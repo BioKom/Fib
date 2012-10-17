@@ -1,0 +1,1017 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fib_object
+			  xmlns:xsd="http://www.w3.org/2001/XMLSchema-instance"
+			  xmlns="http://www.fib-development.org/"
+			  xsd:schemaLocation="http://www.fib-development.org/fib.xsd">
+	<root>
+		<multimedia_info fib_version="3" db_version="3"/>
+		<optionalpart>
+			<pair key="name" value="stickman framework"/>
+			<pair key="description" value="This object represents a stickman framework. The stickman has a body, a head, two arms and two legs, with each one joint in the arms and legs. You have to provide the stickman parts as a subobject (see below). The arms will begin at 1/4 of the body size below the body start (wher the head is). The head will 1/4 (of its radius) overlap the body. The arms length will be the part 0.62 (= golden ratio) of the body or legs. The upper part of arms and legs start at the body, the lower parts start at the other end of the upper parts. The lower part length will be the part 0.62 (= golden ratio) of ther upper part."/>
+			
+			<pair key="inVar1::description" value="position of the stickman start point (lower end of first (right) lower leg) in dimension 1 (x_lrle)"/>
+			<pair key="inVar2::description" value="position of the stickman start point (lower end of first (right) lower leg) in dimension 2 (y_lrle)"/>
+			<pair key="inVar3::description" value="size s of stickman (top of the head to feet bottom, if legs are straight)"/>
+			
+			<pair key="inVar4::description" value="angle alpha of body to the dimension 2 axis (or y-axis, because most stickman will be vertical or parallel to the y-axis) in clockwise direction, the feet start points are on the bottom of the body (and, for the angle, on the virtual dimension 2 (y) axis)"/>
+			<pair key="inVar5::description" value="angle (in radian) betwean right upper arm and body (clockwise direction, if 0 the arm is on the body)"/>
+			<pair key="inVar6::description" value="angle (in radian) betwean left upper arm and body (counter clockwise direction, if 0 the arm is on the body)"/>
+			<pair key="inVar7::description" value="angle (in radian) betwean right upper leg and body axis (clockwise direction, if 0 the leg is straight)"/>
+			<pair key="inVar8::description" value="angle (in radian) betwean left upper leg and body axis (counter clockwise direction, if 0 the leg is straigh)"/>
+			<pair key="inVar9::description" value="angle (in radian) betwean head and body (clockwise direction)"/>
+			<pair key="inVar10::description" value="angle (in radian) betwean right lower arm and upper arm (clockwise direction, if 0 the arm is straight)"/>
+			<pair key="inVar11::description" value="angle (in radian) betwean left lower arm and upper arm (counter clockwise direction, if 0 the arm is straight)"/>
+			<pair key="inVar12::description" value="angle (in radian) betwean right lower leg and upper leg (counter clockwise direction, if 0 the leg is straight)"/>
+			<pair key="inVar13::description" value="angle (in radian) betwean left lower leg and upper leg (clockwise direction, if 0 the leg is straigh)"/>
+			<pair key="inVar14::description" value="width of lines w of the stickman (if lower or equal 0 the standard width w = size s / 24 will be used)"/>
+			<pair key="inVar15::description" value="radius r of head of the stickman (if lower or equal 0 the standard width r = size s / 10 will be used)"/>
+			
+			
+			<pair key="subObj1::description" value="The subobject for the body parts of the stickman. The parameters for the body, head, right upper arm, right lower arm, left upper arm, left lower arm, right upper leg, right lower leg, left upper leg and left lower leg are given."/>
+			<pair key="subObj1::outVar1::description" value="width of line w of the stickman body, right upper arm, right lower arm, left upper arm, left lower arm, right upper leg, right lower leg, left upper leg and left lower leg"/>
+			
+			<pair key="subObj1::outVar2till5::description" value="The parameter for the body of the stickman. The start point (arms),and end point (legs) of the body are given as parameters."/>
+			<pair key="subObj1::outVar2::description" value="position of the stickman body start point (upper end at arms) in dimension 1 (x_bs)"/>
+			<pair key="subObj1::outVar3::description" value="position of the stickman body start point (upper end at arms) in dimension 2 (y_bs)"/>
+			<pair key="subObj1::outVar4::description" value="position of the stickman body end point (lower end at legs) in dimension 1 (x_be)"/>
+			<pair key="subObj1::outVar5::description" value="position of the stickman body end point (lower end at legs) in dimension 2 (y_be)"/>
+			
+			<pair key="subObj1::outVar6till8::description" value="The parameter for the head of the stickman. The center and radius of the head are given as parameters."/>
+			<pair key="subObj1::outVar6::description" value="position of the stickman head center point in dimension 1 (x_h)"/>
+			<pair key="subObj1::outVar7::description" value="position of the stickman head center point in dimension 2 (y_h)"/>
+			<pair key="subObj1::outVar8::description" value="radius r of the stickman head"/>
+			
+			<pair key="subObj1::outVar9till12::description" value="The parameter for the right upper arm of the stickman. The start point (body) and end point of the upper arm are given as parameters."/>
+			<pair key="subObj1::outVar9::description" value="position of the stickman right upper arm start point (upper end at body) in dimension 1 (x_arus)"/>
+			<pair key="subObj1::outVar10::description" value="position of the stickman right upper arm start point (upper end at body) in dimension 2 (y_arus)"/>
+			<pair key="subObj1::outVar11::description" value="position of the stickman right upper arm end point in dimension 1 (x_arue)"/>
+			<pair key="subObj1::outVar12::description" value="position of the stickman right upper arm end point in dimension 2 (y_arue)"/>
+			
+			<pair key="subObj1::outVar13till16::description" value="The parameter for the right lower arm of the stickman. The start point (upper arm) and end point of the lower arm are given as parameters."/>
+			<pair key="subObj1::outVar13::description" value="position of the stickman right lower arm start point (upper end at upper arm) in dimension 1 (x_arls)"/>
+			<pair key="subObj1::outVar14::description" value="position of the stickman right lower arm start point (upper end at upper arm) in dimension 2 (y_arls)"/>
+			<pair key="subObj1::outVar15::description" value="position of the stickman right lower arm end point in dimension 1 (x_arle)"/>
+			<pair key="subObj1::outVar16::description" value="position of the stickman right lower arm end point in dimension 2 (y_arle)"/>
+			
+			<pair key="subObj1::outVar17till20::description" value="The parameter for the left upper arm of the stickman. The start point (body) and end point of the upper arm are given as parameters."/>
+			<pair key="subObj1::outVar17::description" value="position of the stickman left upper arm start point (upper end at body) in dimension 1 (x_alus)"/>
+			<pair key="subObj1::outVar18::description" value="position of the stickman left upper arm start point (upper end at body) in dimension 2 (y_alus)"/>
+			<pair key="subObj1::outVar19::description" value="position of the stickman left upper arm end point in dimension 1 (x_alue)"/>
+			<pair key="subObj1::outVar20::description" value="position of the stickman left upper arm end point in dimension 2 (y_alue)"/>
+			
+			<pair key="subObj1::outVar21till24::description" value="The parameter for the left lower arm of the stickman. The start point (upper arm) and end point of the lower arm are given as parameters."/>
+			<pair key="subObj1::outVar21::description" value="position of the stickman left lower arm start point (upper end at upper arm) in dimension 1 (x_alls)"/>
+			<pair key="subObj1::outVar22::description" value="position of the stickman left lower arm start point (upper end at upper arm) in dimension 2 (y_alls)"/>
+			<pair key="subObj1::outVar23::description" value="position of the stickman left lower arm end point in dimension 1 (x_alle)"/>
+			<pair key="subObj1::outVar24::description" value="position of the stickman left lower arm end point in dimension 2 (y_alle)"/>
+			
+			<pair key="subObj1::outVar25till28::description" value="The parameter for the first (right) upper leg of the stickman. The start point (body) and end point of the upper leg are given as parameters."/>
+			<pair key="subObj1::outVar25::description" value="position of the stickman right upper leg start point (upper end at body) in dimension 1 (x_lrus)"/>
+			<pair key="subObj1::outVar26::description" value="position of the stickman right upper leg start point (upper end at body) in dimension 2 (y_lrus)"/>
+			<pair key="subObj1::outVar27::description" value="position of the stickman right upper leg end point in dimension 1 (x_lrue)"/>
+			<pair key="subObj1::outVar28::description" value="position of the stickman right upper leg end point in dimension 2 (y_lrue)"/>
+			
+			<pair key="subObj1::outVar29till32::description" value="The parameter for the first (right) lower leg of the stickman. The start point (upper leg) and end point of the lower leg are given as parameters."/>
+			<pair key="subObj1::outVar29::description" value="position of the stickman right lower leg start point (upper end at upper leg) in dimension 1 (x_lrls)"/>
+			<pair key="subObj1::outVar30::description" value="position of the stickman right lower leg start point (upper end at upper leg) in dimension 2 (y_lrls)"/>
+			<pair key="subObj1::outVar31::description" value="position of the stickman right lower leg end point in dimension 1 (x_lrle)"/>
+			<pair key="subObj1::outVar32::description" value="position of the stickman right lower leg end point in dimension 2 (y_lrle)"/>
+			
+			<pair key="subObj1::outVar33till36::description" value="The parameter for the left (second) upper leg of the stickman. The start point (body) and end point of the upper leg are given as parameters."/>
+			<pair key="subObj1::outVar33::description" value="position of the stickman upper left leg start point (upper end at body) in dimension 1 (x_llus)"/>
+			<pair key="subObj1::outVar34::description" value="position of the stickman upper left leg start point (upper end at body) in dimension 2 (y_llus)"/>
+			<pair key="subObj1::outVar35::description" value="position of the stickman upper left leg end point in dimension 1 (x_llue)"/>
+			<pair key="subObj1::outVar36::description" value="position of the stickman upper left leg end point in dimension 2 (y_llue)"/>
+			
+			<pair key="subObj1::outVar37till40::description" value="The parameter for the left (second) lower leg of the stickman. The start point (upper leg) and end point of the lower leg are given as parameters."/>
+			<pair key="subObj1::outVar37::description" value="position of the stickman lower left leg start point (upper end at upper leg) in dimension 1 (x_llls)"/>
+			<pair key="subObj1::outVar38::description" value="position of the stickman lower left leg start point (upper end at upper leg) in dimension 2 (y_llls)"/>
+			<pair key="subObj1::outVar39::description" value="position of the stickman lower left leg end point in dimension 1 (x_llle)"/>
+			<pair key="subObj1::outVar40::description" value="position of the stickman lower left leg end point in dimension 2 (y_llle)"/>
+			
+			<pair key="author" value="Betti Oesterholz"/>
+			<pair key="author::email" value="Oesterholz@Fib-Development.org"/>
+			<pair key="copyright" value="LGPL3"/>
+		</optionalpart>
+		<input_variables>
+			<variable number="1" default="32"/>
+			<variable number="2" default="0"/>
+			<variable number="3" default="0"/>
+			<variable number="4" default="0"/>
+			<variable number="5" default="0"/>
+			<variable number="6" default="0"/>
+			<variable number="7" default="0"/>
+			<variable number="8" default="0"/>
+			<variable number="9" default="0"/>
+			<variable number="10" default="0"/>
+			<variable number="11" default="0"/>
+			<variable number="12" default="0"/>
+			<variable number="13" default="0"/>
+			<variable number="14" default="0"/>
+			<variable number="15" default="0"/>
+		</input_variables>
+		<domains>
+			<inVar number="1">
+				<domainReference subdomain="1">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="2">
+				<domainReference subdomain="2">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<!--  <inVar number="3">: size s of the stickman -->
+			<!-- in var 1 .. 9 : angles in radian -->
+			<inVar number="4">
+				<naturalNumber scalingfactor="0.00000001" max="632000000"/>
+			</inVar>
+			<inVar number="5">
+				<naturalNumber scalingfactor="0.00000001" max="632000000"/>
+			</inVar>
+			<inVar number="6">
+				<naturalNumber scalingfactor="0.00000001" max="632000000"/>
+			</inVar>
+			<inVar number="7">
+				<naturalNumber scalingfactor="0.00000001" max="632000000"/>
+			</inVar>
+			<inVar number="8">
+				<naturalNumber scalingfactor="0.00000001" max="632000000"/>
+			</inVar>
+			<inVar number="9">
+				<naturalNumber scalingfactor="0.00000001" max="632000000"/>
+			</inVar>
+			<inVar number="10">
+				<naturalNumber scalingfactor="0.00000001" max="632000000"/>
+			</inVar>
+			<inVar number="11">
+				<naturalNumber scalingfactor="0.00000001" max="632000000"/>
+			</inVar>
+			<inVar number="12">
+				<naturalNumber scalingfactor="0.00000001" max="632000000"/>
+			</inVar>
+			<inVar number="13">
+				<naturalNumber scalingfactor="0.00000001" max="632000000"/>
+			</inVar>
+			<!--  <inVar number="14">: width of lines w -->
+			<!--  <inVar number="15">: radius of head -->
+			
+			<!-- body parts of the stickman -->
+			<externSubobject number="1">
+				<vector elements="40">
+					<!-- actually any numbers are possible;
+						the next lines are just a space holder-->
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+				</vector>
+			</externSubobject>
+			<!-- TODO change to realValues when implemented -->
+			<subfunction>
+				<naturalNumber scalingfactor="0.00001" max="2400000"/>
+			</subfunction>
+		</domains>
+		<main_fib_object>
+			<!-- evalue body part parameters -->
+			<if><!-- if size s > 0 than create stickman; else -> do nothing -->
+				<condition>
+					<lo>
+						<value>0</value>
+						<variable>3</variable>
+					</lo>
+				</condition>
+				<function define_variable="16">
+					<!-- if line width w (=inVar10) is 0 or lower set w to size s / 24 -->
+					<subfunction>
+						<if>
+							<lo>
+								<value>0</value>
+								<variable>14</variable>
+							</lo>
+							<!-- use given value w -->
+							<variable>14</variable>
+							<!-- else evalue w -->
+							<if><!-- ( s / 24 ) < 1 -->
+								<lo>
+									<div>
+										<variable>3</variable>
+										<value>24</value>
+									</div>
+									<value>1</value>
+								</lo>
+								<!-- set w to minimum value of 1 -->
+								<value>1</value>
+								<!-- else set w to size s / 24 -->
+								<div>
+									<variable>3</variable>
+									<value>24</value>
+								</div>
+							</if>
+						</if>
+					</subfunction>
+					<function define_variable="17">
+						<!-- if radius r (=inVar11) is 0 or lower set r to size s / 10 -->
+						<subfunction>
+							<if>
+								<lo>
+									<value>0</value>
+									<variable>15</variable>
+								</lo>
+								<variable>15</variable>
+								<div>
+									<variable>3</variable>
+									<value>10</value>
+								</div>
+							</if>
+						</subfunction>
+						<!-- evalue the clockwise angles in relation to the dimension 2 (y) achsis;
+							(PI is 3.1416) -->
+						<function define_variable="18">
+							<!-- evalue angle betwean right upper arm and dimension 2 (y) achsis;
+							alpha_aur = 2 PI - right upper arm angle - body angle
+								= 0 - right upper arm angle - body angle -->
+							<subfunction>
+								<sub>
+									<sub>
+										<value>0</value>
+										<variable>5</variable>
+									</sub>
+									<variable>4</variable>
+								</sub>
+							</subfunction>
+							<function define_variable="19">
+								<!-- evalue angle betwean left upper arm and dimension 2 (y) achsis;
+								alpha_aul = left upper arm angle - body angle -->
+								<subfunction>
+									<sub>
+										<variable>6</variable>
+										<variable>4</variable>
+									</sub>
+								</subfunction>
+								<function define_variable="20">
+									<!-- evalue angle betwean right upper leg and dimension 2 (y) achsis;
+									alpha_lur = 2 PI - right upper leg angle - body angle -->
+									<subfunction>
+										<sub>
+											<sub>
+												<value>0</value>
+												<variable>7</variable>
+											</sub>
+											<variable>4</variable>
+										</sub>
+									</subfunction>
+									<function define_variable="21">
+										<!-- evalue angle betwean left upper leg and dimension 2 (y) achsis;
+										alpha_lul = left upper leg angle - body angle -->
+										<subfunction>
+											<sub>
+												<variable>8</variable>
+												<variable>4</variable>
+											</sub>
+										</subfunction>
+										<function define_variable="22">
+											<!-- evalue angle betwean head and dimension 2 (y) achsis;
+											alpha_h = body angle + head angle -->
+											<subfunction>
+												<add>
+													<variable>4</variable>
+													<variable>9</variable>
+												</add>
+											</subfunction>
+											<!-- evalue angles of lower parts -->
+											<function define_variable="23">
+												<!-- evalue angle betwean right lower arm and dimension 2 (y) achsis;
+													alpha_alr = right upper arm angle - right lower arm angle -->
+												<subfunction>
+													<sub>
+														<variable>18</variable>
+														<variable>10</variable>
+													</sub>
+												</subfunction>
+												<function define_variable="24">
+													<!-- evalue angle betwean left lower arm and dimension 2 (y) achsis;
+														alpha_all = left upper arm angle + left lower arm angle -->
+													<subfunction>
+														<add>
+															<variable>19</variable>
+															<variable>11</variable>
+														</add>
+													</subfunction>
+													<function define_variable="25">
+														<!-- evalue angle betwean right lower leg and dimension 2 (y) achsis;
+															alpha_llr = right upper leg angle + right lower leg angle -->
+														<subfunction>
+															<add>
+																<variable>20</variable>
+																<variable>12</variable>
+															</add>
+														</subfunction>
+														<function define_variable="26">
+															<!-- evalue angle betwean left lower leg and dimension 2 (y) achsis;
+																  alpha_lll = right upper leg angle - left lower leg angle -->
+															<subfunction>
+																<sub>
+																	<variable>21</variable>
+																	<variable>13</variable>
+																</sub>
+															</subfunction>
+															
+															<function define_variable="27">
+																<!-- evalue the size sp of the stickman body and legs
+																sp = ( size s of stickman - 1.8 * (radius head r) ) / 2 -->
+																<subfunction>
+																	<div>
+																		<sub>
+																			<variable>3</variable>
+																			<mult>
+																				<value>1.8</value>
+																				<variable>17</variable>
+																			</mult>
+																		</sub>
+																		<value>2</value>
+																	</div>
+																</subfunction>
+																<function define_variable="28">
+																	<!-- if the size sp of the stickman body and legs is lower 0, set it to 0 -->
+																	<subfunction>
+																		<if>
+																			<lo>
+																				<value>0</value>
+																				<variable>27</variable>
+																			</lo>
+																			<!-- use size sp -->
+																			<variable>27</variable>
+																			<!-- else set it to 0 -->
+																			<value>0</value>
+																		</if>
+																	</subfunction>
+																	<function define_variable="29">
+																		<!-- evalue the lenght of the upper leg l_lu
+																			  l_lu = sp * 0.62 -->
+																		<subfunction>
+																			<mult>
+																				<variable>28</variable>
+																				<value>0.62</value>
+																			</mult>
+																		</subfunction>
+																		<function define_variable="30">
+																			<!-- evalue the lenght of the lower leg l_ll
+																				  l_ll = sp - l_lu -->
+																			<subfunction>
+																				<sub>
+																					<variable>28</variable>
+																					<variable>29</variable>
+																				</sub>
+																			</subfunction>
+		
+		<!-- evalue start point of the first (right) lower leg (= first (right) upper leg end point);
+			x_lrls = x_lrue = x_lrle + sp * sin( alpha_llr )
+			y_lrls = y_lrue = y_lrle + sp * cos( alpha_llr ) -->
+		<function define_variable="31">
+			<!-- x_lrls = x_lrue = x_lrle + l_ll * sin( alpha_llr ) -->
+			<subfunction>
+				<sub>
+					<variable>1</variable>
+					<mult>
+						<variable>30</variable>
+						<sin>
+							<variable>25</variable>
+						</sin>
+					</mult>
+				</sub>
+			</subfunction>
+			<function define_variable="32">
+				<!-- y_lrls = y_lrue = y_lrle + l_ll * cos( alpha_llr ) -->
+				<subfunction>
+					<add>
+						<variable>2</variable>
+						<mult>
+							<variable>30</variable>
+							<sin>
+								<add>
+									<variable>25</variable>
+									<value>1.5708</value>
+								</add>
+							</sin>
+						</mult>
+					</add>
+				</subfunction>
+				<!-- evalue start point of the first (right) upper leg (= end point of the body = left leg start point);
+					x_be = x_lrus = x_llus = x_lrue + l_ul * sin( alpha_lur )
+					y_be = y_lrus = y_llus = y_lrue + l_ul * cos( alpha_lur ) -->
+				<function define_variable="33">
+					<!-- x_be = x_lrs = x_lls = x_lrue + l_ul * sin( alpha_lur ) -->
+					<subfunction>
+						<sub>
+							<variable>31</variable>
+							<mult>
+								<variable>29</variable>
+								<sin>
+									<variable>20</variable>
+								</sin>
+							</mult>
+						</sub>
+					</subfunction>
+					<function define_variable="34">
+						<!-- y_be = y_lrs = y_lls = y_lrue + l_ul * cos( alpha_lur ) -->
+						<subfunction>
+							<add>
+								<variable>32</variable>
+								<mult>
+									<variable>29</variable>
+									<sin>
+										<add>
+											<variable>20</variable>
+											<value>1.5708</value>
+										</add>
+									</sin>
+								</mult>
+							</add>
+						</subfunction>
+						<!-- evalue start point of the body;
+							x_bs = x_be + sp * sin( alpha )
+							y_bs = y_be + sp * cos( alpha ) -->
+						<function define_variable="35">
+							<!-- x_bs = x_be + sp * sin( alpha ) -->
+							<subfunction>
+								<add>
+									<variable>33</variable>
+									<mult>
+										<variable>28</variable>
+										<sin>
+											<variable>4</variable>
+										</sin>
+									</mult>
+								</add>
+							</subfunction>
+							<function define_variable="36">
+								<!-- y_bs = y_be + sp * cos( alpha ) -->
+								<subfunction>
+									<add>
+										<variable>34</variable>
+										<mult>
+											<variable>28</variable>
+											<sin>
+												<add>
+													<variable>4</variable>
+													<value>1.5708</value>
+												</add>
+											</sin>
+										</mult>
+									</add>
+								</subfunction>
+								<!-- evalue stickman head center point;
+									x_h = x_bs + (r * 0.75) * sin( alpha_h )
+									y_h = y_bs + (r * 0.75) * cos( alpha_h ) -->
+								<function define_variable="37">
+									<!-- x_h = x_bs + (r * 0.75) * sin( alpha_h ) -->
+									<subfunction>
+										<add>
+											<variable>35</variable>
+											<mult>
+												<mult>
+													<variable>17</variable>
+													<value>0.75</value>
+												</mult>
+												<sin>
+													<variable>22</variable>
+												</sin>
+											</mult>
+										</add>
+									</subfunction>
+									<function define_variable="38">
+										<!-- y_h = y_bs + (r * 0.75) * cos( alpha_h )  -->
+										<subfunction>
+											<add>
+												<variable>36</variable>
+												<mult>
+													<mult>
+														<variable>17</variable>
+														<value>0.75</value>
+													</mult>
+													<sin>
+														<add>
+															<variable>22</variable>
+															<value>1.5708</value>
+														</add>
+													</sin>
+												</mult>
+											</add>
+										</subfunction>
+										<!-- evalue end point of the second (left) upper leg (= start point of second (left) lower leg);
+											x_llue = x_llls = x_be + l_lu * sin( alpha_lul )
+											y_llue = y_llls = y_be - l_lu * cos( alpha_lul ) -->
+										<function define_variable="39">
+											<!-- x_llue = x_llls = x_be + l_lu * sin( alpha_lul ) -->
+											<subfunction>
+												<add>
+													<variable>33</variable>
+													<mult>
+														<variable>29</variable>
+														<sin>
+															<variable>21</variable>
+														</sin>
+													</mult>
+												</add>
+											</subfunction>
+											<function define_variable="40">
+												<!-- y_llue = y_llls = y_be - l_lu * cos( alpha_lul ) -->
+												<subfunction>
+													<sub>
+														<variable>34</variable>
+														<mult>
+															<variable>29</variable>
+															<sin>
+																<add>
+																	<variable>21</variable>
+																	<value>1.5708</value>
+																</add>
+															</sin>
+														</mult>
+													</sub>
+												</subfunction>
+												<!-- evalue end point of the second (left) lower leg;
+													x_llle = x_llls + l_ll * sin( alpha_lll )
+													x_llle = y_llls - l_ll * cos( alpha_lll ) -->
+												<function define_variable="41">
+													<!-- x_llle = x_llls + l_ll * sin( alpha_lll ) -->
+													<subfunction>
+														<add>
+															<variable>39</variable>
+															<mult>
+																<variable>30</variable>
+																<sin>
+																	<variable>26</variable>
+																</sin>
+															</mult>
+														</add>
+													</subfunction>
+													<function define_variable="42">
+														<!-- x_llle = y_llls - l_ll * cos( alpha_lll ) -->
+														<subfunction>
+															<sub>
+																<variable>40</variable>
+																<mult>
+																	<variable>30</variable>
+																	<sin>
+																		<add>
+																			<variable>26</variable>
+																			<value>1.5708</value>
+																		</add>
+																	</sin>
+																</mult>
+															</sub>
+														</subfunction>
+														<!-- evalue shoulder:
+															x_shoulder = x_bs - sp * 0.25 * sin( alpha )
+															y_shoulder = y_bs - sp * 0.25 * cos( alpha ) -->
+														<function define_variable="43">
+															<!-- x_shoulder = x_bs - sp * 0.25 * sin( alpha ) -->
+															<subfunction>
+																<sub>
+																	<variable>35</variable>
+																	<mult>
+																		<mult>
+																			<variable>28</variable>
+																			<value>0.25</value>
+																		</mult>
+																		<sin>
+																			<variable>4</variable>
+																		</sin>
+																	</mult>
+																</sub>
+															</subfunction>
+															<function define_variable="44">
+																<!-- y_shoulder = y_bs - sp * 0.25 * cos( alpha ) -->
+																<subfunction>
+																	<sub>
+																		<variable>36</variable>
+																		<mult>
+																			<mult>
+																				<variable>28</variable>
+																				<value>0.25</value>
+																			</mult>
+																			<sin>
+																				<add>
+																					<variable>4</variable>
+																					<value>1.5708</value>
+																				</add>
+																			</sin>
+																		</mult>
+																	</sub>
+																</subfunction>
+		
+		<!-- evalue start point of the right arm (shoulder on side of body);
+			x_arus = x_shoulder - w * cos( alpha ) / 2
+			y_arus = y_shoulder + w * sin( alpha ) / 2 -->
+		<function define_variable="45">
+			<!-- x_arus = x_shoulder - w * cos( alpha ) / 2 -->
+			<subfunction>
+				<sub>
+					<variable>43</variable>
+					<mult>
+						<div>
+							<variable>16</variable>
+							<value>2</value>
+						</div>
+						<sin>
+							<add>
+								<variable>4</variable>
+								<value>1.5708</value>
+							</add>
+						</sin>
+					</mult>
+				</sub>
+			</subfunction>
+			<function define_variable="46">
+				<!-- y_arus = y_shoulder + w * sin( alpha ) / 2 -->
+				<subfunction>
+					<add>
+						<variable>44</variable>
+						<mult>
+							<div>
+								<variable>16</variable>
+								<value>2</value>
+							</div>
+							<sin>
+								<variable>4</variable>
+							</sin>
+						</mult>
+					</add>
+				</subfunction>
+				<!-- evalue start point of the left arm (shoulder + on side of body);
+					x_alus = x_shoulder + w * cos( alpha ) / 2
+					y_alus = x_shoulder - w * sin( alpha ) / 2 -->
+				<function define_variable="47">
+					<!-- x_alus = x_shoulder + w * cos( alpha ) / 2 -->
+					<subfunction>
+						<add>
+							<variable>43</variable>
+							<mult>
+								<div>
+									<variable>16</variable>
+									<value>2</value>
+								</div>
+								<sin>
+									<add>
+										<variable>4</variable>
+										<value>1.5708</value>
+									</add>
+								</sin>
+							</mult>
+						</add>
+					</subfunction>
+					<function define_variable="48">
+						<!-- y_alus = y_shoulder - w * sin( alpha ) / 2 -->
+						<subfunction>
+							<sub>
+								<variable>44</variable>
+								<mult>
+									<div>
+										<variable>16</variable>
+										<value>2</value>
+									</div>
+									<sin>
+										<variable>4</variable>
+									</sin>
+								</mult>
+							</sub>
+						</subfunction>
+						<function define_variable="49">
+							<!-- evalue length of the upper arms l_au;
+								l_au = sp * 0.62 * 0.62 (= sp * (golden ratio)^2) = sp * 0.38 -->
+							<subfunction>
+								<mult>
+									<variable>28</variable>
+									<value>0.38</value>
+								</mult>
+							</subfunction>
+							<function define_variable="50">
+								<!-- evalue length of the lower arms l_al;
+									  l_al = sp * 0.62 * 0.38 (= sp * (golden ratio)^3) = sp * 0.24 -->
+								<subfunction>
+									<mult>
+										<variable>28</variable>
+										<value>0.24</value>
+									</mult>
+								</subfunction>
+								<!-- evalue end point of the right upper arm (= start point lower right arm);
+									x_arue = x_arls = x_arus + l_au * sin( alpha_aur )
+									y_arue = y_arls = y_arus - l_au * cos( alpha_aur ) -->
+								<function define_variable="51">
+									<!-- x_arue = x_arls = x_arus + l_au * sin( alpha_aur ) -->
+									<subfunction>
+										<add>
+											<variable>45</variable>
+											<mult>
+												<variable>49</variable>
+												<sin>
+													<variable>18</variable>
+												</sin>
+											</mult>
+										</add>
+									</subfunction>
+									<function define_variable="52">
+										<!-- y_arue = y_arls = y_arus - l_au * cos( alpha_aur ) -->
+										<subfunction>
+											<sub>
+												<variable>46</variable>
+												<mult>
+													<variable>49</variable>
+													<sin>
+														<add>
+															<variable>18</variable>
+															<value>1.5708</value>
+														</add>
+													</sin>
+												</mult>
+											</sub>
+										</subfunction>
+										<!-- evalue end point of the left upper arm (= start point lower left arm);
+											x_alue = x_alls = x_alus + l_au * sin( alpha_aul )
+											y_alue = y_alls = y_alus - l_au * cos( alpha_aul ) -->
+										<function define_variable="53">
+											<!-- x_alue = x_alls = x_alus + l_au * sin( alpha_aul ) -->
+											<subfunction>
+												<add>
+													<variable>47</variable>
+													<mult>
+														<variable>49</variable>
+														<sin>
+															<variable>19</variable>
+														</sin>
+													</mult>
+												</add>
+											</subfunction>
+											<function define_variable="54">
+												<!-- y_alue = y_alls = y_alus - l_au * cos( alpha_aul ) -->
+												<subfunction>
+													<sub>
+														<variable>48</variable>
+														<mult>
+															<variable>49</variable>
+															<sin>
+																<add>
+																	<variable>19</variable>
+																	<value>1.5708</value>
+																</add>
+															</sin>
+														</mult>
+													</sub>
+												</subfunction>
+												
+												<!-- evalue end point of the right arm;
+													x_arle = x_arls + l_al * sin( alpha_alr )
+													y_arle = y_arls - l_al * cos( alpha_alr ) -->
+												<function define_variable="55">
+													<!-- x_arle = x_arls + l_al * sin( alpha_alr ) -->
+													<subfunction>
+														<add>
+															<variable>51</variable>
+															<mult>
+																<variable>50</variable>
+																<sin>
+																	<variable>23</variable>
+																</sin>
+															</mult>
+														</add>
+													</subfunction>
+													<function define_variable="56">
+														<!-- y_arle = y_arls - l_al * cos( alpha_alr ) -->
+														<subfunction>
+															<sub>
+																<variable>52</variable>
+																<mult>
+																	<variable>50</variable>
+																	<sin>
+																		<add>
+																			<variable>23</variable>
+																			<value>1.5708</value>
+																		</add>
+																	</sin>
+																</mult>
+															</sub>
+														</subfunction>
+														<!-- evalue end point of the left arm;
+															x_alle = x_alls + l_al * sin( alpha_all )
+															y_alle = y_alls - l_al * cos( alpha_all ) -->
+														<function define_variable="57">
+															<!-- x_alle = x_alls + l_al * sin( alpha_all ) -->
+															<subfunction>
+																<add>
+																	<variable>53</variable>
+																	<mult>
+																		<variable>50</variable>
+																		<sin>
+																			<variable>24</variable>
+																		</sin>
+																	</mult>
+																</add>
+															</subfunction>
+															<function define_variable="58">
+																<!-- y_alle = y_alls - l_al * cos( alpha_all ) -->
+																<subfunction>
+																	<sub>
+																		<variable>54</variable>
+																		<mult>
+																			<variable>50</variable>
+																			<sin>
+																				<add>
+																					<variable>24</variable>
+																					<value>1.5708</value>
+																				</add>
+																			</sin>
+																		</mult>
+																	</sub>
+																</subfunction>
+																<if><!-- body size greater 0 -->
+																	<condition>
+																		<lo>
+																			<value>0</value>
+																			<variable>28</variable>
+																		</lo>
+																	</condition>
+																	<subobject number="1">
+																		<vector type="externSubobject">
+																			<variable>16</variable><!-- width of line w of the stickman body, right upper arm, right lower arm, left upper arm, left lower arm, right upper leg, right lower leg, left upper leg and left lower leg -->
+																			<variable>35</variable><!-- position of the stickman body start point (upper end at arms) in dimension 1 (x_bs) -->
+																			<variable>36</variable><!-- position of the stickman body start point (upper end at arms) in dimension 2 (y_bs) -->
+																			<variable>33</variable><!-- position of the stickman body end point (lower end at legs) in dimension 1 (x_be) -->
+																			<variable>34</variable><!-- position of the stickman body end point (lower end at legs) in dimension 2 (y_be) -->
+																			<variable>37</variable><!-- position of the stickman head center point in dimension 1 (x_h) -->
+																			<variable>38</variable><!-- position of the stickman head center point in dimension 2 (y_h) -->
+																			<variable>17</variable><!-- radius r of the stickman head -->
+																			<variable>45</variable><!-- position of the stickman right upper arm start point (upper end at body) in dimension 1 (x_arus) -->
+																			<variable>46</variable><!-- position of the stickman right upper arm start point (upper end at body) in dimension 2 (y_arus) -->
+																			<variable>51</variable><!-- position of the stickman right upper arm end point in dimension 1 (x_arue -->
+																			<variable>52</variable><!-- position of the stickman right upper arm end point in dimension 2 (y_arue) -->
+																			<variable>51</variable><!-- position of the stickman right lower arm start point (upper end at upper arm) in dimension 1 (x_arls) -->
+																			<variable>52</variable><!-- position of the stickman right lower arm start point (upper end at upper arm) in dimension 2 (y_arls) -->
+																			<variable>55</variable><!-- position of the stickman right lower arm end point in dimension 1 (x_arle) -->
+																			<variable>56</variable><!-- position of the stickman right lower arm end point in dimension 2 (y_arle) -->
+																			<variable>47</variable><!-- position of the stickman left upper arm start point (upper end at body) in dimension 1 (x_alus) -->
+																			<variable>48</variable><!-- position of the stickman left upper arm start point (upper end at body) in dimension 2 (y_alus) -->
+																			<variable>53</variable><!-- position of the stickman left upper arm end point in dimension 1 (x_alue) -->
+																			<variable>54</variable><!-- position of the stickman left upper arm end point in dimension 2 (y_alue) -->
+																			<variable>53</variable><!-- position of the stickman left lower arm start point (upper end at upper arm) in dimension 1 (x_alls) -->
+																			<variable>54</variable><!-- position of the stickman left lower arm start point (upper end at upper arm) in dimension 2 (y_alls) -->
+																			<variable>57</variable><!-- position of the stickman left lower arm end point in dimension 1 (x_alle) -->
+																			<variable>58</variable><!-- position of the stickman left lower arm end point in dimension 2 (y_alle) -->
+																			<variable>33</variable><!-- position of the stickman right upper leg start point (upper end at body) in dimension 1 (x_lrus) -->
+																			<variable>34</variable><!-- position of the stickman right upper leg start point (upper end at body) in dimension 2 (y_lrus) -->
+																			<variable>31</variable><!-- position of the stickman right upper leg end point in dimension 1 (x_lrue) -->
+																			<variable>32</variable><!-- position of the stickman right upper leg end point in dimension 2 (y_lrue) -->
+																			<variable>31</variable><!-- position of the stickman right lower leg start point (upper end at upper leg) in dimension 1 (x_lrls) -->
+																			<variable>32</variable><!-- position of the stickman right lower leg start point (upper end at upper leg) in dimension 2 (y_lrls) -->
+																			<variable>1</variable><!-- position of the stickman right lower leg end point in dimension 1 (x_lrle) -->
+																			<variable>2</variable><!--  position of the stickman right lower leg end point in dimension 2 (y_lrle)-->
+																			<variable>33</variable><!-- position of the stickman upper left leg start point (upper end at body) in dimension 1 (x_llus) -->
+																			<variable>34</variable><!-- position of the stickman upper left leg start point (upper end at body) in dimension 2 (y_llus) -->
+																			<variable>39</variable><!-- position of the stickman upper left leg end point in dimension 1 (x_llue) -->
+																			<variable>40</variable><!-- position of the stickman upper left leg end point in dimension 2 (y_llue) -->
+																			<variable>39</variable><!-- position of the stickman lower left leg start point (upper end at upper leg) in dimension 1 (x_llls) -->
+																			<variable>40</variable><!-- position of the stickman lower left leg start point (upper end at upper leg) in dimension 2 (y_llls) -->
+																			<variable>41</variable><!-- position of the stickman lower left leg end point in dimension 1 (x_llle) -->
+																			<variable>42</variable><!-- position of the stickman lower left leg end point in dimension 2 (y_llle) -->
+																		</vector>
+																	</subobject>
+																	<!-- else body size = 0 -> all points = start point body -->
+																	<subobject number="1">
+																		<vector type="externSubobject">
+																			<variable>16</variable><!-- width of line w of the stickman body, right upper arm, right lower arm, left upper arm, left lower arm, right upper leg, right lower leg, left upper leg and left lower leg -->
+																			<variable>1</variable><!-- position of the stickman body start point (upper end at arms) in dimension 1 (x_bs) -->
+																			<variable>2</variable><!-- position of the stickman body start point (upper end at arms) in dimension 2 (y_bs) -->
+																			<variable>1</variable><!-- position of the stickman body end point (lower end at legs) in dimension 1 (x_be) -->
+																			<variable>2</variable><!-- position of the stickman body end point (lower end at legs) in dimension 2 (y_be) -->
+																			<variable>1</variable><!-- position of the stickman head center point in dimension 1 (x_h) -->
+																			<variable>2</variable><!-- position of the stickman head center point in dimension 2 (y_h) -->
+																			<variable>17</variable><!-- radius r of the stickman head -->
+																			<variable>1</variable><!-- position of the stickman right upper arm start point (upper end at body) in dimension 1 (x_arus) -->
+																			<variable>2</variable><!-- position of the stickman right upper arm start point (upper end at body) in dimension 2 (y_arus) -->
+																			<variable>1</variable><!-- position of the stickman right upper arm end point in dimension 1 (x_arue -->
+																			<variable>2</variable><!-- position of the stickman right upper arm end point in dimension 2 (y_arue) -->
+																			<variable>1</variable><!-- position of the stickman right lower arm start point (upper end at upper arm) in dimension 1 (x_arls) -->
+																			<variable>2</variable><!-- position of the stickman right lower arm start point (upper end at upper arm) in dimension 2 (y_arls) -->
+																			<variable>1</variable><!-- position of the stickman right lower arm end point in dimension 1 (x_arle) -->
+																			<variable>2</variable><!-- position of the stickman right lower arm end point in dimension 2 (y_arle) -->
+																			<variable>1</variable><!-- position of the stickman left upper arm start point (upper end at body) in dimension 1 (x_alus) -->
+																			<variable>2</variable><!-- position of the stickman left upper arm start point (upper end at body) in dimension 2 (y_alus) -->
+																			<variable>1</variable><!-- position of the stickman left upper arm end point in dimension 1 (x_alue) -->
+																			<variable>2</variable><!-- position of the stickman left upper arm end point in dimension 2 (y_alue) -->
+																			<variable>1</variable><!-- position of the stickman left lower arm start point (upper end at upper arm) in dimension 1 (x_alls) -->
+																			<variable>2</variable><!-- position of the stickman left lower arm start point (upper end at upper arm) in dimension 2 (y_alls) -->
+																			<variable>1</variable><!-- position of the stickman left lower arm end point in dimension 1 (x_alle) -->
+																			<variable>2</variable><!-- position of the stickman left lower arm end point in dimension 2 (y_alle) -->
+																			<variable>1</variable><!-- position of the stickman right upper leg start point (upper end at body) in dimension 1 (x_lrus) -->
+																			<variable>2</variable><!-- position of the stickman right upper leg start point (upper end at body) in dimension 2 (y_lrus) -->
+																			<variable>1</variable><!-- position of the stickman right upper leg end point in dimension 1 (x_lrue) -->
+																			<variable>2</variable><!-- position of the stickman right upper leg end point in dimension 2 (y_lrue) -->
+																			<variable>1</variable><!-- position of the stickman right lower leg start point (upper end at upper leg) in dimension 1 (x_lrls) -->
+																			<variable>2</variable><!-- position of the stickman right lower leg start point (upper end at upper leg) in dimension 2 (y_lrls) -->
+																			<variable>1</variable><!-- position of the stickman right lower leg end point in dimension 1 (x_lrle) -->
+																			<variable>2</variable><!--  position of the stickman right lower leg end point in dimension 2 (y_lrle)-->
+																			<variable>1</variable><!-- position of the stickman upper left leg start point (upper end at body) in dimension 1 (x_llus) -->
+																			<variable>2</variable><!-- position of the stickman upper left leg start point (upper end at body) in dimension 2 (y_llus) -->
+																			<variable>1</variable><!-- position of the stickman upper left leg end point in dimension 1 (x_llue) -->
+																			<variable>2</variable><!-- position of the stickman upper left leg end point in dimension 2 (y_llue) -->
+																			<variable>1</variable><!-- position of the stickman lower left leg start point (upper end at upper leg) in dimension 1 (x_llls) -->
+																			<variable>2</variable><!-- position of the stickman lower left leg start point (upper end at upper leg) in dimension 2 (y_llls) -->
+																			<variable>1</variable><!-- position of the stickman lower left leg end point in dimension 1 (x_llle) -->
+																			<variable>2</variable><!-- position of the stickman lower left leg end point in dimension 2 (y_llle) -->
+																		</vector>
+																	</subobject>
+																</if>
+															</function>
+														</function>
+													</function>
+												</function>
+											</function>
+										</function>
+									</function>
+								</function>
+							</function>
+						</function>
+					</function>
+				</function>
+			</function>
+		</function>
+		
+														</function>
+													</function>
+												</function>
+											</function>
+										</function>
+									</function>
+								</function>
+							</function>
+						</function>
+					</function>
+				</function>
+			</function>
+		</function>
+		
+																			</function>
+																		</function>
+																	</function>
+																</function>
+															</function>
+														</function>
+													</function>
+												</function>
+											</function>
+										</function>
+									</function>
+								</function>
+							</function>
+						</function>
+					</function>
+				</function>
+				<!-- else size s =< 0 -> do nothing -->
+				<point/>
+			</if>
+		</main_fib_object>
+	</root>
+</fib_object>

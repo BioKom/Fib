@@ -1,0 +1,65 @@
+<data>
+	<vector type="position">
+		<value number="1">1</value>
+		<value number="2">1</value>
+	</vector>
+	<vector type="position">
+		<value number="1">2</value>
+		<value number="2">2</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value number="1">1</value>
+		<value number="2">1</value>
+		<value number="3">1</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value number="1">2</value>
+		<value number="2">2</value>
+		<value number="3">2</value>
+	</vector>
+	<vector type="position">
+		<value number="1">3</value>
+		<value number="2">3</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value number="1">1</value>
+		<value number="2">1</value>
+		<value number="3">1</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value number="1">3</value>
+		<value number="2">3</value>
+		<value number="3">3</value>
+	</vector>
+	<vector type="position">
+		<value number="1">4</value>
+		<value number="2">4</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value number="1">4</value>
+		<value number="2">4</value>
+		<value number="3">4</value>
+	</vector>
+	<vector type="position">
+		<value number="1">5</value>
+		<value number="2">5</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value number="1">5</value>
+		<value number="2">5</value>
+		<value number="3">5</value>
+	</vector>
+	<vector type="position">
+		<value number="1">6</value>
+		<value number="2">6</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value number="1">5</value>
+		<value number="2">5</value>
+		<value number="3">5</value>
+	</vector>
+	<vector type="position">
+		<value number="1">7</value>
+		<value number="2">7</value>
+	</vector>
+</data>

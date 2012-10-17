@@ -1,0 +1,469 @@
+%
+% Copyright (c) 2008 Betti Oesterholz
+%
+% Permission is granted to copy, distribute and/or modify this document
+% under the terms of the GNU Free Documentation License, Version 1.2 or
+% any later version published by the Free Software Foundation;
+% with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+%
+% A copy of the license is included in the file ``fdl.tex'' .
+%
+
+\newpage
+\part{Die Fib-Operatoren}
+\label{partFibOperations}
+
+In diesem Teil werden einige zur Realisierung vorgesehene Operatoren vorgestellt. F"ur weitere Operatoren sind der Fantasie nat"urlich keine Grenzen gesetzt.
+
+Diese Operatoren sollen im genetische Algorithmus (siehe Abschnitt \ref{secGeneticAlgorithmDesign} auf Seite \pageref{secGeneticAlgorithmDesign} ) verwendet werden, um (gute) Individuen bzw. Fib-Multimediadarstellungen in ihm anzupassen, zu ver"andern oder zu erstellen. Dabei werden nat"urlich nicht Individuen im genetische Algorithmus direkt ver"andert, sondern immer nur Kopien dieser. All Individuen im genetische Algorithmus, die zur Erzeugung eines neuen Individuums $I$ verwendet wurden, sind die Elternindividuen dieses ($I$).
+
+
+
+\section{Ein Teilobjekt einf"ugen (Genimport)}
+
+\textbf{Operatorname:} \verb|cOpFibImportPartObject|\index{Operation!cOpFibImportPartObject}
+
+\bigskip\noindent
+\textbf{Status:} nicht Implementiert
+
+\bigskip\noindent
+Um zu gew"ahrleisten, dass sich das kopierte Individuum an das Originalbild ''anpassen`` kann, k"onnen in dieses neue Teilobjekte aus anderen Individuen einf"ugt werden.
+
+Dies wird realisiert werden, indem an einer ausgew"ahlten Stelle im Fib-Objekt, an der ein Fib-Unterobjekt steht, des Individuums ein (neues) Listenelement einf"ugt wird. Wobei ein Teil der Listenunterobjekte das/die Objekt(e), das/die an dieser Stelle standen, weiterf"uhrt/-f"uhren und ein Listenunterobjekt ein neues Objekt enth"alt, welches dadurch gebildet wird, dass ein Teilobjekt, aus einem anderen Individuum, hineinkopiert wird.
+
+%TODO Auswahlkriterien f"ur Teilobjekte k"onnen beliebig spezifizieren werden.
+
+
+\section{Einen neuen Punkt einf"ugen}
+
+\textbf{Operatorname:} \verb|cOpFibCreatePoint|\index{Operation!cOpFibCreatePoint}
+
+\bigskip\noindent
+\textbf{Status:} nicht Implementiert
+
+\bigskip\noindent
+Dieser Operator f"ugt an einer ausgew"ahlten Stelle im Individuum ein (neues) Listenelement ein. Wobei ein Teil der Listenunterobjekte das/die Objekt(e), das/die an dieser Stelle standen, weiterf"uhrt/-f"uhren und ein Listenunterobjekt ein neues Objekt enth"alt, welches dadurch gebildet wird dass ein neuer Punkt mit zuf"allig gew"ahlten Werten einf"ugt wird.
+
+
+\section{Einfache "Anderungen an einem Fib-Objekt: Mutation}
+
+Die Nachfolgenden Operatoren "andern einzelne Teile des Fib-Objekts (eines Individuums) zuf"allig.
+
+
+\subsection{L"oschung eines Teilobjektes}
+\label{secOpFibDeletePartObject}
+
+\textbf{Operatorname:} \verb|cOpFibDeletePartObject|\index{Operation!cOpFibDeletePartObject}
+
+\bigskip\noindent
+\textbf{Status:} nicht Implementiert
+
+\bigskip\noindent
+Um einzelne Individuen m"oglichst klein zu halten, damit sie nicht "uber alle Grenzen wachsen ohne den Fehler zum Originalmultimediaobjekt zu verkleinern, ist es sinnvoll ein neues Individuum zu erzeugen, indem ein Elternindividuum Kopiert und aus dieser Kopie ein Teilobjekt gel"oscht wird. Dabei sind Teilobjekte mit niedriger Fitness zu bevorzugen.
+Wenn das neu entstandene Individuum eine h"ohere Fitness als das Alte hat, erh"alt es auch h"ohere ''"Uberlebenschancen`` und das alte Individuum wird eher gel"oscht.
+
+
+\subsection{"Andern eines Wertes}
+
+\textbf{Operatorname:} \verb|cOpFibChangeValueRandom|\index{Operation!cOpFibChangeValueRandom}
+
+\bigskip\noindent
+\textbf{Status:} nicht Implementiert
+
+\bigskip\noindent
+Bei dieser Operation wird aus dem kopierten Elternindividuum ein Wert ausgew"ahlt und dieser ver"andert, indem ein zuf"alliger Wert hinzu addiert wird.
+
+
+\subsection{Ersetzen eines Wertes durch eine Variable}
+
+\textbf{Operatorname:} \verb|cOpFibReplaceValueWithVariable|\index{Operation!cOpFibReplaceValueWithVariable}
+
+\bigskip\noindent
+\textbf{Status:} nicht Implementiert
+
+\bigskip\noindent
+Bei dieser Operation wird aus dem kopierten Elternindividuum ein Wert ausgew"ahlt und dieser durch eine, f"ur das entsprechende Fib-Element definierte, zuf"allige Variable ersetzt.
+
+
+\subsection{"Andern einer Variable}
+
+\textbf{Operatorname:} \verb|cOpFibChangeVariableRandom|\index{Operation!cOpFibChangeVariableRandom}
+
+\bigskip\noindent
+\textbf{Status:} nicht Implementiert
+
+\bigskip\noindent
+Bei dieser Operation wird aus dem kopierten Elternindividuum eine Variable ausgew"ahlt und diese durch eine zuf"allige andere Variable ersetzt, welche auch f"ur das entsprechende Fib-Element definiert ist.
+
+
+\subsection{Ersetzen einer Variable durch einen Wertes}
+
+\textbf{Operatorname:} \verb|cOpFibReplaceVariableWithValue|\index{Operation!cOpFibReplaceVariableWithValue}
+
+\bigskip\noindent
+\textbf{Status:} nicht Implementiert
+
+\bigskip\noindent
+Bei dieser Operation wird aus dem kopierten Elternindividuum eine Variable ausgew"ahlt und diese durch einen Wert ersetzt. Der Wert sollte nach M"oglichkeit ein Wert sein, den die Variable durchlaufen w"urde.
+
+
+\subsection{Einf"ugen einer Variablen}
+
+\textbf{Operatorname:} \verb|cOpFibCreateFunctionElement|\index{Operation!cOpFibCreateFunctionElement}
+
+\bigskip\noindent
+\textbf{Status:} nicht Implementiert
+
+\bigskip\noindent
+\textbf{Operatorname:} \verb|cOpFibCreateAreaElement|\index{Operation!cOpFibCreateAreaElement}
+
+\bigskip\noindent
+\textbf{Status:} nicht Implementiert
+
+\bigskip\noindent
+Beim Einf"ugen einer Variablen, wird entweder eine schon unter dem Objekt (in den Elementen die dieses enthalten) existierende Variable eingef"ugt oder eine neue Variable gebildet.
+
+Beim Bilden einer neuen Variablen wird ein Fib-Element, das die Variable definiert, in der Kopie des Elternindividuum an einer ausgew"ahlten Stelle einf"ugt und zwar oberhalb der Stelle an der seine Variable eingef"ugt wurde. So dass es das Fib-Element enth"alt, in dem seine Variable eingef"ugt wurde.
+
+\bigskip\noindent
+Es k"onnen Funktions- und Bereichsobjekte eingef"ugt werden.
+
+\bigskip\noindent
+Beim Einf"ugen einer Funktion (\verb|cOpFibCreateFunctionElement|) ist es sinnvoll, diese so zu bilden, dass sie den gleichen Wert repr"asentiert, der ersetzt wurde.
+
+Beim Einf"ugen eines Bereichsobjekts (\verb|cOpFibCreateAreaElement|) ist es sinnvoll, dass der verwendete Bereich, (fast nur) den Wert "uberdeckt, welcher ersetzt wird. Dies kann z. B. dadurch erreicht werden, dass dieses Bereichsobjekt nur ein Bereich mit dem Vektor (Wert, Wert) oder ($Wert - x$, $Wert + y$) enth"alt.
+
+
+\subsection{L"oschung eines Funktionselements}
+
+\textbf{Operatorname:} \verb|cOpFibDeleteUnusedFunctionElement|\index{Operation!cOpFibDeleteUnusedFunctionElement}
+
+\bigskip\noindent
+\textbf{Status:} nicht Implementiert
+
+\bigskip\noindent
+Funktionselemente (\verb|cOpFibDeleteUnusedFunctionElement|) k"onnen gel"oscht werden, wenn kein Objekt unter ihnen mehr ihre Variable, die sie definieren, enth"alt. Beim Anwenden dieser Operation, ist es sinnvoll, mehrmals ein Funktionselement aus dem Individuum herauszugreifen, um zu versuchen, dieses zu entfernen.
+
+
+\subsection{L"oschung eines Bereichselements}
+
+\bigskip\noindent
+\textbf{Operatorname:} \verb|cOpFibDeleteUnusedAreaElement|\index{Operation!cOpFibDeleteUnusedAreaElement}
+
+\bigskip\noindent
+\textbf{Status:} nicht Implementiert
+
+\bigskip\noindent
+Bereichselemente (\verb|cOpFibDeleteUnusedAreaElement|) k"onnen gel"oscht werden, wenn kein Objekt unter ihnen mehr ihre Variable, die sie definieren, enth"alt. Beim Anwenden dieser Operation, ist es sinnvoll, mehrmals ein Bereichselement aus dem Individuum herauszugreifen, um zu versuchen, dieses zu entfernen.
+
+
+\subsection{Hinzuf"ugen eines Unterbereichs zu einem Bereich}
+
+\textbf{Operatorname:} \verb|cOpFibCreateNewUnderarea|\index{Operation!cOpFibCreateNewUnderarea}
+
+\bigskip\noindent
+\textbf{Status:} nicht Implementiert
+
+\bigskip\noindent
+Listen mit Unterbereichen, die in Bereichselementen enthaltenen sind, k"onnen durch neue Vektoren/ Unterbereiche erweitert werden.
+
+Um einen Gradientenanstieg leichter zu erm"oglichen, ist es sinnvoll die Vektoren zum Erweitern sinnvoll zu w"ahlen. Bei Bereichsoperatoren ist es z. B. sinnvoll nur Vektoren einzuf"ugen, die in der N"ahe der schon vorhandenen Bereiche liegen, z. B. vorher $[$(1; 5)$]$ nachher $[$(1; 5),(7; 8)$]$, da so die Bereiche die ''Umgebung ertastend`` erweitert werden.
+
+
+\subsection{L"oschen eines Unterbereichs aus einem Bereich}
+
+\textbf{Operatorname:} \verb|cOpFibDeleteUnderarea|\index{Operation!cOpFibDeleteUnderarea}
+
+\bigskip\noindent
+\textbf{Status:} nicht Implementiert
+
+\bigskip\noindent
+Unterbereiche, die in Listen von Bereichselementen enthalten sind, k"onnen gel"oscht werden. Bei Bereichselementen ist es sinnvoll, Vektoren die aneinander grenzen, "uberschneiden oder nahe beieinander liegen zusammenzuf"ugen (neuer Vektor z. B. (kleinste untere Grenze beider Vektoren; gr"o"ste obere Grenze beider Vektoren)) oder Vektoren f"ur kleine Bereiche beim L"oschen zu bevorzugen z. B. (6; 6).
+
+
+\subsection{Verschieben eines Elements}
+
+\textbf{Operatorname:} \verb|cOpFibMoveRandomElement|\index{Operation!cOpFibMoveRandomElement}
+
+\bigskip\noindent
+\textbf{Status:} nicht Implementiert
+
+\bigskip\noindent
+Einzelne Elemente (au"ser Punkte) k"onnen in der Hierarchie der Fib-Elemente des Objekts nach oben oder unten verschoben werden.
+
+\bigskip\noindent
+Dabei muss beachtet werden, dass die Fib-Objekte nicht fehlerhaft werden, d.h. beispielsweise:
+\begin{itemize}
+  \item	es darf kein Fib-Element nach unten "uber ein Fib-Element verschoben werden, das die Variable enth"alt, die das verschobene Fib-Element definiert
+  \item	es darf kein Fib-Element nach oben "uber ein Fib-Element verschoben werden, das eine Variable enth"alt, die das verschobene Fib-Element ben"otigt
+  \item	wenn ein Listenelement nach unten verschoben wird, werden die Fib-Elemente, die es enth"alt, abwechselnd in das Fib-Element "uber es verschoben (die Variablenmenge, die durch Elemente unter Listenelement realisiert werden, sind disjunkt)
+  \item	wenn ein Listenelement nach oben verschoben wird, werden Fib-Elemente, "uber die es wandert, in die Unterobjekte, die es enth"alt, verschoben, in denen die Variable, die diese Fib-Elemente definieren, verwendet wird (oder auch einfacher m"oglich: das Fib-Element wird in alle Listen-Unterobjekte verschoben)
+  \item	wenn ein Fib-Element, das eine Variable definiert, nach unten "uber ein Listenelement verschoben wird, muss es in die Objekte kopiert werden, die das Listenelement enth"alt und die Variablen verwenden, die dieses Fib-Element definiert
+\end{itemize}
+
+
+\subsection{Vertauschen der Unterobjekte im Listenelement}
+
+\textbf{Operatorname:} \verb|cOpFibFlipListUnderobjects|\index{Operation!cOpFibFlipListUnderobjects}
+
+\bigskip\noindent
+\textbf{Status:} nicht Implementiert
+
+\bigskip\noindent
+Innerhalb der Listenelement k"onnen die einzelnen Unterobjekte, die es enth"alt, vertauscht werden. Da es f"ur diese Unterobjekte eine feste Reihenfolge der Auswertung gibt und das Vertauschen somit das produzierte Multimediaobjekt ver"andern kann, bewirkt diese Operation eventuell etwas.
+
+
+
+\section{Fib-Objekte Vereinfachen}
+
+Operatoren die Fib-Objekte vereinfachen verwenden als Grundlage existierende Fib-Objekte. Von diesen werden bestimmte Aspekte analysiert, um Teile des Fib-Objekts durch einfachere, k"urzere oder/ und schneller auswertbare Teile zu ersetzen.
+
+
+\subsection{L"oschen von "uberfl"ussigen Elementen}
+
+Teile des Fib-Objekts, die bei der Auswertung nicht im erzeugten Multimediaobjekt auftauchen, k"onnen gel"oscht werden. Operationen, welche dies bew"altigen, werden in diesem Abschnitt vorgestellt.
+
+
+\subsubsection{Entfernen von "uberfl"ussigen Bereichs- oder Funktionselemenenten}
+
+\textbf{Operatorname:} \verb|cOpFibDeleteUnusedVariableDefinitions|\index{Operation!cOpFibDeleteUnusedVariableDefinitions}
+
+\bigskip\noindent
+\textbf{Status:} nicht Implementiert
+
+\bigskip\noindent
+Bereichs- und Funktionselemenenten sind "uberfl"ussig, wenn die Variable, welche sie definieren, nicht mehr verwendet wird.
+
+Diese Operation f"uhrt also eine Suche nach Bereichs- oder Funktionselemenenten durch, deren definierte Variable nicht Verwendet wird, und entfernt dann diese.
+Daf"ur werden zuerst alle Bereichs- und dann alle Funktionselemenente im Fib-Objekt durchlaufen und gepr"uft, ob die Variable, welche sie definieren, noch verwendet wird. Wird ein Bereichs- oder Funktionselemenent gefunden deren definierte Variable nicht mehr verwendet wird, wird das Elemenent gel"oscht.
+
+
+\subsubsection{Suche nach und Entfernen von Eigenschaftselementen die sp"ater "uberschrieben werden}
+
+\textbf{Operatorname:} \verb|cOpFibDeleteOverwritenProperties|\index{Operation!cOpFibDeleteOverwritenProperties}
+
+\bigskip\noindent
+\textbf{Status:} nicht Implementiert
+
+\bigskip\noindent
+Viele Eigenschaften k"onnen nur einmal einem Punkt zugewiesen werden. Wenn also in einem Zweig zweimal Eigenschaften vom gleichen Typ auftaucht, die nicht additiv wirken und keine weiteren Verzweigungen zwischen sich haben, ist die Obere davon "uberfl"ussig, da sie von der Unteren "uberschrieben wird. Das obere Eigenschaftselement kann also ohne Auswirkungen auf das dargestellte Multimediaobjekt gel"oscht werden.
+
+Beispielsweise k"onnen Farbeigenschaften gel"oscht werden, welche durch weiter unten im Fib-Baum stehende Farbeigenschaften "uberdeckt werden. Toneigenschaften k"onnen hingegen niemals gel"oscht werden, da sie additiv mit anderen T"onen wirken.
+
+
+\subsubsection{Festlegen einer Hintergrindfarbe}
+
+\textbf{Operatorname:} \verb|cOpFibSetBackground|\index{Operation!cOpFibSetBackground}
+
+\bigskip\noindent
+\textbf{Status:} nicht Implementiert
+
+\bigskip\noindent
+Dieser Operator seperiert f"ur jeweils eine Eigenschaft, f"ur die es noch keine Hintergrundfestlegung gibt, das Fib-Object nach Teilen die jeweils eine bestimmte Auspr"agung dieser Eigenschaft annehmen. In den separierten Teilen kommen dann f"ur die Eigenschaft, nur noch gleiche Vektoren vor.
+
+Der Teil, welcher am gr"o"sten ist und/oder die l"angste Auswertungszeit hat, wird aus dem Fib-Objekts entfernt und daf"ur wird der Hintergrund auf die Eigenschaftsauspr"agung gesetzt.
+
+
+\subsection{L"oschen von "uberfl"ussigen zusammenh"angenden Teilobjekten}
+
+\textbf{Operatorname:} \verb|cOpFibDeleteNonessentialPartObject|\index{Operation!cOpFibDeleteNonessentialPartObject}
+
+\bigskip\noindent
+\textbf{Status:} nicht Implementiert
+
+\bigskip\noindent
+Im Gegensatz zum Operator \verb|cOpFibDeletePartObject| auf Seite \pageref{secOpFibDeletePartObject} werden durch den Operator \verb|cOpFibDeleteNonessentialPartObject| nur zusammenh"angenden Teilobjekte gel"oscht, welche keine oder negative Auswirkung auf das dargestellte Multimediaobjekt haben.
+
+Daf"ur wird f"ur jedes enthaltende zusammenh"angenden Teilobjekt eines Fib-Objekts gepr"uft, welche Auswirkungen es auf das dargestelle Multimediaobjekt hat. Hat es keine oder negative Auswirkung, wird das zusammenh"angenden Teilobjekt gel"oscht.
+
+
+
+\subsection{Operatoren die Fib-Ausdr"ucke vereinfachen}
+
+Operatoren die Fib-Ausdr"ucke bzw. Fib-Objekte vereinfachen. Analysieren die Struktur der Fib-Objekte und vereinfachen diese. Auf diese Weise wird das Fib-Objekte durch die Operation wahrscheinlich kleiner oder schneller auszuwerten.
+
+
+\subsubsection{Zusammenfassen von verschachtelten Funktionen}
+
+\textbf{Operatorname:} \verb|cOpFibCombineFunctions|\index{Operation!cOpFibCombineFunctions}
+
+\bigskip\noindent
+\textbf{Status:} nicht Implementiert
+
+\bigskip\noindent
+Wird von einem Funktionselement $F_1$ eine Variable $V_1$ definiert, die nur noch von einem anderem Funktionselement $F_2$ genutzt wird, so k"onnen die beiden Funktionselemente zu einem Funktionselement zusammengefasst werden.
+
+Daf"ur wird in dem Funktionselement $F_2$ an allen Stellen an denen die Unterfunktion f"ur die Variable $V_1$ auftauch die Unterfunktion von $F_1$ eingesetzt. Danach wird das Funktionselement $F_1$ gel"oscht.
+
+
+\subsubsection{Zusammenfassen von "ahnlichen Funktionen}
+
+\textbf{Operatorname:} \verb|cOpFibCombineSimilarFunctions|\index{Operation!cOpFibCombineSimilarFunctions}
+
+\bigskip\noindent
+\textbf{Status:} nicht Implementiert
+
+\bigskip\noindent
+In einem zusammenh"angenden Teilobjekt tauchen eventuell zwei Funktionselemente auf, welche die gleiche oder zumindest sehr "ahnliche Funktionen realisieren (bezogen auf die Werte, welche die Variablen, die sie verwenden, einnehmen). Von diesen beiden Funktionen kann dann eine Funktion $F_A$ ausgew"ahlt werden. Diese Funktion $F_A$ mu"s dann weit genug im Teilobjekt nach oben verschoben werden, so dass die Variable, die es definiert, an allen Stellen definiert ist, an denen die Variable des nicht ausgew"ahlten Funktionselements verwendet wird. Dann wird die Variable, welche das andere Funktionselement definiert, durch die Variable der ausgew"ahlten Funktionselement $F_A$ ersetzt. Das nicht ausgew"ahlte Funktionselement kann dann gel"oscht werden. (Eventuell k"onnen auch weitere Fib-Elemente gel"oscht werden, welche nun Variablen definieren, die nicht mehr ben"otigt werden.)
+
+
+
+\subsection{Operatoren die Fib-Ausdr"ucke aufr"aumen}
+
+Da Fib-Operatoren nicht in den Fib-Objekten, die sie erzeugen, eingeschr"ankt werden. K"onnen leicht Fib-Objekten entstehen, die unn"otige Teile enthalten (z. B. Teile die nicht dargestellt werden). Diese Teile k"onnen von Operatoren entfernt werden, ohne das sich die "Ahnlichkeit zum original Multimediaobjekt verschlechtert. Dadurch wird das Fib-Objekt aufger"aumt.
+%TODO
+
+\subsubsection{Nur Bereiche zu jedem Punkt, wie sie von diesem ben"otigt werden}
+
+\textbf{Operatorname:} \verb|cOpFibMinimizeAreas|\index{Operation!cOpFibMinimizeAreas}
+
+\bigskip\noindent
+\textbf{Status:} nicht Implementiert
+
+\bigskip\noindent
+Bereichsobjekt in Fib-Objekten k"onnen Unterbereiche enthalten, die mehr Zahlen enthalten als eigentlich ben"otigt werden. Beispielsweise kann ein Unterbereich Punkte erzeugen die "uber den Rand des Multimediaobjekts hinausgehen.
+
+Diese Operation w"ahlt eine Anzahl (eventuell auch alle) Unterbereiche eines Fib-Objekts.
+F"ur jeden Bereich wird gepr"uft, ob er nicht verkleinert werden kann, ohne die Fitness des Fib-Objekts zu verschlechtern. Daf"ur wird schrittweise die eine Grenze des Bereichs in Richtung der anderen bewegt und die Fitness gepr"uft. Wird die Fitness verringert, wird die "Anderung verworfen. Enth"alt ein Bereich nur noch ein Element, wird entweder der Bereich aus dem Bereichselement gel"oscht, wenn das Bereichselement noch andere Unterbereich enth"alt, oder das ganze Bereichselement, wenn das Bereichselement keine anderen Unterbereich enth"alt, gel"oscht und die Variable, die es definiert, durch den Wert des Bereichs ersetzt.
+
+
+%TODO:\subsubsection{Nur Funktionen zu jedem Punkt, wie sie von diesem ben"otigt werden}
+
+
+%TODO:\subsubsection{Bereichselemente in einem Fib-Objekt m"oglichst weit nach unten}
+
+%Da enthaltende "Aste in Bereichselemente mehrmals ausgef"uhrt werden, sind K"urzere "Aste besser
+
+
+%TODO:\subsubsection{Objekte die zuerst Auszuwerten sind, nach vorn in Listenelementen}
+
+
+
+%TODO:\subsection{Operatoren, welche die Gr"o"se von Bereichen in Bereichselementen anpassen}
+
+
+
+
+%TODO:\subsection{Operator zum Erstellen der minimalen Werte-Definitionsbereiche}
+
+
+
+
+\section{Analysieren der Originalmultimediaobjekts}
+
+Bei Operatoren die das Originalmultimediaobjekt analysieren, werden aus dem Originalmultimediaobjekt Informationen gewonnen.
+
+
+\subsection{Suche nach falschen Punkten}
+
+\textbf{Operatorname:} \verb|cOpFibFindWrongPoints|\index{Operation!cOpFibFindWrongPoints}
+
+\bigskip\noindent
+\textbf{Status:} nicht Implementiert
+
+\bigskip\noindent
+Parameter:
+\begin{itemize}
+ \item Die Anzahl der maximal zu setzenden Punkte.
+ \item Die minimale Abweichung f"ur einen Punkt, die "uberschritten sein mu"s, um den Punkt mit den richtigen Eigenschaften einzusetzen.
+\end{itemize}
+
+\bigskip\noindent
+Bei diesem Operator wird ein Fib-Individuum ausgew"alt und Punkte, die in ihm Falsch sind, durch die richtigen Punkte ersetzt.
+
+Daf"ur wird f"ur jeden Punkt im original Multimediaobjekt die Abweichung zum gew"ahlten Individuum gepr"uft (mithilfe des Aktuell gew"ahlten Inividuum Bewerters). Ist diese Abweichung gr"o"ser als die minimal zul"assige Abweichung, wird der Punkt mit den Eigenschaften des original Multimediaobjekt am Ende des ersten Listenelements eingef"ugt. (Sollte kein Listenelement existieren wird eines erzeugt.) Dies wird solange fortgesetzt bis die Anzahl der maximal zu setzenden Punkte gesetzt wurde.
+
+
+\subsection{Suche nach Bereichen mit Eigenschaftswerten die von einander Abh"angig sind}
+
+Bereiche deren Eigenschaften voneinander abh"angen, k"onnen wahrscheinlich in einfachere Fib-Strukturen umgesetzt werden. Diese zu finden und in Fib-Strukturen Umzusetzen, ist ein guter Ansatz f"ur die Vorgehensweise von Operatoren.
+
+
+\subsubsection{Suche nach einem Bereich mit gleichem Eigenschaftswert}
+
+\textbf{Operatorname:} \verb|cOpFibFindEvenArea|\index{Operation!cOpFibFindEvenArea}
+
+\bigskip\noindent
+\textbf{Status:} nicht Implementiert
+
+\bigskip\noindent
+Parameter:
+\begin{itemize}
+ \item Anfangspunkt (zuf"allig gew"ahlt)
+ \item Anteil der falsch "uberdeckten Punkte (Punkte die durch den erzeugten Bereich falsch "uberdeckt werden)
+ \item maximale Komplexit"at des erzeugten Fib-Objekts
+\end{itemize}
+
+\bigskip\noindent
+F"ur diese Operation wird ein zuf"alliger Punkt $P_a$ der im Originalmultimediaobjekt liegt ausgew"ahlt und in die Liste der zu pr"ufenden Punkte $L_p$ eingef"ugt. Des weiteren wird eine Eigenschaft $E$, welche der ausgew"ahlte Punkt hat, ausgew"ahlt.
+
+Danach wird eine Schleife solange durchlaufen bis die Liste der zu pr"ufenden Punkte $L_p$ leer ist.
+In dieser Schleife wird der erste Punkt $P_1$ aus der Liste der zu pr"ufenden Punkte $L_p$ entfernt. Dieser Punkt $P_1$ wird an das Ende der Liste der gepr"uften Punkte $L_g$ angef"ugt. Weiterhin werden alle Nachbarn des Punktes $P_1$, welche die gleiche Eigenschaft $E$ haben und die nicht in der Liste der zu pr"ufenden Punkte $L_p$ oder der Liste der gepr"uften Punkte $L_g$ sind, in die Liste der zu pr"ufenden Punkte $L_p$ eingef"ugt.
+
+Wenn die Schleife beendet ist und die Liste der zu pr"ufenden Punkte $L_p$ leer ist, wird versucht die Punkte in der Liste der gepr"uften Punkte $L_g$ zu einem Bereich zusammen zu fassen. Der erstellte Bereich wird durch maximal $d$ Bereichs- und maximal $d$ Funktionselementen dargestellt, wobei $d$ die Nummer der Dimensionen im Originalmultimediaobjekt ist.
+
+Daf"ur wird der erste Punkt aus $L_g$ (der Anfangspunkt $P_a$) genommen. Dessen Koordinaten werden mit den definierten Variablen der zur Verf"ugung stehenden Bereichs- und Funktionselementen dargestellt.
+
+Es wird dann versucht die Bereiche der Bereichselemente so auszudehnen, dass sie transformiert durch die Funktionselemente einen m"oglichst gro"sen Teil der gefundenen Punkte in $L_g$ "uberdecken.
+
+
+%TODO
+
+
+Alle Bereichselement, welche nur einen Wert in ihren Bereich haben, werden gel"oscht und das Auftreten der von ihnen definierten Variable wird durch den Wert des Bereichselements ersetzt. Alle Funktionselemente, welche nun keinen Variablen mehr enthalten, werden gel"oscht und das Auftreten der von ihnen definierten Variable wird durch den Wert ersetzt, den das Funktionselement berechnet hat.
+
+F"ur alle Eigenschaften, welche auf allen Punkten im Bereich gleich sind, wird jeweils ein Eigenschaftselement f"ur die Eigenschaften erstellt und das erstellte Fib-Objekt in dieses eingef"ugt.
+
+%TODO
+
+
+\subsubsection{Suche nach Bereichen mit Eigenschaftswerten die von einander polynomiell Abh"angig sind}
+
+
+\textbf{Operatorname:} \verb|cOpFibFindPolynomialAreaDependencies|\index{Operation!cOpFibFindPolynomialAreaDependencies}
+
+\bigskip\noindent
+\textbf{Status:} nicht Implementiert
+
+\bigskip\noindent
+"Abh"angigkeiten: Polynom vom Grad n
+
+Polynomiale Abh"angigkeiten k"onnen durch Differenzieren gefunden werden. Daf"ur wird f"ur die einzelnen Eigenschaftswerte die Differenz von in einer Richtung bzw. Dimension benachbarten Punkten gebildet. Diese Differenz wird wird f"ur jede Dimensionsrichtung gebildet. Auf diese Weise wird f"ur jede Dimension $D$ und f"ur jedes Eigenschaftselement $E$ (Element in einem m"oglichen Eigenschaftsvektor) eine Ableitung $f_{D,E}^1$ definiert. Durch wiederholtes $n$-maliges Ableiten in einer Dimension kann die n'te Ableitung $f_{D,E}^n$ erstellt werden. Die Funktion $f_{D,E}$ gibt die nicht abgeleiteten Eigenschaftswerte der Punkte an.
+
+%TODO
+%Alle Fl"achen deren Punkte nur den Wert $0$ annehmen, werden im Nachfolgenden Nullf"achen genannt.
+%Die Abh"angigkeiten eines Eigenschaftselements $E$, das eine Nullfl"achen in der Ableitung $f_{D,E}^n$ hat, k"onnen in der Dimension $D$ durch ein Polynom $n-1$'ten Grades dargestellt werden.
+
+
+%siehe \verb|Op_lineare_Zusammenfassung.txt|
+
+
+
+\subsubsection{Suche nach Bereichen mit Eigenschaftswerten die von einander trigonometrischen Abh"angig sind}
+
+
+\textbf{Operatorname:} \verb|cOpFibFindTrigonometricAreaDependencies|\index{Operation!cOpFibFindTrigonometricAreaDependencies}
+
+\bigskip\noindent
+\textbf{Status:} nicht Implementiert
+
+\bigskip\noindent
+"Abh"angigkeiten: Sinusfunktionen
+
+
+
+
+
+%TODO:\subsection{Suche nach Objekten die mehrmals an verschiedenen Positionen vorkommen}
+
+
+%TODO:\subsection{Suche nach Objekten die mehrmals transformiert an verschiedenen Positionen vorkommen}
+
+
+
+%TODO: Operatoren die nach Mustern im Ortiginalobjekt Suchen und diese durch Standardmuster Fib-Objekte ersetzen (am Ende sollten dann unn"otige Teile herrausgeschnitten werden
+
+
+
+
+ 

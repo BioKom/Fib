@@ -1,0 +1,731 @@
+%
+% Copyright (c) 2008 Betti "Osterholz
+%
+% Permission is granted to copy, distribute and/or modify this document
+% under the terms of the GNU Free Documentation License, Version 1.2 or
+% any later version published by the Free Software Foundation;
+% with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+%
+% A copy of the license is included in the file ``fdl.tex'' .
+%
+
+\newpage
+\part{Erweiterungen des genetische Algorithmus f"ur Fib}
+\label{partImplementationAlgorithmusFib}
+
+In diesem Teil werden die f"ur Fib n"otigen Erweiterungen f"ur den genetische Algorithmus vorgestellt. Dazu geh"ort die Klassenhierarchien und die Schnittstellenbeschreibungen. Die Schnittstellenbeschreibungen geschieht in pseudo C++.
+
+Die zu Fib zugeh"origen Erweiterungen des genetische Algorithmus werden dem separaten Namensraum mit dem Namen ``enviroment.fib'' zugeordnet.
+
+
+\section{Hilfsmethoden}
+
+Hilfsmethoden die bei der Implementierung Hilfreich sind, aber nicht zur eigentlichen Schnittstelle geh"oren, werden nach Bedarf implentiert, hier aber nicht aufgef"uhrt. Sie sollten nach M"oglichkeit von Au"sen nicht zugreifbar sein (also \verb|privat| oder \verb|protected| deklariert sein).
+
+
+\section{Individuen f"ur Fib-Objekte cFibIndividual}
+
+Elternklasse: \verb|cIndividual|
+
+\bigskip\noindent
+Die Klasse \verb|cFibIndividual| stellt ein Fib-Individuum f"ur ein Fib-Objekt bereit. Ihre Elterklasse ist \verb|cIndividual|, von der sie alle Methoden "ubernimmt. Die Klasse \verb|cFibIndividual| dient haupts"achlich der Typsicherheit.
+
+
+\subsection{Schnittstellenbeschreibung}
+
+\subsubsection{cFibIndividual}
+
+\textbf{Syntax:} \verb|cFibIndividual( cRoot * pFibObject,| \\\verb| cIndividualInfo * individualInfo )| \\
+
+Der Konstruktor f"ur ein Fib-Indiviuum, er erzeugt ein Fib-Individuum.
+
+Weder von \verb|pFibObject| noch \verb|individualInfo| werden Kopien gemacht, beide Objekte werden direkt f"ur das Fib-Individuum verwendet.
+
+\bigskip\noindent
+\textbf{Eingabeparameter:}
+\begin{itemize}
+ \item \verb|pFibObject|: Einen Zeiger auf das Fib-Objekt, welches das Individuum repr"asentieren soll.
+ \item \verb|cIndividualInfo|: Einen Zeiger auf die Zusatzinformationen f"ur das Fib-Objekt.
+\end{itemize}
+
+\bigskip\noindent
+\textbf{R"uckgabe:} keine
+
+
+\subsubsection{getClassName}\index{cFibIndividual!getClassName()}\index{getClassName()}
+
+\textbf{Syntax:} \verb|string getClassName() const|
+
+\bigskip\noindent
+Diese Funktion gibt den Klassennamen ''cFibIndividual`` des Inividuumobjekts zur"uck.
+
+In abgeleiteten Klassen sollte diese Methode immer "uberschrieben werden, so dass der jeweilige Klassennahmen zur"uckgegeben wird.
+
+\bigskip\noindent
+\textbf{Eingabeparameter:} keine
+
+\bigskip\noindent
+\textbf{R"uckgabe:} Den Klassennamen ''cFibIndividual`` des Fitnessobjekts.
+
+
+\section{Benchmark}
+
+F"ur den genetischen Algorithmus auf Fib-Objekte wird ein spezieller Benchmark f"ur Fib-Objekte ausgef"uhrt.
+
+Um den Benchmarkwert zu ermitteln, wird auf einem festen Fib-Objekt/ Individuum eine Reihe von deterministischen Operationen ausgef"uhrt und die daf"ur verbrauchte Prozessorzeit (''CPU Time``) gemessen. Diese Prozessorzeit ist dann der Benchmarkwert mit dem die Prozessorzeit (''CPU Time``) von Operationen multipliziert wird, um ihren Aufwand zu ermitteln.
+
+%TODO Standard Fib-Objekt und Operatoren angeben
+
+
+
+\section{Die Fitness von Fib-Objekten cFibObjectFitness}
+\label{secCFibObjectFitness}
+
+Elternklasse: \verb|cObjectFitness|
+
+\bigskip\noindent
+Die Klasse \verb|cFibObjectFitness| stellt die Fitness eines Fib-Objekts dar und wird von der Klasse \verb|cObjectFitness| abgeleitet. Sie ist die Basisklasse f"ur alle Klassen f"ur die Fitness von Fib Objekten. Die Klasse \verb|cFibObjectFitness| stellt selbst aber keine neuen Methoden bereit.
+
+Von der Klasse \verb|cFibObjectFitness| selbst oder einer abgeleiteten Klasse kann keine Instanz direkt erzeugt werden. Instanzen von Objekten der Klasse \verb|cFibObjectFitness| k"onnen nur durch die Berechnung der Fitness mit den Klassen f"ur die Algorithmen \verb|cFibObjectFitnessAlgorithm| (siehe Abschnitt \ref{secCFibObjectFitnessAlgorithmus} auf Seite \pageref{secCFibObjectFitnessAlgorithmus}) oder durch das Laden einer existierenden Fitness aus einem Datenstrom erzeugt werden.
+
+
+
+\subsection{Schnittstellenbeschreibung}
+
+\subsubsection{getClassName}\index{cObjectFitness!getClassName()}\index{getClassName()}
+
+\textbf{Syntax:} \verb|string getClassName() const|
+
+\bigskip\noindent
+Diese Funktion gibt den Klassennamen ''cFibObjectFitness`` des Fitnessobjekts zur"uck.
+
+In abgeleiteten Klassen sollte diese Methode immer "uberschrieben werden, so dass der jeweilige Klassennahmen zur"uckgegeben wird.
+
+\bigskip\noindent
+\textbf{Eingabeparameter:} keine
+
+\bigskip\noindent
+\textbf{R"uckgabe:} Zur"uckgegeben wird der Klassennamen ''cFibObjectFitness`` des Fitnessobjekts.
+
+
+
+\section{Die einfache Fitness von Individuen cFibObjectFitnessBasic}
+\label{secCFibObjectFitnessBasic}
+
+Elternklasse: \verb|cObjectFitnessBasic|
+
+\bigskip\noindent
+Die Klasse \verb|cFibObjectFitnessBasic| stellt eine einfach berechnete Fitness f"ur Individuen dar. Sie wird erzeugt durch die Bewerteralgorithmenklasse \verb|cFibObject|\verb|Fitness|\verb|Algorithmus|\verb|Basic| von Abschnitt \ref{secCFibObjectFitnessAlgorithmusBasic} auf Seite \pageref{secCFibObjectFitnessAlgorithmusBasic}. Ihre Elternklasse ist \verb|cFibObjectFitness|.
+
+\bigskip\noindent
+Zu den Fitnessinformationen geh"oren:
+\begin{itemize}
+ \item die gesamt Fitness des Fib-Objekts
+ \item ein Wert f"ur die Abweichungen vom original Multimediaobjekt
+ \item ein Wert f"ur die Gr"o"se des Fib-Objekts (die Anzahl der Bits, welche das Fib-Objekts beim Abspeichern im komprimierten Format ben"otigt)
+ \item ein Wert f"ur die ben"otige Auswertungszeit des Fib-Objekts
+\end{itemize}
+
+Die Gesamtfitness ergibt sich aus der Summe der gewichteten Einzelfitnesse: $Fitness=lDistanceToOriginal*dWeightDistanceToOriginal+lSize*dWeightSize+lEvaluationTime*dWeightEvaluationTime$
+
+
+\subsection{Schnittstellenbeschreibung}
+
+
+\subsubsection{cFibObjectFitnessBasic}\index{cFibObjectFitnessBasic}
+
+\textbf{Syntax:} \verb|cFibObjectFitnessBasic( double lDistanceToOriginal, | \\\verb| long lSize, long lEvaluationTime, | \\\verb| double dWeightDistanceToOriginal=1.0, | \\\verb| double dWeightSize=1.0, | \\\verb| double dWeightEvaluationTime=1.0 , | \\\verb| cFibObjectFitnessBasicAlgorithm * | \\\verb| objectFitnessAlgorithm=NULL )| \\
+
+Der Konstruktor f"ur ein Fitnessobjekt f"ur ein Fib-Individuum.
+
+Die Gesamtfitness ist die Summe der gewichteten Einzelfitnesse: $Fitness=lDistanceToOriginal*dWeightDistanceToOriginal+lSize*dWeightSize+lEvaluationTime*dWeightEvaluationTime$
+
+\bigskip\noindent
+\textbf{Eingabeparameter:}
+\begin{itemize}
+ \item \verb|lDistanceToOriginal|: Der Abstand des Multimediaobjekts, welches vom Fib-Individuum realisiert wird, zum originalen Multimediaobjekt.
+ \item \verb|lSize|: Die Gr"o"se des Fib-Objekt des Fib-Individuums.
+ \item \verb|lEvaluationTime|: Ein Wert f"ur die Auswertungszeit des Fib-Objekt des Fib-Individuums.
+ \item \verb|dWeightDistanceToOriginal|: Das Gewicht mit dem der Abstand zum Multimediaobjekt \verb|lDistanceToOriginal| in die gesamt Fitness eingeht.
+ \item \verb|dWeightSize|: Das Gewicht mit dem die Gr"o"se \verb|lSize| in die gesamt Fitness eingeht.
+ \item \verb|dWeightEvaluationTime|: Das Gewicht mit dem die Auswertungszeit \verb|lEvaluationTime| in die gesamt Fitness eingeht.
+ \item \verb|objectFitnessAlgorithm|: Dies ist ein Zeiger auf das Algorithmusobjekt der Klasse\verb|cFibObjectFitnessBasicAlgorithm| Algorithmusobjekt mit dem die Fitness erzeugt wurde. Standardwert ist der Nullpointer \verb|NULL|, um anzuzeigen, dass kein Algorithmusobjekt diese Fitness erzeugt hat.
+\end{itemize}
+
+\bigskip\noindent
+\textbf{R"uckgabe:} keine
+
+
+\subsubsection{cFibObjectFitnessBasic}\index{cFibObjectFitnessBasic}
+
+\textbf{Syntax:} \verb|cFibObjectFitnessBasic(| \\\verb| const cFibObjectFitnessBasic & fibObjectBasic )| \\
+
+Der Kopierkonstruktor f"ur ein Fitnessobjekt f"ur ein Fib-Individuum. Er erzeugt ein neues \verb|cFibObjectFitnessBasic| Fitnessobjekt mit den Werten des "ubergebenen Fitnessobjekts \verb|fibObjectBasic|.
+
+\bigskip\noindent
+\textbf{Eingabeparameter:}
+\begin{itemize}
+ \item \verb|fibObjectBasic|: Eine referenz asuf das Fitnessobjekt, dessen Werte das erzeugte Fitnessobjekt haben soll.
+\end{itemize}
+
+\bigskip\noindent
+\textbf{R"uckgabe:} keine
+
+
+\subsubsection{getFitness}\index{cFibObjectFitnessBasic!getFitness()}\index{getFitness()}
+
+\textbf{Syntax:} \verb|double getFitness() const|
+
+\bigskip\noindent
+Diese Funktion gibt die Gesamtfitness des zugeh"origen Fib-Individuums zur"uck.
+
+Die Gesamtfitness ist die Summe der gewichteten Einzelfitnesse: $Fitness= -1 * (lDistanceToOriginal*dWeightDistanceToOriginal+lSize*dWeightSize+lEvaluationTime*dWeightEvaluationTime)$
+
+\bigskip\noindent
+\textbf{Eingabeparameter:} keine
+
+\bigskip\noindent
+\textbf{R"uckgabe:} Die Gesamtfitness des zugeh"origen Fib-Individuums.
+
+
+\subsubsection{getClassName}\index{cFibObjectFitnessBasic!getClassName()}\index{getClassName()}
+
+\textbf{Syntax:} \verb|string getClassName() const|
+
+\bigskip\noindent
+Diese Funktion gibt den Klassennamen ''cFibObjectFitnessBasic`` des Fitnessobjekts zur"uck.
+
+In abgeleiteten Klassen sollte diese Methode immer "uberschrieben werden, so dass der jeweilige Klassennahmen zur"uckgegeben wird.
+
+\bigskip\noindent
+\textbf{Eingabeparameter:} keine
+
+\bigskip\noindent
+\textbf{R"uckgabe:} Den Klassennamen ''cFibObjectFitnessBasic`` des Fitnessobjekts.
+
+
+\subsubsection{getFitnessAlgorithmus}\index{cFibObjectFitnessBasic!getFitnessAlgorithmus()}\index{cFibObjectFitnessBasic()}
+
+\textbf{Syntax:} \verb|const cObjectFitnessAlgorithm * | \\\verb| getFitnessAlgorithmus() const|
+
+\bigskip\noindent
+Diese Funktion gibt einen Zeiger auf das Algorithmusobjekt (siehe Abschnitt \ref{secCFibObjectFitnessAlgorithmusBasic} auf Seite \pageref{secCFibObjectFitnessAlgorithmusBasic}) zur"uck, mit dem das Fitnessobjekte erzeugt wurde. F"ur Fitnessobjekte vom Typ \verb|cFibObjectFitnessBasic| wird eine Referenz auf das Algorithmusobjekt vom Typ \verb|cFibObjectFitnessBasicAlgorithm| zur"uckgegeben.
+
+\bigskip\noindent
+\textbf{Eingabeparameter:} keine
+
+\bigskip\noindent
+\textbf{R"uckgabe:} Zur"uckgegeben wird eine Referenz auf das Algorithmusobjekt vom Typ \verb|cFibObjectFitnessBasicAlgorithm|.
+
+
+\subsubsection{getDifferenceToOriginal}\index{cFibObjectFitnessBasic!getDifferenceToOriginal()}\index{getDifferenceToOriginal()}
+
+\textbf{Syntax:} \verb|double getDifferenceToOriginal() const|
+
+\bigskip\noindent
+Diese Methode gibt den Abstand des Multimediaobjekts, welches vom zugeh"origem Fib-Individuum realisiert wird, zum originalen Multimediaobjekt zur"uck.
+
+\bigskip\noindent
+\textbf{Eingabeparameter:} keine
+
+\bigskip\noindent
+\textbf{R"uckgabe:} Zur"uckgegeben wird der Abstand des Multimediaobjekts, welches vom Fib-Individuum realisiert wird, zum originalen Multimediaobjekt.
+
+
+\subsubsection{changeDifferenceToOriginal}\index{cFibObjectFitnessBasic!changeDifferenceToOriginal()}\index{changeDifferenceToOriginal()}
+
+\textbf{Syntax:} \verb|bool changeDifferenceToOriginal(| \\\verb| long lDeltaToOriginal )|
+
+\bigskip\noindent
+Diese Methode "andert den Abstand des Multimediaobjekts, welches vom Fib-Individuum realisiert wird, zum originalen Multimediaobjekt um den gegebenen Betrag \verb|lDeltaToOriginal|.
+
+\bigskip\noindent
+\textbf{Eingabeparameter:}
+\begin{itemize}
+ \item \verb|lDeltaToOriginal|: Der Betrag, um den der Abstand des Multimediaobjekts, welches vom Fib-Individuum realisiert wird, zum originalen Multimediaobjekt ge"andert wurde.
+\end{itemize}
+
+\bigskip\noindent
+\textbf{R"uckgabe:} Es wird \verb|true| (=wahr) zur"uckgegeben, wenn der Abstand des Multimediaobjekt zum originalen Multimediaobjekt um \verb|lDeltaToOriginal| ge"andert wurde, sonst \verb|false| (=falsch).
+
+
+\subsubsection{getWeightDistanceToOriginal}\index{cFibObjectFitnessBasic!getWeightDistanceToOriginal()}\index{getWeightDistanceToOriginal()}
+
+\textbf{Syntax:} \verb|double getWeightDistanceToOriginal() const|
+
+\bigskip\noindent
+Diese Methode gibt das Gewicht f"ur den Abstand des Multimediaobjekts, welches vom Fib-Individuum realisiert wird, zum originalen Multimediaobjekt zur"uck.
+
+\bigskip\noindent
+\textbf{Eingabeparameter:} keine
+
+\bigskip\noindent
+\textbf{R"uckgabe:} Zur"uckgegeben wird das Gewicht f"ur den Abstand des Multimediaobjekts, welches vom Fib-Individuum realisiert wird, zum originalen Multimediaobjekt.
+
+
+\subsubsection{getSize}\index{cFibObjectFitnessBasic!getSize()}\index{getSize()}
+
+\textbf{Syntax:} \verb|long getSize() const|
+
+\bigskip\noindent
+Diese Methode gibt die Gr"o"se des Fib-Objekt des Individuums zur"uck. Die Gr"o"se ist die Anzahl der Bits, welche das Fib-Objekts beim Abspeichern im komprimierten Format ben"otigt.
+
+\bigskip\noindent
+\textbf{Eingabeparameter:} keine
+
+\bigskip\noindent
+\textbf{R"uckgabe:} Zur"uckgegeben wird die Gr"o"se des Fib-Objekts.
+
+
+\subsubsection{changeSize}\index{cFibObjectFitnessBasic!changeSize()}\index{changeSize()}
+
+\textbf{Syntax:} \verb|bool changeSize( long lDeltaSize )|
+
+\bigskip\noindent
+Diese Methode "andert die vom Fitnessobjekt vermerkte Gr"o"se des Fib-Objekt des Individuums um den gegebenen Betrag \verb|lDeltaSize|.
+
+Diese Methode ist beispielsweise dann sinnvoll, wenn in einer Kopie eines Individuums mit korrekter Fitness nur ein kleiner Teil (z. B. ein Listenunterobjekt) des Fib-Objekts ge"andert wurde und die Gr"o"se nicht komplett neu berechnet werden soll.
+
+\bigskip\noindent
+\textbf{Eingabeparameter:}
+\begin{itemize}
+ \item \verb|lDeltaSize|: Der Betrag, um den die Gr"o"se des Fib-Objekts ge"andert wurde.
+\end{itemize}
+
+\bigskip\noindent
+\textbf{R"uckgabe:} Es wird \verb|true| (=wahr) zur"uckgegeben, wenn die gemerkte Gr"o"se des Fib-Objekts um \verb|lDeltaSize| ge"andert wurde, sonst \verb|false| (=falsch).
+
+
+\subsubsection{getWeightSize}\index{cFibObjectFitnessBasic!getWeightSize()}\index{getWeightSize()}
+
+\textbf{Syntax:} \verb|double getWeightSize() const|
+
+\bigskip\noindent
+Diese Methode gibt das Gewicht f"ur die Gr"o"se des Fib-Objekts zur"uck.
+
+\bigskip\noindent
+\textbf{Eingabeparameter:} keine
+
+\bigskip\noindent
+\textbf{R"uckgabe:} Zur"uckgegeben wird das Gewicht f"ur die Gr"o"se des Fib-Objekts.
+
+
+\subsubsection{getTime}\index{cFibObjectFitnessBasic!getTime()}\index{getTime()}
+
+\textbf{Syntax:} \verb|double getTime() const|
+
+\bigskip\noindent
+Diese Methode gibt ein Wert f"ur die ben"otige Auswertungszeit des Fib-Objekts des Individuums zur"uck.
+
+\bigskip\noindent
+\textbf{Eingabeparameter:} keine
+
+\bigskip\noindent
+\textbf{R"uckgabe:} Zur"uckgegeben wird ein Wert f"ur die ben"otige Auswertungszeit des Fib-Objekts.
+
+
+\subsubsection{changeTime}\index{cFibObjectFitnessBasic!changeTime()}\index{changeTime()}
+
+\textbf{Syntax:} \verb|bool changeTime( long lDeltaEvalueTime )|
+
+\bigskip\noindent
+Diese Methode "andert den von dem Fitnessobjekt gemerkten Wert f"ur die Auswertungszeit um den gegebenen Betrag \verb|lDeltaEvalueTime|.
+
+Diese Methode ist beispielsweise dann sinnvoll, wenn in einer Kopie eines Individuums mit korrekter Fitness nur ein kleiner Teil (z. B. ein Unterobjekt) des Fib-Objekts ge"andert wurde und die Auswertungszeit nicht komplett neu berechnet werden soll.
+
+\bigskip\noindent
+\textbf{Eingabeparameter:}
+\begin{itemize}
+ \item \verb|lDeltaEvalueTime|: Der Betrag, um den die Auswertungszeit des Fib-Objekts ge"andert wurde.
+\end{itemize}
+
+\bigskip\noindent
+\textbf{R"uckgabe:} Es wird \verb|true| (=wahr) zur"uckgegeben, wenn die Auswertungszeit des Fib-Objekts um \verb|lDeltaEvalueTime| ge"andert wurde, sonst \verb|false| (=falsch).
+
+
+\subsubsection{getWeightEvaluationTime}\index{cFibObjectFitnessBasic!getWeightEvaluationTime()}\index{getWeightEvaluationTime()}
+
+\textbf{Syntax:} \verb|double getWeightEvaluationTime() const|
+
+\bigskip\noindent
+Diese Methode gibt das Gewicht f"ur die Auswertungszeit des Fib-Objekts zur"uck.
+
+\bigskip\noindent
+\textbf{Eingabeparameter:} keine
+
+\bigskip\noindent
+\textbf{R"uckgabe:} Zur"uckgegeben wird das Gewicht f"ur die Auswertungszeit des Fib-Objekts.
+
+
+\section{Algorithmus f"ur einen Bewerter von Fib-Individuen cFibObjectFitnessAlgorithm}
+\label{secCFibObjectFitnessAlgorithmus}
+
+Elternklasse: \verb|cObjectFitnessAlgorithm|
+
+\bigskip\noindent
+Die Klasse \verb|cFibObjectFitnessAlgorithm| ist die Basisklasse der Bewerter zur Erzeugung von Fitnessobjekten f"ur Fib-Individuen. Von der Klasse \verb|cFibObjectFitnessAlgorithm| selbst kann keine Instanz erzeugt werden. Sie wird von der Basisklasse \verb|cObjectFitnessAlgorithm| abgeleitet.
+
+
+\subsection{Schnittstellenbeschreibung}
+
+\subsubsection{evalueFitness}\index{cFibObjectFitnessAlgorithm!evalueFitness()}\index{evalueFitness()}
+
+\textbf{Syntax:} \verb|cFibObjectFitness * evalueFitness(| \\\verb| const cFibIndividual  &individual  )| \\
+
+Diese Methode berechnet die Fitness eines Fib-Individuums \verb|individual|.
+
+\bigskip\noindent
+\textbf{Eingabeparameter:}
+\begin{itemize}
+ \item \verb|individual|: Eine Referenz auf das Fib-Individuum, welches bewertet werden soll.
+\end{itemize}
+
+\bigskip\noindent
+\textbf{R"uckgabe:} Zur"uckgegeben wird ein Zeiger auf ein Fitnessobjekt f"ur die Fitness des Fib-Individuums \verb|individual|, berechnet bez"uglich des gesetzten Originalindividuums.
+
+
+\subsubsection{setOriginalIndividual}\index{cFibObjectFitnessAlgorithm!setOriginalIndividual()}\index{setOriginalIndividual()}
+
+\textbf{Syntax:} \verb|bool setOriginalIndividual(| \\\verb| const cFibIndividual  &original )| \\
+
+Diese Methode wird das Fib-Originalindividuum gesetzt. Bez"uglich dieses Fib-Individuums werden andere Fib-Individuen vom Bewerteralgorithmus bewertet.
+
+\bigskip\noindent
+\textbf{Eingabeparameter:}
+\begin{itemize}
+ \item \verb|original|: Dies ist eine Referenz auf das Fib-Individuum, welches als Fib-Originalindividuum gesetzt werden soll.
+\end{itemize}
+
+\bigskip\noindent
+\textbf{R"uckgabe:} Wenn das "ubergebene Fib-Individuum als Originalindividuum gesetzt wurde, wird \verb|true| (=wahr) zur"uckgegeben, sonst \verb|false| (=falsch).
+
+
+\subsubsection{getOriginalIndividual}\index{cFibObjectFitnessAlgorithm!getOriginalIndividual()}\index{getOriginalIndividual()}
+
+\textbf{Syntax:} \verb|cFibIndividual * getOriginalIndividual()| \\
+
+Diese Methode gibt eine Referenz auf das Fib-Originalindividuum zur"uck. Bez"uglich dieses Fib-Individuums werden andere Fib-Individuen vom Bewerteralgorithmus bewertet.
+
+\bigskip\noindent
+\textbf{Eingabeparameter:} keine
+
+\bigskip\noindent
+\textbf{R"uckgabe:} Zur"uckgegeben wird eine Referenz auf das Fib-Originalindividuum.
+
+
+\subsubsection{getOriginalIndividualRoot}\index{cFibObjectFitnessAlgorithm!getOriginalIndividualRoot()}\index{getOriginalIndividualRoot()}
+
+\textbf{Syntax:} \verb|cRoot * getOriginalIndividualRoot()| \\
+
+Diese Methode liefert nur die root-Elemente des original Individuums/ Multimediaobjekts zur"uck. Die Haupt-Fib-Objekte der root-Elemente sind jeweils leere Punkte (Punkte ohne Positionsvektor).
+Dies dient zur Ermittlung des Multimediaformats auf das der Algorithmus arbeitet, ohne das die gesamten Daten des original Individuums/ Multimediaobjekts "ubermittelt werden m"u"sen.
+
+\bigskip\noindent
+\textbf{Eingabeparameter:} keine
+
+\bigskip\noindent
+\textbf{R"uckgabe:} Zur"uckgegeben wird eine Referenz auf die root-Elemente des original Individuums/ Multimediaobjekts.
+
+
+\subsubsection{getClassName}\index{cFibObjectFitnessAlgorithm!getClassName()}\index{getClassName()}
+
+\textbf{Syntax:} \verb|string getClassName()| \\
+
+Diese Methode gibt eine Zeichenkette ''cFibObjectFitnessAlgorithm`` mit dem Klassennamen des aktuellen Bewerters f"ur Individuen zur"uck.
+
+\bigskip\noindent
+\textbf{Eingabeparameter:} keine
+
+\bigskip\noindent
+\textbf{R"uckgabe:} Zur"uckgegeben wird eine Zeichenkette ''cFibObjectFitnessAlgorithm``.
+
+
+\subsubsection{getBestFitness}\index{cFibObjectFitnessAlgorithm!getBestFitness()}\index{getBestFitness()}
+
+\textbf{Syntax:} \verb|const cFibObjectFitness * getBestFitness() const| \\
+
+Diese Methode gibt die best m"ogliche Fitness eines Individuums bez"uglich des Originalobjekts zur"uck. Diese Fitness zeichnet aus, dass es nicht m"oglich ist eine bessere Fitness zu generieren.
+
+Diese Fitness entspricht im Normalfall einem Individuum, welches das Originalobjekt perfekt wiedergibt und dabei keine Recourcen verbraucht.
+
+\bigskip\noindent
+\textbf{Eingabeparameter:} keine
+
+\bigskip\noindent
+\textbf{R"uckgabe:} Zur"uckgegeben wird ein Zeiger auf die best m"ogliche Fitness eines Individuums bez"uglich des Originalobjekts oder der Nullzeiger \verb|NULL|, wenn diese nicht berechnet werden kann.
+
+
+\subsubsection{getWorstCaseFitness}\index{cFibObjectFitnessAlgorithm!getWorstCaseFitness()}\index{getWorstCaseFitness()}
+
+\textbf{Syntax:} \verb|const cFibObjectFitness * getWorstCaseFitness() const| \\
+
+Diese Methode gibt die schlechtest m"ogliche Fitness eines Individuums bez"uglich des Originalobjekts zur"uck. Diese Fitness zeichnet aus, dass sie immer erreicht werden kann.
+
+Im Normalfall wird der Algorithmus die Fitness des Originalindividuums zur"uckgeben, da dieses ja schon in der entsprechenden Repr"asentation vorliegt und verbessert werden soll.
+
+Der Allgorithmus kann dennoch durch \verb|evalueFitness()| Fitnessobjekt generieren die noch schlechter sind.
+
+Es wird der Nullzeiger \verb|NULL| zur"uckgegeben, wenn die schlechtest m"ogliche Fitness nicht berechnet werden kann. Dies kann beispielsweise der Fall sein, wenn kein Originalobjekt f"ur den Algorithmus gesetzt wurde.
+
+\bigskip\noindent
+\textbf{Eingabeparameter:} keine
+
+\bigskip\noindent
+\textbf{R"uckgabe:} Zur"uckgegeben wird ein Zeiger auf die schlechtest m"ogliche Fitness eines Individuums bez"uglich des Originalobjekts oder der Nullzeiger \verb|NULL|, wenn diese nicht berechnet werden kann.
+
+
+
+\section{Einfacher Algorithmus f"ur einen Bewerter von Fib-Individuen cFibObjectFitnessBasicAlgorithm}
+\label{secCFibObjectFitnessAlgorithmusBasic}
+
+Elternklasse: \verb|cFibObjectFitnessAlgorithm|
+
+\bigskip\noindent
+Die Klasse \verb|cFibObjectFitnessBasicAlgorithm| dient zum Berechnen der \verb|cFibObjectFitnessBasic| Fitness (siehe Abschnitt \ref{secCFibObjectFitnessBasic} auf Seite \pageref{secCFibObjectFitnessBasic}) eines Individuums. Sie wird von der Klasse \verb|cFibObjectFitnessAlgorithm| abgeleitet.
+
+
+\bigskip\noindent
+Zu den Fitnessinformationen der vom Algorithmus erzeugten Fitnessobjekte \verb|cFibObjectFitnessBasic| (siehe Abschnitt \ref{secCFibObjectFitnessBasic} auf Seite \pageref{secCFibObjectFitnessBasic}) geh"oren:
+\begin{itemize}
+ \item die gesamt Fitness des Fib-Objekts
+ \item ein Wert f"ur die Abweichungen vom original Multimediaobjekt
+ \item ein Wert f"ur die Gr"o"se des Fib-Objekts (die Anzahl der Bits, welche das Fib-Objekts beim Abspeichern im komprimierten Format ben"otigt)
+ \item ein Wert f"ur die ben"otige Auswertungszeit des Fib-Objekts
+\end{itemize}
+
+Die Gesamtfitness ergibt sich aus der Summe der gewichteten Einzelfitnesse: $Fitness=lDistanceToOriginal*dWeightDistanceToOriginal+lSize*dWeightSize+lEvaluationTime*dWeightEvaluationTime$
+
+Diese Rechnung wird allerdings nicht direkt von den Instanzen der Klasse \verb|cFibObjectFitnessBasicAlgorithm| vorgenommen, sondern direkt von den erzeugten Fitnessobjekten \verb|cFibObjectFitnessBasic| (siehe Abschnitt \ref{secCFibObjectFitnessBasic} auf Seite \pageref{secCFibObjectFitnessBasic}).
+
+
+\subsection{Schnittstellenbeschreibung}
+
+\subsubsection{cFibObjectFitnessBasicAlgorithm}\index{cFibObjectFitnessBasicAlgorithm}
+
+\textbf{Syntax:} \verb|cFibObjectFitnessBasicAlgorithm( cFibElement * pOriginalFibElement, | \\\verb| double dWeightDistanceToOriginal=1.0, | \\\verb| double dWeightSize=1.0, | \\\verb| double dWeightEvaluationTime=1.0 )| \\
+
+Der Konstruktor f"ur ein Objekt zum Bewerter von Fib-Individuen.
+
+\bigskip\noindent
+\textbf{Eingabeparameter:}
+\begin{itemize}
+ \item \verb|pOriginalFibElement|: Eine Referenz auf das Fib-Element, welches als Originalindividuum gesetzt werden soll.
+ \item \verb|dWeightDistanceToOriginal|: Das Gewicht mit dem der Abstand zum Multimediaobjekt \verb|lDistanceToOriginal| in die gesamt Fitness eingeht.
+ \item \verb|dWeightSize|: Das Gewicht, mit dem die Gr"o"se \verb|lSize| in die gesamt Fitness eingeht.
+ \item \verb|dWeightEvaluationTime|: Das Gewicht, mit dem die Auswertungszeit \verb|lEvaluationTime| in die gesamt Fitness eingeht.
+\end{itemize}
+
+\bigskip\noindent
+\textbf{R"uckgabe:} keine
+
+
+\subsubsection{evalueFitness}\index{cFibObjectFitnessBasicAlgorithm!evalueFitness()}\index{evalueFitness()}
+
+\textbf{Syntax:} \verb|cFibObjectFitnessBasic evalueFitness(| \\\verb| const cFibIndividual  &individual  )| \\
+
+Diese Methode berechnet die Fitness eines Fib-Individuums \verb|individual|.
+
+\bigskip\noindent
+\textbf{Eingabeparameter:}
+\begin{itemize}
+ \item \verb|individual|: Eine Referenz auf das Fib-Individuum, welches bewertet werden soll.
+\end{itemize}
+
+\bigskip\noindent
+\textbf{R"uckgabe:} Zur"uckgegeben wird ein Fitnessobjekt f"ur die ermittelte Fitness des Fib-Individuums \verb|individual|, berechnet bez"uglich des gesetzten Originalindividuums.
+
+
+\subsubsection{evalueDistance}\index{cFibObjectFitnessBasicAlgorithm!evalueDistance()}\index{evalueDistance()}
+
+\textbf{Syntax:} \verb|double evalueDistance(| \\\verb| const cFibElement &fibElement, | \\\verb| const cFibElement *fibElementArea=NULL  )| \\
+
+Diese Methode berechnet den Abstand zum original Multimediaobjekt eines Fib-Objekts \verb|fibElement| auf dem durch \verb|fibElementArea| angegeben Bereich. Es wird also nur der Abstand von Eigenschaften von Punkten berechnet, welche durch \verb|fibElementArea| erstellt werden. Wenn \verb|fibElementArea| allerdings gleich \verb|NULL| ist, werden alle Punkte des Fib-Objekts \verb|fibElement| verglichen.
+
+\bigskip\noindent
+\textbf{Eingabeparameter:}
+\begin{itemize}
+ \item \verb|fibElement|: Eine Referenz auf das Fib-Objekt, welches bewertet werden soll.
+ \item \verb|fibElementArea|: Dieses Fib-Objekt bestimmt den zu "uberpr"ufenden Bereich. Nur der Bereich den dieses Individuum mit Punkten "uberdeckt ist zu pr"ufen. Wenn \verb|fibElementArea| gleich dem Nullpointer \verb|NULL| (Standardwert) ist, wird der Abstand des gesamte Bereichs bzw. zum gesamte original Multimediaobjekt ermittelt.
+\end{itemize}
+
+\bigskip\noindent
+\textbf{R"uckgabe:} Zur"uckgegeben wird der Abstand zum original Multimediaobjekt eines Fib-Objekts \verb|fibElement| auf dem durch \verb|fibElementArea| angegeben Bereich.
+
+
+\subsubsection{getClassName}\index{cFibObjectFitnessBasicAlgorithm!getClassName()}\index{getClassName()}
+
+\textbf{Syntax:} \verb|string getClassName()| \\
+
+Diese Methode gibt eine Zeichenkette ''cFibObjectFitnessAlgorithm`` mit dem Klassennamen des aktuellen Bewerters f"ur Individuen zur"uck.
+
+\bigskip\noindent
+\textbf{Eingabeparameter:} keine
+
+\bigskip\noindent
+\textbf{R"uckgabe:} Zur"uckgegeben wird eine Zeichenkette ''cFibObjectFitnessBasicAlgorithm``.
+
+
+\subsubsection{getBestFitness}\index{cFibObjectFitnessBasicAlgorithm!getBestFitness()}\index{getBestFitness()}
+
+\textbf{Syntax:} \verb|const cFibObjectFitnessBasic * getBestFitness() const| \\
+
+Diese Methode gibt die best m"ogliche Fitness eines Individuums bez"uglich des Originalobjekts zur"uck. Diese Fitness zeichnet aus, dass es nicht m"oglich ist eine bessere Fitness zu generieren.
+
+Diese Fitness ist im Fall von \verb|cFibObjectFitnessBasicAlgorithm| einem \verb|cFibObjectFitnessBasic| Object dessen (Teil-)Fitnesswerte alle $0$ sind.
+
+\bigskip\noindent
+\textbf{Eingabeparameter:} keine
+
+\bigskip\noindent
+\textbf{R"uckgabe:} Zur"uckgegeben wird ein Zeiger ein \verb|cFibObjectFitnessBasic| Object dessen (Teil-)Fitnesswerte alle $0$ sind.
+
+
+\subsubsection{getWorstCaseFitness}\index{cFibObjectFitnessBasicAlgorithm!getWorstCaseFitness()}\index{getWorstCaseFitness()}
+
+\textbf{Syntax:} \verb|const cFibObjectFitnessBasic * getWorstCaseFitness() const| \\
+
+Diese Methode gibt die schlechtest m"ogliche Fitness eines Individuums bez"uglich des Originalobjekts zur"uck. Diese Fitness zeichnet aus, dass sie immer erreicht werden kann.
+
+Diese Fitness ist im Fall von \verb|cFibObjectFitnessBasicAlgorithm| die Fitness des Originalindividuums, da dieses ja schon in der entsprechenden Repr"asentation vorliegt und verbessert werden soll.
+
+Der Allgorithmus kann dennoch durch \verb|evalueFitness()| Fitnessobjekt generieren die noch schlechter sind.
+
+Es wird der Nullzeiger \verb|NULL| zur"uckgegeben, wenn die schlechtest m"ogliche Fitness nicht berechnet werden kann. Dies ist der Fall sein, wenn kein Originalobjekt f"ur den Algorithmus gesetzt wurde.
+
+\bigskip\noindent
+\textbf{Eingabeparameter:} keine
+
+\bigskip\noindent
+\textbf{R"uckgabe:} Zur"uckgegeben wird ein Zeiger auf die Fitness des Originalindividuums, wenn dies vorhanden ist, oder der Nullzeiger \verb|NULL|, wenn kein Originalindividuum gesetzt wurde.
+
+
+\subsubsection{getWeightDistanceToOriginal}\index{cFibObjectFitnessBasicAlgorithm!getWeightDistanceToOriginal()}\index{getWeightDistanceToOriginal()}
+
+\textbf{Syntax:} \verb|double getWeightDistanceToOriginal() const| \\
+
+Diese Methode gibt das Gewicht f"ur den Abstand zum Original ($dWeightDistanceToOriginal$) zur"uck.
+
+\bigskip\noindent
+\textbf{Eingabeparameter:} keine
+
+\bigskip\noindent
+\textbf{R"uckgabe:} Zur"uckgegeben wird das Gewicht f"ur den Abstand zum Original ($dWeightDistanceToOriginal$).
+
+
+\subsubsection{getWeightSize}\index{cFibObjectFitnessBasicAlgorithm!getWeightSize()}\index{getWeightSize()}
+
+\textbf{Syntax:} \verb|double getWeightSize() const| \\
+
+Diese Methode gibt das Gewicht f"ur die Gr"o"se des Fib-Objekts ($dWeightSize$) zur"uck.
+
+\bigskip\noindent
+\textbf{Eingabeparameter:} keine
+
+\bigskip\noindent
+\textbf{R"uckgabe:} Zur"uckgegeben wird das Gewicht f"ur die Gr"o"se des Fib-Objekts ($dWeightSize$).
+
+
+\subsubsection{getWeightEvaluationTime}\index{cFibObjectFitnessBasicAlgorithm!getWeightEvaluationTime()}\index{getWeightEvaluationTime()}
+
+\textbf{Syntax:} \verb|double getWeightEvaluationTime() const| \\
+
+Diese Methode gibt das Gewicht f"ur die Auswertungszeit des Fib-Objekts ($dWeightEvaluationTime$) zur"uck.
+
+\bigskip\noindent
+\textbf{Eingabeparameter:} keine
+
+\bigskip\noindent
+\textbf{R"uckgabe:} Zur"uckgegeben wird das Gewicht f"ur die Auswertungszeit des Fib-Objekts ($dWeightEvaluationTime$).
+
+
+
+\section{Initialisieren des Algorithmus cInitFibEnviroment}
+\label{secInitFibAlgoritmus}
+
+Elternklasse: \verb|cInitEnviroment|
+
+\bigskip\noindent
+Die Klasse \verb|cInitFibEnviroment| ist die Basisklasse zur Initialisierung des Algorithmus f"ur Fib-Individuen. Von ihr werden alle Klassen zur Initialisierung des Algorithmus f"ur Fib-Individuen abgeleitet.
+
+F"ur die Initialisierung steht die Methode \verb|initEnviroment()| bereit.
+
+Die Initialisierung umfasst:
+\begin{itemize}
+ \item Die Bereitstellung des Originalindividuums/ -multimediaobjekts.
+ \item Erzeugen und Einf"ugen mindestens eines Fib-Individuums f"ur und in die Population. So hat der Algorithmus von Anfang an ein Fib-Individuum zum zur"uckgeben. Diese Fib-Individuen k"onnen auch einem fr"uheren Lauf des Algorithmus kommen und/oder aus einer Datei geladen werden.
+ \item Aufrufen, wenn vorhanden, des Initialsierungsoperators \verb|cInitOperator|.
+\end{itemize}
+
+
+\subsection{Schnittstellenbeschreibung}
+
+\subsubsection{cInitFibEnviroment}\index{cEnviroment!cInitFibEnviroment}\index{cInitFibEnviroment}
+
+\textbf{Syntax:} \verb|cInitFibEnviroment( const cRoot &fibOriginal )| \\
+
+Der Konstruktor f"ur die Fib-Initialisierungsobjekt des Algorithmus (\verb|cEnviroment| siehe Abschnitt \ref{secCEnviroment} auf Seite \pageref{secCEnviroment}).
+
+\bigskip\noindent
+\textbf{Eingabeparameter:}
+\begin{itemize}
+ \item \verb|fibOriginal|: Eine Referenz auf das original Multimediaobjekt.
+\end{itemize}
+
+\bigskip\noindent
+\textbf{R"uckgabe:} keine
+
+%TODO ben"otigt oder besser extern laden und konvertieren?
+%\subsubsection{cInitFibEnviroment}\index{cEnviroment!cInitFibEnviroment}\index{cInitFibEnviroment}
+%
+%\textbf{Syntax:} \verb|cInitFibEnviroment( string szPathToOriginal )| \\
+%
+%Der Konstruktor f"ur die Fib-Initialisierungsobjekt des Algorithmus (\verb|cEnviroment| siehe Abschnitt \ref{secCEnviroment} auf Seite \pageref{secCEnviroment}).
+%
+%\bigskip\noindent
+%\textbf{Eingabeparameter:}
+%\begin{itemize}
+% \item \verb|szPathToOriginal|: Der Pfad zur Datei in der das original Multimediaobjekt abgespeichert ist. Anhand der Dateiendung wird ermittelt in welchen Dateiformat das Multimediaobjekt vorliegt und die entsprechenden Einstellungen bei der initialisierung gemacht. Unterst"utzte Dateiformate sind:
+% \begin{itemize}
+%  \item \verb|bmp|: Bitmap Bilder.
+% \end{itemize}
+%\end{itemize}
+%
+%\bigskip\noindent
+%\textbf{R"uckgabe:} keine
+
+
+\subsubsection{initEnviroment}\index{cInitFibEnviroment!initEnviroment()}\index{initEnviroment()}
+
+\textbf{Syntax:} \verb|bool initEnviroment()| \\
+
+Diese Methode Initialisiert den Algorithmus mit Fib-Objekten.
+
+Es wird gepr"uft, ob die Initialisierung zur aktuellen Instanz von \verb|cEnviroment| passt. Dazu geh"ort beispielsweise, dass die aktuellen \verb|cEnviroment| Instanz auf Fib-Individuen arbeitet.
+
+Bei der Initialisierung wird das dem Konstruktor "ubergebene Fib-Objekt als original Individuum eingesetzt und als erstes Individuum in den Kernallgorithmus (mit der \verb|insertIndividual()|-Methode) eingef"ugt.
+
+Aufrufen, wenn vorhanden, des Initialsierungsoperators \verb|cFibInitOperator|.
+
+\bigskip\noindent
+\textbf{Eingabeparameter:} keine
+
+\bigskip\noindent
+\textbf{R"uckgabe:} Wenn der Algorithmus \verb|cEnviroment| initialisiert wurde, wird \verb|true| (=wahr) zur"uckgegeben, sonst \verb|false| (=falsch).
+
+
+
+\section{Die Operatoren f"ur Fib cOperationFib}
+\label{secFibOperations}
+
+Elternklasse: \verb|cOperation|
+
+\bigskip\noindent
+Alle Operatoren  f"ur Fib-Individuen werden von der Basisklasse \verb|cOperationFib| abgeleitet, welche wiederum von der Basisklasse aller Operatoren \verb|cOperation| abgeleitet ist. Von \verb|cOperationFib| selbst k"onnen keine Instanzen erzeugt werden. Die Klasse \verb|cOperationFib| "ubernimmt alle Methoden von ihrer Elternklasse \verb|cOperation| und definiert keine eigenen Methoden.
+
+Operatoren werden vom Algorithmus gestartet, um neue bessere Fib-Individuen zu erzeugen. Ob und wieviele neue Individuen eine Operation erzeugt und welche Informationen sie daf"ur benutzt, bleibt der Operation "uberlassen.
+
+
+
+
+
+

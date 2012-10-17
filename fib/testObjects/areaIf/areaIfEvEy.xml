@@ -1,0 +1,78 @@
+<data>
+	<property>
+		<vector type="property.colorSW">
+			<variable number="1">1</variable>
+		</vector>
+		<if>
+			<condition>
+				<lo>
+					<variable>1</variable>
+					<value>2</value>
+				</lo>
+			</condition>
+			<point>
+				<vector type="position">
+					<value number="1">1</value>
+					<variable number="2">1</variable>
+				</vector>
+			</point>
+			<point>
+				<vector type="position">
+					<value number="1">2</value>
+					<variable number="2">1</variable>
+				</vector>
+			</point>
+		</if>
+	</property>
+	<property>
+		<vector type="property.colorSW">
+			<variable number="1">1</variable>
+		</vector>
+		<if>
+			<condition>
+				<lo>
+					<variable>1</variable>
+					<value>2</value>
+				</lo>
+			</condition>
+			<point>
+				<vector type="position">
+					<value number="1">1</value>
+					<variable number="2">1</variable>
+				</vector>
+			</point>
+			<point>
+				<vector type="position">
+					<value number="1">2</value>
+					<variable number="2">1</variable>
+				</vector>
+			</point>
+		</if>
+	</property>
+	<property>
+		<vector type="property.colorSW">
+			<variable number="1">1</variable>
+		</vector>
+		<if>
+			<condition>
+				<lo>
+					<variable>1</variable>
+					<value>2</value>
+				</lo>
+			</condition>
+			<point>
+				<vector type="position">
+					<value number="1">1</value>
+					<variable number="2">1</variable>
+				</vector>
+			</point>
+			<point>
+				<vector type="position">
+					<value number="1">2</value>
+					<variable number="2">1</variable>
+				</vector>
+			</point>
+		</if>
+	</property>
+</data>
+

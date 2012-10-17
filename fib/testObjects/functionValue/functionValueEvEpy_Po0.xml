@@ -1,0 +1,14 @@
+<data>
+	<property>
+		<vector type="property.colorSW">
+			<variable number="1">1</variable>
+		</vector>
+		<point>
+			<vector type="position">
+				<variable number="1">1</variable>
+				<value number="2">2</value>
+			</vector>
+		</point>
+	</property>
+</data>
+ 

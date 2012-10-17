@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fib_object
+			  xmlns:xsd="http://www.w3.org/2001/XMLSchema-instance"
+			  xmlns="http://www.biokom.info/"
+			  xsd:schemaLocation="http://www.biokom.info/fib.xsd">
+	<root>
+		<input_variables>
+			<variable number="1" default="0"/>
+		</input_variables>
+		<main_fib_object>
+			<point>
+				<vector type="position">
+					<variable>1</variable>
+				</vector>
+			</point>
+		</main_fib_object>
+	</root>
+</fib_object>

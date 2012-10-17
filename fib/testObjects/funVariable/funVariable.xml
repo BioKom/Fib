@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fib_object
+xmlns:xsd="http://www.w3.org/2001/XMLSchema-instance"
+xmlns="http://www.biokom.info/"
+xsd:schemaLocation="http://www.biokom.info/fib.xsd">
+<root>
+	<domains>
+		<dim count="2">
+			<dimension number="1" direction="horizontal"/>
+			<dimension number="2" direction="vertical"/>
+			<vector elements="2">
+				<naturalNumber max="255" />
+				<naturalNumber max="255" />
+			</vector>
+		</dim>
+		<property name="colorRGB" >
+			<vector elements="3">
+				<naturalNumber max="255" />
+				<naturalNumber max="255" />
+				<naturalNumber max="255" />
+			</vector>
+		</property>
+		<subfunction>
+			<naturalNumber max="255" />
+		</subfunction>
+		<area>
+			<vector elements="2">
+				<naturalNumber max="4" />
+				<vector elements="2">
+					<naturalNumber max="255" />
+					<naturalNumber max="255" />
+				</vector>
+			</vector>
+		</area>
+		<variable>
+			<naturalNumberB bit="8" />
+		</variable>
+	</domains>
+	<main_fib_object>
+		<area define_variable="1">
+			<vector type="subarea">
+				<value number="1">1</value>
+				<value number="2">2</value>
+			</vector>
+			<function define_variable="2">
+				<subfunction>
+					<variable>1</variable>
+				</subfunction>
+				<property>
+					<vector type="property.colorRGB">
+						<variable number="1">1</variable>
+						<variable number="2">2</variable>
+						<value number="3">3</value>
+					</vector>
+					<point>
+						<vector type="position">
+							<variable number="1">1</variable>
+							<variable number="2">2</variable>
+						</vector>
+					</point>
+				</property>
+			</function>
+		</area>
+	</main_fib_object>
+</root>
+</fib_object>

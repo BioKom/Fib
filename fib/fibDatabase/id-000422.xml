@@ -1,0 +1,378 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fib_object
+			  xmlns:xsd="http://www.w3.org/2001/XMLSchema-instance"
+			  xmlns="http://www.fib-development.org/"
+			  xsd:schemaLocation="http://www.fib-development.org/fib.xsd">
+	<root>
+		<multimedia_info fib_version="3" db_version="2"/>
+		<optionalpart>
+			<pair key="name" value="quadrangle"/>
+			<pair key="description" value="This object represents a quadrangle (box). In the first dimension it goes from start point x_s to end point x_e (if x_e is lower x_s no quadrangle is drawn). In the second dimension the area is filled between two lines. The first line (y_s = f_1( x ) = a_0 + a_1 * x) goes through the first two points ( x_1, y_1 ) and ( x_2, y_2 ). The second line (y_e = f_2( x ) = b_0 + b_1 * x) goes through the last two points ( x_3, y_3 ) and ( x_4, y_4 )."/>
+			<pair key="inVar1::description" value="position of the first point in dimension 1 (x_1)"/>
+			<pair key="inVar2::description" value="position of the first point in dimension 2 (y_1)"/>
+			<pair key="inVar3::description" value="position of the second point in dimension 1 (x_2)"/>
+			<pair key="inVar4::description" value="position of the second point in dimension 2 (y_2)"/>
+			<pair key="inVar5::description" value="position of the 3. point in dimension 1 (x_3)"/>
+			<pair key="inVar6::description" value="position of the 3. point in dimension 2 (y_3)"/>
+			<pair key="inVar7::description" value="position of the 4. point in dimension 1 (x_4)"/>
+			<pair key="inVar8::description" value="position of the 4. point in dimension 2 (y_4)"/>
+			<pair key="inVar9::description" value="the start point x_s"/>
+			<pair key="inVar10::description" value="the end point x_e"/>
+			<pair key="author" value="Betti Oesterholz"/>
+			<pair key="author::email" value="Oesterholz@Fib-Development.org"/>
+			<pair key="copyright" value="LGPL3"/>
+		</optionalpart>
+		<input_variables>
+			<variable number="1" default="0"/>
+			<variable number="2" default="0"/>
+			<variable number="3" default="0"/>
+			<variable number="4" default="0"/>
+			<variable number="5" default="0"/>
+			<variable number="6" default="0"/>
+			<variable number="7" default="0"/>
+			<variable number="8" default="0"/>
+			<variable number="9" default="0"/>
+			<variable number="10" default="0"/>
+		</input_variables>
+		<domains>
+			<inVar number="1">
+				<domainReference subdomain="1">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="2">
+				<domainReference subdomain="2">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="3">
+				<domainReference subdomain="1">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="4">
+				<domainReference subdomain="2">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="5">
+				<domainReference subdomain="1">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="6">
+				<domainReference subdomain="2">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="7">
+				<domainReference subdomain="1">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="8">
+				<domainReference subdomain="2">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="9">
+				<domainReference subdomain="1">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="10">
+				<domainReference subdomain="1">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<subfunction>
+				<naturalNumberB bit="12" />
+			</subfunction>
+			<externObject>
+				<vector elements="4">
+					<integer min="-410" max="-410" /><!--Identifier-->
+					<integer min="6" max="6" /><!--number input values-->
+					<naturalNumber max="0" /><!--number subobjects-->
+					<naturalNumber max="0" /><!--number output values-->
+				</vector>
+			</externObject>
+			<externObjectInput identifier="-410">
+				<vector elements="6">
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+				</vector>
+			</externObjectInput>
+		</domains>
+		<database_identifiers>
+			<identifier>-410</identifier>
+		</database_identifiers>
+		<main_fib_object>
+			<!--evalue x_s and x_e-->
+			<if><!--if x_e < x_s than do nothing-->
+				<condition>
+					<lo>
+						<variable>10</variable>
+						<variable>9</variable>
+					</lo>
+				</condition>
+				<point/>
+			<!--else x_s <= x_e evalue parameters of the two lines-->
+				<if><!--if x_1 == x_2 then connect points 1 and 2 (draw line
+					from y_1 to y_2) and connect to second line f_2 -->
+					<condition>
+						<eqInt>
+							<mult>
+								<variable>1</variable>
+								<value>1024</value>
+							</mult>
+							<mult>
+								<variable>3</variable>
+								<value>1024</value>
+							</mult>
+						</eqInt>
+					</condition>
+					<list>
+						<!--draw line from y_1 to y_2-->
+						<area define_variable="11">
+							<vector type="subarea">
+								<variable>2</variable>
+								<variable>4</variable>
+							</vector>
+							<point>
+								<vector type="position">
+									<variable>1</variable>
+									<variable>11</variable>
+								</vector>
+							</point>
+						</area>
+						<if><!--if x_3 == x_4 then connect points 3 and 4 (draw line
+							from y_3 to y_4) and points 1 and 4 (draw line from y_1 to y_4)-->
+							<condition>
+								<eqInt>
+									<mult>
+										<variable>5</variable>
+										<value>1024</value>
+									</mult>
+									<mult>
+										<variable>7</variable>
+										<value>1024</value>
+									</mult>
+								</eqInt>
+							</condition>
+							<!--connect points 3 and 4 (draw line from y_3 to y_4 and points 1 and 4 (draw line from y_1 to y_4-->
+							<list>
+								<area define_variable="11">
+									<vector type="subarea">
+										<variable>6</variable>
+										<variable>8</variable>
+									</vector>
+									<point>
+										<vector type="position">
+											<variable>5</variable>
+											<variable>11</variable>
+										</vector>
+									</point>
+								</area>
+								<area define_variable="11">
+									<vector type="subarea">
+										<variable>2</variable>
+										<variable>8</variable>
+									</vector>
+									<point>
+										<vector type="position">
+											<variable>1</variable>
+											<variable>11</variable>
+										</vector>
+									</point>
+								</area>
+							</list>
+							<!--else x_1 == x_2 and x_3 != x_4 -> evalue parameters for line f_2 -->
+							<function define_variable="11">
+								<!--b_1 slope of the line f_1-->
+								<subfunction>
+									<!--b_1 = (y_4 - y_3) / (x_4 - x_3) -->
+									<div>
+										<sub>
+											<variable>8</variable>
+											<variable>6</variable>
+										</sub>
+										<sub>
+											<variable>7</variable>
+											<variable>5</variable>
+										</sub>
+									</div>
+								</subfunction>
+								<function define_variable="12">
+									<!--b_0 = y_3 - b_1 * x_3-->
+									<subfunction>
+										<sub>
+											<variable>6</variable>
+											<mult>
+												<variable>11</variable>
+												<variable>5</variable>
+											</mult>
+										</sub>
+									</subfunction>
+									<!-- draw line from f_1=y_1 to f_2 -->
+									<obj identifier="-410">
+										<vector type="externObjectInput">
+											<variable>9</variable>
+											<variable>10</variable>
+											<variable>2</variable>
+											<value>0</value>
+											<variable>12</variable>
+											<variable>11</variable>
+										</vector>
+									</obj>
+								</function>
+							</function>
+						</if>
+					</list>
+				<!--else x_1 != x_2 -> evalue parameters for line f_1 -->
+					<function define_variable="11">
+						<!--a_1 slope of the line f_1-->
+						<subfunction>
+							<!--a_1 = (y_2 - y_1) / (x_2 - x_1) -->
+							<div>
+								<sub>
+									<variable>4</variable>
+									<variable>2</variable>
+								</sub>
+								<sub>
+									<variable>3</variable>
+									<variable>1</variable>
+								</sub>
+							</div>
+						</subfunction>
+						<function define_variable="12">
+							<!--a_0 = y_1 - a_1 * x_1-->
+							<subfunction>
+								<sub>
+									<variable>2</variable>
+									<mult>
+										<variable>11</variable>
+										<variable>1</variable>
+									</mult>
+								</sub>
+							</subfunction>
+							<if><!--if x_3 == x_4 then connect points 3 and 4 (draw line
+								from y_3 to y_4) and connect to first line f_1 -->
+								<condition>
+									<eqInt>
+										<mult>
+											<variable>5</variable>
+											<value>1024</value>
+										</mult>
+										<mult>
+											<variable>7</variable>
+											<value>1024</value>
+										</mult>
+									</eqInt>
+								</condition>
+								<list><!--connect points 3 and 4 (draw line from y_3 to y_4)-->
+									<area define_variable="13">
+										<vector type="subarea">
+											<variable>6</variable>
+											<variable>8</variable>
+										</vector>
+										<point>
+											<vector type="position">
+												<variable>5</variable>
+												<variable>13</variable>
+											</vector>
+										</point>
+									</area>
+									<!-- draw line from f_2=y_3 to f_1 -->
+									<obj identifier="-410">
+										<vector type="externObjectInput">
+											<variable>9</variable>
+											<variable>10</variable>
+											<variable>12</variable>
+											<variable>11</variable>
+											<variable>6</variable>
+											<value>0</value>
+										</vector>
+									</obj>
+								</list>
+							<!--else x_1 != x_2 and x_3 != x_4 -> evalue parameters for line f_2 -->
+								<function define_variable="13">
+									<!--b_1 slope of the line f_1-->
+									<subfunction>
+										<!--b_1 = (y_4 - y_3) / (x_4 - x_3) -->
+										<div>
+											<sub>
+												<variable>8</variable>
+												<variable>6</variable>
+											</sub>
+											<sub>
+												<variable>7</variable>
+												<variable>5</variable>
+											</sub>
+										</div>
+									</subfunction>
+									<function define_variable="14">
+										<!--b_0 = y_3 - b_1 * x_3-->
+										<subfunction>
+											<sub>
+												<variable>6</variable>
+												<mult>
+													<variable>13</variable>
+													<variable>5</variable>
+												</mult>
+											</sub>
+										</subfunction>
+										<!-- draw line from f_1=x_1 to f_2 -->
+										<obj identifier="-410">
+											<vector type="externObjectInput">
+												<variable>9</variable>
+												<variable>10</variable>
+												<variable>12</variable>
+												<variable>11</variable>
+												<variable>14</variable>
+												<variable>13</variable>
+											</vector>
+										</obj>
+									</function>
+								</function>
+							</if>
+						</function>
+					</function>
+				</if>
+			</if>
+		</main_fib_object>
+	</root>
+</fib_object>

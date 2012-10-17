@@ -1,0 +1,155 @@
+%
+% Copyright (c) 2008 Betti "Osterholz
+%
+% Permission is granted to copy, distribute and/or modify this document
+% under the terms of the GNU Free Documentation License, Version 1.2 or
+% any later version published by the Free Software Foundation;
+% with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+%
+% A copy of the license is included in the file ``fdl.tex'' .
+%
+
+\newpage
+\part{Vorgehensweisen f"ur Fib}
+\label{partProcedures}
+
+In diesem Teil werden f"ur Fib einige Vorgehensweisen f"ur bestimmte Aufgaben vorgestellt. Es kann als eine Art ``Tips und Tricks'' Sammlung verstanden werden.
+
+
+\section{Parallele Auswertung von Fib-Teilobjekten}
+
+\bigskip\noindent
+\textbf{Problem:}
+Heutzutage sind Parallelrechner schon weit verbreitet. Um dies bei der Auswertung von Fib-Objekten auszunutzen, sind einige Anpassungen n"otig.
+
+\bigskip\noindent
+\textbf{L"osungskizze:} 
+Anstatt das gesamte Fib-Objekt mit in einem Pro"sess auszuwerten wird dieses in Teilobjekten aufgespalten und diese seperat ausgewertet.
+Dabei gibt es 2 Schritte: Ermittlung der Teilobjekte und Auswertung der ermittelten Teilobjekte.
+
+\bigskip\noindent
+\textbf{L"osung mit getTimeNeed():}
+
+\begin{itemize}
+ \item [0] ermittle die Anzahl $A$ der Teilobjekte die gleichzeitig ausgewerte werden sollen, dies Anzahl $A$ kann beispielsweise mit der Anzahl Prozessorkerne "ubereinstimmen
+ \item [1] Ermittlung der Anzahl $N$ der ben"otigten Teilobjekte: Diese Zahl sollte ein Vielfaches der Anzahl $A$ der Prozesse sein. Wenn beispielsweise 4 Prozesse gleichzeitig laufen k"onnen und ein Multiplikator von 10 festgelegt wurde, sollte $N=10*A=40$ sein. In diesem Fall sollten also rund $40$ Teilobjekte gesucht werden, die ungef"ahr die gleiche Abarbeitungszeit haben.
+ \item [2] $T$ ist die Liste der Teilobjekte. Die Liste $T$ wird am Anfang mit dem obersten root-Element als Teilobjekt initialisiert. Zu jedem Teilobjekt geh"ort der Zeiger auf das definierende Unterobjekt, seine Nummer in der Ordnung der zusammenh"angenden Teilobjekte (siehe Abschnitt \ref{secOrderPartobjects} auf Seite \pageref{secOrderPartobjects}) und (ein Wert f"ur) die zur Auswertung ben"otigte Zeit (ermittelt mit \verb|getTimeNeed()| f"ur das jeweilige Teilobjekt ).
+ \item [3] Ermittlung der Teilobjekte:
+ \begin{itemize}
+  \item [3.1] nehme und entferne das Teilobjekt $T_m$ aus $T$, \emph{welches den gr"o"sten Wert f"ur die zur Auswertung ben"otigte Zeit hat}
+  \item [3.2] ermittle das erste/ n"achste Listenelement $L$ in $T_m$; wenn es kein erste/ n"achste Listenelement $L$ in $T_m$ gibt, f"uge $T_m$ an das Ende von $T_O$ an und, wenn $T$ leer ist, gehe zu Schritt 4, sonst gehe zu Schritt 3.1
+  \item [3.3] ermittle alle Unterobjekte des Listenelements $L$ und f"uge jeweils f"ur jedes ermittelte Unterobjekt das zusammenh"angende Teilobjekt, das es definiert, und die Nummer des zusammenh"angenden Teilobjekts in die Liste $T$ an der Stelle an der vorher $T_m$ stand ein
+  \item [3.4] wenn die Anzahl der Teilobjekte in $T$ gr"o"ser oder gleich $N$ ist gehe zu Schritt 4
+  \item [3.5] wenn die Anzahl der Teilobjekte in $T$ kleiner als $N$ ist gehe zu Schritt 3.1
+ \end{itemize}
+ \item [4] f"uge alle Elemente von $T_O$ an ihrer entsprechenden Stelle von $T$ ein
+%TODO statt 4 besser?: Elemente t_o in T markieren, dort belassen und ignorieren
+ \item [5] Starten der Auswertung der ermittelten Teilobjekte ($i$ wird auf $1$ gesetzt):
+ \begin{itemize}
+  \item [5.1] Wenn $T$ leer ist gehe zu Schritt 6
+  \item [5.2] Wenn weniger als $A$ Teilobjekte zur Zeit ausgewertet werden, gehe Schritt 5.4
+  \item [5.3] Warte kurz und gehe dann zu Schritt 5.2
+  \item [5.4] nehme und entferne das erste Teilobjekt $T_1$ aus $T$
+  \item [5.5] Starte die Auswertung des Teilobjekt $T_1$ und sammle die Ergebnispunkte in der Liste $LP_i$
+  \item [5.5] erh"ohe $i$ um $1$
+  \item [5.6] gehe zu Schritt 5.1
+ \end{itemize}
+ \item [6] warten bis alle Teilobjekte fertig ausgewertet sind
+ \item [7] erstelle die Liste mit Ergebnispunkten $LP=\bigcup_{a=1}^{i-1} LP_a$ , wobei die Elemente der Liste $LP_{i+1}$ in der Ergebnisliste hinter denen der Liste $LP_i$ stehen
+ \item [8] zeige die Punkte in $LP$ an
+ \item [9] Ende
+\end{itemize}
+
+
+\bigskip\noindent
+\textbf{L"osung ohne getTimeNeed():}
+
+\begin{itemize}
+ \item [0] ermittle die Anzahl $A$ der Teilobjekte die gleichzeitig ausgewerte werden sollen, dies Anzahl $A$ kann beispielsweise mit der Anzahl Prozessorkerne "ubereinstimmen
+ \item [1] Ermittlung der Anzahl $N$ der ben"otigten Teilobjekte: Diese Zahl sollte ein Vielfaches der Anzahl $A$ der Prozesse sein. Wenn beispielsweise 4 Prozesse gleichzeitig laufen k"onnen und ein Multiplikator von 10 festgelegt wurde, sollte $N=10*A=40$ sein. In diesem Fall sollten also rund $40$ Teilobjekte gesucht werden.
+ \item [2] $T$ ist die Liste der Teilobjekte. Die Liste $T$ wird am Anfang mit dem obersten root-Element als Teilobjekt initialisiert. Zu jedem Teilobjekt geh"ort der Zeiger auf das definierende Unterobjekt und seine Nummer in der Ordnung der zusammenh"angenden Teilobjekte (siehe Abschnitt \ref{secOrderPartobjects} auf Seite \pageref{secOrderPartobjects}).
+ \item [3] Ermittlung der Teilobjekte:
+ \begin{itemize}
+  \item [3.1] nehme und entferne das i'te Teilobjekt $T_i$ aus $T$
+  \item [3.2] ermittle das erste/ n"achste Listenelement $L$ in $T_i$; wenn es kein erste/ n"achste Listenelement $L$ in $T_i$ gibt, markiere $T_i$; wenn alle $T_j$ markiert sind gehe zu Schritt 4, sonst gehe zu Schritt 3.1
+  \item [3.3] ermittle alle Unterobjekte des Listenelements $L$ und f"uge jeweils f"ur jedes ermittelte Unterobjekt das zusammenh"angenden Teilobjekte, das es definiert, und die Nummer des zusammenh"angenden Teilobjekts in ihrer Reihenfolge an den entsprechenden Stellen $(i + $Anzahl bisher eingef"ugte Teilobjekte$)$ in $T$ ein
+  \item [3.4] wenn die Anzahl der Teilobjekte in $T$ gr"o"ser oder gleich $N$ ist gehe zu Schritt 4
+  \item [3.5] wenn die Anzahl der Teilobjekte in $T$ kleiner als $N$ ist gehe zu Schritt 3.1
+ \end{itemize}
+ \item [4] Starten der Auswertung der ermittelten Teilobjekte ($i$ wird auf $1$ gesetzt):
+ \begin{itemize}
+  \item [4.1] Wenn $T$ leer ist gehe zu Schritt 5
+  \item [4.2] Wenn weniger als $A$ Teilobjekte zur Zeit ausgewertet werden, gehe Schritt 4.4
+  \item [4.3] Warte kurz und gehe dann zu Schritt 4.2
+  \item [4.4] nehme und entferne das erste Teilobjekt $T_1$ aus $T$
+  \item [4.5] Starte die Auswertung des Teilobjekt $T_1$ und sammle die Ergebnispunkte in der Liste $LP_i$
+  \item [4.5] erh"ohe $i$ um $1$
+  \item [4.6] gehe zu Schritt 4.1
+ \end{itemize}
+ \item [5] warten bis alle Teilobjekte fertig ausgewertet sind
+ \item [6] erstelle die Liste mit Ergebnispunkten $LP=\bigcup_{a=1}^{i-1} LP_a$ , wobei die Elemente der Liste $LP_{i+1}$ in der Ergebnisliste hinter denen der Liste $LP_i$ stehen
+ \item [7] zeige die Punkte in $LP$ an
+ \item [8] Ende
+\end{itemize}
+
+
+\section{Auswertung von zeitlichen Fib-Objekten}
+
+\bigskip\noindent
+\textbf{Problem:}
+Fib-Objekte k"onnen Multimediaobjekte repr"asentieren die "uber eine Zeit hinweg ``abgespielt'' werden sollen. Ein Beispiel daf"ur sind Filme. Diese Objekte m"ussen nicht schon zu Begin vollst"andig ausgewertet werden, sondern es reich nur die Abschnitte auszuwerten, welche als n"achstes abgespielt werden m"ussen.
+
+\bigskip\noindent
+\textbf{L"osungskizze 1:}
+"Uber \verb|periodBegin|, \verb|periodEnd| und \verb|evaluationTime| Eigenschaftselemente werden die Fib-Unterobjekte in Zeitintervallen eingeteilt. Und jeweils die n"achsten anzuzeigenden Unterobjekte ausgewertet. Die Unterteilung geschieht dabei direkt in den Unterobjekten eines Listenelements, welches das Haup-Fib-Objekt des obersten root-Elements ist.
+
+\bigskip\noindent
+\textbf{L"osungskizze 2:}
+Das Haupt-Fib-Objekt des Fib-Multimediaobjekt wird durch ein Kommentarelement, welches ein Bereichselement enth"alt, eingeleitet.
+Durch das Kommentarelement wird spezifiziert, dass das enthaltenede Bereichselement verschiedene aufeinanderfolgende Zeitsegmente erzeugt ( z. B. k"onnte es lauten $m($ $nextElement::function,$ $``time'', Obj )$) . Das enthaltende Bereichselement definiert eine Variable, deren verschiedene Belegung verschiedene aufeinanderfolgende Zeitabschnitte erzeugt. Bei der Auswertung kann die Variable des Bereichselements jeweils mit dem n"achsten Wert belegt werden, um den n"achsten Zeitabschnitt zu erzeugen. Sp"atere Belegungen der Variable, werden vorerst nicht ben"otigt, da sie sp"atere, noch nicht ben"otigte, Zeitabschnitte erzeugen.
+
+
+
+%\bigskip\noindent
+%\textbf{L"osung 1:}
+%TODO
+
+
+
+\section{Skalierung von Fib-Objekten}
+
+\bigskip\noindent
+\textbf{Problem:}
+Da Fib-Objekt immer eine kleinste Einheit in den Dimensionsrichtungen haben, ist eine einfache Skalierung im allgemeinen nicht m"oglich. Es k"onnen aber Fib-Objekte speziell so erstellt werden, dass eine Skalierung m"oglich ist.
+
+
+\bigskip\noindent
+\textbf{L"osungskizze:}
+Vorgehensweise bei der Kodierung des Fib-Objekts, um die Dimension $D$ skalieren zu k"onnen:
+\begin{itemize}
+ \item Im obersten root-Element wird f"ur die Dimension $D$ kein Definitionsbereich angegeben. Im Fib-Objekt sollten Werte f"ur die Dimension $D$ aus dem Standarddefinitionsbereich der Dimension $D$ kommen. Kann ein Anzeigeprogramm dann die Dimension des Fib-Objekts nicht Skalieren wird des Fib-Objekt trotzdem noch angezeigt.
+ \item Es wird eine Eingabevariable $inVarX$ angegeben, "uber welche die Anzahl der Punkte in der Dimension $D$ ver"andert werden kann. F"ur diese Eingabevariable wird ein Standardwert festgelegt, bei dem das Fib-Objekt so angezeigt wird das der Standarddefinitionsbereich der Dimension $D$ ausgenutzt wird. F"ur diese Eingabevariable wird ein Eintrag in den optionalen Informationen des root-Elements der Form ``inVarX::\-dimensionD::\-points'' gemacht.
+%TODO max und min der Dimension auch ben"otigt
+\end{itemize}
+
+
+%TODO
+%\bigskip\noindent
+%Vorgehensweise bei der Anzeige des Fib-Objekts, um die Dimension $D$ zu skaliern:
+%\begin{itemize}
+% \item Das Fib-Objekt wird als 
+% \item
+%\end{itemize}
+
+
+
+
+
+
+
+
+
+
+
+
+

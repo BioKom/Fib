@@ -1,0 +1,29 @@
+<data>
+	<matrix  dimensions="1">
+		<defined_variables>
+			<variable>2</variable>
+		</defined_variables>
+		<areas>
+			<vector type="area">
+				<value>6</value>
+				<value>3</value>
+			</vector>
+		</areas>
+		<values>
+		</values>
+		<property>
+			<vector type="property.colorRGB">
+				<variable>2</variable>
+				<value>1</value>
+				<value>2</value>
+			</vector>
+			<point>
+				<vector type="position">
+					<variable>2</variable>
+					<value>3</value>
+				</vector>
+			</point>
+		</property>
+	</matrix>
+</data>
+

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fib_object
+xmlns:xsd="http://www.w3.org/2001/XMLSchema-instance"
+xmlns="http://www.biokom.info/"
+xsd:schemaLocation="http://www.biokom.info/fib.xsd">
+<root>
+	<domains>
+		<dim count="2">
+			<dimension number="1" direction="horizontal"/>
+			<dimension number="2" direction="vertical"/>
+			<vector elements="2">
+				<naturalNumber max="255" />
+				<naturalNumber max="255" />
+			</vector>
+		</dim>
+		<externObject>
+			<vector elements="4">
+				<integer min="-10" max="32" />
+				<naturalNumber max="2" />
+				<naturalNumber max="1" />
+				<naturalNumber max="0" />
+			</vector>
+		</externObject>
+	</domains>
+	<main_fib_object>
+		<function define_variable="1">
+			<subfunction>
+				<value>1</value>
+			</subfunction>
+			<function define_variable="2">
+				<subfunction>
+					<value>2</value>
+				</subfunction>
+				<obj identifier="-2">
+					<vector type="externObjectInput">
+						<variable>1</variable>
+						<variable>2</variable>
+					</vector>
+				</obj>
+			</function>
+		</function>
+	</main_fib_object>
+</root>
+</fib_object>

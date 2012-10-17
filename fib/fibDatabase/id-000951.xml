@@ -1,0 +1,417 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fib_object
+			xmlns:xsd="http://www.w3.org/2001/XMLSchema-instance"
+			xmlns="http://www.fib-development.org/"
+			xsd:schemaLocation="http://www.fib-development.org/fib.xsd">
+	<root>
+		<multimedia_info fib_version="3" db_version="2"/>
+		<optionalpart>
+			<pair key="name" value="evalue if point is inside triangle"/>
+			<pair key="description" value="This object evalues if a point p=(x,y) is inside a triangle (excludig border lines). The triangle is given by the points p_1=(x_1, y_1), p_2=(x_2, y_2) and p_3=(x_3, y_3)."/>
+			<pair key="inVar1::description" value="position of the point p to check in dimension 1 (x)"/>
+			<pair key="inVar2::description" value="position of the point p to check in dimension 2 (y)"/>
+			<pair key="inVar3::description" value="position of the first point p_1 in dimension 1 (x_1) for the triangle"/>
+			<pair key="inVar4::description" value="position of the first point p_1 in dimension 2 (y_1) for the triangle"/>
+			<pair key="inVar5::description" value="position of the second point p_2 in dimension 1 (x_2) for the triangle"/>
+			<pair key="inVar6::description" value="position of the second point p_2 in dimension 2 (y_2) for the triangle"/>
+			<pair key="inVar7::description" value="position of the 3. point p_3 in dimension 1 (x_3) for the triangle"/>
+			<pair key="inVar8::description" value="position of the 3. point p_3 in dimension 2 (y_3) for the triangle"/>
+			<pair key="subObj1::description" value="if the point p is inside the triangle"/>
+			<pair key="subObj1::outVar1::description" value="1 if the point p is inside the triangle, else 0"/>
+			<pair key="author" value="Betti Oesterholz"/>
+			<pair key="author::email" value="Oesterholz@Fib-Development.org"/>
+			<pair key="copyright" value="LGPL3"/>
+		</optionalpart>
+		<input_variables>
+			<variable number="1" default="0"/>
+			<variable number="2" default="0"/>
+			<variable number="3" default="0"/>
+			<variable number="4" default="0"/>
+			<variable number="5" default="0"/>
+			<variable number="6" default="0"/>
+			<variable number="7" default="0"/>
+			<variable number="8" default="0"/>
+		</input_variables>
+		<domains>
+			<inVar number="1">
+				<domainReference subdomain="1">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="2">
+				<domainReference subdomain="2">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="3">
+				<domainReference subdomain="1">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="4">
+				<domainReference subdomain="2">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="5">
+				<domainReference subdomain="1">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="6">
+				<domainReference subdomain="2">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="7">
+				<domainReference subdomain="1">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="8">
+				<domainReference subdomain="2">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<externSubobject number="1">
+				<vector elements="1">
+					<naturalNumberB bit="1" />
+				</vector>
+			</externSubobject>
+			<subfunction>
+				<naturalNumberB bit="17" />
+			</subfunction>
+		</domains>
+		<main_fib_object>
+			<!-- This problem is solved with linear combination of vectors.
+				The point x_1 is the new zero point of the coordinates (to
+				simplify and speed up evaluation).
+				The vectors are:
+					x'_1 = x_2 - x_1
+					y'_1 = y_2 - y_1
+					x'_2 = x_3 - x_1
+					y'_2 = y_3 - y_1
+					x'_3 = x - x_1
+					y'_3 = y - y_1
+					v_i = (x_i, y_i), for i= 1, ... ,3
+				
+				The point is inside the triangle if:
+					x'_3 = a * x'_1 + b * x'_2
+					y'_3 = a * y'_1 + b * y'_2
+					and (0 < a) and (0 < b) and ((a + b) < 1)
+				
+				After some transformations:
+					b = ( (y'_1*x'_3 - x'_1*y'_3) / (y'_1*x'_2 - x'_1*y'_2) )
+					  = det(v_3, v_1) / det(v_2, v_1)
+					a = ( y'_3 - b * y'_2 ) / y'_1
+			-->
+			<!-- evalue y_1, y_2 and y_3 (all needed at least two times) -->
+			<function define_variable="9"><!-- y'_1 = y_2 - y_1 -->
+				<subfunction>
+					<sub>
+						<variable>6</variable>
+						<variable>4</variable>
+					</sub>
+				</subfunction>
+				<function define_variable="10"><!-- y'_2 = y_3 - y_1 -->
+					<subfunction>
+						<sub>
+							<variable>8</variable>
+							<variable>4</variable>
+						</sub>
+					</subfunction>
+					<function define_variable="11"><!-- y'_3 = y - y_1 -->
+						<subfunction>
+							<sub>
+								<variable>2</variable>
+								<variable>4</variable>
+							</sub>
+						</subfunction>
+						<!-- evalue (y'_1*x'_2 - x'_1*y'_2) = det(v_2, v_1) -->
+						<function define_variable="12">
+							<subfunction>
+								<sub>
+									<mult>
+										<variable>9</variable>
+										<sub>
+											<variable>7</variable>
+											<variable>3</variable>
+										</sub>
+									</mult>
+									<mult>
+										<sub>
+											<variable>5</variable>
+											<variable>3</variable>
+										</sub>
+										<variable>10</variable>
+									</mult>
+								</sub>
+							</subfunction>
+							<!-- if det(v_2, v_1) == 0 -> both vectors v_1 and v_2 in same direction
+								-> area of triangle 0 -> no point in triangle -->
+							<if>
+								<condition>
+									<eqInt><!-- det(v_2, v_1) == 0 -->
+										<mult>
+											<variable>12</variable>
+											<value>65536</value>
+										</mult>
+										<value>0</value>
+									</eqInt>
+								</condition>
+								<!-- p not in triangle -->
+								<subobject number="1">
+									<vector type="externSubobject">
+										<value>0</value>
+									</vector>
+								</subobject>
+								<!-- else -->
+								<!-- if (y'_1 == 0) -> switch v_1 and v_2 for equiation -->
+								<if><!-- y'_1 != 0 -->
+									<condition>
+										<not>
+											<eqInt>
+												<mult>
+													<variable>9</variable>
+													<value>65536</value>
+												</mult>
+												<value>0</value>
+											</eqInt>
+										</not>
+									</condition>
+									<!-- evalue b = ( (y'_1*x'_3 - x'_1*y'_3) / det(v_2, v_1) -->
+									<function define_variable="13">
+										<subfunction>
+											<div>
+												<sub>
+													<mult>
+														<variable>9</variable>
+														<sub>
+															<variable>1</variable>
+															<variable>3</variable>
+														</sub>
+													</mult>
+													<mult>
+														<sub>
+															<variable>5</variable>
+															<variable>3</variable>
+														</sub>
+														<variable>11</variable>
+													</mult>
+												</sub>
+												<variable>12</variable>
+											</div>
+										</subfunction>
+										<!-- if (0 < b) and (b < 1) -->
+										<if>
+											<condition>
+												<and>
+													<lo>
+														<value>0</value>
+														<variable>13</variable>
+													</lo>
+													<lo>
+														<variable>13</variable>
+														<value>1</value>
+													</lo>
+												</and>
+											</condition>
+											<!-- evalue a = ( y'_3 - b * y'_2 ) / y'_1 -->
+											<function define_variable="14">
+												<subfunction>
+													<div>
+														<sub>
+															<variable>11</variable>
+															<mult>
+																<variable>13</variable>
+																<variable>10</variable>
+															</mult>
+														</sub>
+														<variable>9</variable>
+													</div>
+												</subfunction>
+												<!-- if (0 < a) and ((a + b) < 1) -->
+												<if>
+													<condition>
+														<and>
+															<lo>
+																<value>0</value>
+																<variable>14</variable>
+															</lo>
+															<lo>
+																<add>
+																	<variable>14</variable>
+																	<variable>13</variable>
+																</add>
+																<value>1</value>
+															</lo>
+														</and>
+													</condition>
+													<!-- point p in triangle -->
+													<subobject number="1">
+														<vector type="externSubobject">
+															<value>1</value>
+														</vector>
+													</subobject>
+													<!-- else (a <= 0) or (1 <= (a + b)) ->  p not in triangle -->
+													<subobject number="1">
+														<vector type="externSubobject">
+															<value>0</value>
+														</vector>
+													</subobject>
+												</if>
+											</function>
+											<!-- else (b <= 0) or (1 <= b) ->  p not in triangle -->
+											<subobject number="1">
+												<vector type="externSubobject">
+													<value>0</value>
+												</vector>
+											</subobject>
+										</if>
+									</function>
+									<!-- else if (y'_1 == 0) -> switch v_1 and v_2 for equiation -->
+
+									<if><!-- y'_2 == 0 -->
+										<condition>
+											<eqInt>
+												<mult>
+													<variable>10</variable>
+													<value>65536</value>
+												</mult>
+												<value>0</value>
+											</eqInt>
+										</condition>
+										<!-- y'_1 == y'_2 == 0 -> area of triangle 0 -> no points in triangle -->
+										<subobject number="1">
+											<vector type="externSubobject">
+												<value>0</value>
+											</vector>
+										</subobject>
+										<!-- else evalue b = ( (y'_2*x'_3 - x'_2*y'_3) / ( - det(v_2, v_1) ) -->
+										<function define_variable="13">
+											<subfunction>
+												<div>
+													<sub>
+														<mult>
+															<variable>10</variable>
+															<sub>
+																<variable>1</variable>
+																<variable>3</variable>
+															</sub>
+														</mult>
+														<mult>
+															<sub>
+																<variable>7</variable>
+																<variable>3</variable>
+															</sub>
+															<variable>11</variable>
+														</mult>
+													</sub>
+													<sub>
+														<value>0</value>
+														<variable>12</variable>
+													</sub>
+												</div>
+											</subfunction>
+											<!-- if (0 < b) and (b < 1) -->
+											<if>
+												<condition>
+													<and>
+														<lo>
+															<value>0</value>
+															<variable>13</variable>
+														</lo>
+														<lo>
+															<variable>13</variable>
+															<value>1</value>
+														</lo>
+													</and>
+												</condition>
+												<!-- evalue a = ( y'_3 - b * y'_1 ) / y'_2 -->
+												<function define_variable="14">
+													<subfunction>
+														<div>
+															<sub>
+																<variable>11</variable>
+																<mult>
+																	<variable>13</variable>
+																	<variable>9</variable>
+																</mult>
+															</sub>
+															<variable>10</variable>
+														</div>
+													</subfunction>
+													<!-- if (0 < a) and ((a + b) < 1) -->
+													<if>
+														<condition>
+															<and>
+																<lo>
+																	<value>0</value>
+																	<variable>14</variable>
+																</lo>
+																<lo>
+																	<add>
+																		<variable>14</variable>
+																		<variable>13</variable>
+																	</add>
+																	<value>1</value>
+																</lo>
+															</and>
+														</condition>
+														<!-- point p in triangle -->
+														<subobject number="1">
+															<vector type="externSubobject">
+																<value>1</value>
+															</vector>
+														</subobject>
+														<!-- else (a <= 0) or (1 <= (a + b)) ->  p not in triangle -->
+														<subobject number="1">
+															<vector type="externSubobject">
+																<value>0</value>
+															</vector>
+														</subobject>
+													</if>
+												</function>
+												<!-- else (b <= 0) or (1 <= b) ->  p not in triangle -->
+												<subobject number="1">
+													<vector type="externSubobject">
+														<value>0</value>
+													</vector>
+												</subobject>
+											</if>
+										</function>
+									</if>
+									
+								</if>
+							</if>
+						</function>
+					</function>
+				</function>
+			</function>
+		</main_fib_object>
+	</root>
+</fib_object>

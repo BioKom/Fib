@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fib_object
+			  xmlns:xsd="http://www.w3.org/2001/XMLSchema-instance"
+			  xmlns="http://www.fib-development.org/"
+			  xsd:schemaLocation="http://www.fib-development.org/fib.xsd">
+	<root>
+		<multimedia_info fib_version="3" db_version="3"/>
+		<optionalpart>
+			<pair key="name" value="circle border"/>
+			<pair key="description" value="This object represents a circle border with the middle point (x, y) and radius r."/>
+			<pair key="inVar1::description" value="position of the middle point in dimension 1 (x)"/>
+			<pair key="inVar2::description" value="position of the middle point in dimension 2 (y)"/>
+			<pair key="inVar3::description" value="the radius r"/>
+			<pair key="inVar4::description" value="width of the border line (the border goes from radius r to (r - w); standard value is 1)"/>
+			<pair key="author" value="Betti Oesterholz"/>
+			<pair key="author::email" value="Oesterholz@Fib-Development.org"/>
+			<pair key="copyright" value="LGPL3"/>
+		</optionalpart>
+		<input_variables>
+			<variable number="1" default="0"/>
+			<variable number="2" default="0"/>
+			<variable number="3" default="1"/>
+			<variable number="4" default="1"/>
+		</input_variables>
+		<domains>
+			<inVar number="1">
+				<domainReference subdomain="1">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="2">
+				<domainReference subdomain="2">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<area>
+				<vector elements="2">
+					<naturalNumber max="1" />
+					<vector elements="2">
+						<naturalNumber max="0" />
+						<naturalNumber max="0" />
+					</vector>
+				</vector>
+			</area>
+			<subfunction>
+				<naturalNumber scalingfactor="0.5" max="4"/>
+			</subfunction>
+		</domains>
+		<main_fib_object>
+			<if>
+				<condition>
+					<or>
+						<lo><!-- if radius is negativ -> do nothing -->
+							<variable>3</variable>
+							<value>0</value>
+						</lo>
+						<lo><!-- if border width w is lower 1 -> do nothing -->
+							<variable>4</variable>
+							<value>1</value>
+						</lo>
+					</or>
+				</condition>
+				<point/><!-- do nothing -->
+				<!-- else draw circle -->
+				<function define_variable="5"><!-- evalue inner circle radius ri -->
+					<subfunction> <!-- if border width w is bigger than the radius r -> set inner circle radius ri to 0 -->
+						<if>
+							<lo>
+								<variable>3</variable>
+								<variable>4</variable>
+							</lo>
+							<!-- set border width to radius r -->
+							<value>0</value>
+							<!-- else use given border width w and evalue ri = r - w -->
+							<sub>
+								<variable>3</variable>
+								<variable>4</variable>
+							</sub>
+						</if>
+					</subfunction>
+					<area define_variable="6"><!-- for a = 0 ... r -->
+						<vector type="subarea">
+							<value>0</value>
+							<variable>3</variable>
+						</vector>
+						<function define_variable="7">
+							<!-- b = r^2 - a^2 -->
+							<subfunction>
+								<sub>
+									<exp>
+										<variable>3</variable>
+										<value>2</value>
+									</exp>
+									<exp>
+										<variable>6</variable>
+										<value>2</value>
+									</exp>
+								</sub>
+							</subfunction>
+							<function define_variable="8">
+								<!-- b = ( r^2 - a^2 )^(1/2) -->
+								<subfunction>
+									<if>
+										<lo><!-- 0 < r^2 - a^2 -->
+											<value>0</value>
+											<variable>7</variable>
+										</lo>
+										<!-- b = ( r^2 - a^2 )^(1/2) -->
+										<exp>
+											<variable>7</variable>
+											<value>0.5</value>
+										</exp>
+										<!-- else b = 0 -->
+										<value>0</value>
+									</if>
+								</subfunction>
+								<function define_variable="9">
+									<subfunction><!-- evalue inner border bi -->
+										<if>
+											<lo><!-- a < ri -->
+												<variable>6</variable>
+												<variable>5</variable>
+											</lo>
+											<!-- bi = ( ri^2 - a^2 )^(1/2) + 1 -->
+											<add>
+												<exp>
+													<sub>
+														<exp>
+															<variable>5</variable>
+															<value>2</value>
+														</exp>
+														<exp>
+															<variable>6</variable>
+															<value>2</value>
+														</exp>
+													</sub>
+													<value>0.5</value>
+												</exp>
+												<value>1</value>
+											</add>
+											<!-- else no inner border set bi to 0 -->
+											<value>0</value>
+										</if>
+									</subfunction>
+									<!-- right half of circle -->
+									<function define_variable="10">
+										<!-- x_r = x + a -->
+										<subfunction>
+											<add>
+												<variable>1</variable>
+												<variable>6</variable>
+											</add>
+										</subfunction>
+										<!-- left half of circle -->
+										<function define_variable="11">
+											<!-- x_l = x - a -->
+											<subfunction>
+												<sub>
+													<variable>1</variable>
+													<variable>6</variable>
+												</sub>
+											</subfunction>
+											<function define_variable="12">
+												<!-- y_min = y - b -->
+												<subfunction>
+													<sub>
+														<variable>2</variable>
+														<variable>8</variable>
+													</sub>
+												</subfunction>
+												<function define_variable="13">
+													<!-- y_max = y + b -->
+													<subfunction>
+														<add>
+															<variable>2</variable>
+															<variable>8</variable>
+														</add>
+													</subfunction>
+													<function define_variable="14">
+														<!-- yi_min = y - bi -->
+														<subfunction>
+															<sub>
+																<variable>2</variable>
+																<variable>9</variable>
+															</sub>
+														</subfunction>
+														<function define_variable="15">
+															<!-- yi_max = y + bi -->
+															<subfunction>
+																<add>
+																	<variable>2</variable>
+																	<variable>9</variable>
+																</add>
+															</subfunction>
+															<area define_variable="16"><!-- for y go from y_min to yi_min and from yi_max to y_max -->
+																<vector type="subarea">
+																	<variable>12</variable>
+																	<variable>14</variable>
+																</vector>
+																<vector type="subarea">
+																	<variable>15</variable>
+																	<variable>13</variable>
+																</vector>
+																<list>
+																	<point><!-- upper half of circle -->
+																		<vector type="position">
+																			<variable>10</variable><!-- x_r -->
+																			<variable>16</variable>
+																		</vector>
+																	</point>
+																	<point><!-- lower half of circle -->
+																		<vector type="position">
+																			<variable>11</variable><!-- x_l -->
+																			<variable>16</variable>
+																		</vector>
+																	</point>
+																</list>
+															</area>
+														</function>
+													</function>
+												</function>
+											</function>
+										</function>
+									</function>
+								</function>
+							</function>
+						</function>
+					</area>
+				</function>
+			</if>
+		</main_fib_object>
+	</root>
+</fib_object>

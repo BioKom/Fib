@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fib_object
+xmlns:xsd="http://www.w3.org/2001/XMLSchema-instance"
+xmlns="http://www.biokom.info/"
+xsd:schemaLocation="http://www.biokom.info/fib.xsd">
+<root>
+	<domains>
+		<dim count="2">
+			<dimension number="1" direction="horizontal"/>
+			<dimension number="2" direction="vertical"/>
+			<vector elements="2">
+				<naturalNumber max="255" />
+				<naturalNumber max="255" />
+			</vector>
+		</dim>
+	</domains>
+	<main_fib_object>
+		<list>
+			<list>
+				<point>
+					<vector type="position">
+						<value number="1">1</value>
+						<value number="2">2</value>
+					</vector>
+				</point>
+				<point>
+					<vector type="position">
+						<value number="1">3</value>
+						<value number="2">4</value>
+					</vector>
+				</point>
+				<point>
+					<vector type="position">
+						<value number="1">5</value>
+						<value number="2">6</value>
+					</vector>
+				</point>
+			</list>
+			<list>
+				<point>
+					<vector type="position">
+						<value number="1">7</value>
+						<value number="2">8</value>
+					</vector>
+				</point>
+				<point>
+					<vector type="position">
+						<value number="1">9</value>
+						<value number="2">10</value>
+					</vector>
+				</point>
+				<point>
+					<vector type="position">
+						<value number="1">11</value>
+						<value number="2">12</value>
+					</vector>
+				</point>
+			</list>
+			<list>
+				<point>
+					<vector type="position">
+						<value number="1">13</value>
+						<value number="2">14</value>
+					</vector>
+				</point>
+				<point>
+					<vector type="position">
+						<value number="1">15</value>
+						<value number="2">16</value>
+					</vector>
+				</point>
+				<point>
+					<vector type="position">
+						<value number="1">17</value>
+						<value number="2">18</value>
+					</vector>
+				</point>
+			</list>
+		</list>
+	</main_fib_object>
+</root>
+</fib_object>

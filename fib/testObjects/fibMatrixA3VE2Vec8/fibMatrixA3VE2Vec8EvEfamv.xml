@@ -1,0 +1,83 @@
+<data>
+	<matrix  dimensions="3">
+		<defined_variables>
+			<variable>6</variable>
+			<variable>7</variable>
+			<variable>8</variable>
+			<variable>9</variable>
+			<variable>10</variable>
+		</defined_variables>
+		<areas>
+			<vector type="area">
+				<value>2</value>
+				<value>3</value>
+			</vector>
+			<vector type="area">
+				<value>1</value>
+				<value>3</value>
+			</vector>
+			<vector type="area">
+				<value>9</value>
+				<value>8</value>
+			</vector>
+		</areas>
+		<values>
+			<vector type="matrix">
+				<value>1</value>
+				<value>1</value>
+			</vector>
+			<vector type="matrix">
+				<value>2</value>
+				<value>4</value>
+			</vector>
+			<vector type="matrix">
+				<value>3</value>
+				<value>6</value>
+			</vector>
+			<vector type="matrix">
+				<value>4</value>
+				<value>8</value>
+			</vector>
+			<vector type="matrix">
+				<value>5</value>
+				<value>10</value>
+			</vector>
+			<vector type="matrix">
+				<value>6</value>
+				<value>12</value>
+			</vector>
+			<vector type="matrix">
+				<value>7</value>
+				<value>14</value>
+			</vector>
+			<vector type="matrix">
+				<value>8</value>
+				<value>16</value>
+			</vector>
+		</values>
+		<property>
+			<vector type="property.colorRGB">
+				<variable>6</variable>
+				<variable>7</variable>
+				<variable>8</variable>
+			</vector>
+			<property>
+				<vector type="property.colorRGB">
+					<variable>8</variable>
+					<variable>9</variable>
+					<variable>10</variable>
+				</vector>
+				<point>
+					<vector type="position">
+						<variable>6</variable>
+						<variable>7</variable>
+						<variable>8</variable>
+						<variable>9</variable>
+						<variable>10</variable>
+					</vector>
+				</point>
+			</property>
+		</property>
+	</matrix>
+</data>
+

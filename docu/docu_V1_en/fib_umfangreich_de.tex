@@ -1,0 +1,259 @@
+% Autor: Betti Oesterholz
+% erstellt: 05.03.2008
+% Haupdokument Fib umfangreich V1.0
+% Dies ist das Haupdokument der der umfangreichen, deutschen
+% Fib -Dokumentation.
+%
+% Copyright (c) 2008 Betti Oesterholz
+%
+% Permission is granted to copy, distribute and/or modify this document
+% under the terms of the GNU Free Documentation License, Version 1.2 or
+% any later version published by the Free Software Foundation;
+% with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+%
+% A copy of the license is included in the file ``fdl.tex'' .
+%
+
+
+
+\documentclass[11pt,a4paper]{article}
+\usepackage{ngerman} % Silbentrennung nach neuer Rechtschreibung
+\usepackage[T1]{fontenc} % Type 1 Schriften
+\usepackage{times} % Da die Standard-LaTeX-Schrift bei mir mit Acrobat nicht funkt.
+\usepackage[ansinew]{inputenc} % Verwendung von Umlauten
+\usepackage{scrpage2} % Seitenformat
+\usepackage{titletoc}
+\usepackage{titlesec}
+\usepackage{listings} % Programm-Listing
+%\usepackage [usetoc]{titleref} 
+\usepackage{graphicx} % Einbindung von Graphiken
+\usepackage{url} % URLs durch \url{}
+\usepackage{bibgerm} % deutsche Bibliographie
+%\usepackage{txfonts}%Paket fr das nat Symbol
+\usepackage{multicol}
+\usepackage{makeidx}%for the index
+\usepackage{longtable}
+%\usepackage{amsmath}%mathematikumgebung {equation*} usw.
+
+% Seitenstil festlegen
+\pagestyle{useheadings}%or: headings
+
+% n�hste vier Zeilen: Format des Inhaltsverzeichnisses
+%\titlespacing{\section}{0pt}{5cm}{5cm}%spacing by sections {in front}{above}{below}
+%\dottedcontents{section}[1.5em]{\addvspace{1.0em}}{1.3em}{0.7pc}
+%\dottedcontents{subsection}[3.8em]{}{2.2em}{0.7pc}
+%\dottedcontents{subsubsection}[7.0em]{}{3.1em}{0.7pc}
+
+%\setcounter{secnumdepth}{4}%%nummerierung der Unterabschnitte bis Tiefe
+
+%Pfad fuer Bilder
+\graphicspath{{images}{./material_grundlagen/}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Definitionen fr das Verwenden von Listings
+
+\newtheorem{Def}{Definition}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Beginn des Dokuments
+
+\makeindex 
+
+\begin{document}
+
+\setlength{\unitlength}{1cm} %definition of the basislength in pictures
+
+\title{Das Fib -Multimediaformat}
+\author{Betti Österholz}
+\date{\today}
+
+\begin{titlepage}
+	\begin{center}
+	\ \vspace{2.5cm} \\
+	\Huge\bf Das Fib -Multimediaformat\\\vspace{3cm}
+	\LARGE Betti Österholz\\\vspace{0.5cm}
+	\large BioKom@gmx.de\\\vspace{0.5cm}
+	\large www.BioKom.info\\\vspace{0.5cm}
+	Potsdam, \today\\\vspace{5.5cm}
+	\end{center}
+	
+	\noindent
+Copyright (c) 2010  Betti Österholz
+\newline\newline
+Permission is granted to copy, distribute and/or modify this document under the terms of the GNU Free Documentation License, Version 1.2 or any later version published by the Free Software Foundation; with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+
+A copy of the license is included in the section entitled "`GNU Free Documentation License"'.
+\end{titlepage}
+
+\renewcommand{\sectionmark}[1]{\markboth{#1}{}}
+\pagenumbering {Roman}
+\automark{section}
+\pagestyle{scrheadings} % individ. Seitenlayout
+\setheadsepline{0.4pt}
+\ihead{} % Titelzeile innen
+\ohead{} % Titelzeile aussen
+\chead{\slshape \headmark}  % Titelzeile mitte
+\cfoot{\thepage} % Fusszeile mitte
+
+% braucht man ein Inhaltsverzeichnis, so sind die n�hsten drei Zeilen auszukommentieren
+%\setcounter{tocdepth}{3}
+%\tableofcontents
+%\clearpage
+
+% Vorschlag fr Titelzeile:
+% Bei umfangreicheren Dokumenten
+\ihead{\slshape \headmark } % Darstellung von Sectionnummer und -name
+\ohead{}
+\chead{}
+\clearpage
+
+\tableofcontents
+
+\clearpage
+\pagenumbering{arabic}
+
+\part{Einleitung}
+
+Das Fib -Multimediaformat dient zum Speichern von Multimediainformationen in strukturierter, funktionaler und hierarchischer Form. Die Struktur der Fib- Multimediaformat unterstützt die Objektsicht auf Dinge. Das Fib -Multimediaformat ist sehr mächtig, da Ausdrücke kombiniert und verschachtelt werden können. Der Speicheraufwand eines Multimediobjekts in Fib ist vielmehr von dessen Komplexität abhängig als von dessen Größe (im Sinne von Ausdehnung in den Dimension, also Beispielsweise die Höhe und Breite bei Bildern) wie bei üblichen Speicherformaten.
+
+Die zweite wichtige Komponente des Fib -Systems ist der genetische Algorithmus zum Kodieren in und Komprimieren von Fib -Multimediaobjekten. Der große Vorteil dieses ist, dass die Kodierung und Komprimierung nicht mehr an einem bestimmten Algorithmus gebunden ist, sondern dass die eigendlichen Kodierungs- und Komprimierungsalgorithmen im genetischen Algorithmus als Operationen eingebunden werden, welche leicht hinzugefügt und geändert werden können. Dadurch ist es leicht neue Kodierungs- und Komprimierungsideen einzubringen und eine Vielzahl von diesen auf ein Multimediaobjekt anzuwenden.
+
+In diesem Sinne baut das Fib -Multimediasystem auf Vielfalt und nicht auf Spezialisierung auf.
+
+
+\section{Der Ausgangspunkt}
+
+Ein (natürliches) Bild besteht im allgemeinen nicht aus einer Aneinanderreihung zusammenhangloser Pixel (Punkte mit bestimmten Farben), sondern zeigt z.B. Objekte die gegeneinander abgegrenzt sind und eine Textur haben. Solche Objekte (z.B. Kreise, Linien aber auch komplexere Objekte) wiederholen sich oftmals auf Bildern, sei es als selbstähnliche Kopie oder transformierte Kopie (z.B. Blätter von Bäumen oder Latten im Lattenzaun). Das Gleiche gilt für andere Inhalte von Multimediadaten, wie den Ton.
+
+Des weiteren können Elemente die durch Multimediadaten gezeigt werden sollen oft miteinander assoziiert oder gruppiert werden, z.B. gehören Geräusche oft zu bestimmten dargestellten Objekten (z.B. Entenschnabel), Objekt gehören zu andern Objekten (z.B. Entenschnabel zur Ente) und mehrere Objekte  können zu einem Objekt (z.B. eine Wiese mit einer Entengruppe) gruppiert werden.
+
+
+\section{Problem}
+\label{secProblem}
+
+Wie können Informationen über Objekte aus einem Bild extrahieren werden, das in Form einer Matrix von Pixeln gegeben ist? (Das Bild ist als Pixelbild gegeben, weil es Beispielsweise durch Digitalfotografie über einem Fotochip aufgenommen wurde.)
+
+Diese extrahierten Information kann dann z.B. zur Komprimierung benutzt werden, da die Informationen, die benötigt werden um ein Objekt zu kodieren, maximal die Informationen aller Punkte des Objekts mit ihren Farben entspricht (diese Kodierung ist ja gegeben). Wird Beispielsweise ein grünes Dreieck im Bild gefunden, das aus 200 grünen Punkten besteht, reicht es im Idealfall einfach das Dreieck bzw. die Punkte durch ein Dreieckobjekt darzustellen, für dass nur seine drei Ecken und seine Farbe benötigt werden.
+
+Man kann mit Information über Objekte im Bild aber auch Objekte auf anderen (Teil-) Bildern wiedererkennen. Oder die Informationen können genutzt werden, um das Bild zu manipulieren, z.B. um Objekte als Ganzes zu entfernen, kopieren oder einzufügen.
+
+
+\section{Lösungsidee}
+\label{secSolution}
+
+Es wird eine ``Multimediasprache'' definiert, in der Objekte, Transformationen und Zusammenhänge zwischen diesen definieren werden können. Mit Hilfe dieser entwirft ein Algorithmus (z.B. aus der KI) dann Programme (in der Multimediasprache), testet und verändert diese, so dass sie ein Multimediaobjekt darstellen, das dem zu kodierendem Multimediaobjekt ähnlich genug ist (was dies ist, sollte spezifiziert werden). Dabei können an dieses Programm noch weitere Einschränkungen gestellt werden, z.B. Kürze und Abarbeitungsgeschwindigkeit des Programms. Mit diesen Kriterien kann dann feststellen werden, wie ``gut'' das Programm ist.
+
+Unter anderem bieten sich dafür genetische Algorithmen/Programmierung an. Da bei genetischen Algorithmen die einzelnen Parameter, Elemente und Konstrukte der Sprache durch Mutation erzeugt und angepasst werden können und die ``besten'' Programme weiterentwickelt werden. Mit ``crossing over'', Austausch von Programmcode zwischen Programmen oder Programmstellen, kann der Umstand berücksichtigt werden, dass die Objekte an anderen Stellen eventuell nur verändert (z.B. vergrößert) wiederverwendet werden.
+
+
+\section{This document ...}
+
+
+
+
+\section{Einteilung dieses Projekts}
+
+Der Aufbau dieses Dokuments richtet sich nach der Projektstruktur.
+
+Das Projekt is hirarchisch aufgebaut und gliedert sich in zwei große Komponenten.
+Die Komponenten sind die Multimediabeschreibungssprache Fib und der genetische Algorithmus, um effizente Fib -Kodierungen von Multimediaobjekten zu erzeugen.
+
+Hirarchisch ist das Projekt, also auch je die Komponenten, in mehrere Ebenen aufgebaut, wobei eine höhere Ebene auf den unteren Aufbauen. Wobei die Ebenen dabei immer detailierter werden.
+\bigskip\noindent
+Diese Ebenen sind:
+\begin{enumerate}
+ \item Eine Zielbeschreibung der Komponenten (siehe Abschnitt \ref{secProblem} auf Seite \pageref{secProblem}, sowie den folgenden Abschnitt \ref{secSolution} und für Fib Abschnitt \ref{secFibLanguageRequirements} auf Seite \pageref{secFibLanguageRequirements} )
+ \item Die theoretische Beschreibung der Komponente: Diese beschreibt die Komponenten ohne auf deren möglich Realisierung einzugehen. (siehe für die Fib -Sprache Abschnitt \ref{partFibLanguage} auf Seite \pageref{partFibLanguage} und für den denetischen Algorithmus Abschnitt \ref{secGeneticAlgorithmDesign} auf Seite \pageref{secGeneticAlgorithmDesign} )
+ \item Einen Entwurf der Realisierung der Komponente: Dies ist ein Entwurf für die Implementierung der Komponenten. Er kann von der tatsächlichen Implementierung abweichen und soll nur den algemeinen Aufbau sowie die Schnittstellen beschreiben. Implementierungen sollten sich nach diesem richten, so dass sie auf einem allgemeinen Standard fußen. Der Entwurf sollte aber Implementierungen genug weitere Freiräume lassen. (siehe Allgemein Abschnitt \ref{partFibProjectstructurImplementation} auf Seite \pageref{partFibProjectstructurImplementation}; für die Fib -Sprache Abschnitt \ref{partImplementationFib} auf Seite \pageref{partImplementationFib} und Abschnitt \ref{partFileFormat} auf Seite \pageref{partFileFormat}; sowie für den denetischen Algorithmus Abschnitt \ref{partImplementationAlgorithmus} auf Seite \pageref{partImplementationAlgorithmus}, Abschnitt \ref{partImplementationAlgorithmusFib} auf Seite \pageref{partImplementationAlgorithmusFib} und Abschnitt \ref{partFibOperations} auf Seite \pageref{partFibOperations})
+ \item Die Dokumentation der Realisierung: Sie umfast die Beschreibung der Schnittstellen der konkreten Implementierung. Eine solche Dokumentation ist nicht in diesem Dokument enthalten und ist zur jeweiligen Realisierung zu halten. In der konkreten Realisierung in C++ zu diesem Dokument, gibt es eine Dokumentation die mit Doxygen erstellt wird und im Doxygen Java Stil erfolgt.
+ \item Die konkrete Realisierungen: Auch hier ist eine Dokumentation der Funktionsweise des Quellcodes sinnvoll.
+\end{enumerate}
+
+
+
+\section{Einteilung dieses Dokuments}
+
+In diesem Abschnitt wird eine Übersicht über den Inhalt und Aufbau dieses Dokuments gegeben.
+
+
+%TODO Anpassen und Erweitern
+
+
+\subsection{Entwurf der Multimediabeschreibungssprache}
+
+Der Teil \ref{partFibLanguage} auf Seite \pageref{partFibLanguage} befasst sich mit der Multimediabeschreibungssprache.
+
+In Abschnitt \ref{secFibElements} auf Seite \pageref{secFibElements} werden die einzelnen Elemente und deren mögliche Beziehungen zueinander spezifiziert.
+
+Der Abschnitt \ref{secFibDatabase} auf Seite \pageref{secFibDatabase} geht auf die Datenbankfunktion für Fib (-Objekte) ein.
+
+Im nachfolgenden Abschnitt \ref{secDefinitionsForFib} auf Seite \pageref{secDefinitionsForFib} werden Definitionen für die Fib -Multimediasprache aufgestellt, die einen Umgang mit ihr erleichtern sollen.
+
+
+
+\subsection{Entwurf des genetischen Algorithmus}
+
+Im Teil \ref{secGeneticAlgorithmDesign} auf Seite \pageref{secGeneticAlgorithmDesign} wird der Entwurf des genetische Algorithmus beschrieben. Dabei geht es vor allem um die grundlegenden Ideen hinter dem genetische Algorithmus.
+
+
+\subsection{Dateiformat}
+
+Im Teil \ref{partFileFormat} auf Seite \pageref{partFileFormat} werden die Dateiformate für die Fib -Multimediasprache dargestellt. Diese sind unabhängig vom Programmsystem oder der Rechnerarchitektur.
+
+
+
+%TODO einkommentieren
+
+%\input{fib_grundlagen}%TODO
+\input{fib_sprachbeschreibung}%TODO
+%\input{fib_aussagen_theoretische}%TODO
+%\input{fib_annahmen}%TODO
+\input{fib_enviroment}%TODO
+\input{fib_dateiformate}%TODO
+\input{fib_projektstruktur}%TODO
+%\input{fib_sprachimplementation}%TODO 
+%\input{enviroment_implementation}%TODO
+%\input{fib_enviroment_implementation}%TODO
+%\input{fib_konvertierungsfunktionen}%TODO
+%\input{fib_vorgehensweisen}%TODO
+%\input{fib_ergebnisse}%TODO
+%TODO: \input{fib_player}
+%\input{fib_algorithmen}%TODO
+%\input{fib_operatoren}%TODO
+
+\newpage
+\part{Anhang}
+
+%\section{Implemtierungskonventionen}
+
+%\input{implKonventions}%TODO
+
+\input{gpl-3_0}
+\input{lgpl-3_0}
+
+\input{fdl}
+
+
+\clearpage
+\nocite{CI}\nocite{ECDF00}\nocite{ECTF}\nocite{LS}\nocite{UZ}\nocite{WT}\nocite{GADA}\nocite{GP}\nocite{EACD}\nocite{CTW}\nocite{CE}\nocite{GEA}\nocite{projBildf}\nocite{ESF}\nocite{GPFD}\nocite{AEFR}\nocite{Genocop}\nocite{HHGuideEC}\nocite{WOBC}\nocite{CMIT}\nocite{LDD_2007}\nocite{HKI2003}\nocite{CgBv2007}\nocite{VSys2003}\nocite{SEngPP2005}\nocite{CPPPR2004}\nocite{CC2004}\nocite{Russell2003}
+
+\bibliographystyle{gerplain}
+\bibliography{literatur}
+
+%TODO comment in
+\index{Multimediainformationen|see{root -Element!Multimediainformationen}}
+\index{Optionalerteil|see{root -Element!Optionalerteil}}
+\index{Definitionsbereiche|see{root -Element!Definitionsbereiche}}
+%\index{Definitionsbereiche|see{cDomain}}
+\index{Unterfunktionen|see{Funktion}}
+\index{Individuum|see{cIndividual}}
+%\index{cIndividual|see{Individuum}}
+%\index{Kleiner Vergleich|see{cConditionLower}}
+
+
+\clearpage
+\label{AbsIndex}
+\printindex 
+
+\end{document}

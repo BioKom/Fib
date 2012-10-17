@@ -1,0 +1,63 @@
+<data>
+	<function define_variable="2">
+		<subfunction>
+			<abs>
+				<variable>1</variable>
+			</abs>
+		</subfunction>
+		<property>
+			<vector type="property.colorRGB">
+				<variable number="1">1</variable>
+				<variable number="2">2</variable>
+				<value number="3">3</value>
+			</vector>
+			<point>
+				<vector type="position">
+					<variable number="1">1</variable>
+					<variable number="2">2</variable>
+				</vector>
+			</point>
+		</property>
+	</function>
+	<function define_variable="2">
+		<subfunction>
+			<abs>
+				<variable>1</variable>
+			</abs>
+		</subfunction>
+		<property>
+			<vector type="property.colorRGB">
+				<variable number="1">1</variable>
+				<variable number="2">2</variable>
+				<value number="3">3</value>
+			</vector>
+			<point>
+				<vector type="position">
+					<variable number="1">1</variable>
+					<variable number="2">2</variable>
+				</vector>
+			</point>
+		</property>
+	</function>
+	<function define_variable="2">
+		<subfunction>
+			<abs>
+				<variable>1</variable>
+			</abs>
+		</subfunction>
+		<property>
+			<vector type="property.colorRGB">
+				<variable number="1">1</variable>
+				<variable number="2">2</variable>
+				<value number="3">3</value>
+			</vector>
+			<point>
+				<vector type="position">
+					<variable number="1">1</variable>
+					<variable number="2">2</variable>
+				</vector>
+			</point>
+		</property>
+	</function>
+</data>
+

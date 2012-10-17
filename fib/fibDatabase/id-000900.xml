@@ -1,0 +1,431 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fib_object
+			  xmlns:xsd="http://www.w3.org/2001/XMLSchema-instance"
+			  xmlns="http://www.fib-development.org/"
+			  xsd:schemaLocation="http://www.fib-development.org/fib.xsd">
+	<root>
+		<multimedia_info fib_version="3" db_version="2"/>
+		<optionalpart>
+			<pair key="name" value="evalue fraction"/>
+			<pair key="description" value="This object evalues wich part / fraction of a given pixel is below a line f(x) = a_0 + a_1 * x (e. g. for antialising). (A pixel (x,y) goes in the first dimension from x to x+1 and in the second dimension from y to y+1 .)"/>
+			<pair key="inVar1::description" value="the first parameter a_0 for the line f(x)"/>
+			<pair key="inVar2::description" value="the slope or gradien (second parameter) a_1 for the line f(x)"/>
+			<pair key="inVar3::description" value="position of the pixle in dimension 1 (x)"/>
+			<pair key="inVar4::description" value="position of the pixle in dimension 2 (y)"/>
+			<pair key="subObj1::description" value="the object for the to return part / fraction of a given pixel which is below a line f(x) = a_0 + a_1 * x"/>
+			<pair key="subObj1::outVar1::description" value="the part / fraction of a given pixel which is below a line f(x) = a_0 + a_1 * x"/>
+			<pair key="author" value="Betti Oesterholz"/>
+			<pair key="author::email" value="Oesterholz@Fib-Development.org"/>
+			<pair key="copyright" value="LGPL3"/>
+		</optionalpart>
+		<input_variables>
+			<variable number="1" default="0"/>
+			<variable number="2" default="0"/>
+			<variable number="3" default="0"/>
+			<variable number="4" default="0"/>
+		</input_variables>
+		<domains>
+			<inVar number="3">
+				<domainReference subdomain="1">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="4">
+				<domainReference subdomain="2">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<externSubobject number="1">
+				<vector elements="1">
+					<!--actually any number is possible;
+						the next line is just a space holder-->
+					<naturalNumberB bit="0" />
+				</vector>
+			</externSubobject>
+			<externObject>
+				<vector elements="4">
+					<integer min="1" max="1" /><!--Identifier-->
+					<integer min="4" max="4" /><!--number input values-->
+					<naturalNumber max="1" /><!--number subobjects-->
+					<naturalNumber max="1" /><!--number output values-->
+				</vector>
+			</externObject>
+			<externObjectInput identifier="1">
+				<vector elements="4">
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+				</vector>
+			</externObjectInput>
+			<subfunction>
+				<integer min="-1" max="2" />
+			</subfunction>
+		</domains>
+		<main_fib_object>
+			<!--step 1: convert problem so that all lines are rising
+				( if (a_1 < 1) then a*_1 = -1 * a_1 and x* = -1 * x ),
+				so that for step 2 just 4 cases remain (out of 8)
+			step 2: seperate the problem into 4 cases, depending on which
+				border lines of the pixel are intersected by the line f:
+				- case 1 intersecting bottom and top border
+				- case 2 intersecting bottom and right border (fraction given by triangle area)
+				- case 3 intersecting left and top border (fraction given by 1 minus triangle area)
+				- case 4 intersecting left and right border
+			-->
+			<if><!--positive slope a_1 do nothing else convert problem-->
+				<condition>
+					<not>
+						<lo>
+							<variable>2</variable>
+							<value>0</value>
+						</lo>
+					</not>
+				</condition>
+				<obj identifier="1">
+					<vector type="externObjectInput">
+						<variable>1</variable>
+						<variable>2</variable>
+						<variable>3</variable>
+						<variable>4</variable>
+					</vector>
+					<subobject>
+						<output_variables>
+							<variable>5</variable>
+						</output_variables>
+						<subobject number="1">
+							<vector type="externSubobject">
+								<variable>5</variable>
+							</vector>
+						</subobject>
+					</subobject>
+				</obj>
+				<!--else negative slope a_1-> a*_1 = -1 * a_1 and x* = -1 * x-->
+				<function define_variable="5">
+					<!-- a*_1 = -1 * a_1 -->
+					<subfunction>
+						<mult>
+							<variable>2</variable>
+							<value>-1</value>
+						</mult>
+					</subfunction>
+					<function define_variable="6">
+						<!-- x* = -1 * x - 1 -->
+						<subfunction>
+							<sub>
+								<mult>
+									<variable>3</variable>
+									<value>-1</value>
+								</mult>
+								<value>1</value>
+							</sub>
+						</subfunction>
+						<obj identifier="1">
+							<vector type="externObjectInput">
+								<variable>1</variable>
+								<variable>5</variable>
+								<variable>6</variable>
+								<variable>4</variable>
+							</vector>
+							<subobject>
+								<output_variables>
+									<variable>7</variable>
+								</output_variables>
+								<subobject number="1">
+									<vector type="externSubobject">
+										<variable>7</variable>
+									</vector>
+								</subobject>
+							</subobject>
+						</obj>
+					</function>
+				</function>
+			</if>
+		</main_fib_object>
+		<sub_roots>
+			<sub_root identifier="1">
+				<root>
+					<optionalpart>
+						<pair key="description" value="This object evalues wich part / fraction of a given pixel is below a line f(x) = a_0 + a_1 * x (e. g. for antialising), with a positive slope a_1 . It is a help object for the main Fib object."/>
+						<pair key="inVar1::description" value="the first parameter a_0 for the line f(x)"/>
+						<pair key="inVar2::description" value="the positive slope or gradien (second parameter) a_1 for the line f(x)"/>
+						<pair key="inVar3::description" value="position of the pixle in dimension 1 (x)"/>
+						<pair key="inVar4::description" value="position of the pixle in dimension 2 (y)"/>
+						<pair key="subObj1::description" value="the object for the to return part / fraction of a given pixel which is below a line f(x) = a_0 + a_1 * x"/>
+						<pair key="subObj1::outVar1::description" value="the part / fraction of a given pixel which is below a line f(x) = a_0 + a_1 * x"/>
+					</optionalpart>
+					<input_variables>
+						<variable number="1" default="0"/>
+						<variable number="2" default="0"/>
+						<variable number="3" default="0"/>
+						<variable number="4" default="0"/>
+					</input_variables>
+					<domains>
+						<inVar number="3">
+							<domainReference subdomain="1">
+								<dim count="2">
+									<dimension number="1" direction="anywhere"/>
+									<dimension number="2" direction="anywhere"/>
+								</dim>
+							</domainReference>
+						</inVar>
+						<inVar number="4">
+							<domainReference subdomain="2">
+								<dim count="2">
+									<dimension number="1" direction="anywhere"/>
+									<dimension number="2" direction="anywhere"/>
+								</dim>
+							</domainReference>
+						</inVar>
+						<externSubobject number="1">
+							<vector elements="1">
+								<!--actually any number is possible;
+									the next line is just a space holder-->
+								<naturalNumberB bit="0" />
+							</vector>
+						</externSubobject>
+					</domains>
+					<main_fib_object>
+						<!--step 2: seperate the problem into 4 cases, depending on which
+						border lines of the pixel are intersected by the line f:
+						- case 1 intersecting bottom and top border
+						- case 2 intersecting bottom and right border (fraction given by triangle area)
+						- case 3 intersecting left and top border (fraction given by 1 minus triangle area)
+						- case 4 intersecting left and right border
+						-->
+						<function define_variable="5">
+							<!--evalue f(x) = a_0 + a_1 * x = left border -->
+							<subfunction>
+								<add>
+									<variable>1</variable>
+									<mult>
+										<variable>2</variable>
+										<variable>3</variable>
+									</mult>
+								</add>
+							</subfunction>
+							<if><!-- if y + 1 <= f(x) -> line above pixle -> area is 1 -->
+								<condition>
+									<not>
+										<lo>
+											<variable>5</variable>
+											<add>
+												<variable>4</variable>
+												<value>1</value>
+											</add>
+										</lo>
+									</not>
+								</condition>
+								<subobject number="1">
+									<vector type="externSubobject">
+										<value>1</value>
+									</vector>
+								</subobject>
+								<function define_variable="6">
+									<!--evalue f( x+1 ) = a_0 + a_1 * (x+1) = f( x ) + a_1 = right border -->
+									<subfunction>
+										<add>
+											<variable>5</variable>
+											<variable>2</variable>
+										</add>
+									</subfunction>
+									<if><!-- if f(x+1) <= y -> line below pixle -> area is 0 -->
+										<condition>
+											<not>
+												<lo>
+													<variable>4</variable>
+													<variable>6</variable>
+												</lo>
+											</not>
+										</condition>
+										<subobject number="1">
+											<vector type="externSubobject">
+												<value>0</value>
+											</vector>
+										</subobject>
+										<!-- line intersecting pixle -->
+										<if><!-- if f(x) < y -> intersecting bottom -->
+											<condition>
+												<lo>
+													<variable>5</variable>
+													<variable>4</variable>
+												</lo>
+											</condition>
+											<!-- intersecting bottom -->
+											<function define_variable="7">
+												<!--evalue intersection with bottom border: f( y ) = (y - a_0) / a_1 -->
+												<subfunction>
+													<div>
+														<sub>
+															<variable>4</variable>
+															<variable>1</variable>
+														</sub>
+														<variable>2</variable>
+													</div>
+												</subfunction>
+												<if><!-- if f( x+1 ) < y + 1 -> not intersecting top border -> intersecting right border -->
+													<condition>
+														<lo>
+															<variable>6</variable>
+															<add>
+																<variable>4</variable>
+																<value>1</value>
+															</add>
+														</lo>
+													</condition>
+													<!--- case 2 intersecting bottom and right border (fraction given by triangle area)-->
+													<function define_variable="8">
+														<!-- A = ( ( 1 - ( f(y) - x ) ) * ( f( x + 1) - y ) ) / 2 -->
+														<subfunction>
+															<div>
+																<mult>
+																	<sub>
+																		<value>1</value>
+																		<sub>
+																			<variable>7</variable>
+																			<variable>3</variable>
+																		</sub>
+																	</sub>
+																	<sub>
+																		<variable>6</variable>
+																		<variable>4</variable>
+																	</sub>
+																</mult>
+																<value>2</value>
+															</div>
+														</subfunction>
+														<subobject number="1">
+															<vector type="externSubobject">
+																<variable>8</variable>
+															</vector>
+														</subobject>
+													</function>
+													<!-- else case 1 intersecting bottom and top border -->
+													<function define_variable="8">
+														<!-- A = (1 - f( y + 1 )) + ( f( y + 1 ) - f( y ) ) / 2
+																= 1 - f( y + 1 ) + f( y + 1 ) / 2 - f( y ) / 2
+																= 1 - f( y + 1 ) / 2 - f( y ) / 2
+																= 1 - ( f( y ) + f( y + 1 ) ) / 2 - x-->
+														<subfunction>
+															<sub>
+																<value>1</value>
+																<sub>
+																	<div>
+																		<add>
+																			<variable>7</variable>
+																			<!--evalue intersection with top border: f( y + 1 ) = ( (y + 1) - a_0) / a_1 -->
+																			<div>
+																				<sub>
+																					<add>
+																						<variable>4</variable>
+																						<value>1</value>
+																					</add>
+																					<variable>1</variable>
+																				</sub>
+																				<variable>2</variable>
+																			</div>
+																		</add>
+																		<value>2</value>
+																	</div>
+																	<variable>3</variable>
+																</sub>
+															</sub>
+														</subfunction>
+														<subobject number="1">
+															<vector type="externSubobject">
+																<variable>8</variable>
+															</vector>
+														</subobject>
+													</function>
+												</if>
+											</function>
+										<!-- else f(x) > y -> not intersecting bottom -->
+											<if><!-- if f( x+1 ) < y + 1 -> not intersecting top border -> intersecting right border -->
+												<condition>
+													<lo>
+														<variable>6</variable>
+														<add>
+															<variable>4</variable>
+															<value>1</value>
+														</add>
+													</lo>
+												</condition>
+												<!-- case 4 intersecting left and right border -->
+												<function define_variable="7">
+													<!-- A = ( f( x ) + f( x + 1 )) / 2 - y-->
+													<subfunction>
+														<sub>
+															<div>
+																<add>
+																	<variable>5</variable>
+																	<variable>6</variable>
+																</add>
+																<value>2</value>
+															</div>
+															<variable>4</variable>
+														</sub>
+													</subfunction>
+													<subobject number="1">
+														<vector type="externSubobject">
+															<variable>7</variable>
+														</vector>
+													</subobject>
+												</function>
+												<!-- else case 3 intersecting left and top border (fraction given by 1 minus triangle area) -->
+												<function define_variable="7">
+													<!-- A = 1 - ( ( 1 - (f(x) - y) ) * ( f( y + 1 ) - x ) ) / 2 -->
+													<subfunction>
+														<sub>
+															<value>1</value>
+															<div>
+																<mult>
+																	<sub>
+																		<value>1</value>
+																		<sub>
+																			<variable>5</variable>
+																			<variable>4</variable>
+																		</sub>
+																	</sub>
+																	<sub>
+																		<!--evalue intersection with top border: f( y + 1 ) = (y + 1 - a_0) / a_1 -->
+																		<div>
+																			<sub>
+																				<add>
+																					<variable>4</variable>
+																					<value>1</value>
+																				</add>
+																				<variable>1</variable>
+																			</sub>
+																			<variable>2</variable>
+																		</div>
+																		<variable>3</variable>
+																	</sub>
+																</mult>
+																<value>2</value>
+															</div>
+														</sub>
+													</subfunction>
+													<subobject number="1">
+														<vector type="externSubobject">
+															<variable>7</variable>
+														</vector>
+													</subobject>
+												</function>
+											</if>
+										</if>
+									</if>
+								</function>
+							</if>
+						</function>
+					</main_fib_object>
+				</root>
+			</sub_root>
+		</sub_roots>
+	</root>
+</fib_object>

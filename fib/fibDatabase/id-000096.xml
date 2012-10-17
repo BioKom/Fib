@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fib_object
+			  xmlns:xsd="http://www.w3.org/2001/XMLSchema-instance"
+			  xmlns="http://www.fib-development.org/"
+			  xsd:schemaLocation="http://www.fib-development.org/fib.xsd">
+	<root>
+		<multimedia_info fib_version="3" db_version="2"/>
+		<optionalpart>
+			<pair key="name" value="evalue intersection of lines"/>
+			<pair key="description" value="This object evalues the intersection of tow lines f_1( x ) and f_2( y ) . The lines are given as: f(x) = a_0 + a_1 * x with the parameters a_0, a_1 and f_2(y) = b_0 + b_1 * y with the parameters b_0, b_1"/>
+			<pair key="inVar1::description" value="start point or y-intercept a_0 of line 1 (f_1)"/>
+			<pair key="inVar2::description" value="slope or gradient a_1 of line 1 (f_1)"/>
+			<pair key="inVar3::description" value="start point or y-intercept b_0 of line 2 (f_2)"/>
+			<pair key="inVar4::description" value="slope or gradient b_1 of line 2 (f_2)"/>
+			<pair key="subObj1::description" value="if and wher the lines intersect"/>
+			<pair key="subObj1::outVar1::description" value="the position of the intersection point in dimension 1 (x) if existing or 0"/>
+			<pair key="subObj1::outVar2::description" value="the position of the intersection point in dimension 2 (y) if existing or 0"/>
+			<pair key="subObj1::outVar3::description" value="0 if no intersection point exists, else 1"/>
+			<pair key="author" value="Betti Oesterholz"/>
+			<pair key="author::email" value="Oesterholz@Fib-Development.org"/>
+			<pair key="copyright" value="LGPL3"/>
+		</optionalpart>
+		<input_variables>
+			<variable number="1" default="0"/>
+			<variable number="2" default="0"/>
+			<variable number="3" default="0"/>
+			<variable number="4" default="0"/>
+		</input_variables>
+		<domains>
+			<externSubobject number="1">
+				<vector elements="3">
+					<!--actually any number is possible;
+						the next line is just a space holder-->
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+				</vector>
+			</externSubobject>
+			<subfunction>
+				<naturalNumberB bit="12" />
+			</subfunction>
+		</domains>
+		<main_fib_object>
+			<function define_variable="5">
+				<!-- 1 - a_1 * b_1 -->
+				<subfunction>
+					<sub>
+						<value>1</value>
+						<mult>
+							<variable>2</variable>
+							<variable>4</variable>
+						</mult>
+					</sub>
+				</subfunction>
+				<if><!-- if (1 - a_1 * b_1) == 0 -> no intersection -->
+					<condition>
+						<eqInt>
+							<mult>
+								<variable>5</variable>
+								<value>1024</value>
+							</mult>
+							<value>0</value>
+						</eqInt>
+					</condition>
+					<subobject number="1">
+						<vector type="externSubobject">
+							<value>0</value>
+							<value>0</value>
+							<value>0</value>
+						</vector>
+					</subobject>
+					<!-- else evalue intersection point -->
+					<function define_variable="6">
+						<!-- y = (a_0 + a_1 * b_0) / (1 - a_1 * b_1) -->
+						<subfunction>
+							<div>
+								<add>
+									<variable>1</variable>
+									<mult>
+										<variable>2</variable>
+										<variable>3</variable>
+									</mult>
+								</add>
+								<variable>5</variable>
+							</div>
+						</subfunction>
+						<function define_variable="7">
+							<!-- x = b_0 + b_1 * (a_0 - a_1 * b_0) / (1 - a_1 * b_1) -->
+							<subfunction>
+								<add>
+									<variable>3</variable>
+									<mult>
+										<variable>4</variable>
+										<variable>6</variable>
+									</mult>
+								</add>
+							</subfunction>
+							<subobject number="1">
+								<vector type="externSubobject">
+									<variable>7</variable>
+									<variable>6</variable>
+									<value>1</value>
+								</vector>
+							</subobject>
+						</function>
+					</function>
+				</if>
+			</function>
+		</main_fib_object>
+	</root>
+</fib_object>

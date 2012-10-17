@@ -1,0 +1,163 @@
+% Autor: Betti "Osterholz
+% erstellt:5.11.2006
+% Implementationskonverntionen V0.1
+% Im Nachfolgendem sind einige Implementationskonverntionen aufgestellt
+%
+% Copyright (c) 2008 Betti "Osterholz
+%
+% Permission is granted to copy, distribute and/or modify this document
+% under the terms of the GNU Free Documentation License, Version 1.2 or
+% any later version published by the Free Software Foundation;
+% with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+%
+% A copy of the license is included in the file ``fdl.tex'' .
+%
+
+\subsection{Allgemeines}
+
+Zur Dokumentierung des Quelltextes wird \textbf{doxygen} im Java Stil verwendet.
+
+Nur Kommentare die sich direkt auf spezifische Codeabschnitte beziehen erfolgen nicht im doxygen Stil.
+
+Beim Quelltext wird gro"ser Wert auf Verst"andlichkeit und "Ubersichtlichkeit gelegt.
+Die Sprache des Quelltexts (inclusive Quelltextkommentare ) ist Englisch.
+
+
+\subsection{\index{Implementation!Einleitung}Einleitung des Quelltextes}
+
+Jede Quelltextdatei beginnt mit einem Informationsheader beziehungsweise einer Dateieinleitung. In ihm steht der Name der Datei, des Autors und das Erstellungsdatum der Datei, gefolgt einer Kurzbeschreibung und den Kopierrechten(Copyright). Nach den Kopierrechten wird der Inhalt der Datei n"aher beschrieben.
+
+Am Ende der Dateieinleitung folgt ein "Anderungsprotokoll, welches nicht in doxygen Stiel geschrieben wird.
+
+\noindent
+Beispiel:
+\begin{verbatim}
+/**
+ * @class cDomains
+ * file name: cDomains.cpp
+ * @author Betti Oesterholz
+ * @date 09.06.2009
+ * @mail webmaster@BioKom.info
+ *
+ * System: C++
+ *
+ * This class represents a list of domains.
+ * Copyright (C) @c LGPL3 2009 Betti Oesterholz
+ *
+ * This program is free software: you can redistribute
+ * it and/or modify it under the terms of the
+ * GNU Lesser General Public License (LGPL) as published
+ * by the Free Software Foundation, either version 3 of
+ * the License, or any later version.
+ *
+ * This program is distributed in the hope that it will
+ * be useful, but WITHOUT ANY WARRANTY; without even
+ * the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General
+ * Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser
+ * General Public License along with this program.
+ * If not, see <http://www.gnu.org/licenses/>.
+ *
+ *
+ * This class represents a list of domains for an
+ * root-element.
+ * The domain list consists of a number of domains with
+ * a type.
+ *
+ */
+/*
+History:
+09.06.2009  Oesterholz  created
+12.07.2009  Schmidt     new method to get the size of
+   an domainelement
+*/
+\end{verbatim}
+
+\subsection{\index{Implementation!Formatierung}Formatierung}
+
+Gearbeitet wird mit Tabulatoren. Jeder Block, au"ser Methodenimplementationen und einzeilige Bl"ocke, wird durch ein Tab einger"uckt.
+
+Die einzelenen Elemente in einer Zeile werden nach M"oglichkeit durch Leerzeichen seperiert. Die L"ange einer Zeile sollte m"oglichst 75 Zeichen nicht "uberschreiten.
+
+\noindent
+Beispiel:
+\begin{verbatim}
+if ( a == b ){
+   //it makes something
+   do_it;
+   call( parameter );
+}
+\end{verbatim}
+
+\subsection{\index{Implementation!Kommentare}Kommentare}
+
+Alle Kommentare sind in Englisch gehalten.
+
+Jede Methode beginnt mit einem Informationsheader im \textbf{doxygen} im Java Stil, in dem eine kurze Beschreibung der Methode steht.
+
+Kommentare zu eine Quelltextsegment stehen in einer Zeile direkt vor diesem.
+
+
+\subsection{\index{Implementation!Notation}Namen}
+
+Namen sind Bezeichner von Klassen, Methoden, Variablen, Konstanten oder Makros.
+
+
+\subsubsection{\index{Implementation!Notation!Klassennamen}\index{Notation!Klassennamen}Klassennamen}
+
+Alle Klassennamen beginnen mit einem Kleinen "`c"' f"ur "`class"', die Teilworte des Klassennamen beginnen mit einem gro"sen Buchstaben
+(Camelcase).
+
+\noindent
+Beispiel: cDomain; cDomainInteger
+
+
+\subsubsection{\index{Implementation!Notation!Methodennamen}\index{Notation!Methodennamen}Methodennamen}
+
+Methoden beginnen mit einem Kleinbuchstaben. Teilnamen im Methodennamen beginnen mit einem gro"sen Buchstaben und grenzen unmittelbar aneinander. (Camelcase)
+
+Methoden, die dazu dienen Werte zur"uckzugeben, beginnen mit einem "`get"'. Demgegen"uber beginnen Methoden, mit denen Werten gesetzt werden, sollen mit einem "`set"'.
+
+\noindent
+Beispiel:
+\begin{itemize}
+ \item eineMethod();
+ \item getSomeThing();
+\end{itemize}
+
+
+\subsubsection{\index{Implementation!Notation!Variablennamen}\index{Notation!Variablennamen}Variablennamen}
+
+Variablennamen beginnen kleingeschriebenen, Teilnamen im Variablennamen beginnen mit einem gro"sen Buchstaben und grenzen unmittelbar aneinander. (Camelcase) Namen von Variablen von grundlegenden Datentypen, wie Beispielsweise \texttt{int}, beginnen mit einem K"urzel f"ur diesen Datentypen (Siehe Tabelle \ref{tabDatatypsPrefixe}). Im Allgemeinen sollte am Variablennamenanfang der Typ der Variable erkennbar sein. Auch sollte der Variablennamen nach M"oglichkeit die Funktion der Variable beschreiben.
+
+\begin{table}
+	\centering
+		\begin{tabular}{r|l}\hline
+			K"urzel & Datentyp\\\hline
+			i & int\\
+			s & short\\
+			c & char\\
+			l & long\\
+			u & unsigned\\
+			p & pointer / Zeiger\\
+			sz  & string / Zeichenketten\\
+			li  & list / Listen\\
+			vec & vector / Vektoren\\
+			str & stream / Datenstrom\\
+		\end{tabular}
+\caption{Prefixe f"ur Variablennamen}
+\label{tabDatatypsPrefixe}
+\end{table}
+
+\noindent
+Beispiel: variableName, uiCounterDomain
+%\subsubsection{\index{Implementation!Notation!Konstantennamen}\index{Notation!Konstantennamen}Konstantennamen}
+
+
+%\subsubsection{\index{Implementation!Notation!Defines}\index{Implementation!Notation!Makros}\index{Notation!Defines}\index{Notation!Makros}Namen f"ur Makros}
+
+
+
+

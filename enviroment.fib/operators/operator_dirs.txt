@@ -1,0 +1,68 @@
+#
+# @author Betti Oesterholz
+# @date 25.02.2010
+# @mail webmaster@BioKom.info
+#
+# System: fib
+#
+# This file contains the directories of the operators.
+#
+# Copyright (C) @c GPL3 2010 Betti Oesterholz
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published
+# by the Free Software Foundation, either version 3 of the License, or
+# any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
+#
+#
+# Every line with an '#' as the first character will be ignored, it is an
+# comment line. Every line with no '#' as the first character, should just
+# contain the path of a directiory with operators and no other characters
+# (this means also no blanks or else except the ending new line character).
+# The path should be given relativ to the fib/enviroment.fib/operators/ path.
+# The directory of the path should contain two subdirectories "incl/" and
+# "src/". The "incl/" directory should contain the header files, with
+# headers of the operators. The names of the files in the "incl/"
+# directory, without the ending ".h", will be taken as the possible operator
+# names. The "src/" directory, in the same directory as the "incl/"
+# directory, should contain the implemntations of the operators of the 
+# "incl/" directory.
+#
+# @see includeOperators.cpp
+#
+#
+##########################################################################
+#
+# History:
+# 25.02.2011   Oesterholz   created
+# 06.03.2011   Oesterholz   splineMax4ParamBorderItrFast directories added
+#
+#
+
+
+./
+./findLine/even/
+./findLine/similar/
+./findArea/even/goodPolynomBorder/
+./findArea/similar/goodPolynomBorder/
+# The next two operator classes take to much time and memory
+# ./findArea/even/splineMax4ParamBorder/
+# ./findArea/similar/splineMax4ParamBorder/
+./findArea/even/splineMax4ParamBorderItrFast/
+./findArea/similar/splineMax4ParamBorderItrFast/
+
+
+
+
+
+
+
+ 

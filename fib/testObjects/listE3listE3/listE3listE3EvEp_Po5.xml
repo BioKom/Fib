@@ -1,0 +1,21 @@
+<data>
+<point>
+	<vector type="position">
+		<value number="1">7</value>
+		<value number="2">8</value>
+	</vector>
+</point>
+<point>
+	<vector type="position">
+		<value number="1">9</value>
+		<value number="2">10</value>
+	</vector>
+</point>
+<point>
+	<vector type="position">
+		<value number="1">11</value>
+		<value number="2">12</value>
+	</vector>
+</point>
+</data>
+

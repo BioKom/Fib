@@ -1,0 +1,38 @@
+<data>
+	<vector type="position">
+		<value>4</value>
+		<value>1</value>
+		<value>2</value>
+		<value>3</value>
+	</vector>
+	<vector type="property.sound">
+		<value>4</value>
+		<value>1</value>
+		<value>2</value>
+		<value>3</value>
+	</vector>
+	<vector type="position">
+		<value>3</value>
+		<value>2</value>
+		<value>-4</value>
+		<value>8</value>
+	</vector>
+	<vector type="property.sound">
+		<value>3</value>
+		<value>2</value>
+		<value>-4</value>
+		<value>8</value>
+	</vector>
+	<vector type="position">
+		<value>2</value>
+		<value>-3</value>
+		<value>9</value>
+		<value>-18</value>
+	</vector>
+	<vector type="property.sound">
+		<value>2</value>
+		<value>-3</value>
+		<value>9</value>
+		<value>-18</value>
+	</vector>
+</data>

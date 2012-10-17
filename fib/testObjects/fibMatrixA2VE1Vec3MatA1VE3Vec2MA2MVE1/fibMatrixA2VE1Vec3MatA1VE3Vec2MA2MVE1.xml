@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fib_object
+xmlns:xsd="http://www.w3.org/2001/XMLSchema-instance"
+xmlns="http://www.biokom.info/"
+xsd:schemaLocation="http://www.biokom.info/fib.xsd">
+<root>
+	<domains>
+		<matrixElement>
+			<vector elements="4">
+				<naturalNumber max="4" />
+				<naturalNumber max="255" />
+				<vector elements="2">
+					<integer min="-255" max="255" />
+					<integer min="-255" max="255" />
+				</vector>
+				<vectorOpenEnd elements="1">
+					<integer min="-255" max="255" />
+				</vectorOpenEnd>
+			</vector>
+		</matrixElement>
+		<dim count="7">
+			<dimension number="1" direction="horizontal"/>
+			<dimension number="2" direction="vertical"/>
+			<dimension number="3" direction="depth"/>
+			<dimension number="4" direction="time"/>
+			<dimension number="5" direction="time"/>
+			<dimension number="6" direction="time"/>
+			<dimension number="7" direction="time"/>
+			<vector elements="7">
+				<naturalNumber max="255" />
+				<naturalNumber max="255" />
+				<naturalNumber max="255" />
+				<naturalNumber max="255" />
+				<naturalNumber max="255" />
+				<naturalNumber max="255" />
+				<naturalNumber max="255" />
+			</vector>
+		</dim>
+		<property name="colorRGB" >
+			<vector elements="3">
+				<naturalNumber max="255" />
+				<naturalNumber max="255" />
+				<naturalNumber max="255" />
+			</vector>
+		</property>
+	</domains>
+	<main_fib_object>
+		<matrix  dimensions="2">
+			<defined_variables>
+				<variable>1</variable>
+				<variable>2</variable>
+				<variable>3</variable>
+			</defined_variables>
+			<areas>
+				<vector type="area">
+					<value>1</value>
+					<value>2</value>
+				</vector>
+				<vector type="area">
+					<value>2</value>
+					<value>3</value>
+				</vector>
+			</areas>
+			<values>
+				<vector type="matrix">
+					<value>4</value>
+				</vector>
+				<vector type="matrix">
+					<value>5</value>
+				</vector>
+				<vector type="matrix">
+					<value>6</value>
+				</vector>
+			</values>
+			<matrix  dimensions="1">
+				<defined_variables>
+					<variable>4</variable>
+					<variable>5</variable>
+					<variable>6</variable>
+					<variable>7</variable>
+				</defined_variables>
+				<areas>
+					<vector type="area">
+						<value>7</value>
+						<value>8</value>
+					</vector>
+				</areas>
+				<values>
+					<vector type="matrix">
+						<value>11</value>
+						<variable>1</variable>
+						<variable>3</variable>
+					</vector>
+					<vector type="matrix">
+						<value>22</value>
+						<variable>2</variable>
+						<variable>3</variable>
+					</vector>
+				</values>
+				<property>
+					<vector type="property.colorRGB">
+						<variable>1</variable>
+						<variable>2</variable>
+						<variable>3</variable>
+					</vector>
+					<property>
+						<vector type="property.colorRGB">
+							<variable>4</variable>
+							<variable>5</variable>
+							<variable>6</variable>
+						</vector>
+						<point>
+							<vector type="position">
+								<variable>1</variable>
+								<variable>2</variable>
+								<variable>3</variable>
+								<variable>4</variable>
+								<variable>5</variable>
+								<variable>6</variable>
+								<variable>7</variable>
+							</vector>
+						</point>
+					</property>
+				</property>
+			</matrix>
+		</matrix>
+	</main_fib_object>
+</root>
+</fib_object>

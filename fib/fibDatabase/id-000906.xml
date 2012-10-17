@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fib_object
+			  xmlns:xsd="http://www.w3.org/2001/XMLSchema-instance"
+			  xmlns="http://www.fib-development.org/"
+			  xsd:schemaLocation="http://www.fib-development.org/fib.xsd">
+	<root>
+		<multimedia_info fib_version="3" db_version="2"/>
+		<optionalpart>
+			<pair key="name" value="function antialising for 2 lines"/>
+			<pair key="description" value="This object evalues wich part / fraction of a pixel is between (in f(y) = x = dim 2 direction) the lines f_1(y) = a_0 + a_1 * y and f_2(y) = b_0 + b_1 * y (e. g. for antialising)."/>
+			<pair key="inVar1::description" value="the first parameter a_0 for the line f_1(y)"/>
+			<pair key="inVar2::description" value="the slope or gradien (second parameter) a_1 for the line f_1(y)"/>
+			<pair key="inVar3::description" value="the first parameter b_0 for the line f_2(y)"/>
+			<pair key="inVar4::description" value="the slope or gradien (second parameter) b_1 for the line f_2(y)"/>
+			<pair key="inVar5::description" value="position of the pixle in dimension 1 (x)"/>
+			<pair key="inVar6::description" value="position of the pixle in dimension 2 (y)"/>
+			<pair key="subObj1::description" value="the object for the to return part / fraction of a pixel is between the lines f_1(y) = a_0 + a_1 * y and f_2(y) = b_0 + b_1 * y"/>
+			<pair key="subObj1::outVar1::description" value="the part / fraction of a pixel which is between the lines f_1(y) = a_0 + a_1 * y and f_2(y) = b_0 + b_1 * y"/>
+			<pair key="author" value="Betti Oesterholz"/>
+			<pair key="author::email" value="Oesterholz@Fib-Development.org"/>
+			<pair key="copyright" value="LGPL3"/>
+		</optionalpart>
+		<input_variables>
+			<variable number="1" default="0"/>
+			<variable number="2" default="0"/>
+			<variable number="3" default="0"/>
+			<variable number="4" default="0"/>
+			<variable number="5" default="0"/>
+			<variable number="6" default="0"/>
+		</input_variables>
+		<domains>
+			<inVar number="5">
+				<domainReference subdomain="1">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="6">
+				<domainReference subdomain="2">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<externSubobject number="1">
+				<vector elements="1">
+					<!--actually any number is possible;
+						the next line is just a space holder-->
+					<naturalNumberB bit="0" />
+				</vector>
+			</externSubobject>
+			<externObject>
+				<vector elements="4">
+					<integer min="-905" max="-905" /><!--Identifier-->
+					<integer min="6" max="6" /><!--number input values-->
+					<naturalNumber max="1" /><!--number subobjects-->
+					<naturalNumber max="1" /><!--number output values-->
+				</vector>
+			</externObject>
+			<externObjectInput identifier="-905">
+				<vector elements="6">
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+				</vector>
+			</externObjectInput>
+		</domains>
+		<main_fib_object>
+		  <obj identifier="-905">
+				<vector type="externObjectInput">
+				  <variable>1</variable>
+				  <variable>2</variable>
+				  <variable>3</variable>
+				  <variable>4</variable>
+				  <variable>6</variable>
+				  <variable>5</variable>
+				</vector>
+				<subobject>
+					<output_variables>
+						<variable>7</variable>
+					</output_variables>
+					<subobject number="1">
+						<vector type="externSubobject">
+							<variable>7</variable>
+						</vector>
+					</subobject>
+				</subobject>
+		  </obj>
+		</main_fib_object>
+	</root>
+</fib_object>

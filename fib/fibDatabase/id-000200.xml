@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fib_object
+			  xmlns:xsd="http://www.w3.org/2001/XMLSchema-instance"
+			  xmlns="http://www.fib-development.org/"
+			  xsd:schemaLocation="http://www.fib-development.org/fib.xsd">
+	<root>
+		<multimedia_info fib_version="3" db_version="3"/>
+		<optionalpart>
+			<pair key="name" value="line"/>
+			<pair key="description" value="This object represents a line in two dimensions from an start point (x_1, y_1) to an end point (x_2, y_2) with a given width and rounded ends."/>
+			<pair key="inVar1::description" value="position start point dimension 1 (x_1)"/>
+			<pair key="inVar2::description" value="position start point dimension 2 (y_1)"/>
+			<pair key="inVar3::description" value="position end point dimension 1 (x_2)"/>
+			<pair key="inVar4::description" value="position end point dimension 2 (y_2)"/>
+			<pair key="inVar5::description" value="the width of the line in points"/>
+			<pair key="author" value="Betti Oesterholz"/>
+			<pair key="author::email" value="Oesterholz@Fib-Development.org"/>
+			<pair key="copyright" value="LGPL3"/>
+		</optionalpart>
+		<input_variables>
+			<variable number="1" default="0"/>
+			<variable number="2" default="0"/>
+			<variable number="3" default="0"/>
+			<variable number="4" default="0"/>
+			<variable number="5" default="1"/>
+		</input_variables>
+		<domains>
+			<inVar number="1">
+				<domainReference subdomain="1">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="2">
+				<domainReference subdomain="2">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="3">
+				<domainReference subdomain="1">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="4">
+				<domainReference subdomain="2">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			
+			<externObject>
+				<vector elements="4">
+					<integer min="-50" max="-21" /><!--Identifier-->
+					<integer min="3" max="4" /><!--number input values-->
+					<naturalNumber max="0" /><!--number subobjects-->
+					<naturalNumber max="0" /><!--number output values-->
+				</vector>
+			</externObject>
+			<externObjectInput identifier="-21"><!-- libe object -->
+				<vector elements="5">
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+				</vector>
+			</externObjectInput>
+			<!-- replace with half circle -->
+			<externObjectInput identifier="-50"><!-- circle object -->
+				<vector elements="3">
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+				</vector>
+			</externObjectInput>
+			<subfunction>
+				<naturalNumberB scalingfactor="0.5" bit="3" />
+			</subfunction>
+		</domains>
+		<database_identifiers>
+			<identifier>-21</identifier>
+			<identifier>-50</identifier>
+		</database_identifiers>
+		<main_fib_object>
+			<!-- draw line and two circles at its ends -->
+			<list>
+				<function define_variable="6">
+					<subfunction>
+						<div>
+							<sub>
+								<variable>5</variable>
+								<value>1.5</value>
+							</sub>
+							<value>2</value>
+						</div>
+					</subfunction>
+					<list>
+						<!-- circle for point 1 (x_1, y_1) -->
+						<obj identifier="-50">
+							<vector type="externObjectInput">
+								<variable>1</variable>
+								<variable>2</variable>
+								<variable>6</variable>
+							</vector>
+						</obj>
+						<!-- circle for point 2 (x_2, y_2) -->
+						<obj identifier="-50">
+							<vector type="externObjectInput">
+								<variable>3</variable>
+								<variable>4</variable>
+								<variable>6</variable>
+							</vector>
+						</obj>
+					</list>
+				</function>
+				<!-- line -->
+				<obj identifier="-21">
+					<vector type="externObjectInput">
+						<variable>1</variable>
+						<variable>2</variable>
+						<variable>3</variable>
+						<variable>4</variable>
+						<variable>5</variable>
+					</vector>
+				</obj>
+			</list>
+		</main_fib_object>
+	</root>
+</fib_object>

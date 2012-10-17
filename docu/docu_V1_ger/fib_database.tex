@@ -1,0 +1,89 @@
+%
+% Copyright (c) 2011  Betti "Osterholz
+%
+% Permission is granted to copy, distribute and/or modify this document
+% under the terms of the GNU Free Documentation License, Version 1.2 or
+% any later version published by the Free Software Foundation;
+% with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+%
+% A copy of the license is included in the file ``fdl.tex'' .
+%
+
+%path for pictures
+%\graphicspath{{./material_sprachbeschreibung/}}
+%\graphicspath{{./material_sprachbeschreibung/}{../material_sprachbeschreibung}}
+
+
+\newpage
+\part{Fib-Datenbank}
+\label{partFibDatabase}
+
+Die Fib-Datenbank bietet die M"oglichkeit h"aufig verwendete Fib-Objekte vorzuhalten. Auf dort abgelegte Fib-Objekte kann von einem Fib-Multimediaobjekt zur"uckgegriffen werden, ohne dass diese mit dem Multimediaobjekt "ubertragen oder gespeichert werden m"ussen. Auf diese Weise kann nicht nur "Ubertragungsbandbreite 
+gespaart werden, sondern mit dem Wissen "uber die festen Datenbankobjekte kann auch weitere Informationen aus dem Multimediaobjekt extrahiert werden.
+
+Die Fib-Datenbank geh"ort zu keinem Fib-Multimediaobject. Sie wird mit den Fib-Bib\-lio\-the\-ken /dem Fib-System ausgeliefert und enth"alt h"aufig verwendete Datenbankobjekte, die in Fib-Objekten verwendet werden k"onnen. Datenbankobjekte k"onnen beispielsweise Linien (mit den Eingabeparametern f"ur Start- und Endpunkte), Recht\-ecke oder Kreise sein, aber auch B"aume, Autos, Zeichens"atze (fonts) oder Fraktale. Wird in einem Fib-Objekt beispielsweise ein Kreis ben"otigt, kann dass entsprechende parametrisierte Datenbankobjekt verwendet werden.
+
+Die Implementierung der Datenbankobjekte kann an die jeweilige Anwendungsumgebung angepasst sein. Soll zur Anzeige beispielsweise OpenGL verwendet werden, k"onnen Datenbankobjekte direkt mit OpenGL-Primitiven (z. B. Dreiecken) umgesetzt werden. Auf diese Weise kann mit Datenbankobjekten die Performance der Anwendung verbessert werden. Bei der Kodierung der Fib-Objekte kann auch gleich darauf geachtet werden, dass Datenbankobjekte mit guter Performance f"ur die Zielanwendung verwendet werden. Diese Fib-Objekte sind dann immer noch auf allen Fib-Systemen mit gen"ugend hoher Datenbankversion anzeigbar, auf einigen jedoch schneller.
+
+Welche Objekte eine Datenbank enth"alt, sowie die Identifier f"ur diese Objekte, sind mit der Datenbankversion festgelegt. Datenbanken mit h"oheren Datenbankversionen enthalten dabei alle Datenbankobjekte mit den gleichen Identifiern wie Datenbanken mit niedrigeren Datenbankversionen. Auf diese Weise ist gew"ahrleistet, dass Fib-Objekte immer aufw"artskompatibel zu neueren Datenbankversionen sind.
+
+Alle Identifier von Datenbankobjekten sind negativ.
+
+
+\section{Struktur}
+
+Die Fib-Datenbank ist in verschiedene Abschnitte strukturiert.
+Dabei sollten "ahnliche Objekte auch nahe beieinander stehen und wahrscheinlich h"aufig verwendete Objekte eine m"oglichst gro"se Identifier haben (also vom Absolutwert kleinen Identifier, da die Datenbankobjekidentifier alle negativ sind).
+
+\bigskip\noindent
+Die Beschreibung der einzelnen Bereiche (vorne stehen die Absolutwerte der Identifier (=Id), also 10 - 19 f"ur Id -10 bis -19):
+\begin{itemize}
+ \item 0 - 9 Punkte (Id = Anzahl der Dimensionen)
+ \item 10 - 19 Beschreibungen (wichtigste Lizenzen)
+ \item 20 - 999 2 dimensionale Objekte:
+ \begin{itemize}
+  \item 20 - 29 Linien
+  \item 30 - 39 Dreiecke
+  \item 40 - 49 Vierecke
+  \item 50 - 59 Kreise
+  \item 60 - 89 offen
+  \item 90 - 99 Funktionen
+  \item 100 - 199 Kreise 2
+  \item 200 - 299 Linien 2
+  \item 300 - 399 Dreiecke 2
+  \item 400 - 499 Vierecke 2
+  \item 500 - 899 offen
+  \item 900 - 999 Funktionen 2
+ \end{itemize}
+ \item 1000 - 1999 Algorithmen
+ \item 2000 - 2999 Beschreibungen
+ \item 3000 - 3999 3 dimensionale Objekte
+ \item 4000 - 4999 4 dimensionale Objekte
+
+\end{itemize}
+
+
+%TODO
+
+%\section{Wichtige Datenbankobjekte}
+
+
+
+
+%\section{Alle Datenbankobjekte}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,28 @@
+<data>
+	<area define_variable="1">
+		<vector type="subarea">
+			<value number="1">1</value>
+			<value number="2">2</value>
+		</vector>
+		<area define_variable="2">
+			<vector type="subarea">
+				<value number="1">4</value>
+				<value number="2">6</value>
+			</vector>
+			<property>
+				<vector type="property.colorRGB">
+					<variable number="1">1</variable>
+					<variable number="2">2</variable>
+					<value number="3">1</value>
+				</vector>
+				<point>
+					<vector type="position">
+						<variable number="1">1</variable>
+						<variable number="2">2</variable>
+					</vector>
+				</point>
+			</property>
+		</area>
+	</area>
+</data>
+ 

@@ -1,0 +1,2000 @@
+%
+% Copyright (c) 2008  Betti "Osterholz
+%
+% Permission is granted to copy, distribute and/or modify this document
+% under the terms of the GNU Free Documentation License, Version 1.2 or
+% any later version published by the Free Software Foundation;
+% with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+%
+% A copy of the license is included in the file ``fdl.tex'' .
+%
+% The file contains the documentation for the fib-storage formats.
+%
+
+\newpage
+\part{Fib-Dateiformate}
+\label{partFileFormat}
+
+In diesen Abschnitt werden die Speicherformate vorgestellt, in denen vollst"andige Fib-Objekte abgespeichert werden. Davon gibt es zwei: ein Format zum m"oglichst komprimierten Abspeichern (siehe Abschnitt \ref{fibCompressing} auf Seiet \pageref{fibCompressing}) und ein Format, um ein Fib-Objekt gut lesbar als XML-Struktur darzustellen (siehe Abschnitt \ref{xmlFormat} auf Seiet \pageref{xmlFormat}).
+
+
+\section{Komprimierte Fib-Daten}\index{Komprimierung}\index{Format!komprimiert}
+\label{fibCompressing}
+
+Da eine Speicherplatz sparende Repr"asentation eines der Hauptziele der Fib-Multi\-media\-be\-schrei\-bungs\-sprache ist, sollten die Fib-Elemente mit m"oglichst wenig Bits bzw. Bytes gespeichert werden k"onnen. Daf"ur wird hier ein komprimierendes Speicherformat definiert. Es wird kein Standardkomprimierungsalgorithmus verwendet, da dieser keine R"ucksicht auf Besonderheiten der Fib-Multimedia\-be\-schrei\-bungs\-sprache nehmen w"urde.
+
+%Die Struktur der komprimierten Daten entspricht weitesgehend der Struktur des XML-Formats, siehe \ref{xmlFormat}.
+
+Die Darstellung von \textbf{ganzen Zahlen} erfolgt im Zweierkomplement System (auch 2-Komplement, Zweikomplement, Basiskomplement, K2-Zahl, 2K-Zahl, two's complement). F"ur \textbf{nat"urliche Zahlen} (inklusive der $0$) wird das Dualsystem verwendet. Die Anzahl der Bits von Vektorelementen oder Variablen wird jeweils durch den entsprechenden Definitionsbereich bestimmt (z. B. f"ur Zahlen f"ur die horizontale Dimension oder einen Grauwert) oder fest vorgegeben (z. B. f"ur Zahlen f"ur das Byte Offset in den root-Elementen).
+
+%endianess
+
+
+\textbf{Reelle Zahlen} werden als Gleitkommazahlen (auch Flie"skommazahl engl. floating point number) dargestellt. Die Anzahl der Bits f"ur den Exponenten und die Mantisse werden durch die jeweilige Definitionsbereichsdefinition angegeben.
+
+Die Zahlen werden im Little Endian Format gespeichert.
+
+Alle \textbf{Texte} werden in Unicode kodiert.
+
+
+F"ur die nachfolgende Beschreibung ist leider die \textbf{Schreibweise von Bits} nicht so einfach umzusetzen. In der normalen Schreibweise werden Zahlen von rechts nach links, Texte allerdings von links nach rechts geschrieben. Dies f"uhrt dazu, dass kurze Bitfolgen, so wie sie in einem Byte auftauchen, eher wie Zahlen von rechts nach links geschrieben werden. Wenn die Bitfolgen allerdings l"anger werden bzw. wenn Bits in einer Datei oder einem Datenstrom betrachtet werden, ist die Schreibweise wie in Texten von links nach rechts eher angebracht. Ansonsten, wenn die Zahlenschreibweise angewendet wird, steht am Ende einer langen Zeile von Bits das erste Bit aus der Datei.
+
+Im Nachfolgenden werden deshalb die Bits einzelner Elemente wie Zahlen von von rechts nach links geschrieben, da diese Bitfolgen meist kurz sind. Einzelne Elemente werden am Computer auch meist im Hexadezimalsystem angezeigt und verarbeitet, welches auch wie Zahlen von rechts nach links arbeitet. Die umgekehrte Schreibweise w"urde die Arbeit mit den komprimierten Elementen nur erschweren. Die Bits einzelner Bytes werden meistens der "Ubersichtlichkeit halber mit einem Semikolon (';') getrennt.
+
+Wenn allerdings ein Datenstrom aus mehreren Elementen dargestellt wird, sind die Bits wie bei Texten von links nach rechts angeordnet. Dies f"uhrt leider dazu, dass die Bits der einzelnen Elemente in umgekehrter Reihenfolge dargestellt werden.
+
+%9 Fib-Elemente plus root
+
+\subsection{Dateiheader}
+
+Jede komprimierte Fib-Datenstrom beginnt mit den drei Buchstaben ``fib''. Die Dateiendung f"ur komprimierte Fib-Dateien sollte ``.fib'' sein.
+
+
+\subsection{Root-Element}\index{root-Element|(}
+\label{secCompressedRootElement}
+
+Zur Beschreibung des root-elements siehe Abschnitt \ref{fibRootElement} auf Seite \pageref{fibRootElement} .
+
+Das Fib-root-Element braucht keine separate Einleitung. Die Daten des obersten root-Elements beginnen mit dem dritten Byte (die Z"ahlung beginnt bei 0) direkt nach der Datenstromeinleitung ``fib''. Andere root-Elemente folgen auf ihren Identifier.
+
+\bigskip\noindent
+F"ur das root-Element werden nacheinander folgende Felder geschrieben (dabei wird jedes Element jeweils fals n"otig auf ein volles Byte mit $0$ aufgef"ullt):
+\begin{enumerate}
+ \item 16-Bit-Feld zur Angabe der optionalen Informationsfelder (siehe Abschnitt \ref{secCompressedOptionlInfos})
+ \item 64-Bit-Feld zur Angabe weiterer optionaler Informationsfelder (siehe Abschnitt \ref{secCompressedOptionlInfos}); nur vorhanden, wenn Bit 16 der optionalen Informationsfelder gesetzt ist
+ \item ein 144($=16+64+64$)-Bit-Feld f"ur die Checksumme (siehe Abschnitt \ref{secCompressedRootChecksumm} auf Seite \pageref{secCompressedRootChecksumm} ); nur vorhanden, wenn Bit 1 der optionalen Informationsfelder gesetzt ist
+ \item Nummer des Bytes des root-Objekts (Offset), ab dem die Definitionsbereiche ($Domains$ und $DomainsValues$) definiert werden; nur vorhanden, wenn Bit 3 der optionalen Informationsfelder gesetzt ist
+ \item Nummer des Bytes des root-Objekts (Offset), ab dem die Eingabevariablen definiert werden; nur vorhanden, wenn Bit 4 der optionalen Informationsfelder gesetzt ist
+ \item Nummer des Bytes des root-Objekts (Offset), ab dem das Haupt-Fib-Objekt definiert wird
+ \item Nummer des Bytes des root-Objekts (Offset), ab dem die weiteren root-Objekte definiert werden; nur vorhanden, wenn Bit 6 der optionalen Informationsfelder gesetzt ist
+ \item Nummer des Bytes des root-Objekts (Offset), ab dem die Identifier von verwendeten Datenbankobjekten aufgelistet werden; nur vorhanden, wenn Bit 7 der optionalen Informationsfelder gesetzt ist
+ \item Nummer des Bytes des root-Objekts (Offset), ab dem der optionale Teil (Optionalpart) kommt; nur vorhanden, wenn Bit 8 der optionalen Informationsfelder gesetzt ist
+ \item Nummer des Bytes des root-Objekts (Offset), ab dem das root-Objekt zu Ende ist, bzw. Anzahl der Bytes, welche das root-Objekt lang ist
+ \item Multimediainformationen (siehe Abschnitt \ref{secCompressedMultimediainfo} auf Seite \pageref{secCompressedMultimediainfo}); nur vorhanden, wenn Bit 2 der optionalen Informationsfelder gesetzt ist
+ \item Definitionsbereiche (siehe Abschnitt \ref{secCompressedDefinitionranges} auf Seite \pageref{secCompressedDefinitionranges}); nur vorhanden, wenn Bit 3 der optionalen Informationsfelder gesetzt ist
+ \item Eingabevariablen (siehe Abschnitt \ref{secCompressedRootInputVar} auf Seite \pageref{secCompressedRootInputVar}); nur vorhanden, wenn Bit 4 der optionalen Informationsfelder gesetzt ist
+ \item Haupt-Fib-Objekt (siehe Abschnitt \ref{secCompressedRootMainObject} auf Seite \pageref{secCompressedRootMainObject})
+ \item weitere root-Objekte (siehe Abschnitt \ref{secCompressedRootSubRoot} auf Seite \pageref{secCompressedRootSubRoot}); nur vorhanden, wenn Bit 6 der optionalen Informationsfelder gesetzt ist
+ \item Identifier von verwendeten Datenbankobjekten (siehe Abschnitt \ref{secCompressedRootDBIdentifier} auf Seite \pageref{secCompressedRootDBIdentifier}); nur vorhanden, wenn Bit 7 der optionalen Informationsfelder gesetzt ist
+\item der optionale Teil (siehe Abschnitt \ref{secCompressedRootOptionalPart} auf Seite \pageref{secCompressedRootOptionalPart}); nur vorhanden, wenn Bit 8 der optionalen Informationsfelder gesetzt ist
+\end{enumerate}
+
+Wenn ein einzelnes Bit in den optionalen Informationsfeldern f"ur ein Feld nicht gesetzt ist, entf"allt diese Feld.
+
+F"ur die Felder mit der ``Nummer des Bytes des root-Elements (Offset)'' werden jeweils 8 Byte oder 64 Bit verwendet. Die Zahl im Feld geh"ort zu den nat"urlichen Zahlen. Angegeben wird jeweils die Nummer des Bytes ab Anfang des root-Elements, ab dem das entsprechende Element beginnt (also f"ur das erste Byte des Elements). Die Z"ahlung der Bytes im root-Element beginnt bei 0. Das optionale Informationsfeld hat also den Offset 0.
+
+Alle Texte, die nicht im optionalen Teil stehen, werden in den optionalen Teil ausgelagert (siehe Abschnitt \ref{secCompressedRootOptionalPart} auf Seite \pageref{secCompressedRootOptionalPart}).
+
+
+\subsubsection{Optionale Informationsfelder}
+\label{secCompressedOptionlInfos}
+
+An dieser Stelle steht ein 16-Bit-Feld, dessen Bits das Vorhandensein von optionalen Informationsfeldern im root-Element anzeigt.
+
+\bigskip\noindent
+Dabei schalten die einzelnen Bits (die Z"ahlung beginnt bei 1) die folgenden Informationsfelder:
+\begin{itemize}
+ \item [1] Checksumme (siehe Abschnitt \ref{secCompressedRootChecksumm} auf Seite \pageref{secCompressedRootChecksumm})
+ \item [2] Multimediainformationen (siehe Abschnitt \ref{secCompressedMultimediainfo} auf Seite \pageref{secCompressedMultimediainfo})
+ \item [3] Definitionsbereiche (siehe Abschnitt \ref{secCompressedDefinitionranges} auf Seite \pageref{secCompressedDefinitionranges})
+ \item [4] Eingabevariablen (siehe Abschnitt \ref{secCompressedRootInputVar} auf Seite \pageref{secCompressedRootInputVar})
+ \item [5] frei
+ \item [6] weitere root-Objekte (siehe Abschnitt \ref{secCompressedRootSubRoot} auf Seite \pageref{secCompressedRootSubRoot})
+ \item [7] Identifier von verwendeten Datenbankobjekten (siehe Abschnitt \ref{secCompressedRootDBIdentifier} auf Seite \pageref{secCompressedRootDBIdentifier})
+ \item [8] optionaler Teil (siehe Abschnitt \ref{secCompressedRootOptionalPart} auf Seite \pageref{secCompressedRootOptionalPart})
+ \item 9 bis 15 Bits sind noch nicht belegt und stehen f"ur zuk"unftige Belegungen zur Verf"ugung
+ \item [16] weitere optionale Felder, angegeben durch ein folgendes 64-Bit-Feld f"ur weitere optionale Informationsfelder
+\end{itemize}
+
+Im Nachfolgenden werden die einzelnen Bits, wann sie eingesetzt werden und ihre Auswirkung beschrieben.
+
+
+\paragraph{1. Checksummenbit}
+
+\ \\\\\noindent
+\textbf{Gesetzt wenn:} Ein Checksummenfeld im root-Element existiert.
+
+\bigskip\noindent
+\textbf{Auswirkungen wenn gesetzt:}
+Ein Checksummenfeld (siehe Abschnitt \ref{secCompressedRootChecksumm} auf Seite \pageref{secCompressedRootChecksumm}) ist vorhanden.
+
+\bigskip\noindent
+\textbf{Nicht gesetzt wenn:} Es existiert kein Checksummenfeld im root-Element.
+
+\bigskip\noindent
+\textbf{Auswirkungen wenn nicht gesetzt:}
+Ein Checksummenfeld ist nicht vorhanden.
+
+
+\paragraph{2. Multimediainformationenbit}
+
+\ \\\\\noindent
+\textbf{Gesetzt wenn:} F"ur das aktuelle root-Element existieren Multimediainformationen, welche von den ererbten Multimediainformationen abweichen. Dabei werden Multimediainformationen eines root-Elements jeweils an in diesem enthaltende root-Elemente vererbt, wenn die enthaltenden root-Elemente nicht selbst (irgendwelche) abweichende Multimediainformationen definieren.
+%TODO Olli: Bitte "`eindeutschen"': "`... an in diesem enthaltende root-Elemente vererbt,..."' (vorheriger Satz)
+
+\bigskip\noindent
+\textbf{Auswirkungen wenn gesetzt:}
+Es werden die Multimediainformationen f"ur das aktuelle root-Element angegeben (siehe Abschnitt \ref{secCompressedMultimediainfo} auf Seite \pageref{secCompressedMultimediainfo}).
+
+\bigskip\noindent
+\textbf{Nicht gesetzt wenn:} Die Multimediainformationen entsprechen den ererbten Multimediainformationen.
+
+Im obersten root-Element (bzw. in einem root-Element, das in keinem anderen root-Element vorhanden ist) muss das Bit immer gesetzt sein und damit die Multimediainformationen vorhanden sein.
+
+\bigskip\noindent
+\textbf{Auswirkungen wenn nicht gesetzt:}
+Es werden keine Multimediainformationen f"ur das aktuelle root-Element angegeben. Die g"ultigen Multimediainformationen f"ur das root-Element werden von dem root-Element, in dem es vorhanden ist, ererbt.
+
+
+\paragraph{3. Definitionsbereiche}
+
+\ \\\\\noindent
+\textbf{Gesetzt wenn:} F"ur das aktuelle root-Element existieren Definitionsbereiche.
+
+\bigskip\noindent
+\textbf{Auswirkungen wenn gesetzt:}
+Es werden die Definitionsbereiche f"ur das aktuelle root-Element ausgegeben (siehe Abschnitt \ref{secCompressedDefinitionranges} auf Seite \pageref{secCompressedDefinitionranges}) und der Offset, wann diese im root-Element beginnen.
+
+\bigskip\noindent
+\textbf{Nicht gesetzt wenn:} F"ur das aktuelle root-Element existieren keine Definitionsbereiche.
+
+\bigskip\noindent
+\textbf{Auswirkungen wenn nicht gesetzt:}
+Es wird kein Offset ausgegeben, wann die Angabe der Definitionsbereiche im root-Element beginnt, und es werden keine Definitionsbereiche f"ur das aktuelle root-Element angegeben.
+
+
+\paragraph{4. Eingabevariablen}
+
+\ \\\\\noindent
+\textbf{Gesetzt wenn:} F"ur das aktuelle root-Element existieren Eingabevariablen.
+
+\bigskip\noindent
+\textbf{Auswirkungen wenn gesetzt:}
+Es werden die Eingabevariablen f"ur das aktuelle root-Element angegeben (siehe Abschnitt \ref{secCompressedRootInputVar} auf Seite \pageref{secCompressedRootInputVar}) und der Offset, wann diese im root-Element beginnen.
+
+\bigskip\noindent
+\textbf{Nicht gesetzt wenn:} F"ur das aktuelle root-Element existieren keine Eingabevariablen.
+
+\bigskip\noindent
+\textbf{Auswirkungen wenn nicht gesetzt:}
+Es wird kein Offset ausgegeben, wann die Angabe der Eingabevariablen im root-Element beginnt, und es werden keine Eingabevariablen f"ur das aktuelle root-Element angegeben.
+
+
+\paragraph{6. weitere root-Objekte}
+
+\ \\\\\noindent
+\textbf{Gesetzt wenn:} F"ur das aktuelle root-Element existieren Unter-root-Objekte.
+
+\bigskip\noindent
+\textbf{Auswirkungen wenn gesetzt:}
+Es werden die Unter-root-Objekte f"ur das aktuelle root-Element angegeben (siehe Abschnitt \ref{secCompressedRootSubRoot} auf Seite \pageref{secCompressedRootSubRoot}) und der Offset, wann diese im root-Element beginnen.
+
+\bigskip\noindent
+\textbf{Nicht gesetzt wenn:} F"ur das aktuelle root-Element existieren keine Unter-root-Objekte.
+
+\bigskip\noindent
+\textbf{Auswirkungen wenn nicht gesetzt:}
+Es wird kein Offset ausgegeben, wann die Angabe der Unter-root-Objekte im root-Element beginnt, und es werden keine Unter-root-Objekte f"ur das aktuelle root-Element angegeben.
+
+
+\paragraph{7. Identifier von verwendeten Datenbankobjekten}
+
+\ \\\\\noindent
+\textbf{Gesetzt wenn:} F"ur das aktuelle root-Element werden Identifier von verwendeten Datenbankobjekten angegeben.
+
+\bigskip\noindent
+\textbf{Auswirkungen wenn gesetzt:}
+Es werden die Identifier von verwendeten Datenbankobjekten f"ur das aktuelle root-Element angegeben (siehe Abschnitt \ref{secCompressedRootDBIdentifier} auf Seite \pageref{secCompressedRootDBIdentifier}) und der Offset, wann diese im root-Element beginnen.
+
+\bigskip\noindent
+\textbf{Nicht gesetzt wenn:} F"ur das aktuelle root-Element existieren keine Identifier von verwendeten Datenbankobjekten.
+
+\bigskip\noindent
+\textbf{Auswirkungen wenn nicht gesetzt:}
+Es wird kein Offset ausgegeben, wann die Angabe der Identifier von verwendeten Datenbankobjekten im root-Element beginnt, und es werden keine Identifier von verwendeten Datenbankobjekten f"ur das aktuelle root-Element angegeben.
+
+
+\paragraph{8. optionaler Teil}
+
+\ \\\\\noindent
+\textbf{Gesetzt wenn:} F"ur das aktuelle root-Element wird der optionale Teil angegeben.
+
+\bigskip\noindent
+\textbf{Auswirkungen wenn gesetzt:}
+Es wird der optionale Teil f"ur das aktuelle root-Element angegeben (siehe Abschnitt \ref{secCompressedRootOptionalPart} auf Seite \pageref{secCompressedRootOptionalPart}) und der Offset, wann diese im root-Element beginnen.
+
+\bigskip\noindent
+\textbf{Nicht gesetzt wenn:} F"ur das aktuelle root-Element ist kein optionaler Teil vorhanden, weil diese beispielsweise nicht mit abgespeichert wurden.
+
+\bigskip\noindent
+\textbf{Auswirkungen wenn nicht gesetzt:}
+Es wird kein Offset ausgegeben, wann die Angabe der optionale Informationen im root-Element beginnt, und es werden keine optionalen Informationen f"ur das aktuelle root-Element angegeben.
+
+
+\paragraph{16. weitere optionale Felder}
+
+\ \\\\\noindent
+\textbf{Gesetzt wenn:} 64 weitere optionale Informationsbits sind vorhanden.
+
+\bigskip\noindent
+\textbf{Auswirkungen wenn gesetzt:}
+Auf dem 16-Bit-Feld zur Bestimmung der vorhandenen optionalen Informationen folgt noch ein weiteres 64-Bit-Feld zur Bestimmung von weiteren optionalen Informationen. Diese Bits sind f"ur zuk"unftige Benutzungen gedacht und werden zur Zeit noch nicht verwendet.
+
+\bigskip\noindent
+\textbf{Nicht gesetzt wenn:} Die 64 weiteren optionalen Informationsbits sind nicht vorhanden.
+
+\bigskip\noindent
+\textbf{Auswirkungen wenn nicht gesetzt:}
+Auf den 16-Bit-Feld folgen keine weiteren Bits zur Anzeige der vorhandenen optionalen Informationen.
+
+
+
+\subsubsection{Checksummenfelder}\index{Checksumme}
+\label{secCompressedRootChecksumm}
+
+Mit diesem Feld kann auch das root-Element mit einer Checksumme versehen werden.
+
+Das Verfahren entspricht dem der Checksummeneigenschaft aus dem Abschnitt \ref{secCompressedChecksumm} auf Seite \pageref{secCompressedChecksumm}.
+
+An dieser Stelle stehen 3 Parameter, welche eine 16 Bit und zwei 64 Bit nat"urliche Zahlen sind. Der erste Parameter $A$ gibt die Art der Checksumme an. Der zweite Parameter $B$ gibt an, alle wieviel Bits eine Checksumme generiert werden soll und der dritte Parameter $C$, wieviel Bits die Checksumme haben soll. Die Angaben gelten f"ur den Bereich nach den drei Parametern (auch in Unter-root-Elementen). Die Checksumme wird so wie in Abschnitt \ref{secCompressedChecksumm} auf Seite \pageref{secCompressedChecksumm} beschrieben umgesetzt.
+
+
+\subsubsection{Multimediainformationen}\index{Multimediainformationen}
+\label{secCompressedMultimediainfo}
+
+In der Tabelle \ref{tableCompressedMultimediainfo} ist der Aufbau des Multimediainformationsabschnitts eines root-Elements beschrieben.
+Die Gr"o"se eines Multimediabschnitts ist $2*64=128$ Bit oder $16$ Byte.
+
+\begin{table}[htbp]
+\begin{center}
+\begin{tabular}{|p{20mm}|p{7mm}|p{7mm}|p{16mm}|p{70mm}|}\hline
+	Element & An\-zahl & Bits & Typ & Beschreibung \\\hline\hline
+	Fib-Version & 1 & 64 & nat"urliche Zahl & Die Versionsnummer der Fib-Multimediabeschreibungssprache, die zum Laden des Fib-Objekts ben"otigt wird. Diese Nummer wird mit jeder neuen Version der Fib-Multimediabeschreibungssprache um eins erh"oht. Sie kann zu einer menschenlesbaren Form (z. B. ``Fib V1.2.3'') gemappt werden. Hier wird allerdings nur eine Zahl verwendet, da ansonsten eine bestimmte Form festgelegt w"urde, die nur noch schwer ge"andert werden kann. Es kann eine menschenlesbaren Form der Version im optionalen Teil angegeben werden.\\\hline
+	DB-Version & 1 & 64 & nat"urliche Zahl & Die Versionsnummer der Fib-Datenbank, die zum Laden des Fib-Objekts ben"otigt wird. Diese Nummer wird mit jeder neuen Version der Fib-Datenbank um eins erh"oht. Sie kann zu einer menschenlesbaren Form (z. B. ``Fib DB V1.2.3'') gemappt werden. Hier wird allerdings nur eine Zahl verwendet, da ansonsten eine bestimmte Form festgelegt w"urde, die nur noch schwer ge"andert werden kann. Es kann eine menschenlesbaren Form der Version im optionalen Teil angegeben werden.\\\hline
+\end{tabular}
+\end{center}
+\caption{Daten der Multimediainformationen}
+\label{tableCompressedMultimediainfo}
+\end{table}
+
+
+\subsubsection{Definitionsbereiche}
+\label{secCompressedDefinitionranges}\label{secCompressedDomains}
+\index{Speicherplatzliste}\index{Definitionsbereiche}
+
+Der Definitionsbereichsabschnitt besteht aus zwei Listen mit unterschiedlich langen Eintr"agen. Die L"ange der Eintr"age wird von ihrem Inhalt bestimmt.
+
+Der Definitionsbereichsabschnitt wird mit einer 64 Bit nat"urlichen Zahl eingeleitet, welche die Anzahl der Eintr"age f"ur die Definitionsbereichsliste angibt. Danach folgt die Definitionsbereichsliste.
+
+Auf diese wiederum folgt eine 64 Bit nat"urliche Zahl, welche die Anzahl der Elemente in der Speicherplatzliste (die Definitionsbereichen f"ur Werte) angibt, und dann die Speicherplatzliste.
+
+Dabei k"onnen eine oder beide Listen auch leer sein. F"ur leere Listen wird dann entsprechend nur die einleitende 64 Bit nat"urliche Zahl gespeichert, die dann 0 ist
+
+Die Definitionsbereichsliste gibt die Definitionsbereiche der einzelnen Elemente an. Ist ein Wert (z. B. einer Variable) au"serhalb dieses Definitionsbereichs, wird er auf einen Wert innerhalb des Definitionsbereichs gerundet. Werte au"serhalb dieser Definitionsbereiche k"onnen also f"ur das Element nicht auftreten.
+
+Die Definitionsbereiche f"ur Werte (Speicherplatzliste) enthalten auch Definitionsbereiche, nur gelten diese Definitionsbereiche nicht f"ur Elemente, die Variablen enthalten. Die Definitionsbereiche f"ur Werte bestimmen, wieviel Bits zum Speichern eines Elements, welches einen Wert enth"alt, ben"otigt wird.
+Die Definitionsbereiche f"ur Werte sind also dann sinnvoll, wenn die Werte eines Elements nicht den vollen m"oglichen Definitionsbereich f"ur das Element aussch"opfen. Wenn beispielsweise ein Unterobjekt nur Punkte enth"alt, deren Positionsvektoren nur Variablen und Ganzzahlwerte zwischen 0 und 10 enthalten, kann der Definitionsbereich f"ur Werte f"ur Positionsvektoren auf ``integerB'' mit 4 Bit gesetzt werden, auch wenn die Variablen der Positionsvektoren Werte "uber 100 einnehmen k"onnen.
+
+%TODO? besser runden
+Wenn beim Abspeichern ein Wert im Haupt-Fib-Objekt gefunden wird, der au"serhalb des f"ur sein Element festgelegten Definitionsbereichs liegt, wird der Definitionsbereich automatisch erweitert, so dass er auch den Wert umfasst. Wenn der Definitionsbereich ererbt wurde, wird im root-Element ein entsprechender neuer Definitionsbereich angelegt, der den Wert und den ererbten Definitionsbereich umfasst.
+
+Die Definitionsbereiche f"ur Werte werden beim Abspeichern eventuell erzeugt und optimiert, um den Speicherplatz f"ur das Fib-Objekt m"oglichst gering zu halten. Ein Definitionsbereich f"ur Werte wird beim Abspeichern erzeugt, wenn durch seine Erzeugung wahrscheinlich Speicherplatz eingespart wird.
+
+Da zu einem Fib-Multimediaobjekt viele Definitionsbereiche geh"oren k"onnen, wird bei ihnen mehr auf den Speicherplatz geachtet. Um zuk"unftige Erweiterungen einfach zu machen, wird Wert auf Flexibilit"at gelegt.
+
+Der Grund, f"ur die Einf"uhrung von zentral (in den root-Elementen) festgelegten Definitionsbereichen ist, dass einerseits beim Abspeichern des Fib-Objekts m"oglichst wenig Speicherplatz f"ur die Werte verbraucht wird, ohne die Belegungsm"oglichkeiten f"ur die Werte drastisch einzuschr"anken und andererseits vorab bestimmt werden kann, ob und wie das Multimediaobjekt angezeigt werden kann (z. B. wie es skaliert werden muss oder ob die Anzeige aller Werte unm"oglich ist). Wenn beispielsweise ein Dimensionsdefinitionsbereich nur Ganzzahlwerte zwischen 0 und 50 einnimmt (z. B. die Horizontale in einem Bild), dann reichen 6 Bit zum Abspeichern der Werte f"ur die Dimension aus. Bei gr"o"seren Bildern k"onnen einfach mehr Bits f"ur die Werte der Dimension verwendet werden.
+
+\bigskip\noindent
+Jeder Eintrag besteht aus zwei Teilen:
+\begin{enumerate}
+ \item Dem Namen des Elements, f"ur den der Definitionsbereich gilt (siehe Abschnitt \ref{secCompressedDefinitionrangesElements}).
+ \item Die Angabe des Definitionsbereichs f"ur das Element (siehe Abschnitt \ref{secCompressedDefinitionrangesArea}).
+\end{enumerate}
+
+
+\paragraph{Elementennamen}
+\label{secCompressedDefinitionrangesElements}
+
+Der Elementenname kann nur aus der Angabe eines festen Elements oder aus einem festen Element und einem Parameter bestehen.
+
+\bigskip\noindent
+Das erste Bit (die Z"ahlung beginnt bei 1) des festen Elements bestimmt dessen L"ange:
+\begin{itemize}
+ \item Ist es $0$, ist der Namen 8 Bit lang. M"ogliche Werte sind in Tabelle \ref{tableFixElementsForDefinitionRanges} zu sehen.
+ \item Ist es $1$, ist der Namen 64 Bit lang. Dies ist zur Zeit nur f"ur eine zuk"unftige Nutzung eingeplant.
+\end{itemize}
+
+\bigskip\noindent
+Das zweite und dritte Bit bestimmen die L"ange des Parameters:
+\begin{itemize}
+ \item[00] es gibt kein Parameter
+ \item[01] Parameter mit einer Gesamtl"ange von 8 Bit folgen
+ \item[10] Parameter mit einer Gesamtl"ange von 64 Bit folgen
+ \item[11] Die auf das Elementnamenfeld folgende 16 Bit nat"urliche Zahl gibt die Parameterl"ange in Byte an. Dabei werden die 16 Bit der Parameterl"angenangabe nicht zur Parameterl"ange mit eingerechnet.
+\end{itemize}
+
+
+\begin{center}
+\begin{longtable}{|p{25mm}|p{15mm}|p{85mm}|}\hline
+	Name & Wert Bit 4 bis 8 & Beschreibung \\\hline\endhead
+	dim & 0000 1 & Der Definitionsbereich f"ur Positionsvektoren (siehe Abschnitt \ref{secFibPoint} auf Seite \pageref{secFibPoint} und Abschnitt \ref{secCompressedPoint} auf Seite \pageref{secCompressedPoint}) bzw. die Dimensionen. Die L"ange der Parameterliste ist variabel. Das zweite und dritte Bit ist also $11$ und auf Bit 8 folgt eine 16 Bit nat"urliche Zahl $L$, welche die L"ange der Parameterliste in Byte angibt. Der erste folgende Parameter ist eine 16 Bit nat"urliche Zahl und gibt die Anzahl der Dimension $Dim$ an. Darauf folgen $Dim$ weitere Parameter $Dimmap_1$ bis $Dimmap_{Dim}$ als nat"urliche Zahl mit jeweils der L"ange $L_{Dimmap}=\lfloor((L-2) * 8)/Dim\rfloor$ (also die noch "ubrigen Bits f"ur die Parameter $L$ durch die Anzahl der Dimensionen und das Ergebnis auf eine Ganzzahl abgerundet). Die Werte, welche die $Dimmap_i$ Parameter einnehmen k"onnen, sind in Tabelle \ref{tableDimmapValues} auf Seite \pageref{tableDimmapValues} beschrieben. Die L"ange der Parameterliste $L$ ist so zu bestimmen, dass gerade genug Platz f"ur alle Parameter ist.\\\hline
+	subfunction & 0001 0 & Definitionsbereich f"ur die Elemente von Unterfunktionen (siehe Abschnitt \ref{secFibFunction} auf Seite \pageref{secFibFunction} und Abschnitt \ref{secCompressedFunctions} auf Seite \pageref{secCompressedFunctions})\\\hline
+	property & 0010 0 & Dies ist der Definitionsbereich eines Eigenschaftselements mit dem gegebenen Namen (siehe Abschnitt \ref{secFibProperty} auf Seite \pageref{secFibProperty} und Abschnitt \ref{secCompressedProperty} auf Seite \pageref{secCompressedProperty}). Der Wert f"ur den Namen bzw. den Eigenschaftstyp wird im Parameter "ubergeben. M"ogliche Werte sind in Tabelle \ref{tablePropertyNamen} auf Seite \pageref{tablePropertyNamen} zu sehen. Der Wert, der als Parameter angegeben wird, ist eine nat"urliche Zahl. Der Parameter ist nur so lang (z. B. 8 Bit), wie f"ur die Darstellung des Wertes aus Tabelle \ref{tablePropertyNamen} als nat"urliche Zahl ben"otigt wird. \\\hline
+	inVar & 0010 1 & Dies ist der Definitionsbereich f"ur die i'ten Eingabevariable (siehe Abschnitt \ref{fibRootElement} auf Seite \pageref{fibRootElement} und Abschnitt \ref{secCompressedRootInputVar} auf Seite \pageref{secCompressedRootInputVar}). Der folgende Parameter ist eine nat"urliche Zahl und gibt die Nummer $i$ der Eingabevariable an. (Die Z"ahlung der Eingabevariablen eines root-Elements beginnt bei 1 .) \\\hline
+
+	\multicolumn{3}{|c|}{\textbf{Namen von Elementen f"ur Definitionsbereiche die beim Abspeichern}}\\
+	\multicolumn{3}{|c|}{\textbf{(wenn n"otig) erstellt werden}}\\\hline
+
+	area & 0001 1 & Dieser Typ ist f"ur den Definitionsbereich f"ur das Bereichselement (siehe Abschnitt \ref{fibArea} auf Seite \pageref{fibArea} und Abschnitt \ref{secCompressedArea} auf Seite \pageref{secCompressedArea}). Der zugeh"orige Definitionsbereich ist ein Vektordefinitionsbereich mit 2 Elementen /Unterdefinitionsbereichen. Das erste Element bzw. der erste Unterdefinitionsbereich dient f"ur die Anzahl ($n$) der Unterbereiche, er ist ein Definitionsbereich aus den nat"urlichen Zahlen. Das zweite und letzte Element ist der Definitionsbereich f"ur die Vektoren f"ur die Unterbereiche ($B_{1}$) und ist ein Definitionsbereich f"ur Vektoren dessen zwei Elemente ganze Zahlen sind. \\\hline
+	variable & 1000 1 & Werte, die ben"otigt werden, um Variablen zu kodieren. Der Definitionsbereich sollte die nat"urliche Zahlen von 0 bis maximale Anzahl der definierten Variablen in den Fib-Bl"attern im Haupt-Fib-Objekt beinhalten. Das Fib-Baum-Blatt im Haupt-Fib-Objekt, "uber das die meisten Variablen definiert werden, bzw. der Ast mit den meisten definierten Variablen, bestimmt also den Definitionsbereich. Dieser Eintrag wird beim Abspeichern erstellt.\\\hline
+	comments & 1001 0 & Werte, die ben"otigt werden, um Kommentare zu kodieren (siehe Abschnitt \ref{secFibComment} auf Seite \pageref{secFibComment}, Abschnitt \ref{secCompressedRootOptionalPart} auf Seite \pageref{secCompressedRootOptionalPart} und Abschnitt \ref{secCompressedComments} auf Seite \pageref{secCompressedComments}) . Der Definitionsbereich sollte die nat"urlichen Zahlen von 0 bis Anzahl der Kommentare im Haupt-Fib-Objekt beinhalten. Dieser Eintrag wird beim Abspeichern erstellt.\\\hline
+%free 10011-10111
+	externObject & 1100 0 & Dies ist der Definitionsbereich f"ur externe Objekte (siehe Abschnitt \ref{fibExtObject} auf Seite \pageref{fibExtObject} und Abschnitt \ref{secCompressedExternObjects} auf Seite \pageref{secCompressedExternObjects}) im Haupt-Fib-Objekt. Der Definitionsbereich ist ein Vektor mit 4 Elementen. Die Vektorelemente dienen der Reihenfolge f"ur den Identifier, die Anzahl der Eingabewerte, die Anzahl der Unterobjekte und die Anzahl der Ausgabevariablen. Alle Vektorelementdefinitionsbereiche, au"ser der f"ur den Identifier, kommen aus den nat"urlichen Zahlen. Der Vektorelementdefinitionsbereich f"ur den Identifier kommt aus den Ganzzahlen. Dieser Definitionsbereich wird normalerweise beim Abspeichern erstellt.\\\hline
+	externObject\-Input & 1110 0 & Dieser Typ ist f"ur den Definitionsbereich f"ur die Eingabewerte f"ur externe Objekte (siehe Abschnitt \ref{fibExtObject} auf Seite \pageref{fibExtObject} und Abschnitt \ref{secCompressedExternObjects} auf Seite \pageref{secCompressedExternObjects}). Der Definitionsbereich ist ein Vektordefinitionsbereich und wird normalerweise beim Abspeichern erstellt. Der folgende Parameter ist eine Ganzzahl und gibt den Identifier des externe Objekts an, f"ur dessen Element der Definitionsbereich ist.\\\hline
+	externSubobject & 1100 1 & Dieser Typ ist f"ur den Definitionsbereich f"ur die Eingabewerte f"ur externe Unterobjekte (siehe Abschnitt \ref{fibSubobject} auf Seite \pageref{fibSubobject} und Abschnitt \ref{secCompressedExternSubobjects} auf Seite \pageref{secCompressedExternSubobjects}). Der Definitionsbereich ist ein Vektordefinitionsbereich und wird normalerweise beim Abspeichern erstellt. Der folgende Parameter ist eine nat"urliche Zahl und gibt die Nummer des externe Unterobjekts an, f"ur das der Definitionsbereich ist.\\\hline
+	setElement & 1101 0 & Dieser Typ ist f"ur den Definitionsbereich f"ur das Set-Element (siehe Abschnitt \ref{secFibSetElement} auf Seite \pageref{secFibSetElement} und Abschnitt \ref{secCompressedFibSet} auf Seite \pageref{secCompressedFibSet}). Der zugeh"orige Definitionsbereich ist ein Vektordefinitionsbereich mit 3 Elementen /Unterdefinitionsbereichen. Das erste Element bzw. der erste Unterdefinitionsbereich dient f"ur die Anzahl ($n$) der Variablen und der zu setzenden Werte pro Satz, er ist ein Definitionsbereich aus den nat"urlichen Zahlen. Das zweite Element bzw. der zweite Unterdefinitionsbereich dient f"ur die Anzahl ($k$) der S"atze mit zu setzenden Werten. Er ist auch ein Definitionsbereich aus den nat"urlichen Zahlen. Das dritte und letzte Element ist der Definitionsbereich f"ur die Vektoren f"ur die zu setzenden Werte ($W_{i.g}$) und ist ein Definitionsbereich f"ur Vektoren deren Elemente einfache Zahlen (skalare) sind. Des weiteren kann als Parameter eine nat"urliche Zahl f"ur den Definitionsbereichnummer $DomainNr$ angegeben werden. Wenn der Parameter fehlt, ist die die Definitionsbereichnummer $DomainNr$ gleich $0$ .\\\hline
+	matrixElement & 1101 1 & Dieser Typ ist f"ur den Definitionsbereich f"ur das Matrixelement (siehe Abschnitt \ref{secFibMatrixElement} auf Seite \pageref{secFibMatrixElement} und Abschnitt \ref{secCompressedFibMatrix} auf Seite \pageref{secCompressedFibMatrix}). Der zugeh"orige Definitionsbereich ist ein Vektordefinitionsbereich mit 4 Elementen/Unterdefinitionsbereichen. Das erste Element bzw. der erste Unterdefinitionsbereich ist f"ur die Anzahl ($d$) der Dimensionsvariablen, die Anzahl ($i$) der Wertevariablen und die zu setzenden Werte $i$ pro Satz. Er ist ein Definitionsbereich aus den nat"urlichen Zahlen. Das zweite Element bzw. der zweite Unterdefinitionsbereich ist f"ur die Anzahl ($k$) der S"atze mit den zu setzenden Werten. Er ist auch ein Definitionsbereich aus den nat"urlichen Zahlen. Das dritte Element ist der Definitionsbereich f"ur die Bereiche bzw. Start und Endwerte f"ur die einzellenen Dimensionsvariablen, er ist ein Vektordefinitionsbereich mit zwei Elementen, welche jeweils aus den ganzen Zahlen kommen. Das vierte und letzte Element ist der Definitionsbereich f"ur die Vektoren f"ur die zu setzenden Werte ($W_{a.b}$) und ist ein Definitionsbereich f"ur Vektoren deren Elemente einfache Zahlen (skalare) sind. Des weiteren kann als Parameter eine nat"urliche Zahl f"ur den Definitionsbereichnummer $DomainNr$ angegeben werden. Wenn der Parameter fehlt, ist die die Definitionsbereichnummer $DomainNr$ gleich $0$ .\\\hline
+%frei ab: 1110 1
+\caption{Namen von festen 8-Bit-Elementen f"ur Definitionsbereiche}
+\label{tableFixElementsForDefinitionRanges}
+\end{longtable}
+\end{center}
+
+
+
+\paragraph{Definitionsbereiche}
+\label{secCompressedDefinitionrangesArea}\label{parCompressedDomains}
+
+Der Definitionsbereich besteht aus einem Grunddefinitionsbereich und eventuell Parametern, die den Grunddefinitionsbereich weiter spezifizieren.
+
+\bigskip\noindent
+Das erste Bit (die Z"ahlung beginnt bei 1) des Grunddefinitionsbereichsfeldes bestimmt dessen L"ange:
+\begin{itemize}
+ \item Ist es $0$, ist der Grunddefinitionsbereichsfeld 8 Bit lang. M"ogliche 8-Bit-Grunddefinitionsbereiche sind in Tabelle \ref{tableCompressedDefinitionRanges} zu sehen.
+ \item Ist es $1$, ist der Grunddefinitionsbereichsfeld 64 Bit lang. Dies ist zur Zeit nur f"ur eine zuk"unftige Nutzung eingeplant.
+\end{itemize}
+
+\bigskip\noindent
+Das zweite Bit gibt an, ob der Definitionsbereich skaliert wird:
+\begin{itemize}
+ \item Ist es $0$, wird der Definitionsbereich nicht skaliert.
+ \item Ist es $1$, wird der Definitionsbereich skaliert.
+\end{itemize}
+
+Wenn der Definitionsbereich skaliert wird, wird ein Skalierungsfaktor $S$ angegeben. Dieser Faktor $S$ ist eine Gleitkommazahl, mit dem die Werte des unskalierten Definitionsbereichs multipliziert werden, um (die Werte des/) den skalierten Definitionsbereich zu erhalten.
+
+Der Skalierungsteil wird hinter den Definitionsbereichsangaben (inklusive Parametern) angegeben. Er besteht aus 3 Feldern: dem L"angenfeld, dem Mantissenfeld und dem Exponentenfeld. Das erste Feld (das L"angenfeld) ist 8 Bit lang, stellt eine nat"urliche Zahlen dar und gibt die Anzahl der Bytes f"ur sowohl das Mantisse- als auch das Exponentenfeld an. Das Mantissenfeld (zweites Feld) $S_M$ und das Exponentenfeld (drittes Feld) $S_E$ sind jeweils Ganzzahlen. Der Skalierungsfaktor $S$ ergibt sich dann zu $S=S_M*2^{S_E}$.
+
+\noindent
+\textit{Beispiel:} Der Definitionsbereich sind 2 Bit nat"urliche Zahlen mit dem Skalierungsfaktor $F=1*2^{-1}=1/2$ (die Mantisse ist $1$ und der Exponent ist $-1$, das L"angenfeld ist $1$, f"ur ein Byte Skalierungsfaktorfeld). Die Bits des Skalierungsfaktors sind damit: 0000 0001; 0000 0001; 1111 1111. M"oglich Werte f"ur das Element zum Definitionsbereich sind: $\{$ $0*1/2=0$; $1*1/2=0,5$; $2*1/2=1$; $3*1/2=1,5$ $\}$. Ist nun im Element zum Definitionsbereich eine Zahl, die unskaliert $1$ bedeuten w"urde, bedeutet sie mit Skalierung $0,5$.
+Die Bits des gesamten Definitionsbereichs sind: 0; 1; 000000; 00000010; \ 00000001; 00000001; 11111111 (Felder in dieser Reihenfolge: 8-Bit-Grunddefinitionsbereiche; skaliert; natNumberB; mit 2 Bit pro Element; Skalierungsfaktor: 1 Byte pro Feld, $S_M=1$, $S_E=-1$) (in der Datei, erste Bit vorn: 01000000 01000000 10000000 10000000 11111111)
+
+
+\bigskip
+Die einzelnen Definitionsbereiche (inklusive Skalierungsfaktor) werden mit 0 auf ganzzahlige Byts aufgef"ullt. Ist also eine Definitionsbereichsangabe 13 Bit lang, so werden die verbleibenden 3 Bit mit 0 gef"ullt, so dass ein 16-Bit (=2 Byte) Definitionsbereichsfeld entsteht.
+
+\begin{center}
+\begin{longtable}{|p{25mm}|p{15mm}|p{25mm}|p{60mm}|}\hline
+	Name & Wert Bits 3 bis 8 & Beschreibung & Parameter \\\hline\endhead
+	naturalNumberB & 0000 00 & Der Grunddefinitionsbereich sind die nat"urlichen Zahlen. & Der folgende 8-Bit-Parameter ist eine nat"urliche Zahl $X$, welche die Anzahl der Bits f"ur Werte des Definitionsbereichs angibt. Der zugeh"orige Grunddefinitionsbereich ist dann $0 \ldots (2^X-1)$. \\\hline
+	integerB & 0100 00 & Der Grunddefinitionsbereich sind die Ganzzahlen. & Der folgende 8-Bit-Parameter ist eine nat"urliche Zahl $X$, welche die Anzahl der Bits f"ur Werte des Definitionsbereichs angibt. Der zugeh"orige Grunddefinitionsbereich ist dann $-(2^{X-1}) \ldots (2^{X-1}-1)$. \\\hline
+	naturalNumber & 0000 01 & Der Grunddefinitionsbereich sind die nat"urlichen Zahlen. & Der folgende 64-Bit-Parameter ist eine nat"urliche Zahl $X$, welche die gr"o"ste nat"urliche Zahl des Definitionsbereichs angibt. Der zugeh"orige Grunddefinitionsbereich ist dann $0 \ldots X$. Die Bits, die pro Wert des Definitionsbereichs ben"otigt werden, sind $\lceil \log_2(X+1) \rceil $.\\\hline
+	integer & 0100 01 & Der Grunddefinitionsbereich sind die Ganzzahlen. & Die folgenden zwei 64-Bit-Parameter sind zwei Ganzzahlen $X$ und $Y$. Der erste Parameter $X$ gibt die untere Grenze des Grunddefinitionsbereich an. Der zweite Parameter $Y$ gibt die obere Grenze des Grunddefinitionsbereich an. Der zugeh"orige Grunddefinitionsbereich ist dann $Y \ldots X$. Die Bits, die pro Wert des Definitionsbereichs ben"otigt werden, sind $\lceil \log_2(Y-X+1) \rceil $. Bei der Interpretation der Bits werden alle Werte $W$ ($W$ ist der Wert der Bits als nat"urliche Zahl) gr"o"ser als $X$ als negative Werte mit dem Wert $W-(X-Y+1)$ umgesetzt. Wenn die kleinste Zahl $X$ gr"o"ser als 0 oder die gr"o"ste Zahl $Y$ kleiner als 0 ist ist, wird kleinste Zahl $X$ von alle Zahlen zum Speichern abgezogen ($W+X$).\\\hline
+	integerValues & 0100 10 & Der Grunddefinitionsbereich sind die Ganzzahlen. & Der erste folgende 64-Bit-Parameter ist eine nat"urliche Zahl $N$, welche die Anzahl der m"oglichen Werte angibt. Der zweite folgende 8-Bit-Parameter $B$ gibt die Anzahl der Bits pro nachfolgenden Wert an. Nach den ersten beiden Parametern folgen $N$ Ganzzahlen mit je $B$ Bits in der Zweierkomplementdarstellung. Diese $N$ Ganzzahlen sind alle Werte, die Werte zu dem Grunddefinitionsbereich einnehmen k"onnen. Dabei wird der Wert $W$ einer Zahl in einem Element zum Definitionsbereich auf die $W$'te Zahl in der Liste gemappt/interpretiert (die Z"ahlung beginnt bei 0). Die Bits, die pro Wert $W$ des Definitionsbereichs ben"otigt werden, sind $\lceil \log_2(N) \rceil $.\\\hline
+%TODO: naturalNumberUL() + integerUL() + realUL() f"ur unbegrenzte Zahlen
+
+
+
+%TODO Olli: 14471
+
+	real & 1000 00 & Der Grunddefinitionsbereich sind Gleitkommazahlen. Eine Gleitkommazahl besteht aus zwei Ganzzahlfeldern, eines, das Erste, f"ur den Exponent $E$ und eines, das Zweite, f"ur die Mantisse $M$. Die Gleitkommazahl $Z$ ergibt sich dann zu $Z=M*2^E$ . & Es folgen zwei Parameter. Der erste Parameter gibt den Definitionsbereich der Mantisse und der zweite des Exponenten an. Die Angabe der Definitionsbereiche ist so wie in dieser Tabelle beschrieben (ohne dass die Definitionsbereiche einzeln mit 0 aufgef"ullt werden). Beide Definitionsbereiche m"ussen aus den Ganzzahlen kommen (also integer... oder naturalNumber...).\\\hline
+	realValues & 1000 01 & Der Grunddefinitionsbereich sind Gleitkommazahlen. Eine Gleitkommazahl besteht aus zwei Ganzzahlfeldern, eines, das Erste, f"ur den Exponent $E$ und eines, das Zweite, f"ur die Mantisse $M$. Die Gleitkommazahl $Z$ ergibt sich dann zu $Z=M*2^E$ . & Der erste folgende 64 Bit Parameter ist eine nat"urliche Zahl $N$, welche die Anzahl der m"oglichen Werte angibt. Es folgen 2 Parameter. Der erste Parameter gibt den Definitionsbereich der Mantisse und der zweite des Exponenten an. Beide Definitionsbereiche m"ussen aus den Ganzzahlen kommen (also integer... oder naturalNumber...) . Nach den ersten drei Parameter folgen $N$ Gleitkommazahlen mit je $B=B_M+B_E$ Bits in der Gleitkommazahlendarstellung f"ur die gegebenen Mantissa and Exponenten Definitionsbereiche. Dabei sind $B_M$ die Bits pro Mantisse und $B_E$ die Bits pro Exponent. Diese $N$ Gleitkommazahlen sind alle Werte, die Werte zu dem Definitionsbereich einnehmen k"onnen. Dabei wird der Wert $W$, einer Zahl in einem Element zum Definitionsbereich, auf die $W$'te Zahl in der Liste gemappt/ interpretiert (die Z"ahlung beginnt bei 0). Die Bits, die pro Wert des Definitionsbereichs ben"otigt werden, sind $\lceil \log_2(N) \rceil $.\\\hline
+
+	vector & 1100 00 und 1100 01 & Der Grunddefinitionsbereich sind Vektoren. & Der folgende Parameter $E$ gibt die Anzahl der Elemente des Vektors an. Der (Anzahl-)Parmeter ist bei der Einleitung ``1100 00'' 8 Bit lang und bei der Einleitung ``1100 01'' 64 Bit lang. Auf diesen Parameter folgt eine Liste mit $E$ Definitionsbereichen, so wie sie in diesem Abschnitt definiert sind. Alle Werte des Definitionsbereichs haben dann die Form $(D_1, \ldots , D_E)$, wobei $D_i$ ein Wert aus dem i'ten Definitionsbereich der Liste ist.\\\hline
+	vectorValues & 1100 10 und 1100 11 & Der Grunddefinitionsbereich sind Vektoren. & Der erste folgende Parameter $E$ gibt die Anzahl der Elemente des Vektors an. Der zweite Parameter $N$ die Anzahl der m"oglichen Vektoren. Die (Anzahl-)Parmeter sind bei der Einleitung ``1100 00'' 8 Bit lang und bei der Einleitung ``1100 01'' 64 Bit lang. Auf den zweiten Parameter folgt eine Liste mit $E$ Definitionsbereichen, so wie sie in diesem Abschnitt definiert sind. Darauf folgt eine Liste mit $N$ Vektoren, so wie im Abschnitt \ref{secCompressedVector} auf Seite \pageref{secCompressedVector} beschreiben. Die Definitionsbereiche der Vektoren sind die angegebenen Definitionsbereich der vorhergehenden Liste. Es k"onnen auch Variablen in den abgespeicherten Vektoren vorkommen. Der Definitionsbereich f"ur Variablen in der Liste hat 0 Bits. F"ur eine Variable im Vektor wird also nur die einleitende $1$ geschrieben. Ein Wert $W$ zum Definitionsbereich in einem Fib-Element wird dann als $W$'ter Vektor der zweiten Liste interpretiert. (Die Z"ahlung beginnt bei $0$ . ) Enth"alt der angegebene Vektor Variablen, folgen auf den Wert $W$ direkt die Variablenbezeichner der Variablen, so wie sie "uber dem aktuellen Fib-Element definiert wurde. Die Anzahl der Bits der Variable wird durch den entsprechenden Definitionsbereich f"ur Variablen ``variable'' bestimmt (siehe Abschnitt \ref{secCompressedDefinitionranges} auf Seite \pageref{secCompressedDefinitionranges}). \\\hline
+	vectorOpenEnd & 1110 00 und 1110 01 & Der Grunddefinitionsbereich sind Vektoren. & Der folgende Parameter $E$ gibt die mindest Anzahl der Elemente des Vektors an. Der (Anzahl-)Parmeter ist bei der Einleitung ``1100 00'' 8 Bit lang und bei der Einleitung ``1100 01'' 64 Bit lang. Auf diesen Parameter folgt eine Liste mit $E$ Definitionsbereichen, so wie sie in diesem Abschnitt definiert sind. Alle Werte des Definitionsbereichs haben dann die Form $(D_1, \ldots , D_E, \ldots ,D_E)$, wobei $D_i$ ein Wert aus dem i'ten Definitionsbereich der Liste ist. Dieser Definitionsbereich dient f"ur Elemente, die Vektoren unterschiedlicher Gr"o"se enthalten k"onnen. Die Anzahl der Elemente eines Vektors zu diesem Definitionsbereich wird durch das Element bestimmt, welches den Vektor enth"alt.\\\hline
+
+	domainReference & 1111 00 & Ein Verweis auf den (Unter-)Definitionsbereich eines anderen Elements. Als Definitionsbereich wird der Definitionsbereich des Elements mit dem gegebenen Definitions\-bereich\-namen $Name$ genommen. & Als erster Parameter folgt der im komprimierte Dateiformat kodierte $Name$ des Elements von dem der Definitionsbereich verwendet wird (siehe Abschnitt \ref{secCompressedDefinitionrangesElements} auf Seite \pageref{secCompressedDefinitionrangesElements}, ohne auff"ullen auf ein ganzes Byte). Danach folgt die Angabe der $Element$ Parameter, f"ur die Auswahl eines Unterdefinitionsbereichs. Als erstes folgt daf"ur ein $Element$-Einleitungsbit, welches angibt ob ein weiterer $Element$ Parameter folgen. Ist es $0$ folgt kein $Element$ Parameter, ist es $1$ folgt ein $Element$ Parameter. Wenn es $1$  ist folgt auf dieses erste $Element$-Einleitungsbit eine 1 Byte (8-Bit) lange nat"urliche Zahl $Bits$, die Angibt, wieviele Bits pro $Element$ Parameter verwendet werden. Danach folgt der erste $Element$ Parameter. Nach jedem $Element$ Parameter (abgespeichert mit dem Definitionsbereich $naturalNumberB( Bits )$) folgt wieder ein $Element$-Einleitungsbit und danach eventuell der n"achste $Element$ Parameter usw. .  Beispiel $matrix.3.1$: zwei Bits werden ben"otigt um die $Element$ Parameter abzuspeichern; die Bits sind (erstes Bit vorn): 0 0 001111  0 00 11011  1 00000010 11  1 10  0 ( In ihrer Reihenfolge stehen die Felder f"ur: Definitionsbereichsfeld 8 Bit lang; nicht skaliert; domainReference; 8 Bit Elementname; keine Parameter; matrixElement; $Element$ Parameter folgt; mit je 2 Bit; 3'ter Unterdefinitionsbereich; $Element$ Parameter folgt; erster Unterdefinitionsbereich; kein $Element$ Parameter folgt )\\\hline
+
+%TODO impl
+	defaultDomain & 1111 01 & Der angegebene Definitionsbereich wird nur verwendet, wenn es f"ur das entsprechende Element bisher keinen anderen Definitionsbereich gibt. & Als Parameter folgt ein Definitionsbereich wie in dieser Tabelle beschrieben. Der angegeben Definitionsbereich wird nur verwendet, wenn es f"ur das entsprechende Element bisher keinen anderen Definitionsbereich gibt. \\\hline
+
+%offen: (nat:) 0000 10; 0000 11; (int:) 0100 11; (vec:) 1000 10; 1000 11; 1110 10; 1110 11;; 1111 01; 1111 10; 1111 11;  110? ??; 101? ??; 011? ??; 001? ??; ...?
+
+\caption{8 Bit Parameter f"ur Definitionsbereiche}
+\label{tableCompressedDefinitionRanges}
+\end{longtable}
+\end{center}
+
+
+\subsubsection{Eingabevariablen}\index{Eingabevariablen}
+\label{secCompressedRootInputVar}
+
+In komprimierten Fib-Objekten werden Variablen durchnummeriert und als nat"urliche Zahlen dargestellt. Dabei sind die ersten $n$ Variablenwerte im Fib-Objekten f"ur die Eingabenvariablen reserviert. Deshalb ist f"ur die Variablen nur die Anzahl der Eingabevariablen $V_E$ an dieser Stelle interessant. Daf"ur wird eine 64 Bit nat"urliche Zahl an dieser Stelle abgespeichert, welche die Anzahl der Eingabevariablen enth"alt.
+Nach dem Feld f"ur die Anzahl der Eingabevariablen ($V_E$) folgen $V_E$ Werte f"ur die Standardbelegungen $S_i$ der Eingabevariable $inVar_i$ (in der jeweiligen Reihenfolge). Die Anzahl der Bits und die Kodierung des Standardwerts $S_i$ folgt aus dem Definitionsbereich der Eingabevariable $inVar_i$ .
+
+Das Eingabevariablenfeld wird mit dem 0 Bit auf volle Bytes aufgef"ullt.
+
+
+\subsubsection{Haupt-Fib-Objekt}\index{Haupt-Fib-Objekt}
+\label{secCompressedRootMainObject}
+
+An dieser Stelle kommen die Daten des Haupt-Fib-Objekts in Form seiner Elemente und deren Parameter, so wie es weiter unten im Abschnitt \ref{secCompressedFibElement} auf Seite \pageref{secCompressedFibElement} beschrieben wird.
+
+Das Feld f"ur das Haupt-Fib-Objekts wird mit dem 0 Bit auf volle Bytes aufgef"ullt.
+
+
+\subsubsection{Weitere root-Objekte}\index{Unter-root-Objekte}
+\label{secCompressedRootSubRoot}
+
+Hier folgt eine Liste mit weiteren root-Objekten und ihren Identifizierern. Eingeleitet wird die Liste mit einer 64 Bit nat"urlichen Zahl $N$, welche die Anzahl der Elemente der Liste angibt. Darauf folgt eine 8 Bit nat"urliche Zahl $B$, welche die Bytes pro Identifizierer angibt.
+
+Darauf folgt die Liste von $N$ Paare mit Identifizierer und root-Element. Der Identifizierer in jedem Paar ist eine Ganzzahl (im root-Element immer gr"o"sergleich 0, in der Datenbank kleiner 0). Er kommt in den Listenelementen zuerst und ist $B$ Bytes lang. Darauf folgt das root-Element, so wie es hier im Abschnitt \ref{secCompressedRootElement} (ab Seite \pageref{secCompressedRootElement}) beschrieben wird. Jedes Paare wird mit dem 0 Bit auf volle Bytes aufgef"ullt.
+
+
+\subsubsection{Identifier von verwendeten Datenbankobjekten}\index{Datenbank!benutzte Identifier}
+\label{secCompressedRootDBIdentifier}
+
+An dieser Stelle steht eine Liste aller Identifier von Fib-Datenbankobjekten, welche im Haupt-Fib-Objekt oder auch in Unter-root-Objekten verwendet werden. Diese Angaben der Identifiern ist optional. Wenn Identifier vorhanden sind, kann von Vornherein gepr"uft werden, ob alle externen Fib-Objekte aus der Datenbank, welche ben"otigt werden, existieren oder ob es wahrscheinlich zu Anzeigefehlern kommt, da Fib-Datenbankobjekte fehlen. Ob die Identifier von Fib-Datenbankobjekten, die in einem Haupt-Fib-Objekt eines root-Elements verwendet werden, in diesem root-Element angegeben werden oder in einem h"oheren root-Element, h"angt von verschiedenen Gesichtspunkten ab. F"ur die Ver"anderung von Fib-Objekten, ist es vorteilhaft Identifier von Fib-Datenbankobjekten in einem root-Element, welches m"oglichst nahe am Verwendungsort liegt, anzugeben. Aus Platzgr"unden kann es aber sinnvoll sein, Identifier von Fib-Datenbankobjekten in m"oglichst wenigen root-Elementen zusammenzufassen.
+
+Eingeleitet wird die Liste mit einer 64 Bit nat"urlichen Zahl $N$, welche die Anzahl der Elemente der Liste angibt. Darauf folgt eine 8 Bit nat"urliche Zahl $B$, welche die Bits pro Identifizierer angibt.
+Darauf folgt die Liste von $N$ je $B$ Bits langen ganzzahl Identifizierern.
+
+Das Feld f"ur die Identifizierer von verwendeten Datenbankobjekten wird mit dem 0 Bit auf volle Bytes aufgef"ullt.
+
+
+\subsubsection{Optionaler Teil}\index{Optionaler Teil}
+\label{secCompressedRootOptionalPart}
+
+Der optionale Teil ist der letzte Teil eines root-Elements. Er sollte f"ur die Darstellung des Multimediaobjekts keine wichtige Informationen enthalten, so dass er beim Abspeichern ganz weggelassen werden kann. Auf diese Weise kann Speicherplatz gespart werden.
+
+Die L"ange des optionale Teil ergibt sich aus der Differenz zwischen seinem Anfangsbyte und dem Ende des root-Elements (zum Offset siehe "Uberabschnitt \ref{secCompressedRootElement} ab Seite \pageref{secCompressedRootElement}).
+
+Eingeleitet wird der Optionale Teil durch eine 16 Bit nat"urliche Zahl $C$, welche die Kompressionsart des optionale Teils angibt. M"ogliche Werte f"ur die Kompressionsart $C$ sind in Tabelle \ref{tableOptionalPartCompressing} aufgef"uhrt. Der restliche optionale Teil wird dann vollst"andig mit dem angegebenen Verfahren komprimiert.
+
+\begin{table}[htbp]
+\begin{center}
+\begin{tabular}{|p{15mm}|p{100mm}|}\hline
+	Wert $C$ & Beschreibung \\\hline\hline
+	0 & keine Komprimierung\\\hline
+	1 & Die Daten sind im zlib Format komprimiert. Dieser ist ein Warper (dokumentiert im RFC 1950) f"ur einen Deflate Datenstrom (verlustlosen Datenkompression, dokumentiert in RFC 1951). \\\hline
+
+%TODO Comprimierungsarten Einpflegen?
+\end{tabular}
+\end{center}
+\caption{Komprimierungsarten}
+\label{tableOptionalPartCompressing}
+\end{table}
+
+
+Der dekomprimierte optionale Teil besteht aus einer Liste von Key, Value-Paaren. Sie wird eingeleitet durch eine 64 Bit nat"urliche Zahl $N$, welche die Anzahl der Elemente in der Liste angibt. Als zweiter Parameter folgt eine 16 Bit nat"urliche Zahl, welche die Kodierungsart bestimmt. M"ogliche Werte f"ur die Kodierung sind in Tabelle \ref{tableOptionalPartCoding} aufgef"uhrt. Dabei sollte UTF-8 als Standardkodierung angesehen werden und andere Kodierungen nur gew"ahlt werden, wenn UTF-8 nicht mehr ausreichend ist.
+Danach folgt die Liste mit den Paaren/ Elementen.
+
+Jedes Listenelement (-Paar) enth"alt zwei nullterminierte Zeichenketten in der angegeben Kodierung. Die erste Zeichenkette ist dabei der Schl"ussel/ Key des Elements und die zweite der Wert/ Value.
+
+\begin{table}[htbp]
+\begin{center}
+\begin{tabular}{|p{20mm}|p{15mm}|p{80mm}|}\hline
+	Name & Wert & Beschreibung \\\hline\hline
+	UTF-8 & 0 & 8-Bit Unicode Transformation Format\\\hline
+	UTF-16 & 1 & Universal Multiple-Octet Coded Character Set (UCS) Transformation Format for 16 Planes of Group 00\\\hline
+	UTF-32 & 2 & Unicode kodiert ein Zeichen mit 32 Bit\\\hline
+
+%TODO Kodierungen Einpflegen?
+\end{tabular}
+\end{center}
+\caption{Kodierungsarten f"ur Zeichenketten}
+\label{tableOptionalPartCoding}
+\end{table}
+
+\label{secCompressedOptionalPartComment}
+Aus dem Haupt-Fib-Objekt werden alle Texte aus den Anmerkungen (siehe Abschnitt \ref{secCompressedComments} auf Seite \pageref{secCompressedComments} ) in den optionalen Teil verlagert. Die Anmerkungen enthalten auch Schl"ussel ($Key$), Wert ($Value$)-Paare. Jedem dieser Schl"ussel, Wert Paare aus den Anmerkungen wird eine nat"urliche Zahl $K$ zugeordnet (beginnend mit 0). Im optionalen Teil wird dann f"ur das ausgelagerte Paar ein eigener Listeneintrag generiert. Dabei ist der Schl"ussel des Listeneintrags ``@'' gefolgt von der der Nummer der Anmerkung $A$, dann folgt wieder ein ``@'' und danach der urspr"unglich Schl"ussel ($Key$) der Anmerkung. Der Wert des generierten Listeneintrag ist gleich dem Wert aus der Anmerkung.
+Wenn also das Schl"ussel, Wert Paar in der $A$'ten Anmerkung $(Key, Value)$ ist, ist der Eintrag im optionalen Teil daf"ur $(@A@Key, Value)$ .
+
+Beispiel: Die 2. Anmerkung ist: ``c( ``autor'',``ich'', Obj)'', der daraus generierte Listeneintrag im optionalen Teil ist: ``( ``@2@autor'',``ich'')''.
+
+Ausgelagerte Texte sollten am Ende des optionalen Teils stehen.
+
+\index{root-Element|)}
+
+
+\subsection{Fib-Elemente}\index{Fib-Element}
+\label{secCompressedFibElement}
+
+Alle Fib-Elemente, au"ser dem root-Element, werden durch ein (mindestens 4 Bit) Bitfeld eingeleitet. Vektoren werden direkt in den Fib-Elementen eingebunden, ohne eigene Einleitung.
+
+Die Einleitung $0000$ ist reserviert, damit mit 0 aufgef"ullte Bereiche nicht als Fib-Element interpretiert werden k"onnen. Die Einleitung $1111$ ist f"ur sp"atere Benutzung reserviert und k"undigt an, dass die Einleitung 16 Bit lang ist und nicht 4 Bit.
+
+Alle Fib-Elemente und Vektorelemente folgen direkt hintereinander. Wenn Stellen mit dem 0 Bit aufgef"ullt werden, wird dies im Nachfolgenden explizit angef"uhrt.
+
+
+\subsubsection{Vektoren}\index{Vektoren|(}
+\label{secCompressedVector}
+
+Vektoren bestehen aus mehreren Elementen, wobei jedes Element entweder eine Wert oder eine Variable sein kann. Die Anzahl der Elemente des Vektors ist entweder Fib-Element spezifisch oder wird durch einen zugeh"origen Definitionsbereich bestimmt (siehe Abschnitt \ref{secCompressedDefinitionranges} auf Seite \pageref{secCompressedDefinitionranges}). 
+
+\noindent\bigskip
+F"ur jedes Element gibt es zwei Felder:
+\begin{itemize}
+ \item ein 1 Bitfeld welches bestimmt, ob es sich bei dem Element um einen Wert (Bit ist 0) oder um eine Variable (Bit ist 1) handelt
+ \item das Feld mit dem Wert f"ur das Element (dem wahren Wert oder einer Zahl f"ur die Variable)
+\end{itemize}
+
+Ist das Element ein Wert, folgt auf das 1 Bitfeld mit $0$ direkt ein Wert. Die Anzahl der Bits des Werts wird durch den entsprechenden Definitionsbereich bestimmt. Der Wert entstammt dem unskalierten Definitionsbereich und wird erst nach dem Laden skaliert.
+
+Ist das Element eine Variable, folgt auf das 1 Bitfeld mit $1$ direkt ein Variablenbezeichner (dies ist die gleiche nat"urliche Zahl wie bei der Variablendefinition) einer Variable, die "uber dem aktuellen Fib-Element definiert wurde. Die Anzahl der Bits der Variable wird durch den entsprechenden Definitionsbereich f"ur Variablen ``variable'' bestimmt (siehe Abschnitt \ref{secCompressedDefinitionranges} auf Seite \pageref{secCompressedDefinitionranges}).
+
+Die im jeweiligen Fib-Objekt-Zweig am weitesten oben definierten Variable hat den Wert bzw. Variablenbezeichner $1$ . Alle anderen Variablen haben den Wert $i+1$, wobei $i$ der Wert der als n"achste "uber der Variable definierten Variable ist. Es werden also in den jeweiligen Fib-Objekt-Zweigen die Variablen von oben (ausgehend von der Wurzel) nach unten (zu den Bl"attern) durchnummeriert, wobei mit $1$ begonnen wird.
+
+\index{Vektoren|)}
+
+\subsubsection{Punkte}\index{Punktelement|(}
+\label{secCompressedPoint}
+
+Einleitung normaler Punkt: 0001
+\\\noindent
+F"unf Bit Einleitung f"ur einen Punkt mit leerem Positionsvektor ($point(())$): 00010
+\\\noindent
+F"unf Bit Einleitung f"ur einen Punkt ohne Positionsvektor ($point()$): 10010
+
+\bigskip\noindent
+Zur Beschreibung des Punktelements siehe Abschnitt \ref{fibPoint} auf Seite \pageref{fibPoint} .
+
+Normale Punkte enthalten einen Positionsvektor (siehe \ref{secCompressedVector}). Die Anzahl der Vektorelemente wird durch die Anzahl der Dimensionen bzw. Elemente im Definitionsbereich der Dimension (``dim'') bestimmt. Die Bits pro Positionsvektorelement wird durch das jeweile Element des Definitionsbereich der Dimension (``dim'') oder durch den Definitionsbereich f"ur Variablen (``variable'') bestimmt (siehe Abschnitt \ref{secCompressedDefinitionranges} auf Seite \pageref{secCompressedDefinitionranges}).
+
+Die einzelnen Vektorelemente folgen direkt auf die Einleitung des Punktes.
+
+Punkt mit leeren oder ohne Positionsvektor enthalten keine Bits f"ur einen Positionsvektor. Bei diesen Punkten gibt es also nur die jeweilige 5 Bit Einleitung.
+
+\bigskip\noindent
+Beispiel: Ein Punkt wird kodiert mit den Positionswerten (2; 10). Das Multimediaobjekt hat 2 Dimensionen. F"ur beide Dimensionen werden 5 Bit ben"otigt, es sind nat"urliche Zahlen.
+\begin{itemize}
+ \item Einleitung Punkt: 0001
+ \item Erstes Positionsvektorelement (f"uhrende 0 f"ur: ``Vektorelement ist ein Wert'') 2 : 0 00010
+ \item Zweites Positionsvektorelement (f"uhrende 0 f"ur: ``Vektorelement ist ein Wert'') 10 : 0 01010
+ \item Kodiertes Punktobjekt (erstes Bit vorn): 1000010000010100
+\end{itemize}
+
+\index{Punktelement|)}
+
+
+\subsubsection{Eigenschaft}\index{Eigenschaftselement|(}
+\label{secCompressedProperty}
+
+Einleitung: 0011
+
+\bigskip\noindent
+Zur Beschreibung des Eigenschaftselements siehe Abschnitt \ref{fibProperty} auf Seite \pageref{fibProperty} .
+
+Der Eigenschaftsvektortyp wird durch eine nat"urliche Zahl bestimmt die direkt auf die Einleitung folgt. In den g"ultigen Definitionsbereichen werden die m"ogliche Eigenschaften aufgelistet (siehe Abschnitt \ref{root_definition_ranges} auf Seite \pageref{root_definition_ranges}, Tabelle \ref{tablePropertyNamen} auf Seite \pageref{tablePropertyNamen} und Tabelle \ref{tableElementsForDomains} auf Seite \pageref{tableElementsForDomains}). Die Zahl f"ur den Eigenschaftsvektortyp ist die Nummer der Eigenschaft in der g"ultigen Definitionsbereichsliste. Gez"ahlt werden dabei nur Eigenschaftsdefinitionsbereiche und angefangen wird mit der Z"ahlung bei 0.
+
+In der g"ultigen Definitionsbereichsliste werden zuerst die Definitionsbereiche f"ur Werte (siehe Abschnitt \ref{secDomainsForValues} auf Seite \pageref{secDomainsForValues}) aufgelistet und danach Definitionsbereiche f"ur Elemente (siehe Abschnitt \ref{secDomainsForElements} auf Seite \pageref{secDomainsForElements}) .
+Ererbte Eigenschaftsdefinitionsbereich, die nicht "uberschrieben werden, werden gez"ahlt, als ob sie hinter den Definitionsbereichen des aktuellen (bzw. n"achsten) root-Elements stehen. (Um so n"aher das vererbende root-Element dem erbenden ist, um so kleiner sind die Zahlen der vererbten Eigenschaftsdefinitionsbereiche [jeweils f"ur Werte oder Elemente Definitionsbereiche getrennt] .)
+
+F"ur Eigenschaftstypen, welche im Fib-Objekt vorhanden sind, aber f"ur die kein Definitionsbereich existiert, mu"s ein Definitionsbereich (z. B. der Standarddefinitionsbereich) in den Wertedefinitionsbereichen eingef"ugt werden. Nur so k"onnen die Eigenschaftsvektortypen durchnummeriert werden.
+
+Die Anzahl Bits, welche f"ur die Zahl des Eigenschaftsvektortyp ben"otigt werden, ergibt sich aus der Anzahl der definierten (inklusive ererbten) Eigenschaftsdefinitionsbereiche $WE$ insgesamt, sie ist $\lceil \log_2(WE) \rceil $.
+Werden beispielsweise nur die Eigenschaftsdefinitionsbereiche \verb|colorRGB|, \verb|layer| und \verb|sound| definiert. Dann werden $\lceil \log_2(3) \rceil = 2$ Bit zum Abspeichern des Eigenschaftsvektortyp ben"otigt und der Eigenschaftsvektortyp \verb|layer| hat den Wert 01.
+
+Auf dem Eigenschaftsvektortyp folgen die Elemente des Eigenschaftsvektors (siehe Abschnitt \ref{secCompressedVector} auf Seite \pageref{secCompressedVector}). Wobei die Anzahl und Bits durch die jeweiligen Definitionsbereichsdefinition bestimmt wird (siehe Abschnitt \ref{secCompressedDefinitionranges} auf Seite \pageref{secCompressedDefinitionranges}).
+
+Am Ende folgt das Unterobjekt der Eigenschaft.
+
+\bigskip\noindent
+Bei den Eigenschaften gibt es noch zwei besondere Eigenschaften, die Einfluss auf die Decodierung des Fib-Objekts haben. Diese Eigenschaften sind ``checksum'' und ``boundSize''.
+
+
+\paragraph{Checksummen}\index{Checksumme}
+\label{secCompressedChecksumm}
+
+Die Checksummeneigenschaft dient zum Finden von fehlerhaften Fib-Objekten und zum eventuellen korrigieren der Fehler.
+
+Ihre Bezeichnung ist ``checksum''. Sie hat 3 Parameter. Der erste Parameter $A$ gibt die Art der Checksumme an. Der zweite parameter $B$ gibt an alle wieviel Bits eine Checksumme generiert werden soll und der dritte Parameter $C$ wieviel Bits die Checksumme haben soll.
+
+
+\subparagraph{Checksummen der Art 1}
+
+Ist der erste Parameter $A$ gleich $1$ wird die Checksumme nach der in diesem Abschnitt beschriebenen Art generiert.
+
+Die Checksumme steht jeweils vor dem zu ihr geh"orenden Block.
+
+Die Checksummeneigenschaft gilt f"ur das gesamte Fib-Objekt bzw. Fib-Zweig das im Eigenschaftselement vorhanden ist (dessen gesamtes Unterobjekt), ausgenommen Bereiche die eine separate Checksummeneigenschaft haben. Beim Laden des Fib-Objekts werden immer Bl"ocke von $C+B$ Bits geladen, wobei Bl"ocke die am Ende des Checksummenbereichs liegen mit $0$ aufgef"ullt werden. Vom Fib-Objekt wird also jeweils nur soviel gelesen wie noch zum Checksummenbereich geh"ort und der Rest des Blocks mit $0$ aufgef"ullt.
+
+Wird der Checksummenbereich $Cb_1$ durch ein anderen Checksummenbereich $CB_2$ unterbrochen, wird nach dem Checksummenbereich $CB_2$ ein neuer Block f"ur den Checksummenbereich $Cb_1$ angefangen und eingelesen.
+
+Beim Abspeichern wird das gesamte Unterobjekt des Eigenschaftselement der Checksumme zuerst in komprimierte Form gebracht, so wie in diesem Abschnitt \ref{fibCompressing} beschrieben. Aus dem entstandende Bitfeld werden alle Bereiche ausgeschnitten die nicht mehr zu der Checksummeneigenschaft geh"oren, da sie zu einer anderen Checksummeneigenschaften geh"oren, diese werden dann separat behandelt. Dadurch entstehen aus dem komprimierten Unterobjekt der Checksummeneigenschaft mehrere Bitfelder $Bf_i$ f"ur die Checksummeneigenschaft. Diese Bitfelder $Bf_i$ werden in Bl"ocke von je $B$ Bits unterteilt, wobei der jeweils letzte Block eines Bitfeldes $Bf_i$ mit dem 0 Bit auf $B$ Bits aufgef"ullt wird. F"ur die Bl"ocke wird dann jeweils die Checksumme von $C$ Bits berechnet. Die Bl"ocke werden danach in ihrer urspr"unglichen Reihenfolge wieder zu Bitfelder entsprechend zu den $Bf_i$ Bl"ocken zusammengef"ugt, wobei jeweils zuerst das Checksummenfeld des Blocks und dann der zugeh"orige Block kommt. Diese Bitfelder werden anschlie"send in ihrer urspr"unglichen Reihenfolge mit den zu anderen Checksummeneigenschaften Bereichen, die separat behandelt wurden, zu einem Bitfeld f"ur das gesamte Unterobjekt zusammengef"ugt.
+
+Die Checksumme gilt nicht nur zur Fehlererkennung, sonder nach M"oglichkeit (wenn genug Checksummenbits vorhanden sind) zu Fehlerkorrektur.
+
+
+%TODO checksumme Verfahren + Korrektur
+
+
+
+\paragraph{Gr"o"se des Fib-Objekts}
+\label{secCompressedBoundSize}
+
+Mit der Eigenschaft ``boundSize'' wird angegeben, dass f"ur ein Fib-Objekt die Gr"o"se in Bit angegeben werden sollen. Obwohl diese Eigenschaft im erstellten Fib-Objekt kein Element im Vektor besitzt, wird beim Abspeichern des Vektors ein Element erzeugt, f"ur das auch ein Definitionsbereich im root-Element erstellt wird (siehe Abschnitt \ref{secCompressedDefinitionranges} auf Seite \pageref{secCompressedDefinitionranges}).
+
+Das Vektorelement im komprimierten Format enth"alt die Anzahl der Bits, die das enthaltende Fib-Objekt lang ist (inklusive eventueller Checksummen). Sollte das Fib-Objekt unreparabel Fehlerhaft sein, so kann auf diese Weise dennoch der Anfang des folgenden Fib-Objekts gefunden werden und dieses geladen werden. Ohne die Angabe der L"ange des Fib-Objekts $Obj_1$ kann wahrscheinlich nicht der Anfang des im Datenstrom folgenden Fib-Objekts $Obj_2$ bestimmt werden, da unbekannt ist, wie lang die Elemente von $Obj_1$ sind. Wenn $Obj_1$ unreparabel Fehlerhaft ist, aber der Anfangspunkt bzw. das Anfangsbit des folgenden Fib-Objekts $Obj_2$ bekannt ist, kann dann zwar das $Obj_1$ nicht dargestellt werden, aber dies hat dann keine Auswirkungen auf Multimediainformationen au"serhalb von $Obj_1$, so dass sich der Fehler auf $Obj_1$ beschr"ankt.
+
+Die Eigenschaft ``boundSize'' ist sinvollerweise als erstes/ oberstes Fib-Element von Unterobjekten in Listen oder root-Elementen einzusetzen.
+
+
+\index{Eigenschaftselement|)}
+
+
+\subsubsection{Listenelement}\index{Listenelement|(}
+
+M"ogliche Einleitungen:
+\begin{itemize}
+ \item 0100: Einleitung f"ur zwei Unterobjekte
+ \item 0101: weniger als 256 Unterobjekte
+ \item 0110: weniger als $2^{64}$ Unterobjekte
+\end{itemize}
+
+\bigskip\noindent
+Zur Beschreibung des Listenelements siehe Abschnitt \ref{fibList} auf Seite \pageref{fibList} .
+
+Das Listenelement gibt an, dass im Nachfolgenden mehrere Fib-Objekte hintereinander kommen. Wobei direkt auf die Einleitung des Listenelements ein nat"urliche Zahl folgt, welche die Anzahl der folgenden Fib-Unterobjekte angibt. Die L"ange des Feldes, f"ur die Anzahl der Fib-Unterobjekte, h"angt von der Einleitung des Listenelements ab.
+
+\bigskip\noindent
+Folgende L"angen f"ur das Anzahlfeld gibt es:
+\begin{itemize}
+ \item Einleitung Listenelement 0100: Das Feld f"ur die Anzahl der Fib-Unterobjekte ist 0 Bit lang, bzw. wird weggelassen.
+ \item Einleitung Listenelement 0101: Das Feld f"ur die Anzahl der Fib-Unterobjekte ist 8 Bit lang.
+ \item Einleitung Listenelement 0110: Das Feld f"ur die Anzahl der Fib-Unterobjekte ist 64 Bit lang.
+\end{itemize}
+
+Auf die Angabe der Anzahl Fib-Unterobjekte folgen die Fib-Unterobjekte. Wobei das erste folgende Fib-Unterobjekte, das erste Unterobjekt des Listenelements ist, darauf folgt dann das zweite Unterobjekt des Listenelements usw. .
+
+Weitere Angaben oder Informationen werden zum Listenelement nicht ben"otigt, da die L"ange der Unterobjekte aus den Unterobjekten selbst hervorgeht.
+
+\index{Listenelement|)}
+
+\subsubsection{Anmerkungselement}\index{Anmerkungselement|(}
+\label{secCompressedComments}
+
+Einleitung: 0111
+
+\bigskip\noindent
+Zur Beschreibung des Anmerkungselements siehe Abschnitt \ref{fibComment} auf Seite \pageref{fibComment} .
+
+Die Anmerkungselemente enthalten nach der Einleitung eine nat"urliche Zahl $N$, welche die Nummer der Anmerkung angibt. Der Definitionsbereich ``comments'' dieser Zahl wird durch das root-Element bestimmt (siehe Abschnitt \ref{secCompressedDefinitionranges} auf Seite \pageref{secCompressedDefinitionranges}).
+
+Darauf folgt das Unterobjekt des Anmerkungselements.
+
+Im optionalen Teil des zugeh"origen root-Elements wird f"ur jede Anmerkung ein Eintrag erstellt. Mehr Details sind im Abschnitt \ref{secCompressedOptionalPartComment} auf Seite \pageref{secCompressedOptionalPartComment} nachzulesen.
+
+\index{Anmerkungselement|)}
+
+
+\subsubsection{Bereiche}\index{Bereichselement|(}
+\label{secCompressedArea}
+
+Einleitungen: 1000
+
+\bigskip\noindent
+Zur Beschreibung des Bereichselements siehe Abschnitt \ref{fibArea} auf Seite \pageref{fibArea} .
+
+Direkt auf die Einleitungen folgt eine nat"urliche Zahl, welche die Anzahl der Teilbereiche angibt. Die Bits f"ur diese Zahl ergeben sich aus dem ersten Element /Unterdefinitionsbereich des Vektordefinitionsbereichs f"ur ``area''.
+
+Dannach folgen die Teilbereiche.
+Die Teilbereiche sind Vektoren, welche aus zwei Elementen bestehen (zu Vektoren siehe Abschnitt \ref{secCompressedVector} auf Seite \pageref{secCompressedVector}).
+Die entsprechenden Definitionsbereiche f"ur die Elemente der Teilbereichsvektoren sind durch den zweiten Unterdefinitionsbereiche des Definitionsbereichs ``area'' f"ur die Werte oder den Definitionsbereich ``variable'' f"ur die Variablen bestimmt (siehe Abschnitt \ref{secCompressedDefinitionranges} auf Seite \pageref{secCompressedDefinitionranges}).
+
+Am Ende folgt das Unterobjekt des Bereichsobjekts.
+
+\index{Bereichselement|)}
+
+
+\subsubsection{Funktionen}\index{Funktionselement|(}\index{Funktion|(}
+\label{secCompressedFunctions}
+
+Einleitung: 1011
+
+\bigskip\noindent
+Zur Beschreibung des Funktionselements siehe Abschnitt \ref{fibFunction} auf Seite \pageref{fibFunction} .
+
+Nach der Einleitung folgt die Unterfunktion der Funktion.
+
+Am Ende folgt das Unterobjekt des Funktionsobjekts.
+
+
+\paragraph{Unterfunktionen}\index{Unterfunktionen|(}
+\label{secCompressedUnderFunction}
+
+\ \\
+Unterfunktionen werden durch 2 Bit f"ur Art der Unterfunktion eingeleitet:
+\begin{itemize}
+ \item 00: Wert
+ \item 01: Variable
+ \item 10: Unterfunktion einstellig
+ \item 11: Unterfunktion zweistellig
+\end{itemize}
+
+Ist die Unterfunktion ein Wert (Einleitung: $00$), folgt auf die Einleitung $00$ direkt ein Wert. Die Anzahl der Bits des Werts wird durch den entsprechenden Definitionsbereich f"ur Unterfunktionen ``underfunction'' bestimmt (siehe Abschnitt \ref{secCompressedDefinitionranges} auf Seite \pageref{secCompressedDefinitionranges}).
+
+Ist die Unterfunktion eine Variable (Einleitung: $01$), folgt auf die Einleitung $01$ direkt ein Variablenbezeichner, einer Variable die "uber dem Funktionselement definiert wurde. Die Anzahl der Bits des Variablenbezeichners wird durch den entsprechenden Definitionsbereich f"ur Variablen ``variable'' bestimmt (siehe Abschnitt \ref{secCompressedDefinitionranges} auf Seite \pageref{secCompressedDefinitionranges}).
+
+\bigskip\noindent
+Ist die Unterfunktion eine einstellig Unterfunktion (Einleitung: $10$), folgt auf die Einleitung $10$ direkt ein (mindestens 2 Bit) Bitfeld, welches den Typ der Unterfunktion angibt. Nach dem Bitfeld folgt direkt eine weitere Unterfunktion (Eingeleitet durch die 2 Bit f"ur deren Art), welche die Unterfunktion der einstellig Unterfunktion ist.
+
+\bigskip\noindent
+Werte f"ur den Typ von einstellig Unterfunktion:
+\begin{itemize}
+ \item 00: Absolutwert
+ \item 01: Sinusfunktion
+ \item 10: Einleitung f"ur seltenere einstellige Funktionen. Die folgenden 2 Bit geben den Typ der einstelligen Funktion an:
+ \begin{itemize}
+  \item 00 10: Logarithmus
+  \item 01 10: Arkussinus
+  \item 10 10: Runden
+  \item 11 10: Frei f"ur zuk"unftige Belegungen.
+ \end{itemize}
+ \item 11: Einleitung f"ur seltenere einstellige Funktionen. Die folgenden 6 Bit geben den Typ der einstelligen Funktion an:
+ \begin{itemize}
+  \item **** ** 11: Frei f"ur zuk"unftige Belegungen.
+ \end{itemize}
+\end{itemize}
+
+
+\bigskip\noindent
+Ist die Unterfunktion eine zweistellig Unterfunktion (Einleitung: $11$), folgt auf die Einleitung $11$ direkt ein (mindestens 3 Bit) Bitfeld welches den Typ der Unterfunktion angibt. Nach dem Bitfeld folgt direkt zwei weitere Unterfunktion (Eingeleitet jeweils durch die 2 Bit f"ur deren Art), welche die Unterfunktionen der zweistellig Unterfunktion sind.
+
+\bigskip\noindent
+Werte f"ur den Typ von zweistellig Unterfunktion:
+\begin{itemize}
+ \item 000: Addition
+ \item 001: Subtraktion
+ \item 010: Multiplikation
+ \item 011: Division
+ \item 100: Exponent
+ \item 101: Minimum
+ \item 110: Maximum
+ \item 111: Einleitung f"ur seltenere einstellige Funktionen. Die folgenden 5 Bit geben den Typ der zweistelligen Funktion an:
+ \begin{itemize}
+ \item 0000 0 111: If-Funktion (vor den zwei weitere Unterfunktion wird zuerst die Bedingung der if-Unterfunktion ausgegeben)
+ \item 0000 1 111: Delay
+  \item **** * 111: Frei f"ur zuk"unftige Belegungen.
+ \end{itemize}
+\end{itemize}
+
+\bigskip\noindent
+Beispiel:
+\begin{itemize}
+ \item Beispielobjekt: fun( $x_3$ , mult( sin( 5 ), $x_1$ ), ... )
+ \item Bits f"ur ``fun'' (Einleitung): 1011
+ \item Bits f"ur ``mult'' (Einleitungen f"ur ``Unterfunktion zweistellig'' und ``mult''): 11 010
+ \item Bits f"ur ``sin'' (Einleitungen f"ur ``Unterfunktion einstellig'' und ``sin''): 10 01
+ \item Bits f"ur den Wert 5 (Einleitungen f"ur ``Wert'' und 5 als 4 Bit nat"urliche Zahl mit dem Werte Definitionsbereich ``underfunction'' als ``naturalNumberB(4)'', also eine $4$ Bit Zahl): 00 0101
+ \item Bits f"ur die Variable $x_1$ (die erste Variable im Teilobjektarm, Einleitungen f"ur ``Variable'' und der Variablenwert): 01 0001
+ \item Bits f"ur das ganze Funktionselement: 1011 \ 11 010 \ 10 01 \ 00 0101 \ 01 0001 ... (=Bits f"ur das Unterobjekt)
+ \item Bits f"ur das ganze Funktionselement (erste bit vorn): 1101 1101 \ 0011 0001 \ 0101 0100 \ 0 ... (=Bits f"ur das Unterobjekt)
+\end{itemize}
+
+\index{Unterfunktionen|)}
+\index{Funktionselement|)}\index{Funktion|)}
+
+
+\subsubsection{If-Bedingung}\index{If-Element|(}
+
+Einleitung: 1100
+
+\bigskip\noindent
+Zur Beschreibung des If-Elements siehe Abschnitt \ref{secFibIf} auf Seite \pageref{secFibIf} .
+
+Nach der Einleitung folgt die Bedingung des If-Elements.
+
+Am Ende folgen die beiden Unterobjekte des If-Objekts. Wenn die Bedingung Wahr ist, wird nur das erste Unterobjekt ausgewertet, wenn die Bedingung Falsch ist, nur das zweite Unterobjekt.
+
+\paragraph{Bedingungen}\index{Bedingungen|(}
+
+Bedingungen werden durch einen 4 Bit Wert f"ur die Art der Bedingungen eingeleitet. Nach der Einleitung der Bedingung folgen als Parameter entweder 0 bis 2 Unterbedingungen oder zwei Unterfunktionen (siehe Abschnitt \ref{secCompressedUnderFunction} auf Seite \pageref{secCompressedUnderFunction}).
+
+Die m"oglichen Bedingungen werden in Tabelle \ref{tableConditionsCoding} aufgef"uhrt.
+
+\begin{table}[htbp]
+\begin{center}
+\begin{tabular}{|p{15mm}|p{15mm}|p{55mm}|p{40mm}|}\hline
+	Name & Einleitung & Beschreibung & Parameter \\\hline\hline
+	false & 0000 & Die Bedingung ist Falsch. & keine \\\hline
+	true & 1111 & Die Bedingung ist Wahr. & keine \\\hline
+	not & 0001 & Die Bedingung ist genau dann Wahr, wenn die Unterbedingung Falsch ist, sonst ist sie Falsch. & eine Unterbedingung \\\hline
+	or & 0010 & Die Bedingung ist genau dann Wahr, wenn mindestens eine der beiden Unterbedingungen Wahr ist, sonst ist sie Falsch. & zwei Unterbedingung \\\hline
+	and & 0011 & Die Bedingung ist genau dann Wahr, wenn die beiden Unterbedingungen Wahr sind, sonst ist sie Falsch. & zwei Unterbedingung \\\hline
+	xor & 0100 & Die Bedingung ist genau dann Wahr, wenn genau eine der beiden Unterbedingungen Wahr sind, sonst ist sie Falsch. & zwei Unterbedingung \\\hline
+
+	eqInt & 1000 & Vergleich zweier auf Ganzzahlen gerundeter Zahlen auf Gleichheit. & zwei Unterfunktionen, so wie in Abschnitt \ref{secCompressedUnderFunction} auf Seite \pageref{secCompressedUnderFunction} beschrieben\\\hline
+	lo & 1001 & Vergleich, ob die erste Zahl kleiner als die zweite ist. & zwei Unterfunktionen, so wie in Abschnitt \ref{secCompressedUnderFunction} auf Seite \pageref{secCompressedUnderFunction} beschrieben \\\hline
+	gr & 1010 & Vergleich, ob die erste Zahl gr"o"ser als die zweite ist. & zwei Unterfunktionen, so wie in Abschnitt \ref{secCompressedUnderFunction} auf Seite \pageref{secCompressedUnderFunction} beschrieben \\\hline
+
+	 & 0101 bis 0111 und 1011 bis 1110 & Frei f"ur zuk"unftige Bedingungen. & \\\hline
+
+\end{tabular} 
+\end{center}
+\caption{Einleitungen f"ur Bedingungen}
+\label{tableConditionsCoding}
+\end{table}
+
+\bigskip\noindent
+Beispiel:
+\begin{itemize}
+ \item Beispielobjekt: if( and( true, gr( $x_1$, 3 ) ), ... )
+ \item Bits f"ur ``if'' (Einleitung): 1101
+ \item Bits f"ur ``and'' (Einleitungen f"ur ``and''): 0011
+ \item Bits f"ur ``true'' (Einleitungen f"ur ``true''): 1111
+ \item Bits f"ur ``gr'' (Einleitungen f"ur ``gr''): 0111
+ \item Bits f"ur die Variable $x_1$ (die erste Variable im Teilobjektarm, Einleitungen f"ur die Unterfunktion ``Variable'' und der Variablenwert; der Variable Definitionsbereich ``variable'' ist ``naturalNumberB(4)'', also eine $4$ Bit Zahl): 01 0001
+ \item Bits f"ur den Wert 3 (Einleitungen f"ur die Unterfunktion ``Wert'' und 3 als 4 Bit nat"urliche Zahl; der Werte Definitionsbereich ``underfunction'' ist ``naturalNumberB(4)'', also eine $4$ Bit Zahl): 00 0011
+ \item Bits f"ur die ganze If-Bedingung (erstes Bit vorn):\newline 10111100\ 11111110\ 10100000\ 1100 ... (=Bits f"ur die zwei Unterobjekte)
+\end{itemize}
+
+\index{Bedingungen|)}
+\index{If-Element|)}
+
+
+\subsubsection{Externe Objekte}\index{Externe Objekte|(}
+\label{secCompressedExternObjects}
+
+Einleitung: 1101
+
+\bigskip\noindent
+Zur Beschreibung des Fib-Elements f"ur externe Objekte siehe Abschnitt \ref{fibExtObject} Seite \pageref{fibExtObject} .
+
+Nach der Einleitung folgt direkt eine Zahl f"ur den Identifier des externen Objekts, der Definitionsbereich, und damit die Bits f"ur die Zahl, wird durch den Definitionsbereich des ersten Elements des den Definitionsbereich ``externObject'' bestimmt (siehe Abschnitt \ref{secCompressedDefinitionranges} auf Seite \pageref{secCompressedDefinitionranges}).
+
+Nach der Identifier folgt die Anzahl der Eingabewerte $E$, welche den Definitionsbereich des zweiten Elements des Definitionsbereichs ``externObject'' hat. Ist dieser Wert $0$ wird die Anzahl der Eingabewerte aus der Anzahl der Vektorelemente des Vektors f"ur die Eingabewerte bestimmt, also den Elementen des Definitionsbereichs f"ur ''externObjectInput'' mit dem entsprechenden Identifier, wenn kein solcher existiert ist davon auszugehen das keine / $0$ Eingabewerte ($E=0$) existieren.
+
+Danach folgt der Vektor (siehe Abschnitt \ref{secCompressedVector} auf Seite \pageref{secCompressedVector}) mit den Eingabewerten. Der Definitionsbereich f"ur den Vektor ist der Definitionsbereich f"ur das ``externObjectInput'' mit dem entsprechenden Identifier oder $vectorOpenEnd($ $integerB(8) )$, wenn kein solcher Definitionsbereich existiert.
+
+Auf den Vektor mit den Eingabewerten folgen die Unterobjekte des externen Objekts. Diese werden durch eine Zahl f"ur die Anzahl der Unterobjekte $U$ eingeleitet. Der Definitionsbereich dieser Zahl $U$ ist der Definitionsbereich des dritten Elements des den Definitionsbereich ``externObject''. Danach folgen hintereinander die $U$ Datens"atze der $U$ Unterobjekte.
+
+Jeder Datensatz f"ur ein Unterobjekt wird durch eine Zahl f"ur die Anzahl der Ausgabevariablen $A_i$ ($i=1 \ldots U$) eingeleitet. Der Definitionsbereich dieser Zahl $A_i$ ist der Definitionsbereich des vierten Elements des den Definitionsbereich ``externObject''.
+
+Danach folgt das Unterobjekt des Datensatzes, welches ein normales Fib-Objekt ist.
+
+\index{Externe Objekte|)}
+
+
+\subsubsection{Externe Unterobjekte}\index{Externe Unterobjekte|(}
+\label{secCompressedExternSubobjects}
+
+Einleitung: 1110
+
+\bigskip\noindent
+Zur Beschreibung des Fib-Elements f"ur externe Unterobjekte siehe Abschnitt \ref{fibSubobject} Seite \pageref{fibSubobject} .
+
+Auf die Einleitung folgt eine nat"urliche Zahl f"ur die Nummer des externen Unterobjekts. Der Definitionsbereich dieser Nummer ergibt sich implizit aus der Anzahl $N$ der Unterobjekte (bzw. der h"ochsten Nummer f"ur einen ``externSubobject'' Definitionsbereich) im aktuellen/ n"achsten root-Element , siehe Abschnitt \ref{parCompressedDomains} auf Seite \pageref{parCompressedDomains} . Der Definitionsbereich ist: $naturalNumber(N)$ , siehe Tabelle \ref{tableCompressedDefinitionRanges} auf Seite \pageref{tableCompressedDefinitionRanges} .
+
+Danach folgt der Vektor mit den Ausgabewerte (siehe Abschnitt \ref{secCompressedVector} auf Seite \pageref{secCompressedVector}), bzw. Eingabevariablen f"ur das Unterobjekt. Der Definitionsbereich f"ur den Vektor ist der Definitionsbereich f"ur das ``externSubobject'' mit dem entsprechenden Nummer oder der Standarddefinitionsbereich f"ur ``externSubobject'', wenn kein solcher Definitionsbereich existiert.
+
+\index{Externe Unterobjekte|)}
+
+
+\subsubsection{Definitionsbereichseigenschaften abrufen}\index{Definitionsbereichseigenschaften|(}
+
+Einleitung: 0000 0000 0000 1111
+
+\bigskip\noindent
+Zur Beschreibung des Definitionsbereichseigenschaftselements sei auf Abschnitt \ref{fibDomeinProperties} auf Seite \pageref{fibDomeinProperties} verwiesen.
+
+Nach der Einleitung folgt der Definitionsbereich (die Domain), von welcher der Wert zur"uckgegeben werden soll. Die Angabe des Definitionsbereichs erfolgt "uber den Elementnamen wie in Abschnitt \ref{secCompressedDefinitionrangesElements} auf Seite \pageref{secCompressedDefinitionrangesElements} beschreiben.
+
+Danach folgt die Angabe der $Element$ Parameter, f"ur die Auswahl eines Unterdefinitionsbereichs. Als erstes folgt daf"ur ein $Element$-Einleitungsbit, welches angibt ob ein weiterer $Element$ Parameter folgen. Ist es $0$ folgt kein $Element$ Parameter, ist es $1$ folgt ein $Element$ Parameter. Wenn es $1$  ist folgt auf dieses erste $Element$-Einleitungsbit eine 1 Byte (8-Bit) lange nat"urliche Zahl $Bits$, die Angibt, wieviele Bits pro $Element$ Parameter verwendet werden. Danach folgt der erste $Element$ Parameter. Nach jedem $Element$ Parameter (abgespeichert mit dem Definitionsbereich $naturalNumberB( Bits )$) folgt wieder ein $Element$-Einleitungsbit und danach eventuell der n"achste $Element$ Parameter usw. .  Beispiel $matrix.3.1$: zwei Bits werden ben"otigt um die $Element$ Parameter abzuspeichern; die Bits sind (erstes Bit vorn): 1111 0000 0000 0000 \  0 00 11011 \ 1 00000010 11  1 10  0 ( In ihrer Reihenfolge stehen die Felder f"ur: Definitionsbereichseigenschaftselement; 8 Bit Elementname; keine Parameter; matrixElement; $Element$ Parameter folgt; mit je 2 Bit; 3'ter Unterdefinitionsbereich; $Element$ Parameter folgt; erster Unterdefinitionsbereich; kein $Element$ Parameter folgt )
+
+Nach der Angabe f"ur das Element folgt der $Mode$, also welcher Eigenschaftswert des Definitionsbereichs ausgew"ahlt wird. Dies ist eine 8 Bit nat"urliche Zahl, so wie in Tabelle \ref{tableDomainPropertyModes} auf Seite \pageref{tableDomainPropertyModes} in der Spalte ``Wert'' beschrieben.
+%TODO use domain insted of fix fields for $Bits$ and $Mode$
+
+Am Ende folgt das Unterobjekt des Definitionsbereichseigenschaftselements.
+
+\index{Definitionsbereichseigenschaften|)}
+
+
+\subsubsection{Set-Element}\index{Set-Element|(}
+\label{secCompressedFibSet}
+
+Einleitung: 0000 0000 0001 1111
+
+\bigskip\noindent
+Zur Beschreibung des Set-Element siehe Abschnitt \ref{secFibSetElement} auf Seite \pageref{secFibSetElement} .
+
+Der Definitionsbereich f"ur das Set-Element ist ``setElement'' (siehe Abschnitt \ref{secCompressedDefinitionranges} auf Seite \pageref{secCompressedDefinitionranges}).
+
+Nach der Einleitung folgt zuerst ein Bit, dass angibt ob ein besonderer Definitionsbereich verwendet wird. Ist dieses Bit $0$ wird keine Definitionsbereichsnummer $DomainNr$ angegeben und die $DomainNr$ wird mit 0 belegt. Sonst, wenn es $1$ ist, folgt eine nat"urliche Zahl f"ur die Nummer des verwendeten Definitionsbereichs $DomainNr$. Die Anzahl der Bit f"ur diese Nummer ergibt sich aus der gr"o"sten Nummer $max(i)$ f"ur einen Definitionsbereich f"ur das Set-Element und ist $\lceil \log_2( max(i) ) \rceil$ .
+Aus der $DomainNr$ ergibt sich der Definitionsbereich des Elements. Er ist der erste ``setElement'' Definitionsbereich der eine Definitionsbereichnummer kleiner gleich der gesetzen (geladenen) Definitionsbereichsnummer $DomainNr$ hat.
+
+Danach folgen zwei nat"urlich Zahlen.
+
+Die erste Zahl gibt die Anzahl ($n$) der Variablen und der zu setzenden Werte pro Satz an. Die Bits f"ur diese Zahl ergeben sich aus dem ersten Element /Unterdefinitionsbereich des Vektordefinitionsbereichs f"ur das Element.
+
+Die zweite Zahl gibt die Anzahl ($k$) der S"atze mit zu setzenden Werten an. Die Bits f"ur diese Zahl ergeben sich aus dem zweiten Element /Unterdefinitionsbereich des Vektordefinitionsbereichs f"ur das Element.
+
+Nach den beiden Anzahlwerten folgen $k$ Vektoren/S"atze (siehe Abschnitt \ref{secCompressedVector} auf Seite \pageref{secCompressedVector}) mit je $n$ Werten (bzw. es folgen $k * n$ Werte/Vektorelemente direkt hintereinander). Der Definitionsbereich f"ur die Vektoren/S"atze ist das dritte Element / Unterdefinitionsbereich des Vektordefinitionsbereichs f"ur das Element.
+%TODO? domain for the values if vector open end: subdomain[ i+2 ]
+
+Am Ende folgt das Unterobjekt des Set-Elements.
+
+\index{Set-Element|)}
+
+
+\subsubsection{Matrixelement}\index{Matrixelement|(}
+\label{secCompressedFibMatrix}
+
+Einleitung: 0000 0000 0010 1111
+
+\bigskip\noindent
+Zur Beschreibung des Matrixelement siehe Abschnitt \ref{secFibMatrixElement} auf Seite \pageref{secFibMatrixElement} .
+
+Der Definitionsbereich f"ur das Matrixelement ist ``matrixElement'' (siehe Abschnitt \ref{secCompressedDefinitionranges} auf Seite \pageref{secCompressedDefinitionranges}).
+
+Nach der Einleitung folgt zuerst ein Bit, dass angibt ob ein besonderer Definitionsbereich verwendet wird. Ist dieses Bit $0$ wird keine Definitionsbereichsnummer $DomainNr$ angegeben und die $DomainNr$ wird mit 0 belegt. Sonst, wenn es $1$ ist, folgt eine nat"urliche Zahl f"ur die Nummer des verwendeten Definitionsbereichs $DomainNr$. Die Anzahl der Bit f"ur diese Nummer ergibt sich aus der gr"o"sten Nummer $max(i)$ f"ur einen Definitionsbereich f"ur das Matrixelement und ist $\lceil \log_2( max(i) ) \rceil$ .
+Aus der $DomainNr$ ergibt sich der Definitionsbereich des Elements. Er ist der erste ``matrixElement'' Definitionsbereich der eine Definitionsbereichnummer kleiner gleich der gesetzen (geladenen) Definitionsbereichsnummer $DomainNr$ hat.
+
+Danach folgen drei nat"urlich Zahlen.
+
+Die erste Zahl gibt die Anzahl ($d$) der Dimensionen /Dimensionsvariablen an.
+
+Die zweite Zahl gibt die Anzahl ($i$) der Wertevariablen und der zu setzenden Werte pro Satz an.
+Die Bits f"ur die ersten beiden Zahlen ergeben sich aus dem ersten Element /Unterdefinitionsbereich des Vektordefinitionsbereichs f"ur das Element.
+
+Die dritte Zahl gibt die Anzahl ($k$) der S"atze mit zu setzenden Werten an. Die Bits f"ur diese Zahl ergeben sich aus dem zweiten Element /Unterdefinitionsbereich des Vektordefinitionsbereichs f"ur das Element.
+
+Nach den Anzahlwerten folgen $d$ Vektoren (siehe Abschnitt \ref{secCompressedVector} auf Seite \pageref{secCompressedVector}) f"ur die Bereiche bzw. Start und Endwerte f"ur die jeweiligen Dimensionen. Dabei stehet der erste Vektor f"ur die erste Dimensionsvariable, der zweite Vektor f"ur die zweite Dimensionsvariable usw. . Der Definitionsbereich f"ur die Vektoren/S"atze ist das dritte Element / Unterdefinitionsbereich des Vektordefinitionsbereichs f"ur das  Element.
+
+Nach den Vektoren f"ur die Bereich folgen $k$ Vektoren/S"atze (siehe Abschnitt \ref{secCompressedVector} auf Seite \pageref{secCompressedVector}) mit je $i$ Werten (bzw. es folgen $k * i$ Werte/Vektorelemente direkt hintereinander). Der Definitionsbereich f"ur die Vektoren/S"atze ist das vierte Element / Unterdefinitionsbereich des Vektordefinitionsbereichs f"ur das Element.
+%TODO? domain for the values if vector open end: subdomain[ i+2 ]
+
+Am Ende folgt das Unterobjekt des Matrixelement.
+
+\index{Matrixelement|)}
+
+
+%TODO freie Einleitungen: 1001; 1010; ab 0000 0000 0010 1111
+
+
+
+\section{XML-Format}\index{XML-Format}
+\label{xmlFormat}
+
+Jedes Fib-Element und jeder Vektor hat im XML-Format sein eigenes XML-Element. Einfache Werte der Fib-Elemente und Vektoren werden als Attribute gespeichert.
+
+Im Folgendem Listing ist ein einfaches Beispiel eines Fib-Objekts im XML-Format angegeben.
+
+\bigskip\noindent
+Beispiel:
+\begin{verbatim}
+<?xml version="1.0" encoding="UTF-8"?>
+<fib_object
+   xmlns:xsd="http://www.w3.org/2001/XMLSchema-instance"
+   xmlns="http://www.fib-development.org/"
+   xsd:schemaLocation="http://www.fib-development.org/fib.xsd">
+
+   <root>
+      <multimedia_info fib_version="3" db_version="2"/>
+      <optionalpart>
+         <pair key="autor" value="Oesterholz"/>
+      </optionalpart>
+      <domains>
+         <dim count="2">
+            <dimension number="1" direction="horizontal"/>
+            <dimension number="2" direction="vertical"/>
+            <vector elements="2">
+               <naturalNumberB bit="8">
+               <integer min="10" max="123">
+            </vector>
+         </dim>
+      </domains>
+      <main_fib_object>
+         <area defined_variable="1">
+            <vector type="subarea">
+               <value>3</value>
+               <value>15</value>
+            </vector>
+
+            <property>
+               <vector type="property.colorSW">
+                  <value>200</value>
+               </vector>
+               <point>
+                  <vector type="position">
+                     <value>4</value>
+                     <variable>1</variable>
+                  </vector>
+               </point>
+            </property>
+         </area>
+      </main_fib_object>
+   </root>
+</fib_object>
+\end{verbatim}
+
+
+\subsection{XML-Header}\index{XML-Header}
+
+Der Header des Fib-XML-Formats ist immer gleich aufgebaut. Er spezifiziert das XML-Format. Das oberste Element des Fib-XML-Formats ist immer ein Element mit dem Namen \verb|fib_object|. Dieses einth"alt die Attribute, um das XML-Format spezifizieren und ein root-Objekt.
+
+\bigskip\noindent
+Aufbau:
+\begin{verbatim}
+<?xml version="1.0" encoding="UTF-8"?>
+<fib_object
+   xmlns:xsd="http://www.w3.org/2001/XMLSchema-instance"
+   xmlns="http://www.fib-development.org/"
+   xsd:schemaLocation="http://www.fib-development.org/fib.xsd">
+
+      ... <!-- root-Element -->
+
+</fib_object>
+\end{verbatim}
+
+
+\subsection{Root-Element}\index{root-Element|(}
+\label{secXmlRootElement}
+
+Zur Beschreibung des root-elements siehe Abschnitt \ref{fibRootElement} auf Seite \pageref{fibRootElement} .
+
+Das Element f"ur das root-Element hat den Namen \verb|root|.
+
+Das root-Element kann folgende Elemente, in der nachfolgenden Reihenfolge, enthalten:
+\begin{enumerate}
+ \item Multimediainformationen (siehe Abschnitt \ref{secXmlMultimediainfo} auf Seite \pageref{secXmlMultimediainfo})
+ \item Der optionale Teil (siehe Abschnitt \ref{secXmlRootOptionalPart} auf Seite \pageref{secXmlRootOptionalPart})
+ \item Definitionsbereiche (siehe Abschnitt \ref{secXmlDefinitionranges} auf Seite \pageref{secXmlDefinitionranges})
+ \item Definitionsbereiche f"ur Werte (siehe Abschnitt \ref{secXmlDefinitionranges} auf Seite \pageref{secXmlDefinitionranges})
+ \item Eingabevariablen (siehe Abschnitt \ref{secXmlRootInputVar} auf Seite \pageref{secXmlRootInputVar})
+ \item Haupt-Fib-Objekt (siehe Abschnitt \ref{secXmlRootMainObject} auf Seite \pageref{secXmlRootMainObject}); dieses Element ist immer vorhanden
+ \item weitere root-Objekte (siehe Abschnitt \ref{secXmlRootSubRoot} auf Seite \pageref{secXmlRootSubRoot})
+ \item Identifier von verwendeten Datenbankobjekten (siehe Abschnitt \ref{secXmlRootDBIdentifier} auf Seite \pageref{secXmlRootDBIdentifier})
+ \item eventuell ein Checksummenelement (siehe Abschnitt \ref{secXmlRootChecksumm} auf Seite \pageref{secXmlRootChecksumm} ), dieses ist f"ur das Fib-XML-Format ohne Bedeutung und dient nur der Datenhaltung
+\end{enumerate}
+
+
+\subsubsection{Multimediainformationen}\index{Multimediainformationen}
+\label{secXmlMultimediainfo}
+
+
+Das Element f"ur Multimediainformationen hat den Namen \verb|multimedia_info|.
+
+Das Element f"ur Multimediainformationen hat zwei Attribute f"ur die Version von Fib und der Fib-Datenbank.
+
+Das Attribute \verb|fib_version| gibt die Fib-Version des Fib-Objekts an und das Attribute \verb|db_version| die Datenbankversion. Beide Versionsnummern sind nat"urliche Zahlen. Sie k"onnen zu einer menschenlesbaren Form (z. B. ``Fib V1.2.3'') gemappt werden. Hier wird allerdings nur jeweils eine Zahl verwendet, da sonst eine bestimmte Form festgelegt w"urde, die nur noch schwer ge"andert werden kann. Es kann eine menschenlesbaren Form der Version im optionalen Teil angegeben werden.
+
+\bigskip\noindent
+Ein Beispiel f"ur die Multimediainformationen:
+\begin{verbatim}
+<multimedia_info fib_version="3" db_version="2"/>
+\end{verbatim}
+
+
+\subsubsection{Optionaler Teil}\index{Optionaler Teil}
+\label{secXmlRootOptionalPart}
+
+Das Element f"ur den optionalen Teil hat den Namen \verb|optionalpart|.
+
+Es enth"alt eine Liste mit Elementen f"ur die Eintrage im optionalen Teil. Diese Elemente haben den Namen \verb|pair|. Die \verb|pair|-Elemente haben die zwei Attribute \verb|key| und \verb|value|.
+Das Attribut \verb|key| enth"alt den Schl"ussel und das Attribut \verb|value| enth"alt den Wert des Eintrags.
+
+\bigskip\noindent
+Ein Beispiel f"ur die Optionaleninformationen:
+\begin{verbatim}
+<optionalpart>
+   <pair key="copyright" value="GNU GPL 3"/>
+   <pair key="type" value="die Berliner Mauer"/>
+</optionalpart>
+\end{verbatim}
+
+
+\subsubsection{Definitionsbereiche}
+\label{secXmlDefinitionranges}
+\index{Speicherplatzliste}\index{Definitionsbereiche}
+
+Das Definitionsbereichselement hat den Namen \verb|domains| und besteht aus einer Definitionsbereichsliste.
+
+Das Definitionsbereichselement f"ur Wertedefinitionsbereiche hat den Namen \verb|valuedomains| und ist genauso wie das Definitionsbereichselement mit den Namen \verb|domains| aufgebaut. Dieses Element (\verb|valuedomains|) hat auf das Abspeichern im XML-Format keine Auswirkung, sondern dient nur der Informationshaltung.
+
+Die Definitionsbereichsliste gibt die Definitionsbereiche der einzelnen Elemente an, ist ein Wert (z. B. einer Variable) au"serhalb dieses Definitionsbereichs, wird er auf einen Wert innerhalb des Definitionsbereichs gerundet. Werte au"serhalb dieser Definitionsbereiche k"onnen also f"ur das Element nicht auftreten.
+
+Die Wertedefinitionsbereiche enthalten auch Definitionsbereiche, nur gelten diese Definitionsbereiche nicht f"ur Elemente die Variablen enthalten. Die Wertedefinitionsbereiche bestimmen, wieviel Bits zum komprimierten Speichern (siehe Abschnitt \ref{fibCompressing} auf Seite \pageref{fibCompressing}) eines Elements, welches ein Wert enth"alt, ben"otigt wird. 
+Die Wertedefinitionsbereiche sind also dann sinnvoll, wenn die Werte eines Elements nicht den vollen m"oglichen Definitionsbereich f"ur das Element aussch"opfen. Wenn beispielsweise ein Unterobjekt nur Punkt enth"alt, deren Positionsvektoren nur Variablen und Werte zwischen 0 und 10 enthalten, kann der Definitionsbereich der Speicherplatzliste f"ur Positionsvektoren auf ``integerB'' mit 4 Bit gesetzt werden, auch wenn die Variablen der Positionsvektoren Werte "uber 100 einnehmen k"onnen.
+
+Die Wertedefinitionsbereiche werden beim Abspeichern im komprimierten Format eventuell erzeugt und optimiert, um den Speicherplatz f"ur das Fib-Objekt m"oglichst gering zu halten.
+
+Der Grund, f"ur die Einf"uhrung von zentral (in den root-Elementen) festgelegten Definitionsbereiche f"ur Werte, ist, das einerseits beim komprimierten Abspeichern des Fib-Objekts m"oglichst wenig Speicherplatz f"ur die Werte verbraucht wird, ohne die Belegungsm"oglichkeiten f"ur die Werte drastisch einzuschr"anken und andererseits vorab bestimmt werden kann wie und ob das Multimediaobjekt angezeigt werden kann (z. B. wie es Skaliert werden muss oder ob die Anzeige aller Werte unm"oglich ist).
+
+\bigskip\noindent
+Jede der beiden Listen enth"alt eine Anzahl von Definitionsbereichsdefinitionen. Eine Definitionsbereichsdefinition ist ein XML-Element f"ur den Typ des Fib-Vektorelements f"ur das es gilt. Dieses XML-Element enth"alt dann den eigentlichen Definitionsbereich.
+
+
+\paragraph{XML-Elementnamen f"ur Fib-Vektorelemente}
+\label{secXmlDefinitionrangesElements}
+
+Die Tabelle \ref{tableFixXmlElementsForDefinitionRanges} listet die Namen der XML-Elemente und die Attribute der XML-Elemente f"ur die verschiedenen Typen bzw. den Fib-Elementen auf.
+
+\begin{center}
+\begin{longtable}{|p{25mm}|p{100mm}|}\hline
+	Name & Beschreibung \\\hline\endhead
+	dim & Der Definitionsbereich f"ur Positionsvektoren bzw. die Dimensionen. Das Attribut ist \verb|count|, welches die Anzahl der Dimensionen angibt. Dieses Element enth"alt f"ur jede Dimension ein Element mit dem Namen \verb|dimension|. Die \verb|dimension|-Elemente haben die zwei Attribute \verb|number| und \verb|direction|. Das Attribut \verb|number| ist eine nat"urliche Zahl gr"o"ser $0$, welche die Nummer der Dimension angibt. In Positionsvektoren steht das \verb|number|'te Element f"ur die Dimension. Das Attribut \verb|direction| gibt die Richtung an, in welche die Dimension geht. Dies ist eine nat"urliche Zahl, welche angibt auf was die \verb|number|'te Dimension gemappt wird. Die m"oglichen Werte sind in Tabelle \ref{tableDimmapValues} auf Seite \pageref{tableDimmapValues} beschrieben. \\\hline
+	subfunction & Definitionsbereich f"ur die Elemente von Unterfunktionen \\\hline
+	property & Definitionsbereich eines Eigenschaftselements mit dem gegebenen Namen. Das Attribut \verb|name| enth"alt den Namen der Eigenschaft. M"ogliche Namen sind in Tabelle \ref{tablePropertyNamen} auf Seite \pageref{tablePropertyNamen} zu sehen.\\\hline
+	inVar & Definitionsbereich f"ur die \verb|number|'ten Eingabevariable. Das Attribut ist \verb|number|, welches die Nummer der Eingabevariable angibt. (Die Z"ahlung der Eingabevariablen eines root-Elements beginnt bei 1 .)\\\hline
+
+	\multicolumn{2}{|c|}{\textbf{Namen von XML-Elementen f"ur Definitionsbereiche die beim komprimierten}}\\
+	\multicolumn{2}{|c|}{\textbf{Abspeichern relevant sind}}\\\hline
+
+	area & Dieser Typ ist f"ur den Definitionsbereich f"ur das Bereichselement (siehe Abschnitt \ref{fibArea} auf Seite \pageref{fibArea}). Der zugeh"orige Definitionsbereich ist ein Vektordefinitionsbereich mit 2 Elementen /Unterdefinitionsbereichen. Das erste Element bzw. der erste Unterdefinitionsbereich dient f"ur die Anzahl ($n$) der Unterbereiche, er ist ein Definitionsbereich aus den nat"urlichen Zahlen. Das zweite und letzte Element ist der Definitionsbereich f"ur die Vektoren f"ur die Unterbereiche ($B_{1}$) und ist ein Definitionsbereich f"ur Vektoren dessen zwei Elemente ganze Zahlen sind. \\\hline
+	variable & Werte die ben"otigt werden, um Variablen zu kodieren. Der Definitionsbereich sollten die nat"urliche Zahlen von 0 bis maximale Anzahl der definierten Variablen in den Fib-Bl"attern im Haupt-Fib-Objekt sein. Das Fib-Baum-Blatt im Haupt-Fib-Objekt "uber dem meisten Variablen definiert werden, bestimmt also den Definitionsbereich, bzw. der Ast mit den meisten definierten Variablen.\\\hline
+	comments & Werte die ben"otigt werden, um Kommentare zu kodieren. Der Definitionsbereich sollten die nat"urliche Zahlen von 0 bis Anzahl der Kommentare im Haupt-Fib-Objekt sein.\\\hline
+	externObject & Definitionsbereich f"ur externe Objekte im Haupt-Fib-Objekt. Der Definitionsbereich ist ein Vector mit 4 Elementen. Die Vektorelemente dienen der Reihenfolge f"ur den Identifier, die Anzahl der Eingabewerte NumberInVal, die Anzahl der Unterobjekte NumberSubobjects und die Anzahl der Ausgabevariablen NumberOutVar. Alle Vektorelementdefinitionsbereiche, au"ser dem f"ur den Identifier, kommen aus den nat"urlichen Zahlen. Der Vektorelementdefinitionsbereich f"ur den Identifier kommt aus den Ganzzahlen.\\\hline
+	externObjectInput & Dieser Typ ist f"ur den Definitionsbereich f"ur die Eingabewerte f"ur externe Objekte (siehe Abschnitt \ref{fibExtObject} auf Seite \pageref{fibExtObject}). Der Definitionsbereich ist ein Vektordefinitionsbereich. Das Attribute \verb|identifier| ist eine Ganzzahl und gibt den Identifier des externe Objekts an, f"ur dessen Element der Definitionsbereich ist.\\\hline
+	externSubobject & Dieser Typ ist f"ur den Definitionsbereich f"ur die Eingabewerte f"ur externe Unterobjekte (siehe Abschnitt \ref{fibSubobject} auf Seite \pageref{fibSubobject}). Der Definitionsbereich ist ein Vektordefinitionsbereich. Das Attribute \verb|number| ist eine nat"urliche Zahl und gibt die Nummer des externe Unterobjekts an, f"ur das der Definitionsbereich ist.\\\hline
+	setElement & Dieser Typ ist f"ur den Definitionsbereich f"ur das Set-Element (siehe Abschnitt \ref{secFibSetElement} auf Seite \pageref{secFibSetElement}). Der zugeh"orige Definitionsbereich ist ein Vektordefinitionsbereich mit 3 Elementen /Unterdefinitionsbereichen. Das erste Element bzw. der erste Unterdefinitionsbereich dient f"ur die Anzahl ($n$) der Variablen und der zu setzenden Werte pro Satz, er ist ein Definitionsbereich aus den nat"urlichen Zahlen. Das zweite Element bzw. der zweite Unterdefinitionsbereich dient f"ur die Anzahl ($k$) der S"atze mit zu setzenden Werten. Er ist auch ein Definitionsbereich aus den nat"urlichen Zahlen. Das dritte und letzte Element ist der Definitionsbereich f"ur die Vektoren f"ur die zu setzenden Werte ($W_{i.g}$) und ist ein Definitionsbereich f"ur Vektoren deren Elemente einfache Zahlen (skalare) sind. Des weiteren kann als Attribut \verb|domainNr| eine nat"urliche Zahl f"ur den Definitionsbereichnummer $DomainNr$ angegeben werden. Wenn das Attribut \verb|domainNr| fehlt, ist die die Definitionsbereichnummer $DomainNr$ gleich $0$ . \\\hline
+	matrixElement & Dieser Typ ist f"ur den Definitionsbereich f"ur das Matrixelement (siehe Abschnitt \ref{secFibMatrixElement} auf Seite \pageref{secFibMatrixElement}). Der zugeh"orige Definitionsbereich ist ein Vektordefinitionsbereich mit 4 Elementen/Unterdefinitionsbereichen. Das erste Element bzw. der erste Unterdefinitionsbereich ist f"ur die Anzahl ($d$) der Dimensionsvariablen, die Anzahl ($i$) der Wertevariablen und die zu setzenden Werte $i$ pro Satz. Er ist ein Definitionsbereich aus den nat"urlichen Zahlen. Das zweite Element bzw. der zweite Unterdefinitionsbereich ist f"ur die Anzahl ($k$) der S"atze mit den zu setzenden Werten. Er ist auch ein Definitionsbereich aus den nat"urlichen Zahlen. Das dritte Element ist der Definitionsbereich f"ur die Bereiche bzw. Start und Endwerte f"ur die einzellenen Dimensionsvariablen, er ist ein Vektordefinitionsbereich mit zwei Elementen, welche jeweils aus den ganzen Zahlen kommen. Das vierte und letzte Element ist der Definitionsbereich f"ur die Vektoren f"ur die zu setzenden Werte ($W_{a.b}$) und ist ein Definitionsbereich f"ur Vektoren deren Elemente einfache Zahlen (skalare) sind. Des weiteren kann als Attribut \verb|domainNr| eine nat"urliche Zahl f"ur den Definitionsbereichnummer $DomainNr$ angegeben werden. Wenn das Attribut \verb|domainNr| fehlt, ist die die Definitionsbereichnummer $DomainNr$ gleich $0$ .\\\hline
+
+\caption{Namen von XML-Elementen f"ur Definitionsbereiche}
+\label{tableFixXmlElementsForDefinitionRanges}
+\end{longtable}
+\end{center}
+
+
+\paragraph{M"oglich Definitionsbereiche}
+\label{secXmlDefinitionrangesArea}
+
+Jedem Definitionsbereich ist eine eigenes XML-Element zugeordnet. Jedes Definitionsbereich XML-Element kann ein Attribut f"ur den Skalierungsfaktor \verb|scalingfactor| besitzen. Dieses kann weggelassen werden, wenn der Skalierungsfaktor $1$ ist, bzw. der Skalierungsfaktor ist $1$, wenn es weggelassen wird.
+
+Der Skalierungsfaktor \verb|scalingfactor| ist eine Gleitkommazahl mit dem die Werte des unskalierten Definitionsbereich bzw. dem Grunddefinitionsbereich multipliziert werden, um den skalierten Definitionsbereich zu erhalten.
+
+\noindent
+\textit{Beispiel:} Der Definitionsbereich sind 2 Bit nat"urliche Zahlen mit den Skalierungsfaktor $scalingfactor=1*2^{-1}=1/2$. M"oglich Werte sind dann: $\{$ $0*1/2=0$; $1*1/2=0,5$; $2*1/2=1$; $3*1/2=1,5$ $\}$.
+
+\bigskip\noindent
+Die Tabelle \ref{tableXmlDefinitionRanges} listet die Namen der XML-Elemente und die Attribute der XML-Elemente f"ur die verschiedenen Definitionsbereiche auf.
+
+\begin{center}
+\begin{longtable}{|p{25mm}|p{25mm}|p{75mm}|}\hline
+	Name & Beschreibung & Parameter \\\hline\endhead
+	naturalNumberB & Der Grunddefinitionsbereich sind die nat"urlichen Zahlen. & Das Attribute \verb|bit| ist eine nat"urliche Zahl, welche die Anzahl der Bits angibt, den Werte des Definitionsbereichs lang sind. Der zugeh"orige Grunddefinitionsbereich ist dann $0 \ldots (2^{bit}-1)$. \\\hline
+	integerB & Der Grunddefinitionsbereich sind die Ganzzahlen. & Das Attribute \verb|bit| ist eine nat"urliche Zahl, welche die Anzahl der Bits angibt, den Werte des Definitionsbereichs lang sind. Der zugeh"orige Grunddefinitionsbereich ist dann $-(2^{bit-1}) \ldots (2^{bit-1}-1)$. \\\hline
+	naturalNumber &  Der Grunddefinitionsbereich sind die nat"urlichen Zahlen. & Das Attribute \verb|max| ist eine nat"urliche Zahl, welche die gr"o"ste nat"urliche Zahl des Grunddefinitionsbereich angibt. Der zugeh"orige Grunddefinitionsbereich ist dann $0 \ldots max$.\\\hline
+	integer & Der Grunddefinitionsbereich sind die Ganzzahlen. &  Das Attribute \verb|min| und \verb|max| sind zwei Ganzzahlen. Das Attribute \verb|min| gibt die untere Grenze des Grunddefinitionsbereich an. Das Attribute \verb|max| gibt die obere Grenze des Grunddefinitionsbereich an. Der zugeh"orige Grunddefinitionsbereich ist dann $min \ldots max$.\\\hline
+	integerValues & Der Grunddefinitionsbereich sind die Ganzzahlen. & F"ur jeden Wert des Grunddefinitionsbereichs enth"alt das \verb|integerValues|-Element ein \verb|value|-Element in dem der Wert steht (z. B. \verb|<value>17</value>|).\\\hline
+
+	real & Der Grunddefinitionsbereich sind Gleitkommazahlen. Eine Gleitkommazahl besteht aus zwei Ganzzahlfeldern, eines, das Erste, f"ur den Exponent $E$ und eines, das Zweite, f"ur die Mantisse $M$. Die Gleitkommazahl $Z$ ergibt sich dann zu $Z=M*2^E$ . & Dieses Element enth"alt zwei Elemente. Das erste enthaltende Element gibt den Definitionsbereich der Mantisse und der zweite des Exponenten an. Die Angabe der Definitionsbereiche ist so wie in dieser Tabelle beschrieben. Beide Definitionsbereiche m"ussen aus den Ganzzahlen kommen. (also integer... oder naturalNumber...) Beispiel: \verb|<real>|\newline \verb|<integer min="-100" max="100"/>| \verb|<naturalNumberB| \verb|scalingfactor="0.1"| \verb| bit="8"/></real>| Die Mantisse ist eine nat"urliche Zahl von $-100$ bis $100$ und der Exponenten ist eine acht Bit nat"urliche Zahl die mit $0.1$ skaliert wird.\\\hline
+	realValues & Der Grunddefinitionsbereich sind Gleitkommazahlen. Eine Gleitkommazahl besteht aus zwei Ganzzahlfeldern, eines, das Erste, f"ur den Exponent $E$ und eines, das Zweite, f"ur die Mantisse $M$. Die Gleitkommazahl $Z$ ergibt sich dann zu $Z=M*2^E$ . & Dieses Element enth"alt mehrere Elemente. Das erste enthaltende Element gibt den Definitionsbereich der Mantisse und der zweite des Exponenten an. Die Angabe der Definitionsbereiche ist so wie in dieser Tabelle beschrieben. Beide Definitionsbereiche m"ussen aus den Ganzzahlen kommen. (also integer... oder naturalNumber...) Nach diese Elementen folgen f"ur jeden Wert des Grunddefinitionsbereichs ein \verb|value|-Element in dem der Wert steht (z. B. \verb|<value>17.14</value>|). Beispiel: \verb|<real>| \verb|<integer min="-100"| \verb|max="100"/>| \verb|<naturalNumberB| \verb|scalingfactor="0.1"| \verb| bit="8"/>| \verb|<value>7*2^0.5</value>| \verb|<value>31*2^10</value>| \verb|</real>| Die Mantisse ist eine nat"urliche Zahl von $-100$ bis $100$ und der Exponenten ist eine acht Bit nat"urliche Zahl die mit $0.1$ skaliert wird. Die Werte im Definitionsbereich sind $7*2^{0.5} \approx 9.9$ und $31*2^{10} \approx 31744$ .\\\hline
+
+	vector & Der Grunddefinitionsbereich sind Vektoren. & Dieses Element besitzt das Attribut \verb|elements|, welches die Anzahl der Elemente $E$ des Vektors angibt. Das XML-Element \verb|vector| enth"alt weiterhin f"ur jedes Elemente des Vektors (also \verb|elements| St"uck) ein XML-Element mit dem Definitionsbereich des Elements des Vektors. Wobei das erste enthaltende XML-Element den Definitionsbereich des ersten Vektorelements angibt, das Zweite des Zweiten usw. . Alle Werte des Definitionsbereichs haben dann die Form $(D_1, \ldots , D_E)$, wobei $D_i$ ein Wert aus dem i'ten Definitionsbereich der Liste ist.\\\hline
+	vectorValues & Der Grunddefinitionsbereich sind Vektoren. & Dieses Element besitzt das Attribut \verb|elements|, welches die Anzahl der Elemente des Vektors angibt. Das XML-Element \verb|vectorValues| enth"alt weiterhin f"ur jedes Elemente des Vektors (also \verb|elements| St"uck) ein XML-Element mit dem Definitionsbereich des Elements des Vektors. Wobei das erste enthaltende XML-Element den Definitionsbereich des ersten Vektorelements angibt, das Zweite des Zweiten usw. . Darauf folgt eine Liste mit den Vektoren, so wie im Abschnitt \ref{secXmlVector} auf Seite \pageref{secXmlVector} beschreiben, ohne das \verb|type| Attribute. Die Definitionsbereiche der Vektoren sind die angegebenen Definitionsbereich der vorhergehenden Liste. Es k"onnen auch Variablen in den abgespeicherten Vektoren vorkommen. Bei einer Variable im Vektor wird der Variablenbezeichner weggelassen. Beispiel: \verb|<vectorValues elements="2">| \verb|<integer min="-100" max="100"/>| \verb|<naturalNumberB| \verb|scalingfactor="0.1"| \verb| bit="8"/>| \verb|<vector>| \verb|<value number="1">99</value>| \verb|<value number="2">2</value>| \verb|</vector>| \verb|<vector>| \verb|<value number="1">-17</value>| \verb|<variable number="2"></variable>| \verb|</vector>| \verb|</vectorValues>| ; An der Angabe der Vektoren in Fib-Elementen "andert dieser Definitionsbereich beim XML-Format nichts. Vektoren werden abgespeichert wie mit dem \verb|vector| Definitionsbereich. \\\hline
+	vectorOpenEnd & Der Grunddefinitionsbereich sind Vektoren. & Dieses Element besitzt das Attribut \verb|elements|, welches die Anzahl der mindest Elemente $E$ des Vektors angibt. Das XML-Element \verb|vectorOpenEnd| enth"alt weiterhin f"ur jedes der ersten $E$ Elemente des Vektors (also \verb|elements| St"uck) ein XML-Element mit dem Definitionsbereich des Elements des Vektors. Wobei das erste enthaltende XML-Element den Definitionsbereich des ersten Vektorelements angibt, das Zweite des Zweiten usw. und der $E$'te den Definitionsbereich der $E$'ten und folgenden Elemente. Alle Werte des Definitionsbereichs haben dann die Form $(D_1, \ldots , D_E, \ldots , D_E)$, wobei $D_i$ ein Wert aus dem i'ten Definitionsbereich der Liste ist. Dieser Definitionsbereich dient f"ur Elemente, die Vektoren unterschiedlicher Gr"o"se enthalten k"onnen. Die Anzahl der Elemente eines Vektors zu diesem Definitionsbereich wird durch das Element bestimmt, welches den Vektor enth"alt.\\\hline
+	domainReference & Ein Verweis auf den (Unter-)Definitionsbereich eines anderen Elements. Als Definitionsbereich wird der Definitionsbereich des Elements mit dem gegebenen Definitions\-bereich\-namen genommen. & 
+	%Dieses Element besitzt das Attribut \verb|name|, welches der Name des Elements angibt auf wessen Domain verwiesen wird. Als Namen k"onnen die in Tabelle \ref{tableFixXmlElementsForDefinitionRanges} auf Seite \pageref{tableFixXmlElementsForDefinitionRanges} in der Spalte Name aufgef"uhrten Namen verwendet werden.
+	Als weiters kann dieses Element ein optionales Attribut \verb|subdomain| enthalten. Das Attribut \verb|subdomain| spezifiziert den Unterefinitionsbereich auf welchen verwiesen wird. Dabei k"onnen die Nummern (die Z"ahlung beginnt bei 1) von Unterdefinitionsbereichen auf meheren Stufen durch einen Punkt getrennt angegeben werden. Wobei die Nummer eines Unterdefinitionsbereichs vor der Nummer des in ihm enthaltenden Unterdefinitionsbereichs steht. Das \verb|domainReference| enth"alt eine XML-Element f"ur den Definitions\-bereichs\-namen auf welchen verwiesen wird. Dieses XML-Element wird wie in Tabelle \ref{tableFixXmlElementsForDefinitionRanges} auf Seite \pageref{tableFixXmlElementsForDefinitionRanges} beschrieben erzeugt. Beispiel \verb|<domainReference| \verb|subdomain="3.1">| \verb|<matrixElement/>| \verb|</domainReference>|: Verwendet wird der erste Unterdefinitionsbereich des dritten Unterdefinitionsbereichs des matrix Elements.\\\hline
+
+	defaultDomain & Der angegebene Definitionsbereich wird nur verwendet, wenn es f"ur das entsprechende Element bisher keinen anderen Definitionsbereich gibt. & Dieses Element enth"alt ein XML-Element f"ur einen Definitionsbereich wie in dieser Tabelle beschrieben. Der enthaltende Definitionsbereich wird nur verwendet, wenn es f"ur das entsprechende Element bisher keinen anderen Definitionsbereich gibt. \\\hline
+
+\caption{Elemente f"ur Definitionsbereiche}
+\label{tableXmlDefinitionRanges}
+\end{longtable}
+\end{center}
+
+
+\bigskip\noindent
+Ein Beispiel f"ur die Definitionsbereiche:
+\begin{verbatim}
+<domains>
+   <dim count="2">
+      <dimension number="1" direction="horizontal"/>
+      <dimension number="2" direction="vertical"/>
+      <vector elements="2">
+         <naturalNumberB scalingfactor="0.1" bit="8"/>
+         <integer scalingfactor="0.1" min="10" max="110"/>
+      </vector>
+   </dim>
+   <property name="colorRGB">
+      <vector elements="3">
+         <naturalNumberB bit="8"/>
+         <integer min="-10" max="246"/>
+         <naturalNumberB bit="9"/>
+      </vector>
+   </property>
+</domains>
+<valuedomains>
+   <property name="colorRGB">
+      <vector elements="3">
+         <naturalNumberB bit="4"/>
+         <integer min="-10" max="10"/>
+         <integerValues count="4">
+            <value>17</value>
+            <value>-3</value>
+            <value>12</value>
+            <value>124</value>
+         </integerValues>
+      </vector>
+   </property>
+</valuedomains>
+\end{verbatim}
+
+\subsubsection{Eingabevariablen}\index{Eingabevariablen}
+\label{secXmlRootInputVar}
+
+Das XML-Element f"ur die Eingabevariablen tr"agt den Namen \verb|input_variables|. Es enth"alt f"ur jede Eingabevariable ein XML-Element mit dem Namen \verb|variable|. Die \verb|variable|-Elemente haben die zwei Attribute \verb|number| und \verb|default|. Das Attribut \verb|number| gibt die Nummer der Eingabevariable an. Mit dem Attribut \verb|default| wird der Standardwert der Eingabevariable festgelegt.
+
+\bigskip\noindent
+Ein Beispiel f"ur das Eingabevariablenelement:
+\begin{verbatim}
+<input_variables>
+   <variable number="1" default="3"/>
+   <variable number="2" default="17.3"/>
+</input_variables>
+\end{verbatim}
+
+
+\subsubsection{Haupt-Fib-Objekt}\index{Haupt-Fib-Objekt}
+\label{secXmlRootMainObject}
+
+An dieser Stelle kommen die Daten des Haupt-Fib-Objekts in Form seiner Elemente und deren Parameter, so wie es weiter unten im Abschnitt \ref{secXmlFibElement} auf Seite \pageref{secXmlFibElement} beschrieben wird. Es ist in einem Xml-Element mit dem Namen \verb|main_fib_object| verpackt.
+
+\bigskip\noindent
+Ein Beispiel f"ur Haupt-Fib-Objekt:
+\begin{verbatim}
+<main_fib_object>
+   ...<!-- Haupt-Fib-Objekt -->
+</main_fib_object>
+\end{verbatim}
+
+
+\subsubsection{Weitere root-Objekte}\index{Unter-root-Objekte}
+\label{secXmlRootSubRoot}
+
+Das XML-Element f"ur die Unter-root-Objekte hei"st \verb|sub_roots|. Es enth"alt f"ur jedes Unter-root-Objekt ein XML-Element mit dem Namen \verb|sub_root|. Das Element \verb|sub_root| hat das Attribut \verb|identifier|, welches den Identifizierer der Unter-root-Objekts angibt (dies ist eine Ganzzahl). Weiterhin enth"alt das Element \verb|sub_root| das entsprechende root-Objekt, so wie in dem "Uberabschnitt \ref{secXmlRootElement} beschrieben.
+
+\bigskip\noindent
+Ein Beispiel f"ur Unter-root-Objekte:
+\begin{verbatim}
+<sub_roots>
+   <sub_root identifier="1">
+      <root>
+          ...
+      <\root>
+   </sub_root>
+   <sub_root identifier="3">
+      <root>
+          ...
+      <\root>
+   </sub_root>
+</sub_roots>
+\end{verbatim}
+
+
+\subsubsection{Identifier von verwendeten Datenbankobjekten}\index{Datenbank!benutzte Identifier}
+\label{secXmlRootDBIdentifier}
+
+Hier folgt eine Liste aller Identifier von Fib-Datenbankobjekten, welche im Haupt-Fib-Objekt oder auch in Unter-root-Objekten verwendet werden. Die Angaben dieser Identifier ist optional. Wenn Identifier vorhanden sind, kann von Vornherein gepr"uft werden, ob alle externen Fib-Objekte aus der Datenbank, welche ben"otigt werden, existieren oder ob es wahrscheinlich zu Anzeigefehlern kommt, da Fib-Datenbankobjekte fehlen. Ob Identifier von Fib-Datenbankobjekten, die in einem Haupt-Fib-Objekt eines root-Elements verwendet werden, in diesem root-Element angegeben werden oder in einem h"oheren root-Element, h"angt von verschiedenen Gesichtspunkten ab. F"ur die Ver"anderung von Fib-Objekten, ist es vorteilhaft Identifier von Fib-Datenbankobjekten in einem root-Element, welches m"oglichst nahe am Verwendungsort liegt, anzugeben. Aus Platzgr"unden bei der komprimierten Speicherform kann es aber sinnvoll sein, Identifier von Fib-Datenbankobjekten in m"oglichst wenigen root-Elementen zusammenzufassen.
+
+Der Name des entsprechenden XML-Elements f"ur die Datenbankidentifier ist \verb|database_identifiers|. Es enth"alt f"ur jeden angegebenen Datenbankidentifier ein XML-Element mit dem Namen \verb|identifier|. Dieses XML-Element \verb|identifier| enth"alt wiederum eine negative Ganzzahl f"ur den verwendeten Datenbankidentifier.
+
+\bigskip\noindent
+Ein Beispiel f"ur die Identifier von verwendeten Datenbankobjekte:
+\begin{verbatim}
+<database_identifiers>
+   <identifier>-21</identifier>
+   <identifier>-632</identifier>
+</database_identifiers>
+\end{verbatim}
+
+
+\subsubsection{Checksummenelement}\index{Checksumme}
+\label{secXmlRootChecksumm}
+
+Mit diesem Element kann auch das root-Element im komprimierten Speicherformat mit einer Checksumme versehen werden. F"ur das Fib-XML-Format sind diese Angaben ohne Bedeutung.
+
+Das Checksummenelement ist ein Eigenschaftsvektor f"ur Checksummen, wie im Abschnitt \ref{secXmlProperty} auf Seite \pageref{secXmlProperty} beschrieben.
+
+\bigskip\noindent
+Ein Beispiel f"ur das Checksummenelement bzw. einen Checksummenvektor:
+\begin{verbatim}
+<vector type="property.checksum">
+   <value number="1">1</value>
+   <value number="2">256</value>
+   <value number="3">64</value>
+</vector>
+\end{verbatim}
+
+
+\index{root-Element|)}
+
+
+\subsection{Fib-Elemente}\index{Fib-Element}
+\label{secXmlFibElement}
+
+Jedes Fib-Element hat sein eigenes XML-Element. Deren Aufbau werden im Nachfolgenden beschrieben.
+
+
+\subsubsection{Vektoren}\index{Vektoren|(}
+\label{secXmlVector}
+
+Vektoren bestehen aus mehreren Elementen, wobei jedes Element entweder eine Wert oder eine Variable sein kann. Die Anzahl der Elemente des Vektors ist entweder Fib-Element spezifisch oder wird durch einen zugeh"origen Definitionsbereich bestimmt (siehe Abschnitt \ref{root_definition_ranges} auf Seite \pageref{root_definition_ranges}).
+
+Alle Vektor-XML-Elemente haben den Namen \verb|vector|. Das \verb|vector|-Element hat das Attribut \verb|type|, welches den Typ des Vektors angibt (Bsp.: \verb|position| oder \verb|property.colorRGB|). Des weiteren enth"alt das \verb|vector|-Element f"ur jedes Element des Vektors ein XML-Element. Das XML-Element f"ur Vektorelemente, die Werte sind, hat den Namen \verb|value|. Dagegen hat das XML-Element f"ur Vektorelemente die Variablen sind den Namen \verb|variable|.
+Beide XML-Element f"ur Vektorelemente haben das optionale Attribut \verb|number|, welches die Nummer (die Z"ahlung beginnt bei $1$) des Elements im Vektor angibt. Weiterhin enthalten beide den Wert des Vektorelements. Wobei bei Variablen die Nummer der Variable angegeben wird, so wie sie in der Definition des Variable festgelegt wurde.
+
+\bigskip\noindent
+Ein Beispiel f"ur einen Vektor:
+\begin{verbatim}
+<vector type="position">
+   <value>17</value>
+   <variable>3</variable>
+</vector>
+\end{verbatim}
+
+Ein Beispiel f"ur einen Vektor mit dem optionalen Attribut \verb|number|:
+\begin{verbatim}
+<vector type="position">
+   <variable number="1">5</variable>
+   <value number="2">3.9</value>
+</vector>
+\end{verbatim}
+
+\index{Vektoren|)}
+
+
+\subsubsection{Punkte}\index{Punktelement|(}
+
+Zur Beschreibung des Punktelements siehe Abschnitt \ref{fibPoint} auf Seite \pageref{fibPoint} .
+
+Ein normales Punktelement hat den Namen \verb|point|. Ein Punkt ohne Positionsvektor ($point()$) hat auch den Namen \verb|point| enth"alt aber keinen Positionsvektor.
+Wenn der Punkt f"ur den gesamten Hintergrund ($point(())$ der also keine Positionsvektorelemente hat) gilt, ist der Name des XML-Elements \verb|background|.
+
+Normale Punkte enthalten einen Positionsvektor (siehe Abschnitt \ref{secXmlVector}). Die Anzahl der Vektorelemente wird durch die Anzahl der Dimensionen bestimmt (siehe Abschnitt \ref{secXmlDefinitionranges} auf Seite \pageref{secXmlDefinitionranges}) die Anzahl der m"oglichen Werte pro Positionsvektorelement, wird durch den Definitionsbereich der Dimension bestimmt (siehe Abschnitt \ref{secXmlDefinitionrangesArea} auf Seite \pageref{secXmlDefinitionrangesArea}).
+
+\bigskip\noindent
+Ein Beispiel f"ur einen normalen Punkt:
+\begin{verbatim}
+<point>
+   <vector type="position">
+      <variable>2</variable>
+      <value>21</value>
+   </vector>
+</point>
+\end{verbatim}
+
+\bigskip\noindent
+Ein Beispiel f"ur einen Punkt ohne Auswirkungen bzw. einen Punkt ohne Positionsvektor:
+\begin{verbatim}
+<point/>
+\end{verbatim}
+
+\bigskip\noindent
+Ein Beispiel f"ur einen Punkt mit leerem Positionsvektor f"ur den gesamten Hintergrund:
+\begin{verbatim}
+<background/>
+\end{verbatim}
+
+\index{Punktelement|)}
+
+
+\subsubsection{Eigenschaft}\index{Eigenschaftselement|(}
+\label{secXmlProperty}
+
+Zur Beschreibung des Eigenschaftselements siehe Abschnitt \ref{fibProperty} auf Seite \pageref{fibProperty} .
+
+Der Name des Eigenschaftselements ist \verb|property|. Es enth"alt einen Eigenschaftsvektor und ein Fib-Objekt (sein Unterobjekt).
+
+Der Eigenschaftsvektor hat ein Attribut mit dem Namen \verb|type| f"ur den Typ der Property.  Der Typ is immer \verb|"property."| gefolgt von dem Namen der Eigenschaft, so wie in Tabelle \ref{tablePropertyNamen} auf Seite \pageref{tablePropertyNamen} aufgef"uhrt.
+
+\bigskip\noindent
+Ein Beispiel f"ur einen Eigenschaftselement:
+\begin{verbatim}
+<property>
+   <vector type="property.colorSW">
+      <value>200</value>
+   <vector>
+   ...<!-- Fib-Unterobjekt -->
+</property>
+\end{verbatim}
+
+
+\bigskip\noindent
+Bei den Eigenschaften gibt es noch zwei besondere Eigenschaften, die Einfluss auf die Decodierung des komprimierten Fib-Objekts haben. Diese Eigenschaften sind ``checksum'' (siehe Abschnitt \ref{secCompressedChecksumm} auf Seite \pageref{secCompressedChecksumm}) und ``boundSize'' (siehe Abschnitt \ref{secCompressedBoundSize} auf Seite \pageref{secCompressedBoundSize}) . F"ur das XML-Format haben sie jedoch keine besondere Bedeutung, sondern dienen nur zur Informationshaltung. Der Vektor f"ur die Eigenschaft ``boundSize'' besitzt dabei $0$ Vektorelemente.
+
+\index{Eigenschaftselement|)}
+
+
+\subsubsection{Listenelement}\index{Listenelement|(}
+
+Zur Beschreibung des Listenelements siehe Abschnitt \ref{fibList} auf Seite \pageref{fibList} .
+
+Der Name des Listenelements ist \verb|list|. Es enth"alt eine Anzahl von Unterobjekten die in ihrer Reihenfolge aufgef"uhrt werden. (Das erste Element im XML-Listenelements ist auch das erste Unterobjekt des Listenelements usw. .)
+
+\bigskip\noindent
+Ein Beispiel f"ur einen Listenelementelement:
+\begin{verbatim}
+<list>
+   <!-- 1. Listenunterobjekt -->
+   <property>
+      <vector type="property.boundSize">
+      </vector>
+      ...<!-- Fib-Objekt -->
+   </property>
+
+   <!-- 2. Listenunterobjekt -->
+   <point>
+      <vector type="position">
+         <variable>1</variable>
+         <variable>2</variable>
+      </vector>
+   </point>
+
+   <!-- 3. Listenunterobjekt -->
+   <point>
+      <vector type="position">
+         <variable>52</variable>
+         <value>36</value>
+      </vector>
+   </point>
+
+</list>
+\end{verbatim}
+
+\index{Listenelement|)}
+
+
+\subsubsection{Anmerkungselement}\index{Anmerkungselement|(}
+
+Zur Beschreibung des Anmerkungselements siehe Abschnitt \ref{fibComment} auf Seite \pageref{fibComment} .
+
+Anmerkungselements hat den Namen \verb|comment|. Es hat zwei Attribute \verb|key| und \verb|value|. Das Attribut \verb|key| gibt den Schl"ussel des Anmerkungselements an und das Attribut \verb|value| den Wert. Statt mit dem Attribut \verb|value| kann der Wert des Anmerkungselements auch in einem XML-Element mit dem Namen \verb|value| als Text abgespeichert werden.
+Des weiteren enth"alt das Anmerkungselements ein Fib-Objekt (sein Unterobjekt).
+
+\bigskip\noindent
+Ein Beispiel f"ur einen Anmerkungselement:
+\begin{verbatim}
+<comment key="name" value="der Kasperle">
+   ...<!-- Fib-Unterobjekt -->
+</comment>
+\end{verbatim}
+
+\bigskip\noindent
+Ein Beispiel f"ur einen Anmerkungselement mit einem \verb|value| XML-Element:
+\begin{verbatim}
+<comment key="description">
+   <value>
+      Dies ist ein laengerer Text
+      Zeile 2
+   </value>
+   ...<!-- Fib-Unterobjekt -->
+</comment>
+\end{verbatim}
+
+\index{Anmerkungselement|)}
+
+
+\subsubsection{Bereiche}\index{Bereichselement|(}
+
+Zur Beschreibung des Bereichselements siehe Abschnitt \ref{fibArea} auf Seite \pageref{fibArea} .
+
+Der Name des XML-Bereichselements ist \verb|area|. Das XML-Bereichselement hat ein Attribut \verb|defined_variable|. Das Attribut \verb|defined_variable| gibt an, welche Variable vom Bereichselement definiert wird. Es ist eine nat"urliche Zahl f"ur eine Variable, welche noch nicht "uber dem Bereichselement, f"ur eine andere Variable, verwendet wird.
+
+Des weiteren enth"alt das Bereichselement f"ur jeden seiner Unterbereiche einen Vektor vom Typ \verb|subarea|. Wobei der erste Unterbereich zuerst im XML-Element kommt, dann das Zweite usw. .
+
+Nach den Unterbereichen folgt das XML-Element f"ur das enthaltende Unterobjekt.
+
+\bigskip\noindent
+Ein Beispiel f"ur einen Bereichselement:
+\begin{verbatim}
+<area defined_variable="1">
+   <vector type="subarea">
+      <value>4</value>
+      <value>10</value>
+   </vector>
+   <vector type="subarea">
+      <value>15</value>
+      <value>19</value>
+   </vector>
+   ...<!-- Fib-Unterobjekt -->
+</area>
+\end{verbatim}
+
+\index{Bereichselement|)}
+
+
+\subsubsection{Funktionen}\index{Funktionselement|(}
+
+Zur Beschreibung des Funktionselements siehe Abschnitt \ref{fibFunction} auf Seite \pageref{fibFunction} .
+
+Der Name des XML-Funktionselements ist \verb|function|. Das XML-Funk\-tions\-ele\-ment hat ein Attribut namens \verb|defined_variable|. Es gibt an, welche Variable vom Funktionselement definiert wird. Es ist eine nat"urliche Zahl f"ur eine Variable, welche noch nicht "uber dem Funktionselement, f"ur eine andere Variable, verwendet wird.
+
+Des weiteren enth"alt das Funktionselement ein Unterfunktionselement (dieses wird beschrieben in Unterabschnitt \ref{secXmlUnderFunction}), welches in ein XML-Element mit dem Namen \verb|underfunction| eingebettet ist.
+
+Nach dem Unterfunktionselement folgt das XML-Element f"ur das enthaltende Unterobjekt.
+
+\bigskip\noindent
+Ein Beispiel f"ur einen Funktionselement:
+\begin{verbatim}
+<function defined_variable="2">
+   <subfunction>
+      <add>
+         <value>4</value>
+         <div>
+            <variable>1</variable>
+            <value>3.14</value>
+         </div>
+      </add>
+   </subfunction>
+   ...<!-- Fib-Unterobjekt -->
+</function>
+\end{verbatim}
+
+
+\paragraph{Unterfunktionen}\index{Unterfunktionen|(}
+\label{secXmlUnderFunction}
+
+\ \\
+Die XML-Unterfunktionselement f"ur Variablen und Werte (siehe Abschnitt \ref{fibUnderFunctionValueVariable} auf Seite \pageref{fibUnderFunctionValueVariable}) haben die Namen:
+\begin{itemize}
+ \item \verb|value|: Wert
+ \item \verb|variable|: Variable
+\end{itemize}
+Sie enthalten jeweils eine Zahl.
+Wobei bei der Variableunterfunktion (\verb|variable|) der enthaltende Wert die Nummer der Variable ist, so wie sie definiert wird.
+
+\bigskip\noindent
+Weiterhin gibt es echte Unterfunktionen (siehe Abschnitt \ref{fibUnderFunction} auf Seite \pageref{fibUnderFunction}). Diese enthalten f"ur jede ihrer Unterfunktionen ein XML-Element.
+
+\bigskip\noindent
+Namen von einstellig XML-Unterfunktionselement sind:
+\begin{itemize}
+ \item \verb|abs|: Absolutwert
+ \item \verb|sin|: Sinusfunktion
+ \item \verb|arcsin|: Arkussinus
+ \item \verb|log|: Logarithmus
+ \item \verb|round|: Runden
+ \item \verb|delay|: Delayunterfunktion
+\end{itemize}
+
+\bigskip\noindent
+Namen von zweistellig XML-Unterfunktionselement sind:
+\begin{itemize}
+ \item \verb|add|: Addition
+ \item \verb|sub|: Subtraktion
+ \item \verb|mult|: Multiplikation
+ \item \verb|div|: Division
+ \item \verb|exp|: Exponent
+ \item \verb|min|: Minimum
+ \item \verb|max|: Maximum
+\end{itemize}
+Bei den \verb|sub|, \verb|div| und \verb|exp| Unterfunktionen ist die Reihenfolge der enthaltenden XML-Elemente wichtig. Dabei ist das erste enthaltende XML-Element die erste enthaltende Unterfunktion der Unterfunktion.
+
+\bigskip\noindent
+Weitere Unterfunktionen:
+\begin{itemize}
+ \item \verb|if|: If-Funktion (vor den zwei Unterfunktionen wird zuerst die Bedingung der If-Funktion ausgegeben, die Reihenfolge der enthaltenden XML Elements ist: Bedingung, wahr (true) Fall (Unterfunktion), falsch (false) Fall (Unterfunktion); siehe Abschnitt   \ref{secXmlIfElement} auf Seite \pageref{secXmlIfElement})
+\end{itemize}
+
+\index{Unterfunktionen|)}
+\index{Funktionselement|)}
+
+
+\subsubsection{If-Bedingung}\index{If-Element|(}
+\label{secXmlIfElement}
+
+Zur Beschreibung des If-Elements siehe Abschnitt \ref{secFibIf} auf Seite \pageref{secFibIf} .
+
+Der Name des XML-If-Elements ist \verb|if|.
+
+Das If-Element enth"alt ein Bedingungselement \verb|condition| (dieser wird beschrieben in Unterabschnitt \ref{secXmlCondition}).
+
+Nach dem Bedingungselement folgen zwei XML-Element f"ur die enthaltende Unterobjekte. Das erste XML-Element wird ausgewertet, wenn die Bedingung Wahr (=true) ist, und das zweite sonst (wenn die Bedingung Falsch (=false) ist).
+
+\bigskip\noindent
+Ein Beispiel f"ur einen If-Element:
+\begin{verbatim}
+<if>
+   <condition>
+      <and>
+         <true/>
+         <lo>
+            <variable>1</variable>
+            <value>3.14</value>
+         </lo>
+      </and>
+   </condition>
+   ...<!-- Fib-Unterobjekt,
+      wenn die Bedingung Wahr (=true) ist -->
+   ...<!-- Fib-Unterobjekt,
+      wenn die Bedingung Falsch (=false) ist -->
+</if>
+\end{verbatim}
+
+
+\paragraph{Bedingungen}\index{Bedingungen|(}
+\label{secXmlCondition}
+
+Bedingungen enthalten entweder XML-Elemente f"ur 0 bis 2 Unterbedingungen (bzw. Bedingungen) oder XML-Elemente f"ur zwei Unterfunktionen (siehe Abschnitt \ref{secXmlUnderFunction} auf Seite \pageref{secXmlUnderFunction}).
+
+Die m"oglichen XML-Elemente f"ur Bedingungen werden in Tabelle \ref{tableXmlConditions} aufgef"uhrt.
+
+\begin{table}[htbp]
+\begin{center}
+\begin{tabular}{|p{15mm}|p{60mm}|p{40mm}|}\hline
+	Ele\-ment\-name & Beschreibung & Enthaltende XML-Elemente \\\hline\hline
+	\verb|false| & Die Bedingung ist Falsch. & keine \\\hline
+	\verb|true| & Die Bedingung ist Wahr. & keine \\\hline
+	\verb|not| & Die Bedingung ist genau dann Wahr, wenn die Unterbedingung Falsch ist, sonst ist sie Falsch. & eine Unterbedingung \\\hline
+	\verb|or| & Die Bedingung ist genau dann Wahr, wenn mindestens eine der beiden Unterbedingungen Wahr ist, sonst ist sie Falsch. & zwei Unterbedingung \\\hline
+	\verb|and| & Die Bedingung ist genau dann Wahr, wenn die beiden Unterbedingungen Wahr sind, sonst ist sie Falsch. & zwei Unterbedingung \\\hline
+	\verb|xor| & Die Bedingung ist genau dann Wahr, wenn nur eine der beiden Unterbedingungen Wahr sind, sonst ist sie Falsch. & zwei Unterbedingung \\\hline
+
+	\verb|eqInt| & Vergleich zweier auf Ganzzahlen gerundeter Zahlen auf Gleichheit. (zur Rundung siehe Abschnitt \ref{secFibArea} auf Seite \pageref{secFibArea}) & zwei Unterfunktionen, so wie in Abschnitt \ref{secXmlUnderFunction} auf Seite \pageref{secXmlUnderFunction} beschrieben\\\hline
+	\verb|lo| & Vergleich, ob die erste Zahl kleiner als die zweite ist. & zwei Unterfunktionen, so wie in Abschnitt \ref{secXmlUnderFunction} auf Seite \pageref{secXmlUnderFunction} beschrieben \\\hline
+	\verb|gr| & Vergleich, ob die erste Zahl gr"o"ser als die zweite ist. & zwei Unterfunktionen, so wie in Abschnitt \ref{secXmlUnderFunction} auf Seite \pageref{secXmlUnderFunction} beschrieben \\\hline
+
+\end{tabular} 
+\end{center}
+\caption{XML-Elementnamen f"ur Bedingungen}
+\label{tableXmlConditions}
+\end{table}
+
+\index{Bedingungen|)}
+\index{If-Element|)}
+
+
+\subsubsection{Externe Objekte}\index{Externe Objekte|(}
+
+Zur Beschreibung des Fib-Elements f"ur externe Objekte siehe Abschnitt \ref{fibExtObject} auf Seite \pageref{fibExtObject} .
+
+Die XML-Elemente f"ur externe Objekte besitzen den Namen \verb|obj|. Sie haben ein Attribut namens \verb|identifier|, welches den Identifier des einzusetzenden externen Objekts angibt. Des weiteren enth"alt das \verb|obj| XML-Elemente eine XML-Element f"ur die Eingabevariablen und eine XML-Element f"ur jedes Teil-Fib-Objekte bzw. Fib-Unterobjekt, welches vom externen Objekt verwendet werden kann.
+
+Das entsprechende XML-Element f"ur die Eingabewerte ist ein Vektor (siehe Abschnitt \ref{secXmlVector} auf Seite \pageref{secXmlVector}) vom Typ \verb|externObjectInput| (\verb|<vector| \verb| type=|\verb|"externObjectInput">|), er enth"alt die Eingabewerte.
+
+Ein XML-Elemente f"ur ein Teil-Fib-Objekt hat den Namen \verb|subobject|. Das \verb|subobject| XML-Element hat das optionale Attribut \verb|number|, welches die Nummer (die Z"ahlung beginnt bei $1$) des Teil-Fib-Objekts angibt. Des weiteren enth"alt das \verb|subobject| XML-Elemente eine XML-Element f"ur die Ausgabevariablen des externe Objekts und eine XML-Element f"ur das Fib-Unterobjekt, welches ein ganz normales Fib-Objekt ist, wie im "Uberabschnitt \ref{secXmlFibElement} beschrieben.
+
+Das entsprechende XML-Element f"ur die Ausgabevariablen hat den Elementnamen \verb|output_variables|. Es einth"alt f"ur jede Ausgabevariable ein XML-Element namens \verb|variable|. Das \verb|variable| XML-Element hat das optionale Attribut \verb|number|, welches die Nummer (die Z"ahlung beginnt bei $1$) der Ausgabevariable angibt. Weiterhin enth"alt das \verb|variable| XML-Element einen Wert f"ur die Nummer der definierten Variable.
+
+\bigskip\noindent
+Ein Beispiel f"ur ein externes Objekt:
+\begin{verbatim}
+<obj identifier="123">
+   <vector type="externObjectInput">
+      <value>5</value>
+      <variable>1</variable>
+      <variable>3</variable>
+   </vector>
+   <subobject>
+      <output_variables>
+         <variable>6</variable>
+         <variable>7</variable>
+         <variable>8</variable>
+         <variable>9</variable>
+      </output_variables>
+      ...<!-- Fib-Unterobjekt nummer 1 -->
+   </subobject>
+   <subobject>
+      <output_variables/>
+      ...<!-- Fib-Unterobjekt nummer 2 -->
+   </subobject>
+   <subobject>
+      <output_variables>
+         <variable>6</variable>
+         <variable>7</variable>
+      </output_variables>
+      ...<!-- Fib-Unterobjekt nummer 3 -->
+   </subobject>
+</obj>
+\end{verbatim}
+
+\noindent
+Ein Beispiel f"ur ein externes Objekt mit dem optionalen Attribut \verb|number|:
+\begin{verbatim}
+<obj identifier="34">
+   <vector type="externObjectInput">
+      <variable number="1">2</variable>
+      <value number="2">3.7</value>
+      <variable number="3">5</variable>
+   </vector>
+   <subobject number="1">
+      <output_variables>
+         <variable number="1">6</variable>
+         <variable number="2">7</variable>
+         <variable number="3">8</variable>
+      </output_variables>
+      ...<!-- Fib-Unterobjekt nummer 1 -->
+   </subobject>
+   <subobject number="2">
+      <output_variables>
+         <variable number="1">6</variable>
+         <variable number="2">7</variable>
+      </output_variables>
+      ...<!-- Fib-Unterobjekt nummer 2 -->
+   </subobject>
+</obj>
+\end{verbatim}
+
+\index{Externe Objekte|)}
+
+
+\subsubsection{Externe Unterobjekte}\index{Externe Unterobjekte|(}
+
+Zur Beschreibung des Fib-Elements f"ur externe Unterobjekte siehe Abschnitt \ref{fibSubobject} auf Seite \pageref{fibSubobject} .
+
+Die XML-Elemente f"ur externe Unterobjekte hat den Namen \verb|subobject|. Sie haben ein Attribut namens \verb|number|, das die Nummer des externen Unterobjekts angibt, welches hier eingesetzt werden soll. Des weiteren enth"alt das \verb|subobject| XML-Elemente eine XML-Element f"ur die Ausgabevariablen.
+
+Das entsprechende XML-Element f"ur die Ausgabewerte ist ein Vektor (siehe Abschnitt \ref{secXmlVector} auf Seite \pageref{secXmlVector}) vom Typ \verb|externSubobject| (\verb|<vector| \verb| type=|\verb|"externSubobject">|), er enth"alt die Ausgabewerte.
+
+\bigskip\noindent
+Ein Beispiel f"ur ein externes Unterobjekt:
+\begin{verbatim}
+<subobject number="6">
+   <vector type="externSubobject">
+      <value>5</value>
+      <variable>7</variable>
+   </vector>
+</subobject>
+\end{verbatim}
+
+\noindent
+Ein Beispiel f"ur ein externes Unterobjekt mit dem optionalen Attribut \verb|number|:
+\begin{verbatim}
+<subobject number="2">
+   <vector type="externSubobject">
+      <variable number="1">2</variable>
+      <value number="2">3.7</value>
+      <variable number="3">5</variable>
+   </vector>
+</subobject>
+\end{verbatim}
+
+\index{Externe Unterobjekte|)}
+
+
+\subsubsection{Definitionsbereichseigenschaftselement}\index{Definitionsbereichseigenschaften|(}
+
+Zur Beschreibung des Fib-Elements f"ur Definitionsbereichseigenschaften siehe Abschnitt \ref{fibDomeinProperties} auf Seite \pageref{fibDomeinProperties} .
+
+Das entsprechende XML-Element f"ur Definitionsbereichseigenschaften hat den Namen \verb|domainProperty|. Das XML-Element hat zwei bis drei Attribute. Das erste Attribut hat den Namen \verb|defined_variable| und gibt an, welche Variable vom Definitionsbereichseigenschaftselement definiert wird. Es ist eine nat"urliche Zahl f"ur eine Variable, welche noch nicht "uber dem Definitionsbereichseigenschaftselement f"ur eine andere Variable verwendet wird.
+
+Als weiters kann dieses Element ein optionales Attribut \verb|subdomain| enthalten. Das Attribut \verb|subdomain| spezifiziert den Unterefinitionsbereich auf welchen verwiesen wird. Dabei k"onnen die Nummern (die Z"ahlung beginnt bei 1) von Unterdefinitionsbereichen auf meheren Stufen durch einen Punkt getrennt angegeben werden. Wobei die Nummer eines Unterdefinitionsbereichs vor der Nummer des in ihm enthaltenden Unterdefinitionsbereichs steht.
+
+Das Attribut \verb|mode| gibt den Type der Eigenschaft an, welche zur"uckgegeben werden soll. Der Wert diese Attributs kommt aus der Spalte ``Name'' der Tabelle \ref{tableDomainPropertyModes} auf Seite \pageref{tableDomainPropertyModes} .
+
+Das Fib-Elements f"ur Definitionsbereichseigenschaften enth"alt zwei XML-Ele\-men\-te.
+
+Das Erste ist f"ur den Typ des Fib-Elements auf dessen Definitionsbereich verwiesen wird. Es hat den Namen \verb|type| und enth"alt das XML-Element f"ur den Typ. Dieses XML-Element wird wie in Tabelle \ref{tableFixXmlElementsForDefinitionRanges} auf Seite \pageref{tableFixXmlElementsForDefinitionRanges} beschrieben erstellt.
+
+Das Definitionsbereichseigenschaftselement enth"alt weiterhin das XML-Element f"ur das enthaltende Unterobjekt.
+
+\bigskip\noindent
+Ein Beispiel f"ur ein Definitionsbereichseigenschaftselement:
+\begin{verbatim}
+<domainProperty defined_variable="3" subdomain="2"
+      mode="unscaled max">
+   <type>
+      <dim count="2">
+         <dimension number="1" direction="horizontal"/>
+         <dimension number="2" direction="vertical"/>
+      </dim>
+   </type>
+   ...<!-- Fib-Unterobjekt -->
+</subobject>
+\end{verbatim}
+
+\noindent
+Beispiel in dem der erste Unterdefinitionsbereich des dritten Unterdefinitionsbereichs des Matrixelements verwendet wird:
+\begin{verbatim}
+<domainProperty defined_variable="1" subdomain="3.1"
+      mode="unscaled min">
+   <type>
+      <matrixElement/>
+   </type>
+   ...<!-- Fib-Unterobjekt -->
+</subobject>
+\end{verbatim}
+
+\noindent
+Beispiel ohne Unterdefinitionsbereiche:
+\begin{verbatim}
+<domainProperty defined_variable="14" mode="scaling">
+   <type>
+      <inVar number="4"/>
+   </type>
+   ...<!-- Fib-Unterobjekt -->
+</subobject>
+\end{verbatim}
+
+\index{Definitionsbereichseigenschaften|)}
+
+
+\subsubsection{Set-Element}\index{Set-Element|(}
+
+Zur Beschreibung des Set-Element siehe Abschnitt \ref{secFibSetElement} auf Seite \pageref{secFibSetElement} .
+
+Der Name des Set-Elements ist \verb|set|. Es hat ein optionales Attribut mit dem Namen \verb|domainNr|, welches die Nummer des Definitionsbereichs f"ur das set-Element angibt. Wenn das Attribut \verb|domainNr| fehlt, ist die die Nummer des Definitionsbereichs $0$ .
+
+Das Set-Xml-Element enth"alt als erstes ein Xml-Element f"ur den definierten Variablen mit dem Namen \verb|defined_variables|, welches f"ur jede Variable, die das Set-Element definiert, in ihrer Reihenfolge ein \verb|variable|-Element enth"alt.
+Diese haben das optinale Attribut \verb|number|, welches die Nummer (die Z"ahlung beginnt bei $1$) des Elements bzw. der definierten Variable im Set-Element angibt. Weiterhin enth"alt das \verb|variable|-Element eine nat"urliche Zahl f"ur die Variable, welche noch nicht "uber oder im Set-Element verwendet wird.
+
+Nach dem Xml-Element f"ur Variablendefinitionen \verb|defined_variables| folgt ein Xml-Element namens \verb|values|, welches die Vektoren mit den Werten, mit denen die Variablen belegt werden sollen enth"alt. Sie stehen in ihrer Reihenfolge im Set-Element. Die Vektoren haben alle den Typ \verb|set| (\verb|type="set"|).
+
+Am Ende, nach den Xml-Element f"ur die Wertevektoren \verb|values|, enth"alt das Set-Element das XML-Element f"ur das enthaltende Unterobjekt.
+
+\bigskip\noindent
+Ein Beispiel f"ur einen Set-Element:
+\begin{verbatim}
+<set>
+   <defined_variables>
+      <variable>7</variable>
+      <variable>8</variable>
+      <variable>9</variable>
+   </defined_variables>
+   <values>
+      <vector type="set">
+         <variable>1</variable>
+         <value>3</value>
+         <value>26.14</value>
+      </vector>
+      <vector type="set">
+         <value>33.4</value>
+         <value>-47</value>
+         <variable>4</variable>
+      </vector>
+   </values>
+
+   ...<!-- Fib-Unterobjekt -->
+</set>
+\end{verbatim}
+
+\noindent
+Ein Beispiel f"ur einen Set-Element mit dem optionalen Attributen \verb|domainNr| und \verb|number|:
+\begin{verbatim}
+<set domainNr="5">
+   <defined_variables>
+      <variable number="1">2</variable>
+      <variable number="2">3</variable>
+      <variable number="3">4</variable>
+      <variable number="4">5</variable>
+   </defined_variables>
+   <values>
+      <vector type="set">
+         <variable>1</variable>
+         <variable>1</variable>
+         <variable>1</variable>
+         <variable>1</variable>
+      </vector>
+      <vector type="set">
+         <value>8</value>
+         <value>4</value>
+         <variable>1</variable>
+         <value>3</value>
+      </vector>
+   </values>
+
+   ...<!-- Fib-Unterobjekt -->
+</set>
+\end{verbatim}
+
+
+\index{Set-Element|)}
+
+
+\subsubsection{Matrixelement}\index{Matrixelement|(}
+
+Zur Beschreibung des Matrixelement siehe Abschnitt \ref{secFibMatrixElement} auf Seite \pageref{secFibMatrixElement} .
+
+Der Name des Matrixelement ist \verb|matrix|. Es hat das Attribut \verb|dimensions|, welches angibt, wieviel Dimensionen $d$ das Matrixelement hat. Des weiteren hat es ein weiteres optionales Attribut mit dem Namen \verb|domainNr|, welches die Nummer des Definitionsbereichs f"ur das Matrixelement angibt. Wenn das Attribut \verb|domainNr| fehlt, ist die die Nummer des Definitionsbereichs $0$ .
+
+Das Xml-Matrixelement enth"alt als erstes ein Xml-Element mit dem Namen \verb|defined_variables|, welches f"ur jede Variable, die das Matrixelement definiert, in ihrer Reihenfolge ein \verb|variable|-Element enth"alt.
+Dieses hat das optinale Attribut \verb|number|, welches die Nummer (die Z"ahlung beginnt bei $1$) des Elements bzw. der definierten Variable im Matrixelement angibt. Weiterhin enth"alt das \verb|variable|-Element eine nat"urliche Zahl f"ur die Variable, welche noch nicht "uber oder im Matrixelement verwendet wird.
+
+Nach den Xml-Element f"ur die Variablendefinitionen \verb|defined_variables| folgt das Xml-Element namens \verb|areas|, welches die Vektoren mit den Bereichen f"ur die Dimensionen ($(Startvalue_k, \ldots, Endvalue_k)$ mit $k=1 \ldots d$) enth"alt, mit denen die Dimensionsvariablen ($Variable_1, \ldots, Variable_d$) belegt werden sollen. Sie stehen in ihrer Reihenfolge im Matrixelement. Die Vektoren haben alle den Typ \verb|area| (\verb|type="area"|).
+
+Nach den Xml-Element f"ur Vektoren mit den Bereichen \verb|areas| folg das Xml-Element namens \verb|values|, welches die Vektoren mit den Werten enth"alt, mit denen die Wertevariablen ($Value_{d+1}, \ldots, Value_{d+i}$) belegt werden sollen. Sie stehen in ihrer Reihenfolge im Matrixelement. Die Vektoren haben alle den Typ \verb|matrix| (\verb|type="matrix"|).
+
+Am Ende, nach den Xml-Element f"ur die Wertevektoren \verb|values|, enth"alt das Matrixelement das XML-Element f"ur das enthaltende Unterobjekt.
+
+\bigskip\noindent
+Ein Beispiel f"ur einen Matrixelement:
+\begin{verbatim}
+<matrix dimensions="2">
+   <defined_variables>
+      <variable>7</variable>
+      <variable>8</variable>
+      <variable>9</variable>
+      <variable>10</variable>
+      <variable>11</variable>
+   </defined_variables>
+   <areas>
+      <vector type="area">
+         <value>3</value>
+         <value>4</value>
+      </vector>
+      <vector type="area">
+         <variable>2</variable>
+         <value>7</value>
+      </vector>
+   </areas>
+   <values>
+      <vector type="matrix">
+         <variable>1</variable>
+         <value>3</value>
+         <value>26.14</value>
+      </vector>
+      <vector type="matrix">
+         <value>33.4</value>
+         <value>-47</value>
+         <variable>4</variable>
+      </vector>
+   </values>
+  ...
+   ...<!-- Fib-Unterobjekt -->
+</matrix>
+\end{verbatim}
+
+\noindent
+Ein Beispiel f"ur einen Matrixelement mit dem optionalen Attributen \verb|domainNr| und \verb|number|:
+\begin{verbatim}
+<matrix dimensions="2" domainNr="7">
+   <defined_variables>
+      <variable number="1">8</variable>
+      <variable number="2">9</variable>
+      <variable number="3">10</variable>
+      <variable number="4">11</variable>
+   </defined_variables>
+   <areas>
+      <vector type="area">
+         <variable>3</variable>
+         <variable>2</variable>
+      </vector>
+      <vector type="area">
+         <value>-2</value>
+         <value>0</value>
+      </vector>
+   </areas>
+   <values>
+      <vector type="matrix">
+         <value>3</value>
+         <variable>1</variable>
+      </vector>
+      <vector type="matrix">
+         <value>0.44</value>
+         <value>-7</value>
+      </vector>
+      <vector type="matrix">
+         <value>6</value>
+         <value>5</value>
+      </vector>
+      <vector type="matrix">
+         <value>-1</value>
+         <value>-1</value>
+      </vector>
+   </values>
+   ...
+   ...<!-- Fib-Unterobjekt -->
+</matrix>
+\end{verbatim}
+
+
+\index{Matrixelement|)}
+
+
+
+%TODO XSD Schemadatei einf"ugen
+

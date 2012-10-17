@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fib_object
+			xmlns:xsd="http://www.w3.org/2001/XMLSchema-instance"
+			xmlns="http://www.fib-development.org/"
+			xsd:schemaLocation="http://www.fib-development.org/fib.xsd">
+	<root>
+		<multimedia_info fib_version="3" db_version="2"/>
+		<optionalpart>
+			<pair key="name" value="quadrangle with antialising"/>
+			<pair key="description" value="This object represents a quadrangle (box) with antialising. In the second dimension it goes from y_s to y_e (borders not antialiased). In the first dimension the area is filled between two lines, which are antialiased. The first line (x_s = f_1( y ) = a_0 + a_1 * y) goes through the first two points ( x_1, y_1 ) and ( x_2, y_2 ). The second line (x_e = f_2( y ) = b_0 + b_1 * y) goes through the last two points ( x_3, y_3 ) and ( x_4, y_4 ). The start point y_s is max( min( y_1, y_2 ), min( y_3, y_4 ) ) and the end point y_e is ( min( max( y_1, y_2 ), max( y_3, y_4 ) ) - 1 ) (the '- 1' at the end is, because for antialising the pixle y goes till (y + 1) ). If y_s is bigger than y_e no box is drawn. The points of the quadrangle (box) are given back as variables of the subobject."/>
+			<pair key="inVar1::description" value="position of the first point in dimension 1 (x_1)"/>
+			<pair key="inVar2::description" value="position of the first point in dimension 2 (y_1)"/>
+			<pair key="inVar3::description" value="position of the second point in dimension 1 (x_2)"/>
+			<pair key="inVar4::description" value="position of the second point in dimension 2 (y_2)"/>
+			<pair key="inVar5::description" value="position of the 3. point in dimension 1 (x_3)"/>
+			<pair key="inVar6::description" value="position of the 3. point in dimension 2 (y_3)"/>
+			<pair key="inVar7::description" value="position of the 4. point in dimension 1 (x_4)"/>
+			<pair key="inVar8::description" value="position of the 4. point in dimension 2 (y_4)"/>
+			<pair key="subObj1::description" value="The points of the quadrangle (box). The subobject is called for every point on the quadrangle (box)."/>
+			<pair key="subObj1::outVar1::description" value="the position of the quadrangle point in dimension 1 (x)"/>
+			<pair key="subObj1::outVar2::description" value="the position of the quadrangle point in dimension 2 (y)"/>
+			<pair key="subObj1::outVar3::description" value="the antialising factor (1 is full transparent and 0 full opaque)"/>
+			<pair key="author" value="Betti Oesterholz"/>
+			<pair key="author::email" value="Oesterholz@Fib-Development.org"/>
+			<pair key="copyright" value="LGPL3"/>
+		</optionalpart>
+		<input_variables>
+			<variable number="1" default="0"/>
+			<variable number="2" default="0"/>
+			<variable number="3" default="0"/>
+			<variable number="4" default="0"/>
+			<variable number="5" default="0"/>
+			<variable number="6" default="0"/>
+			<variable number="7" default="0"/>
+			<variable number="8" default="0"/>
+		</input_variables>
+		<domains>
+			<inVar number="1">
+				<domainReference subdomain="1">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="2">
+				<domainReference subdomain="2">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="3">
+				<domainReference subdomain="1">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="4">
+				<domainReference subdomain="2">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="5">
+				<domainReference subdomain="1">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="6">
+				<domainReference subdomain="2">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="7">
+				<domainReference subdomain="1">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="8">
+				<domainReference subdomain="2">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<externSubobject number="1">
+				<vector elements="2">
+					<!--actually any numbers are possible;
+						the next lines are just a space holder-->
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+				</vector>
+			</externSubobject>
+			<externObject>
+				<vector elements="4">
+					<integer min="-475" max="-475" /><!--Identifier-->
+					<integer min="8" max="8" /><!--number input values-->
+					<integer min="1" max="1" /><!--number subobjects-->
+					<integer min="3" max="3" /><!--number output values-->
+				</vector>
+			</externObject>
+			<externObjectInput identifier="-475">
+				<vector elements="8">
+					<domainReference>
+						<inVar number="2"/>
+					</domainReference>
+					<domainReference>
+						<inVar number="1"/>
+					</domainReference>
+					<domainReference>
+						<inVar number="4"/>
+					</domainReference>
+					<domainReference>
+						<inVar number="3"/>
+					</domainReference>
+					<domainReference>
+						<inVar number="6"/>
+					</domainReference>
+					<domainReference>
+						<inVar number="5"/>
+					</domainReference>
+					<domainReference>
+						<inVar number="8"/>
+					</domainReference>
+					<domainReference>
+						<inVar number="7"/>
+					</domainReference>
+				</vector>
+			</externObjectInput>
+		</domains>
+		<database_identifiers>
+			<identifier>-475</identifier>
+		</database_identifiers>
+		<main_fib_object>
+			<obj identifier="-475">
+				<vector type="externObjectInput">
+					<variable>2</variable>
+					<variable>1</variable>
+					<variable>4</variable>
+					<variable>3</variable>
+					<variable>6</variable>
+					<variable>5</variable>
+					<variable>8</variable>
+					<variable>7</variable>
+				</vector>
+				<subobject>
+					<output_variables>
+						<variable>9</variable>
+						<variable>10</variable>
+						<variable>11</variable>
+					</output_variables>
+					<subobject number="1">
+						<vector type="externSubobject">
+							<variable>10</variable>
+							<variable>9</variable>
+							<variable>11</variable>
+						</vector>
+					</subobject>
+				</subobject>
+			</obj>
+		</main_fib_object>
+	</root>
+</fib_object>

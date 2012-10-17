@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fib_object
+xmlns:xsd="http://www.w3.org/2001/XMLSchema-instance"
+xmlns="http://www.biokom.info/"
+xsd:schemaLocation="http://www.biokom.info/fib.xsd">
+<root>
+	<optionalpart>
+		<pair key="cFibObjectFitnessBasic.distance" value="115.0"/>
+		<pair key="cFibObjectFitnessBasic.distance.area/area1.xml" value="0.0"/>
+	</optionalpart>
+	<domains>
+		<dim count="1">
+			<dimension number="1" direction="horizontal"/>
+			<vector elements="1">
+				<naturalNumber max="0" />
+			</vector>
+		</dim>
+		<property name="colorSW" >
+			<vector elements="1">
+				<naturalNumberB bit="8" />
+			</vector>
+		</property>
+		<property name="sound" >
+			<vector elements="4">
+				<naturalNumberB bit="8" />
+				<naturalNumberB bit="8" />
+				<naturalNumberB bit="8" />
+				<naturalNumberB bit="8" />
+			</vector>
+		</property>
+	</domains>
+	<main_fib_object>
+		<list>
+			<property>
+				<vector type="property.sound">
+					<value number="1">11</value>
+					<value number="2">20</value>
+					<value number="3">40</value>
+					<value number="4">82</value>
+				</vector>
+				<point>
+					<vector type="position">
+						<value number="1">0</value>
+					</vector>
+				</point>
+			</property>
+			<property>
+				<vector type="property.sound">
+					<value number="1">15</value>
+					<value number="2">15</value>
+					<value number="3">15</value>
+					<value number="4">15</value>
+				</vector>
+				<point>
+					<vector type="position">
+						<value number="1">0</value>
+					</vector>
+				</point>
+			</property>
+			<property>
+				<vector type="property.sound">
+					<value number="1">13</value>
+					<value number="2">13</value>
+					<value number="3">13</value>
+					<value number="4">13</value>
+				</vector>
+				<background/>
+			</property>
+		</list>
+	</main_fib_object>
+</root>
+</fib_object>

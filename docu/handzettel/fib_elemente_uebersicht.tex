@@ -1,0 +1,165 @@
+% Autor: Betti Oesterholz
+% erstellt: 09.2010
+% Dies ist ein handzettel, welcher die Fib-Elemente beschreibt.
+%
+% Copyright (c) 2010 Betti Oesterholz
+%
+% Permission is granted to copy, distribute and/or modify this document
+% under the terms of the GNU Free Documentation License, Version 1.2 or
+% any later version published by the Free Software Foundation;
+% with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+%
+% A copy of the license is included in the file ``fdl.tex'' .
+%
+
+
+
+\documentclass[10pt,a4paper]{article}
+\pagestyle{empty} %keine Seitennummerierung
+\usepackage{a4wide} % besser den Platz nutzen (kleinere R"ander)
+\usepackage{ngerman} % Silbentrennung nach neuer Rechtschreibung
+\usepackage[T1]{fontenc} % Type 1 Schriften
+\usepackage{times} % Da die Standard-LaTeX-Schrift bei mir mit Acrobat nicht funkt.
+\usepackage[ansinew]{inputenc} % Verwendung von Umlauten
+%\usepackage{scrpage2} % Seitenformat
+%\usepackage{titletoc}
+%\usepackage{titlesec}
+\usepackage{listings} % Programm-Listing
+%\usepackage [usetoc]{titleref} 
+\usepackage{graphicx} % Einbindung von Graphiken
+\usepackage{url} % URLs durch \url{}
+%\usepackage{bibgerm} % deutsche Bibliographie
+%\usepackage{txfonts}%Paket fr das nat Symbol
+\usepackage{multicol}
+%\usepackage{makeidx}%for the index
+%\usepackage{longtable}
+%\usepackage{amsmath}%mathematikumgebung {equation*} usw.
+
+% Seitenstil festlegen
+%\pagestyle{useheadings}%or: headings
+
+% naehste vier Zeilen: Format des Inhaltsverzeichnisses
+%\titlespacing{\section}{0pt}{5cm}{5cm}%spacing by sections {in front}{above}{below}
+%\dottedcontents{section}[1.5em]{\addvspace{1.0em}}{1.3em}{0.7pc}
+%\dottedcontents{subsection}[3.8em]{}{2.2em}{0.7pc}
+%\dottedcontents{subsubsection}[7.0em]{}{3.1em}{0.7pc}
+
+%\setcounter{secnumdepth}{4}%%nummerierung der Unterabschnitte bis Tiefe
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Definitionen fr das Verwenden von Listings
+
+\newtheorem{Def}{Definition}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Beginn des Dokuments
+%\makeindex
+
+\begin{document}
+
+%\renewcommand{\sectionmark}[1]{\markboth{#1}{}}
+%\pagenumbering {Roman}
+%\automark{section}
+%\pagestyle{scrheadings} % individ. Seitenlayout
+%\setheadsepline{0.4pt}
+%\ihead{} % Titelzeile innen
+%\ohead{} % Titelzeile aussen
+%\chead{\slshape \headmark}  % Titelzeile mitte
+%\cfoot{\thepage} % Fusszeile mitte
+
+% braucht man ein Inhaltsverzeichnis, so sind die naechsten drei Zeilen auszukommentieren
+%\setcounter{tocdepth}{3}
+%\tableofcontents
+%\clearpage
+
+% Vorschlag fr Titelzeile:
+% Bei umfangreicheren Dokumenten
+%\ihead{\slshape \headmark } % Darstellung von Sectionnummer und -name
+%\ohead{}
+%\chead{}
+
+
+%\pagenumbering{arabic}
+
+\ \vspace{-2.5cm}
+\begin{center}
+	\LARGE\bf Fib-Elemente
+\end{center}
+
+\bigskip\noindent
+\textbf{Vektoren:} Vektoren dienen zum Bereitstellen von numerischen Werten. Jedes Vektorelement ist entweder eine Zahl oder eine Variable, welche weiter oben im Fib-Objekt belegt wird. Zu den Vektoren geh"oren Definitionsbereiche, die im Allgemeinen im root-Element definiert werden.
+
+\bigskip\noindent
+\textbf{Variablen:} Variablen werden von einigen Fib-Elementen definiert und k"onnen dann im gesamten enthaltenen (bzw. darunter liegenden) Fib-Objekt verwendet werden.
+
+\bigskip\noindent
+\textbf{Fib-Objekte:} $Obj$
+
+Fib-Objekte sind aus Fib-Elementen g"ultig zusammengesetzte Objekte.
+
+\bigskip\noindent
+\textbf{Punkte:} $Obj = p( Positionsvektor )$
+
+Die Punkte sind die darstellenden Elemente. An ihnen werden die gesetzten Eigenschaften ausgewertet. Der leere Punkt hat keine Auswirkungen $p()$. Punkte mit leerem Positionsvektor $p(())$ erzeugen den Hintergrund.
+
+\bigskip\noindent
+\textbf{Eigenschaftselement:} $Obj = pr( Eigenschaftsvektor_{name}, Obj_1 )$
+
+Mit dem Eigenschaftselement werden Eigenschaften (vom Type $name$) f"ur Fib-Objekte gesetzt.
+
+\bigskip\noindent
+\textbf{Listenelement:} $Obj = l( Obj_1, \ldots, Obj_n )$; $n \in N$ und $2 \geq n$
+
+Mit dem Listenelement k"onnen mehrere Fib-Objekte zu einem Objekt zusammengef"ugt werden.
+
+\bigskip\noindent
+\textbf{Anmerkungselement:} $Obj = c( Schl"ussel , Wert , Obj_1)$
+
+Das Anmerkungselement (comment) dient zum Benennen oder Beschreiben von Unterobjekten.
+
+\bigskip\noindent
+\textbf{Bereichselement:} $Obj = for( Variable, ( B_{1}, B_{2},\ldots, B_{n}), Obj_1)$
+
+Das Bereichselement legt f"ur eine Variable die Werte aus dem Bereich der ganzen Zahlen (diskrete Bereiche) fest, welche sie einnimmt. Das Bereichselement enth"alt eine Liste von Unterbereichen $B_{i}$, welche die Variable annimmt.
+
+\bigskip\noindent
+\textbf{Funktionen:} $Obj = f( Variable ,UF ,Obj_1 )$
+
+Funktionen sind Fib-Elemente, welche einer Variable einen Wert zuordnen, der mit Hilfe einer Formel berechnet wird.
+Eine Funktion enth"alt daf"ur eine Unterfunktion $UF$.
+
+\bigskip\noindent
+\textbf{Externe Objekte aufrufen:}
+\begin{eqnarray*}
+Obj &=& obj( Identifierer , inVar_1 , \ldots , inVar_n , ( outVar_{1}, \ldots ,outVar_{v_1}, Obj_1), \ldots , \\
+  && ( outVar_{1}, \ldots ,outVar_{v_m}, Obj_m) )
+\end{eqnarray*}
+
+Externe Objekte sind Fib-Objekte, welche nicht im aktuellen Fib-Teilobjekt definiert werden. Diese k"onnen aus dem Wurzelelement (root-Element) oder der Fib-Objekt\-daten\-bank kommen. Auf diese Weise k"onnen Teile von Fib-Objekten im gleichen Fib-Objekt mehrfach verwendet oder von verschiedenen Fib-Objekten wiederverwendet werden.
+
+\bigskip\noindent
+\textbf{Externe Unterobjekte:} $Obj = sub( Nummer , (var_1, \ldots , var_v) )$
+
+Externe Unterobjekte sind Objekte, die beim Auswerten des aktuellen Fib-Objekts schon bereitgestellt werden (z. B. "uber externe Objekte).
+
+\bigskip\noindent
+\textbf{Root-Element:}
+\begin{eqnarray*}
+Rootobj &=& root( [Multimediainformation], [Domains], [DomainsValues], \\
+&& [((inVar_1, S_1), \ldots , (inVar_v, S_v) )], [( outVarNum_{1}, \ldots , outVarNum_m)], Obj , \\
+&& [((Identifier_1, Rootobj_1) , \ldots , (Identifier_n, Rootobj_n))],\\
+&& [( DB\_Identifier_1, \ldots , DB\_Identifier_d)], [Optionalpart] )
+\end{eqnarray*}
+
+Das root-Element dient als Wurzelelement eines Fib-Objekts. Es sollte alle (Um\-ge\-bungs-)Informationen, welche f"ur die Auswertung des Fib-Objekts ben"otigt werden, bereitstellen. Das root-Element selbst kann in keinem Fib-Element, au"ser einem anderem root-Element, enthalten sein.
+
+
+\end{document}
+
+
+
+
+
+
+

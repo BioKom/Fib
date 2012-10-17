@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fib_object
+xmlns:xsd="http://www.w3.org/2001/XMLSchema-instance"
+xmlns="http://www.biokom.info/"
+xsd:schemaLocation="http://www.biokom.info/fib.xsd">
+<root>
+	<optionalpart>
+		<pair key="cFibObjectFitnessBasic.distance" value="11.0"/>
+		<pair key="cFibObjectFitnessBasic.distance.area/area0.xml" value="0.0"/>
+		<pair key="cFibObjectFitnessBasic.distance.area/area1.xml" value="9.0"/>
+		<pair key="cFibObjectFitnessBasic.distance.area/area2.xml" value="2.0"/>
+	</optionalpart>
+	<domains>
+		<dim count="1">
+			<dimension number="1" direction="horizontal"/>
+			<vector elements="1">
+				<naturalNumber max="1" />
+			</vector>
+		</dim>
+		<property name="colorSW" >
+			<vector elements="1">
+				<naturalNumberB bit="8" />
+			</vector>
+		</property>
+	</domains>
+	<main_fib_object>
+		<list>
+		<property>
+			<vector type="property.colorSW">
+				<value number="1">5</value>
+			</vector>
+			<background/>
+		</property>
+		<property>
+			<vector type="property.colorSW">
+				<value number="1">10</value>
+			</vector>
+			<point>
+				<vector type="position">
+					<value number="1">0</value>
+				</vector>
+			</point>
+		</property>
+	</list>
+	</main_fib_object>
+</root>
+</fib_object>

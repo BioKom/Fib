@@ -1,0 +1,22 @@
+<data>
+	<property>
+		<vector type="property.colorRGB">
+			<value number="1">8</value>
+			<value number="2">9</value>
+			<value number="3">10</value>
+		</vector>
+		<function define_variable="9">
+			<subfunction>
+				<value>3</value>
+			</subfunction>
+			<subobject number="2">
+				<vector type="externSubobject">
+					<variable>8</variable>
+					<variable>9</variable>
+				</vector>
+			</subobject>
+		</function>
+	</property>
+</data>
+
+

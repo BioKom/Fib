@@ -1,0 +1,110 @@
+<data>
+	<vector type="position">
+		<value number="1">7</value>
+		<value number="2">11</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value number="1">7</value>
+		<value number="2">11</value>
+		<value number="3">1</value>
+	</vector>
+	<vector type="position">
+		<value number="1">7</value>
+		<value number="2">10</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value number="1">7</value>
+		<value number="2">10</value>
+		<value number="3">1</value>
+	</vector>
+	<vector type="position">
+		<value number="1">7</value>
+		<value number="2">9</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value number="1">7</value>
+		<value number="2">9</value>
+		<value number="3">1</value>
+	</vector>
+	<vector type="position">
+		<value number="1">7</value>
+		<value number="2">2</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value number="1">7</value>
+		<value number="2">2</value>
+		<value number="3">2</value>
+	</vector>
+	<vector type="position">
+		<value number="1">8</value>
+		<value number="2">11</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value number="1">8</value>
+		<value number="2">11</value>
+		<value number="3">1</value>
+	</vector>
+	<vector type="position">
+		<value number="1">8</value>
+		<value number="2">10</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value number="1">8</value>
+		<value number="2">10</value>
+		<value number="3">1</value>
+	</vector>
+	<vector type="position">
+		<value number="1">8</value>
+		<value number="2">9</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value number="1">8</value>
+		<value number="2">9</value>
+		<value number="3">1</value>
+	</vector>
+	<vector type="position">
+		<value number="1">8</value>
+		<value number="2">2</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value number="1">8</value>
+		<value number="2">2</value>
+		<value number="3">2</value>
+	</vector>
+	<vector type="position">
+		<value number="1">9</value>
+		<value number="2">11</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value number="1">9</value>
+		<value number="2">11</value>
+		<value number="3">1</value>
+	</vector>
+	<vector type="position">
+		<value number="1">9</value>
+		<value number="2">10</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value number="1">9</value>
+		<value number="2">10</value>
+		<value number="3">1</value>
+	</vector>
+	<vector type="position">
+		<value number="1">9</value>
+		<value number="2">9</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value number="1">9</value>
+		<value number="2">9</value>
+		<value number="3">1</value>
+	</vector>
+	<vector type="position">
+		<value number="1">9</value>
+		<value number="2">2</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value number="1">9</value>
+		<value number="2">2</value>
+		<value number="3">2</value>
+	</vector>
+</data>

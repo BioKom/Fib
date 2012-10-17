@@ -1,0 +1,170 @@
+%
+% Copyright (c) 2008 Betti "Osterholz
+%
+% Permission is granted to copy, distribute and/or modify this document
+% under the terms of the GNU Free Documentation License, Version 1.2 or
+% any later version published by the Free Software Foundation;
+% with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+%
+% A copy of the license is included in the file ``fdl.tex'' .
+%
+
+\section{Theoretische Aussagen zur Fib-Multi\-media\-be\-schrei\-bungs\-sprache}
+\label{secTheoreticFib}
+
+Es folgen einige theoretische Aussagen zur Fib-Multimediabeschreibungssprache, f"ur die aber aus Zeitgr"unden meistens nicht ein vollst"andiger Beweis angef"uhrt wird. Mit diesen Aussagen soll ein besseres Verst"andnis der Fib-Multimediasprache erreicht werden.
+
+
+\subsection{M"achtigkeit der Fib-Multimediasprache auf Bilder}
+\label{secPowerOfFibOnPictures}
+
+Mit der Fib-Multimediasprache k"onnen alle als Rastergrafik darstellbaren Bilder dargestellt werden. Bilder, die als Rastergrafik darstellbar sind, sind die am h"aufigsten verwendeten Bilder in der elektronischen Datenverarbeitung. Dazu geh"oren unter anderem Windows Bitmap (BMP, Dateiendung: .bmp), JPEG File Interchange Format (JFIF, Dateiendung: .jpg) und Portable Network Graphics (PNG, Dateiendung: .png).
+
+Allein mit dem Punktelement und dem Listenelement lassen sich bereits alle m"oglichen Rastergrafiken darstellen.
+
+\bigskip\noindent
+\textbf{Beweis:}
+Eine Rastergrafik (euklidisch, zweidimensional, diskret) kann als Matrix dargestellt werden, in der die Spalte die x-Koordinate, die Zeile die y-Koordinate des Punktes angibt und die Werte die Farben der Punkte angeben. Die Anzahl der Punkte in der Rastergrafik ist endlich. Um diese Punkte durch Fib-Multimediasprache darzustellen, ist ein root-Element zu erzeugen, das die Eigenschaften der Rastergrafik enth"alt (Gr"o"se bzw. Dimensionsdefinitionsbereich usw.). In diesem root-Element ist als Haupt-Fib-Objekt ein Listenelement einzuf"ugen, welches f"ur jeden Punkt des Bildes ein Unterobjekt enth"alt. Dieses Unterobjekt besteht nur aus einem Eigenschaftselement, das die Farbe des Punktes kodiert, und einem enthaltenden Punktelement, welches die Position des Punktes kodiert. So gibt es f"ur jeden Punkt in der Rastergrafik einen entsprechenden Punkt im erzeugten Fib-Objekt, womit das Fib-Objekt die Rastergrafik repr"asentiert.
+
+Eine Abbildung in die Fib-Multimediasprache kann beispielsweise mit dem im Listing \ref{alleBild} dargestellten Algorithmus geschehen (Pseudo-C).
+
+\begin{flushleft}
+Dabei beginnt die Indizierung der Matrix mit (0,0).
+
+Der Farbwert der Koordinate (x,y) kann mit \verb|matrix[ x, y]| bestimmt werden. Mit der Funktion \verb|getColorVector()| wird aus dem Matrix-Farbwert ein Fib-Farbvektor generiert.
+
+Die Syntax der Fib-Objekte entspricht der im Abschnitt \ref{partFibLanguage} auf Seite \pageref{partFibLanguage} angesprochenen m"oglichen Syntax.
+\end{flushleft}
+
+\begin{lstlisting}[language=C, numbers=left, frame=single, caption={Algorithmus zur Erzeugung eines korrekten Fib-Objekts aus einer Bildmatrix}, label={alleBild}, breaklines, basicstyle=\footnotesize\ttfamily, numberstyle=\tiny]
+void translate( matrix ){
+
+   int xmax = Anzahl der Spalten der Matrix;
+   int ymax = Anzahl der Zeilen der Matrix;
+   Fib_Objekt_Pointer obj=new root();
+
+   //Eigenschaften der Rastergrafik setzen
+   obj->setBild( xmax, ymax, Farbschema);
+
+   list hauptliste=new list()
+
+   obj->insertMainObject( hauptliste )
+
+   for( int x = 0; x == xmax; x = x + 1 ){
+
+      for( int y = 0; y == xmax; y = y + 1 ){
+         hauptliste->insertObject( property( getColorVector( matrix[x,y] ) , p( (x,y) ) ) );
+      };
+   };
+};
+\end{lstlisting}
+
+\bigskip\noindent
+Da die Erweiterung mit Funktionen und anderen Elementen optional ist, wird mit dem angegebenen Algorithmus ein korrektes Fib-Objekt erzeugt.
+
+\bigskip\noindent
+Zu jedem Punkt in der Matrix gibt es einen gleichfarbigen Punkt im Fib-Objekt mit der entsprechenden Koordinate, aber es gibt keinen Punkt im Fib-Objekt, der nicht in der Matrix vorhanden ist, denn jede Koordinate der Matrix wird mit den zwei for-Schleifen durchlaufen. Dadurch wird f"ur jede Koordinate und damit auch f"ur jeden Punkt in der Rastergrafik ein Punkt im Fib-Objekt eingef"ugt. Somit gibt es f"ur jeden Punkt in der Rastergrafik einen entsprechenden Punkt in dem Fib-Objekt.
+Da nur Koordinaten der Matrix in den for-Schleifen durchlaufen werden und nur f"ur diese die entsprechenden Punkte in das Fib-Objekt eingef"ugt werden, existieren nur Punkte die auch in der Matrix auftauchen und damit auch nur Punkte im Fib-Objekt die auch in der Rastergrafik vorkommen.
+Es gibt also nur die Punkte aus der Originalrastergrafik im Fib-Objekt und nur diese.
+Damit repr"asentieren das Fib-Objekt und die Originalrastergrafik die gleiche Rastergrafik. Deshalb k"onnen alle Rastergrafiken auch mit der Fib-Multimediasprache dargestellt werden.
+
+Ein mit dem Algorithmus generiertes Fib-Objekt, das einer Originalrastergrafik entspricht, stellt eine obere Grenze der minimalen Gr"o"se m"oglicher entsprechender Fib-Objekte da. Das hei"st, jede Rastergrafik kann durch ein Fib-Objekt repr"asentiert werden, das genauso gro"s ist, wie ein Fib-Objekt f"ur die Rastergrafik, das mit dem oben aufgef"uhrten Algorithmus generiert wurde, n"amlich das generierte Fib-Objekt. Es gibt aber wahrscheinlich noch k"urzere Fib-Objekte f"ur die Rastergrafik.
+
+\begin{flushleft}
+Damit ist die minimale Gr"o"se eines Fib-Objekts f"ur eine Rastergrafik maximal:
+
+$Fib\_max_{min}$ = (Anzahl der Pixel im Bild) $* [$(Gr"o"se eines Punktelements) + (Gr"o"se eines Eigenschaftselements f"ur das entsprechende Farbschema)$]$ + (Gr"o"se eines Listenelements)+ (Gr"o"se eines root-Elements mit gesetzten Werten)
+
+\bigskip\noindent
+Beispiel: Dargestellt werden soll ein Bild 8 x 8 = 256 Pixel mit 3 Byte f"ur die Farbe (RGB), 1 Byte f"ur die Position (f"ur jede Richtung x und y 4 Bit = 8 m"ogliche Werte) und 1 Byte f"ur den Objektnamen (z. B. ``l'' f"ur Listelemente und ``p'' f"ur Punktelemente). Klammern werden nicht ben"otigt, da alle Teile eine feste L"ange haben. (Die Annahmen "uber die Gr"o"sen der Fib-Objekt-Elemente wird hier abgesch"atzt. Bei einer Implementierung sind sicherlich bessere (/kleinere) Werte m"oglich.)
+\begin{itemize}
+ \item F"ur einen Punktelement werden 2 Byte ben"otigt (1 Byte Position + 1 Byte Elementname).
+ \item F"ur eine Eigenschaftselement werden 4 Byte ben"otigt (3 Byte Farbe + 1 Byte Elementname).
+ \item F"ur ein Listenelement werden 9 Byte ben"otigt ( 8 Byte f"ur Angabe der Anzahl der Unterobjekte + 1 Byte Elementname).
+ \item F"ur das root-Element werden 256 Bytes ben"otigt. (Da viele Teile des root-Elements leer sind und nur der Definitionsbereichen f"ur 2 Dimensionen und die RGB-Farbdefinitionsbereiche angegeben werden m"ussen, sollten 256 Bytes gen"ugen.)
+\end{itemize}
+
+\bigskip\noindent
+Rechnung:
+$256 (Pixel) * (2 Bytes + 4 Bytes) + 9 Bytes + 256 Bytes = 1801 Bytes$
+
+\bigskip\noindent
+Das Bild kann also auf jeden Fall mit einem 1801 Byte gro"sen Fib-Objekt dargestellt werden. Es sind davon abweichende k"urzere Fib-Objekt-Darstellungen m"oglich. Die 1801 Byte sind also die Obergrenze f"ur die minimale Gr"o"se, mit der das Bild mit einem Fib-Objekt dargestellt werden kann.
+
+\bigskip\noindent
+Zum Vergleich: Der Speicherbedarf einer Rastergrafik als Bitmap (nur Punkt-Informationen) betr"agt mindestens
+(Anzahl der Pixel im Bild) * (Gr"o"se eines Farbwertes)
+
+\bigskip\noindent
+F"ur das obige Beispiel ergibt sich: $256 (Pixel) * 3 Bytes = 768 Bytes$
+
+\bigskip\noindent
+Das ist ungef"ahr die H"alfte der 1801 Byte der Obergrenze f"ur die minimale Fib-Objekt-Darstellung.
+
+\bigskip\noindent
+Indem die Matrix auf 3 Dimensionen erweitert wird, kann die Aussage "uber die Darstellbarkeit aller Rastergrafiken leicht auf Sequenzen von Rastergrafiken (z. B. die Bilder von Filmen) erweitert werden.
+
+\end{flushleft}
+
+
+\subsection{M"achtigkeit von Fib}
+
+\textbf{Satz: Die Menge der m"oglichen Fib-Objekte ist abz"ahlbar unendlich.}
+
+\bigskip\noindent
+Beweis Skizze f"ur die Abz"ahlbarkeit:
+
+\noindent
+Jedes Fib-Objekt kann mit einer endlichen Anzahl von Buchstaben und damit auch Bits oder Zahlen repr"asentiert werden, und die Menge dieser ist abz"ahlbar.
+Das folgt daraus, dass die Anzahl der Fib-Elemente in einem Fib-Objekt immer abz"ahlbar ist und jedes Fib-Element aus abz"ahlbar vielen Teilen besteht, welche selbst abz"ahlbar sind, es gibt z. B. nur ganze oder rationale Zahlen, und auch die Menge der Variablen ist abz"ahlbar.
+
+\bigskip\noindent
+Beweis Skizze f"ur ``unendlich'':
+
+\noindent
+Es k"onnen alle nat"urlichen Zahlen durch Fib-Objekte repr"asentiert werden. Im Nachfolgendem ist eine m"ogliche Darstellungsart von beliebigen nat"urlichen Zahlen mithilfe von Fib-Objekten beschrieben.
+
+Ein Punktobjekt alleine stellt die nat"urliche Zahl 0 da.
+Wird ein Fib-Objekt in ein neues Funktionselement eingesetzt, stellt das entstehende Fib-Objekt den Nachfolger des urspr"unglichen Fib-Objekts da.
+Damit werden die 0 und die Nachfolgefunktion in der Fib-Multimediasprache nachgebildet, und es k"onnen damit alle nat"urlichen Zahlen dargestellt werden. Da die Menge der nat"urlichen Zahlen unendlich ist, muss die Menge der Fib-Objekte auch unendlich sein.
+
+\bigskip\noindent
+Jedes Multimediaobjekt wird sogar durch eine abz"ahlbar unendliche Menge von Fib-Objekten repr"asentiert, denn es kann an ein Fib-Objekt, das ein Multimediaobjekt repr"asentiert, jedes beliebige Fib-Objekt mit einem Listenelement angeh"angt werden, solange dieses die Multimediaobjektdarstellung nicht ver"andert. Es k"onnte z. B. beliebig oft an ein Fib-Objekt eine Kopie von sich selbst mit Hilfe eines Listenelements angef"ugt werden, ohne das Multimediaobjekt zu ver"andern.
+
+
+\subsection{Jedes vollst"andige Fib-Objekt kann als ein Multimediaobjekt dargestellt werden}
+\label{alleBilder}
+
+Es wird in diesem Abschnitt aufgezeigt, dass es m"oglich ist, jedes vollst"andige Fib-Objekt (siehe Abschnitt \ref{secFullFibObject} auf Seite \pageref{secFullFibObject}) immer so zu interpretieren (in ein Multimediaobjekt zu "ubersetzen), dass nur g"ultige Multimediaobjekte eines bestimmten Typs (z. B. RGB-Bilder mit 100 x 100 Pixel) entstehen k"onnen. Dabei wird die schon angesprochene Einschr"ankung bez"uglich der Multimediadaten vorrausgesetzt, dass die Multimediadaten als Eigenschaften von Punkten eines endlichen, euklidischen, diskreten (es gibt kleinste Einheiten) Raumes darstellbar sind. Diese Einschr"ankung ist nicht sehr gro"s, da sie (fast) keine der heutzutage "ublichen Multimediadaten ausgrenzt. Die Multimediadaten k"onnen also Bilder, Ton und Filme darstellen.
+
+Mit der Einschr"ankung, dass der Abstand/Unterschied zwischen zwei Eigenschaften des gleichen Typs immer als Zahlenwert bestimmt werden kann, k"onnen zwei Multimediaobjekte mit den gleichen Dimensionen immer verglichen werden. Zwei Multimediaobjekte haben die gleichen Dimensionen, wenn f"ur jeden Punkt in dem einem Multimediaobjekt genau ein entsprechender Punkt im jeweils anderen Multimediaobjekt existiert.
+
+Die Voraussetzung des vollst"andigen Fib-Objekts ist n"otig, um zu gew"ahrleisten, dass das Fib-Objekt immer auswertbar ist. Da die Vollst"andigkeit eines Fib-Objekts "uber die in Teil \ref{partFibLanguage} dargestellte Syntax gepr"uft werden kann, ist die Vollst"andigkeit eines Fib-Objekts immer feststellbar. Nicht vollst"andige Fib-Objekte sollten von Algorithmen bzw. den genetischen Operatoren nicht erzeugt werden.
+
+Wenn nun bei einem Fib-Objekt die Dimensionen an die eines Multimediaobjekts angepasst werden (dies sollte immer m"oglich sein), ist das Fib-Objekt immer mit dem Multimediaobjekt vergleichbar, da es selbst immer als Multimediaobjekt dargestellt werden kann und zwei Multimediaobjekte mit den gleichen Dimensionen immer verglichen und die "Ahnlichkeit zueinander bewertet werden kann.
+
+Anmerkung: Dies ist f"ur genetische Algorithmen vorteilhaft. Bei einigen anderen Darstellungsformen, die durch genetische Algorithmen erzeugt werden, k"onnen ung"ultige Objekte (z. B. Programme) entstehen, bei denen eine genauere(/r) Bewertung/Vergleich nicht m"oglich ist. Eine Population in dieser Darstellungsform kann dann, z. B. eine gro"se Klasse von ung"ultigen Objekten haben, die alle gleich schlecht sind und damit bei der Selektion gleich ber"ucksichtigt werden. Wenn dann die Population nur aus ung"ultigen Individuen besteht, ist die Auswahl eines besseren Individuums unm"oglich. Der genetische Algorithmus befindet sich dann sozusagen auf einer (Fitness-)Ebene, von der er nur noch schwer herunterfinden kann.
+
+\bigskip\noindent
+Beweis, dass jedes korrekte Fib-Objekt als ein Multimediaobjekt (eines bestimmten Typs, z. B. als Bild) dargestellt werden kann: 
+Ausgangspunkt ist, dass ein Multimediaobjekt (euklidisch, zweidimensional, diskret) als endliche Menge von Punkten mit ihren (endlich vielen) Eigenschaften dargestellt werden kann. Da es nur endlich viele Punkte mit nur endlich vielen Eigenschaften gibt, ist eine solche endliche Menge immer konstruierbar.
+
+Eine solche endliche Menge von Punkten mit ihren (endlich vielen) Eigenschaften erzeugt auch jedes korrekte Fib-Objekt. Punkte die in dieser Menge zu viel sind, um ein Multimediaobjekt zu repr"asentieren, werden aus der Menge gel"oscht. Punkte, die in der Menge fehlen, um ein Multimediaobjekt zu repr"asentieren, werden in die Menge eingef"ugt. Eigenschaften von Punkten die zu viele sind, um ein Multimediaobjekt zu repr"asentieren, werden gel"oscht. Eigenschaften, die bei Punkten fehlen, um ein Multimediaobjekt zu repr"asentieren, werden hinzugef"ugt und mit Standardwerten belegt (z. B. den Nullwerten ihres Definitionsbereichs). Auf diese Weise entsteht eine endliche Menge von Punkten mit ihren (endlich vielen) Eigenschaften, die als Multimediaobjekt repr"asentiert werden kann.
+
+\bigskip\noindent
+Beispiel: Das Fib-Objekt soll ein RGB-Bild mit 100 x 100 Pixel darstellen. Dann werden die Dimensionen des Fib-Objekts so angepasst, das diese 100 x 100 Pixel in horizontaler und vertikaler Richtung umfassen. Das hei"st, wenn die Dimension (horizontal oder vertikal) schon existiert, wird der Definitionsbereich jeweils so angepasst, dass er mindestens 100 Werte in gleichm"a"sigen Abst"anden umfasst. So wird jedem Pixel ein Wert zugeordnet. Sollte eine Dimension fehlen, so wird sie mit dem entsprechenden Definitionsbereich erzeugt und in allen Punkten f"ur die Dimension der Standardwert 0 eingesetzt. Es gibt dann keine Punkte mit anderen Werten als den Standardwert f"ur diese Dimensionen. Dimensionen, die zuviel sind, werden aus den root-Elementen und den Punkten gel"oscht. Bei der Auswertung des so erzeugten Fib-Objekts entsteht eine Menge von Punkten mit ihren Eigenschaften. Bei der Auswertung wird der kleinste Wert $W_{min}$ der jeweiligen Dimension im Fib-Objekt dem Wert 0 als Koordinate in der Menge zugeordnet, dem zweitkleinsten die 1 als Koordinate usw. 
+
+Aus dieser Menge werden nun alle Punkte gel"oscht, die nicht innerhalb der 100 x 100 Pixel liegen (also Punkte, bei denen ein Wert bzw. eine Koordinate kleiner 0 oder gr"o"ser 99 ist). F"ur alle Koordinaten, die noch fehlen (also fehlende Punkte, bei denen die Werte bzw. die Koordinaten zwischen [inklusive] 0 und 99 liegen), werden Punkte eingef"ugt. Alle Eigenschaften, die nicht RGB-Farben entsprechen, werden gel"oscht. Allen Punkten, denen keine Eigenschaft f"ur RGB- Farben zugeordnet ist, wird die Standardfarbe $(0, 0 ,0 )_{colorRGB}$ zugeordnet. Die so entstandene Menge enth"alt f"ur jeden Punkt in dem RGB-Bild mit 100 x 100 Pixel einen Punkt mit einer RGB-Farbe, aber keinen anderen Punkt oder Eigenschaften und stellt somit ein RGB-Bild mit 100 x 100 Pixel da.
+
+Dies kann dann mit anderen RGB-Bildern mit 100 x 100 Pixel verglichen und im Bezug auf diese bewertet werden.
+
+
+
+
+
+
+
+
+
+
+

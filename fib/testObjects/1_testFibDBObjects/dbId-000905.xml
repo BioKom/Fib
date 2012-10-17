@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fib_object
+			xmlns:xsd="http://www.w3.org/2001/XMLSchema-instance"
+			xmlns="http://www.biokom.info/"
+			xsd:schemaLocation="http://www.biokom.info/fib.xsd">
+<root>
+	<multimedia_info fib_version="3" db_version="2"/>
+	<optionalpart>
+		<pair key="description" value="This object is for testing database object with id -905 ."/>
+		<pair key="call" value="../../../add_ons/converter/bin/convertFromFib dbId-000905.xml dbId-000905.png"/>
+	</optionalpart>
+	<domains>
+		<dim count="2">
+			<dimension number="1" direction="horizontal"/>
+			<dimension number="2" direction="vertical"/>
+			<vector elements="2">
+				<integer min="0" max="95"/>
+				<integer min="0" max="127"/>
+			</vector>
+		</dim>
+		<property name="colorRGB" >
+			<vector elements="3">
+				<naturalNumberB bit="8" />
+				<naturalNumberB bit="8" />
+				<naturalNumberB bit="8" />
+			</vector>
+		</property>
+		<property name="transparency" >
+			<vector elements="1">
+				<naturalNumberB bit="8" />
+			</vector>
+		</property>
+		<subfunction>
+			<naturalNumber max="255" />
+		</subfunction>
+		<externObject>
+			<vector elements="4">
+				<integer min="-10000" max="10000" />
+				<naturalNumber max="2" />
+				<naturalNumber max="1" />
+				<naturalNumber max="0" />
+			</vector>
+		</externObject>
+	</domains>
+	<main_fib_object>
+		<list>
+			<property>
+				<vector type="property.colorRGB">
+					<value>255</value>
+					<value>0</value>
+					<value>0</value>
+				</vector>
+				<background/>
+			</property>
+			<property>
+				<vector type="property.colorRGB">
+					<value>0</value>
+					<value>255</value>
+					<value>0</value>
+				</vector>
+				<list>
+					<point/>
+			
+				 <area define_variable="1">
+						<vector type="subarea">
+							<value>-10</value>
+							<value>20</value>
+						</vector>
+						<obj identifier="-905">
+							<vector type="externObjectInput">
+								<value>0</value>
+								<value>0</value>
+								<value>0</value>
+								<value>0.1</value>
+								<variable>1</variable>
+								<value>0</value>
+							</vector>
+							<subobject>
+								<output_variables>
+									<variable>2</variable>
+								</output_variables>
+								<function define_variable="3">
+									<subfunction>
+										<add>
+											<mult>
+												<variable>2</variable>
+												<value>10</value>
+											</mult>
+											<value>2</value>
+										</add>
+									</subfunction>
+									<function define_variable="4">
+										<subfunction>
+											<add>
+												<variable>1</variable>
+												<value>20</value>
+											</add>
+										</subfunction>
+										<property>
+											<vector type="property.colorRGB">
+												<value>0</value>
+												<value>0</value>
+												<value>255</value>
+											</vector>
+											<point>
+												<vector type="position">
+													<variable>4</variable>
+													<variable>3</variable>
+												</vector>
+											</point>
+										</property>
+									</function>
+								</function>
+							</subobject>
+						</obj>
+					</area>
+
+					<area define_variable="1">
+						<vector type="subarea">
+							<value>-10</value>
+							<value>20</value>
+						</vector>
+						<obj identifier="-905">
+							<vector type="externObjectInput">
+								<value>0</value>
+								<value>0.1</value>
+								<value>0</value>
+								<value>0</value>
+								<variable>1</variable>
+								<value>0</value>
+							</vector>
+							<subobject>
+								<output_variables>
+									<variable>2</variable>
+								</output_variables>
+								<function define_variable="3">
+									<subfunction>
+										<add>
+											<mult>
+												<variable>2</variable>
+												<value>10</value>
+											</mult>
+											<value>15</value>
+										</add>
+									</subfunction>
+									<function define_variable="4">
+										<subfunction>
+											<add>
+												<variable>1</variable>
+												<value>20</value>
+											</add>
+										</subfunction>
+										<property>
+											<vector type="property.colorRGB">
+												<value>0</value>
+												<value>255</value>
+												<value>0</value>
+											</vector>
+											<point>
+												<vector type="position">
+													<variable>4</variable>
+													<variable>3</variable>
+												</vector>
+											</point>
+										</property>
+									</function>
+								</function>
+							</subobject>
+						</obj>
+					</area>
+
+					<area define_variable="1">
+						<vector type="subarea">
+							<value>-10</value>
+							<value>20</value>
+						</vector>
+						<obj identifier="-905">
+							<vector type="externObjectInput">
+								<value>0</value>
+								<value>0.05</value>
+								<value>0.5</value>
+								<value>0.05</value>
+								<variable>1</variable>
+								<value>0</value>
+							</vector>
+							<subobject>
+								<output_variables>
+									<variable>2</variable>
+								</output_variables>
+								<function define_variable="3">
+									<subfunction>
+										<add>
+											<mult>
+												<variable>2</variable>
+												<value>10</value>
+											</mult>
+											<value>30</value>
+										</add>
+									</subfunction>
+									<function define_variable="4">
+										<subfunction>
+											<add>
+												<variable>1</variable>
+												<value>20</value>
+											</add>
+										</subfunction>
+										<property>
+											<vector type="property.colorRGB">
+												<value>0</value>
+												<value>255</value>
+												<value>255</value>
+											</vector>
+											<point>
+												<vector type="position">
+													<variable>4</variable>
+													<variable>3</variable>
+												</vector>
+											</point>
+										</property>
+									</function>
+								</function>
+							</subobject>
+						</obj>
+					</area>
+					
+					<!-- check one line in middle pixle + check intersection point -->
+					<area define_variable="1">
+						<vector type="subarea">
+							<value>-10</value>
+							<value>30</value>
+						</vector>
+						<obj identifier="-905">
+							<vector type="externObjectInput">
+								<value>0</value>
+								<value>0.04</value>
+								<value>0.5</value>
+								<value>0.0</value>
+								<variable>1</variable>
+								<value>0</value>
+							</vector>
+							<subobject>
+								<output_variables>
+									<variable>2</variable>
+								</output_variables>
+								<function define_variable="3">
+									<subfunction>
+										<add>
+											<mult>
+												<variable>2</variable>
+												<value>10</value>
+											</mult>
+											<value>45</value>
+										</add>
+									</subfunction>
+									<function define_variable="4">
+										<subfunction>
+											<add>
+												<variable>1</variable>
+												<value>20</value>
+											</add>
+										</subfunction>
+										<property>
+											<vector type="property.colorRGB">
+												<value>0</value>
+												<value>128</value>
+												<value>0</value>
+											</vector>
+											<point>
+												<vector type="position">
+													<variable>4</variable>
+													<variable>3</variable>
+												</vector>
+											</point>
+										</property>
+									</function>
+								</function>
+							</subobject>
+						</obj>
+					</area>
+					
+					<area define_variable="1">
+						<vector type="subarea">
+							<value>-10</value>
+							<value>50</value>
+						</vector>
+						<obj identifier="-905">
+							<vector type="externObjectInput">
+								<value>4.3</value>
+								<value>0.0</value>
+								<value>5</value>
+								<value>-0.04</value>
+								<variable>1</variable>
+								<value>4</value>
+							</vector>
+							<subobject>
+								<output_variables>
+									<variable>2</variable>
+								</output_variables>
+								<function define_variable="3">
+									<subfunction>
+										<add>
+											<mult>
+												<variable>2</variable>
+												<value>10</value>
+											</mult>
+											<value>60</value>
+										</add>
+									</subfunction>
+									<function define_variable="4">
+										<subfunction>
+											<add>
+												<variable>1</variable>
+												<value>20</value>
+											</add>
+										</subfunction>
+										<property>
+											<vector type="property.colorRGB">
+												<value>0</value>
+												<value>0</value>
+												<value>128</value>
+											</vector>
+											<point>
+												<vector type="position">
+													<variable>4</variable>
+													<variable>3</variable>
+												</vector>
+											</point>
+										</property>
+									</function>
+								</function>
+							</subobject>
+						</obj>
+					</area>
+					<!-- both lines equal -->
+					<area define_variable="1">
+						<vector type="subarea">
+							<value>-10</value>
+							<value>50</value>
+						</vector>
+						<obj identifier="-905">
+							<vector type="externObjectInput">
+								<value>2.2</value>
+								<value>0.7</value>
+								<value>2.2</value>
+								<value>0.7</value>
+								<variable>1</variable>
+								<value>2</value>
+							</vector>
+							<subobject>
+								<output_variables>
+									<variable>2</variable>
+								</output_variables>
+								<function define_variable="3">
+									<subfunction>
+										<add>
+											<mult>
+												<variable>2</variable>
+												<value>10</value>
+											</mult>
+											<value>75</value>
+										</add>
+									</subfunction>
+									<function define_variable="4">
+										<subfunction>
+											<add>
+												<variable>1</variable>
+												<value>20</value>
+											</add>
+										</subfunction>
+										<property>
+											<vector type="property.colorRGB">
+												<value>0</value>
+												<value>128</value>
+												<value>128</value>
+											</vector>
+											<point>
+												<vector type="position">
+													<variable>4</variable>
+													<variable>3</variable>
+												</vector>
+											</point>
+										</property>
+									</function>
+								</function>
+							</subobject>
+						</obj>
+					</area>
+					
+					
+				</list>
+			</property>
+		</list>
+	</main_fib_object>
+</root>
+</fib_object>

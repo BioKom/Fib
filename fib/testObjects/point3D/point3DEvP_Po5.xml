@@ -1,0 +1,27 @@
+<data>
+	<vector type="position">
+		<value number="1">10</value>
+		<value number="2">11</value>
+		<value number="3">12</value>
+	</vector>
+	<vector type="position">
+		<value number="1">13</value>
+		<value number="2">14</value>
+		<value number="3">15</value>
+	</vector>
+	<vector type="position">
+		<value number="1">16</value>
+		<value number="2">17</value>
+		<value number="3">18</value>
+	</vector>
+	<vector type="position">
+		<value number="1">19</value>
+		<value number="2">20</value>
+		<value number="3">21</value>
+	</vector>
+	<vector type="position">
+		<value number="1">22</value>
+		<value number="2">23</value>
+		<value number="3">24</value>
+	</vector>
+</data>

@@ -1,0 +1,193 @@
+%
+% Copyright (c) 2010 Betti Oesterholz
+%
+% Permission is granted to copy, distribute and/or modify this document
+% under the terms of the GNU Free Documentation License, Version 1.2 or
+% any later version published by the Free Software Foundation;
+% with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+%
+% A copy of the license is included in the file ``fdl.tex'' .
+%
+
+\newpage
+\part{Die Fib-Algorithmen}
+\label{partFibAlgorithms}
+
+Viele Operatoren bauen auf "Uberlegungen und Algorithmen auf, welche in diesem Teil beschrieben werden.
+
+Diese Algorithmen k"onnen von verschiedenen Operatoren genutzt und miteinander kombiniert werden.
+
+F"ur die meisten Algorithmen gibt es gute Beschreibungen in entsprechender Fachliteratur. Allerdings sind diese Beschreibungen meist schlecht direkt f"ur Fib anzuwenden.
+Das Problem liegt in der Art der verarbeiteten Daten. W"ahrend viele Algorithmenbeschreibungen f"ur reele Zahlen und abstrakte oder exakte Probleme ausgelegt sind, werden bei der Umsetzung von Multimediadaten in Fib die Daten meist Ganzzahlen oder zumindest skalierte Ganzzahlen sein. Zus"atzlich ist eine speicherplatzspaarende Darstellung oft wichtiger, als eine exakte Umsetzung der Multimediadaten.
+Deshalb sind die Allgorithmen meist f"ur Fib anzupassen.
+
+
+\section{Ableitung}\index{Ableitung}
+\label{secDerivate}
+
+Da Fib nicht nich auf reelen Zahlen arbeiten kann, vereinfacht sich der Begriff der Ableitung.
+Als Ableitung einer Funktion $f$ wird im Folgenden die Funktion $f'$ verstanden, welche die Differenz zweier benachbarter Eingabewerte von $f$ berechnet.
+
+Meist werden die Funktion f"ur Fib als Eingabevariablen wohl Werte haben, welche auf die Dimensionen von Fib-Objekten zur"uckgehen. Dies ist beispielsweise der Fall, wenn die Farbe (Ausgabewert) eines Punktes anhand seiner Position (Eingabewert) oder die Position in der zweiten Dimension (Ausgabewert) anhand der Position in der ersten Dimension (Eingabewert) mithilfe einer Funktion ermittelt werden soll.
+
+Daher sind als Ausgangsfunktion $f$ zwei Funktionsklassen f"ur Fib zu unterscheiden. Funktionen die auf Ganzzahlen arbeiten und Funktionen, welche auf ratinalen Zahlen arbeiten.
+Diese werden im Nachfolgenden genauer betrachtet.
+
+
+\subsection{Ganzzahlfunktionen}\index{Ableitung!Ganzzahlfunktionen}
+\label{secDerivateInteger}
+
+Bei diesen Funktionen, sind die ganzzahlige Funktionswerte als $n$ dimensionale Matrix gegeben. Die Anzahl der Dimensionen wird meist eins oder zwei sein.
+
+Soll mit den Werten der Ableitung ein Taylorpolynom oder andere rationale Funktion erstellt werden, so ist zu beachten, dass rationale Werte auf ganzzahlige Werte gerundet werden. Alle rationalen Zahlen $x$ die $n-0.5 < x < n+0.5$ erf"ullen werden zu der Ganzzahl $n$ gerundet. Durch eine Ableitung verdoppelt sich der m"oglich Bereich, f"ur den die Zahlen in der Ableitung noch auf eine bestimmte Ganzzahl gerundet werden k"onnen. Wenn beispielsweise ein Punkt den Wert $1.51$ (gerundet $2$) hat und sein Nachbarpunkt $2.49$ (gerundet $2$), ist die Differenz dieser beiden Punkte ungef"ahr $1$. Bis zu einen Abstand von $1$ ($n'-1 < x' < n'+1$) k"onnen also in der Ableitung einer Funktionen die Funktion noch als konstant angesehen werden.
+
+Eine Taylorentwicklung nach den exakten (Ganzahl-)Werten, ber"ucksichtig also nicht die Freiheitsgrade durch die Rundung. Eine solche Taylorentwicklung k"onnte nur schwehr die Treppenartigen Funktionen von Ganzzahlen erfassen.
+
+Daher ist mit den Werten der Ableitung bei Ganzzahlfunktionen mit Vorsicht umzugehen.
+
+
+\subsection{Rationale Funktionen}\index{Ableitung!Rationale Funktionen}
+
+Die Werte der rationalen Funktionen in Fib-Objekten werden meist in Form einer Matrix vorliegen und daher "uber die Distanz von Nachparpunkten berechnet werden.
+
+Besonderen Augenmerk ist aber darauf zu verwenden, ob es sich wirklich um rationale Werte handelt oder im Grunde um skalierte Ganzzahlen. Handelt es sich um skalierte Ganzzahlen, so sollten die "Uberlegungen aus dem vorhergehenden Abschnitt \ref{secDerivateInteger} beachtet werden.
+
+
+
+
+%\section{Fourieranalyse}
+
+\input{algorithm/solveLinearInequiations}%TODO weiter aussfeilen
+
+
+
+
+\section{Bereiche Approximieren}\index{Bereiche}
+
+Wurde ein Fib-Multimidiaobjekt analysiert und Bereiche in ihm gefunden, so sollten diese m"oglichst g"unstig mit Fib-Elementen darstellbar sein.
+
+Kombinationen aus dem Bereichs- und Funktionselement bieten sich daf"ur an. Bereichselemente erzeugen Punktmengen, die mit den Funktionselementen so angepasst werden, dass sie den gegebenen Bereich "uberdecken.
+
+
+
+\section{Bereiche for-2fun-for 2 D Approximieren mit Taylorpolynomen}
+
+Die Idee dieser approximationsmethode ist es einen zweidimensionalen Bereich mit zwei Bereichselementen und zwei Funktionselementen zu "uberdeken.
+
+Das erste Areaelement gibt den Grundbereich in einer Richtung $x$ vor. F"ur jeden $x$-Wert hat der Bereich eine bestimmte Ausdehnung $y(x)_1$ bis $y(x)_2$ (die Gr"o"ste und kleinste Ausdehung f"ur den $x$ Wert). Diese Werte $y(x)_1$ und $y(x)_2$ werden mit den zwei Funktionselementen abh"angig von den $x$ Werten berechnet und als Grenzen des zweiten Bereichselements genommen. ( z. B. $for( x, (x_1,x_2),$ $fun( y_1, ...,$ $fun( y_2, ...,$ $for( y, (y_1, y_2),$ $p(x,y) ) ) ) )$ )
+
+%TODO grafik einf"ugen
+
+Vorraussetzung f"ur dieses Vorgehen ist, dass der Bereich f"ur jede $x$ Position durch zwei Werte $(y_1, y_2)$ begrenzt ist und alle Werte zwischen $y_1$ und $y_2$ zum Bereich geh"oren. Diese Verraussetzung kann etwas entsch"arft werden, wenn der Bereich nich hundertprozentig genau approximiert werden mu"s, sonder auch einige Punkte nicht im Bereich "uberdeckt werden k"onnen.
+Ansonsten mu"s der Bereich in mehrere Unterbereiche aufgespalten werden. Die Anzahl der Unterbereich ist dabei mindestens die maximale Anzahl der Unterbrechungen in den $(y_1, y_2)$ Bereichen.
+
+Die Richtung /Dimension der $x$ und $y$ Werte kann frei gew"ahlt werden. Mit der wahl der $x$ und $y$-Richtung kann daher eventuell die Anzahl der Unterbereiche verringert werden.
+
+
+%TODO grafik einf"ugen
+
+\section{Polynom Approximation}
+
+Allgorithmen f"ur Polynominterpolationen sind in der Mathematik gut bekannt. In zusammenhang mit Fib sind aber einige Besonderheiten zu beachten. Einige der besonderheiten wurden schon im Abschnitt \ref{secDerivate} "uber Ableitungen angesprochen.
+
+
+\subsection{Eindimensionale Polynome mit Y-Bereichen}
+
+In Fib gibt es die Problemstellung, dass ein Polynom ($f(x)=y$) interpoliert werden soll, das eine feste Zahl f"ur die Eingabe $x$ hat, aber deren Ausgabewerte $y$ in einem Bereich liegen k"onnen. Beispielsweise ist bei Funktionen auf Ganzzahlen die Eingabe eine Ganzzahl und die Ausgabe wird auf eine Ganzzahl $y$ gerundet, wenn sie im Bereich $(y-0.5, y+0.5)$ liegt. Dies kommt in Fib unter anderen vor, wenn die Helligkeit eines Punktes in Abh"angigkeit von seiner Position berechnet werden soll ( z. B. mit ``$for($ $x, [1, 20],$ $fun( y$ $,mult(x,0.5),$ $pr($ $(y)_{colorSW},$ $p(x,1) ) ) )$'' ). Wird in diesen F"allen nicht der Freiheitsgrad f"ur die Ausgabe ausgenutzt, sondern nur ein fester Wert aus dem m"oglichen Ausgabewert zur Polynominterpolation gew"ahlt (so dass ein "ubliches Verfahren angewendet werden kann), kann es zu starken Schwingungen des Polynoms kommen. Dann hat das Polynom viele unn"otige Faktoren, die den Speicherplatzverbrach f"ur ein Fib-Object nur unn"otig erh"ohen.
+
+Deshalb wird im Nachfolgenden ein Verfahren vorgestellt, dass dies Freiheitsgraden ber"ucksichtigt.
+
+\bigskip\noindent
+gegeben:
+\begin{itemize}
+ \item Punkte (mit den Bereichen f"ur den Ausgabewert): $P_1( x_1, (yu_1,yo_1 )), \ldots,$ $P_p( x_p, y_p \in (yu_p,yo_p ))$
+ \item der maximale Grad des Polynoms $n$, mit $n < p$
+\end{itemize}
+
+\bigskip\noindent
+Gesucht wird das Polynom $f(x) = \sum_{i=0}^{n} (a_i( x )^i)$; bzw. dessen Faktoren: $a_i$ mit $i=0, \ldots, n$ .
+
+\bigskip\noindent
+L"osung:
+
+setze untere Grenze $a_n$ auf  $-inf$ und die obere auf $+inf$
+
+\bigskip\noindent
+1. L"osungschema aufbauen:
+\begin{eqnarray*}
+yu_1 &<=  a_0 + a_1( x_1 ) + \ldots + a_n( x_1 )^n &<= yo_1\\
+yu_2 &<=  a_0 + a_1( x_2 ) + \ldots + a_n( x_2 )^n &<= yo_2\\
+\ldots & & \\
+yu_p &<=  a_0 + a_1( x_p ) + \ldots + a_n( x_p )^n &<= yo_p\\
+\end{eqnarray*}
+
+\bigskip\noindent
+2. in Dreiecksform bringen:
+( $<?>$ : Vergleich wird entsprechend gedreht wenn durch negative $x_i$ geteilt wird)
+
+\begin{itemize}
+ \item mit $a_k$ ist das $a_i$ mit groessten $i$, dessen untere und ober Grenze nicht gleich ist 
+ \item $as_{n}$ ist der konstante Faktor, der sich aus den $a_i$ mit jeweils gleicher untere und ober Grenze und dem $x$ Wert der Ungleichung ergibt
+\end{itemize}
+
+\begin{eqnarray*}
+&&yu_1 <= a_0 + a_1( x_1 ) + \ldots + a_n( x_1 )^n <= yo_1\\
+&&(yu_2 - yu_1)/x_2 <?> a_1 + \ldots + 2* a_n( x_2 )^{n-1} <?> (yo_2-yo_1)/x_2\\
+&&yu_3 /x_3 - yu_2/x_2 + yu_1*(1/x_2-1/x_3) <?> a_2 + \ldots + 3 * a_n( x_3 )^{n-2} \\
+&&  <?> yo_3/x_3 - yo_2/x_2 + yo_1*(1/x_2-1/x_3) \ldots \\
+&&  yu_n / x_n^n + g_n( yu_1,\ldots, yu_{n-1}, x_1, \ldots, x_{n-1}) <?>  k*(k-1)/2 * a_k + as_{k}\\
+&&  <?> yo_n / x_n^n - g_n( yo_1, \ldots yo_{n-1}, x_1, \ldots, x_{n-1}) \\
+&&yu_{n+1} / x_{n+1}^n + g_{n+1}( yu_1, \ldots, yu_{n}, x_1,\ldots, x_n, x_{n+1})\\
+&&  <?> k*(k-1)/2 * a_{k} + as_{k+1} \\
+&&  <?> yo_{n+1} / x_{n+1}^n + g_{n+1}( yo_1, \ldots, yo_{n}, x_1, \ldots, x_n, x_{n+1})\\
+&&\ldots\\
+&&yu_p / x_p^n + g_p( yu_1, \ldots, yu_{n}, x_1, \ldots, x_n, x_p) \\
+&&  <?> k*(k-1)/2 *  a_k  + as_{p} \\
+&&  <?> yo_p / x_p^n + g_p( yo_1, \ldots, yo_{n}, x_1, \ldots, x_n, x_p)\\
+\end{eqnarray*}
+
+
+\bigskip\noindent
+2.b So Umformen, dass in jeder Ungleichung ein $a_i$
+($b_i$ Faktor fuer die $a_i$)
+
+\begin{eqnarray*}
+&& g_0( yu_1, \ldots, yu_{n}, x_1, \ldots, x_n, x_p) <?>  b_0 * a_0 + as_{0} <?> g_0( yu_1, \ldots, yu_{n}, x_1, \ldots, x_n, x_p)\\
+&& g_1( yu_1, \ldots, yu_{n}, x_1, \ldots, x_n, x_p) <?>  b_1 * a_1 + as_{1} <?> g_1( yu_1, \ldots, yu_{n}, x_1, \ldots, x_n, x_p)\\
+&& g_2( yu_1, \ldots, yu_{n}, x_1, \ldots, x_n, x_p) <?>  b_2 * a_2 + as_{2} <?> g_2( yu_1, \ldots, yu_{n}, x_1, \ldots, x_n, x_p)\\
+&& \ldots\\
+&& yu_n / x_n^n + g_n( yu_1, \ldots, yu_{n-1}, x_1, \ldots, x_{n-1}) \\
+&&   <?>  k*(k-1)/2 * a_k + as_{k} <?> yo_n / x_n^n - g_n( yo_1, \ldots, yo_{n-1}, x_1, \ldots, x_{n-1})\\
+&& yu_{n+1} / x_{n+1}^n + g_{n+1}( yu_1, \ldots, yu_{n}, x_1, \ldots, x_n, x_{n+1})\\
+&&   <?> k*(k-1)/2 * a_{k} + as_{k+1} <?> yo_{n+1} / x_{n+1}^n +\\
+&&   + g_{n+1}( yo_1, \ldots, yo_{n}, x_1, \ldots, x_n, x_{n+1})\\
+&& \ldots\\
+&& yu_p / x_p^n + g_p( yu_1, \ldots, yu_{n}, x_1, \ldots, x_n, x_p)\\
+&&   <?> k*(k-1)/2 *  a_k  + as_{p} <?> yo_p / x_p^n + g_p( yo_1, \ldots, yo_{n}, x_1, \ldots, x_n, x_p)\\
+\end{eqnarray*}
+
+
+\bigskip\noindent
+3. L"osungsschema umformen (zu $0 <= p$)
+
+%as'_{n} ist der Konstante Faktor, der sich aus den a_i und y mit jeweils gleicher untere und ober Grenze und dem x Wert der Ungleichung ergibt
+
+\bigskip\noindent
+4. Faktoren Eingrenzen:
+\begin{enumerate}
+ \item Fuer jede Ungleichung mit maximal einen Faktor mit einer Grenze im Unendlichen:
+ \begin{enumerate}
+  \item Passe Faktoren an; f"ur jeden Faktor $f = a_i (mit i = 1, \ldots n )$ und y*; (enthaelt die Ungleichung einen inf Faktor kann nur dieser gewaehlt werden):
+  \begin{enumerate}
+   \item setze anderen nicht $f$ Faktoren so (auf jeweils ihre Ober- oder Untergrenze), dass sie Formel maximieren; bestimme dann $f$ neu
+  \end{enumerate}
+ \end{enumerate}
+ \item wenn sich in 4. Aenderungen ergeben haben zur"uck zu 4.
+ \item beginne dann mit diesem Wert Schritt 1. ``L"osungschema aufbauen'' erneut solange f"ur ein $a_i$ sich zuletzt Aenderungen ergeben haben oder es noch nicht eingegrenzt wurde
+ \item Wenn alle $a_i$ mit Grenzen belegt und keine "Anderungen, w"ahle jeweils einen Wert (den Mittelwert) fuer $a_i$ aus seinen Bereich aus; beginne mit $a_i$ mit kleinsten $i$ dessen Grenzen noch nicht gleich sind und gehe dann jeweils wieder zum Schritt 4
+\end{enumerate}
+
+
+
+
+

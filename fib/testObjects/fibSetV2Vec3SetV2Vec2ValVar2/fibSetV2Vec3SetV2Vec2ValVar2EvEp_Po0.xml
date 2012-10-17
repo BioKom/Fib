@@ -1,0 +1,85 @@
+<data>
+	<point>
+		<vector type="position">
+			<variable>1</variable>
+			<variable>2</variable>
+			<variable>3</variable>
+			<variable>4</variable>
+		</vector>
+	</point>
+	<vector type="property.sound">
+		<value>1</value>
+		<value>-1</value>
+		<value>-1</value>
+		<value>11</value>
+	</vector>
+	<point>
+		<vector type="position">
+			<variable>1</variable>
+			<variable>2</variable>
+			<variable>3</variable>
+			<variable>4</variable>
+		</vector>
+	</point>
+	<vector type="property.sound">
+		<value>1</value>
+		<value>-1</value>
+		<value>-1</value>
+		<value>22</value>
+	</vector>
+	<point>
+		<vector type="position">
+			<variable>1</variable>
+			<variable>2</variable>
+			<variable>3</variable>
+			<variable>4</variable>
+		</vector>
+	</point>
+	<vector type="property.sound">
+		<value>2</value>
+		<value>4</value>
+		<value>4</value>
+		<value>11</value>
+	</vector>
+	<point>
+		<vector type="position">
+			<variable>1</variable>
+			<variable>2</variable>
+			<variable>3</variable>
+			<variable>4</variable>
+		</vector>
+	</point>
+	<vector type="property.sound">
+		<value>2</value>
+		<value>4</value>
+		<value>4</value>
+		<value>22</value>
+	</vector>
+	<point>
+		<vector type="position">
+			<variable>1</variable>
+			<variable>2</variable>
+			<variable>3</variable>
+			<variable>4</variable>
+		</vector>
+	</point>
+	<vector type="property.sound">
+		<value>3</value>
+		<value>-9</value>
+		<value>-9</value>
+		<value>11</value>
+	</vector>
+	<point>
+		<vector type="position">
+			<variable>1</variable>
+			<variable>2</variable>
+			<variable>3</variable>
+			<variable>4</variable>
+		</vector>
+	</point>
+	<vector type="property.sound">
+		<value>3</value>
+		<value>-9</value>
+		<value>-9</value>
+		<value>22</value>
+	</vector></data>

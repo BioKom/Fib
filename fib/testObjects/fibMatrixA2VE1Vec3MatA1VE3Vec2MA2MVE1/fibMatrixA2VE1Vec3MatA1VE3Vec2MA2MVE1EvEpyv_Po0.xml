@@ -1,0 +1,152 @@
+<data>
+	<property>
+		<vector type="property.colorRGB">
+			<variable>1</variable>
+			<variable>2</variable>
+			<variable>3</variable>
+		</vector>
+		<property>
+			<vector type="property.colorRGB">
+				<variable>4</variable>
+				<variable>5</variable>
+				<variable>6</variable>
+			</vector>
+			<point>
+				<vector type="position">
+					<variable>1</variable>
+					<variable>2</variable>
+					<variable>3</variable>
+					<variable>4</variable>
+					<variable>5</variable>
+					<variable>6</variable>
+					<variable>7</variable>
+				</vector>
+			</point>
+		</property>
+	</property>
+	<property>
+		<vector type="property.colorRGB">
+			<variable>1</variable>
+			<variable>2</variable>
+			<variable>3</variable>
+		</vector>
+		<property>
+			<vector type="property.colorRGB">
+				<variable>4</variable>
+				<variable>5</variable>
+				<variable>6</variable>
+			</vector>
+			<point>
+				<vector type="position">
+					<variable>1</variable>
+					<variable>2</variable>
+					<variable>3</variable>
+					<variable>4</variable>
+					<variable>5</variable>
+					<variable>6</variable>
+					<variable>7</variable>
+				</vector>
+			</point>
+		</property>
+	</property>
+	<property>
+		<vector type="property.colorRGB">
+			<variable>1</variable>
+			<variable>2</variable>
+			<variable>3</variable>
+		</vector>
+		<property>
+			<vector type="property.colorRGB">
+				<variable>4</variable>
+				<variable>5</variable>
+				<variable>6</variable>
+			</vector>
+			<point>
+				<vector type="position">
+					<variable>1</variable>
+					<variable>2</variable>
+					<variable>3</variable>
+					<variable>4</variable>
+					<variable>5</variable>
+					<variable>6</variable>
+					<variable>7</variable>
+				</vector>
+			</point>
+		</property>
+	</property>
+	<property>
+		<vector type="property.colorRGB">
+			<variable>1</variable>
+			<variable>2</variable>
+			<variable>3</variable>
+		</vector>
+		<property>
+			<vector type="property.colorRGB">
+				<variable>4</variable>
+				<variable>5</variable>
+				<variable>6</variable>
+			</vector>
+			<point>
+				<vector type="position">
+					<variable>1</variable>
+					<variable>2</variable>
+					<variable>3</variable>
+					<variable>4</variable>
+					<variable>5</variable>
+					<variable>6</variable>
+					<variable>7</variable>
+				</vector>
+			</point>
+		</property>
+	</property>
+	<property>
+		<vector type="property.colorRGB">
+			<variable>1</variable>
+			<variable>2</variable>
+			<variable>3</variable>
+		</vector>
+		<property>
+			<vector type="property.colorRGB">
+				<variable>4</variable>
+				<variable>5</variable>
+				<variable>6</variable>
+			</vector>
+			<point>
+				<vector type="position">
+					<variable>1</variable>
+					<variable>2</variable>
+					<variable>3</variable>
+					<variable>4</variable>
+					<variable>5</variable>
+					<variable>6</variable>
+					<variable>7</variable>
+				</vector>
+			</point>
+		</property>
+	</property>
+	<property>
+		<vector type="property.colorRGB">
+			<variable>1</variable>
+			<variable>2</variable>
+			<variable>3</variable>
+		</vector>
+		<property>
+			<vector type="property.colorRGB">
+				<variable>4</variable>
+				<variable>5</variable>
+				<variable>6</variable>
+			</vector>
+			<point>
+				<vector type="position">
+					<variable>1</variable>
+					<variable>2</variable>
+					<variable>3</variable>
+					<variable>4</variable>
+					<variable>5</variable>
+					<variable>6</variable>
+					<variable>7</variable>
+				</vector>
+			</point>
+		</property>
+	</property>
+</data>

@@ -1,0 +1,215 @@
+% Autor: Betti Oesterholz
+% erstellt: 21.03.2011
+% Dies ist der Handzettel mit einem Beispiel Objekts zu Fib.
+%
+% Copyright (c) 2011 Betti Oesterholz
+%
+% Permission is granted to copy, distribute and/or modify this document
+% under the terms of the GNU Free Documentation License, Version 1.2 or
+% any later version published by the Free Software Foundation;
+% with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+%
+% A copy of the license is included in the file ``fdl.tex'' .
+%
+
+
+
+\documentclass[12pt,a4paper]{article}
+\pagestyle{empty} %keine Seitennummerierung
+\usepackage{a4wide} % besser den Platz nutzen (kleinere R"ander)
+\usepackage{ngerman} % Silbentrennung nach neuer Rechtschreibung
+\usepackage[T1]{fontenc} % Type 1 Schriften
+\usepackage{times} % Da die Standard-LaTeX-Schrift bei mir mit Acrobat nicht funkt.
+\usepackage[ansinew]{inputenc} % Verwendung von Umlauten
+\usepackage{scrpage2} % Seitenformat
+%\usepackage{titletoc}
+%\usepackage{titlesec}
+\usepackage{listings} % Programm-Listing
+%\usepackage [usetoc]{titleref} 
+\usepackage{graphicx} % Einbindung von Graphiken
+\usepackage{url} % URLs durch \url{}
+%\usepackage{bibgerm} % deutsche Bibliographie
+%\usepackage{txfonts}%Paket fr das nat Symbol
+\usepackage{multicol}
+%\usepackage{makeidx}%for the index
+%\usepackage{longtable}
+%\usepackage{amsmath}%mathematikumgebung {equation*} usw.
+\usepackage{picinpar}%Textumflossene Bilder
+
+% Seitenstil festlegen
+%\pagestyle{useheadings}%or: headings
+
+% naehste vier Zeilen: Format des Inhaltsverzeichnisses
+%\titlespacing{\section}{0pt}{5cm}{5cm}%spacing by sections {in front}{above}{below}
+%\dottedcontents{section}[1.5em]{\addvspace{1.0em}}{1.3em}{0.7pc}
+%\dottedcontents{subsection}[3.8em]{}{2.2em}{0.7pc}
+%\dottedcontents{subsubsection}[7.0em]{}{3.1em}{0.7pc}
+
+%\setcounter{secnumdepth}{4}%%nummerierung der Unterabschnitte bis Tiefe
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Definitionen fr das Verwenden von Listings
+
+\newtheorem{Def}{Definition}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Beginn des Dokuments
+%\makeindex
+
+\begin{document}
+
+\renewcommand{\sectionmark}[1]{\markboth{#1}{}}
+\pagenumbering{arabic}
+\automark{section}
+\pagestyle{scrheadings} % individ. Seitenlayout
+%\setheadsepline{0.4pt}
+\ihead{} % Titelzeile innen
+\ohead{} % Titelzeile aussen
+%\chead{\slshape \headmark}  % Titelzeile mitte
+\cfoot{Fib-Beispiel Seite \thepage} % Fusszeile mitte
+
+% Vorschlag fr Titelzeile:
+% Bei umfangreicheren Dokumenten
+%\ihead{\slshape \headmark } % Darstellung von Sectionnummer und -name
+%\ohead{}
+%\chead{}
+
+
+
+\ \vspace{-2.5cm}
+\begin{center}
+   \LARGE\bf Fib-Beispiel\\
+\end{center}
+
+\noindent
+Fib-Multimediaobjekte k"onnen direkt in einer lesbaren Form im XML-Format erstellt und abgespeichert werden.
+
+Zum besseren Verst"andnis des Fib-Multi\-media\-for\-mats und zur Illustration seiner M"oglichkeiten sei daher hier ein relativ einfaches Beispiel in Fib gegeben.
+
+%\bigskip\noindent
+\begin{window}[0,l,\includegraphics[scale=0.75]{./bilder/wappen.eps},{}]
+Das Bild zum Beispiel ist links dargestellt. Es handelt sich, wie zu sehen, um ein wappenf"ormiges Objekt mit einem Farbverlauf. Die Bildgr"o"se ist 255 mal 255 Bildpunkte in RGB-Farbe.
+
+Die XML-Beschreibung in Fib des Bildes ist weiter unten aufgef"uhrt. Der besseren Lesbarkeit wegen ist sie etwas ausschweifend dargestellt.
+
+Das Fib-Objekt im komprimierten Fib-Spei\-cher\-format ist von der Struktur her gleich aufgebaut, diese wird aber viel effizienter gespeichert.
+Im komprimierten Fib-Spei\-cher\-format ben"otigt das Bild daher nur 153 Byte, wovon 134 Byte f"ur Einrichtung der Umgebung dienen (das root-Element ohne das ``main\_fib\_object''-Element), das hei"st, nur 19 Byte werden f"ur die eigentliche Darstellung des Wappens ben"otigt.
+
+\end{window}
+
+Um diesen Speicherplatzbedarf in Bezug zu anderen Formaten zu setzen, wurde das Bild in verschiedenen Formaten abgespeichert:% und die Gr"o"se der entstandenen Dateien ist im Nachfolgenden angegeben.
+\begin{itemize}
+ \item Fib-Format: 153 Byte, davon 134 Byte f"ur Umgebung und 19 Byte f"ur das Wappen
+ \item Fib-XML-Format: rund 1.900 Byte (mit Einr"uckungen und Zeilenumbr"uchen)
+ \item PNG-Format: 2.500 Byte
+ \item JPG-Format: 4.720 Byte (mit GIMP: Qualit"at 85, optimiert, Gl"attung 0)
+ \item BMP-Format: 196.000 Byte
+\end{itemize}
+
+
+\begin{center}
+   \Large\bf XML-Darstellung des Bildes\\
+\end{center}
+\begin{small}
+\begin{verbatim}
+<?xml version="1.0" encoding="UTF-8"?>
+<fib_object xmlns:xsd="http://www.w3.org/2001/XMLSchema-instance"
+   xmlns="http://www.fib-development.de/"
+   xsd:schemaLocation="http://www.fib-development.de/fib.xsd">
+<root>
+   <domains>
+      <dim count="2">
+         <dimension number="1" direction="horizontal"/>
+         <dimension number="2" direction="vertical"/>
+         <vector elements="2">
+            <naturalNumber max="255" />
+            <naturalNumber max="255" />
+         </vector>
+      </dim>
+      <property name="colorRGB" >
+         <vector elements="3">
+            <naturalNumber max="255" />
+            <naturalNumber max="255" />
+            <naturalNumber max="255" />
+         </vector>
+      </property>
+      <underarea>
+         <vector elements="2">
+            <naturalNumber max="255" />
+            <naturalNumber max="255" />
+         </vector>
+      </underarea>
+      <underfunction>
+         <naturalNumber max="255" />
+      </underfunction>
+   </domains>
+   <main_fib_object>
+      <area define_variable="1">
+         <vector type="underarea">
+            <value>25</value>
+            <value>225</value>
+         </vector>
+         <function define_variable="2">
+            <underfunction>
+               <add>
+                  <value>25</value>
+                  <exp>
+                     <div>
+                        <sub>
+                           <variable>1</variable>
+                           <value>125</value>
+                        </sub>
+                        <value>8</value>
+                     </div>
+                     <value>2</value>
+                  </exp>
+               </add>
+            </underfunction>
+            <area define_variable="3">
+               <vector type="underarea">
+                  <value>225</value>
+                  <variable>2</variable>
+               </vector>
+               <property>
+                  <vector type="property.colorRGB">
+                     <variable>3</variable>
+                     <variable>2</variable>
+                     <variable>1</variable>
+                  </vector>
+                  <point>
+                     <vector type="position">
+                        <variable>1</variable>
+                        <variable>3</variable>
+                     </vector>
+                  </point>
+               </property>
+            </area>
+         </function>
+      </area>
+   </main_fib_object>
+</root>
+</fib_object>
+\end{verbatim}
+\end{small}
+
+\bigskip\noindent
+\textbf{Erkl"arung zur XML-Darstellung:}
+
+Das root-Element bildet die Umgebung des Bildes. Es enth"alt im Wesentlichen zwei Teile: die Angabe der Definitionsbereiche (\verb|<domains>|) und das eigentliche darstellende Fib-Objekt (\verb|<main_fib_object>|).
+
+Die Definitionsbereiche geben die Gr"o"se des Bildes und die in den Elementen verwendbaren Zahlen an.
+
+Das darstellende Fib-Objekt stellt das Wappen dar.
+Das erste Bereichselement (\verb|area|) sorgt daf"ur, dass die erste Variable (\verb|define_variable="1"|) von 25 bis 225 l"auft (also 25, 26, 27, ..., 225). Diese Variable 1 bildet die Begrenzung des Wappens in der horizontalen Richtung (zu sehen am Punktelement \verb|point|).
+In der vertikalen Richtung wird das Wappen durch die Variable 3 begrenzt. Diese l"auft f"ur jede Belegung von Variable 1 von 225 (obere Grenze des Wappens) bis zu einem (kleineren) Wert, der sich aus einer Funktion (\verb|function|) von Variable 1 $f(V_1)$ ergibt. Diese Funktion ist $f(V_1)=25 + ( (V_1 - 125) / 8 ) ^{2}$ . Dadurch wird die untere Grenze des Wappens durch eine quadratische Funktion definiert.
+
+Der Farbverlauf im Wappen wird einfach dadurch erzeugt, dass die vorhandenen Variablen als Farbkomponenten verwendet werden. Genauso gut k"onnten aber auch f"ur die Farbkomponenten weitere Funktionen oder auch feste Zahlen Verwendung finden.
+
+\bigskip
+Diese XML-Darstellung kann direkt in das oben dargestellte Bild (mit dem Wappen) durch den Fib-Konverter (convertFromFib) "ubersetzt werden.
+
+Damit ist es m"oglich, Fib-Darstellungen direkt "uber einen Texteditor zu erzeugen. Notwendig daf"ur sind nur etwas "Ubung beim Schreiben im XML-Format und Kenntnisse der Fib-XML-Elemente.
+
+\end{document}
+

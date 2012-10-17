@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fib_object
+			  xmlns:xsd="http://www.w3.org/2001/XMLSchema-instance"
+			  xmlns="http://www.fib-development.org/"
+			  xsd:schemaLocation="http://www.fib-development.org/fib.xsd">
+	<root>
+		<multimedia_info fib_version="3" db_version="2"/>
+		<optionalpart>
+			<pair key="name" value="line"/>
+			<pair key="description" value="This object represents a line in two dimensions from an start point (x_1, y_1) to an end point (x_2, y_2). The points of the line are given back as variables of the subobject."/>
+			<pair key="inVar1::description" value="position start point dimension 1 (x_1)"/>
+			<pair key="inVar2::description" value="position start point dimension 2 (y_1)"/>
+			<pair key="inVar3::description" value="position end point dimension 1 (x_2)"/>
+			<pair key="inVar4::description" value="position end point dimension 2 (y_2)"/>
+			<pair key="subObj1::description" value="The points of the line. The subobject is called for every point on the line."/>
+			<pair key="subObj1::outVar1::description" value="the position of the line point in dimension 1 (x)"/>
+			<pair key="subObj1::outVar2::description" value="the position of the line point in dimension 2 (y)"/>
+			<pair key="author" value="Betti Oesterholz"/>
+			<pair key="author::email" value="Oesterholz@Fib-Development.org"/>
+			<pair key="copyright" value="LGPL3"/>
+		</optionalpart>
+		<input_variables>
+			<variable number="1" default="0"/>
+			<variable number="2" default="0"/>
+			<variable number="3" default="0"/>
+			<variable number="4" default="0"/>
+		</input_variables>
+		<domains>
+			<inVar number="1">
+				<domainReference subdomain="1">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="2">
+				<domainReference subdomain="2">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="3">
+				<domainReference subdomain="1">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="4">
+				<domainReference subdomain="2">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<externSubobject number="1">
+				<vector elements="2">
+					<!--actually any numbers are possible;
+						the next two lines are just a space holder-->
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+				</vector>
+			</externSubobject>
+			<subfunction>
+				<naturalNumberB bit="1" />
+			</subfunction>
+		</domains>
+		<main_fib_object>
+			<function define_variable="5">
+				<!-- a slope of the line -->
+				<subfunction>
+					<!-- (y_2 - y_1) / (x_2 - x_1) -->
+					<div>
+						<sub>
+							<variable>4</variable>
+							<variable>2</variable>
+						</sub>
+						<sub>
+							<variable>3</variable>
+							<variable>1</variable>
+						</sub>
+					</div>
+				</subfunction>
+				<if>
+					<condition>
+						<!--(y_2 - y_1) < (x_2 - x_1) -->
+						<lo>
+							<abs>
+								<variable>5</variable>
+							</abs>
+							<value>1</value>
+						</lo>
+					</condition>
+					<if>
+						<condition>
+							<!--(y_2 - y_1) < (x_2 - x_1) -->
+							<eqInt>
+								<variable>1</variable>
+								<variable>3</variable>
+							</eqInt>
+						</condition>
+						<!--x_1 == x_2-->
+						<area define_variable="6">
+							<vector type="subarea">
+								<variable>2</variable>
+								<variable>4</variable>
+							</vector>
+							<subobject number="1">
+								<vector type="externSubobject">
+									<variable>1</variable>
+									<variable>6</variable>
+								</vector>
+							</subobject>
+						</area>
+						<!--go from x to x (greater differnce)-->
+						<function define_variable="6">
+							<subfunction>
+								<sub>
+									<variable>2</variable>
+									<mult>
+										<variable>1</variable>
+										<variable>5</variable>
+									</mult>
+								</sub>
+							</subfunction>
+							<area define_variable="7">
+								<vector type="subarea">
+									<variable>1</variable>
+									<variable>3</variable>
+								</vector>
+								<function define_variable="8">
+									<subfunction>
+										<add>
+											<variable>6</variable>
+											<mult>
+												<variable>7</variable>
+												<variable>5</variable>
+											</mult>
+										</add>
+									</subfunction>
+									<subobject number="1">
+										<vector type="externSubobject">
+											<variable>7</variable>
+											<variable>8</variable>
+										</vector>
+									</subobject>
+								</function>
+							</area>
+						</function>
+					</if>
+					<!--go from y to y (greater differnce)-->
+					<function define_variable="6">
+						<!--1/a slope of the line-->
+						<subfunction>
+							<!--(x_2 - x_1) / (y_2 - y_1) -->
+							<div>
+								<sub>
+									<variable>3</variable>
+									<variable>1</variable>
+								</sub>
+								<sub>
+									<variable>4</variable>
+									<variable>2</variable>
+								</sub>
+							</div>
+						</subfunction>
+						<function define_variable="7">
+							<subfunction>
+								<sub>
+									<variable>1</variable>
+									<mult>
+										<variable>2</variable>
+										<variable>6</variable>
+									</mult>
+								</sub>
+							</subfunction>
+							<area define_variable="8">
+								<vector type="subarea">
+									<variable>2</variable>
+									<variable>4</variable>
+								</vector>
+								<function define_variable="9">
+									<subfunction>
+										<add>
+											<variable>7</variable>
+											<mult>
+												<variable>8</variable>
+												<variable>6</variable>
+											</mult>
+										</add>
+									</subfunction>
+									<subobject number="1">
+										<vector type="externSubobject">
+											<variable>9</variable>
+											<variable>8</variable>
+										</vector>
+									</subobject>
+								</function>
+							</area>
+						</function>
+					</function>
+				</if>
+			</function>
+		</main_fib_object>
+	</root>
+</fib_object>

@@ -1,0 +1,54 @@
+<data>
+	<set>
+		<defined_variables>
+			<variable>5</variable>
+			<variable>6</variable>
+		</defined_variables>
+		<values>
+			<vector type="set">
+				<value>1</value>
+				<value>-1</value>
+			</vector>
+			<vector type="set">
+				<value>2</value>
+				<value>4</value>
+			</vector>
+			<vector type="set">
+				<value>3</value>
+				<value>-9</value>
+			</vector>
+		</values>
+		<set>
+			<defined_variables>
+				<variable>7</variable>
+				<variable>8</variable>
+			</defined_variables>
+			<values>
+				<vector type="set">
+					<variable>2</variable>
+					<value>11</value>
+				</vector>
+				<vector type="set">
+					<variable>2</variable>
+					<value>22</value>
+				</vector>
+			</values>
+			<property>
+				<vector type="property.sound">
+					<variable>5</variable>
+					<variable>6</variable>
+					<variable>7</variable>
+					<variable>8</variable>
+				</vector>
+				<point>
+					<vector type="position">
+						<variable>5</variable>
+						<variable>6</variable>
+						<variable>7</variable>
+						<variable>8</variable>
+					</vector>
+				</point>
+			</property>
+		</set>
+	</set>
+</data>

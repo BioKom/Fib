@@ -1,0 +1,261 @@
+% Autor: Betti Oesterholz
+% erstellt: 05.03.2008
+% main document for Fib V1.0
+%
+% This is the main document of the english Fib documentationen.
+% It is a short version of the german documentation.
+%
+% Copyright (c) 2008 Betti Oesterholz
+%
+% Permission is granted to copy, distribute and/or modify this document
+% under the terms of the GNU Free Documentation License, Version 1.2 or
+% any later version published by the Free Software Foundation;
+% with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+%
+% A copy of the license is included in the file ``fdl.tex'' .
+%
+
+
+
+\documentclass[11pt,a4paper]{article}
+%\usepackage{ngerman} % Silbentrennung nach neuer Rechtschreibung
+\usepackage[T1]{fontenc} % Type 1 Schriften
+\usepackage{times} % Da die Standard-LaTeX-Schrift bei mir mit Acrobat nicht funkt.
+%\usepackage[ansinew]{inputenc} % Verwendung von Umlauten
+\usepackage{scrpage2} % Seitenformat
+\usepackage{titletoc}
+\usepackage{titlesec}
+\usepackage{listings} % Programm-Listing
+%\usepackage [usetoc]{titleref} 
+\usepackage{graphicx} % Einbindung von Graphiken
+\usepackage{url} % URLs durch \url{}
+%\usepackage{bibgerm} % deutsche Bibliographie
+%\usepackage{txfonts}%Paket fr das nat Symbol
+\usepackage{multicol}
+\usepackage{makeidx}%for the index
+\usepackage{longtable}
+%\usepackage{amsmath}%mathematikumgebung {equation*} usw.
+\usepackage{picinpar}%Textumflossene Bilder
+
+% Seitenstil festlegen
+\pagestyle{useheadings}%or: headings
+
+% n�hste vier Zeilen: Format des Inhaltsverzeichnisses
+%\titlespacing{\section}{0pt}{5cm}{5cm}%spacing by sections {in front}{above}{below}
+%\dottedcontents{section}[1.5em]{\addvspace{1.0em}}{1.3em}{0.7pc}
+%\dottedcontents{subsection}[3.8em]{}{2.2em}{0.7pc}
+%\dottedcontents{subsubsection}[7.0em]{}{3.1em}{0.7pc}
+
+%\setcounter{secnumdepth}{4}%%nummerierung der Unterabschnitte bis Tiefe
+
+%path for pictures
+\graphicspath{{./sonstiges/}}
+\graphicspath{{./sonstiges/}{../sonstiges}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Definitionen fr das Verwenden von Listings
+
+\newtheorem{Def}{Definition}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Beginn des Dokuments
+
+\makeindex
+
+\begin{document}
+
+
+\setlength{\unitlength}{1cm} %definition of the basislength in pictures
+
+\title{The Fib multimedia format}
+\author{Betti \"{O}sterholz}
+\date{\today}
+
+\begin{titlepage}
+	\begin{center}
+	\ \vspace{2.5cm} \\
+	\Huge\bf The Fib multimedia format\\\vspace{0.5cm}
+	\LARGE Version V1.1.0\\\vspace{2cm}
+	\LARGE Betti \"{O}sterholz\\\vspace{0.5cm}
+	\large BioKom@gmx.de\\\vspace{0.5cm}
+	\large www.BioKom.info\\\vspace{0.5cm}
+	Potsdam, \today\\\vspace{5.5cm}
+	\end{center}
+	
+	\noindent
+Copyright (c) 2011  Betti \"{O}sterholz
+\newline\newline
+Permission is granted to copy, distribute and/or modify this document under the terms of the GNU Free Documentation License, Version 1.2 or any later version published by the Free Software Foundation; with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+
+A copy of the license is included in the section entitled "`GNU Free Documentation License"'.
+\end{titlepage}
+
+\renewcommand{\sectionmark}[1]{\markboth{#1}{}}
+\pagenumbering{Roman}
+\automark{section}
+\pagestyle{scrheadings} % individ. Seitenlayout
+\setheadsepline{0.4pt}
+\ihead{} % Titelzeile innen
+\ohead{} % Titelzeile aussen
+\chead{\slshape \headmark}  % Titelzeile mitte
+\cfoot{\thepage} % Fusszeile mitte
+
+% braucht man ein Inhaltsverzeichnis, so sind die n�hsten drei Zeilen auszukommentieren
+%\setcounter{tocdepth}{3}
+%\tableofcontents
+%\clearpage
+
+% Vorschlag fr Titelzeile:
+% Bei umfangreicheren Dokumenten
+\ihead{\slshape \headmark } % Darstellung von Sectionnummer und -name
+\ohead{}
+\chead{}
+\clearpage
+
+\tableofcontents
+
+\clearpage
+\pagenumbering{arabic}
+
+\part{Introduction}
+
+The Fib multimedia format is used to store multimedia information in a structured, functional and hierarchical form. The structure of the Fib multimedia format supports the object oriented view of things. It is very powerful, since expressions can be combined and nested. The needed memory size of a multimedia object in Fib is depending on its complexity and not on its size (in terms of the extend in the dimensions, for example, the height and width for images), as for standard storage formats.
+
+The second important component of the Fib system is the genetic algorithm for encoding and compressing Fib multimedia objects. The great advantage of this approach is, that the encoding and compression is tied not to a particular algorithm. The encoding and compression algorithms involved in the genetic algorithm are in fact seperated operations that can be easily added and modified. This makes it easy to introduce new encoding and compression ideas and apply a variety of these on a multimedia object.
+
+In this sense, the Fib multimedia system is based on diversity rather than specialization.
+
+
+\section{Given conditions}
+
+A (natural) image is generally not a series of independent pixels (points with certain colors), but contains, for example, different objects, which are distinguished from one another and have a texture. Such objects (e.g. circles, lines, but also more complex objects) are often repeated in pictures, either as a self-similar copy or a transformed copy (e.g. tree leaves or slats in the fence). The same applies to other contents of multimedia data, such as the sound.
+
+Furthermore, elements or objects in the multimedia data are often associated with each other or grouped, e.g. certain sounds belong often to specific objects (e.g. a C-hook), object belong to other objects (e.g. the C-hook to a duck) and several objects can be grouped into one object (e.g. a field with a group of ducks).
+
+
+\section{Problem}
+\label{secProblem}
+
+How to extract information about objects from an image, which is given in the form of a matrix of pixels? (The image is given as a pixel image, for example, because it was recorded by digital photography with a CCD.)
+
+The extracted information can then for example be used for compression, because the information needed to encode an object, is at most the information from all points of the object with their corresponding colors (this coding is given). For example, for a green triangle displayed in the image, which consists of 200 green points, it is sufficient in the best case, to just represent the triangle and the points by a triangular object, for this only its three corners and the color is needed.
+
+With the information about objects in the image, you can also to recognize objects at other (sub-) images. Or the information can be used to manipulate the image, e.g. to remove objects as a whole, copy or paste them.
+
+
+
+\section{A solution}
+\label{secSolution}
+
+The Fib multimedia language, respectively Fib multimedia format, has be created, in which for the objects, transformations and relationships between the objects can be defined. Using these Fib multimedia format, an algorithm (e.g. the AI) then generates programs (in the multimedia language), tests and modifies them, so that they represent a multimedia object, wich are similar enough to encode the original multimedia object (what this means, will be specified). Further restrictions can be imposed on the programs, e.g. shortnes and speed of execution of a program. These criteria will then determine how ``good'' a program is.
+
+Among others the genetic algorithms / programming offer good opportunities. Since with genetic algorithms the individual parameters, elements and constructs of the language are generated by mutation and adjusted, and the ``best''/fittest -programs will be developed. With ``crossing over'', sharing code between programs or part of a program can be taken into account, this supports the case when, may be altered (e.g. scaled), objects will be reused in other places.
+
+
+\section{This document}
+
+This document is a short version of the original german documentation. Some parts of the german documentation are skipted in this version.
+
+This document contains mainly the discription of the important theoretical background. The description of the source code, will be in the source code, as doxygen comments.
+
+
+
+\section{Structure of this project}
+
+The structure of this document is based on the project structure.
+
+The project is structured hierarchically and divided into two major components.
+The components are the multimedia description language Fib and the genetic algorithm to produce good Fib encodings of multimedia objects.
+
+The project, including each of the components, is build hierarchically. Whereupon the higher levels are build on the lower levels, while each higher level is more detailed. This documentation includes just the lowest levels.
+
+
+
+\section{Structure of this document}
+
+This section gives an overview of the content and structure of this document.
+
+%TODO Anpassen und Erweitern
+
+
+\subsection{Design of the multimedia description language}
+
+The part \ref{partFibLanguage} on page \pageref{partFibLanguage} deals with the multimedia description language Fib.
+
+The individual elements and their possible relationships to each other, will be described in section \ref{secFibElements} on page \pageref{secFibElements} .
+
+The section \ref{secFibDatabase} on page \pageref{secFibDatabase} adresses the Fib database function for Fib (objects).
+
+In the following section \ref{secDefinitionsForFib} on page \pageref{secDefinitionsForFib} definitions for the Fib multimedia language are established, to facilitate a way of dealing with it.
+
+
+\subsection{Design of the genetic algorithm}
+
+The part \ref{secGeneticAlgorithmDesign} on page \pageref{secGeneticAlgorithmDesign} adresses the design of the genetic algorithm. It is mainly about the basic ideas behind the genetic algorithm for Fib.
+
+
+\subsection{File format}
+
+The part \ref{partFileFormat} on page \pageref{partFileFormat} describs the file formats for the Fib multimedia language. These are independent of the program or the computer system architecture.
+
+
+
+
+%TODO einkommentieren
+
+%%\input{fib_grundlagen_en}%TODO
+\input{fib_sprachbeschreibung_en}
+\input{fib_theoretical_statements_en}%TODO prio 2 (secPowerOfFibOnPictures): \input{fib_aussagen_theoretische_en}
+%%\input{fib_annahmen_en}%TODO
+\input{fib_enviroment_en}%TODO references
+\input{fib_storage_formats_en}
+\input{fib_projectstructur_en}%TODO references
+%%\input{fib_sprachimplementation_en}%TODO 
+%%\input{enviroment_implementation_en}%TODO
+%%\input{fib_enviroment_implementation_en}%TODO
+%%\input{fib_database}%TODO
+%%\input{fib_konvertierungsfunktionen_en}%TODO
+%%\input{fib_vorgehensweisen_en}%TODO
+%%\input{fib_ergebnisse_en}%TODO
+%%TODO: \input{fib_player_en}
+%%\input{fib_algorithmen_en}%TODO
+%%\input{fib_operatoren_en}%TODO
+
+\newpage
+\part{Appendix}
+
+%\section{Implemtierungskonventionen}
+
+%\input{implKonventions}%TODO
+
+\input{gpl-3_0}
+\input{lgpl-3_0}
+
+\input{fdl}
+
+
+\clearpage
+\nocite{CI}\nocite{ECDF00}\nocite{ECTF}\nocite{LS}\nocite{UZ}\nocite{WT}\nocite{GADA}\nocite{GP}\nocite{EACD}\nocite{CTW}\nocite{CE}\nocite{GEA}\nocite{projBildf}\nocite{ESF}\nocite{GPFD}\nocite{AEFR}\nocite{Genocop}\nocite{HHGuideEC}\nocite{WOBC}\nocite{CMIT}\nocite{LDD_2007}\nocite{HKI2003}\nocite{CgBv2007}\nocite{VSys2003}\nocite{SEngPP2005}\nocite{CPPPR2004}\nocite{CC2004}\nocite{Russell2003}
+
+%\bibliographystyle{gerplain}%deutscher bibliographie stiel
+\bibliographystyle{amsplain}
+\bibliography{literatur}
+
+%TODO comment in
+\index{multimedia information|see{root-element!multimedia information}}
+\index{optional part|see{root-element!optional part}}
+\index{domain|see{root-element!domain}}
+%\index{Definitionsbereiche|see{cDomain}}
+\index{subfunction|see{function element}}
+\index{individual|see{cIndividual}}
+%\index{cIndividual|see{Individuum}}
+%\index{Kleiner Vergleich|see{cConditionLower}}
+
+
+%\clearpage
+%\part{Index}
+\label{AbsIndex}
+\printindex
+
+\end{document}

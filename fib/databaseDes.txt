@@ -1,0 +1,797 @@
+
+Extract all descriptions of Fib Database objects
+================================================
+
+ - 0 : description : This object represents a empty point with no impact.
+ - -1 : description : This object represents a point in one dimensions.
+    - inVar1 : position of the point in dimension 1
+ - -2 : description : This object represents a point in two dimensions.
+    - inVar1 : position of the point in dimension 1
+    - inVar2 : position of the point in dimension 2
+ - -3 : description : This object represents a point in 3 dimensions.
+    - inVar1 : position of the point in dimension 1
+    - inVar2 : position of the point in dimension 2
+    - inVar3 : position of the point in dimension 3
+ - -4 : description : This object represents a point in 4 dimensions.
+    - inVar1 : position of the point in dimension 1
+    - inVar2 : position of the point in dimension 2
+    - inVar3 : position of the point in dimension 3
+    - inVar4 : position of the point in dimension 4
+ - -10 : description : GNU GENERAL PUBLIC LICENSE Version 3
+ - -20 : description : This object represents a line in two dimensions from an start point (x_1, y_1) to an end point (x_2, y_2).
+    - inVar1 : position start point dimension 1 (x_1)
+    - inVar2 : position start point dimension 2 (y_1)
+    - inVar3 : position end point dimension 1 (x_2)
+    - inVar4 : position end point dimension 2 (y_2)
+ - -21 : line
+    - description : This object represents a line in two dimensions from an start point (x_1, y_1) to an end point (x_2, y_2) with a given width.
+    - inVar1 : position start point dimension 1 (x_1)
+    - inVar2 : position start point dimension 2 (y_1)
+    - inVar3 : position end point dimension 1 (x_2)
+    - inVar4 : position end point dimension 2 (y_2)
+    - inVar5 : the width of the line in points
+ - -25 : description : This object represents a line in two dimensions from an start point (x_1, y_1) to an end point (x_2, y_2). The points of the line are given back as variables of the subobject.
+    - inVar1 : position start point dimension 1 (x_1)
+    - inVar2 : position start point dimension 2 (y_1)
+    - inVar3 : position end point dimension 1 (x_2)
+    - inVar4 : position end point dimension 2 (y_2)
+    - subObj1 : The points of the line. The subobject is called for every point on the line.
+    - subObj1::outVar1 : the position of the line point in dimension 1 (x)
+    - subObj1::outVar2 : the position of the line point in dimension 2 (y)
+ - -26 : line
+    - description : This object represents a line in two dimensions from an start point (x_1, y_1) to an end point (x_2, y_2) with a given width. The points of the line are given back as variables of the subobject.
+    - inVar1 : position start point dimension 1 (x_1)
+    - inVar2 : position start point dimension 2 (y_1)
+    - inVar3 : position end point dimension 1 (x_2)
+    - inVar4 : position end point dimension 2 (y_2)
+    - inVar5 : the width of the line in points
+    - subObj1 : The points of the line. The subobject is called for every point on the line.
+    - subObj1::outVar1 : the position of the line point in dimension 1 (x)
+    - subObj1::outVar2 : the position of the line point in dimension 2 (y)
+ - -27 : line
+    - description : This object represents a line in two dimensions from an start point (x_1, y_1) to an end point (x_2, y_2) with a given width and antialising. The points of the line are given back as variables of the subobject.
+    - inVar1 : position start point dimension 1 (x_1)
+    - inVar2 : position start point dimension 2 (y_1)
+    - inVar3 : position end point dimension 1 (x_2)
+    - inVar4 : position end point dimension 2 (y_2)
+    - inVar5 : the width of the line in points
+    - subObj1 : The points of the line. The subobject is called for every point on the line.
+    - subObj1::outVar1 : the position of the line point in dimension 1 (x)
+    - subObj1::outVar2 : the position of the line point in dimension 2 (y)
+    - subObj1::outVar3 : the antialising factor (1 is full transparent and 0 full opaque)
+ - -30 : description : This object represents a filled triangle between tree points (x_1, y_1), (x_2, y_2) and (x_3, y_3).
+    - inVar1 : position of the first point in dimension 1 (x_1)
+    - inVar2 : position of the first point in dimension 2 (y_1)
+    - inVar3 : position of the second point in dimension 1 (x_2)
+    - inVar4 : position of the second point in dimension 2 (y_2)
+    - inVar5 : position of the 3. point in dimension 1 (x_3)
+    - inVar6 : position of the 3. point in dimension 2 (y_3)
+ - -35 : triangle
+    - description : This object represents a filled triangle between tree points (x_1, y_1), (x_2, y_2) and (x_3, y_3). The points of the triangle are given back as variables of the subobject.
+    - inVar1 : position of the first point in dimension 1 (x_1)
+    - inVar2 : position of the first point in dimension 2 (y_1)
+    - inVar3 : position of the second point in dimension 1 (x_2)
+    - inVar4 : position of the second point in dimension 2 (y_2)
+    - inVar5 : position of the 3. point in dimension 1 (x_3)
+    - inVar6 : position of the 3. point in dimension 2 (y_3)
+    - subObj1 : The points of the triangle. The subobject is called for every point on the triangle.
+    - subObj1::outVar1 : the position of the triangle point in dimension 1 (x)
+    - subObj1::outVar2 : the position of the triangle point in dimension 2 (y)
+ - -36 : triangle with antialising
+    - description : This object represents a filled triangle between tree points (x_1, y_1), (x_2, y_2) and (x_3, y_3) with antialising. The points of the triangle are given back as variables of the subobject.
+    - inVar1 : position of the first point in dimension 1 (x_1)
+    - inVar2 : position of the first point in dimension 2 (y_1)
+    - inVar3 : position of the second point in dimension 1 (x_2)
+    - inVar4 : position of the second point in dimension 2 (y_2)
+    - inVar5 : position of the 3. point in dimension 1 (x_3)
+    - inVar6 : position of the 3. point in dimension 2 (y_3)
+    - subObj1 : The points of the triangle. The subobject is called for every point on the triangle.
+    - subObj1::outVar1 : the position of the triangle point in dimension 1 (x)
+    - subObj1::outVar2 : the position of the triangle point in dimension 2 (y)
+    - subObj1::outVar3 : the antialising factor (1 is full transparent and 0 full opaque)
+ - -40 : description : This object represents a filled rectangle with the start point (x_s, y_s) and start point (x_e, y_e).
+    - inVar1 : position of the start point in dimension 1 (x_s)
+    - inVar2 : position of the start point in dimension 2 (y_s)
+    - inVar3 : position of the end point in dimension 1 (x_e)
+    - inVar4 : position of the end point in dimension 2 (y_e)
+ - -41 : quadrangle
+    - description : This object represents a filled quadrangle (box). The quadrangle has the given four corner points ( x_1, y_1 ), ( x_2, y_2 ), ( x_3, y_3 ) and ( x_4, y_4 ) as its border points. Where ( x_i, y_i ) is the neighbour point of ( x_{i+1}, y_{i+1} )
+    - inVar1 : position of the first point p_1 in dimension 1 (x_1)
+    - inVar2 : position of the first point p_1 in dimension 2 (y_1)
+    - inVar3 : position of the second point p_2 in dimension 1 (x_2)
+    - inVar4 : position of the second point p_2 in dimension 2 (y_2)
+    - inVar5 : position of the 3. point p_3 in dimension 1 (x_3)
+    - inVar6 : position of the 3. point p_3 in dimension 2 (y_3)
+    - inVar7 : position of the 4. point p_4 in dimension 1 (x_4)
+    - inVar8 : position of the 4. point p_4 in dimension 2 (y_4)
+ - -45 : description : This object represents a filled rectangle with the start point (x_s, y_s) and start point (x_e, y_e). The points of the quadrangle are given back as variables of the subobject.
+    - inVar1 : position of the start point in dimension 1 (x_s)
+    - inVar2 : position of the start point in dimension 2 (y_s)
+    - inVar3 : position of the end point in dimension 1 (x_e)
+    - inVar4 : position of the end point in dimension 2 (y_e)
+    - subObj1 : The points of the rectangle. The subobject is called for every point on the rectangle.
+    - subObj1::outVar1 : the position of the rectangle point in dimension 1 (x)
+    - subObj1::outVar2 : the position of the rectangle point in dimension 2 (y)
+ - -46 : quadrangle
+    - description : This object represents a filled quadrangle (box). The quadrangle has the given four corner points ( x_1, y_1 ), ( x_2, y_2 ), ( x_3, y_3 ) and ( x_4, y_4 ) as its border points. Where ( x_i, y_i ) is the neighbour point of ( x_{i+1}, y_{i+1} ). The points of the quadrangle are given back as variables of the subobject.
+    - inVar1 : position of the first point p_1 in dimension 1 (x_1)
+    - inVar2 : position of the first point p_1 in dimension 2 (y_1)
+    - inVar3 : position of the second point p_2 in dimension 1 (x_2)
+    - inVar4 : position of the second point p_2 in dimension 2 (y_2)
+    - inVar5 : position of the 3. point p_3 in dimension 1 (x_3)
+    - inVar6 : position of the 3. point p_3 in dimension 2 (y_3)
+    - inVar7 : position of the 4. point p_4 in dimension 1 (x_4)
+    - inVar8 : position of the 4. point p_4 in dimension 2 (y_4)
+    - subObj1 : The points of the quadrangle. The subobject is called for every point on the quadrangle.
+    - subObj1::outVar1 : the position of the quadrangle point in dimension 1 (x)
+    - subObj1::outVar2 : the position of the quadrangle point in dimension 2 (y)
+ - -47 : quadrangle with antialising
+    - description : This object represents a filled quadrangle (box) with antialising. The quadrangle has the given four corner points ( x_1, y_1 ), ( x_2, y_2 ), ( x_3, y_3 ) and ( x_4, y_4 ) as its border points. Where ( x_i, y_i ) is the neighbour point of ( x_{i+1}, y_{i+1} ). The points of the quadrangle are given back as variables of the subobject.
+    - inVar1 : position of the first point p_1 in dimension 1 (x_1)
+    - inVar2 : position of the first point p_1 in dimension 2 (y_1)
+    - inVar3 : position of the second point p_2 in dimension 1 (x_2)
+    - inVar4 : position of the second point p_2 in dimension 2 (y_2)
+    - inVar5 : position of the 3. point p_3 in dimension 1 (x_3)
+    - inVar6 : position of the 3. point p_3 in dimension 2 (y_3)
+    - inVar7 : position of the 4. point p_4 in dimension 1 (x_4)
+    - inVar8 : position of the 4. point p_4 in dimension 2 (y_4)
+    - subObj1 : The points of the quadrangle. The subobject is called for every point on the quadrangle.
+    - subObj1::outVar1 : the position of the quadrangle point in dimension 1 (x)
+    - subObj1::outVar2 : the position of the quadrangle point in dimension 2 (y)
+    - subObj1::outVar3 : the antialising factor (1 is full transparent and 0 full opaque)
+ - -50 : circle
+    - description : This object represents a filled circle with the middle point (x, y) and radius r.
+    - inVar1 : position of the middle point in dimension 1 (x)
+    - inVar2 : position of the middle point in dimension 2 (y)
+    - inVar3 : size of the radius r
+ - -55 : circle
+    - description : This object represents a filled circle with the middle point (x, y) and radius r. The points of the line are given back as variables of the subobject.
+    - inVar1 : position of the middle point in dimension 1 (x)
+    - inVar2 : position of the middle point in dimension 2 (y)
+    - inVar3 : size of the radius r
+    - subObj1 : The points of the circle. The subobject is called for every point on the circle.
+    - subObj1::outVar1 : the position of the circle point in dimension 1 (x)
+    - subObj1::outVar2 : the position of the circle point in dimension 2 (y)
+ - -56 : circle antialiased
+    - description : This object represents a filled circle with the middle point (x, y), radius r and antialising. The points of the line are given back as variables of the subobject.
+    - inVar1 : position of the middle point in dimension 1 (x)
+    - inVar2 : position of the middle point in dimension 2 (y)
+    - inVar3 : size of the radius r
+    - subObj1 : The points of the circle. The subobject is called for every point on the circle.
+    - subObj1::outVar1 : the position of the circle point in dimension 1 (x)
+    - subObj1::outVar2 : the position of the circle point in dimension 2 (y)
+    - subObj1::outVar3 : the antialising factor (1 is full transparent and 0 full opaque)
+ - -70 : tile
+    - description : This object represents a tile. In the first dimension it goes from x_s to x_e. In the second dimension the area is filled between y_s and the line y_e = f( x ) = a_0 + a_1 * x + a_2 * x^2 (wher y goes from x_s to x_e).
+    - inVar1 : position start point dimension 1 (x_s)
+    - inVar2 : position start point dimension 2 (y_s)
+    - inVar3 : position end point dimension 1 (x_e)
+    - inVar4 : parameter a_0 of the line function f
+    - inVar5 : parameter a_1 of the line function f
+    - inVar6 : parameter a_2 of the line function f
+ - -71 : tile
+    - description : This object represents a tile. In the second dimension it goes from y_s to y_e. In the first dimension the area is filled between x_s and the line x_e = f( y ) = a_0 + a_1 * y + a_2 * y^2 (wher y goes from y_s to y_e).
+    - inVar1 : position start point dimension 1 (x_s)
+    - inVar2 : position start point dimension 2 (y_s)
+    - inVar3 : position end point dimension 2 (y_e)
+    - inVar4 : parameter a_0 of the line function f
+    - inVar5 : parameter a_1 of the line function f
+    - inVar6 : parameter a_2 of the line function f
+ - -75 : tile
+    - description : This object represents a tile. In the first dimension it goes from x_s to x_e. In the second dimension the area is filled between y_s and the line y_e = f( x ) = a_0 + a_1 * x + a_2 * x^2 (wher y goes from x_s to x_e). The points of the triangle are given back as variables of the subobject.
+    - inVar1 : position start point dimension 1 (x_s)
+    - inVar2 : position start point dimension 2 (y_s)
+    - inVar3 : position end point dimension 1 (x_e)
+    - inVar4 : parameter a_0 of the line function f
+    - inVar5 : parameter a_1 of the line function f
+    - inVar6 : parameter a_2 of the line function f
+    - subObj1 : The points of the tile. The subobject is called for every point on the tile.
+    - subObj1::outVar1 : the position of the tile point in dimension 1 (x)
+    - subObj1::outVar2 : the position of the tile point in dimension 2 (y)
+ - -76 : tile
+    - description : This object represents a tile. In the second dimension it goes from y_s to y_e. In the first dimension the area is filled between x_s and the line x_e = f( y ) = a_0 + a_1 * y + a_2 * y^2 (wher y goes from y_s to y_e). The points of the triangle are given back as variables of the subobject.
+    - inVar1 : position start point dimension 1 (x_s)
+    - inVar2 : position start point dimension 2 (y_s)
+    - inVar3 : position end point dimension 2 (y_e)
+    - inVar4 : parameter a_0 of the line function f
+    - inVar5 : parameter a_1 of the line function f
+    - inVar6 : parameter a_2 of the line function f
+    - subObj1 : The points of the tile. The subobject is called for every point on the tile.
+    - subObj1::outVar1 : the position of the tile point in dimension 1 (x)
+    - subObj1::outVar2 : the position of the tile point in dimension 2 (y)
+ - -80 : tile antialiased
+    - description : This object represents a tile with one side antialiased. In the first dimension it goes from x_s to x_e. In the second dimension the area is filled between y_s and the antialiased line y_e = f( x ) = a_0 + a_1 * x + a_2 * x^2 (wher y goes from x_s to x_e; the side of f( x ) is the only antialiased side of the tile). The points of the triangle are given back as variables of the subobject.
+    - inVar1 : position start point dimension 1 (x_s)
+    - inVar2 : position start point dimension 2 (y_s)
+    - inVar3 : position end point dimension 1 (x_e)
+    - inVar4 : parameter a_0 of the line function f
+    - inVar5 : parameter a_1 of the line function f
+    - inVar6 : parameter a_2 of the line function f
+    - subObj1 : The points of the tile. The subobject is called for every point on the tile.
+    - subObj1::outVar1 : the position of the tile point in dimension 1 (x)
+    - subObj1::outVar2 : the position of the tile point in dimension 2 (y)
+    - subObj1::outVar3 : the antialising factor (1 is full transparent and 0 full opaque)
+ - -81 : tile antialiased
+    - description : This object represents a tile with one side antialiased. In the first dimension it goes from y_s to y_e. In the second dimension the area is filled between y_s and the antialiased line x_e = f( y ) = a_0 + a_1 * y + a_2 * y^2 (wher y goes from y_s to y_e; the side of f( y ) is the only antialiased side of the tile). The points of the triangle are given back as variables of the subobject.
+    - inVar1 : position start point dimension 1 (x_s)
+    - inVar2 : position start point dimension 2 (y_s)
+    - inVar3 : position end point dimension 2 (y_e)
+    - inVar4 : parameter a_0 of the line function f
+    - inVar5 : parameter a_1 of the line function f
+    - inVar6 : parameter a_2 of the line function f
+    - subObj1 : The points of the tile. The subobject is called for every point on the tile.
+    - subObj1::outVar1 : the position of the tile point in dimension 1 (x)
+    - subObj1::outVar2 : the position of the tile point in dimension 2 (y)
+    - subObj1::outVar3 : the antialising factor (1 is full transparent and 0 full opaque)
+ - -90 : description : This object represents a (linear) function of degree 1: f( x, a0, a1 ) = a0 + a1 * x .
+    - inVar1 : x position
+    - inVar2 : start point or y-intercept a0
+    - inVar3 : slope or gradient a1
+    - subObj1 : the value f( x, a0, a1 ) as the (only) variable for the subobject
+    - subObj1::outVar1 : the value f( x, a0, a1 )
+ - -95 : description : This object evalues the intersection of two lines f_1( x ) and f_2( x ) . The lines are given as: f(x) = a_0 + a_1 * x with the parameters a_0, a_1 and f_2(x) = b_0 + b_1 * x with the parameters b_0, b_1
+    - inVar1 : start point or y-intercept a_0 of line 1 (f_1)
+    - inVar2 : slope or gradient a_1 of line 1 (f_1)
+    - inVar3 : start point or y-intercept b_0 of line 2 (f_2)
+    - inVar4 : slope or gradient b_1 of line 2 (f_2)
+    - subObj1 : if and wher the lines intersect
+    - subObj1::outVar1 : the position of the intersection point in dimension 1 (x) if existing or 0
+    - subObj1::outVar2 : the position of the intersection point in dimension 2 (y) if existing or 0
+    - subObj1::outVar3 : 0 if no intersection point exists, else 1
+ - -96 : description : This object evalues the intersection of tow lines f_1( x ) and f_2( y ) . The lines are given as: f(x) = a_0 + a_1 * x with the parameters a_0, a_1 and f_2(y) = b_0 + b_1 * y with the parameters b_0, b_1
+    - inVar1 : start point or y-intercept a_0 of line 1 (f_1)
+    - inVar2 : slope or gradient a_1 of line 1 (f_1)
+    - inVar3 : start point or y-intercept b_0 of line 2 (f_2)
+    - inVar4 : slope or gradient b_1 of line 2 (f_2)
+    - subObj1 : if and wher the lines intersect
+    - subObj1::outVar1 : the position of the intersection point in dimension 1 (x) if existing or 0
+    - subObj1::outVar2 : the position of the intersection point in dimension 2 (y) if existing or 0
+    - subObj1::outVar3 : 0 if no intersection point exists, else 1
+ - -410 : quadrangle
+    - description : This object represents a quadrangle (box). In the first dimension it goes from x_s to x_e. In the second dimension the area is filled between two lines y_s = f_1( x ) = a_0 + a_1 * x and y_e = f_2( x ) = b_0 + b_1 * x (wher x goes from x_s to x_e).
+    - inVar1 : position start point dimension 1 (x_s)
+    - inVar2 : position end point dimension 1 (x_e)
+    - inVar3 : parameter a_0 of the first line function f_1
+    - inVar4 : parameter a_1 of the first line function f_1
+    - inVar5 : parameter b_0 of the second line function f_2
+    - inVar6 : parameter b_1 of the second line function f_2
+ - -411 : description : This object represents a quadrangle (box). In the second dimension it goes from y_s to y_e. In the first dimension the area is filled between two lines x_s = f_1( y ) = a_0 + a_1 * y and x_e = f_2( y ) = b_0 + b_1 * y (wher y goes from y_s to y_e).
+    - inVar1 : position start point dimension 2 (y_s)
+    - inVar2 : position end point dimension 2 (y_e)
+    - inVar3 : parameter a_0 of the first line function f_1
+    - inVar4 : parameter a_1 of the first line function f_1
+    - inVar5 : parameter b_0 of the second line function f_2
+    - inVar6 : parameter b_1 of the second line function f_2
+ - -415 : quadrangle
+    - description : This object represents a quadrangle (box). In the first dimension it goes from x_s to x_e. In the second dimension the area is filled between two lines y_s = f_1( x ) = a_0 + a_1 * x and y_e = f_2( x ) = b_0 + b_1 * x (wher x goes from x_s to x_e). The points of the quadrangle (box) are given back as variables of the subobject.
+    - inVar1 : position start point dimension 1 (x_s)
+    - inVar2 : position end point dimension 1 (x_e)
+    - inVar3 : parameter a_0 of the first line function f_1
+    - inVar4 : parameter a_1 of the first line function f_1
+    - inVar5 : parameter b_0 of the second line function f_2
+    - inVar6 : parameter b_1 of the second line function f_2
+    - subObj1 : The points of the quadrangle (box). The subobject is called for every point on the quadrangle (box).
+    - subObj1::outVar1 : the position of the quadrangle point in dimension 1 (x)
+    - subObj1::outVar2 : the position of the quadrangle point in dimension 2 (y)
+ - -416 : quadrangle
+    - description : This object represents a quadrangle (box). In the second dimension it goes from y_s to y_e. In the first dimension the area is filled between two lines x_s = f_1( y ) = a_0 + a_1 * y and x_e = f_2( y ) = b_0 + b_1 * y (wher y goes from y_s to y_e). The points of the quadrangle (box) are given back as variables of the subobject.
+    - inVar1 : position start point dimension 2 (y_s)
+    - inVar2 : position end point dimension 2 (y_e)
+    - inVar3 : parameter a_0 of the first line function f_1
+    - inVar4 : parameter a_1 of the first line function f_1
+    - inVar5 : parameter b_0 of the second line function f_2
+    - inVar6 : parameter b_1 of the second line function f_2
+    - subObj1 : The points of the quadrangle (box). The subobject is called for every point on the quadrangle (box).
+    - subObj1::outVar1 : the position of the quadrangle point in dimension 1 (x)
+    - subObj1::outVar2 : the position of the quadrangle point in dimension 2 (y)
+ - -420 : quadrangle
+    - description : This object represents a quadrangle (box). In the first dimension it goes from start point x_s to end point x_e. In the second dimension the area is filled between two lines. The first line (y_s = f_1( x ) = a_0 + a_1 * x) goes through the first two points ( x_1, y_1 ) and ( x_2, y_2 ). The second line (y_e = f_2( x ) = b_0 + b_1 * x) goes through the last two points ( x_3, y_3 ) and ( x_4, y_4 ). The start point x_s is max( min( x1, x2 ), min( x3, x4 ) ) and the end point x_e is min( max( x_1, x_2 ), max( x_3, x_4 ) ). If x_s is bigger than x_e no box is drawn.
+    - inVar1 : position of the first point in dimension 1 (x_1)
+    - inVar2 : position of the first point in dimension 2 (y_1)
+    - inVar3 : position of the second point in dimension 1 (x_2)
+    - inVar4 : position of the second point in dimension 2 (y_2)
+    - inVar5 : position of the 3. point in dimension 1 (x_3)
+    - inVar6 : position of the 3. point in dimension 2 (y_3)
+    - inVar7 : position of the 4. point in dimension 1 (x_4)
+    - inVar8 : position of the 4. point in dimension 2 (y_4)
+ - -421 : quadrangle
+    - description : This object represents a quadrangle (box). In the second dimension it goes from start point y_s to end point y_e. In the first dimension the area is filled between two lines. The first line (x_s = f_1( y ) = a_0 + a_1 * y) goes through the first two points ( x_1, y_1 ) and ( x_2, y_2 ). The second line (x_e = f_2( x ) = b_0 + b_1 * y) goes through the last two points ( x_3, y_3 ) and ( x_4, y_4 ). The start point y_s is max( min( y_1, y_2 ), min( y_3, y_4 ) ) and the end point y_e is min( max( y_1, y_2 ), max( y_3, y_4 ) ). If y_s is bigger than y_e no box is drawn.
+    - inVar1 : position of the first point in dimension 1 (x_1)
+    - inVar2 : position of the first point in dimension 2 (y_1)
+    - inVar3 : position of the second point in dimension 1 (x_2)
+    - inVar4 : position of the second point in dimension 2 (y_2)
+    - inVar5 : position of the 3. point in dimension 1 (x_3)
+    - inVar6 : position of the 3. point in dimension 2 (y_3)
+    - inVar7 : position of the 4. point in dimension 1 (x_4)
+    - inVar8 : position of the 4. point in dimension 2 (y_4)
+ - -422 : quadrangle
+    - description : This object represents a quadrangle (box). In the first dimension it goes from start point x_s to end point x_e (if x_e is lower x_s no quadrangle is drawn). In the second dimension the area is filled between two lines. The first line (y_s = f_1( x ) = a_0 + a_1 * x) goes through the first two points ( x_1, y_1 ) and ( x_2, y_2 ). The second line (y_e = f_2( x ) = b_0 + b_1 * x) goes through the last two points ( x_3, y_3 ) and ( x_4, y_4 ).
+    - inVar1 : position of the first point in dimension 1 (x_1)
+    - inVar2 : position of the first point in dimension 2 (y_1)
+    - inVar3 : position of the second point in dimension 1 (x_2)
+    - inVar4 : position of the second point in dimension 2 (y_2)
+    - inVar5 : position of the 3. point in dimension 1 (x_3)
+    - inVar6 : position of the 3. point in dimension 2 (y_3)
+    - inVar7 : position of the 4. point in dimension 1 (x_4)
+    - inVar8 : position of the 4. point in dimension 2 (y_4)
+    - inVar9 : the start point x_s
+    - inVar10 : the end point x_e
+ - -423 : quadrangle
+    - description : This object represents a quadrangle (box). In the second dimension it goes from start point y_s to end point y_e (if y_e is lower y_s no quadrangle is drawn). In the first dimension the area is filled between two lines. The first line (x_s = f_1( y ) = a_0 + a_1 * y) goes through the first two points ( x_1, y_1 ) and ( x_2, y_2 ). The second line (x_e = f_2( x ) = b_0 + b_1 * y) goes through the last two points ( x_3, y_3 ) and ( x_4, y_4 ).
+    - inVar1 : position of the first point in dimension 1 (x_1)
+    - inVar2 : position of the first point in dimension 2 (y_1)
+    - inVar3 : position of the second point in dimension 1 (x_2)
+    - inVar4 : position of the second point in dimension 2 (y_2)
+    - inVar5 : position of the 3. point in dimension 1 (x_3)
+    - inVar6 : position of the 3. point in dimension 2 (y_3)
+    - inVar7 : position of the 4. point in dimension 1 (x_4)
+    - inVar8 : position of the 4. point in dimension 2 (y_4)
+    - inVar9 : the start point y_s
+    - inVar10 : the end point y_e
+ - -425 : quadrangle
+    - description : This object represents a quadrangle (box). In the first dimension it goes from start point x_s to end point x_e. In the second dimension the area is filled between two lines. The first line (y_s = f_1( x ) = a_0 + a_1 * x) goes through the first two points ( x_1, y_1 ) and ( x_2, y_2 ). The second line (y_e = f_2( x ) = b_0 + b_1 * x) goes through the last two points ( x_3, y_3 ) and ( x_4, y_4 ). The start point x_s is max( min( x_1, x_2 ), min( x_3, x_4 ) ) and the end point x_e is min( max( x_1, x_2 ), max( x_3, x_4 ) ). If x_s is bigger than x_e no box is drawn. The points of the quadrangle (box) are given back as variables of the subobject.
+    - inVar1 : position of the first point in dimension 1 (x_1)
+    - inVar2 : position of the first point in dimension 2 (y_1)
+    - inVar3 : position of the second point in dimension 1 (x_2)
+    - inVar4 : position of the second point in dimension 2 (y_2)
+    - inVar5 : position of the 3. point in dimension 1 (x_3)
+    - inVar6 : position of the 3. point in dimension 2 (y_3)
+    - inVar7 : position of the 4. point in dimension 1 (x_4)
+    - inVar8 : position of the 4. point in dimension 2 (y_4)
+    - subObj1 : The points of the quadrangle (box). The subobject is called for every point on the quadrangle (box).
+    - subObj1::outVar1 : the position of the quadrangle point in dimension 1 (x)
+    - subObj1::outVar2 : the position of the quadrangle point in dimension 2 (y)
+ - -426 : quadrangle
+    - description : This object represents a quadrangle (box). In the second dimension it goes from start point y_s to end point y_e. In the first dimension the area is filled between two lines. The first line (x_s = f_1( y ) = a_0 + a_1 * y) goes through the first two points ( x_1, y_1 ) and ( x_2, y_2 ). The second line (x_e = f_2( x ) = b_0 + b_1 * y) goes through the last two points ( x_3, y_3 ) and ( x_4, y_4 ). The start point y_s is max( min( y_1, y_2 ), min( y_3, y_4 ) ) and the end point y_e is min( max( y_1, y_2 ), max( y_3, y_4 ) ). If y_s is bigger than y_e no box is drawn. The points of the quadrangle (box) are given back as variables of the subobject.
+    - inVar1 : position of the first point in dimension 1 (x_1)
+    - inVar2 : position of the first point in dimension 2 (y_1)
+    - inVar3 : position of the second point in dimension 1 (x_2)
+    - inVar4 : position of the second point in dimension 2 (y_2)
+    - inVar5 : position of the 3. point in dimension 1 (x_3)
+    - inVar6 : position of the 3. point in dimension 2 (y_3)
+    - inVar7 : position of the 4. point in dimension 1 (x_4)
+    - inVar8 : position of the 4. point in dimension 2 (y_4)
+    - subObj1 : The points of the quadrangle (box). The subobject is called for every point on the quadrangle (box).
+    - subObj1::outVar1 : the position of the quadrangle point in dimension 1 (x)
+    - subObj1::outVar2 : the position of the quadrangle point in dimension 2 (y)
+ - -427 : quadrangle
+    - description : This object represents a quadrangle (box). In the first dimension it goes from start point x_s to end point x_e (if x_e is lower x_s no quadrangle is drawn). In the second dimension the area is filled between two lines. The first line (y_s = f_1( x ) = a_0 + a_1 * x) goes through the first two points ( x_1, y_1 ) and ( x_2, y_2 ). The points of the quadrangle (box) are given back as variables of the subobject.
+    - inVar1 : position of the first point in dimension 1 (x_1)
+    - inVar2 : position of the first point in dimension 2 (y_1)
+    - inVar3 : position of the second point in dimension 1 (x_2)
+    - inVar4 : position of the second point in dimension 2 (y_2)
+    - inVar5 : position of the 3. point in dimension 1 (x_3)
+    - inVar6 : position of the 3. point in dimension 2 (y_3)
+    - inVar7 : position of the 4. point in dimension 1 (x_4)
+    - inVar8 : position of the 4. point in dimension 2 (y_4)
+    - inVar9 : the start point x_s
+    - inVar10 : the end point x_e
+    - subObj1 : The points of the quadrangle (box). The subobject is called for every point on the quadrangle (box).
+    - subObj1::outVar1 : the position of the quadrangle point in dimension 1 (x)
+    - subObj1::outVar2 : the position of the quadrangle point in dimension 2 (y)
+ - -428 : quadrangle
+    - description : This object represents a quadrangle (box). In the second dimension it goes from start point y_s to end point y_e (if y_e is lower y_s no quadrangle is drawn). In the first dimension the area is filled between two lines. The first line (x_s = f_1( y ) = a_0 + a_1 * y) goes through the first two points ( x_1, y_1 ) and ( x_2, y_2 ). The second line (x_e = f_2( x ) = b_0 + b_1 * y) goes through the last two points ( x_3, y_3 ) and ( x_4, y_4 ). The points of the quadrangle (box) are given back as variables of the subobject.
+    - inVar1 : position of the first point in dimension 1 (x_1)
+    - inVar2 : position of the first point in dimension 2 (y_1)
+    - inVar3 : position of the second point in dimension 1 (x_2)
+    - inVar4 : position of the second point in dimension 2 (y_2)
+    - inVar5 : position of the 3. point in dimension 1 (x_3)
+    - inVar6 : position of the 3. point in dimension 2 (y_3)
+    - inVar7 : position of the 4. point in dimension 1 (x_4)
+    - inVar8 : position of the 4. point in dimension 2 (y_4)
+    - inVar9 : the start point y_s
+    - inVar10 : the end point y_e
+    - subObj1 : The points of the quadrangle (box). The subobject is called for every point on the quadrangle (box).
+    - subObj1::outVar1 : the position of the quadrangle point in dimension 1 (x)
+    - subObj1::outVar2 : the position of the quadrangle point in dimension 2 (y)
+ - -465 : quadrangle with antialising
+    - description : This object represents a quadrangle (box) with antialising. In the first dimension it goes from x_s to x_e (borders not antialiased). In the second dimension the area is filled between two lines y_s = f_1( x ) = a_0 + a_1 * x and y_e = f_2( x ) = b_0 + b_1 * x (wher x goes from x_s to x_e; borders / lines antialiased ). The points of the quadrangle (box) are given back as variables of the subobject.
+    - inVar1 : position start point dimension 1 (x_s)
+    - inVar2 : position end point dimension 1 (x_e)
+    - inVar3 : parameter a_0 of the first line function f_1
+    - inVar4 : parameter a_1 of the first line function f_1
+    - inVar5 : parameter b_0 of the second line function f_2
+    - inVar6 : parameter b_1 of the second line function f_2
+    - subObj1 : The points of the quadrangle (box). The subobject is called for every point on the quadrangle (box).
+    - subObj1::outVar1 : the position of the quadrangle point in dimension 1 (x)
+    - subObj1::outVar2 : the position of the quadrangle point in dimension 2 (y)
+    - subObj1::outVar3 : the antialising factor (1 is full transparent and 0 full opaque)
+ - -466 : quadrangle with antialising
+    - description : This object represents a quadrangle (box) with antialising. In the second dimension it goes from y_s to y_e (borders not antialiased). In the first dimension the area is filled between two lines x_s = f_1( y ) = a_0 + a_1 * y and x_e = f_2( y ) = b_0 + b_1 * y (wher y goes from y_s to y_e; borders / lines antialiased ). The points of the quadrangle (box) are given back as variables of the subobject.
+    - inVar1 : position start point dimension 2 (y_s)
+    - inVar2 : position end point dimension 2 (y_e)
+    - inVar3 : parameter a_0 of the first line function f_1
+    - inVar4 : parameter a_1 of the first line function f_1
+    - inVar5 : parameter b_0 of the second line function f_2
+    - inVar6 : parameter b_1 of the second line function f_2
+    - subObj1 : The points of the quadrangle (box). The subobject is called for every point on the quadrangle (box).
+    - subObj1::outVar1 : the position of the quadrangle point in dimension 1 (x)
+    - subObj1::outVar2 : the position of the quadrangle point in dimension 2 (y)
+    - subObj1::outVar3 : the antialising factor (1 is full transparent and 0 full opaque)
+ - -467 : quadrangle with antialising
+    - description : This object represents a quadrangle (box) with one line / side antialiased. In the first dimension it goes from x_s to x_e (borders not antialiased). In the second dimension the area is filled between two lines y_s = f_1( x ) = a_0 + a_1 * x , which is antialiased, and y_e = f_2( x ) = b_0 + b_1 * x (wher x goes from x_s to x_e; border / line f_1 antialiased and f_2, x_e, x_s not antialiased). The points of the quadrangle (box) are given back as variables of the subobject.
+    - inVar1 : position start point dimension 1 (x_s)
+    - inVar2 : position end point dimension 1 (x_e)
+    - inVar3 : parameter a_0 of the first antialiased line function f_1
+    - inVar4 : parameter a_1 of the first antialiased line function f_1
+    - inVar5 : parameter b_0 of the second line function f_2
+    - inVar6 : parameter b_1 of the second line function f_2
+    - subObj1 : The points of the quadrangle (box). The subobject is called for every point on the quadrangle (box).
+    - subObj1::outVar1 : the position of the quadrangle point in dimension 1 (x)
+    - subObj1::outVar2 : the position of the quadrangle point in dimension 2 (y)
+    - subObj1::outVar3 : the antialising factor (1 is full transparent and 0 full opaque)
+ - -468 : quadrangle with antialising
+    - description : This object represents a quadrangle (box) with one line / side antialiased. In the first dimension it goes from y_s to y_e (borders not antialiased). In the second dimension the area is filled between two lines x_s = f_1( y ) = a_0 + a_1 * y , which is antialiased, and x_e = f_2( y ) = b_0 + b_1 * y (wher y goes from y_s to y_e; border / line f_1 antialiased and f_2, y_e, y_s not antialiased). The points of the quadrangle (box) are given back as variables of the subobject.
+    - inVar1 : position start point dimension 1 (y_s)
+    - inVar2 : position end point dimension 1 (y_e)
+    - inVar3 : parameter a_0 of the first antialiased line function f_1
+    - inVar4 : parameter a_1 of the first antialiased line function f_1
+    - inVar5 : parameter b_0 of the second line function f_2
+    - inVar6 : parameter b_1 of the second line function f_2
+    - subObj1 : The points of the quadrangle (box). The subobject is called for every point on the quadrangle (box).
+    - subObj1::outVar1 : the position of the quadrangle point in dimension 1 (x)
+    - subObj1::outVar2 : the position of the quadrangle point in dimension 2 (y)
+    - subObj1::outVar3 : the antialising factor (1 is full transparent and 0 full opaque)
+ - -475 : quadrangle with antialising
+    - description : This object represents a quadrangle (box) with antialising. In the first dimension it goes from start point x_s to end point x_e (borders not antialiased). In the second dimension the area is filled between two lines, which are antialiased. The first line (y_s = f_1( x ) = a_0 + a_1 * x) goes through the first two points ( x_1, y_1 ) and ( x_2, y_2 ). The second line (y_e = f_2( x ) = b_0 + b_1 * x) goes through the last two points ( x_3, y_3 ) and ( x_4, y_4 ). The start point x_s is max( min( x_1, x_2 ), min( x_3, x_4 ) ) and the end point x_e is ( min( max( x_1, x_2 ), max( x_3, x_4 ) ) - 1 ) (the '- 1' at the end is, because for antialising the pixle x goes till (x + 1) ). If x_s is bigger than x_e no box is drawn. The points of the quadrangle (box) are given back as variables of the subobject.
+    - inVar1 : position of the first point in dimension 1 (x_1)
+    - inVar2 : position of the first point in dimension 2 (y_1)
+    - inVar3 : position of the second point in dimension 1 (x_2)
+    - inVar4 : position of the second point in dimension 2 (y_2)
+    - inVar5 : position of the 3. point in dimension 1 (x_3)
+    - inVar6 : position of the 3. point in dimension 2 (y_3)
+    - inVar7 : position of the 4. point in dimension 1 (x_4)
+    - inVar8 : position of the 4. point in dimension 2 (y_4)
+    - subObj1 : The points of the quadrangle (box). The subobject is called for every point on the quadrangle (box).
+    - subObj1::outVar1 : the position of the quadrangle point in dimension 1 (x)
+    - subObj1::outVar2 : the position of the quadrangle point in dimension 2 (y)
+    - subObj1::outVar3 : the antialising factor (1 is full transparent and 0 full opaque)
+ - -476 : quadrangle with antialising
+    - description : This object represents a quadrangle (box) with antialising. In the second dimension it goes from y_s to y_e (borders not antialiased). In the first dimension the area is filled between two lines, which are antialiased. The first line (x_s = f_1( y ) = a_0 + a_1 * y) goes through the first two points ( x_1, y_1 ) and ( x_2, y_2 ). The second line (x_e = f_2( y ) = b_0 + b_1 * y) goes through the last two points ( x_3, y_3 ) and ( x_4, y_4 ). The start point y_s is max( min( y_1, y_2 ), min( y_3, y_4 ) ) and the end point y_e is ( min( max( y_1, y_2 ), max( y_3, y_4 ) ) - 1 ) (the '- 1' at the end is, because for antialising the pixle y goes till (y + 1) ). If y_s is bigger than y_e no box is drawn. The points of the quadrangle (box) are given back as variables of the subobject.
+    - inVar1 : position of the first point in dimension 1 (x_1)
+    - inVar2 : position of the first point in dimension 2 (y_1)
+    - inVar3 : position of the second point in dimension 1 (x_2)
+    - inVar4 : position of the second point in dimension 2 (y_2)
+    - inVar5 : position of the 3. point in dimension 1 (x_3)
+    - inVar6 : position of the 3. point in dimension 2 (y_3)
+    - inVar7 : position of the 4. point in dimension 1 (x_4)
+    - inVar8 : position of the 4. point in dimension 2 (y_4)
+    - subObj1 : The points of the quadrangle (box). The subobject is called for every point on the quadrangle (box).
+    - subObj1::outVar1 : the position of the quadrangle point in dimension 1 (x)
+    - subObj1::outVar2 : the position of the quadrangle point in dimension 2 (y)
+    - subObj1::outVar3 : the antialising factor (1 is full transparent and 0 full opaque)
+ - -477 : quadrangle with antialising
+    - description : This object represents a quadrangle (box). In the first dimension it goes from start pixle line x_s to end pixle line x_e (borders not antialiased; if x_e is lower x_s no quadrangle is drawn, a pixle line x goes from x to x + 1 ). In the second dimension the area is filled between two lines, which are antialiased. The first line (y_s = f_1( x ) = a_0 + a_1 * x) goes through the first two points ( x_1, y_1 ) and ( x_2, y_2 ). The second line (y_e = f_2( x ) = b_0 + b_1 * x) goes through the last two points ( x_3, y_3 ) and ( x_4, y_4 ). The points of the quadrangle (box) are given back as variables of the subobject.
+    - inVar1 : position of the first point in dimension 1 (x_1)
+    - inVar2 : position of the first point in dimension 2 (y_1)
+    - inVar3 : position of the second point in dimension 1 (x_2)
+    - inVar4 : position of the second point in dimension 2 (y_2)
+    - inVar5 : position of the 3. point in dimension 1 (x_3)
+    - inVar6 : position of the 3. point in dimension 2 (y_3)
+    - inVar7 : position of the 4. point in dimension 1 (x_4)
+    - inVar8 : position of the 4. point in dimension 2 (y_4)
+    - inVar9 : the start point x_s
+    - inVar10 : the end point x_e
+    - subObj1 : The points of the quadrangle (box). The subobject is called for every point on the quadrangle (box).
+    - subObj1::outVar1 : the position of the quadrangle point in dimension 1 (x)
+    - subObj1::outVar2 : the position of the quadrangle point in dimension 2 (y)
+    - subObj1::outVar3 : the antialising factor (1 is full transparent and 0 full opaque)
+ - -478 : quadrangle with antialising
+    - description : This object represents a quadrangle (box) with antialising. In the second dimension it goes from pixle line y_s to pixle line y_e (borders not antialiased; if y_e is lower y_s no quadrangle is drawn, a pixle line y goes from y to y + 1 ). In the first dimension the area is filled between two lines, which are antialiased. The first line (x_s = f_1( y ) = a_0 + a_1 * y) goes through the first two points ( x_1, y_1 ) and ( x_2, y_2 ). The second line (x_e = f_2( y ) = b_0 + b_1 * y) goes through the last two points ( x_3, y_3 ) and ( x_4, y_4 ). The points of the quadrangle (box) are given back as variables of the subobject.
+    - inVar1 : position of the first point in dimension 1 (x_1)
+    - inVar2 : position of the first point in dimension 2 (y_1)
+    - inVar3 : position of the second point in dimension 1 (x_2)
+    - inVar4 : position of the second point in dimension 2 (y_2)
+    - inVar5 : position of the 3. point in dimension 1 (x_3)
+    - inVar6 : position of the 3. point in dimension 2 (y_3)
+    - inVar7 : position of the 4. point in dimension 1 (x_4)
+    - inVar8 : position of the 4. point in dimension 2 (y_4)
+    - inVar9 : the start point x_s
+    - inVar10 : the end point x_e
+    - subObj1 : The points of the quadrangle (box). The subobject is called for every point on the quadrangle (box).
+    - subObj1::outVar1 : the position of the quadrangle point in dimension 1 (x)
+    - subObj1::outVar2 : the position of the quadrangle point in dimension 2 (y)
+    - subObj1::outVar3 : the antialising factor (1 is full transparent and 0 full opaque)
+ - -479 : quadrangle with one side antialising
+    - description : This object represents a quadrangle (box). In the first dimension it goes from start point x_s to end point x_e. In the second dimension the area is filled between two lines. The first line (y_s = f_1( x ) = a_0 + a_1 * x) goes through the first two points ( x_1, y_1 ) and ( x_2, y_2 ) and is the only antialiased side of the quadrangle. The second line (y_e = f_2( x ) = b_0 + b_1 * x) goes through the last two points ( x_3, y_3 ) and ( x_4, y_4 ). The start point x_s is max( min( x_1, x_2 ), min( x_3, x_4 ) ) and the end point x_e is ( min( max( x_1, x_2 ), max( x_3, x_4 ) ) - 1 ) (the '- 1' at the end is, because for antialising the pixle x goes till (x + 1) ). If x_s is bigger than x_e no box is drawn. The points of the quadrangle (box) are given back as variables of the subobject.
+    - inVar1 : position of the first point in dimension 1 (x_1)
+    - inVar2 : position of the first point in dimension 2 (y_1)
+    - inVar3 : position of the second point in dimension 1 (x_2)
+    - inVar4 : position of the second point in dimension 2 (y_2)
+    - inVar5 : position of the 3. point in dimension 1 (x_3)
+    - inVar6 : position of the 3. point in dimension 2 (y_3)
+    - inVar7 : position of the 4. point in dimension 1 (x_4)
+    - inVar8 : position of the 4. point in dimension 2 (y_4)
+    - subObj1 : The points of the quadrangle (box). The subobject is called for every point on the quadrangle (box).
+    - subObj1::outVar1 : the position of the quadrangle point in dimension 1 (x)
+    - subObj1::outVar2 : the position of the quadrangle point in dimension 2 (y)
+    - subObj1::outVar3 : the antialising factor (1 is full transparent and 0 full opaque)
+ - -480 : quadrangle with one side antialising
+    - description : This object represents a quadrangle (box) with antialising. In the second dimension it goes from y_s to y_e (borders not antialiased). In the first dimension the area is filled between two lines. The first line (x_s = f_1( y ) = a_0 + a_1 * y) goes through the first two points ( x_1, y_1 ) and ( x_2, y_2 ) and is the only antialiased side of the quadrangle. The second line (x_e = f_2( y ) = b_0 + b_1 * y) goes through the last two points ( x_3, y_3 ) and ( x_4, y_4 ). The start point y_s is max( min( y_1, y_2 ), min( y_3, y_4 ) ) and the end point y_e is ( min( max( y_1, y_2 ), max( y_3, y_4 ) ) - 1 ) (the '- 1' at the end is, because for antialising the pixle y goes till (y + 1) ). If y_s is bigger than y_e no box is drawn. The points of the quadrangle (box) are given back as variables of the subobject.
+    - inVar1 : position of the first point in dimension 1 (x_1)
+    - inVar2 : position of the first point in dimension 2 (y_1)
+    - inVar3 : position of the second point in dimension 1 (x_2)
+    - inVar4 : position of the second point in dimension 2 (y_2)
+    - inVar5 : position of the 3. point in dimension 1 (x_3)
+    - inVar6 : position of the 3. point in dimension 2 (y_3)
+    - inVar7 : position of the 4. point in dimension 1 (x_4)
+    - inVar8 : position of the 4. point in dimension 2 (y_4)
+    - subObj1 : The points of the quadrangle (box). The subobject is called for every point on the quadrangle (box).
+    - subObj1::outVar1 : the position of the quadrangle point in dimension 1 (x)
+    - subObj1::outVar2 : the position of the quadrangle point in dimension 2 (y)
+    - subObj1::outVar3 : the antialising factor (1 is full transparent and 0 full opaque)
+ - -481 : quadrangle with one side antialising
+    - description : This object represents a quadrangle (box). In the first dimension it goes from start pixle line x_s to end pixle line x_e (borders not antialiased; if x_e is lower x_s no quadrangle is drawn, a pixle line x goes from x to x + 1 ). In the second dimension the area is filled between two lines. The first line (y_s = f_1( x ) = a_0 + a_1 * x) goes through the first two points ( x_1, y_1 ) and ( x_2, y_2 ) and is the only antialiased side of the quadrangle. The second line (y_e = f_2( x ) = b_0 + b_1 * x) goes through the last two points ( x_3, y_3 ) and ( x_4, y_4 ). The points of the quadrangle (box) are given back as variables of the subobject.
+    - inVar1 : position of the first point in dimension 1 (x_1)
+    - inVar2 : position of the first point in dimension 2 (y_1)
+    - inVar3 : position of the second point in dimension 1 (x_2)
+    - inVar4 : position of the second point in dimension 2 (y_2)
+    - inVar5 : position of the 3. point in dimension 1 (x_3)
+    - inVar6 : position of the 3. point in dimension 2 (y_3)
+    - inVar7 : position of the 4. point in dimension 1 (x_4)
+    - inVar8 : position of the 4. point in dimension 2 (y_4)
+    - inVar9 : the start point x_s
+    - inVar10 : the end point x_e
+    - subObj1 : The points of the quadrangle (box). The subobject is called for every point on the quadrangle (box).
+    - subObj1::outVar1 : the position of the quadrangle point in dimension 1 (x)
+    - subObj1::outVar2 : the position of the quadrangle point in dimension 2 (y)
+    - subObj1::outVar3 : the antialising factor (1 is full transparent and 0 full opaque)
+ - -482 : quadrangle with one side antialising
+    - description : This object represents a quadrangle (box) with antialising. In the second dimension it goes from pixle line y_s to pixle line y_e (borders not antialiased; if y_e is lower y_s no quadrangle is drawn, a pixle line y goes from y to y + 1 ). In the first dimension the area is filled between two lines. The first line (x_s = f_1( y ) = a_0 + a_1 * y) goes through the first two points ( x_1, y_1 ) and ( x_2, y_2 ) and is the only antialiased side of the quadrangle. The second line (x_e = f_2( y ) = b_0 + b_1 * y) goes through the last two points ( x_3, y_3 ) and ( x_4, y_4 ). The points of the quadrangle (box) are given back as variables of the subobject.
+    - inVar1 : position of the first point in dimension 1 (x_1)
+    - inVar2 : position of the first point in dimension 2 (y_1)
+    - inVar3 : position of the second point in dimension 1 (x_2)
+    - inVar4 : position of the second point in dimension 2 (y_2)
+    - inVar5 : position of the 3. point in dimension 1 (x_3)
+    - inVar6 : position of the 3. point in dimension 2 (y_3)
+    - inVar7 : position of the 4. point in dimension 1 (x_4)
+    - inVar8 : position of the 4. point in dimension 2 (y_4)
+    - inVar9 : the start point x_s
+    - inVar10 : the end point x_e
+    - subObj1 : The points of the quadrangle (box). The subobject is called for every point on the quadrangle (box).
+    - subObj1::outVar1 : the position of the quadrangle point in dimension 1 (x)
+    - subObj1::outVar2 : the position of the quadrangle point in dimension 2 (y)
+    - subObj1::outVar3 : the antialising factor (1 is full transparent and 0 full opaque)
+ - -900 : description : This object evalues wich part / fraction of a given pixel is below a line f(x) = a_0 + a_1 * x (e. g. for antialising). (A pixel (x,y) goes in the first dimension from x to x+1 and in the second dimension from y to y+1 .)
+    - inVar1 : the first parameter a_0 for the line f(x)
+    - inVar2 : the slope or gradien (second parameter) a_1 for the line f(x)
+    - inVar3 : position of the pixle in dimension 1 (x)
+    - inVar4 : position of the pixle in dimension 2 (y)
+    - subObj1 : the object for the to return part / fraction of a given pixel which is below a line f(x) = a_0 + a_1 * x
+    - subObj1::outVar1 : the part / fraction of a given pixel which is below a line f(x) = a_0 + a_1 * x
+ - -901 : description : This object evalues wich part / fraction of a given pixel is above a line f(x) = a_0 + a_1 * x (e. g. for antialising). (A pixel (x,y) goes in the first dimension from x to x+1 and in the second dimension from y to y+1 .)
+    - inVar1 : the first parameter a_0 for the line f(x)
+    - inVar2 : the slope or gradien (second parameter) a_1 for the line f(x)
+    - inVar3 : position of the pixle in dimension 1 (x)
+    - inVar4 : position of the pixle in dimension 2 (y)
+    - subObj1 : the object for the to return part / fraction of a given pixel which is above a line f(x) = a_0 + a_1 * x
+    - subObj1::outVar1 : the part / fraction of a given pixel which is above a line f(x) = a_0 + a_1 * x
+ - -902 : description : This object evalues wich part / fraction of a given pixel is right a line f(x) = a_0 + a_1 * x (e. g. for antialising). (A pixel (x,y) goes in the first dimension from x to x+1 and in the second dimension from y to y+1 .)
+    - inVar1 : the first parameter a_0 for the line f(x)
+    - inVar2 : the slope or gradien (second parameter) a_1 for the line f(x)
+    - inVar3 : position of the pixle in dimension 1 (x)
+    - inVar4 : position of the pixle in dimension 2 (y)
+    - subObj1 : the object for the to return part / fraction of a given pixel which is right a line f(x) = a_0 + a_1 * x
+    - subObj1::outVar1 : the part / fraction of a given pixel which is right a line f(x) = a_0 + a_1 * x
+ - -903 : description : This object evalues wich part / fraction of a given pixel is left a line f(x) = a_0 + a_1 * x (e. g. for antialising). (A pixel (x,y) goes in the first dimension from x to x+1 and in the second dimension from y to y+1 .)
+    - inVar1 : the first parameter a_0 for the line f(x)
+    - inVar2 : the slope or gradien (second parameter) a_1 for the line f(x)
+    - inVar3 : position of the pixle in dimension 1 (x)
+    - inVar4 : position of the pixle in dimension 2 (y)
+    - subObj1 : the object for the to return part / fraction of a given pixel which is left a line f(x) = a_0 + a_1 * x
+    - subObj1::outVar1 : the part / fraction of a given pixel which is left a line f(x) = a_0 + a_1 * x
+ - -905 : function antialising for 2 lines
+    - description : This object evalues wich part / fraction of a pixel is between (in f(x) = y = dim 2 direction) the lines f_1(x) = a_0 + a_1 * x and f_2(x) = b_0 + b_1 * x (e. g. for antialising).
+    - inVar1 : the first parameter a_0 for the line f_1(x)
+    - inVar2 : the slope or gradien (second parameter) a_1 for the line f_1(x)
+    - inVar3 : the first parameter b_0 for the line f_2(x)
+    - inVar4 : the slope or gradien (second parameter) b_1 for the line f_2(x)
+    - inVar5 : position of the pixle in dimension 1 (x)
+    - inVar6 : position of the pixle in dimension 2 (y)
+    - subObj1 : the object for the to return part / fraction of a pixel is between the lines f_1(x) = a_0 + a_1 * x and f_2(x) = b_0 + b_1 * x
+    - subObj1::outVar1 : the part / fraction of a pixel which is between the lines f_1(x) = a_0 + a_1 * x and f_2(x) = b_0 + b_1 * x
+ - -906 : function antialising for 2 lines
+    - description : This object evalues wich part / fraction of a pixel is between (in f(y) = x = dim 2 direction) the lines f_1(y) = a_0 + a_1 * y and f_2(y) = b_0 + b_1 * y (e. g. for antialising).
+    - inVar1 : the first parameter a_0 for the line f_1(y)
+    - inVar2 : the slope or gradien (second parameter) a_1 for the line f_1(y)
+    - inVar3 : the first parameter b_0 for the line f_2(y)
+    - inVar4 : the slope or gradien (second parameter) b_1 for the line f_2(y)
+    - inVar5 : position of the pixle in dimension 1 (x)
+    - inVar6 : position of the pixle in dimension 2 (y)
+    - subObj1 : the object for the to return part / fraction of a pixel is between the lines f_1(y) = a_0 + a_1 * y and f_2(y) = b_0 + b_1 * y
+    - subObj1::outVar1 : the part / fraction of a pixel which is between the lines f_1(y) = a_0 + a_1 * y and f_2(y) = b_0 + b_1 * y
+ - -907 : function antialising for 2 lines f_1(x) and f_2(y)
+    - description : This object evalues wich part / fraction of a pixel is between (in f(x) = y = dim 2 direction) the lines f_1(x) = a_0 + a_1 * x and f_2(y) = b_0 + b_1 * y (e. g. for antialising).
+    - inVar1 : the first parameter a_0 for the line f_1(x)
+    - inVar2 : the slope or gradien (second parameter) a_1 for the line f_1(x)
+    - inVar3 : the first parameter b_0 for the line f_2(y)
+    - inVar4 : the slope or gradien (second parameter) b_1 for the line f_2(y)
+    - inVar5 : position of the pixle in dimension 1 (x)
+    - inVar6 : position of the pixle in dimension 2 (y)
+    - subObj1 : the object for the to return part / fraction of a pixel is between the lines f_1(x) = a_0 + a_1 * x and f_2(y) = b_0 + b_1 * y
+    - subObj1::outVar1 : the part / fraction of a pixel which is between the lines f_1(x) = a_0 + a_1 * x and f_2(y) = b_0 + b_1 * y
+ - -908 : function antialising for 2 lines
+    - description : This object evalues wich part / fraction of a pixel is between (in f(y) = x = dim 2 direction) the lines f_1(y) = a_0 + a_1 * y and f_2(x) = b_0 + b_1 * x (e. g. for antialising).
+    - inVar1 : the first parameter a_0 for the line f_1(y)
+    - inVar2 : the slope or gradien (second parameter) a_1 for the line f_1(y)
+    - inVar3 : the first parameter b_0 for the line f_2(y)
+    - inVar4 : the slope or gradien (second parameter) b_1 for the line f_2(y)
+    - inVar5 : position of the pixle in dimension 1 (x)
+    - inVar6 : position of the pixle in dimension 2 (y)
+    - subObj1 : the object for the to return part / fraction of a pixel is between the lines f_1(y) = a_0 + a_1 * y and f_2(x) = b_0 + b_1 * x
+    - subObj1::outVar1 : the part / fraction of a pixel which is between the lines f_1(y) = a_0 + a_1 * y and f_2(x) = b_0 + b_1 * x
+ - -910 : description : This object evalues wich part / fraction of a given box is below a line f(x) = a_0 + a_1 * x (e. g. for antialising). (The box (x_1, x_2, y_1, y_2) goes in the first dimension from x_1 to x_2 and in the second dimension from y_1 to y_2 .)
+    - inVar1 : the first parameter a_0 for the line f(x)
+    - inVar2 : the slope or gradien (second parameter) a_1 for the line f(x)
+    - inVar3 : first border in dimension 1 (x_1)
+    - inVar4 : second border in dimension 1 (x_2)
+    - inVar5 : first border in dimension 2 (y_1)
+    - inVar6 : second border in dimension 2 (y_2)
+    - subObj1 : the object for the to return part / fraction of a given box is below a line f(x) = a_0 + a_1 * x
+    - subObj1::outVar1 : the part / fraction of a given box which is below a line f(x) = a_0 + a_1 * x
+ - -911 : description : This object evalues wich part / fraction of a given box is above a line f(x) = a_0 + a_1 * x (e. g. for antialising). (The box (x_1, x_2, y_1, y_2) goes in the first dimension from x_1 to x_2 and in the second dimension from y_1 to y_2 .)
+    - inVar1 : the first parameter a_0 for the line f(x)
+    - inVar2 : the slope or gradien (second parameter) a_1 for the line f(x)
+    - inVar3 : first border in dimension 1 (x_1)
+    - inVar4 : second border in dimension 1 (x_2)
+    - inVar5 : first border in dimension 2 (y_1)
+    - inVar6 : second border in dimension 2 (y_2)
+    - subObj1 : the object for the to return part / fraction of a given box is above a line f(x) = a_0 + a_1 * x
+    - subObj1::outVar1 : the part / fraction of a given box which is above a line f(x) = a_0 + a_1 * x
+ - -912 : description : This object evalues wich part / fraction of a given box is right a line f(x) = a_0 + a_1 * x (e. g. for antialising). (The box (x_1, x_2, y_1, y_2) goes in the first dimension from x_1 to x_2 and in the second dimension from y_1 to y_2 .)
+    - inVar1 : the first parameter a_0 for the line f(x)
+    - inVar2 : the slope or gradien (second parameter) a_1 for the line f(x)
+    - inVar3 : first border in dimension 1 (x_1)
+    - inVar4 : second border in dimension 1 (x_2)
+    - inVar5 : first border in dimension 2 (y_1)
+    - inVar6 : second border in dimension 2 (y_2)
+    - subObj1 : the object for the to return part / fraction of a given box is right a line f(x) = a_0 + a_1 * x
+    - subObj1::outVar1 : the part / fraction of a given box which is right a line f(x) = a_0 + a_1 * x
+ - -913 : description : This object evalues wich part / fraction of a given box is left a line f(x) = a_0 + a_1 * x (e. g. for antialising). (The box (x_1, x_2, y_1, y_2) goes in the first dimension from x_1 to x_2 and in the second dimension from y_1 to y_2 .)
+    - inVar1 : the first parameter a_0 for the line f(x)
+    - inVar2 : the slope or gradien (second parameter) a_1 for the line f(x)
+    - inVar3 : first border in dimension 1 (x_1)
+    - inVar4 : second border in dimension 1 (x_2)
+    - inVar5 : first border in dimension 2 (y_1)
+    - inVar6 : second border in dimension 2 (y_2)
+    - subObj1 : the object for the to return part / fraction of a given box is left a line f(x) = a_0 + a_1 * x
+    - subObj1::outVar1 : the part / fraction of a given box which is left a line f(x) = a_0 + a_1 * x
+ - -915 : description : This object evalues wich part / fraction of a given box of hight 1 is below a line f(x) = a_0 + a_1 * x (e. g. for antialising). (The box (x_1, x_2, y ) goes in the first dimension from x_1 to x_2 and in the second dimension from y to y+1 .)
+    - inVar1 : the first parameter a_0 for the line f(x)
+    - inVar2 : the slope or gradien (second parameter) a_1 for the line f(x)
+    - inVar3 : first border in dimension 1 (x_1)
+    - inVar4 : second border in dimension 1 (x_2)
+    - inVar5 : first border in dimension 2 (y)
+    - subObj1 : the object for the to return part / fraction of a given box is below a line f(x) = a_0 + a_1 * x
+    - subObj1::outVar1 : the part / fraction of a given box which is below a line f(x) = a_0 + a_1 * x
+ - -916 : description : This object evalues wich part / fraction of a given box of hight 1 is above a line f(x) = a_0 + a_1 * x (e. g. for antialising). (The box (x_1, x_2, y ) goes in the first dimension from x_1 to x_2 and in the second dimension from y to y+1 .)
+    - inVar1 : the first parameter a_0 for the line f(x)
+    - inVar2 : the slope or gradien (second parameter) a_1 for the line f(x)
+    - inVar3 : first border in dimension 1 (x_1)
+    - inVar4 : second border in dimension 1 (x_2)
+    - inVar5 : first border in dimension 2 (y)
+    - subObj1 : the object for the to return part / fraction of a given box is above a line f(x) = a_0 + a_1 * x
+    - subObj1::outVar1 : the part / fraction of a given box which is above a line f(x) = a_0 + a_1 * x
+ - -917 : description : This object evalues wich part / fraction of a given box of hight 1 is right a line f(x) = a_0 + a_1 * x (e. g. for antialising). (The box (x_1, x_2, y ) goes in the first dimension from x_1 to x_2 and in the second dimension from y to y+1 .)
+    - inVar1 : the first parameter a_0 for the line f(x)
+    - inVar2 : the slope or gradien (second parameter) a_1 for the line f(x)
+    - inVar3 : first border in dimension 1 (x_1)
+    - inVar4 : second border in dimension 1 (x_2)
+    - inVar5 : first border in dimension 2 (y)
+    - subObj1 : the object for the to return part / fraction of a given box is right a line f(x) = a_0 + a_1 * x
+    - subObj1::outVar1 : the part / fraction of a given box which is right a line f(x) = a_0 + a_1 * x
+ - -918 : description : This object evalues wich part / fraction of a given box of hight 1 is right a line f(x) = a_0 + a_1 * x (e. g. for antialising). (The box (x_1, x_2, y ) goes in the first dimension from x_1 to x_2 and in the second dimension from y to y+1 .)
+    - inVar1 : the first parameter a_0 for the line f(x)
+    - inVar2 : the slope or gradien (second parameter) a_1 for the line f(x)
+    - inVar3 : first border in dimension 1 (x_1)
+    - inVar4 : second border in dimension 1 (x_2)
+    - inVar5 : first border in dimension 2 (y)
+    - subObj1 : the object for the to return part / fraction of a given box is right a line f(x) = a_0 + a_1 * x
+    - subObj1::outVar1 : the part / fraction of a given box which is right a line f(x) = a_0 + a_1 * x
+ - -920 : function antialising for below 2 lines
+    - description : This object evalues wich part / fraction of a pixel is below (in f(x) = y = dim 2 direction) of both the lines f_1(x) = a_0 + a_1 * x and f_2(x) = b_0 + b_1 * x (e. g. for antialising).
+    - inVar1 : the first parameter a_0 for the line f_1(x)
+    - inVar2 : the slope or gradien (second parameter) a_1 for the line f_1(x)
+    - inVar3 : the first parameter b_0 for the line f_2(x)
+    - inVar4 : the slope or gradien (second parameter) b_1 for the line f_2(x)
+    - inVar5 : position of the pixle in dimension 1 (x)
+    - inVar6 : position of the pixle in dimension 2 (y)
+    - subObj1 : the object for the to return part / fraction of a pixel is below the lines f_1(x) = a_0 + a_1 * x and f_2(x) = b_0 + b_1 * x
+    - subObj1::outVar1 : the part / fraction of a pixel which is below the lines f_1(x) = a_0 + a_1 * x and f_2(x) = b_0 + b_1 * x
+ - -921 : function antialising for above 2 lines
+    - description : This object evalues wich part / fraction of a pixel is above (in f(x) = y = dim 2 direction) of both the lines f_1(x) = a_0 + a_1 * x and f_2(x) = b_0 + b_1 * x (e. g. for antialising).
+    - inVar1 : the first parameter a_0 for the line f_1(x)
+    - inVar2 : the slope or gradien (second parameter) a_1 for the line f_1(x)
+    - inVar3 : the first parameter b_0 for the line f_2(x)
+    - inVar4 : the slope or gradien (second parameter) b_1 for the line f_2(x)
+    - inVar5 : position of the pixle in dimension 1 (x)
+    - inVar6 : position of the pixle in dimension 2 (y)
+    - subObj1 : the object for the to return part / fraction of a pixel is above the lines f_1(x) = a_0 + a_1 * x and f_2(x) = b_0 + b_1 * x
+    - subObj1::outVar1 : the part / fraction of a pixel which is above the lines f_1(x) = a_0 + a_1 * x and f_2(x) = b_0 + b_1 * x
+ - -922 : function antialising for right of 2 lines
+    - description : This object evalues wich part / fraction of a pixel is right (for f(x) = y = dim 2 direction) of both the lines f_1(x) = a_0 + a_1 * x and f_2(x) = b_0 + b_1 * x (e. g. for antialising).
+    - inVar1 : the first parameter a_0 for the line f_1(x)
+    - inVar2 : the slope or gradien (second parameter) a_1 for the line f_1(x)
+    - inVar3 : the first parameter b_0 for the line f_2(x)
+    - inVar4 : the slope or gradien (second parameter) b_1 for the line f_2(x)
+    - inVar5 : position of the pixle in dimension 1 (x)
+    - inVar6 : position of the pixle in dimension 2 (y)
+    - subObj1 : the object for the to return part / fraction of a pixel is right the lines f_1(x) = a_0 + a_1 * x and f_2(x) = b_0 + b_1 * x
+    - subObj1::outVar1 : the part / fraction of a pixel which is right the lines f_1(x) = a_0 + a_1 * x and f_2(x) = b_0 + b_1 * x
+ - -923 : function antialising for left of 2 lines
+    - description : This object evalues wich part / fraction of a pixel is left (for f(x) = y = dim 2 direction) of both the lines f_1(x) = a_0 + a_1 * x and f_2(x) = b_0 + b_1 * x (e. g. for antialising).
+    - inVar1 : the first parameter a_0 for the line f_1(x)
+    - inVar2 : the slope or gradien (second parameter) a_1 for the line f_1(x)
+    - inVar3 : the first parameter b_0 for the line f_2(x)
+    - inVar4 : the slope or gradien (second parameter) b_1 for the line f_2(x)
+    - inVar5 : position of the pixle in dimension 1 (x)
+    - inVar6 : position of the pixle in dimension 2 (y)
+    - subObj1 : the object for the to return part / fraction of a pixel is left the lines f_1(x) = a_0 + a_1 * x and f_2(x) = b_0 + b_1 * x
+    - subObj1::outVar1 : the part / fraction of a pixel which is left the lines f_1(x) = a_0 + a_1 * x and f_2(x) = b_0 + b_1 * x
+ - -924 : function antialising for below 2 lines f(x) and f(y)
+    - description : This object evalues wich part / fraction of a pixel is below (in f(x) = y = dim 2 direction) of both the lines f_1(x) = a_0 + a_1 * x and f_2(y) = b_0 + b_1 * y (e. g. for antialising).
+    - inVar1 : the first parameter a_0 for the line f_1(x)
+    - inVar2 : the slope or gradien (second parameter) a_1 for the line f_1(x)
+    - inVar3 : the first parameter b_0 for the line f_2(y)
+    - inVar4 : the slope or gradien (second parameter) b_1 for the line f_2(y)
+    - inVar5 : position of the pixle in dimension 1 (x)
+    - inVar6 : position of the pixle in dimension 2 (y)
+    - subObj1 : the object for the to return part / fraction of a pixel is below the lines f_1(x) = a_0 + a_1 * x and f_2(y) = b_0 + b_1 * y
+    - subObj1::outVar1 : the part / fraction of a pixel which is below the lines f_1(x) = a_0 + a_1 * x and f_2(y) = b_0 + b_1 * y
+ - -925 : function antialising for above 2 lines f(x) and f(y)
+    - description : This object evalues wich part / fraction of a pixel is above (in f(x) = y = dim 2 direction) of both the lines f_1(x) = a_0 + a_1 * x and f_2(y) = b_0 + b_1 * y (e. g. for antialising).
+    - inVar1 : the first parameter a_0 for the line f_1(x)
+    - inVar2 : the slope or gradien (second parameter) a_1 for the line f_1(x)
+    - inVar3 : the first parameter b_0 for the line f_2(y)
+    - inVar4 : the slope or gradien (second parameter) b_1 for the line f_2(y)
+    - inVar5 : position of the pixle in dimension 1 (x)
+    - inVar6 : position of the pixle in dimension 2 (y)
+    - subObj1 : the object for the to return part / fraction of a pixel is above the lines f_1(x) = a_0 + a_1 * x and f_2(y) = b_0 + b_1 * y
+    - subObj1::outVar1 : the part / fraction of a pixel which is above the lines f_1(x) = a_0 + a_1 * x and f_2(y) = b_0 + b_1 * y
+ - -926 : function antialising for right 2 lines f(x) and f(y)
+    - description : This object evalues wich part / fraction of a pixel is right (in f(x) = y = dim 2 direction) of both the lines f_1(x) = a_0 + a_1 * x and f_2(y) = b_0 + b_1 * y (e. g. for antialising).
+    - inVar1 : the first parameter a_0 for the line f_1(x)
+    - inVar2 : the slope or gradien (second parameter) a_1 for the line f_1(x)
+    - inVar3 : the first parameter b_0 for the line f_2(y)
+    - inVar4 : the slope or gradien (second parameter) b_1 for the line f_2(y)
+    - inVar5 : position of the pixle in dimension 1 (x)
+    - inVar6 : position of the pixle in dimension 2 (y)
+    - subObj1 : the object for the to return part / fraction of a pixel is right the lines f_1(x) = a_0 + a_1 * x and f_2(y) = b_0 + b_1 * y
+    - subObj1::outVar1 : the part / fraction of a pixel which is right the lines f_1(x) = a_0 + a_1 * x and f_2(y) = b_0 + b_1 * y
+ - -927 : function antialising for left 2 lines f(x) and f(y)
+    - description : This object evalues wich part / fraction of a pixel is left (in f(x) = y = dim 2 direction) of both the lines f_1(x) = a_0 + a_1 * x and f_2(y) = b_0 + b_1 * y (e. g. for antialising).
+    - inVar1 : the first parameter a_0 for the line f_1(x)
+    - inVar2 : the slope or gradien (second parameter) a_1 for the line f_1(x)
+    - inVar3 : the first parameter b_0 for the line f_2(y)
+    - inVar4 : the slope or gradien (second parameter) b_1 for the line f_2(y)
+    - inVar5 : position of the pixle in dimension 1 (x)
+    - inVar6 : position of the pixle in dimension 2 (y)
+    - subObj1 : the object for the to return part / fraction of a pixel is left the lines f_1(x) = a_0 + a_1 * x and f_2(y) = b_0 + b_1 * y
+    - subObj1::outVar1 : the part / fraction of a pixel which is left the lines f_1(x) = a_0 + a_1 * x and f_2(y) = b_0 + b_1 * y
+ - -950 : evalue intersection of lines trougth points
+    - description : This object evalues the intersection of two lines betwean two points each. The line f_1 goes from the point p_1=(x_1, y_1) to p_2=(x_2, y_2). The line f_2 goes from the point p_3=(x_3, y_3) to p_4=(x_4, y_4). The intersection has to be betwaen the points.
+    - inVar1 : position of the first point p_1 in dimension 1 (x_1) for line f_1
+    - inVar2 : position of the first point p_1 in dimension 2 (y_1) for line f_1
+    - inVar3 : position of the second point p_2 in dimension 1 (x_2) for line f_1
+    - inVar4 : position of the second point p_2 in dimension 2 (y_2) for line f_1
+    - inVar5 : position of the 3. point p_3 in dimension 1 (x_3) for line f_2
+    - inVar6 : position of the 3. point p_3 in dimension 2 (y_3) for line f_2
+    - inVar7 : position of the 4. point p_4 in dimension 1 (x_4) for line f_2
+    - inVar8 : position of the 4. point p_4 in dimension 2 (y_4) for line f_2
+    - subObj1 : if and wher the lines intersect
+    - subObj1::outVar1 : the position of the intersection point in dimension 1 (x) if existing or 0
+    - subObj1::outVar2 : the position of the intersection point in dimension 2 (y) if existing or 0
+    - subObj1::outVar3 : 0 if no intersection point exists, else 1
+ - -951 : evalue if point is inside triangle
+    - description : This object evalues if a point p=(x,y) is inside a triangle (excludig border lines). The triangle is given by the points p_1=(x_1, y_1), p_2=(x_2, y_2) and p_3=(x_3, y_3).
+    - inVar1 : position of the point p to check in dimension 1 (x)
+    - inVar2 : position of the point p to check in dimension 2 (y)
+    - inVar3 : position of the first point p_1 in dimension 1 (x_1) for the triangle
+    - inVar4 : position of the first point p_1 in dimension 2 (y_1) for the triangle
+    - inVar5 : position of the second point p_2 in dimension 1 (x_2) for the triangle
+    - inVar6 : position of the second point p_2 in dimension 2 (y_2) for the triangle
+    - inVar7 : position of the 3. point p_3 in dimension 1 (x_3) for the triangle
+    - inVar8 : position of the 3. point p_3 in dimension 2 (y_3) for the triangle
+    - subObj1 : if the point p is inside the triangle
+    - subObj1::outVar1 : 1 if the point p is inside the triangle, else 0
+

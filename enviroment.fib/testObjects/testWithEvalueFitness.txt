@@ -1,0 +1,13 @@
+onePoint
+onePointColorSw
+onePointBgColorSw
+onePointColorRgb
+onePointChecksum
+onePoint1Sound
+onePoint2Sound
+twoPointColorSw
+point2D1C
+point2D2C
+point2D3C
+point3D1C
+

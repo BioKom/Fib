@@ -1,0 +1,666 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fib_object
+			xmlns:xsd="http://www.w3.org/2001/XMLSchema-instance"
+			xmlns="http://www.fib-development.org/"
+			xsd:schemaLocation="http://www.fib-development.org/fib.xsd">
+	<root>
+		<multimedia_info fib_version="3" db_version="2"/>
+		<optionalpart>
+			<pair key="name" value="quadrangle"/>
+			<pair key="description" value="This object represents a quadrangle (box). In the first dimension it goes from x_s to x_e. In the second dimension the area is filled between two lines y_s = f_1( x ) = a_0 + a_1 * x and y_e = f_2( x ) = b_0 + b_1 * x (wher x goes from x_s to x_e). The points of the quadrangle (box) are given back as variables of the subobject."/>
+			<pair key="inVar1::description" value="position start point dimension 1 (x_s)"/>
+			<pair key="inVar2::description" value="position end point dimension 1 (x_e)"/>
+			<pair key="inVar3::description" value="parameter a_0 of the first line function f_1"/>
+			<pair key="inVar4::description" value="parameter a_1 of the first line function f_1"/>
+			<pair key="inVar5::description" value="parameter b_0 of the second line function f_2"/>
+			<pair key="inVar6::description" value="parameter b_1 of the second line function f_2"/>
+			<pair key="subObj1::description" value="The points of the quadrangle (box). The subobject is called for every point on the quadrangle (box)."/>
+			<pair key="subObj1::outVar1::description" value="the position of the quadrangle point in dimension 1 (x)"/>
+			<pair key="subObj1::outVar2::description" value="the position of the quadrangle point in dimension 2 (y)"/>
+			<pair key="author" value="Betti Oesterholz"/>
+			<pair key="author::email" value="Oesterholz@Fib-Development.org"/>
+			<pair key="copyright" value="LGPL3"/>
+		</optionalpart>
+		<input_variables>
+			<variable number="1" default="0"/>
+			<variable number="2" default="0"/>
+			<variable number="3" default="0"/>
+			<variable number="4" default="0"/>
+			<variable number="5" default="0"/>
+			<variable number="6" default="0"/>
+		</input_variables>
+		<domains>
+			<inVar number="1">
+				<domainReference subdomain="1">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="2">
+				<domainReference subdomain="1">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<externSubobject number="1">
+				<vector elements="2">
+					<!--actually any numbers are possible;
+									 the next two lines are just a space holder-->
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+				</vector>
+			</externSubobject>
+			<subfunction>
+				<naturalNumber scalingfactor="0.5" max="1"/>
+			</subfunction>
+		</domains>
+		<main_fib_object>
+			<!-- evalue min x (x_min) and max x (x_max) -->
+			<function define_variable="7">
+				<!-- x_min -->
+				<subfunction>
+					<min>
+						<variable>1</variable>
+						<variable>2</variable>
+					</min>
+				</subfunction>
+				<function define_variable="8">
+					<!-- x_max -->
+					<subfunction>
+						<max>
+							<variable>1</variable>
+							<variable>2</variable>
+						</max>
+					</subfunction>
+					<function define_variable="9">
+						<!-- evalue ceil( x_min ) -->
+						<subfunction>
+							<round>
+								<add>
+									<variable>7</variable>
+									<value>0.5</value>
+								</add>
+							</round>
+						</subfunction>
+						<function define_variable="10">
+							<!-- evalue flour( x_max ) -->
+							<subfunction>
+								<round>
+									<sub>
+										<variable>8</variable>
+										<value>0.5</value>
+									</sub>
+								</round>
+							</subfunction>
+							<!-- if ceil( x_min ) =< flour( x_max ) go from ceil( x_min ) to flour( x_max ) -->
+							<if>
+								<condition>
+									<not>
+										<gr>
+											<variable>9</variable>
+											<variable>10</variable>
+										</gr>
+									</not>
+								</condition>
+								<list>
+									<!-- if ceil( x_min ) < flour( x_max ) go from ceil( x_min ) to flour( x_max ) -->
+									<if>
+										<condition>
+											<lo>
+												<variable>9</variable>
+												<variable>10</variable>
+											</lo>
+										</condition>
+										<area define_variable="11"><!-- x -->
+											<vector type="subarea">
+												<variable>9</variable>
+												<variable>10</variable>
+											</vector>
+											<function define_variable="12">
+												<!-- f_1( x ) = a_0 + a_1 * x -->
+												<subfunction>
+													<add>
+														<variable>3</variable>
+														<mult>
+															<variable>4</variable>
+															<variable>11</variable>
+														</mult>
+													</add>
+												</subfunction>
+												<function define_variable="13">
+													<!-- f_2( x ) = b_0 + b_1 * x -->
+													<subfunction>
+														<add>
+															<variable>5</variable>
+															<mult>
+																<variable>6</variable>
+																<variable>11</variable>
+															</mult>
+														</add>
+													</subfunction>
+													<function define_variable="14">
+														<!-- f_1( x + 1 ) = f_1( x ) + a_1 -->
+														<subfunction>
+															<add>
+																<variable>12</variable>
+																<variable>4</variable>
+															</add>
+														</subfunction>
+														<function define_variable="15">
+															<!-- f_2( x + 1 ) = f_2( x ) + b_1 -->
+															<subfunction>
+																<add>
+																	<variable>13</variable>
+																	<variable>6</variable>
+																</add>
+															</subfunction>
+															<if><!-- f_1( x ) < f_1( x + 1 ) -->
+																<condition>
+																	<lo>
+																		<variable>12</variable>
+																		<variable>14</variable>
+																	</lo>
+																</condition>
+																<!-- fill area from max till min -->
+																<function define_variable="16">
+																	<!-- max( f_1( x ), f_2( x ), min( f_1( x + 1 ), f_2( x + 1 ) ) ) -->
+																	<subfunction>
+																		<max>
+																			<max>
+																				<variable>12</variable>
+																				<variable>13</variable>
+																			</max>
+																			<min><!-- make connection to the part after this pixle line -->
+																				<variable>14</variable>
+																				<variable>15</variable>
+																			</min>
+																		</max>
+																	</subfunction>
+																	<function define_variable="17">
+																		<!-- min( f_2( x ), f_1( x ) ) -->
+																		<subfunction>
+																			<min>
+																				<variable>12</variable>
+																				<variable>13</variable>
+																			</min>
+																		</subfunction>
+																		<area define_variable="18">
+																			<vector type="subarea">
+																				<variable>16</variable>
+																				<variable>17</variable>
+																			</vector>
+																			<subobject number="1">
+																				<vector type="externSubobject">
+																					<variable>11</variable>
+																					<variable>18</variable>
+																				</vector>
+																			</subobject>
+																		</area>
+																	</function>
+																</function>
+																<!-- else f_1( x +1 ) =< f_1( x ) -->
+																<function define_variable="16">
+																	<!-- max( f_1( x ), f_2( x ) ) -->
+																	<subfunction>
+																		<max>
+																			<variable>12</variable>
+																			<variable>13</variable>
+																		</max>
+																	</subfunction>
+																	<function define_variable="17">
+																		<!-- min( f_2( x ), f_1( x ), max( f_1( x + 1 ), f_2( x + 1 ) ) ) -->
+																		<subfunction>
+																			<min>
+																				<min>
+																					<variable>12</variable>
+																					<variable>13</variable>
+																				</min>
+																				<max><!-- make connection to the part after this pixle line -->
+																					<variable>14</variable>
+																					<variable>15</variable>
+																				</max>
+																			</min>
+																		</subfunction>
+																		<area define_variable="18">
+																			<vector type="subarea">
+																				<variable>16</variable>
+																				<variable>17</variable>
+																			</vector>
+																			<subobject number="1">
+																				<vector type="externSubobject">
+																					<variable>11</variable>
+																					<variable>18</variable>
+																				</vector>
+																			</subobject>
+																		</area>
+																	</function>
+																</function>
+															</if>
+														</function>
+													</function>
+												</function>
+											</function>
+										</area>
+										<!-- else do nothing -->
+										<point/>
+									</if>
+									<!-- for line at ceil( x_min ) -->
+									<function define_variable="11">
+										<!-- f_1( x_min ) = a_0 + a_1 * x_min -->
+										<subfunction>
+											<add>
+												<variable>3</variable>
+												<mult>
+													<variable>4</variable>
+													<variable>7</variable>
+												</mult>
+											</add>
+										</subfunction>
+										<function define_variable="12">
+											<!-- f_2( x_min ) = b_0 + b_1 * x_min -->
+											<subfunction>
+												<add>
+													<variable>5</variable>
+													<mult>
+														<variable>6</variable>
+														<variable>7</variable>
+													</mult>
+												</add>
+											</subfunction>
+											<function define_variable="13">
+												<!-- f_1( ceil( x_min ) ) = a_0 + a_1 * ceil( x_min ) -->
+												<subfunction>
+													<add>
+														<variable>3</variable>
+														<mult>
+															<variable>4</variable>
+															<variable>9</variable>
+														</mult>
+													</add>
+												</subfunction>
+												<function define_variable="14">
+													<!-- f_2( ceil( x_min ) ) = b_0 + b_1 * ceil( x_min ) -->
+													<subfunction>
+														<add>
+															<variable>5</variable>
+															<mult>
+																<variable>6</variable>
+																<variable>9</variable>
+															</mult>
+														</add>
+													</subfunction>
+													<function define_variable="15">
+														<!-- evalue flour( x_min ) -->
+														<subfunction>
+															<round>
+																<sub>
+																	<variable>7</variable>
+																	<value>0.5</value>
+																</sub>
+															</round>
+														</subfunction>
+														<if><!-- f_1( x ) < f_1( x + 1 ) -->
+															<condition>
+																<lo>
+																	<variable>11</variable>
+																	<variable>13</variable>
+																</lo>
+															</condition>
+															<!-- fill area from max till min -->
+															<function define_variable="16">
+																<!-- max( f_1( x_min ), f_2( x_min ), min( f_1( ceil( x_min ) ), f_2( ceil( x_min ) ) ) ) -->
+																<subfunction>
+																	<max>
+																		<max>
+																			<variable>11</variable>
+																			<variable>12</variable>
+																		</max>
+																		<min><!-- make connection to the part after this pixle line -->
+																			<variable>13</variable>
+																			<variable>14</variable>
+																		</min>
+																	</max>
+																</subfunction>
+																<function define_variable="17">
+																	<!-- min( f_1( x_min ), f_2( x_min ) ) -->
+																	<subfunction>
+																		<min>
+																			<variable>11</variable>
+																			<variable>12</variable>
+																		</min>
+																	</subfunction>
+																	<area define_variable="18">
+																		<vector type="subarea">
+																			<variable>16</variable>
+																			<variable>17</variable>
+																		</vector>
+																		<subobject number="1">
+																			<vector type="externSubobject">
+																				<variable>15</variable>
+																				<variable>18</variable>
+																			</vector>
+																		</subobject>
+																	</area>
+																</function>
+															</function>
+															<!-- else f_1( ceil( x_min ) ) =< f_1( x_min ) -->
+															<function define_variable="16">
+																<!-- max( f_1( x_min ), f_2( x_min ) ) -->
+																<subfunction>
+																	<max>
+																		<variable>11</variable>
+																		<variable>12</variable>
+																	</max>
+																</subfunction>
+																<function define_variable="17">
+																	<!-- min( f_2( x_min ), f_1( x_min ), max( f_1( ceil( x_min ) ), f_2( ceil( x_min ) ) ) ) -->
+																	<subfunction>
+																		<min>
+																			<min>
+																				<variable>11</variable>
+																				<variable>12</variable>
+																			</min>
+																			<max><!-- make connection to the part after this pixle line -->
+																				<variable>13</variable>
+																				<variable>14</variable>
+																			</max>
+																		</min>
+																	</subfunction>
+																	<area define_variable="18">
+																		<vector type="subarea">
+																			<variable>16</variable>
+																			<variable>17</variable>
+																		</vector>
+																		<subobject number="1">
+																			<vector type="externSubobject">
+																				<variable>15</variable>
+																				<variable>18</variable>
+																			</vector>
+																		</subobject>
+																	</area>
+																</function>
+															</function>
+														</if>
+													</function>
+												</function>
+											</function>
+										</function>
+									</function>
+									<!-- for line at flour( x_max )
+										go from max( f_1( x_max ), f_2( x_max ) )-->
+									<function define_variable="11">
+										<!-- f_1( flour( x_max ) ) = a_0 + a_1 * flour( x_max ) -->
+										<subfunction>
+											<add>
+												<variable>3</variable>
+												<mult>
+													<variable>4</variable>
+													<variable>10</variable>
+												</mult>
+											</add>
+										</subfunction>
+										<function define_variable="12">
+											<!-- f_2( flour( x_max ) ) = b_0 + b_1 * flour( x_max ) -->
+											<subfunction>
+												<add>
+													<variable>5</variable>
+													<mult>
+														<variable>6</variable>
+														<variable>10</variable>
+													</mult>
+												</add>
+											</subfunction>
+											<function define_variable="13">
+												<!-- f_1( x_max ) = a_0 + a_1 * x_max -->
+												<subfunction>
+													<add>
+														<variable>3</variable>
+														<mult>
+															<variable>4</variable>
+															<variable>8</variable>
+														</mult>
+													</add>
+												</subfunction>
+												<function define_variable="14">
+													<!-- f_2( x_max ) = b_0 + b_1 * x_max -->
+													<subfunction>
+														<add>
+															<variable>5</variable>
+															<mult>
+																<variable>6</variable>
+																<variable>8</variable>
+															</mult>
+														</add>
+													</subfunction>
+													<if><!-- f_1( x ) < f_1( x + 1 ) -->
+														<condition>
+															<lo>
+																<variable>11</variable>
+																<variable>13</variable>
+															</lo>
+														</condition>
+														<!-- fill area from max till min -->
+														<function define_variable="15">
+															<!-- max( f_1( flour( x_max ) ), f_2( flour( x_max ) ) , min( f_1( x_max ), f_2( x_max ) ) ) -->
+															<subfunction>
+																<max>
+																	<max>
+																		<variable>11</variable>
+																		<variable>12</variable>
+																	</max>
+																	<min><!-- make connection to the part after this pixle line -->
+																		<variable>13</variable>
+																		<variable>14</variable>
+																	</min>
+																</max>
+															</subfunction>
+															<function define_variable="16">
+																<!-- min( f_1( flour( x_max ) ), f_2( flour( x_max ) ) ) -->
+																<subfunction>
+																	<min>
+																		<variable>11</variable>
+																		<variable>12</variable>
+																	</min>
+																</subfunction>
+																<area define_variable="17">
+																	<vector type="subarea">
+																		<variable>15</variable>
+																		<variable>16</variable>
+																	</vector>
+																	<subobject number="1">
+																		<vector type="externSubobject">
+																			<variable>10</variable>
+																			<variable>17</variable>
+																		</vector>
+																	</subobject>
+																</area>
+															</function>
+														</function>
+														<!-- else f_1( x_max ) =< f_1( flour( x_max ) ) -->
+														<function define_variable="15">
+															<!-- max( f_1( flour( x_max ) ), f_2( flour( x_max ) ) ) -->
+															<subfunction>
+																<max>
+																	<variable>11</variable>
+																	<variable>12</variable>
+																</max>
+															</subfunction>
+															<function define_variable="16">
+																<!-- min( f_1( flour( x_max ) ), f_2( flour( x_max ) ), max( f_2( x_max ), f_1( x_max ) ) ) -->
+																<subfunction>
+																	<min>
+																		<min>
+																			<variable>11</variable>
+																			<variable>12</variable>
+																		</min>
+																		<max><!-- make connection to the part after this pixle line -->
+																			<variable>13</variable>
+																			<variable>14</variable>
+																		</max>
+																	</min>
+																</subfunction>
+																<area define_variable="17">
+																	<vector type="subarea">
+																		<variable>15</variable>
+																		<variable>16</variable>
+																	</vector>
+																	<subobject number="1">
+																		<vector type="externSubobject">
+																			<variable>10</variable>
+																			<variable>17</variable>
+																		</vector>
+																	</subobject>
+																</area>
+															</function>
+														</function>
+													</if>
+												</function>
+											</function>
+										</function>
+									</function>
+								</list>
+								
+								<!-- else if flour( x_max ) < ceil( x_min ) go from ceil( x_min ) to flour( x_max ) -->
+								<function define_variable="11">
+									<!-- f_1( x_min ) = a_0 + a_1 * x_min -->
+									<subfunction>
+										<add>
+											<variable>3</variable>
+											<mult>
+												<variable>4</variable>
+												<variable>7</variable>
+											</mult>
+										</add>
+									</subfunction>
+									<function define_variable="12">
+										<!-- f_2( x_min ) = b_0 + b_1 * x_min -->
+										<subfunction>
+											<add>
+												<variable>5</variable>
+												<mult>
+													<variable>6</variable>
+													<variable>7</variable>
+												</mult>
+											</add>
+										</subfunction>
+										<function define_variable="13">
+											<!-- f_1( ceil( x_min ) ) = a_0 + a_1 * x_max -->
+											<subfunction>
+												<add>
+													<variable>3</variable>
+													<mult>
+														<variable>4</variable>
+														<variable>8</variable>
+													</mult>
+												</add>
+											</subfunction>
+											<function define_variable="14">
+												<!-- f_2( ceil( x_min ) ) = b_0 + b_1 * x_max -->
+												<subfunction>
+													<add>
+														<variable>5</variable>
+														<mult>
+															<variable>6</variable>
+															<variable>8</variable>
+														</mult>
+													</add>
+												</subfunction>
+												<if><!-- f_1( x ) < f_1( x + 1 ) -->
+													<condition>
+														<lo>
+															<variable>11</variable>
+															<variable>13</variable>
+														</lo>
+													</condition>
+													<!-- fill area from max till min -->
+													<function define_variable="15">
+														<!-- max( f_1( x_min ), f_2( x_min ), min( f_1( x_max ), f_2( x_max ) ) ) -->
+														<subfunction>
+															<max>
+																<max>
+																	<variable>11</variable>
+																	<variable>12</variable>
+																</max>
+																<min><!-- make connection to the part after this pixle line -->
+																	<variable>13</variable>
+																	<variable>14</variable>
+																</min>
+															</max>
+														</subfunction>
+														<function define_variable="16">
+															<!-- min( f_1( x_min ), f_2( x_min ) ) -->
+															<subfunction>
+																<min>
+																	<variable>11</variable>
+																	<variable>12</variable>
+																</min>
+															</subfunction>
+															<area define_variable="17">
+																<vector type="subarea">
+																	<variable>15</variable>
+																	<variable>16</variable>
+																</vector>
+																<subobject number="1">
+																	<vector type="externSubobject">
+																		<variable>10</variable>
+																		<variable>17</variable>
+																	</vector>
+																</subobject>
+															</area>
+														</function>
+													</function>
+													<!-- else f_1( x_max ) =< f_1( x_min ) -->
+													<function define_variable="15">
+														<!-- max( f_1( x_min ), f_2( x_min ) ) -->
+														<subfunction>
+															<max>
+																<variable>11</variable>
+																<variable>12</variable>
+															</max>
+														</subfunction>
+														<function define_variable="16">
+															<!-- min( f_2( x_min ), f_1( x_min ), max( f_1( x_max ), f_2( x_max ) ) ) -->
+															<subfunction>
+																<min>
+																	<min>
+																		<variable>11</variable>
+																		<variable>12</variable>
+																	</min>
+																	<max><!-- make connection to the part after this pixle line -->
+																		<variable>13</variable>
+																		<variable>14</variable>
+																	</max>
+																</min>
+															</subfunction>
+															<area define_variable="17">
+																<vector type="subarea">
+																	<variable>15</variable>
+																	<variable>16</variable>
+																</vector>
+																<subobject number="1">
+																	<vector type="externSubobject">
+																		<variable>10</variable>
+																		<variable>17</variable>
+																	</vector>
+																</subobject>
+															</area>
+														</function>
+													</function>
+												</if>
+											</function>
+										</function>
+									</function>
+								</function>
+								
+							</if>
+						</function>
+					</function>
+				</function>
+			</function>
+		</main_fib_object>
+	</root>
+</fib_object>

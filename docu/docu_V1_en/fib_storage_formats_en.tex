@@ -1,0 +1,1988 @@
+%
+% Copyright (c) 2011  Betti Österholz
+%
+% Permission is granted to copy, distribute and/or modify this document
+% under the terms of the GNU Free Documentation License, Version 1.2 or
+% any later version published by the Free Software Foundation;
+% with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+%
+% A copy of the license is included in the file ``fdl.tex'' .
+%
+% The file contains the documentation for the fib-storage formats.
+%
+
+
+\newpage
+\part{Fib storage format}
+\label{partFileFormat}
+
+In this section, the Fib storage formats are presented, in which complete Fib objects can be stored. There are two Fib storage formats: a format for compressed storing (see section \ref{fibCompressing} on page \pageref{fibCompressing}) and a format to represent a Fib object as a readable XML structure (see section \ref{xmlFormat} on page \pageref{xmlFormat}).
+
+
+\section{Compressed storing of Fib objects}\index{compressing}\index{format!compressed}
+\label{fibCompressing}
+
+Since a space-saving representation is one of the main objectives of the Fib multi\-media description language, the Fib elements can be stored with few bits respectively bytes. For this a compressed storage format is defined here. Ther will be no standard compression algorithm used, since it would take no account of the specific characteristics of the Fib multimedia description language.
+
+%Die Struktur der komprimierten Daten entspricht weitesgehend der Struktur des XML-Formats, siehe \ref{xmlFormat}.
+
+
+The representation of \textbf{integers} is in two's complement system. For \textbf{natural numbers} (including the $0$) the binary numeral system is used. The number of bits for vector elements or variables are determined by the corresponding domain (e.g. for numbers for the horizontal dimension or a grayscale value) or fixed specified (for example, numbers for the byte offset in the root-elements).
+
+%endianess
+\textbf{Real numbers} are stored as floating point numbers. The number of bits for the exponent and mantissa are given by the respective domain definition.
+
+The numbers are stored in little endian format.
+
+All \textbf{texts} are encoded in Unicode.
+
+Unfortunately, in the following description the \textbf{notation of the bits} isn't easy to implement. In the normal form (or spelling) numbers are written from right to left, but text is written from left to right. This means that short bit sequences, as they appear in a byte, are written rather how numbers are written from right to left. However, if the bit sequences gets longer or when the bits are considered in a file or data stream, writing them as in the spelling of text from left to right is more appropriate. Otherwise, if the number notation would be used, at the end of a long line of bits the first bit from the file would stand.
+
+Therefore, in the following the bits of individual elements such as numbers are written from right to left, as they are usually short bit sequences. Individual elements are usually also displayed and processed on the computer in the hexadecimal system, which works, as well as numbers, from right to left. The reverse writing would make it difficult to work with compressed elements. The bits of individual bytes are for clarity mostly separated with a semicolon (';').
+
+If, however, a series (or stream) of several elements in a data stream is displayed, the bits are arranged like in text from left to right. This unfortunately leads to the fact, that the bits of each element are presented in reverse order.
+
+%9 Fib Elemente plus root
+
+
+\subsection{File Header}
+
+Every compressed Fib data stream begins with the three letters ``fib''. The file extension for compressed Fib files should ``.fib''.
+
+
+\subsection{Root-element}\index{root-element|(}
+\label{secCompressedRootElement}
+
+For the description of the root-element see section \ref{fibRootElement} on page \pageref{fibRootElement} .
+
+The Fib root-element does not need a separate introduction. The data of the top most root-element starts with the third byte (the counting starts from 0) immediately after the stream initiation of ``fib''. Other root-elements follow after their identifiers.
+
+\bigskip\noindent
+For the root-element the following fields are written sequentially (where each element is filled in each case if needed to a full byte with $0$):
+\begin{enumerate}
+ \item 16-bit field to specify the optional information fields (see section \ref{secCompressedOptionlInfos})
+ \item 64-bit field to specify additional optional information fields (see section \ref{secCompressedOptionlInfos}); only present if the bit 16 of the optional information field is set
+ \item a 144 ($= 16 +64 +64$)-bit field for the checksum (see section \ref{secCompressedRootChecksumm} on page \pageref{secCompressedRootChecksumm}); only present if bit 1 of the optional information fields is set
+ \item number of the byte of the root-object (offset), from which the domains ($Domains$ and $DomainsValues$) are defined; only present if the bit 3 of the optional information field is set
+ \item number of the byte of the root-object (offset), from which the input variables are defined; only present if bit 4 of the optional information field is set
+ \item number of the byte of the root-object (offset), at which the main-Fib-object begins
+ \item number of the byte of the root-object (offset), from which the sub-root-objects are defined; only present if bit 6 of the optional information field is set
+ \item number of the byte of the root-object (offset), from which the database identifiers are listed; only present if bit 7 of the optional information field is set
+ \item number of the byte of the root-object (offset), at which optional part begins; only present if bit 8 of the optional information field is set
+ \item number of the byte of the root-object (offset), at which root-object ends, respectively the number of byts the root-object is long
+ \item the multimedia information (see section \ref{secCompressedMultimediainfo} on page \pageref{secCompressedMultimediainfo}), only present if bit 2 of the optional information field is set
+ \item the domains (see section \ref{secCompressedDefinitionranges} on page \pageref{secCompressedDefinitionranges}); only present if bit 3 of the optional information field is set
+ \item input variables (see section \ref{secCompressedRootInputVar} on page \pageref{secCompressedRootInputVar}); only present if bit 4 of the optional information field is set
+ \item main-Fib-object (see section \ref{secCompressedRootMainObject} on page \pageref{secCompressedRootMainObject})
+ \item sub-root-objects (see section \ref{secCompressedRootSubRoot} on page \pageref{secCompressedRootSubRoot}); only present if bit 6 of the optional information field is set
+ \item database identifiers of used database objects (see section \ref{secCompressedRootDBIdentifier} on page \pageref{secCompressedRootDBIdentifier}); only present if bit 7 of the optional information field is set
+\item the optional part compressed with the Deflate-algorithm for the lossless data compression (see section \ref{secCompressedRootOptionalPart} on page \pageref{secCompressedRootOptionalPart}); only present if bit 8 of the optional information field is set
+\end{enumerate}
+
+If a single bit is not set in the optional information fields for a field, this field is omitted.
+
+For fields with the ``number of the byte of the root-object, at which ...'' 8 bytes or 64 bits are used each. The number in the field is in the domain of the natural numbers. Given in each case is the number of the byte, from the beginning of the root-element, at which the corresponding element beginns (i.e. for the first byte of the element). The count of bytes in the root-element starts at 0 . The optional information field thus has the offset 0 .
+
+All texts that are not contained in the optional part, are moved into the optional part (see section \ref{secCompressedRootOptionalPart} on page \pageref{secCompressedRootOptionalPart}).
+
+
+\subsubsection{Optional information fields}\index{optional information fields}
+\label{secCompressedOptionlInfos}
+
+At this point a 16-bit fild stands, whose bits indicate the presence of optional information fields in the root-element.
+
+\bigskip\noindent
+The individual bits (counting starts with 1) switch the following information fields:
+\begin{itemize}
+ \item [1] checksum (see section \ref{secCompressedRootChecksumm} on page \pageref{secCompressedRootChecksumm})
+ \item [2] multimedia information (see section \ref{secCompressedMultimediainfo} on page \pageref{secCompressedMultimediainfo})
+ \item [3] domains (see section \ref{secCompressedDefinitionranges} on page \pageref{secCompressedDefinitionranges})
+ \item [4] input variables (see section \ref{secCompressedRootInputVar} on page \pageref{secCompressedRootInputVar})
+ \item [6] the sub-root-objects (see section \ref{secCompressedRootSubRoot} on page \pageref{secCompressedRootSubRoot})
+ \item [7] identifiers of used database objects (see section \ref{secCompressedRootDBIdentifier} on page \pageref{secCompressedRootDBIdentifier})
+ \item [8] optional part (see section \ref{secCompressedRootOptionalPart} on page \pageref{secCompressedRootOptionalPart})
+ \item bits 9 till 15 have not been established and are available for future use
+ \item [16] additional optional fields, indicated by a following 64-bit field for additional optional information fields
+\end{itemize}
+
+The following section describes the individual bits, when they are used and their impact.
+
+
+\paragraph{1. checksum bit}\index{checksum}
+
+\ \\\\\noindent
+\textbf{If set:} An checksum field in the root-element exists.
+
+\bigskip\noindent
+\textbf{Effect if set:}
+A checksum field (see section \ref{secCompressedRootChecksumm} on page \pageref{secCompressedRootChecksumm}) exists.
+
+\bigskip\noindent
+\textbf{If not set:} Ther is no checksum field in the root-element.
+
+\bigskip\noindent
+\textbf{Effect if not set:}
+A checksum field dosn't exists.
+
+
+\paragraph{2. multimedia information bit}\index{multimedia information}
+
+\ \\\\\noindent
+\textbf{Is set if:} For the current root-element multimedia information exist, which may differ from the inherited multimedia information. The multimedia information from a root-element will be inherited by a contained root-element, when the contained root-element does not define itself (any) different multimedia information.
+%TODO Olli: Bitte "`eindeutschen"': "`... an in diesem enthaltende root-elemente vererbt,..."' (vorheriger Satz)
+
+\bigskip\noindent
+\textbf{Effect if set:}
+The current root-element specifies own multimedia information (see section \ref{secCompressedMultimediainfo} on page \pageref{secCompressedMultimediainfo}).
+
+\bigskip\noindent
+\textbf{If not set:} The multimedia information are the same as the inherited multimedia information.
+
+In the top most root-element (respectively a root-element that exists in no other root-element), the bit must always be set, and thus the multimedia information have to be present.
+
+\bigskip\noindent
+\textbf{Effect if not set:}
+There are no multimedia information given in the current root-element. The valid multimedia information for the root-element are inherited from the root-element in which it is contained.
+
+
+\paragraph{3. domains bit}\index{domains}
+
+\ \\\\\noindent
+\textbf{Is set if:} For the current root-element domains exists.
+
+\bigskip\noindent
+\textbf{Effect if set:}
+For the current root-element domains are given (see section \ref{secCompressedDefinitionranges} on page \pageref{secCompressedDefinitionranges}) and the offset, at which byte they start in the root-element.
+
+\bigskip\noindent
+\textbf{If not set:} For the current root-element no domains exists.
+
+\bigskip\noindent
+\textbf{Effect if not set:}
+No offset is given for the domains in the current root-element and no domains are given.
+
+
+\paragraph{4. input variables}\index{input variables}
+
+\ \\\\\noindent
+\textbf{Is set if:} For the current root-element input variables exists.
+
+\bigskip\noindent
+\textbf{Effect if set:}
+For the current root-element input variables are given (see section \ref{secCompressedRootInputVar} on page \pageref{secCompressedRootInputVar}) and the offset, at which byte they start in the root-element.
+
+\bigskip\noindent
+\textbf{If not set:} For the current root-element no input variables exists.
+
+\bigskip\noindent
+\textbf{Effect if not set:}
+No offset is given for the input variables in the current root-element and no input variables are given in the current root-element.
+
+
+\paragraph{6. sub-root-objects}\index{sub-root-objects}
+
+\ \\\\\noindent
+\textbf{Is set if:} For the current root-element sub-root-objects exists.
+
+\bigskip\noindent
+\textbf{Effect if set:}
+For the current root-element sub-root-objects are given (see section \ref{secCompressedRootSubRoot} on page \pageref{secCompressedRootSubRoot}) and the offset, at which byte they start in the root-element.
+
+\bigskip\noindent
+\textbf{If not set:} For the current root-element no sub-root-objects exists.
+
+\bigskip\noindent
+\textbf{Effect if not set:}
+No offset is given for the sub-root-objects in the current root-element and no sub-root-objects are given in the current root-element.
+
+
+\paragraph{7. identifiers of used database objects}\index{database!used identifiers}
+
+\ \\\\\noindent
+\textbf{Is set if:} For the current root-element identifiers of used database objects are listed.
+
+\bigskip\noindent
+\textbf{Effect if set:}
+For the current root-element identifiers of used database objects are listed (see section \ref{secCompressedRootDBIdentifier} on page \pageref{secCompressedRootDBIdentifier}) and the offset, at which byte they start in the root-element.
+
+\bigskip\noindent
+\textbf{If not set:} For the current root-element no identifiers of used database objects are listed.
+
+\bigskip\noindent
+\textbf{Effect if not set:}
+No offset is given for the identifiers of used database objects in the current root-element and no identifiers of used database objects are given in the current root-element.
+
+
+\paragraph{8. optional part}\index{optional part}
+
+\ \\\\\noindent
+\textbf{Is set if:} For the current root-element an optional part exists.
+
+\bigskip\noindent
+\textbf{Effect if set:}
+For the current root-element an optional part exists (see section \ref{secCompressedRootOptionalPart} on page \pageref{secCompressedRootOptionalPart}) and the offset, at which byte it starts in the root-element.
+
+\bigskip\noindent
+\textbf{If not set:} For the current root-element no optional part exists (maybe because it was not stored to save space).
+
+\bigskip\noindent
+\textbf{Effect if not set:}
+No offset is given for the optional part in the current root-element and no optional part is given in the current root-element.
+
+
+\paragraph{16. more optional fields}
+
+\ \\\\\noindent
+\textbf{Is set if:} 64 more optional information bits are present.
+
+\bigskip\noindent
+\textbf{Effect if set:}
+After the 16-bit field, to determine the existing optional information, follows one additional 64-bit field for the determination more optional information. These bits are for future uses and are currently not used.
+
+\bigskip\noindent
+\textbf{If not set:} The 64 more optional information bits are not present.
+
+\bigskip\noindent
+\textbf{Effect if not set:}
+After the 16-bit field no more bits follow for additional optional information.
+
+
+\subsubsection{Checksum field}\index{checksum}
+\label{secCompressedRootChecksumm}
+
+With this field a checksum can be provided for the root-element.
+
+The procedure is identical to the procedure of the checksum property from section \ref{secCompressedChecksumm} on page \pageref{secCompressedChecksumm}.
+
+At this position there are 3 parameters, which are one 16-bit and two 64 bit integers. The first parameter $A$ is the type of checksum. The second parameter $B$ is any number of bits, a checksum should be generated and the third parameter $C$, how many bits the checksum should have. The information applies to the area after the three parameters (even in sub-root-elements). The checksum is implemented as described in section \ref{secCompressedChecksumm} on page \pageref{secCompressedChecksumm}.
+
+
+\subsubsection{Multimedia information}\index{multimedia information}
+\label{secCompressedMultimediainfo}
+
+In Table \ref{tableCompressedMultimediainfo} the structure of the multimedia information section of a root-element is described.
+The size of the  multimedia information section is $2 * 64 = 128$ bits or $16$ bytes.
+
+\begin{table}[htbp]
+\begin{center}
+\begin{tabular}{|p{20mm}|p{7mm}|p{7mm}|p{16mm}|p{70mm}|}\hline
+	element & num\-ber & bits & typ & description \\\hline\hline
+	Fib version & 1 & 64 & natural number & The version number of the Fib multimedia description language, which is required to load the Fib object. This number increases with each new version of the Fib multimedia description language by one. It can be mapped to a human-readable form (e.g. ``Fib V1.2.3''). Here, however, only a number is used, otherwise a particular form would be used, which can be changed only with difficulty afterwards. A human-readable form of the version may be specified in the optional part.\\\hline
+	DB-version & 1 & 64 & natural number &  The version number of the Fib database, which is required to load the Fib object. This number increases with each new version of the Fib database by one. It can be mapped to a human-readable form (e.g. ``Fib DB V1.2.3''). Here, however, only a number is used, otherwise a particular form would be used, which can be changed only with difficulty afterwards. A human-readable form of the version may be specified in the optional part.\\\hline
+\end{tabular}
+\end{center}
+\caption{Data of the multimedia information}
+\label{tableCompressedMultimediainfo}
+\end{table}
+
+
+\subsubsection{Domains}
+\label{secCompressedDefinitionranges}\label{secCompressedDomains}
+\index{value domains}\index{domains|(}
+
+The domain section consists of two lists with entries of different length. The lengths of entries are determined by ther content.
+
+The domain section starts with a 64 bit integer that pecifies the number of entries for the domain list. After which follows the domain list.
+
+This list in turn is followed by a 64 bit integer that specifies the number of elements in the value domains list (the domains for values), and then the list with the value domains.
+
+In this, one or both lists can be empty. For an empty lists only the introductory 64-bit number will be stored, which is in that case 0 .
+
+The domain list identifies the domains of the individual elements. If a value (e.g. a variable) is outside the domain, it is rounded to a value within the domain. Values outside these domains can thus not occur for the element.
+
+The domains for values contain also domains, but these domains only apply to actual values in elements and not for values of contained variables. The domains for values will determine how many bits are needed to store an element that contains a value.
+%TODO weg: Superset of the set of values to an element in the domains for values should always be the value set of the corresponding domain in the domain list (or inherited genuine domain). 
+The domains for values are useful when the values of an element do not cover the full possible range of the domain for the element. For example, if a subobject contains only points whose position vectors only contain variables and integer values between 0 and 10, the domain for values for position vectors can be set to ``integerB'' with 4 bits, even if the variables of position vectors taking values greater 100 .
+
+%TODO? besser runden
+If while saving a value is found in main-Fib-object that lies outside of the actual domain of the element, the domain is automatically expanded so that it includes the value. If the domain was inherited, in the root-element a corresponding new domain is created, which includes the value and the inherited domain.
+
+The domains for values may be generated and optimized when storing the Fib object, to keep the space for the Fib object as small as possible. A domain for values is generated when saving, if it is likely that through its generation space will be saved.
+
+Because many domains can belong to a Fib multimedia object, for them more attention is paid to their storage space. To make future upgrades easy, the emphasis is on flexibility.
+
+The reason for the introduction of central (in the root-elements) domains is, that on the one hand as little space as possible for values should be used when saving the Fib object, without drastically limit the assignment possibilities for the values and on other hand that it can be determined in advance if and how the multimedia object can be displayed (e.g. if and how it should be scaled or whether the display of all values is impossible). If for example, the domain for the dimension takes only integer values between 0 and 50 (e.g. the horizontal in an image), then 6 bits is enough to store the values for the dimension. For larger images simply more bits for the values of the dimension can be used.
+
+\bigskip\noindent
+Each entry consists of two parts:
+\begin{enumerate}
+ \item The name / type of the element for which the domain is (see section \ref{secCompressedDefinitionrangesElements}).
+ \item The specification of the domain for the element (see section \ref{secCompressedDefinitionrangesArea}).
+\end{enumerate}
+
+
+\paragraph{Element names}
+\label{secCompressedDefinitionrangesElements}
+
+The element name / type can only consist of the specification of a fixed element or a fixed element and a parameter.
+
+\bigskip\noindent
+The first bit (counting begins at 1) of the fixed element determines its length:
+\begin{itemize}
+ \item If it is $0$, the name is 8 bits long. Possible values are listed in table \ref{tableFixElementsForDefinitionRanges} .
+ \item If it is $1$, the name is 64 bits long. This is currently only planned for a future use.
+\end{itemize}
+
+\bigskip\noindent
+The second and third bits determine the length of the parameter:
+\begin{itemize}
+ \item[00] ther is no parameter
+ \item[01] parameter with a total length of 8 bits follows
+ \item[10] parameter with a total length of 64 bits follows
+ \item[11] After the element name field follows an 16 bit natural number, wich specifies the parameter length in bytes. The 16 bits for the length of the parameters are not included in the evaluation for the parameter length.
+\end{itemize}
+
+
+\begin{center}
+\begin{longtable}{|p{25mm}|p{15mm}|p{85mm}|}\hline
+	name & value bit 4 till 8 & description \\\hline\endhead
+	dim & 0000 1 & The domain is for position vectors (see section \ref{secFibPoint} on page \pageref{secFibPoint} and section \ref{secCompressedPoint} on page \pageref{secCompressedPoint}) respectively dimensions. The length of the parameter list is variable. The second and third bit is thus $11$ and after bit 8 follows a 16 bit natural number $L$, which specifies the length in bytes of the parameter list. The first parameter following is a 16 bit natural number and specifies the number of dimension $Dim$. Then $Dim$ more parameters $Dimmap_1$ till $Dimmap_{Dim}$ follow up, they are a natural numbers with each of them of the length $L_{Dimmap}=\lfloor((L-2) * 8)/Dim\rfloor$ (per parameter the still remaining bits of the parameter $L$ divided by the number of dimensions and the result is rounded to an integer). The values that can be taken by the $Dimmap_i$ parameters are described in table \ref{tableDimmapValues} on page \pageref{tableDimmapValues}. The length of the parameter list $L$ is to be determined in such a way, that it is just enough room for all parameters.\\\hline
+	subfunction & 0001 0 & domain for the elements of subfunctions (see section \ref{secFibFunction} on page \pageref{secFibFunction} and section \ref{secCompressedFunctions} on page \pageref{secCompressedFunctions})\\\hline
+	property & 0010 0 & This is the domain of a property element with the given name (see section \ref{secFibProperty} on page \pageref{secFibProperty} and section \ref{secCompressedProperty} on page \pageref{secCompressedProperty}). The value for the name respectively the property type is passed in the parameter. Possible values are listed in table \ref{tablePropertyNamen} on page \pageref{tablePropertyNamen}. The value that is specified as a parameter, is a natural number. The parameter is only so long (e.g. 8 bits), as for the representation of the value as a natural number from table \ref{tablePropertyNamen} is required.\\\hline
+	inVar & 0010 1 & This is the domain for the i'th input variable (see section \ref{fibRootElement} on page \pageref{fibRootElement} and section \ref{secCompressedRootInputVar} on page \pageref{secCompressedRootInputVar}). The following parameter is an integer and specifies the number $i$ of the input variable. (The count of the input variables of a root-element starts with 1.) \\\hline
+
+	\multicolumn{3}{|c|}{\textbf{Names for elements of domains, which are created (if needed)}}\\
+	\multicolumn{3}{|c|}{\textbf{when storing a Fib object}}\\\hline
+
+	area & 0001 1 & This type is for domains for the area element (see section \ref{fibArea} on page \pageref{fibArea} and section \ref{secCompressedArea} on page \pageref{secCompressedArea}).  The corresponding domain is a vector domain with 2 elements / subdomains. The first element or the first subdomain is used for the number ($n$) of subareas / vectors, it is part of the domain of the natural numbers. The second element is the domain for the subareas ($B_{1}$), it is a vector domain with two elements or subdomains, each of which come from the domain of integers. \\\hline
+	variable & 1000 1 & Values that are needed to encode variables. The domain should include the natural numbers from 0 to maximum number of variables defined in the Fib leafs in the main-Fib object. The Fib tree-leaf in the main-Fib-object above which the most variables are defined respectively the branch with the most defined variables, thus determins the domain. This entry is created when saving.\\\hline
+	comments & 1001 0 & Values that are needed to encode comments (see section \ref{secFibComment} on page \pageref{secFibComment}, section \ref{secCompressedRootOptionalPart} on page \pageref{secCompressedRootOptionalPart} and section \ref{secCompressedComments} on page \pageref{secCompressedComments}). The domain should include the natural numbers from 0 to the number of comments in the main-Fib-object. This entry is created when saving.\\\hline
+%free 10011-10111
+	externObject & 1100 0 & This is the domain type for external objects (see section \ref{fibExtObject} on page \pageref{fibExtObject} and section \ref{secCompressedExternObjects} on page \pageref{secCompressedExternObjects}) in the main-Fib-object. The domain is a vector with 4 elements. The vector elements are in ther the order for the identifier, the number of input values, the number of subobjects and the number of output variables. All vector element domains, except for the identifier, are part of the natural numbers. The vector element domain for the identifier is part of the integers. This domain is usually created when saving.\\\hline
+	externObject\-Input & 1110 0 & This domain is for the input values for external objects (see section \ref{fibExtObject} on page \pageref{fibExtObject} and section \ref{secCompressedExternObjects} on page \pageref{secCompressedExternObjects}) . The domain is an vector domain and is usually created when saving. The following parameter is an integer and determines the identifier of the external object, for which elements the domain is.\\\hline
+	externSubobject & 1100 1 & This domain type is for the input values for external subobjects (see section \ref{fibSubobject} on page \pageref{fibSubobject} and section \ref{secCompressedExternSubobjects} on page \pageref{secCompressedExternSubobjects}). The domain is an vector domain and is usually created when saving. The following parameter is a natural number and determines the number of the external subobject, for which elements the domain is.\\\hline
+	setElement & 1101 0 & This type is for the domain for the set-element (see section \ref{secFibSetElement} on page \pageref{secFibSetElement} and section \ref{secCompressedFibSet} on page \pageref{secCompressedFibSet}). The corresponding domain is a vector domain with 3 elements / subdomains. The first element or the first subdomain is used for the number ($n$) of variables and number of values to be set per set, it is part of the domain of the natural numbers. The second element or the second subdomain is used for the number ($k$) of the sets of values to be set. It is also part of the domain of the natural numbers. The third and final element is the domain for the vectors for the values to be set ($W_{i.g}$) and is a domain for vectors, which element- or subdomains are domains for numbers (scalar). Further as parameter a natural number can be specified for the domain number $DomainNr$. If the parameter is missing, the domain number $DomainNr$ is $0$ .\\\hline
+	matrixElement & 1101 1 & This type is for the domain for the matrix element (see section \ref{secFibMatrixElement} on page \pageref{secFibMatrixElement} and section \ref{secCompressedFibMatrix} on page \pageref{secCompressedFibMatrix}). The corresponding domain is a vector domain with 4 elements / subdomains. The first element or the first subdomain is used for the number ($d$) of dimension variables, the number $i$ of value variables and number of values $i$ to be set per set, it is part of the domain of the natural numbers. The second element or the second subdomain is used for the number ($k$) of the sets of values to be set. It is also part of the domain of the natural numbers. The third element is the domain for the areas respectively for the start and end values for the different dimension variables, it is a vector domain with two elements or subdomains, each of which come from the domain of integers. The fourth and final element is the domain for the vectors for the values to be set ($W_{a.b}$) and is a domain for vectors, which element- or subdomains are domains for numbers (scalar). Further as parameter a natural number can be specified for the domain number $DomainNr$. If the parameter is missing, the domain number $DomainNr$ is $0$ .\\\hline 
+
+\caption{Names of fixed 8-bit elements for domains}
+\label{tableFixElementsForDefinitionRanges}
+\end{longtable}
+\end{center}
+
+
+\paragraph{Domains}
+\label{secCompressedDefinitionrangesArea}\label{parCompressedDomains}
+
+The domain consists of a basic domain and maybe parameters, for further specification of the domain.
+
+that specify the basic domain further.
+
+\bigskip\noindent
+The first bit (counting starts with 1) of the basic domain determines the length of the field:
+\begin{itemize}
+ \item If it is $0$, the basic domain field is 8 bits long. Possible 8-bit basic domains are shown in table \ref{tableCompressedDefinitionRanges}.
+ \item If it is $1$, the basic domain field is 64 bits long. This is currently only planned for a future use.
+\end{itemize}
+
+\bigskip\noindent
+The second bit indicates whether the domain is scaled:
+\begin{itemize}
+ \item If it is $0$, the domain is not scaled.
+ \item If it is $1$, the domain is scaled.
+\end{itemize}
+
+If the domain is scaled, a scaling factor $S$ is specified. This factor $S$ is a float, the unscaled values of the domain will be multiplied with it to obtain (the values of) the scaled domain.
+
+The scaling part is specified after the domain information (including parameters). It consists of three fields: the length field, the mantissa field and the exponent field. The first field (the length field) is 8 bits long, it is a natural number and specifies the number of bytes for both the mantissa and the exponent field. The mantissa field (second field) $S_M$ and the exponent field (third field) $S_E$ are each integers. The scaling factor $S$ is then $S=S_M*2^{S_E}$.
+
+\noindent
+\textit{Example:} The domain is 2 bit natural numbers with the scaling factor of $F=1*2^{-1}=1/2$ (the mantissa is $1$ and the exponent is $-1$, the length field is $1$, for one byte scaling factor field). The bits of the scaling factor are thus: 0000 0001; 0000 0001; 1111 1111. Possible values for the elements for the domain are: $\{$ $0*1/2=0$; $1*1/2=0.5$; $2*1/2=1$; $3*1/2=1.5$ $\}$. If in the element to the domain a number is set that would mean $1$ unscaled, it means with the scaling $0.5$.
+The bits of the entire domain are: 0; 1; 000000; 00000010; \ 00000001; 00000001; 11111111 (Fields in this order: 8-bit basic domain; scaled; natNumberB, with 2 bits per element; scaling factor: 1 byte per field, $S_M=1$, $S_E=-1$) (in the file, first bit at the front: 01000000 01000000 10000000 10000000 11111111)
+
+\bigskip
+The individual domains (including scaling factor) are padded with 0 to full Byts. So if a domain is 13 bits long, the remaining 3 bits are filled with 0, so that the domain field is 16 bit (=2 byte) long.
+
+
+\begin{center}
+\begin{longtable}{|p{25mm}|p{15mm}|p{25mm}|p{60mm}|}\hline
+	name & value bit 3 till 8 & description & parameter \\\hline\endhead
+	naturalNumberB & 0000 00 & The basic domain are the natural numbers. & The following 8-bit parameter is a natural number $X$, which represents the number of bits for values of the domain. The corresponding basic domain is then $0 \ldots (2^X-1)$. \\\hline
+	integerB & 0100 00 & The basic domain are the integer numbers. & The following 8-bit parameter is a natural number $X$, which represents the number of bits for values of the domain. The corresponding basic domain is then $-(2^{X-1}) \ldots (2^{X-1}-1)$. \\\hline
+	naturalNumber & 0000 01 & The basic domain are the natural numbers. & The following 64-bit parameter is a natural number $X$, which is the largest natural number in the domain. The corresponding basic domain is then $0 \ldots X$. The bits that are needed for each value of the domain are $\lceil \log_2(X+1) \rceil$.\\\hline
+	integer & 0100 01 & The basic domain are the integer numbers. & The following two 64-bit parameters are two integers $X$ and $Y$. The first parameter $X$ is the smallest number in the domain. The second parameter $Y$ is the biggest number in the domain. The corresponding basic domain is then $Y \ldots X$. The bits that are needed for each value of the domain are $\lceil \log_2(Y-X+1) \rceil$. When interpreting the bits, all values $W$ ($W$ is the value of the bits as a natural number), which are greater than $X$, will be implemented as negative values with a value of $W-(X-Y+1)$. If the smallest number $X$ is greater than 0 or largest number $Y$ is less than 0, smallest number $X$ is subtracted from all numbers to save them ($W+X$).\\\hline
+	integerValues & 0100 10 & The basic domain are the integer numbers & The first 64-bit parameter is a natural number $N$, which indicates the number of possible values. Following after it is a second 8-bit parameter $B$, wich determines the number of bits per following value. After the first two parameters $N$ integers follow, each with $B$ bits in two's complement. This $N$ integers are all values which are contained in the basic domain. In the implementation the value $W$ in an element for the domain is mapped to / interpreted as the $W$'th number in the list (the numbering starts at 0). The bits that are needed for each value $W$ of the domain are $\lceil \log_2(N) \rceil $.\\\hline
+%TODO: naturalNumberUL() + integerUL() + realUL() für unbegrenzte Zahlen
+
+	real & 1000 00 & The basic domain are floating point numbers. A floating point number consists of two integer fields, one the first, for the exponent $E$ and one, the second, for the mantissa $M$. The floating point number $Z$ is then $Z = M * 2^E$. & It follow two parameters. The first parameter specifies the domain of the mantissa and the second for the exponent. The specification of the domains is as described in this table (without the domains individually padded with 0). Both domains have to be domains for integers (ie. integer... or naturalNumber...).\\\hline
+	realValues & 1000 01 & The basic domain are floating point numbers. A floating point number consists of two integer fields, one the first, for the exponent $E$ and one, the second, for the mantissa $M$. The floating point number $Z$ is then $Z = M * 2^E$. & The first following 64 bit parameter is a natural number $N$, which indicates the number of possible values. Then follow two parameters. The first parameter specifies the domain of the mantissa and the second for the exponent. The specification of the domains is as described in this table (without the domains individually padded with 0). Both domains must come from the domains of integers (ie. integer... or naturalNumber...). After the first three parameters $N$ floating point numbers follow, each with $B=B_M+B_E$ bits in the floating point number representation for the given mantissa and exponent domains. In which $B_M$ are the bits per mantissa and $B_E$ are the bits per exponent. This $N$ floating point numbers are all values the elements for the domain can be set to. For this the value of $W$, in an element to the domain is mapped / interpreted to the $W$'th number in the list (counting begins at 0). The bits that are needed for each value of the domain are $\lceil \log_2(N) \rceil $.\\\hline
+
+	vector & 1100 00\newline and\newline 1100 01 & The basic domain are vectors. & The following parameters $E$ is the number of elements in the vectors. The (``number of'') parmeter after the introduction ``11 0000'' is 8 bits long and after the introduction ``11 0001'' 64 bits. After this parameter follows a list of $E$ domains, as defined in this section. All the values of the vector domain will have the form $(D_1, \ldots , D_E)$, where $D_i$ is a value of the i'th domain in the domains list.\\\hline
+	vectorValues & 1100 10\newline and\newline 1100 11 & The basic domain are vectors. & The following parameters $E$ is the number of elements in the vectors. The second parameter $N$ gives the number of possible vectors. Each (``number of'') parmeter after the introduction ``1100 10'' is 8 bits long and after the introduction ``1100 11'' 64 bits. After the second parameter a list of $E$ domains follows, as defined in this section. Then follows a list of $N$ vectors, as described in section \ref{secCompressedVector} on page \pageref{secCompressedVector}. The domains of the vectors are the given domains of the preceding list. Variables can also occur in the stored vectors. The domain for variables in the list has 0 bits. For a variable in the vector only the initial $1$ is written. A value of $W$ for the domain in a Fib element is interpreted as $W$'ter vector of the second list. (The counting starts at $0$.) If the specified vector contains variables, directly after the value of $W$ follow the variable identifiers of variables, as they wher defined above the current Fib element. The number of bits for the variable is given by the corresponding domain for variables ``variable'' (see section \ref{secCompressedDefinitionranges} on page \pageref{secCompressedDefinitionranges}). \\\hline
+	vectorOpenEnd & 1110 00\newline and\newline 1110 01 & The basic domain are vectors. & The following parameters $E$ is the minimum number of elements of the vector. The (``number of'') parmeter after the introduction ``1110 00 '' is 8 bits long and after the introduction ``1110 01 '' 64 bits. After this parameter follows a list of $E$ domains, as defined in this section. All the values of the vector domain will have the form $(D_1, \ldots , D_E, \ldots ,D_E)$, where $D_i$ is a value of the i'th domain in the list. This domain is for elements that may contain vectors of different size. The number of elements for a vector of this domain is determined by the element containing the vector.\\\hline
+
+	domainReference & 1111 00 & This is a reference to the (sub-)domain of an other element. The domain is the domain of the element with the given domain name $Name$. & The first parameter is the in the compressed format coded $Name$ of the element, to which the domain refer to (see section \ref{secCompressedDefinitionrangesElements} on page \pageref{secCompressedDefinitionrangesElements}, without padding to a full byte). After it follows the $Element$ parameter, for the choosen subdomain. First follows (each) an $Element$-startbit, which indicates if an $Element$ parameter follows. If it is $0$ no $Element$ parameter follows, if it is $1$ an $Element$ parameter follows. If it is $1$ this first $Element$-startbit is followed by a 1 byte (8 bits) long natural number $Bits$, which indicates how many bits per $Element$ parameter are used. After this follows the first $Element$ parameter. After each $Element$ parameters (stored with the domain $ naturalNumberB ( Bits )$) follows again an $Element$-startbit and after it maybe the next $Element$ parameter and so forth. Example $matrix.3.1$: 2 Bits are needed to store the $Element$ parametes; the bits are (first bit on the front): 0 0 001111  0 00 11011  1 00000010 11  1 10  0 (in ther order the fields are for: domain name is 8 bit long; not scaled; domainReference; 8 bit element name; no parameter; matrixElement; $Element$ parameter follows; with each 2 bit; 3'th subdomain; $Element$ parameter follows; first subdomain; no $Element$ parameter follows )\\\hline
+
+	defaultDomain & 1111 01 & The specified domain will be used only if for the corresponding element so far no other domain was given. & As a parameter follows a domain as described in this table. The specified domain is only used, if for the corresponding element so far no other domain was given.\\\hline
+
+\caption{8 Bit parameters for domains}
+\label{tableCompressedDefinitionRanges}
+\end{longtable}
+\end{center}
+
+\index{domains|)}
+
+
+\subsubsection{Input variables}\index{input variables}
+\label{secCompressedRootInputVar}
+
+In compressed Fib objects variables are numbered and represented as natural numbers. In this, the first $n$ variables values in the Fib object are reserved for the $n$ input variables. Therefore, at this point for the variables only the number of input variables $V_E$ is interesting. For this a 64 bit natural number is stored at this location, which contains the number of input variables.
+After the field for the number of input variables ($V_E$) follow $V_E$ values, each, in ther order, for the default value $S_i$ of the input variable $inVar_i$. The number of bits and the encoding of the default value of $S_i$ is determined by the domain of the input variable $inVar_i$ .
+
+The input variable field is padded with 0 bits to a full byte.
+
+
+\subsubsection{Main-Fib-object}\index{main-Fib-object}
+\label{secCompressedRootMainObject}
+
+At this point the data from the main-Fib-object in form of its elements and their parameters follows, as it is described below in the section \ref{secCompressedFibElement} on page \pageref{secCompressedFibElement} .
+
+The field for the main-Fib-object is padded with 0 bits to a full byte.
+
+
+\subsubsection{Sub-root-objects}\index{sub-root-object}
+\label{secCompressedRootSubRoot}
+
+Here a list of sub-root-objects and their identifiers stand. The list is initiated with a 64-bit natural number $N$, which specifies the number of elements in the list. This is followed by a 8-bit integer $B$, which indicates the bytes per identifier.
+
+Then follows a list of $N$ pairs of identifiers and root-elements. The identifier of each pair is an integer (in the root-element always greater than 0, in the database less than 0). It is the first element in the list element pairs and is $B$ bytes long. It is followed by the root-element, as described in this section \ref{secCompressedRootElement} (beginning at page \pageref{secCompressedRootElement}). Each pair is padded with 0 bits to full a byte.
+
+
+\subsubsection{Identifiers of used database objects}\index{database!used identifiers}
+\label{secCompressedRootDBIdentifier}
+
+At this point there is a list of all identifiers of Fib database objects, which are used in the main-Fib-object or in sub-root-objects. This specification of the identifiers is optional. If identifiers are present, it can be tested from the outset, that all external Fib objects from the database that are needed exists, or whether it is likely that display errors occur, since Fib database objects are missing. Whether the identifiers of Fib database objects that are used in a main-Fib object of a root-element are given in this root-element, or in a higher root-element, depends on several factors. For the changing of Fib objects it is advantageous, that identifier of Fib database objects are listed in a root-element, which is as near as possible to the place of ther use. To save space it may be useful to subsume the identifiers of Fib database objects in as few as possible root-elements.
+
+The list is initiated with a 64-bit natural number $N$, which specifies the number of elements of the list. This is followed by a 8-bit natural number $B$, which specifies the bits per identifier.
+Then follows the list of $N$ integer identifiers, which is each $B$ bits long.
+
+The field for the identifiers of used database objects is padded with 0 bits to a full byte.
+
+
+\subsubsection{Optional part}\index{optional part}
+\label{secCompressedRootOptionalPart}
+
+The optional part is the last part of a root-element. It shouldn't contain important information for the presentation of multimedia object, so that it can be omitted entirely when storing. In this way, storage space can be saved.
+
+The length of the optional part is calculated from the difference between its starting byte and the end of the root-element (for the offset see section \ref{secCompressedRootElement} on page \pageref{secCompressedRootElement}).
+
+The optional part is initiated by a 16-bit natural number $C$, which indicates the compression type of the optional part. Possible values for the compression type $C$ are listed in table \ref{tableOptionalPartCompressing} . The remaining optional part will be completely compressed using the specified method.
+
+\begin{table}[htbp]
+\begin{center}
+\begin{tabular}{|p{15mm}|p{100mm}|}\hline
+	value $C$ & description \\\hline\hline
+	0 & no compression\\\hline
+	1 & The data is compressed in the zlib format. This is a warper (documented in RFC 1950) for a deflate stream (lossless data compression, documented in RFC 1951). \\\hline
+
+%TODO Comprimierungsarten Einpflegen?
+\end{tabular}
+\end{center}
+\caption{Compression types}
+\label{tableOptionalPartCompressing}
+\end{table}
+
+The decompressed optional part consists of a list of key, value pairs. It is initiated by a 64 bit integer $N$, which specifies the number of elements in the list. The second parameter is a 16 bit integer, which determines the coding. Possible values for encoding are listed in table \ref{tableOptionalPartCoding} . In this UTF-8 should be regarded as the standard encoding and other encodings should be selected only if UTF-8 is no longer sufficient.
+Then follows the list with the pairs / elements.
+
+Each list element (pair) contains two null-terminated strings in the specified encoding. The first string is the key of the element and the second is the value.
+
+\begin{table}[htbp]
+\begin{center}
+\begin{tabular}{|p{20mm}|p{15mm}|p{80mm}|}\hline
+	name & value & description \\\hline\hline
+	UTF-8 & 0 & 8-Bit Unicode Transformation Format\\\hline
+	UTF-16 & 1 & Universal Multiple-Octet Coded Character Set (UCS) Transformation Format for 16 Planes of Group 00\\\hline
+	UTF-32 & 2 & Unicode coded one character with 32 Bit\\\hline
+
+%TODO Kodierungen Einpflegen?
+\end{tabular} 
+\end{center}
+\caption{Encoding types for strings}
+\label{tableOptionalPartCoding}
+\end{table}
+
+\label{secCompressedOptionalPartComment}
+From the main-Fib-object all text from the comments (see section \ref{secCompressedComments} on page \pageref{secCompressedComments}) are moved into the optional part. The comments also contain key ($Key$), value ($Value$) pairs. To each of these key, value pairs from the comments will be assigned a natural number $K$ (starting with 0). In the optional part a separate list entry is generated for the moved pair. In this the key of the list entry is ``@'' followed by the number of the comment $A$, then followed by a ``@'' and then the original key ($Key$) of the comment. The value of the generated list entry is equal to the value of the comment.
+So if the key value pair in the $A$'th comment is $(Key, Value)$, the entry in the optional part for it is $(@A@Key, Value)$.
+
+Example: The 2. comment is: ``c( ``autor'',``ich'', Obj)'', the generated list entry for it in the optional part is: ``( ``@2@autor'',``ich'')''.
+
+The outsourced texts should be at the end of the optional part.
+
+\index{root-element|)}
+
+
+\subsection{Fib elements}\index{Fib element}
+\label{secCompressedFibElement}
+
+All Fib elements except the root-element will be introduced by a (at least four bit) bit field. Vectors are directly included in the Fib elements, without ther own introduction.
+
+The introduction $0000$ is reserved, so that with 0 padded areas can not be interpreted as a Fib element. The introduction $1111$ announces that the introduction is at least 16 bits long and not 4 bits.
+
+All Fib elements and vector elements follow directly behind each other. If positions are padded with the 0 bit, this is explicitly stated hereafter.
+
+
+\subsubsection{Vectors}\index{Vectors}
+\label{secCompressedVector}
+
+Vectors consist of several elements, an element is either a value or a variable. The number of elements of the vector is either Fib element specific or is determined by an associated domain (see section \ref{secCompressedDefinitionranges} on page \pageref{secCompressedDefinitionranges}).
+
+\noindent\bigskip
+For each element there are two fields:
+\begin{itemize}
+ \item one 1 bit field, which determines, if the element is a value (the bit is 0) or a variable (the bit is 1)
+ \item the field with the value for the element (the genuine value or number / identifier for the variable)
+\end{itemize}
+
+If the element is a value, then follows after the 1 bit field with $0$ directly a value. The number of bits of the value is determined by the corresponding domain. The value comes from the unscaled domain and is scaled after restoring.
+
+If the element is a variable, then follows after the 1 bit field with $1$ directly the variable identifier (which is the same natural number as in the variable definition) of the variable, which was defined above the current Fib element. The number of bits of the variable is determined by the appropriate domain for variables ``variable'' (see section \ref{secCompressedDefinitionranges} on page \pageref{secCompressedDefinitionranges}).
+
+The in a particular Fib object-branch highest defined variable has the variable value respectively variable identifier $1$ . All other variables have the value $i+1$, where $i$ is the value of the variable, which is defined next above variable. So the variables are numbered in the Fib object-branches from the top (starting from the root) to bottom (the leaves), with the starting value of $1$.
+
+
+\subsubsection{Point}\index{point element|(}
+\label{secCompressedPoint}
+
+Introduction of a normal point: 0001
+\\\noindent
+Five bits introduction for a point with an empty position vector ($point(())$): 00010
+\\\noindent
+Five bits introduction for a point with no position vector ($point()$): 10010
+
+\bigskip\noindent
+For the description of the point element see section \ref{fibPoint} on page \pageref{fibPoint} .
+
+Normal points contain a position vector (see \ref{secCompressedVector}). The number of vector elements is determined by the number of dimensions respectively elements in the domain for dimensions (``dim''). The bits per position vector element is determined by the particular element of the domain for the dimensions (``dim'') or by the domain variables (``variable'') (see section \ref{secCompressedDefinitionranges} on page \pageref{secCompressedDefinitionranges}).
+
+The individual vector elements follow directly after the introduction of the point.
+
+Points with an empty or without a position vector does not contain any bits for the position vector. For these points there are only the 5 bits of the respectively introduction.
+
+\bigskip\noindent
+Example: A point is encoded with the position vector (2, 10). The multimedia object has two dimensions. For both dimensions, 5 bits are needed, there are natural numbers.
+\begin{itemize}
+ \item introduction point: 0001
+ \item first position vector element (leading 0 for: ``vector element is a value'') 2 : 0 00010
+ \item second position vector element (leading 0 for: ``vector element is a value'') 10 : 0 01010
+ \item coded point object (first bit in front): 1000010000010100
+\end{itemize}
+
+\index{point element|)}
+
+
+\subsubsection{Properties}\index{property element|(}
+\label{secCompressedProperty}
+
+Introduction: 0011
+
+\bigskip\noindent
+For the description of the property element see section \ref{fibProperty} on page \pageref{fibProperty} .
+
+The property vector type is determined by a natural number, which immediately follows after the introduction. In the list of the valid domains the possible properties are listed (see section \ref{root_definition_ranges} on page \pageref{root_definition_ranges}, table \ref{tablePropertyNamen} on page \pageref{tablePropertyNamen} and table \ref{tableElementsForDomains} on page \pageref{tableElementsForDomains}). The number for the property (vector) type is the number of the property in the valid domains list. Counted are only property domains and the count starts with 0 .
+
+In the valid domain list first domains for values (see section \ref{secDomainsForValues} on page \pageref{secDomainsForValues})
+and than the domains for elements (see section \ref{secDomainsForElements} on page \pageref{secDomainsForElements} are listed.
+Inherited property domains, which are not overwritten, will be counted as if they are behind the domains of the current (respectively next) root-element. (The closer the inherited root-element is to the inheriting root-element, the smaller are the numbers of inherited property domains [respectively for values and element domains].)
+
+For property types, that exists in the Fib object, but for which no domain exists, a domain (e.g. the standard domain) must inserted in the domains for values. Only then the property vector types can be numbered.
+
+The number of bits, that are needed for the number of property vector type, results from the number of defined (including inherited) property domains $DE$ as a whole, it is $\lceil \log_2(DE) \rceil $.
+If for example property domains \verb|colorRGB|, \verb|layer| and \verb|sound| are defined. Then $\lceil \log_2(3) \rceil = 2$ bits are needed to store the property vector type and the property \verb|layer| has the value 01 .
+
+The property vector type is followed by the elements of the property vector (see section \ref{secCompressedVector} on page \pageref{secCompressedVector}). In which the number of elements and bits are determined by the respectively domain (see section \ref{secCompressedDefinitionranges} on page \pageref{secCompressedDefinitionranges}).
+
+At the end the subobject of the property follows.
+
+\bigskip\noindent
+For the properties there are two special properties, that have influence on the decoding of the Fib object. These properties are ``checksum'' and ``boundSize''.
+
+
+\paragraph{Checksum}\index{checksum}
+\label{secCompressedChecksumm}
+
+The checksum property is used to find erroneous Fib objects and to maybe correct these errors.
+
+Its name is ``checksum''. It has 3 parameters. The first parameter $A$ is for the type of the checksum. The second parameter $B$ determines for how many number of bits the checksum should be generated and the third parameter $C$ determines how many bits of the checksum should have.
+
+
+\subparagraph{Checksum of the type 1}
+
+If the first parameter $A$ is equal to $1$ the checksum is generated in the manner described in this section.
+
+The checksum stands before the block it belongs to.
+
+The checksum property applies to the entire Fib object respectively Fib branch that is contained in the property element (its entire subobject), except those which have a separate / own checksum property. When loading the Fib object, blocks of the size of $C+B$ bits are loaded, where the block, wich lie at the end of the checksum field, is padded with $0$. From each Fib object it will be only read as much as belongs to the checksum field and the rest of the block is padded with $0$ .
+
+If the checksum field $Cb_1$ is interrupted by another checksum field (object) $CB_2$, after the checksum field (object) $CB_2$ a new block for the checksum field  $Cb_1$ will be start and read.
+
+When storing the subobject of the property element of the checksum, the entire subobject is first brought into the compressed form, as described in this section \ref{fibCompressing} . From the created bit field, all areas which not belong to the checksum property are cut out, since they belong to different checksum properties, which are treated separately. As a result of this from the compressed subobject of the checksum property several bit fields $Bf_i$ for the checksum property are created. These bit fields $Bf_i$ are divided into blocks of $B$ bits, where each of the last blocks of a bit fields $Bf_i$ are padded with the 0 bit to $B$ bits. Then for each of the blocks the checksum of $C$ bits computed. After this step the blocks for each $Bf_i$ are assembled in their original order into bit fields, in which for each block first the checksum field of the block and then the associated data block comes. These bit fields are then concatenate into their original order with the other properties checksum fields, which were treated separately, into a bit field for the entire subobject.
+
+The checksum is not only used for error detection, but if possible (if enough checksum bits are present) also for error correction.
+
+
+%TODO checksumme Verfahren + Korrektur
+
+
+\paragraph{Size of Fib objects}
+\label{secCompressedBoundSize}
+
+With the property ``boundSize'' it will be specified, that the size in bits for an Fib object should be stated. Although no vector elements exists for this property in the created Fib object, one vector element is generated when storing the object, also for the vector a domain is created in the root-element when storing (see section \ref{secCompressedDefinitionranges} on page \pageref{secCompressedDefinitionranges}).
+
+The vector element in a compressed format contains the number of bits, that the contained Fib object is long (including any checksums). If the Fib object is irreparably defective, in this way the beginning of the next Fib object can still be found and this Fib object can be restored. Without specifying the length of the Fib object $Obj_1$ the beginning of following Fib object $Obj_2$ in the data stream can probably not be determined, since it is unknown how long the elements of $Obj_1$ are. If $Obj_1$ is irreparably flawed, but the starting point respectively the starting bit of the next Fib object $Obj_2$ is known, then indeed the $Obj_1$ can not be displayed, but this will have no effect on multimedia information outside of $Obj_1$, so that the error is limited to $Obj_1$ .
+
+The property of ``boundSize'' should best be used as the first / top element of a subobject in branch elements.
+
+\index{property element|)}
+
+
+\subsubsection{List element}\index{list element}
+
+Possible introductions:
+\begin{itemize}
+ \item 0100: introduction for two subobjects
+ \item 0101: less than 256 subobjects
+ \item 0110: less than $2^{64}$ subobjects
+\end{itemize}
+
+\bigskip\noindent
+For the description of the list element see section \ref{fibList} on page \pageref{fibList} .
+
+The list element indicates that hereafter come several Fib objects in a row. Directly after the introduction of the list element follows a natural number, which indicats the number of the following subobjects. The length of the field, for the number of subobjects, depends on the introduction of the list element.
+
+\bigskip\noindent
+The following lengths for the number field exists:
+\begin{itemize}
+ \item Introductions of the list element 0100: The field for the number of subobjects is 0 bits long, respectively it is omitted.
+ \item Introductions of the list element 0101: The field for the number of subobjects is 8 bits long.
+ \item Introductions of the list element 0110: The field for the number of subobjects is 64 bits long.
+\end{itemize}
+
+After the field for the number of subobjects follow the subobjects. Where the first following subobject, is the first subobject of the list element, the following is the second subobject of the list element, etc..
+
+More information for the list element is not needed, because the length of subobjects is apparent from the subobjects themselves.
+
+
+\subsubsection{Comment element}\index{comment element}
+\label{secCompressedComments}
+
+Introduction: 0111
+
+\bigskip\noindent
+For the description of the comment element see section \ref{fibComment} on page \pageref{fibComment} .
+
+The comment element contains after its introduction a natural number $N$, which indicates the number of the comment. The domain ``comments'' of this number is determined by the root-element (see section \ref{secCompressedDefinitionranges} on page \pageref{secCompressedDefinitionranges}).
+
+This is followed by the subobject of the comment element.
+
+In the optional part of the associated root-element for each comment an entry is created. More details can be found in the section \ref{secCompressedOptionalPartComment} on page \pageref{secCompressedOptionalPartComment} .
+
+
+\subsubsection{Area element}\index{area element}
+\label{secCompressedArea}
+
+Introduction: 1000
+
+\bigskip\noindent
+For the description of the area element see section \ref{fibArea} on page \pageref{fibArea} .
+
+The introduction is follows by a natural number, for the number of subareas. The bits for this number resulting from the first element / subdomain of the vector domain for the ``area'' type.
+
+After this follow the subareas.
+The subareas are vectors that consist of two elements (for vectors see section \ref{secCompressedVector} on page \pageref{secCompressedVector}).
+The corresponding domains for the elements of the subarea vectors are determined by the second subdomain of the domain ``area'' for the values and the ``variable'' domain  for the variables (see section \ref{secCompressedDefinitionranges} on page \pageref{secCompressedDefinitionranges}).
+
+At the end of the area object follows its subobject.
+
+
+\subsubsection{Function}\index{function element|(}\index{function|(}
+\label{secCompressedFunctions}
+
+Introduction: 1011
+
+\bigskip\noindent
+For the description of the function element see section \ref{fibFunction} on page \pageref{fibFunction} .
+
+After the introduction follows the subfunction of the function.
+
+At the end of the function object follows its subobject.
+
+
+\paragraph{Subfunction}\index{subfunction|(}\index{underfunction|(}
+\label{secCompressedUnderFunction}
+
+\ \\
+Subfunctions are initiated by two bits for the type of subfunction:
+\begin{itemize}
+ \item 00: value
+ \item 01: variable
+ \item 10: subfunction with arity of one
+ \item 11: subfunction with arity of two
+\end{itemize}
+
+If the subfunction is a value (Introduction: $00$), the value is directly following after the introduction $00$ . The number of bits of the value is determined by the appropriate domain for subfunctions ``subfunction'' (see section \ref{secCompressedDefinitionranges} on page \pageref{secCompressedDefinitionranges}).
+
+If the subfunction is a variable (Introduction: $01$), the variable identifier /name, of a variable defined above the function element, is directly following after the introduction $01$ . The number of bits of the variable identifier is determined by the appropriate domain for variables ``variable'' (see section \ref{secCompressedDefinitionranges} on page \pageref{secCompressedDefinitionranges}).
+
+\bigskip\noindent
+If the subfunction has an arity of one (introduction: $10$), a (at least 2 bits) bit field follows directly the introduction $10$, which indicates the type of subfunction. Immediately after the bit field follows another subfunction (initiated by the 2 bits for its type), which is the subfunction of the subfunction with arity of one.
+
+\bigskip\noindent
+Values for the type of a subfunction with an arity of one:
+\begin{itemize}
+ \item 00: absolut value
+ \item 01: sine function
+ \item 10: The introduction of rarely used one arity functions. The next two bits indicate the type of the one arity subfunction:
+ \begin{itemize}
+  \item 00 10: logarithm
+  \item 01 10: arc sine
+  \item 10 10: round
+  \item 11 10: free for future assignments
+ \end{itemize}
+ \item 11: The introduction of rarely used one arity functions. The next 6 bits indicate the type of one arity subfunction:
+ \begin{itemize}
+  \item **** ** 11: free for future assignments
+ \end{itemize}
+\end{itemize}
+
+\bigskip\noindent
+If the subfunction has an arity of two (introduction: $11$), a (at least 3 bits) bit field follows directly the introduction $11$, which indicates the type of subfunction. Immediately after the bit field follow two other subfunctions (initiated each by the 2 bits for their type), which are the subfunctions of the subfunction with arity of two.
+
+\bigskip\noindent
+Values for the type of a subfunction with an arity of two:
+\begin{itemize}
+ \item 000: adding
+ \item 001: subtraction
+ \item 010: multiplication
+ \item 011: division
+ \item 100: exponentiation
+ \item 101: minimum
+ \item 110: maximum
+ \item 111: The introduction of rarely used two arity functions. The next 5 bits indicate the type of two arity subfunction:
+ \begin{itemize}
+ \item 0000 0 111: if-function (before the two other subfunctions, first the condition the if-subfunction is stored)
+ \item 0000 1 111: delay
+ \item **** * 111: free for future assignments
+ \end{itemize}
+\end{itemize}
+
+\bigskip\noindent
+Example:
+\begin{itemize}
+ \item example object: fun( $x_3$ , mult( sin( 5 ), $x_1$ ), ... )
+ \item bits for ``fun'' (introduction): 1011
+ \item bits for ``mult'' (introduction for ``two arity subfunction'' and ``mult''): 11 010
+ \item bits for ``sin'' (introduction for ``one arity subfunction'' and ``sin''): 10 01
+ \item bits for the value 5 (introduction for ``value'' and 5 as a 4 bit natural number with the value domain ``subfunction'' as ``naturalNumberB(4)'', which means a $4$ bit natural number): 00 0101
+ \item bits for die Variable $x_1$ (the first variable in the part object branch, introduction for ``variable'' and the 4 bit variable identifier): 01 0001
+ \item bits for the entire function element: 1011 \ 11 010 \ 10 01 \ 00 0101 \ 01 0001 ...  (=Bits for the subobject)
+ \item bits for the entire function element (first bit at the front): 1101 1101 \ 0011 0001 \ 0101 0100 \ 0 ...  (=Bits for the subobject)
+\end{itemize}
+
+\index{subfunction|)}\index{underfunction|)}
+\index{function element|)}\index{function|)}
+
+
+\subsubsection{If-element}\index{if-element|(}
+
+Introduction: 1100
+
+\bigskip\noindent
+For the description of the if-element see section \ref{secFibIf} on page \pageref{secFibIf} .
+
+After the introduction follows the condition of the if-element.
+
+At the end of the if-object follow the two subobjects. If the condition is true, only the first subobject is evaluated, if the condition is false, only the second subobject is evaluated.
+
+
+\paragraph{Conditions}\index{condition|(}
+
+Conditions are introduced by a 4-bit value for the type of the condition. After the introduction of the condition follows as a parameter either 0 till 2 subconditions or two subfunctions (see section \ref{secCompressedUnderFunction} on page \pageref{secCompressedUnderFunction})
+
+The possible conditions are listed in table \ref{tableConditionsCoding}.
+
+\begin{table}[htbp]
+\begin{center}
+\begin{tabular}{|p{15mm}|p{15mm}|p{55mm}|p{40mm}|}\hline
+	name & intro\-duc\-tion & description & parameter \\\hline\hline
+	false & 0000 & The condition is false. & none \\\hline
+	true & 1111 & The condition is true. & none \\\hline
+	not & 0001 & The condition is true if and only if the subcondition is false, otherwise it is false. & one subcondition \\\hline
+	or & 0010 & The condition is true if and only if at least one of its two subconditions is true, otherwise it is false. & two subconditions \\\hline
+	and & 0011 & The condition is true if and only if the two subconditions are true, otherwise it is false. & two subconditions \\\hline
+	xor & 0100 & The condition is true if and only if exactly one of the two subconditions is true, otherwise it is false. & two subconditions \\\hline
+
+	eqInt & 1000 & Comparison of two to integers rounded numbers on equality. & two subfunctions, as described in section \ref{secCompressedUnderFunction} on page \pageref{secCompressedUnderFunction} \\\hline
+	lo & 1001 & Comparison, if the first number is less than the second. & two subfunctions, as described in section \ref{secCompressedUnderFunction} on page \pageref{secCompressedUnderFunction} \\\hline
+	gr & 1010 & Comparison, if the first number is greater than the second. & two subfunctions, as described in section \ref{secCompressedUnderFunction} on page \pageref{secCompressedUnderFunction} \\\hline
+
+	 & 0101 till 0111 and 1011 till 1110 & Free for future conditions. & \\\hline
+
+\end{tabular}
+\end{center}
+\caption{Introduction for conditions}
+\label{tableConditionsCoding}
+\end{table}
+
+\bigskip\noindent
+Example:
+\begin{itemize}
+ \item example object: if( and( true, gr( $x_1$, 3 ) ), ... )
+ \item bits for ``if'' (introduction): 1100
+ \item bits for ``and'' (introduction for ``and''): 0011
+ \item bits for ``true'' (introduction for ``true''): 1111
+ \item bits for ``gr'' (introduction for ``gr''): 1010
+ \item bits for the variable $x_1$ (the first variable in the part object branch, introduction for ``variable'' and the variable identifier; the variable domain ``variable'' is ``naturalNumberB(4)'', which means a $4$ bit natural number): 01 0001
+ \item bits for the value 3 (introduction for ``value'' and 3 as a 4 bit natural number with the value domain ``subfunction'' as ``naturalNumberB(4)'', which means a $4$ bit natural number): 00 0011
+ \item bits for the entire if-element (first bit at the front):\newline 00111100\ 11110101\ 10100000\ 1100 ... (=Bits for the two subobjects)
+\end{itemize}
+
+\index{condition|)}
+\index{if-element|)}
+
+
+\subsubsection{External object}\index{external object}
+\label{secCompressedExternObjects}
+
+Introduction: 1101
+
+\bigskip\noindent
+For the description of the external objects see section \ref{fibExtObject} on page \pageref{fibExtObject} .
+
+Directly after the introduction follows the number of the identifier of the external object. Its domain, and therefore the number of bits for it, is determined by the first subdomain of the domain ``externObject'' (see section \ref{secCompressedDefinitionranges} on page \pageref{secCompressedDefinitionranges}) .
+
+The identifier is followed by the number of input values $E$, which has the domain of second subdomain of the domain `externObject''. If this value is $0$ the number of input values is the number of vector elements of the vector for input values, this means the number of elements of the domain ''externObjectInput'' with the corresponding identifier, if non such exists it is assumed that no / $0$ input values ($E=0$) exist.
+
+Then follows the vector (see section \ref{secCompressedVector} on page \pageref{secCompressedVector}) with the input values. 
+The domain for the vector is the domain for the ``externObjectInput'' with the corresponding identifier or $vectorOpenEnd( integerB(8) )$, if non such exist.
+
+After the list of input values follow the subobjects of the external object. These are preceded by a number $U$ for the number of subobjects. The domain of this number $U$ is the third subdomain of the domain ``externObject''. Then follow one after the other the $U$ records of the $U$ subobjects.
+
+Each record for a subobject is introduced by a number representing the number of output variables $A_i$ ($i = 1 \ldots U$). The domain of this number $A_i$ is the fourth subdomain of the domain ``externObject''.
+
+At the end follows the subobject of the record, which is a normal Fib object.
+
+
+\subsubsection{External subobject}\index{external subobject}
+\label{secCompressedExternSubobjects}
+
+Introduction: 1110
+
+\bigskip\noindent
+For the description of the external subobjects see section \ref{fibSubobject} on page \pageref{fibSubobject} .
+
+After the introduction follows a natural number for the number of the external subobject. The domain of this number is implicit determined by the number $N$ of the subobjects (respectively the highest number for a ``externSubobject'' domain) in the current / next in the next root-element, see section \ref{parCompressedDomains} on page \pageref{parCompressedDomains} . The domain is: $integer(N)$ , see table \ref{tableCompressedDefinitionRanges} on page \pageref{tableCompressedDefinitionRanges} .
+
+
+This is followed by the vector (see section \ref{secCompressedVector} on page \pageref{secCompressedVector}) of the input values, respectively the input variables for the subobject. The domain for the output values vector is the domain for the ``externSubobject'' with the corresponding number or the standard domain for ``externSubobject'', if non such domain exist.
+
+
+
+\subsubsection{Retrieve domain properties}\index{domain properties}
+
+Introduction: 0000 0000 0000 1111
+
+\bigskip\noindent
+For the description of the Fib element to retrieve domain properties see section \ref{fibDomeinProperties} on page \pageref{fibDomeinProperties} .
+
+After the introduction follows the domain, from wich a value should be retrieved. The specification of the domain is in the form described in section \ref{secCompressedDefinitionranges} on page \pageref{secCompressedDefinitionranges} (without padding to a full byte).
+
+Then follows the $Element$ parameter, for the choosen subdomain. First follows (each) an $Element$-startbit, which indicates if an $Element$ parameter follows. If it is $0$ no $Element$ parameter follows, if it is $1$ an $Element$ parameter follows. If it is $1$ this first $Element$-startbit is followed by a 1 byte (8 bits) long natural number $Bits$, which indicates how many bits per $Element$ parameter are used. After this follows the first $Element$ parameter. After each $Element$ parameters (stored with the domain $naturalNumberB ( Bits )$) follows again an $Element$-startbit and after it maybe the next $Element$ parameter and so forth. Example $matrix.3.1$: 2 Bits are needed to store the $Element$ parametes; the bits are (first bit on the front): 1111 0000 0000 0000 \ 0 00 11011 \ 1 00000010 11  1 10  0 (in ther order the fields are for: Fib element to retrieve domain; 8 bit element name; no parameter; matrixElement; $Element$ parameter follows; with each 2 bit; 3'th subdomain; $Element$ parameter follows; first subdomain; no $Element$ parameter follows )
+
+After the bits for the element follows the $Mode$, this means what property value of the domain is selected. This is an 8-bit integer, as described in table \ref{tableDomainPropertyModes} on page \pageref{tableDomainPropertyModes} in the column ``value''.
+%TODO use domain insted of fix fields for $Bits$ and $Mode$
+
+At the end of the Fib element to retrieve domain properties follows its subobject.
+
+
+\subsubsection{Set-element}\index{set-element|(}
+\label{secCompressedFibSet}
+
+Introduction: 0000 0000 0001 1111
+
+\bigskip\noindent
+For the description of the set-element see section \ref{secFibSetElement} on page \pageref{secFibSetElement} .
+
+The domain for the set-element is ``setElement'' (see section \ref{secCompressedDefinitionranges} on page \pageref{secCompressedDefinitionranges}).
+
+After the introduction first follows one bit, that indicates whether a particular domain is used. If this bit is $0$ no domain number $DomainNr$ is given and the $DomainNr$ is set to 0 . Otherwise, if it is $1$, a natural number follows for the used domain $DomainNr$ . The number of bits for this number results from the largest number $max(i)$ for a domain for the set-element and is $\lceil \log_2( max(i) ) \rceil$.
+The $DomainNr$ determines the domain of the element. It is the first ``setElement'' domain with a domain number equal or lower of the set (loaded) domain number $DomainNr$.
+
+Then follow two natural numbers.
+
+The first number indicates the number ($n$) of the variables and to set values per set. The bits for this number resulting from the first element / subdomain of the vector domain for the element.
+
+The second number indicates the number ($k$) of the sets of values to be set. The bits for this number results from the second element / subdomain of the vector domain for the element.
+
+Following the two count values are $k$ sets respectively vectors (see section \ref{secCompressedVector} on page \pageref{secCompressedVector}) with each $n$ values (respectively it follow $k * n$ values / vector elements in a row). The domain for the vectors respectively sets is the third element / subdomain of the vector domain for the element.
+%TODO? domain for the values if vector open end: subdomain[ i+2 ]
+
+At the end of the set-element follows its subobject.
+
+\index{set-element|)}
+
+
+\subsubsection{Matrix element}\index{matrix element|(}
+\label{secCompressedFibMatrix}
+
+Introduction: 0000 0000 0010 1111
+
+\bigskip\noindent
+For the description of the matrix element see section \ref{secFibMatrixElement} on page \pageref{secFibMatrixElement} .
+
+The domain for the matrix element is ``matrixElement'' (see section \ref{secCompressedDefinitionranges} on page \pageref{secCompressedDefinitionranges}).
+
+After the introduction first follows one bit, that indicates whether a particular domain is used. If this bit is $0$ no domain number $DomainNr$ is given and the $DomainNr$ is set to 0 . Otherwise, if it is $1$, a natural number follows for the used domain $DomainNr$ . The number of bits for this number results from the largest number $max(i)$ for a domain for the matrix element and is $\lceil \log_2( max(i) ) \rceil$.
+The $DomainNr$ determines the domain of the element. It is the first ``matrixElement'' domain with a domain number equal or lower of the set (loaded) domain number $DomainNr$.
+
+Then follow three natural numbers.
+
+The first number indicates the number ($d$) of the dimensions / dimension variables.
+
+The second number indicates the number ($i$) of the to set values per set.
+The bits for the first two numbers resulting from the first element / subdomain of the vector domain for the element.
+
+The third number indicates the number ($k$) of the sets of values to be set. The bits for this number resulting from the second element / subdomain of the vector domain for the element.
+
+Following the three count values are $d$ vectors (see section \ref{secCompressedVector} on page \pageref{secCompressedVector}) for the areas respectively start and end values for the respective dimensions. In this, the first vector stands for the first dimension variable, the second vector for the second dimension variable, etc. . The domain for the vectors / sets is the third element / subdomain of the vector domain for the element.
+
+After the dimension vectors follow $k$ vectors / sets (see section \ref{secCompressedVector} on page \pageref{secCompressedVector}) with each $i$ values (respectively it follow $k * i$ values / vector elements in a row). The domain for the vectors / sets is the forth element / subdomain of the vector domain for the element.
+%TODO? domain for the values if vector open end: subdomain[ i+2 ]
+
+At the end of the matrix element follows its subobject.
+
+\index{matrix element|)}
+
+
+\section{XML format}\index{XML format}
+\label{xmlFormat}
+
+Each Fib element and each vector has its own XML element in the XML format. Simple values of Fib elements and vectors are stored as attributes.
+
+In the following listing a simple example of a Fib object in XML format is specified.
+
+\bigskip\noindent
+Example:
+\begin{verbatim}
+<?xml version="1.0" encoding="UTF-8"?>
+<fib_object
+   xmlns:xsd="http://www.w3.org/2001/XMLSchema-instance"
+   xmlns="http://www.fib-development.org/"
+   xsd:schemaLocation="http://www.fib-development.org/fib.xsd">
+
+   <root>
+      <multimedia_info fib_version="1" db_version="0"/>
+      <optionalpart>
+         <pair key="autor" value="Oesterholz"/>
+      </optionalpart>
+      <domains>
+         <dim count="2">
+            <dimension number="1" direction="horizontal"/>
+            <dimension number="2" direction="vertical"/>
+            <vector elements="2">
+               <naturalNumberB bit="8">
+               <integer min="10" max="123">
+            </vector>
+         </dim>
+      </domains>
+      <main_fib_object>
+         <area defined_variable="1">
+            <vector type="subarea">
+               <value>3</value>
+               <value>15</value>
+            </vector>
+
+            <property>
+               <vector type="property.colorSW">
+                  <value>200</value>
+               </vector>
+               <point>
+                  <vector type="position">
+                     <value>4</value>
+                     <variable>1</variable>
+                  </vector>
+               </point>
+            </property>
+         </area>
+      </main_fib_object>
+   </root>
+</fib_object>
+\end{verbatim}
+
+
+\subsection{XML header}\index{XML header}
+
+The header of the Fib XML format is structured the same in each case. It specifies the XML format. The top element of the Fib XML format is always an element named \verb|fib_object|. This contains the attributes to specify the XML format and one root-object.
+
+\bigskip\noindent
+Layout:
+\begin{verbatim}
+<?xml version="1.0" encoding="UTF-8"?>
+<fib_object
+   xmlns:xsd="http://www.w3.org/2001/XMLSchema-instance"
+   xmlns="http://www.fib-development.org/"
+   xsd:schemaLocation="http://www.fib-development.org/fib.xsd">
+
+      ... <!-- root-element -->
+
+</fib_object>
+\end{verbatim}
+
+
+\subsection{Root-element}\index{root-element|(}
+\label{secXmlRootElement}
+
+For the description of the root-element see section \ref{fibRootElement} on page \pageref{fibRootElement} .
+
+The element for the root-element has the name \verb|root|.
+
+The root-element can contain the following elements:
+\begin{enumerate}
+ \item multimedia information (see section \ref{secXmlMultimediainfo} on page \pageref{secXmlMultimediainfo})
+ \item the optional part (see section \ref{secXmlRootOptionalPart} on page \pageref{secXmlRootOptionalPart})
+ \item domains (see section \ref{secXmlDefinitionranges} on page \pageref{secXmlDefinitionranges})
+ \item domains for values (see section \ref{secXmlDefinitionranges} on page \pageref{secXmlDefinitionranges})
+ \item input variables (see section \ref{secXmlRootInputVar} on page \pageref{secXmlRootInputVar})
+ \item main-Fib-object (see section \ref{secXmlRootMainObject} on page \pageref{secXmlRootMainObject}); this element is always present
+ \item sub-root-objects (see section \ref{secXmlRootSubRoot} on page \pageref{secXmlRootSubRoot})
+ \item identifiers of used database objects (see section \ref{secXmlRootDBIdentifier} on page \pageref{secXmlRootDBIdentifier})
+ \item maybe a checksum field (see section \ref{secXmlRootChecksumm} on page \pageref{secXmlRootChecksumm} ), this is irrelevant for the Fib XML format and it only serves for the data storage
+\end{enumerate}
+
+
+\subsubsection{Multimedia information}\index{multimedia information}
+\label{secXmlMultimediainfo}
+
+The element for the multimedia information has the name \verb|multimedia_info|.
+
+The element for the multimedia information has two attributes one for the version of Fib and one for the version of the Fib database.
+
+The attribute \verb|fib_version| indicates the Fib version of the Fib object and the attribute \verb|db_version| the database version. Both version numbers are natural numbers. They can be mapped to a human-readable form (e.g. ``Fib V1.2.3''). In the multimedia information element only numbers are used, otherwise a certain form would have to be established, which can be changed afterwards only with difficulty. There may be a human readable form of the versions specified in the optional part.
+
+\bigskip\noindent
+An example for the multimedia information:
+\begin{verbatim}
+<multimedia_info fib_version="1" db_version="0"/>
+\end{verbatim}
+
+
+\subsubsection{Optional part}\index{optional part}
+\label{secXmlRootOptionalPart}
+
+The element for the optional part has the name \verb|optionalpart|.
+
+It contains a list of elements for the entries in the optional part. These elements have the name \verb|pair|. The \verb|pair| elements have two attributes \verb|key| and \verb|value|.
+The attribute \verb|key| contains the key and the attribute \verb|value| contains the value of the entry.
+
+\bigskip\noindent
+An example for the optional part:
+\begin{verbatim}
+<optionalpart>
+   <pair key="copyright" value="GNU GPL 3"/>
+   <pair key="type" value="the Berlin wall"/>
+</optionalpart>
+\end{verbatim}
+
+
+\subsubsection{Domains}
+\label{secXmlDefinitionranges}
+\index{value domains}\index{domains|(}
+
+The element for the domains element has the name \verb|domains| and consists of a domain list.
+
+The domain for values element has the name \verb|valueDomains| and has the same structure as the domain element with the name \verb|domains|. This element (\verb|valueDomains|) has no effect when saving in XML format, but is for keeping the information.
+
+The domain list identifies the domains of each element, if a value (e.g. a variable) is outside its domain, it is rounded to a value within the domain. Values outside these domains can thus not occur for the element.
+
+The domains for values include also domains, but these domains only apply to actual values in elements and not for values of contained variables. The domains for values determine how many bits are needed for compressed storing (see section \ref{fibCompressing} on page \pageref{fibCompressing}) of an element that contains a value.
+%TODO weg: Superset of the set of values to an element in the domains for values should always be the value set of the corresponding domain in the domain list (or inherited genuine domain). 
+The domains for values are useful when the values of an element do not cover the full possible range of the domain for the element. For example, if a subobject contains only points whose position vectors only contain variables and integer values between 0 and 10, the domain for values for position vectors can be set to ``integerB'' with 4 bits, even if the variables of the position vectors taking values greater 100 .
+
+The reason for the introduction of central (in the root-elements) domains is, that on the one hand as little space for values should be used when compressed storing the Fib object, without drastically limit the assignment possibilities for the values and on other hand that it can be determined in advance if and how the multimedia object can be displayed (e.g. if and how it should be scaled or whether the display of all values is impossible). If for example, the domain for the dimension takes only integer values between 0 and 50 (e.g. the horizontal in an image), then 6 bits is enough to store the values for the dimension. For larger images simply more bits for the values of the dimension can be used.
+
+\bigskip\noindent
+Each of the two domain lists contains a number of domain entries. A domain entry is an XML element for the type of Fib element for which it applies. This XML element in turn contains the actual domain.
+
+
+\paragraph{XML element names for Fib elements}
+\label{secXmlDefinitionrangesElements}
+
+The table \ref{tableFixXmlElementsForDefinitionRanges} lists the names of XML elements and the attributes of the XML elements for the various types respectively Fib elements.
+
+\begin{center}
+\begin{longtable}{|p{25mm}|p{100mm}|}\hline
+	name & description \\\hline\endhead
+	dim & The domain is for position vectors respectively dimensions. The attribute is \verb|count|, which indicates the number of dimensions $Dim$. This element contains one element for each dimension with the name \verb|dimension|. A \verb|dimension| element has two attributs \verb|number| and \verb|direction|. The attribute \verb|number| is a natural number greater than $0$, which indicates the number of the dimension. In the position vectors the \verb|number|'th element is for the dimension. The attribute \verb|direction| indicates the direction in which the dimension goes. This is a natural number, which indicates, in which direction the \verb|number|'th dimension is mapped. The possible values are described in table \ref{tableDimmapValues} on page \pageref{tableDimmapValues}. \\\hline
+	subfunction & domain for the elements of subfunctions\\\hline
+	property & This is the domain of property elements with the given name. The attribute \verb|name| contains the name of the property. Possible names are listed in table \ref{tablePropertyNamen} on page \pageref{tablePropertyNamen}.\\\hline
+	inVar & This is the domain for the \verb|number|'th input variable. The attribute is \verb|number|, which indicates the number of the input variable. (The count of the input variables of a root-element starts at 1 .) \\\hline
+
+
+	\multicolumn{2}{|c|}{\textbf{Names of XML elements for domains that are relevant}}\\
+	\multicolumn{2}{|c|}{\textbf{for compressed storing}}\\\hline
+
+	area & This type is for domains for the area element (see section \ref{fibArea} on page \pageref{fibArea}).  The corresponding domain is a vector domain with 2 elements / subdomains. The first element or the first subdomain is used for the number ($n$) of subareas / vectors, it is part of the domain of the natural numbers. The second element is the domain for the subareas ($B_{1}$), it is a vector domain with two elements or subdomains, each of which come from the domain of integers. \\\hline
+	variable & Values that are needed to encode variables. The domain should include the natural numbers from 0 to the maximum number of variables defined in the Fib leafs in the main-Fib-object. The Fib tree-leaf in the main-Fib-object above which the most variables are defined respectively the branch with the most defined variables, thus determins the domain.\\\hline
+	comments & Values that are needed to encode comments. The domain should include the natural numbers from 0 to the number of comments in the main-Fib-object.\\\hline
+	externObject & This is the domain for external objects (see section \ref{fibExtObject} on page \pageref{fibExtObject}) in the main-Fib-object. The domain is a vector with 4 elements. The vector elements are in ther the order for the identifier, the number of input values, the number of subobjects and the number of output variables. All vector element domains, except for the identifier, are part of the natural numbers. The vector element domain for the identifier is part of the integers.\\\hline
+	externObjectInput & This domain is for the input values for external objects (see section \ref{fibExtObject} on page \pageref{fibExtObject}) . The domain is an vector domain. The attribute \verb|identifier| is an integer and determines the identifier of the external object, for which elements the domain is.\\\hline
+	externSubobject & This domain type is for the input values for external subobjects (see section \ref{fibSubobject} on page \pageref{fibSubobject}). The domain is an vector domain. The attribute \verb|number| is a natural number and determines the number of the external subobject, for which elements the domain is.\\\hline
+	externSubobject & This domain type is for the number of input variables for external subobjects (see section \ref{fibSubobject} on page \pageref{fibSubobject}). The domain is always a subset of the natural numbers.\\\hline
+	setElement & This type is for the domain for the set-element (see section \ref{secFibSetElement} on page \pageref{secFibSetElement}). The corresponding domain is a vector domain with 3 elements / subdomains. The first element or the first subdomain is used for the number ($n$) of variables and number of values to be set per set, it is part of the domain of the natural numbers. The second element or the second subdomain is used for the number ($k$) of the sets of values to be set. It is also part of the domain of the natural numbers. The third and final element is the domain for the vectors for the values to be set ($W_{i.g}$) and is a domain for vectors, which element- or subdomains are domains for numbers (scalar). Further as an attribut \verb|domainNr| a natural number can be specified for the domain number $DomainNr$. If the attribute \verb|domainNr| is missing, the domain number $DomainNr$ is $0$ . \\\hline
+	matrixElement & This type is for the domain for the matrix-element (see section \ref{secFibMatrixElement} on page \pageref{secFibMatrixElement}). The corresponding domain is a vector domain with 4 elements / subdomains. The first element or the first subdomain is used for the number ($d$) of dimension variables, the number $i$ of value variables and number of values $i$ to be set per set, it is part of the domain of the natural numbers. The second element or the second subdomain is used for the number ($k$) of the sets of values to be set. It is also part of the domain of the natural numbers. The third element is the domain for the areas respectively for the start and end values for the different dimension variables, it is a vector domain with two elements or subdomains, each of which come from the domain of integers.The fourth and final element is the domain for the vectors for the values to be set ($W_{a.b}$) and is a domain for vectors, which element- or subdomains are domains for numbers (scalar). Further as an attribut \verb|domainNr| a natural number can be specified for the domain number $DomainNr$. If the attribute \verb|domainNr| is missing, the domain number $DomainNr$ is $0$ .\\\hline 
+
+\caption{Names of XML elements for domains}
+\label{tableFixXmlElementsForDefinitionRanges}
+\end{longtable}
+\end{center}
+
+
+\paragraph{Possible domains}
+\label{secXmlDefinitionrangesArea}
+
+Each domain is assigned its own XML element. Each XML element for a domain can have an attribute \verb|scalingfactor| for the scaling factor. This may be omitted, if the scaling factor is $1$, respectively the scaling factor is $1$ if it is omitted.
+
+The scaling factor \verb|scalingfactor| is a floating point number, with which the values of the unscaled domain or the basic domain are multiplied to obtain the scaled domain.
+
+\noindent
+\textit{Example:} The domain is 2 bit natural numbers with the scaling factor of $F=0.5$ . Possible values for the element to the domain are: $\{$ $0*0.5=0$; $1*0.5=0.5$; $2*0.5=1$; $3*0.5=1.5$ $\}$. If in the element to the domain a number is set that would mean $3$ unscaled, it means with the scaling $1.5$.
+The XML Element for the domain: \verb|<naturalNumberB scalingfactor="0.5" bit="2"/>|
+
+\bigskip\noindent
+The table \ref{tableXmlDefinitionRanges} lists the names of XML elements and attributes of XML elements for the various domains.
+
+\begin{center}
+\begin{longtable}{|p{25mm}|p{25mm}|p{75mm}|}\hline
+	name & description & parameter \\\hline\endhead
+	naturalNumberB & The basic domain are the natural numbers. & The attribute \verb|bit| is a natural number, which indicates the number of bits for values of the domain. The corresponding basic domain is $0 \ldots (2^bit-1)$ . \\\hline
+	integerB & The basic domain are the integer numbers. & The attribute \verb|bit| is a natural number, which indicates the number of bits for values of the domain. The corresponding basic domain is $-(2^{bit-1}) \ldots (2^{bit-1}-1)$ . \\\hline
+	naturalNumber & The basic domain are the natural numbers. & The attribute \verb|max| is a natural number, which is the largest natural number in the domain. The corresponding basic domain is $0 \ldots max$.\\\hline
+	integer & The basic domain are the integer numbers. & The two attributes \verb|min| and \verb|max| are two integers. The attribute \verb|min| is the smallest number in the domain. The attribute \verb|max| is the biggest number in the domain. The corresponding basic domain is $min \ldots max$. \\\hline
+	integerValues & The basic domain are the integer numbers. & For each value of the basic domain the \verb|integerValues| element contains one \verb|value| element, in which the value is given (for example  \verb|<value>17</value>|).\\\hline
+%TODO: naturalNumberUL() + integerUL() + realUL() für unbegrenzte Zahlen
+
+
+	real & The basic domain are floating point numbers. A floating point number consists of two integer fields, one the first, for the exponent $E$ and one, the second, for the mantissa $M$. The floating point number $Z$ is then $Z = M * 2^E$. & This element contains two elements. The first element specifies the domain of the mantissa and the second for the exponent. The specification of the domains is as described in this table. Both domains must come from the domains of integers (ie. integer... or naturalNumber...). Example: \verb|<real>|\newline \verb|<integer min="-100" max="100"/>| \verb|<naturalNumberB| \verb|scalingfactor="0.1"| \verb| bit="8"/></real>| The mantissa is a natural number from $-100$ to $100$ and the exponent is an eight-bit natural number scaled by $0.1$ .\\\hline
+	realValues & The basic domain are floating point numbers. A floating point number consists of two integer fields, one the first, for the exponent $E$ and one, the second, for the mantissa $M$. The floating point number $Z$ is then $Z = M * 2^E$. & This element contains several elements. The first element specifies the domain of the mantissa and the second for the exponent. The specification of the domains is as described in this table. Both domains must come from the domains of integers (ie. integer... or naturalNumber...). After the first two parameters the \verb|value|-elements for the possible floating point numbers of the domain follow (e.g. \verb|<value>17.14</value>|). Example: \verb|<real>| \verb|<integer min="-100"| \verb|max="100"/>| \verb|<naturalNumberB| \verb|scalingfactor="0.1"| \verb| bit="8"/>| \verb|<value>7*2^0.5</value>| \verb|<value>31*2^10</value>| \verb|</real>| The mantissa is a natural number from $-100$ to $100$ and the exponent is an eight-bit integer scaled by $0.1$ . The values in the domain are $7*2^{0.5} \approx 9.9$ and $31*2^{10} \approx 31744$\\\hline
+
+	vector & The basic domain are vectors. & The element has one attribute \verb|elements|, which indicates the number of elements $E$ in the vectors. The XML element \verb|vector| also contains for each of the vector elements (this means \verb|elements| piece) a XML element with the domain for the element of the vector. Where the first XML element contains the domain of the first vector element, the second of the second and so on. All the values of the vector domain will have the form $(D_1, \ldots , D_E)$, where $D_i$ is a value of the i'th domain in the domains list.\\\hline
+	vectorValues & The basic domain are vectors. & The element has one attribute \verb|elements|, which indicates the number of elements $E$ in the vectors. The XML element \verb|vectorValues| also contains for each of the vector elements (this means \verb|elements| piece) an XML element with the domain for the element of the vector. Where the first XML element contains the domain of the first vector element, the second of the second and so on. Then follows a list with the vectors, as described in section \ref{secXmlVector} on page \pageref{secXmlVector} without the \verb|type| attributes. The domains of the vectors are the given domains of the preceding list. Variables can also occur in the stored vectors. If a variable is an element in a the vector the identifier for the variable is omitted. Example: \verb|<vectorValues elements="2">| \verb|<integer min="-100" max="100"/>| \verb|<naturalNumberB| \verb|scalingfactor="0.1"| \verb| bit="8"/>| \verb|<vector>| \verb|<value>99</value>| \verb|<value>2</value>| \verb|</vector>| \verb|<vector>| \verb|<value>-17</value>| \verb|<variable></variable>| \verb|</vector>| \verb|</vectorValues>| ; This domain dosn't change anything for the notation of a vector in a Fib element in the XML format. Vectors will be stored like with the \verb|vector| domain. \\\hline
+	vectorOpenEnd & The basic domain are vectors. & The element has one attribute \verb|elements|, which indicates the minimum number of elements $E$ in the vectors. The XML element \verb|vectorOpenEnd| also contains for each of the vector elements (this means \verb|elements| piece) an XML element with the domain for the element of the vector. Where the first XML element contains the domain of the first vector element, the second of the second and so on and the $E$'te domain is for $E$'th and the following elements. All the values of the vector domain will have the form $(D_1, \ldots , D_E, \ldots , D_E)$, where $D_i$ is a value of the i'th domain in the domains list. This domain is for elements that may contain vectors of different size. The number of elements for a vector of this domain is determined by the element containing the vector. \\\hline
+	domainReference & This is a reference to the (sub-)domain of an other element. The domain is the domain of the element with the given type element. & The element can contain the optional attribute \verb|subdomain|. The attribute \verb|subdomain| specifies the subdomain which should be used. In it the numbers (counting starts with 1) of the subdomains to use is stored.  Subdomains of more levels can be given separated by a point betwean them. In which the number of a subdomain stands befor the number of the subdomains contained in it. The \verb|domainReference| contains a XML element for the type element to which it refers to. This XML element is generated as described in table \ref{tableFixXmlElementsForDefinitionRanges} on page \pageref{tableFixXmlElementsForDefinitionRanges} . Example \verb|<domainReference| \verb|subdomain="3.1">| \verb|<matrixElement/>| \verb|</domainReference>|: The used domain is the first subdomain of the third subdoamin of the matrix element.\\\hline
+
+	defaultDomain & The specified domain will be used only if for the corresponding element so far no other domain was given. & The element contains a Xml element of a domain as described in this table. The specified domain is only used, if for the corresponding element so far no other domain was given.\\\hline
+
+\caption{Elements for domains}
+\label{tableXmlDefinitionRanges}
+\end{longtable}
+\end{center}
+
+\bigskip\noindent
+An example for the domains:
+\begin{verbatim}
+<domains>
+   <dim count="2">
+      <dimension number="1" direction="horizontal"/>
+      <dimension number="2" direction="vertical"/>
+      <vector elements="2">
+         <naturalNumberB scalingfactor="0.1" bit="8"/>
+         <integer scalingfactor="0.1" min="10" max="110"/>
+      </vector>
+   </dim>
+   <property name="colorRGB">
+      <vector elements="3">
+         <naturalNumberB bit="8"/>
+         <integer min="-10" max="246"/>
+         <naturalNumberB bit="9"/>
+      </vector>
+   </property>
+</domains>
+<valueDomains>
+   <property name="colorRGB">
+      <vector elements="3">
+         <naturalNumberB bit="4"/>
+         <integer min="-10" max="10"/>
+         <integerValues>
+            <value>17</value>
+            <value>-3</value>
+            <value>12</value>
+            <value>124</value>
+         </integerValues>
+      </vector>
+   </property>
+</valueDomains>
+\end{verbatim}
+
+\index{domains|)}
+
+
+\subsubsection{Input variables}\index{input variables}
+\label{secXmlRootInputVar}
+
+The XML element for the input variables is named \verb|input_variables|. It contains for each input variable an XML element named \verb|variable|. The \verb|variable| element has two attributes \verb|number| and \verb|default|. The attribute \verb|number| is the number of input variable. With the attribute \verb|default| the default value of the input variable is set.
+
+\bigskip\noindent
+An example for the input variable element:
+\begin{verbatim}
+<input_variables>
+   <variable number="1" default="3"/>
+   <variable number="2" default="17.3"/>
+</input_variables>
+\end{verbatim}
+
+
+\subsubsection{Main-Fib-object}\index{main-Fib-object}
+\label{secXmlRootMainObject}
+
+At this point the data from the main-Fib-object stand in the form of its elements and their parameters, as described in the section \ref{secXmlFibElement} on page \pageref{secXmlFibElement}. It is packaged in a XML element named \verb|main_fib_object|.
+
+\bigskip\noindent
+An example for the main-Fib-object:
+\begin{verbatim}
+<main_fib_object>
+   ...<!-- main-Fib-object -->
+</main_fib_object>
+\end{verbatim}
+
+
+\subsubsection{Sub-root-objects}\index{sub-root-object}
+\label{secXmlRootSubRoot}
+
+The XML element for the sub-root-objects is named \verb|sub_roots|. It contains for each sub-root-object an XML element named \verb|sub_root|. The element \verb|sub_root| has the attribute \verb|identifier|, which specifies the identifier of the sub-root-object (it is an integer). The element \verb|sub_root| also contains the corresponding root-object, as described in this section \ref{secXmlRootElement}.
+
+\bigskip\noindent
+An example for the sub-root-objects:
+\begin{verbatim}
+<sub_roots>
+   <sub_root identifier="1">
+      <root>
+          ...
+      <\root>
+   </sub_root>
+   <sub_root identifier="3">
+      <root>
+          ...
+      <\root>
+   </sub_root>
+</sub_roots>
+\end{verbatim}
+
+
+\subsubsection{Identifiers of used database objects}\index{database!used identifiers}
+\label{secXmlRootDBIdentifier}
+
+Here follows a list of all identifiers of Fib database objects, which are used in the main-Fib-object or also in sub-root-objects. The storing of this identifiers is optional. If identifiers are present, it can be tested from the outset, that all external Fib objects from the database, that are needed, exists or whether it is likely that display errors occur, since database objects are missing. Whether the identifier of a Fib database object is given in the root-element in which main-Fib-object the database object is needed or in a higher root-element, depends on several factors. For the changing of the Fib objects, it is advantageous, that the identifier of a Fib database object is given in a root-element, which is near the place of its use. For storage space reasons in the compressed storage form it may be useful to store the identifier of used database objects in as few as possible root-elements.
+
+The name of the corresponding XML element for the database identifier is \verb|database_identifier|. It contains, for each specified database identifier, an XML element named \verb|identifier|. This XML element \verb|identifier| in turn, contains an (negative) integer for the used database identifier.
+
+\bigskip\noindent
+An example for the the identifiers of used database objects:
+\begin{verbatim}
+<database_identifier>
+   <identifier>-21</identifier>
+   <identifier>-632</identifier>
+</database_identifier>
+\end{verbatim}
+
+
+\subsubsection{Checksum field}\index{checksum}
+\label{secXmlRootChecksumm}
+
+With this element a checksum for the root-element in the compressed storage format can be provided. For the Fib XML format, these information is irrelevant.
+
+The checksum element is a property vector for a checksums, as described in section \ref{secXmlProperty} on page \pageref{secXmlProperty}.
+
+\bigskip\noindent
+An example for the checksum element / vector:
+\begin{verbatim}
+<vector type="property.checksum">
+   <value>1</value>
+   <value>256</value>
+   <value>64</value>
+</vector>
+\end{verbatim}
+
+\index{root-element|)}
+
+
+\subsection{Fib elements}
+\label{secXmlFibElement}
+
+Each Fib element has its own XML element. Their layout will be described below.
+
+
+\subsubsection{Vectors}\index{vectors|(}
+\label{secXmlVector}
+
+Vectors consist of several elements, each element being either a value or a variable. The number of elements of the vector is either determined by the Fib element or an associated domain (see section \ref{root_definition_ranges} on page \pageref{root_definition_ranges}).
+
+All vector XML elements have the name \verb|vector|. The \verb|vector| element has the attribute \verb|type|, which indicates the type of vector (Example: \verb|position| or \verb|property.colorRGB|). The \verb|vector| element contains further for each element of the vector an XML element. The XML element for vector elements, which are values, has the name \verb|value|. However, the XML element for vector elements, which are variables, has the name \verb|variable|.
+Both XML elements for vector elements have the optional attribute \verb|number|, which is the number (the counting starts at $1$) of the element in the vector. Furthermore, both contain the value of the vector element. Where for the variables the variable identifier / number is given, as it was defined in the definition of the variable.
+
+\bigskip\noindent
+An example for a vector:
+\begin{verbatim}
+<vector type="position">
+   <value>17</value>
+   <variable>3</variable>
+</vector>
+\end{verbatim}
+
+\noindent
+An example for a vector with the optional attribute \verb|number|:
+\begin{verbatim}
+<vector type="position">
+   <variable number="1">5</variable>
+   <value number="2">3.9</value>
+</vector>
+\end{verbatim}
+
+\index{vectors|)}
+
+
+\subsubsection{Point}\index{point element|(}
+
+For the description of the point element see section \ref{fibPoint} on page \pageref{fibPoint} .
+
+A normal point element has the name \verb|point|. A point without a position vector ($point()$) has also the name \verb|point| but contains no position vector.
+If the point is for the entire background ($point(())$: point in which the position vector has no elements), the name of the XML element is \verb|background|.
+
+Normal points included a position vector (see section \ref{secXmlVector}). The number of vector elements is determined by the number of dimensions (see section \ref{secXmlDefinitionranges} on page \pageref{secXmlDefinitionranges}) the number of possible values for each position vector element, is determined by the domain of the dimension (see section \ref{secXmlDefinitionrangesArea} on page \pageref{secXmlDefinitionrangesArea}).
+
+\bigskip\noindent
+An example for a normal point:
+\begin{verbatim}
+<point>
+   <vector type="position">
+      <variable>2</variable>
+      <value>21</value>
+   </vector>
+</point>
+\end{verbatim}
+
+\noindent
+An example for a point with no impact respectively a point with no position vector:
+\begin{verbatim}
+<point/>
+\end{verbatim}
+
+\noindent
+An example for a point with an empty position vector for the entire background:
+\begin{verbatim}
+<background/>
+\end{verbatim}
+
+\index{point element|)}
+
+
+\subsubsection{Properties}\index{property element|(}
+\label{secXmlProperty}
+
+For the description of the property element see section \ref{fibProperty} on page \pageref{fibProperty} .
+
+The name of the property element is \verb|property|. It contains a property vector and a Fib object (its subobject).
+
+The property vector has an attribute named \verb|type| for the type of property. The type is always \verb|"property."| followed by the name of the property, as listed in table \ref{tablePropertyNamen} on page \pageref{tablePropertyNamen} .
+
+\bigskip\noindent
+An example for a property element:
+\begin{verbatim}
+<property>
+   <vector type="property.colorSW">
+      <value>200</value>
+   <vector>
+   ...<!-- Fib subobject -->
+</property>
+\end{verbatim}
+
+\bigskip\noindent
+For the properties there are two special properties, that have influence on the decoding of the Fib object in the compressed format. These properties are ``checksum'' (see section \ref{secCompressedChecksumm} on page \pageref{secCompressedChecksumm}) and ``boundSize'' (see section \ref{secCompressedBoundSize} on page \pageref{secCompressedBoundSize}) .
+For the XML format they have no significance, but serve only to hold the information that they exists. The vector for the property ``boundSize'' has in this case $0$ vector elements.
+
+
+\index{property element|)}
+
+
+\subsubsection{List element}\index{list element|(}
+
+For the description of the list element see section \ref{fibList} on page \pageref{fibList} .
+
+The name of the list element is \verb|list|. It contains a number of subobjects that are listed in their order. (The first element in the XML list element is for the first subobject of the list element, etc. .)
+
+\bigskip\noindent
+An example for a list element:
+\begin{verbatim}
+<list>
+   <!-- 1. list subobject -->
+   <property>
+      <vector type="property.boundSize">
+      </vector>
+      ...<!-- Fib subobject -->
+   </property>
+
+   <!-- 2. list subobject -->
+   <point>
+      <vector type="position">
+         <variable>1</variable>
+         <variable>2</variable>
+      </vector>
+   </point>
+
+   <!-- 3. list subobject -->
+   <point>
+      <vector type="position">
+         <variable>52</variable>
+         <value>36</value>
+      </vector>
+   </point>
+
+</list>
+\end{verbatim}
+
+\index{list element|)}
+
+
+\subsubsection{Comment element}\index{comment element|(}
+
+For the description of the comment element see section \ref{fibComment} on page \pageref{fibComment} .
+
+The comment element has the name \verb|comment|. It has two attributes \verb|key| and \verb|value|. The attribute \verb|key| is the key of the comment element and the attribute \verb|value| the value. Instead of using the attribute \verb|value| the value of the comment element can be stored in a XML element named \verb|value| as the text.
+Furthermore, the comment element contains a Fib object (its subobject).
+
+\bigskip\noindent
+An example for a comment element:
+\begin{verbatim}
+<comment key="name" value="Mr X">
+   ...<!-- Fib subobject -->
+</comment>
+\end{verbatim}
+
+\noindent
+An example for a comment element with a \verb|value| XML element:
+\begin{verbatim}
+<comment key="description">
+   <value>
+      This is a long text
+      line 2
+   </value>
+   ...<!-- Fib subobject -->
+</comment>
+\end{verbatim}
+
+
+
+\index{comment element|)}
+
+
+\subsubsection{Area element}\index{area element|(}
+
+For the description of the area element see section \ref{fibArea} on page \pageref{fibArea} .
+
+The name of the area XML element is \verb|area|. The area XML element has an attribute \verb|defined_variable|. The attribute \verb|defined_variable| indicates, which variable is defined by the area element. It is a natural number for a variable, that is not used above the area element for another variable.
+
+The area element also contains for each of its subareas a vector of the type \verb|subarea|. Wherein the first subarea is the first XML element, then comes the second etc. .
+
+After the subareas follows the XML element for the contained subobject.
+
+\bigskip\noindent
+An example for a area element:
+\begin{verbatim}
+<area defined_variable="1">
+   <vector type="subarea">
+      <value>4</value>
+      <value>10</value>
+   </vector>
+   <vector type="subarea">
+      <value>15</value>
+      <value>19</value>
+   </vector>
+   ...<!-- Fib subobject -->
+</area>
+\end{verbatim}
+
+\index{area element|)}
+
+
+\subsubsection{Function}\index{function element|(}\index{function|(}
+
+For the description of the function element see section \ref{fibFunction} on page \pageref{fibFunction} .
+
+The name of the function XML element is \verb|function|. The function XML element has an attribute \verb|defined_variable|. The attribute \verb|defined_variable| indicates, which variable is defined by the function element. It is a natural number for a variable, that is not used above the function element for another variable.
+
+Furthermore, the function element contains a subfunction element (this is described in subsection \ref{secXmlUnderFunction}), which is contained in a separate XML element named \verb|subfunction|.
+
+After the subfunction element follows the XML element for the contained subobject.
+
+\bigskip\noindent
+An example for a function element:
+\begin{verbatim}
+<function defined_variable="2">
+   <subfunction>
+      <add>
+         <value>4</value>
+         <div>
+            <variable>1</variable>
+            <value>3.14</value>
+         </div>
+      </add>
+   </subfunction>
+   ...<!-- Fib subobject -->
+</function>
+\end{verbatim}
+
+
+\paragraph{Subfunction}\index{subfunction|(}\index{underfunction|(}
+\label{secXmlUnderFunction}
+
+\ \\
+The XML elements for subfunctions for variables and values (see section \ref{fibUnderFunctionValueVariable} on page \pageref{fibUnderFunctionValueVariable}) have the names:
+\begin{itemize}
+ \item \verb|value|: value
+ \item \verb|variable|: variable
+\end{itemize}
+They contain a number each.
+Where the variable subfunction (\verb|variable|) contains the value of the number / identifier of the variable, as it is defined above.
+
+\bigskip\noindent
+Furthermore, there are real subfunctions (see section \ref{fibUnderFunction} on page \pageref{fibUnderFunction}). These contain for each of ther subfunction a XML element.
+
+\bigskip\noindent
+Names of subfunctions with an arity of one are:
+\begin{itemize}
+ \item \verb|abs|: absolute value
+ \item \verb|sin|: sine
+ \item \verb|arcsin|: arc sine
+ \item \verb|log|: logarithm
+ \item \verb|round|: round
+ \item \verb|delay|: delay
+\end{itemize}
+
+\bigskip\noindent
+Names of subfunctions with an arity of two are:
+\begin{itemize}
+ \item \verb|add|: addition
+ \item \verb|sub|: subtraction
+ \item \verb|mult|: multiplication
+ \item \verb|div|: division
+ \item \verb|exp|: exponent
+ \item \verb|min|: minimum
+ \item \verb|max|: maximum
+\end{itemize}
+In the \verb|sub|, \verb|div| and \verb|exp| subfunctions the the sequence of the contained XML elements is important. In them the first contained XML element is the first contained subfunction of the subfunction.
+
+\bigskip\noindent
+Other subfunctions:
+\begin{itemize}
+ \item \verb|if|: if-function (before its two subfunctions, first the condition of the if-subfunction is stored, the order of the XML subelements is: condition, true case (subfunction), false case (subfunction); see section \ref{secXmlIfElement} on page \pageref{secXmlIfElement})
+\end{itemize}
+
+\index{subfunction|)}\index{underfunction|)}
+\index{function element|)}\index{function|)}
+
+
+\subsubsection{if-element}\index{if-element|(}
+\label{secXmlIfElement}
+
+For the description of the if-element see section \ref{secFibIf} on page \pageref{secFibIf} .
+
+The name of the XML if-element is \verb|if|.
+
+The element contains a condition element \verb|condition| (this is described in subsection \ref{secXmlCondition}).
+
+After the condition element follow two XML elements for the contained subobjects. The first XML element is evaluated when the condition is true, and the second otherwise (if the condition is false).
+
+\bigskip\noindent
+An example for an if-element:
+\begin{verbatim}
+<if>
+   <condition>
+      <and>
+         <true/>
+         <lo>
+            <variable>1</variable>
+            <value>3.14</value>
+         </lo>
+      </and>
+   </condition>
+   ...<!-- Fib subobject,
+     if the condition is true -->
+   ...<!-- Fib subobject,
+      if the condition is false -->
+</if>
+\end{verbatim}
+
+
+\paragraph{Conditions}\index{condition|(}
+\label{secXmlCondition}
+
+Conditions contain either XML elements for 0 to 2 subconditions (respectively conditions) or XML elements for two subfunctions (see section \ref{secXmlUnderFunction} on page \pageref{secXmlUnderFunction}).
+
+The possible conditions for XML elements are listed in table \ref{tableXmlConditions}.
+
+\begin{table}[htbp]
+\begin{center}
+\begin{tabular}{|p{15mm}|p{60mm}|p{40mm}|}\hline
+	ele\-ment name & description & contained XML elements \\\hline\hline
+	\verb|false| & The condition is false. & non \\\hline
+	\verb|true| & The condition is true. & non \\\hline
+	\verb|not| & The condition is true if and only if the subcondition is false, otherwise it is false. & one subcondition \\\hline
+	\verb|or|  & The condition is true if and only if at least one of its subconditions is true, otherwise it is false. & two subconditions \\\hline
+	\verb|and| & The condition is true if and only if both of its subconditions are true, otherwise it is false. & two subconditions \\\hline
+	\verb|xor| & The condition is true if and only if exactly one of its two subconditions is true, otherwise it is false. & two subconditions \\\hline
+
+	\verb|eqInt| & Comparison of two to integers rounded numbers on equality. (for rounding see section \ref{secFibArea} on page \pageref{secFibArea}) & two subfunctions, as described in section \ref{secCompressedUnderFunction} on page \pageref{secCompressedUnderFunction}\\\hline
+	\verb|lo| & Comparison, if the first number is less than the second. & two subfunctions, as described in section \ref{secCompressedUnderFunction} on page \pageref{secCompressedUnderFunction} \\\hline
+	\verb|gr| & Comparison, if the first number is greater than the second. & two subfunctions, as described in section \ref{secCompressedUnderFunction} on page \pageref{secCompressedUnderFunction} \\\hline
+
+\end{tabular} 
+\end{center}
+\caption{XML element names for conditions}
+\label{tableXmlConditions}
+\end{table}
+
+\index{condition|)}
+\index{if-element|)}
+
+
+\subsubsection{External object element}\index{external object|(}
+
+For the description of the external object element see section \ref{fibExtObject} on page \pageref{fibExtObject} .
+
+The XML element for external object has the name \verb|obj|. It has one attribute named \verb|identifier|, which indicates the identifier of the external object to be used. Moreover an \verb|obj| XML element contains an XML element for the input variables and an XML element for each Fib subobject that can be used by the external object.
+
+The corresponding XML element for the input values is a vector (see section \ref{secXmlVector} on page \pageref{secXmlVector}) with the type \verb|externObjectInput| (\verb|<vector | \verb|type=| \verb|"externObjectInput">|), it contains the input values.
+
+A XML element for a subobject has the name \verb|subobject|. The \verb|subobject| XML element has the optional attribute \verb|number|, which specifies the number (counting begins at $1$) of the subobject. Furthermore the \verb|subobject| XML element contains an XML element for the output variables of the external object and an XML element for the Fib subobject, which is a normal Fib object, as described in this section \ref{secXmlFibElement} .
+
+The corresponding XML element for the output variable has the element named \verb|output_variables|. It keeps for each output variable one XML element named \verb|variable|. The \verb|variable| XML element has an optional attribute \verb|number|, which indicates the number (counting begins at $1$) of the output variable. Furthermore the \verb|variable| XML element contains a value for the number / identifier of the defined variable.
+
+\bigskip\noindent
+An example for a external object element:
+\begin{verbatim}
+<obj identifier="123">
+   <vector type="externObjectInput">
+      <value>5</value>
+      <variable>1</variable>
+      <variable>3</variable>
+   </vector>
+   <subobject>
+      <output_variables>
+         <variable>6</variable>
+         <variable>7</variable>
+         <variable>8</variable>
+         <variable>9</variable>
+      </output_variables>
+      ...<!-- Fib subobject number 1 -->
+   </subobject>
+   <subobject>
+      <output_variables/>
+      ...<!-- Fib subobject number 2 -->
+   </subobject>
+   <subobject>
+      <output_variables>
+         <variable>6</variable>
+         <variable>7</variable>
+      </output_variables>
+      ...<!-- Fib subobject number 3 -->
+   </subobject>
+</obj>
+\end{verbatim}
+
+\noindent
+An example for a external object element with the optional attribute \verb|number|:
+\begin{verbatim}
+<obj identifier="34">
+   <vector type="externObjectInput">
+      <variable number="1">2</variable>
+      <value number="2">3.7</value>
+      <variable number="3">5</variable>
+   </vector>
+   <subobject number="1">
+      <output_variables>
+         <variable number="1">6</variable>
+         <variable number="2">7</variable>
+         <variable number="3">8</variable>
+      </output_variables>
+      ...<!-- Fib subobject number 1 -->
+   </subobject>
+   <subobject number="2">
+      <output_variables>
+         <variable number="1">6</variable>
+         <variable number="2">7</variable>
+      </output_variables>
+      ...<!-- Fib subobject number 2 -->
+   </subobject>
+</obj>
+\end{verbatim}
+
+\index{external object|)}
+
+
+\subsubsection{External subobject}\index{external subobject|(}
+
+For the description of the external subobject element see section \ref{fibSubobject} on page \pageref{fibSubobject} .
+
+The XML element for an external subobject has the name \verb|subobject|. It has an attribute named \verb|number|, which indicates the number of external subobject, which is to be used for it. Furthermore the \verb|subobject| XML element contains an XML element for its output variables.
+
+The corresponding XML element for the output values is a vector (see section \ref{secXmlVector} on page \pageref{secXmlVector}) with the type \verb|externSubobject| (\verb|<vector | \verb|type=| \verb|"externSubobject">|), it contains the output values.
+
+\bigskip\noindent
+An example for a external subobject element:
+\begin{verbatim}
+<subobject number="6">
+   <vector type="externSubobject">
+      <value>5</value>
+      <variable>7</variable>
+   </vector>
+</subobject>
+\end{verbatim}
+
+\noindent
+An example for a external subobject element with the optional attribute \verb|number|:
+\begin{verbatim}
+<subobject number="2">
+   <vector type="externSubobject">
+      <variable number="1">2</variable>
+      <value number="2">3.7</value>
+      <variable number="3">5</variable>
+   </vector>
+</subobject>
+\end{verbatim}
+
+\index{external subobjects|)}
+
+
+\subsubsection{Retrieve domain properties}\index{domain properties|(}
+
+For the description of the Fib element to retrieve domain properties see section \ref{fibDomeinProperties} on page \pageref{fibDomeinProperties} .
+
+The XML element for the Fib element to retrieve domain properties has the name \verb|domainProperty|. The XML element has two till tree attributes. The first attribute has the name \verb|defined_variable| and specifies which variable is defined by the Fib element to retrieve domain properties. It is a natural number for a variable, that is not used above the Fib element to retrieve domain properties for another variable.
+
+If the domain is a vector domain and thus contains multiple subdomains, there is an attribute \verb|subdomain|. The attribute \verb|subdomain| specifies the subdomain which should be used. In it the numbers (counting starts with 1) of the subdomains to use is stored.  Subdomains of more levels can be given separated by a point betwean them. In which the number of a subdomain stands befor the number of the subdomains contained in it.
+
+The attribute \verb|mode| specifies the type of the property, which should be returned. The value of this attribute comes from the ``name'' column of the table \ref{tableDomainPropertyModes} on page \pageref{tableDomainPropertyModes} .
+
+The Fib element to retrieve domain properties contains two XML elements.
+
+The first is for the used type of the Fib element, for which the domain is to which the Fib element to retrieve domain properties refers to. It has the name \verb|type| and contains the XML element for the type. This XML element is generated as described in table \ref{tableFixXmlElementsForDefinitionRanges} on page \pageref{tableFixXmlElementsForDefinitionRanges} . 
+
+The Fib element to retrieve domain properties contains also the XML element for the contained subobject.
+
+\bigskip\noindent
+An example for a Fib element to retrieve domain properties:
+\begin{verbatim}
+<domainProperty defined_variable="3" subdomain="2"
+      mode="unscaled max">
+   <type>
+      <dim count="2">
+         <dimension number="1" direction="horizontal"/>
+         <dimension number="2" direction="vertical"/>
+      </dim>
+   </type>
+   ...<!-- Fib subobject -->
+</subobject>
+\end{verbatim}
+
+\noindent
+Example wher the used domain is the first subdomain of the third subdoamin of the matrix element:
+\begin{verbatim}
+<domainProperty defined_variable="1" subdomain="3.1"
+      mode="unscaled min">
+   <type>
+      <matrixElement/>
+   </type>
+   ...<!-- Fib subobject -->
+</subobject>
+\end{verbatim}
+
+\noindent
+Example without subdomains:
+\begin{verbatim}
+<domainProperty defined_variable="14" mode="scaling">
+   <type>
+      <inVar number="4"/>
+   </type>
+   ...<!-- Fib subobject -->
+</subobject>
+\end{verbatim}
+
+
+
+
+\index{domain properties|)}
+
+
+\subsubsection{Set-element}\index{set-element|(}
+
+For the description of the set-element see section \ref{secFibSetElement} on page \pageref{secFibSetElement} .
+
+The name of the set-XML element is \verb|set|. It has an optional attribute named \verb|domainNr|, which specifies the number of the domain for the set-element. If the attribute \verb|domainNr| is missing, the domain number is $0$ .
+
+The element contains first a XML element named \verb|defined_variables|, wich contains for each variable, which the set-element defines, in their order, a \verb|variable| element.
+These have the optinal attribute \verb|number|, which is the number (counting begins at $1$) of the element respectively variable defined in the set-element. Furthermore the \verb|variable| element contains a natural number for the variable, that is not used above the set-element for another variable.
+
+After the XML element for variable definitions \verb|defined_variables| follows the XML element named \verb|values|, wich contains the vectors with the values, to which the variables should be set. They are listed in their order in the set-element. The vectors all have the type \verb|set| (\verb|type="set"|).
+
+At the end, after the XML element for values vectors \verb|values|, the set-element contains the XML element for the contained the subobject.
+
+\bigskip\noindent
+An example for a set-element:
+\begin{verbatim}
+<set>
+   <defined_variables>
+      <variable>7</variable>
+      <variable>8</variable>
+      <variable>9</variable>
+   </defined_variables>
+   <values>
+      <vector type="set">
+         <variable>1</variable>
+         <value>3</value>
+         <value>26.14</value>
+      </vector>
+      <vector type="set">
+         <value>33.4</value>
+         <value>-47</value>
+         <variable>4</variable>
+      </vector>
+   </values>
+
+   ...<!-- Fib subobject -->
+</set>
+\end{verbatim}
+
+\noindent
+An example for a set-element with the optional attribute \verb|domainNr| and \verb|number|:
+\begin{verbatim}
+<set domainNr="5">
+   <defined_variables>
+      <variable number="1">2</variable>
+      <variable number="2">3</variable>
+      <variable number="3">4</variable>
+      <variable number="4">5</variable>
+   </defined_variables>
+   <values>
+      <vector type="set">
+         <variable>1</variable>
+         <variable>1</variable>
+         <variable>1</variable>
+         <variable>1</variable>
+      </vector>
+      <vector type="set">
+         <value>8</value>
+         <value>4</value>
+         <variable>1</variable>
+         <value>3</value>
+      </vector>
+   </values>
+
+   ...<!-- Fib subobject -->
+</set>
+\end{verbatim}
+
+\index{set-element|)}
+
+
+\subsubsection{Matrix element}\index{matrix element|(}
+
+For the description of the matrix element see section \ref{secFibMatrixElement} on page \pageref{secFibMatrixElement} .
+
+The name of the XML element is \verb|matrix|. It has the attribute \verb|dimensions|, which indicates how many dimensions $d$ the matrix element has. Furthermore it has an optional attribute named \verb|domainNr|, which specifies the number of the domain for the matrix element. If the attribute \verb|domainNr| is missing, the domain number is $0$ .
+
+The element contains first a XML element named \verb|defined_variables|, wich contains for each variable, which the matrix element defines, in their order a \verb|variable| element.
+These have the optional attribute \verb|number|, which is the number (counting begins at $1$) of the element respectively variable defined in the matrix element. Furthermore the \verb|variable| element contains a natural number / identifier for the variable, that is not used above the matrix element for another variable.
+
+After the XML element for variable definitions \verb|defined_variables| follows the XML element named \verb|areas|, wich contains the vectors with the areas for the dimension ($(Startvalue_k, \ldots, Endvalue_k)$ with $k=1 \ldots d$), to which the dimension variables ($Variable_1, \ldots, Variable_d$) should be set to. They are listed in their order in the matrix element. The vectors all have the type \verb|area| (\verb|type="area"|).
+
+After the XML element for the areas \verb|areas| follows the XML element named \verb|values|, wich contains the vectors with the values ($Value_{d+1}, \ldots, Value_{d+i}$), to which the variables should be set. They are listed in their order in the matrix element. The vectors all have the type \verb|matrix| (\verb|type="matrix"|).
+
+At the end, after the XML element for the values vectors \verb|values|, the matrix element contains the XML element for the contained subobject.
+
+\bigskip\noindent
+An example for a matrix element:
+\begin{verbatim}
+<matrix dimensions="2">
+   <defined_variables>
+      <variable>7</variable>
+      <variable>8</variable>
+      <variable>9</variable>
+      <variable>10</variable>
+      <variable>11</variable>
+   </defined_variables>
+   <areas>
+      <vector type="area">
+         <value>3</value>
+         <value>4</value>
+      </vector>
+      <vector type="area">
+         <variable>2</variable>
+         <value>7</value>
+      </vector>
+   </areas>
+   <values>
+      <vector type="matrix">
+         <variable>1</variable>
+         <value>3</value>
+         <value>26.14</value>
+      </vector>
+      <vector type="matrix">
+         <value>33.4</value>
+         <value>-47</value>
+         <variable>4</variable>
+      </vector>
+   </values>
+   ...
+   ...<!-- Fib subobject -->
+</matrix>
+\end{verbatim}
+
+\noindent
+An example for a matrix element with the optional attribute \verb|domainNr| and \verb|number|:
+\begin{verbatim}
+<matrix dimensions="2" domainNr="7">
+   <defined_variables>
+      <variable number="1">8</variable>
+      <variable number="2">9</variable>
+      <variable number="3">10</variable>
+      <variable number="4">11</variable>
+   </defined_variables>
+   <areas>
+      <vector type="area">
+         <variable>3</variable>
+         <variable>2</variable>
+      </vector>
+      <vector type="area">
+         <value>-2</value>
+         <value>0</value>
+      </vector>
+   </areas>
+   <values>
+      <vector type="matrix">
+         <value>3</value>
+         <variable>1</variable>
+      </vector>
+      <vector type="matrix">
+         <value>0.44</value>
+         <value>-7</value>
+      </vector>
+      <vector type="matrix">
+         <value>6</value>
+         <value>5</value>
+      </vector>
+      <vector type="matrix">
+         <value>-1</value>
+         <value>-1</value>
+      </vector>
+   </values>
+   ...
+   ...<!-- Fib subobject -->
+</matrix>
+\end{verbatim}
+
+\index{matrix element|)}
+
+
+
+
+%TODO XSD Schemadatei einfügen
+

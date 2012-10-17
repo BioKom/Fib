@@ -1,0 +1,363 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fib_object
+			xmlns:xsd="http://www.w3.org/2001/XMLSchema-instance"
+			xmlns="http://www.biokom.info/"
+			xsd:schemaLocation="http://www.biokom.info/fib.xsd">
+<root>
+	<multimedia_info fib_version="3" db_version="3"/>
+	<optionalpart>
+		<pair key="description" value="This object is for testing database object with id -512 ."/>
+		<pair key="call" value="../../../add_ons/converter/bin/convertFromFib dbId-0000512.xml dbId-0000512.png"/>
+	</optionalpart>
+	<domains>
+		<dim count="2">
+			<dimension number="1" direction="horizontal"/>
+			<dimension number="2" direction="vertical"/>
+			<vector elements="2">
+				<integer min="0" max="1024"/>
+				<integer min="0" max="1536"/>
+			</vector>
+		</dim>
+		<property name="colorRGB" >
+			<vector elements="3">
+				<naturalNumberB bit="8" />
+				<naturalNumberB bit="8" />
+				<naturalNumberB bit="8" />
+			</vector>
+		</property>
+		<property name="transparency" >
+			<vector elements="1">
+				<naturalNumberB bit="8" />
+			</vector>
+		</property>
+		<subfunction>
+			<naturalNumber max="255" />
+		</subfunction>
+		<externObject>
+			<vector elements="4">
+				<integer min="-10000" max="10000" /><!--Identifier-->
+				<naturalNumber max="32" /><!--number input values-->
+				<naturalNumber max="8" /><!--number subobjects-->
+				<naturalNumber max="16" /><!--number output values-->
+			</vector>
+		</externObject>
+	</domains>
+	<main_fib_object>
+		<list>
+			<property>
+				<vector type="property.colorRGB">
+					<value>255</value>
+					<value>255</value>
+					<value>255</value>
+				</vector>
+				<background/>
+			</property>
+			
+			<property>
+				<vector type="property.colorRGB">
+					<value>0</value>
+					<value>255</value>
+					<value>0</value>
+				</vector>
+				<list>
+					<point>
+						<vector type="position">
+							<value>2</value>
+							<value>2</value>
+						</vector>
+					</point>
+					<point>
+						<vector type="position">
+							<value>4</value>
+							<value>2</value>
+						</vector>
+					</point>
+					<point>
+						<vector type="position">
+							<value>2</value>
+							<value>4</value>
+						</vector>
+					</point>
+				</list>
+			</property>
+			
+			<property>
+				<vector type="property.colorRGB">
+					<value>0</value>
+					<value>0</value>
+					<value>255</value>
+				</vector>
+				<obj identifier="-512">
+					<vector type="externObjectInput">
+						<value>17</value>
+						<value>20</value>
+						<value>15</value>
+						<value>4</value>
+					</vector>
+				</obj>
+			</property>
+			
+			<property>
+				<vector type="property.colorRGB">
+					<value>0</value>
+					<value>255</value>
+					<value>0</value>
+				</vector>
+				<obj identifier="-512">
+					<vector type="externObjectInput">
+						<value>40</value>
+						<value>30</value>
+						<value>10</value>
+					</vector>
+				</obj>
+			</property>
+		
+			<property>
+				<vector type="property.colorRGB">
+					<value>255</value>
+					<value>0</value>
+					<value>0</value>
+				</vector>
+				<obj identifier="-512">
+					<vector type="externObjectInput">
+						<value>60</value>
+						<value>20</value>
+						<value>10</value>
+						<value>1</value>
+					</vector>
+				</obj>
+			</property>
+			
+			<property>
+				<vector type="property.colorRGB">
+					<value>0</value>
+					<value>0</value>
+					<value>0</value>
+				</vector>
+				<obj identifier="-512">
+					<vector type="externObjectInput">
+						<value>75</value>
+						<value>20</value>
+						<value>1</value>
+						<value>1</value>
+					</vector>
+				</obj>
+			</property>
+			
+			<property>
+				<vector type="property.colorRGB">
+					<value>255</value>
+					<value>0</value>
+					<value>0</value>
+				</vector>
+				<obj identifier="-512">
+					<vector type="externObjectInput">
+						<value>90</value>
+						<value>20</value>
+						<value>13</value>
+						<value>13</value>
+					</vector>
+				</obj>
+			</property>
+			
+			<property>
+				<vector type="property.colorRGB">
+					<value>0</value>
+					<value>0</value>
+					<value>255</value>
+				</vector>
+				<obj identifier="-512">
+					<vector type="externObjectInput">
+						<value>105</value>
+						<value>20</value>
+						<value>0.4</value>
+						<value>1</value>
+					</vector>
+				</obj>
+			</property>
+			
+			<property>
+				<vector type="property.colorRGB">
+					<value>0</value>
+					<value>128</value>
+					<value>255</value>
+				</vector>
+				<obj identifier="-512">
+					<vector type="externObjectInput">
+						<value>130</value>
+						<value>20</value>
+						<value>15</value>
+						<value>14</value>
+					</vector>
+				</obj>
+			</property>
+			
+			<property>
+				<vector type="property.colorRGB">
+					<value>0</value>
+					<value>255</value>
+					<value>128</value>
+				</vector>
+				<obj identifier="-512">
+					<vector type="externObjectInput">
+						<value>170</value>
+						<value>20</value>
+						<value>13</value>
+						<value>13</value>
+					</vector>
+				</obj>
+			</property>
+			
+			
+			<area  define_variable="1"><!-- for circle radius -->
+				<vector type="subarea">
+					<value>2</value>
+					<value>8</value>
+				</vector>
+				<area  define_variable="2"><!-- for circle border width w -->
+					<vector type="subarea">
+						<value>1</value>
+						<value>10</value>
+					</vector>
+					<function define_variable="3">
+						<!-- r = var_1 ^ 2 - 3 -->
+						<subfunction>
+							<sub>
+								<mult>
+									<variable>1</variable>
+									<variable>1</variable>
+								</mult>
+								<value>3</value>
+							</sub>
+						</subfunction>
+						<function define_variable="4">
+							<!-- center x position of circle x = r * 3 + 100 -->
+							<subfunction>
+								<add>
+									<mult>
+										<variable>3</variable>
+										<value>6</value>
+									</mult>
+									<value>50</value>
+								</add>
+							</subfunction>
+							<function define_variable="5">
+								<!-- center y position of circle y = w * 130 + 100 -->
+								<subfunction>
+									<add>
+										<mult>
+											<variable>2</variable>
+											<value>130</value>
+										</mult>
+										<value>0</value>
+									</add>
+								</subfunction>
+								
+								<property>
+									<vector type="property.colorRGB">
+										<value>1</value>
+										<value>2</value>
+										<value>255</value>
+									</vector>
+									<obj identifier="-512">
+										<vector type="externObjectInput">
+											<variable>4</variable>
+											<variable>5</variable>
+											<variable>3</variable>
+											<variable>2</variable>
+										</vector>
+									</obj>
+								</property>
+								
+							</function>
+						</function>
+					</function>
+				</area>
+			</area>
+			
+			<area  define_variable="1"><!-- for circle radius -->
+				<vector type="subarea">
+					<value>2</value>
+					<value>8</value>
+				</vector>
+				<area  define_variable="2"><!-- for circle border width w' -->
+					<vector type="subarea">
+						<value>1</value>
+						<value>10</value>
+					</vector>
+					<function define_variable="3">
+						<!-- r = var_1 ^ 2 - 3 -->
+						<subfunction>
+							<sub>
+								<mult>
+									<variable>1</variable>
+									<variable>1</variable>
+								</mult>
+								<value>3</value>
+							</sub>
+						</subfunction>
+						<function define_variable="4">
+							<!-- center x position of circle x = r * 3 + 100 -->
+							<subfunction>
+								<add>
+									<mult>
+										<variable>3</variable>
+										<value>6</value>
+									</mult>
+									<value>512</value>
+								</add>
+							</subfunction>
+							<function define_variable="5">
+								<!-- center y position of circle y = w * 130 + 100 -->
+								<subfunction>
+									<add>
+										<mult>
+											<variable>2</variable>
+											<value>130</value>
+										</mult>
+										<value>0</value>
+									</add>
+								</subfunction>
+								
+								<function define_variable="6">
+									<!-- line width w = w' ^ 2.5 / 6 + 5 -->
+									<subfunction>
+										<add>
+											<div>
+												<exp>
+													<variable>2</variable>
+													<value>2.5</value>
+												</exp>
+												<value>6</value>
+											</div>
+											<value>5</value>
+										</add>
+									</subfunction>
+								
+									<property>
+										<vector type="property.colorRGB">
+											<value>255</value>
+											<value>1</value>
+											<value>2</value>
+										</vector>
+										<obj identifier="-512">
+											<vector type="externObjectInput">
+												<variable>4</variable>
+												<variable>5</variable>
+												<variable>3</variable>
+												<variable>6</variable>
+											</vector>
+										</obj>
+									</property>
+								
+								</function>
+							</function>
+						</function>
+					</function>
+				</area>
+			</area>
+	
+		</list>
+	</main_fib_object>
+</root>
+</fib_object>

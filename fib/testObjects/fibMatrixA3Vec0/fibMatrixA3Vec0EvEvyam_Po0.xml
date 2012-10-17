@@ -1,0 +1,39 @@
+<data>
+	<matrix  dimensions="3">
+		<defined_variables>
+			<variable>4</variable>
+			<variable>5</variable>
+			<variable>6</variable>
+		</defined_variables>
+		<areas>
+			<vector type="area">
+				<value>2</value>
+				<value>3</value>
+			</vector>
+			<vector type="area">
+				<value>-1</value>
+				<value>-3</value>
+			</vector>
+			<vector type="area">
+				<value>9</value>
+				<value>8</value>
+			</vector>
+		</areas>
+		<values>
+		</values>
+		<property>
+			<vector type="property.colorRGB">
+				<variable>4</variable>
+				<variable>5</variable>
+				<variable>6</variable>
+			</vector>
+			<point>
+				<vector type="position">
+					<variable>4</variable>
+					<variable>5</variable>
+					<variable>6</variable>
+				</vector>
+			</point>
+		</property>
+	</matrix>
+</data>

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fib_object
+xmlns:xsd="http://www.w3.org/2001/XMLSchema-instance"
+xmlns="http://www.biokom.info/"
+xsd:schemaLocation="http://www.biokom.info/fib.xsd">
+<root>
+	<domains>
+		<dim count="4">
+			<dimension number="1" direction="horizontal"/>
+			<dimension number="2" direction="vertical"/>
+			<dimension number="3" direction="depth"/>
+			<dimension number="4" direction="time"/>
+			<vector elements="4">
+				<naturalNumber max="255" />
+				<naturalNumber max="255" />
+				<naturalNumber max="255" />
+				<naturalNumber max="255" />
+			</vector>
+		</dim>
+		<setElement>
+			<vector elements="3">
+				<naturalNumber max="4" />
+				<naturalNumber max="255" />
+				<vectorOpenEnd elements="1">
+					<integer min="-255" max="255" />
+				</vectorOpenEnd>
+			</vector>
+		</setElement>
+		<property name="sound" >
+			<vector elements="4">
+				<naturalNumber max="255" />
+				<naturalNumber max="255" />
+				<naturalNumber max="255" />
+				<naturalNumber max="255" />
+			</vector>
+		</property>
+	</domains>
+	<main_fib_object>
+		<set>
+			<defined_variables>
+				<variable>1</variable>
+				<variable>2</variable>
+			</defined_variables>
+			<values>
+				<vector type="set">
+					<value>1</value>
+					<value>-1</value>
+				</vector>
+				<vector type="set">
+					<value>2</value>
+					<value>4</value>
+				</vector>
+				<vector type="set">
+					<value>3</value>
+					<value>-9</value>
+				</vector>
+			</values>
+			<set>
+				<defined_variables>
+					<variable>3</variable>
+					<variable>4</variable>
+				</defined_variables>
+				<values>
+					<vector type="set">
+						<variable>2</variable>
+						<value>11</value>
+					</vector>
+					<vector type="set">
+						<variable>2</variable>
+						<value>22</value>
+					</vector>
+				</values>
+				<property>
+					<vector type="property.sound">
+						<variable>1</variable>
+						<variable>2</variable>
+						<variable>3</variable>
+						<variable>4</variable>
+					</vector>
+					<point>
+						<vector type="position">
+							<variable>1</variable>
+							<variable>2</variable>
+							<variable>3</variable>
+							<variable>4</variable>
+						</vector>
+					</point>
+				</property>
+			</set>
+		</set>
+	</main_fib_object>
+</root>
+</fib_object>

@@ -1,0 +1,97 @@
+%
+% Copyright (c) 2008 Betti "Osterholz
+%
+% Permission is granted to copy, distribute and/or modify this document
+% under the terms of the GNU Free Documentation License, Version 1.2 or
+% any later version published by the Free Software Foundation;
+% with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+%
+% A copy of the license is included in the file ``fdl.tex'' .
+%
+
+\newpage
+\part{Konvertierungsfunktionen}
+\label{partFibConverter}
+
+In diesem Teil werden Algorithmen beschrieben die zur Konvertierung von Multimediaobjekten in Fib-Objekte und von Fib-Objekte in Multimediaobjekten in anderen Multimediabeschreibungsformate/ -sprachen.
+
+\section{Konvertierung zu Fib-Multimediaobjekten}
+
+Bei der Konvertierung von Multimediaobjekte zu Fib-Multimediaobjekten geht es vorrangig darum, das original Multimediaobjekt mit der Fib-Multimediasprache korrekt darzustellen. Die Optimierung vom erzeugten Fib-Multimediaobjekt ist zweitrangig und kann in einem nachgeschalteten Schritt geschehen (z. B. durch den genetischen Algorithmus f"ur Fib).
+
+Diese Umsetzung in Fib wird im allgemeinen dadurch geschehen, dass die Punkte des original Multimediaobjekts mit ihren Eigenschaften zu ein Fib-Objekt zusammengef"ugt werden. Dabei ist darauf zu achten das die Eigenschaften der Punkte korrekt umgesetzt werden.
+Ebenen in Bildern haben beispielsweise nichts mit der "Uberdeckung von Teilbildern in Fib-Objekten zu tun, sondern sind Eigenschaften von Punkten.
+
+
+\subsection{Konvertierung von Rastergrafik in Fib-Multimediaobjekte}
+
+Rastergrafik ist dadurch gekenzeichnet, dass die Daten f"ur das Bild in einer 2 Dimensionalen Matrix darstellbar ist, dessen Elemente Farbwerte sind.
+
+Eine einfache Abbildung von Rastergrafik in die Fib-Multimediasprache kann mit dem im Listing \ref{allPicturesKonverter} dargestellten Algorithmus geschehen (Pseudo-C).
+
+\begin{flushleft}
+Dabei beginnt die Indizierung der Matrix mit (0,0).
+
+Der Farbwert der Koordinate (x,y) kann mit \verb|matrix[ x, y]| bestimmt werden. Mit der Funktion \verb|getColorVector()| wird aus dem Matrix Farbwert ein Fib-Farbvektor generiert.
+
+Die Syntax der Fib-Objekte entspricht der im Abschnitt \ref{partFibLanguage} auf Seite \pageref{partFibLanguage} angesprochenen m"oglichen Syntax.
+\end{flushleft}
+
+\begin{lstlisting}[language=C, numbers=left, frame=single, caption={Algorithmus zur Erzeugung eines korrekten Fib-Objekts aus einer Bildmatrik}, label={allPicturesKonverter}, breaklines, basicstyle=\footnotesize\ttfamily, numberstyle=\tiny]
+void translate( matrix, farbschema ){
+
+   int xmax = Anzahl der Spalten der Matrix;
+   int ymax = Anzahl der Zeilen der Matrix;
+   Fib_Objekt_Pointer obj = new root();
+
+   //Eigenschaften der Rastergrafik setzen
+   obj->addDomain( dim( 2, horizontal, vertikal ), vector( 2, naturalNumber( xmax ), naturalNumber( ymax ) ) );
+   obj->addDomain( property( farbschema.type ), farbschema.domain );
+
+   list hauptliste = new list();
+
+   obj->setMainFibObject( hauptliste )
+
+   for( int x = 0; x == xmax; x = x + 1 ){
+
+      for( int y = 0; y == xmax; y = y + 1 ){
+         hauptliste->insertObject( property( getColorVector( farbschema.type, matrix[x,y] ) , p( (x,y) ) ) );
+      };
+   };
+};
+\end{lstlisting}
+
+Nach dieser Umsetzung kann das erzeugte Fib-Multimediaobjekt mit Operatoren, welche das Fib-Objekt vereinfachen, aber nicht die dargestellte Rastergrafik beeinflussen, weiter vereinfacht werden.
+
+Eine sinvollerweise einzusetzende Operation, w"are beispielsweise das Zusammenfassen von gleichfarbigen Bereichen.
+
+
+%TODO weitere Konvertierungen zu Fib
+
+\section{Konvertierung von Fib-Multimediaobjekten}
+
+Die in Fib-Multimediaobjekten kodierten Objekte m"u"sen auch wieder aus der Fib-Darstellung erzeugt werden k"onnen, um sie beispielsweise Darzustellen.
+
+Die allgemeine Vorgehensweise daf"ur ist, das Fib-Multimediaobjekt auszuwerten und die erzeugten Punkte in das Zielformat einzuf"ugen. Dies ist nat"urlich nur m"oglich, wenn das Zielformat die Eigenschaften, welche Fib-Multimediaobjekt auftauchen, auch kodieren kann. Wenn nicht, gehen Informationen verlohren.
+Des weiteren kann es sinnvoll sein, nicht alle einzelnen Punkte in das Zielformat einzf"ugen, sondern ganze Teilobjekte (z. B. Rechtecke oder Kreise) aus dem Fib-Multimediaobjekt, wenn das Zielformat diese unterst"utzt.
+
+
+\subsection{Konvertierung von Fib-Multimediaobjekte in Rastergrafik}
+
+Bei der Konvertierung von Fib-Multimediaobjekten in Rastergrafik ist zuerst eine Matrix f"ur die Punkte mit ihren Eigenschaften zu erzeugen. Die Matrix h"alt die Informationen der Rastergrafik. Die Gr"o"se der Matrix und die Art der Eigenschaften, welche sie in ihren Koordinaten aufnehemen kann, wird von den Informationen in den root-Elementen des zu konvertierenden Fib-Multimediaobjekts bestimmt. Dabei m"ussen allerdings alle Eigenschaften, welche nicht Farben oder/und Helligskeitwerte repr"asentieren ignoriert werden. Das weiteren k"onnen nat"urlich Fib-Multimediaobjekte, welche nicht genau zwei Dimensionen besitzen, nicht direkt in Rastergrafik konvertiert werden.
+
+Die erzeugte Matrix ist dann sinnvollerweise mit einem Standardwert/-eigenschaft zu initialisieren. Dann ist das Fib-Multimediaobjekt auszuwerten und f"ur die erzeugten Punkte (inklusive der Hintergrundeigenschaften), an der entsprechenden Position in der Matrix, ihre Eigenschaft einzuf"ugen.
+
+Die erzeugte Matrix ist am Ende im gew"unschten Rastergrafikformat abzuspeichen.
+
+%TODO
+
+%TODO weitere Konvertierungen zu Fib
+
+
+
+
+
+
+
+

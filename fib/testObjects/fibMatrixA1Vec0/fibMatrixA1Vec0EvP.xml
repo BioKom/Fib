@@ -1,0 +1,38 @@
+<data>
+	<vector type="position">
+		<value>6</value>
+		<value>3</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>6</value>
+		<value>1</value>
+		<value>2</value>
+	</vector>
+	<vector type="position">
+		<value>5</value>
+		<value>3</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>5</value>
+		<value>1</value>
+		<value>2</value>
+	</vector>
+	<vector type="position">
+		<value>4</value>
+		<value>3</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>4</value>
+		<value>1</value>
+		<value>2</value>
+	</vector>
+	<vector type="position">
+		<value>3</value>
+		<value>3</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>3</value>
+		<value>1</value>
+		<value>2</value>
+	</vector>
+</data>

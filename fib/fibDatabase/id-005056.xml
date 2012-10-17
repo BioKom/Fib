@@ -1,0 +1,467 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fib_object
+			  xmlns:xsd="http://www.w3.org/2001/XMLSchema-instance"
+			  xmlns="http://www.fib-development.org/"
+			  xsd:schemaLocation="http://www.fib-development.org/fib.xsd">
+	<root>
+		<multimedia_info fib_version="3" db_version="3"/>
+		<optionalpart>
+			<pair key="name" value="stickman framework"/>
+			<pair key="description" value="This object represents a stickman framework. The stickman has a body, a head, two arms and two legs, with each one joint in the arms and legs. You have to provide the stickman parts as subobjects (see below). The arms will begin at 1/4 of the body size below the body start (wher the head is). The head will 1/4 (of its radius) overlap the body. The arms length will be the part 0.62 (= golden ratio) of the body or legs. The upper part of arms and legs start at the body, the lower parts start at the other end of the upper parts. The lower part length will be the part 0.62 (= golden ratio) of ther upper part."/>
+			
+			<pair key="inVar1::description" value="position of the stickman start point (lower end of first (right) lower leg) in dimension 1 (x_lrle)"/>
+			<pair key="inVar2::description" value="position of the stickman start point (lower end of first (right) lower leg) in dimension 2 (y_lrle)"/>
+			<pair key="inVar3::description" value="size s of stickman (top of the head to feet bottom, if legs are straight)"/>
+			
+			<pair key="inVar4::description" value="angle alpha of body to the dimension 2 axis (or y-axis, because most stickman will be vertical or parallel to the y-axis) in clockwise direction, the feet start points are on the bottom of the body (and, for the angle, on the virtual dimension 2 (y) axis)"/>
+			<pair key="inVar5::description" value="angle (in radian) betwean right upper arm and body (clockwise direction, if 0 the arm is on the body)"/>
+			<pair key="inVar6::description" value="angle (in radian) betwean left upper arm and body (counter clockwise direction, if 0 the arm is on the body)"/>
+			<pair key="inVar7::description" value="angle (in radian) betwean right upper leg and body axis (clockwise direction, if 0 the leg is straight)"/>
+			<pair key="inVar8::description" value="angle (in radian) betwean left upper leg and body axis (counter clockwise direction, if 0 the leg is straigh)"/>
+			<pair key="inVar9::description" value="angle (in radian) betwean head and body (clockwise direction)"/>
+			<pair key="inVar10::description" value="angle (in radian) betwean right lower arm and upper arm (clockwise direction, if 0 the arm is straight)"/>
+			<pair key="inVar11::description" value="angle (in radian) betwean left lower arm and upper arm (counter clockwise direction, if 0 the arm is straight)"/>
+			<pair key="inVar12::description" value="angle (in radian) betwean right lower leg and upper leg (counter clockwise direction, if 0 the leg is straight)"/>
+			<pair key="inVar13::description" value="angle (in radian) betwean left lower leg and upper leg (clockwise direction, if 0 the leg is straigh)"/>
+			<pair key="inVar14::description" value="width of lines w of the stickman (if lower or equal 0 the standard width w = size s / 24 will be used)"/>
+			<pair key="inVar15::description" value="radius r of head of the stickman (if lower or equal 0 the standard width r = size s / 10 will be used)"/>
+			
+			
+			<pair key="subObj1::description" value="The subobject for the right and left upper arms of the stickman. The start point (body) and end points of the upper arms are given as parameters. (This subobject is called two times, for each upper arm with its parameters.)"/>
+			<pair key="subObj1::outVar1::description" value="position of the stickman right and left upper arms start point (upper end at body) in dimension 1 (x_aXus)"/>
+			<pair key="subObj1::outVar2::description" value="position of the stickman right and left upper arms start point (upper end at body) in dimension 2 (y_aXus)"/>
+			<pair key="subObj1::outVar3::description" value="position of the stickman right and left upper arms end point in dimension 1 (x_aXue)"/>
+			<pair key="subObj1::outVar4::description" value="position of the stickman right and left upper arms end point in dimension 2 (y_aXue)"/>
+			<pair key="subObj1::outVar5::description" value="width of line w of the stickman right and left upper arms"/>
+			
+			<pair key="subObj2::description" value="The subobject for the first (right) and second (left) upper legs of the stickman. The start point (body) and end point of the upper leg are given as parameters. (This subobject is called two times, for each upper leg with its parameters.)"/>
+			<pair key="subObj2::outVar1::description" value="position of the stickman right and left upper legs start point (upper end at body) in dimension 1 (x_lXus)"/>
+			<pair key="subObj2::outVar2::description" value="position of the stickman right and left upper legs start point (upper end at body) in dimension 2 (y_lXus)"/>
+			<pair key="subObj2::outVar3::description" value="position of the stickman right and left upper legs end point in dimension 1 (x_lXue)"/>
+			<pair key="subObj2::outVar4::description" value="position of the stickman right and left upper legs end point in dimension 2 (y_lXue)"/>
+			<pair key="subObj2::outVar5::description" value="width of line w of the stickman right and left upper legs"/>
+			
+			<pair key="subObj3::description" value="The subobject for the body of the stickman. The start point (arms),and end point (legs) of the body are given as parameters."/>
+			<pair key="subObj3::outVar1::description" value="position of the stickman body start point (upper end at arms) in dimension 1 (x_bs)"/>
+			<pair key="subObj3::outVar2::description" value="position of the stickman body start point (upper end at arms) in dimension 2 (y_bs)"/>
+			<pair key="subObj3::outVar3::description" value="position of the stickman body end point (lower end at legs) in dimension 1 (x_be)"/>
+			<pair key="subObj3::outVar4::description" value="position of the stickman body end point (lower end at legs) in dimension 2 (y_be)"/>
+			<pair key="subObj3::outVar5::description" value="width of line w of the stickman body"/>
+			
+			<pair key="subObj4::description" value="The subobject for the head of the stickman. The center and radius of the head are given as parameters."/>
+			<pair key="subObj4::outVar1::description" value="position of the stickman head center point in dimension 1 (x_h)"/>
+			<pair key="subObj4::outVar2::description" value="position of the stickman head center point in dimension 2 (y_h)"/>
+			<pair key="subObj4::outVar3::description" value="radius r of the stickman head"/>
+			
+			<pair key="subObj5::description" value="The subobject for the right and left lower arms of the stickman. The start point (upper arm) and end point of the lower arm are given as parameters. (This subobject is called two times, for each lower arm with its parameters.)"/>
+			<pair key="subObj5::outVar1::description" value="position of the stickman right and left lower arms start point (upper end at upper arm) in dimension 1 (x_aXls)"/>
+			<pair key="subObj5::outVar2::description" value="position of the stickman right and left lower arms start point (upper end at upper arm) in dimension 2 (y_aXls)"/>
+			<pair key="subObj5::outVar3::description" value="position of the stickman right and left lower arms end point in dimension 1 (x_aXle)"/>
+			<pair key="subObj5::outVar4::description" value="position of the stickman right and left lower arms end point in dimension 2 (y_aXle)"/>
+			<pair key="subObj5::outVar5::description" value="width of line w of the stickman right and left lower arms"/>
+			
+			<pair key="subObj6::description" value="The subobject for the first (right) and second (left) lower legs of the stickman. The start point (upper leg) and end point of the lower leg are given as parameters. (This subobject is called two times, for each lower leg with its parameters.)"/>
+			<pair key="subObj6::outVar1::description" value="position of the stickman right and left lower legs start point (upper end at upper leg) in dimension 1 (x_lXls)"/>
+			<pair key="subObj6::outVar2::description" value="position of the stickman right and left lower legs start point (upper end at upper leg) in dimension 2 (y_lXls)"/>
+			<pair key="subObj6::outVar3::description" value="position of the stickman right and left lower legs end point in dimension 1 (x_lXle)"/>
+			<pair key="subObj6::outVar4::description" value="position of the stickman right and left lower legs end point in dimension 2 (y_lXle)"/>
+			<pair key="subObj6::outVar5::description" value="width of line w of the stickman right and left lower legs"/>
+			
+			
+			<pair key="author" value="Betti Oesterholz"/>
+			<pair key="author::email" value="Oesterholz@Fib-Development.org"/>
+			<pair key="copyright" value="LGPL3"/>
+		</optionalpart>
+		<input_variables>
+			<variable number="1" default="32"/>
+			<variable number="2" default="0"/>
+			<variable number="3" default="0"/>
+			<variable number="4" default="0"/>
+			<variable number="5" default="0"/>
+			<variable number="6" default="0"/>
+			<variable number="7" default="0"/>
+			<variable number="8" default="0"/>
+			<variable number="9" default="0"/>
+			<variable number="10" default="0"/>
+			<variable number="11" default="0"/>
+			<variable number="12" default="0"/>
+			<variable number="13" default="0"/>
+			<variable number="14" default="0"/>
+			<variable number="15" default="0"/>
+		</input_variables>
+		<domains>
+			<inVar number="1">
+				<domainReference subdomain="1">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="2">
+				<domainReference subdomain="2">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<!--  <inVar number="3">: size s of the stickman -->
+			<!-- in var 1 .. 9 : angles in radian -->
+			<inVar number="4">
+				<naturalNumber scalingfactor="0.00000001" max="632000000"/>
+			</inVar>
+			<inVar number="5">
+				<naturalNumber scalingfactor="0.00000001" max="632000000"/>
+			</inVar>
+			<inVar number="6">
+				<naturalNumber scalingfactor="0.00000001" max="632000000"/>
+			</inVar>
+			<inVar number="7">
+				<naturalNumber scalingfactor="0.00000001" max="632000000"/>
+			</inVar>
+			<inVar number="8">
+				<naturalNumber scalingfactor="0.00000001" max="632000000"/>
+			</inVar>
+			<inVar number="9">
+				<naturalNumber scalingfactor="0.00000001" max="632000000"/>
+			</inVar>
+			<inVar number="10">
+				<naturalNumber scalingfactor="0.00000001" max="632000000"/>
+			</inVar>
+			<inVar number="11">
+				<naturalNumber scalingfactor="0.00000001" max="632000000"/>
+			</inVar>
+			<inVar number="12">
+				<naturalNumber scalingfactor="0.00000001" max="632000000"/>
+			</inVar>
+			<inVar number="13">
+				<naturalNumber scalingfactor="0.00000001" max="632000000"/>
+			</inVar>
+			<!--  <inVar number="14">: width of lines w -->
+			<!--  <inVar number="15">: radius of head -->
+			
+			
+			
+			<!-- body parts of the stickman -->
+			<!-- right and left upper arm of the stickman -->
+			<externSubobject number="1">
+				<vector elements="5">
+					<!--actually any numbers are possible;
+						the next lines are just a space holder-->
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+				</vector>
+			</externSubobject>
+			<!-- right and left upper leg of the stickman -->
+			<externSubobject number="2">
+				<vector elements="5">
+					<!--actually any numbers are possible;
+						the next lines are just a space holder-->
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+				</vector>
+			</externSubobject>
+			<!-- body of the stickman -->
+			<externSubobject number="3">
+				<vector elements="5">
+					<!--actually any numbers are possible;
+						the next lines are just a space holder-->
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+				</vector>
+			</externSubobject>
+			<!-- head of the stickman -->
+			<externSubobject number="4">
+				<vector elements="3">
+					<!--actually any numbers are possible;
+						the next lines are just a space holder-->
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+				</vector>
+			</externSubobject>
+			<!-- right and left lower arm of the stickman -->
+			<externSubobject number="5">
+				<vector elements="5">
+					<!--actually any numbers are possible;
+						the next lines are just a space holder-->
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+				</vector>
+			</externSubobject>
+			<!-- right and left lower leg of the stickman -->
+			<externSubobject number="6">
+				<vector elements="5">
+					<!--actually any numbers are possible;
+						the next lines are just a space holder-->
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+				</vector>
+			</externSubobject>
+			
+			<externObject>
+				<vector elements="4">
+					<integer min="-5059" max="-5059" /><!--Identifier-->
+					<integer min="15" max="15" /><!--number input values-->
+					<naturalNumber max="1" /><!--number subobjects-->
+					<naturalNumber max="40" /><!--number output values-->
+				</vector>
+			</externObject>
+			<externObjectInput identifier="-5059">
+				<vector elements="15">
+					<domainReference>
+						<inVar number="1"/>
+					</domainReference>
+					<domainReference>
+						<inVar number="2"/>
+					</domainReference>
+					<domainReference>
+						<inVar number="3"/>
+					</domainReference>
+					<domainReference>
+						<inVar number="4"/>
+					</domainReference>
+					<domainReference>
+						<inVar number="5"/>
+					</domainReference>
+					<domainReference>
+						<inVar number="6"/>
+					</domainReference>
+					<domainReference>
+						<inVar number="7"/>
+					</domainReference>
+					<domainReference>
+						<inVar number="8"/>
+					</domainReference>
+					<domainReference>
+						<inVar number="9"/>
+					</domainReference>
+					<domainReference>
+						<inVar number="10"/>
+					</domainReference>
+					<domainReference>
+						<inVar number="11"/>
+					</domainReference>
+					<domainReference>
+						<inVar number="12"/>
+					</domainReference>
+					<domainReference>
+						<inVar number="13"/>
+					</domainReference>
+					<domainReference>
+						<inVar number="14"/>
+					</domainReference>
+					<domainReference>
+						<inVar number="15"/>
+					</domainReference>
+				</vector>
+			</externObjectInput>
+		</domains>
+		<database_identifiers>
+			<identifier>-5059</identifier>
+		</database_identifiers>
+		<main_fib_object>
+			<!-- call the subobject -5059 and distribute its output parameters to this object subobjects -->
+			<obj identifier="-5059">
+				<vector type="externObjectInput">
+					<variable>1</variable>
+					<variable>2</variable>
+					<variable>3</variable>
+					<variable>4</variable>
+					<variable>5</variable>
+					<variable>6</variable>
+					<variable>7</variable>
+					<variable>8</variable>
+					<variable>9</variable>
+					<variable>10</variable>
+					<variable>11</variable>
+					<variable>12</variable>
+					<variable>13</variable>
+					<variable>14</variable>
+					<variable>15</variable>
+				</vector>
+				<subobject>
+					<output_variables>
+						<variable>16</variable>
+						<variable>17</variable>
+						<variable>18</variable>
+						<variable>19</variable>
+						<variable>20</variable>
+						<variable>21</variable>
+						<variable>22</variable>
+						<variable>23</variable>
+						<variable>24</variable>
+						<variable>25</variable>
+						<variable>26</variable>
+						<variable>27</variable>
+						<variable>28</variable>
+						<variable>29</variable>
+						<variable>30</variable>
+						<variable>31</variable>
+						<variable>32</variable>
+						<variable>33</variable>
+						<variable>34</variable>
+						<variable>35</variable>
+						<variable>36</variable>
+						<variable>37</variable>
+						<variable>38</variable>
+						<variable>39</variable>
+						<variable>40</variable>
+						<variable>41</variable>
+						<variable>42</variable>
+						<variable>43</variable>
+						<variable>44</variable>
+						<variable>45</variable>
+						<variable>46</variable>
+						<variable>47</variable>
+						<variable>48</variable>
+						<variable>49</variable>
+						<variable>50</variable>
+						<variable>51</variable>
+						<variable>52</variable>
+						<variable>53</variable>
+						<variable>54</variable>
+						<variable>55</variable>
+					</output_variables>
+					<!-- distribute its output parameters to this object subobjects -->
+					<list>
+						<!-- right upper arm of the stickman -->
+						<comment key="type" value="right upper arm">
+							<subobject number="1">
+								<vector type="externSubobject">
+									<variable>24</variable><!-- right upper arm start point x_arus -->
+									<variable>25</variable><!-- right upper arm start point y_arus -->
+									<variable>26</variable><!-- right upper arm end point x_arue -->
+									<variable>27</variable><!-- right upper arm end point y_arue -->
+									<variable>16</variable><!-- right upper arm width of line w -->
+								</vector>
+							</subobject>
+						</comment>
+						<!-- left upper arm of the stickman -->
+						<comment key="type" value="left upper arm">
+							<subobject number="1">
+								<vector type="externSubobject">
+									<variable>32</variable><!-- left upper arm start point x_alus -->
+									<variable>33</variable><!-- left upper arm start point y_alus -->
+									<variable>34</variable><!-- left upper arm end point x_alue -->
+									<variable>35</variable><!-- left upper arm end point y_alue -->
+									<variable>16</variable><!-- left upper arm width of line w -->
+								</vector>
+							</subobject>
+						</comment>
+						<!-- first (right) upper leg of the stickman -->
+						<comment key="type" value="right upper leg">
+							<subobject number="2">
+								<vector type="externSubobject">
+									<variable>40</variable><!-- right upper leg start point x_lrus -->
+									<variable>41</variable><!-- right upper leg start point y_lrus -->
+									<variable>42</variable><!-- right upper leg end point x_lrue -->
+									<variable>43</variable><!-- right upper leg end point y_lrue -->
+									<variable>16</variable><!-- right upper leg width of line w -->
+								</vector>
+							</subobject>
+						</comment>
+						<!-- left (second) upper leg of the stickman -->
+						<comment key="type" value="left upper leg">
+							<subobject number="2">
+								<vector type="externSubobject">
+									<variable>48</variable><!-- left upper leg start point x_llus -->
+									<variable>49</variable><!-- left upper leg start point y_llus -->
+									<variable>50</variable><!-- left upper leg end point x_llue -->
+									<variable>51</variable><!-- left upper leg end point y_llue -->
+									<variable>16</variable><!-- left upper leg width of line w -->
+								</vector>
+							</subobject>
+						</comment>
+						<!-- body of the stickman -->
+						<comment key="type" value="body">
+							<subobject number="3">
+								<vector type="externSubobject">
+									<variable>17</variable><!-- body start point x_bs -->
+									<variable>18</variable><!-- body start point y_bs -->
+									<variable>19</variable><!-- body end point x_be -->
+									<variable>20</variable><!-- body end point y_be -->
+									<variable>16</variable><!-- body width of line w -->
+								</vector>
+							</subobject>
+						</comment>
+						<!-- head of the stickman -->
+						<comment key="type" value="head">
+							<subobject number="4">
+								<vector type="externSubobject">
+									<variable>21</variable><!-- head center point x_h -->
+									<variable>22</variable><!-- head center point y_h -->
+									<variable>23</variable><!-- radius of head r -->
+								</vector>
+							</subobject>
+						</comment>
+						<!-- right lower arm of the stickman -->
+						<comment key="type" value="right lower arm">
+							<subobject number="5">
+								<vector type="externSubobject">
+									<variable>28</variable><!-- right lower arm start point x_arls -->
+									<variable>29</variable><!-- right lower arm start point y_arls -->
+									<variable>30</variable><!-- right lower arm end point x_arle -->
+									<variable>31</variable><!-- right lower arm end point y_arle -->
+									<variable>16</variable><!-- right lower arm width of line w -->
+								</vector>
+							</subobject>
+						</comment>
+						<!-- left lower arm of the stickman -->
+						<comment key="type" value="left lower arm">
+							<subobject number="5">
+								<vector type="externSubobject">
+									<variable>36</variable><!-- left lower arm start point x_alls -->
+									<variable>37</variable><!-- left lower arm start point y_alls -->
+									<variable>38</variable><!-- left lower arm end point x_alle -->
+									<variable>39</variable><!-- left lower arm end point y_alle -->
+									<variable>16</variable><!-- left lower arm width of line w -->
+								</vector>
+							</subobject>
+						</comment>
+						<!-- first (right) lower leg of the stickman -->
+						<comment key="type" value="right lower leg">
+							<subobject number="6">
+								<vector type="externSubobject">
+									<variable>44</variable><!-- right lower leg start point x_lrls -->
+									<variable>45</variable><!-- right lower leg start point y_lrls -->
+									<variable>46</variable><!-- right lower leg end point x_lrle -->
+									<variable>47</variable><!-- right lower leg end point y_lrle -->
+									<variable>16</variable><!-- right lower leg width of line w -->
+								</vector>
+							</subobject>
+						</comment>
+						<!-- left (second) lower leg of the stickman -->
+						<comment key="type" value="left lower leg">
+							<subobject number="6">
+								<vector type="externSubobject">
+									<variable>52</variable><!-- left lower leg start point x_llls -->
+									<variable>53</variable><!-- left lower leg start point y_llls -->
+									<variable>54</variable><!-- left lower leg end point x_llle -->
+									<variable>55</variable><!-- left lower leg end point y_llle -->
+									<variable>16</variable><!-- left lower leg width of line w -->
+								</vector>
+							</subobject>
+						</comment>
+					</list>
+				</subobject>
+			</obj>
+		</main_fib_object>
+	</root>
+</fib_object>

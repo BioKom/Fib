@@ -1,0 +1,50 @@
+<data>
+	<set>
+		<defined_variables>
+			<variable>4</variable>
+			<variable>5</variable>
+			<variable>6</variable>
+		</defined_variables>
+		<values>
+			<vector type="set">
+				<value>1</value>
+				<value>-1</value>
+				<value>1</value>
+			</vector>
+			<vector type="set">
+				<value>2</value>
+				<value>4</value>
+				<value>8</value>
+			</vector>
+			<vector type="set">
+				<value>0</value>
+				<value>-9</value>
+				<value>18</value>
+			</vector>
+			<vector type="set">
+				<value>-4</value>
+				<value>8</value>
+				<value>-16</value>
+			</vector>
+			<vector type="set">
+				<value>5</value>
+				<value>10</value>
+				<value>15</value>
+			</vector>
+		</values>
+		<property>
+			<vector type="property.colorRGB">
+				<variable>4</variable>
+				<variable>5</variable>
+				<variable>6</variable>
+			</vector>
+			<point>
+				<vector type="position">
+					<variable>4</variable>
+					<variable>5</variable>
+					<variable>6</variable>
+				</vector>
+			</point>
+		</property>
+	</set>
+</data>

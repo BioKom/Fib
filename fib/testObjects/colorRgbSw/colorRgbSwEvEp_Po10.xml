@@ -1,0 +1,16 @@
+<data>
+	<point>
+		<vector type="position">
+			<value number="1">6</value>
+			<value number="2">6</value>
+		</vector>
+	</point>
+	<vector type="property.colorSW">
+		<value number="1">3</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value number="1">5</value>
+		<value number="2">5</value>
+		<value number="3">5</value>
+	</vector>
+</data>

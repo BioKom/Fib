@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fib_object
+			  xmlns:xsd="http://www.w3.org/2001/XMLSchema-instance"
+			  xmlns="http://www.fib-development.org/"
+			  xsd:schemaLocation="http://www.fib-development.org/fib.xsd">
+	<root>
+		<multimedia_info fib_version="3" db_version="3"/>
+		<optionalpart>
+			<pair key="name" value="stickman"/>
+			<pair key="description" value="This object draws a stickman. The points of the stickman are given back as variables of the subobject. The stickman has a body, a head, two arms and two legs, with each one joint in the arms and legs. The arms will begin at 1/4 of the body size below the body start (wher the head is). The head will 1/4 (of its radius) overlap the body. The arms length will be the part 0.62 (= golden ratio) of the body or legs. The upper part of arms and legs start at the body, the lower parts start at the other end of the upper parts. The lower part length will be the part 0.62 (= golden ratio) of ther upper part."/>
+			
+			<pair key="inVar1::description" value="position of the stickman start point (lower end of first (right) lower leg) in dimension 1"/>
+			<pair key="inVar2::description" value="position of the stickman start point (lower end of first (right) lower leg) in dimension 2"/>
+			<pair key="inVar3::description" value="size s of stickman (top of the head to feet bottom, if legs are straight)"/>
+			
+			<pair key="inVar4::description" value="angle alpha of body to the dimension 2 axis (or y-axis, because most stickman will be vertical or parallel to the y-axis) in clockwise direction, the feet start points are on the bottom of the body (and, for the angle, on the virtual dimension 2 (y) axis)"/>
+			<pair key="inVar5::description" value="angle (in radian) betwean right upper arm and body (clockwise direction, if 0 the arm is on the body)"/>
+			<pair key="inVar6::description" value="angle (in radian) betwean left upper arm and body (counter clockwise direction, if 0 the arm is on the body)"/>
+			<pair key="inVar7::description" value="angle (in radian) betwean right upper leg and body axis (clockwise direction, if 0 the leg is straight)"/>
+			<pair key="inVar8::description" value="angle (in radian) betwean left upper leg and body axis (counter clockwise direction, if 0 the leg is straigh)"/>
+			<pair key="inVar9::description" value="angle (in radian) betwean head and body (clockwise direction)"/>
+			<pair key="inVar10::description" value="angle (in radian) betwean right lower arm and upper arm (clockwise direction, if 0 the arm is straight)"/>
+			<pair key="inVar11::description" value="angle (in radian) betwean left lower arm and upper arm (counter clockwise direction, if 0 the arm is straight)"/>
+			<pair key="inVar12::description" value="angle (in radian) betwean right lower leg and upper leg (counter clockwise direction, if 0 the leg is straight)"/>
+			<pair key="inVar13::description" value="angle (in radian) betwean left lower leg and upper leg (clockwise direction, if 0 the leg is straigh)"/>
+			<pair key="inVar14::description" value="width of lines w of the stickman (if lower or equal 0 the standard width w = size s / 24 will be used)"/>
+			<pair key="inVar15::description" value="radius r of head of the stickman (if lower or equal 0 the standard width r = size s / 10 will be used)"/>
+			
+			<pair key="subObj1::description" value="The points of the stickman. The subobject is called for every point on the stickman."/>
+			<pair key="subObj1::outVar1::description" value="the position of the stickman point in dimension 1 (x)"/>
+			<pair key="subObj1::outVar2::description" value="the position of the stickman point in dimension 2 (y)"/>
+			
+			<pair key="author" value="Betti Oesterholz"/>
+			<pair key="author::email" value="Oesterholz@Fib-Development.org"/>
+			<pair key="copyright" value="LGPL3"/>
+		</optionalpart>
+		<input_variables>
+			<variable number="1" default="32"/>
+			<variable number="2" default="0"/>
+			<variable number="3" default="0"/>
+			<variable number="4" default="0"/>
+			<variable number="5" default="0"/>
+			<variable number="6" default="0"/>
+			<variable number="7" default="0"/>
+			<variable number="8" default="0"/>
+			<variable number="9" default="0"/>
+			<variable number="10" default="0"/>
+			<variable number="11" default="0"/>
+			<variable number="12" default="0"/>
+			<variable number="13" default="0"/>
+			<variable number="14" default="0"/>
+			<variable number="15" default="0"/>
+		</input_variables>
+		<domains>
+			<inVar number="1">
+				<domainReference subdomain="1">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="2">
+				<domainReference subdomain="2">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<!--  <inVar number="3">: size s of the stickman -->
+			<!-- in var 1 .. 9 : angles in radian -->
+			<inVar number="4">
+				<naturalNumber scalingfactor="0.00000001" max="632000000"/>
+			</inVar>
+			<inVar number="5">
+				<naturalNumber scalingfactor="0.00000001" max="632000000"/>
+			</inVar>
+			<inVar number="6">
+				<naturalNumber scalingfactor="0.00000001" max="632000000"/>
+			</inVar>
+			<inVar number="7">
+				<naturalNumber scalingfactor="0.00000001" max="632000000"/>
+			</inVar>
+			<inVar number="8">
+				<naturalNumber scalingfactor="0.00000001" max="632000000"/>
+			</inVar>
+			<inVar number="9">
+				<naturalNumber scalingfactor="0.00000001" max="632000000"/>
+			</inVar>
+			<inVar number="10">
+				<naturalNumber scalingfactor="0.00000001" max="632000000"/>
+			</inVar>
+			<inVar number="11">
+				<naturalNumber scalingfactor="0.00000001" max="632000000"/>
+			</inVar>
+			<inVar number="12">
+				<naturalNumber scalingfactor="0.00000001" max="632000000"/>
+			</inVar>
+			<inVar number="13">
+				<naturalNumber scalingfactor="0.00000001" max="632000000"/>
+			</inVar>
+			<!-- <inVar number="14">: width of lines w -->
+			<!-- <inVar number="15">: radius of head -->
+			
+			<externSubobject number="1">
+				<vector elements="2">
+					<!-- actually any numbers are possible;
+						the next lines are just a space holder -->
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+				</vector>
+			</externSubobject>
+			
+			<externObject>
+				<vector elements="4">
+					<integer min="-26" max="-5055" /><!--Identifier-->
+					<integer min="3" max="15" /><!--number input values-->
+					<naturalNumber max="1" /><!--number subobjects-->
+					<naturalNumber max="40" /><!--number output values-->
+				</vector>
+			</externObject>
+			<!-- subobject for the lines -->
+			<externObjectInput identifier="-26">
+				<vector elements="5">
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+				</vector>
+			</externObjectInput>
+			<!-- subobject for the head circle -->
+			<externObjectInput identifier="-55">
+				<vector elements="3">
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+				</vector>
+			</externObjectInput>
+			<!-- subobject for the stickman framework -->
+			<externObjectInput identifier="-5055">
+				<vector elements="15">
+					<domainReference>
+						<inVar number="1"/>
+					</domainReference>
+					<domainReference>
+						<inVar number="2"/>
+					</domainReference>
+					<domainReference>
+						<inVar number="3"/>
+					</domainReference>
+					<domainReference>
+						<inVar number="4"/>
+					</domainReference>
+					<domainReference>
+						<inVar number="5"/>
+					</domainReference>
+					<domainReference>
+						<inVar number="6"/>
+					</domainReference>
+					<domainReference>
+						<inVar number="7"/>
+					</domainReference>
+					<domainReference>
+						<inVar number="8"/>
+					</domainReference>
+					<domainReference>
+						<inVar number="9"/>
+					</domainReference>
+					<domainReference>
+						<inVar number="10"/>
+					</domainReference>
+					<domainReference>
+						<inVar number="11"/>
+					</domainReference>
+					<domainReference>
+						<inVar number="12"/>
+					</domainReference>
+					<domainReference>
+						<inVar number="13"/>
+					</domainReference>
+					<domainReference>
+						<inVar number="14"/>
+					</domainReference>
+					<domainReference>
+						<inVar number="15"/>
+					</domainReference>
+				</vector>
+			</externObjectInput>
+		</domains>
+		<database_identifiers>
+			<identifier>-26</identifier>
+			<identifier>-55</identifier>
+			<identifier>-5055</identifier>
+		</database_identifiers>
+		<main_fib_object>
+			<!-- call the subobject -5055 -->
+			<obj identifier="-5055">
+				<vector type="externObjectInput">
+					<variable>1</variable>
+					<variable>2</variable>
+					<variable>3</variable>
+					<variable>4</variable>
+					<variable>5</variable>
+					<variable>6</variable>
+					<variable>7</variable>
+					<variable>8</variable>
+					<variable>9</variable>
+					<variable>10</variable>
+					<variable>11</variable>
+					<variable>12</variable>
+					<variable>13</variable>
+					<variable>14</variable>
+					<variable>15</variable>
+				</vector>
+				<subobject><!-- subobject for line body parts -->
+					<output_variables>
+						<variable>16</variable>
+						<variable>17</variable>
+						<variable>18</variable>
+						<variable>19</variable>
+						<variable>20</variable>
+					</output_variables>
+					<obj identifier="-26"><!-- line object -->
+						<vector type="externObjectInput">
+							<variable>16</variable>
+							<variable>17</variable>
+							<variable>18</variable>
+							<variable>19</variable>
+							<variable>20</variable>
+						</vector>
+						<subobject>
+							<output_variables>
+								<variable>21</variable>
+								<variable>22</variable>
+							</output_variables>
+							<subobject number="1">
+								<vector type="externSubobject">
+									<variable>21</variable>
+									<variable>22</variable>
+								</vector>
+							</subobject>
+						</subobject>
+					</obj>
+				</subobject>
+				<subobject><!-- subobject for head -->
+					<output_variables>
+						<variable>16</variable>
+						<variable>17</variable>
+						<variable>18</variable>
+					</output_variables>
+					<obj identifier="-55"><!-- circle object -->
+						<vector type="externObjectInput">
+							<variable>16</variable>
+							<variable>17</variable>
+							<variable>18</variable>
+						</vector>
+						<subobject>
+							<output_variables>
+								<variable>19</variable>
+								<variable>20</variable>
+							</output_variables>
+							<subobject number="1">
+								<vector type="externSubobject">
+									<variable>19</variable>
+									<variable>20</variable>
+								</vector>
+							</subobject>
+						</subobject>
+					</obj>
+				</subobject>
+			</obj>
+		</main_fib_object>
+	</root>
+</fib_object>

@@ -1,0 +1,35 @@
+<data>
+	<point>
+		<vector type="position">
+			<variable>1</variable>
+			<variable>2</variable>
+		</vector>
+	</point>
+	<vector type="property.colorRGB">
+		<value>1</value>
+		<value>-1</value>
+		<value>1</value>
+	</vector>
+	<point>
+		<vector type="position">
+			<variable>1</variable>
+			<variable>2</variable>
+		</vector>
+	</point>
+	<vector type="property.colorRGB">
+		<value>2</value>
+		<value>4</value>
+		<value>1</value>
+	</vector>
+	<point>
+		<vector type="position">
+			<variable>1</variable>
+			<variable>2</variable>
+		</vector>
+	</point>
+	<vector type="property.colorRGB">
+		<value>0</value>
+		<value>-9</value>
+		<value>1</value>
+	</vector>
+</data>

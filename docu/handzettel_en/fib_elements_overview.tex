@@ -1,0 +1,173 @@
+% Autor: Betti Oesterholz
+% erstellt: 22.05.2011
+% Dies ist ein handzettel, welcher die Fib Elemente beschreibt.
+%
+% Copyright (c) 2011 Betti Oesterholz
+%
+% Permission is granted to copy, distribute and/or modify this document
+% under the terms of the GNU Free Documentation License, Version 1.2 or
+% any later version published by the Free Software Foundation;
+% with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+%
+% A copy of the license is included in the file ``fdl.tex'' .
+%
+
+
+
+\documentclass[10pt,a4paper]{article}
+\pagestyle{empty} %keine Seitennummerierung
+\usepackage{a4wide} % besser den Platz nutzen (kleinere R"ander)
+%\usepackage{ngerman} % Silbentrennung nach neuer Rechtschreibung
+\usepackage[T1]{fontenc} % Type 1 Schriften
+\usepackage{times} % Da die Standard-LaTeX-Schrift bei mir mit Acrobat nicht funkt.
+\usepackage[ansinew]{inputenc} % Verwendung von Umlauten
+%\usepackage{scrpage2} % Seitenformat
+%\usepackage{titletoc}
+%\usepackage{titlesec}
+\usepackage{listings} % Programm-Listing
+%\usepackage [usetoc]{titleref} 
+\usepackage{graphicx} % Einbindung von Graphiken
+\usepackage{url} % URLs durch \url{}
+%\usepackage{bibgerm} % deutsche Bibliographie
+%\usepackage{txfonts}%Paket fr das nat Symbol
+\usepackage{multicol}
+%\usepackage{makeidx}%for the index
+%\usepackage{longtable}
+%\usepackage{amsmath}%mathematikumgebung {equation*} usw.
+
+% Seitenstil festlegen
+%\pagestyle{useheadings}%or: headings
+
+% naehste vier Zeilen: Format des Inhaltsverzeichnisses
+%\titlespacing{\section}{0pt}{5cm}{5cm}%spacing by sections {in front}{above}{below}
+%\dottedcontents{section}[1.5em]{\addvspace{1.0em}}{1.3em}{0.7pc}
+%\dottedcontents{subsection}[3.8em]{}{2.2em}{0.7pc}
+%\dottedcontents{subsubsection}[7.0em]{}{3.1em}{0.7pc}
+
+%\setcounter{secnumdepth}{4}%%nummerierung der Unterabschnitte bis Tiefe
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Definitionen fr das Verwenden von Listings
+
+\newtheorem{Def}{Definition}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Beginn des Dokuments
+%\makeindex
+
+\begin{document}
+
+%\renewcommand{\sectionmark}[1]{\markboth{#1}{}}
+%\pagenumbering {Roman}
+%\automark{section}
+%\pagestyle{scrheadings} % individ. Seitenlayout
+%\setheadsepline{0.4pt}
+%\ihead{} % Titelzeile innen
+%\ohead{} % Titelzeile aussen
+%\chead{\slshape \headmark}  % Titelzeile mitte
+%\cfoot{\thepage} % Fusszeile mitte
+
+% braucht man ein Inhaltsverzeichnis, so sind die naechsten drei Zeilen auszukommentieren
+%\setcounter{tocdepth}{3}
+%\tableofcontents
+%\clearpage
+
+% Vorschlag fr Titelzeile:
+% Bei umfangreicheren Dokumenten
+%\ihead{\slshape \headmark } % Darstellung von Sectionnummer und -name
+%\ohead{}
+%\chead{}
+
+
+%\pagenumbering{arabic}
+
+\ \vspace{-2.5cm}
+\begin{center}
+	\LARGE\bf Fib elements
+\end{center}
+
+\bigskip\noindent
+\textbf{Vectors:} Vectors are used for providing numerical values. Each vector element is either a number or a variable, which is defined above the Fib object. To each vector type belongs a domain, which is in normally defined in the root-element.
+
+\bigskip\noindent
+\textbf{Variables:} Variables are defined by some Fib elements and can be used in the entire contained (or below) Fib object.
+
+\bigskip\noindent
+\textbf{Fib objects:} $Obj$
+
+Fib objects are made out of Fib elements as valid composite objects.
+
+\bigskip\noindent
+\textbf{Points:} $Obj = p( PositionVector )$
+
+The points are the performing elements. At them the actual properties are evaluated. The empty point $p()$ has no effect. Points with an empty position vector $p(())$ create the background.
+
+
+\bigskip\noindent
+\textbf{Property element:} $Obj = pr( PropertyVector_{name}, Obj_1 )$
+
+With the property element, properties (of type $name$) are set for Fib objects.
+
+
+\bigskip\noindent
+\textbf{List element:} $Obj = l( Obj_1, \ldots, Obj_n )$; $n \in N$ and $2 \geq n$
+
+With the list element several Fib objects are combined into one object.
+
+
+\bigskip\noindent
+\textbf{Comment element:} $Obj = c( Key , Value , Obj_1)$
+
+The comment element is used to name or describe subobjects.
+
+
+\bigskip\noindent
+\textbf{Area element:} $Obj = for( Variable, ( B_{1}, B_{2},\ldots, B_{n}), Obj_1)$
+
+The area element sets a variable to the values in the range of integer area (discrete zones), which the variable occupies. The area element contains a list of subareas $B_{i}$, through which the variable runs.
+
+
+\bigskip\noindent
+\textbf{Function:} $Obj = f( Variable ,UF ,Obj_1 )$
+
+Functions are Fib elements that assign a variable to a value, that the function element calculates using a formula.
+A function contains for this a subfunction $UF$.
+
+
+\bigskip\noindent
+\textbf{Call external objects:}
+\begin{eqnarray*}
+Obj &=& obj( Identifierer , ( inVal_1 , \ldots , inVal_n ) , ( outVar_{1}, \ldots ,outVar_{v_1}, Obj_1), \ldots , \\
+  && ( outVar_{1}, \ldots ,outVar_{v_m}, Obj_m) )
+\end{eqnarray*}
+
+External objects stands for Fib objects, that are not defined in the current Fib subobject. These can be from a root-element (root) or from the Fib object database. In this way, parts of Fib objects can be used multiple times in the Fib object or can be reused for different Fib objects.
+
+
+\bigskip\noindent
+\textbf{External subobjects:} $Obj = sub( Number , ( value_1, \ldots , value_v ) )$
+
+External subobjects are objects, that are already provided during the evaluation of the current Fib object.
+
+
+\bigskip\noindent
+\textbf{The root-element:}
+\begin{eqnarray*}
+Rootobj &=& root( [MultimediaInformation], [Domains], [DomainsValues], \\
+&& [( (inVar_1, S_1), \ldots , (inVar_v, S_v) )], Obj , \\
+&& [((Identifier_1, Rootobj_1) , \ldots , (Identifier_n, Rootobj_n))],\\
+&& [( DB\_Identifier_1, \ldots , DB\_Identifier_d)], [Optionalpart] )
+\end{eqnarray*}
+
+The root-element serves as the root-element of a Fib object. It should provide all (enviroment) information that are needed to evaluate the Fib object. The root-element itself can just be contained in other root-elements, but not in other Fib elements.
+
+
+\end{document}
+
+
+
+
+
+
+

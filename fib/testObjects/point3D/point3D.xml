@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fib_object
+xmlns:xsd="http://www.w3.org/2001/XMLSchema-instance"
+xmlns="http://www.biokom.info/"
+xsd:schemaLocation="http://www.biokom.info/fib.xsd">
+<root>
+	<domains>
+		<dim count="3">
+			<dimension number="1" direction="horizontal"/>
+			<dimension number="2" direction="vertical"/>
+			<dimension number="3" direction="depth"/>
+			<vector elements="3">
+				<naturalNumber max="255" />
+				<naturalNumber max="255" />
+				<naturalNumber max="128" />
+			</vector>
+		</dim>
+	</domains>
+	<main_fib_object>
+		<list>
+			<list>
+				<point>
+					<vector type="position">
+						<value number="1">1</value>
+						<value number="2">2</value>
+						<value number="3">3</value>
+					</vector>
+				</point>
+				<point>
+					<vector type="position">
+						<value number="1">4</value>
+						<value number="2">5</value>
+						<value number="3">6</value>
+					</vector>
+				</point>
+			</list>
+			<point>
+				<vector type="position">
+					<value number="1">7</value>
+					<value number="2">8</value>
+					<value number="3">9</value>
+				</vector>
+			</point>
+			<list>
+				<point>
+					<vector type="position">
+						<value number="1">10</value>
+						<value number="2">11</value>
+						<value number="3">12</value>
+					</vector>
+				</point>
+				<point>
+					<vector type="position">
+						<value number="1">13</value>
+						<value number="2">14</value>
+						<value number="3">15</value>
+					</vector>
+				</point>
+				<point>
+					<vector type="position">
+						<value number="1">16</value>
+						<value number="2">17</value>
+						<value number="3">18</value>
+					</vector>
+				</point>
+				<list>
+					<point>
+						<vector type="position">
+							<value number="1">19</value>
+							<value number="2">20</value>
+							<value number="3">21</value>
+						</vector>
+					</point>
+					<point>
+						<vector type="position">
+							<value number="1">22</value>
+							<value number="2">23</value>
+							<value number="3">24</value>
+						</vector>
+					</point>
+				</list>
+			</list>
+		</list>
+	</main_fib_object>
+</root>
+</fib_object>

@@ -1,0 +1,150 @@
+%
+% Copyright (c) 2008 Betti "Osterholz
+%
+% Permission is granted to copy, distribute and/or modify this document
+% under the terms of the GNU Free Documentation License, Version 1.2 or
+% any later version published by the Free Software Foundation;
+% with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+%
+% A copy of the license is included in the file ``fdl.tex'' .
+%
+
+%path for pictures
+\graphicspath{{./beispiele/}}
+\graphicspath{{./beispiele/}{../beispiele}}
+
+
+\section{Weitere Annahmen zu Fib}
+\label{secHypothesisFib}
+
+Die hier aufgestellten "Uberlegungen sollen als Denkanst"o"se dienen. Sie erheben nicht den Anspruch, richtig zu sein, sondern sind vielmehr nur Vermutungen. Mit ihnen soll ein tieferes und/oder besseres Verst"andnis der Fib-Multimediasprache gef"ordert werden. Des Weiteren sollen Hinweise auf die M"oglichkeiten der Fib-Multimediasprache gefunden werden.
+
+
+\subsection{Komprimierungsm"oglichkeiten von Fib}
+
+\begin{flushleft}
+Warum ist eine effizientere Kodierung mit Fib als beim ''Pixelbild`` m"oglich?
+
+Mit Hilfe von Fib lassen sich zumindest einfache (strukturierte) Bilder mit Fib-Objekten k"urzer darstellen.
+
+\bigskip\noindent
+Beispiel:
+
+Ein RGB-Farben-Bild ([r,g,b]-Vektor) mit 1.000 Pixeln horizontal und vertikal, mit schwarzem Hintergrund und einem wei"sen Rechteck in der oberen linken Ecke, das bis zur Mitte des Bildes reicht (Siehe Abbildung \ref{figExampleBlackBackgroundWithWhithArea})
+
+\begin{figure}[htbp]
+\begin{center}
+  \includegraphics[scale=0.2]{p1000x1000s_weisses_quadrat}
+\end{center}
+\caption{Beispielbild: 1000 x 1000 Pixel, schwarzer Hintergrund mit wei"sem Rechteck}
+\label{figExampleBlackBackgroundWithWhithArea}
+\end{figure}
+
+\bigskip\noindent
+Eine Fib-Darstellung:
+%RGB Farben ( (r,g,b) Vektor) Bild mit 1.000 Pixel horizontal und vertikal mit wei"sem Hintergrund und einem schwarzen Strich
+%root( ( 1, 0, 2, (1, 2 ) ) , , ( ( dim(1), naturalNumber(999), 1), ( dim(2), naturalNumber(999), 1), ( property(colorRGB), vector( 3 , naturalNumber(255), naturalNumber(255) , naturalNumber(255)), 1) ), , , , \\
+%list( for( y, $[$(0;1000)$]$, for( x, $[$(0;1000)$]$, pr( $(255;255;255)_{colorRGB}$, p((x,y)) ) ) ), for( x, $[$(5;500)$]$, pr( $(0;0;0)_{colorRGB}$, p((x,6)) ) ) )  , , )
+
+root( ( 1, 0 ) , , ( ( dim(2, 1, 2), vector( 2, naturalNumber(999), naturalNumber(999) ) ), ( property(colorRGB), vector( 3 , naturalNumber(255), naturalNumber(255) , naturalNumber(255) ) ) ), , , , list( for( y, $[$(0;999)$]$, for( x, $[$(0;999)$]$, pr( $(0;0;0)_{colorRGB}$, p((x,y)) ) ) ), for( x, $[$(5;500)$]$, for( y, $[$(5;500)$]$,  pr( $(255;255;255)_{colorRGB}$, p((x,y)) ) ) ) ) , , )
+
+%root((1,0),,((dim(2,1,2),vector(2,naturalNumber(999),naturalNumber(999))),(property(colorRGB),vector(3,naturalNumber(255),naturalNumber(255),naturalNumber(255)))),,,,list(for(y,[(0;1000)],for(x,[(0;1000)],pr((0;0;0)_{colorRGB},p((x,y))))),for(x,[(5;500)],for(y,[(5;500)],pr((255;255;255)_{colorRGB},p((x,y)))))),,)
+
+\bigskip\noindent
+Gr"o"senvergleiche einiger Formate:
+\begin{itemize}
+ \item Fib: L"ange dieses Fib-Objektes: 315 Bytes (Anzahl der Zeichen im String oberhalb, in der er in einer Textdatei gespeichert werden k"onnte)
+ \item Bitmapbild (ohne Header): 3 Bytes pro Punkt f"ur RGB * 1.000 * 1.000 = 3.000.000 Bytes
+ \item JPG: $7857$ Byte mit Gimp: Qualit"at 85 und optimiert; $7294$ Byte mit Gimp: Qualit"at 85 und optimiert;
+\end{itemize}
+
+\end{flushleft}
+
+\noindent
+An diesem Beispiel ist ersichtlich, dass das Fib-Objekt eine wesentlich k"urzere Darstellung erm"oglicht.
+Zumindest f"ur dieses Beispiel ist eine gute Komprimierung mit Fib m"oglich. Die Fib-Darstellung stellt eine Verkleinerung um den Faktor von rund $9500$ zu Bitmapbildern und $25$ zu JPG dar.
+
+\begin{flushleft}
+\bigskip\noindent
+Beispiel h"ohere Aufl"osung:
+
+Um das Verhalten von Fib-Multimediaobjekten bei einer Erh"ohung der Aufl"osung zu veranschaulichen, sei hier das obige Beispiel mit doppelter Aufl"osung ausgef"uhrt.
+
+Grundlage ist also ein RGB-Farben-Bild ([r,g,b]-Vektor) mit 2.000 Pixeln horizontal und vertikal, mit schwarzem Hintergrund und einem wei"sen Rechteck in der oberen linken Ecke, dass bis zur Mitte des Bildes reicht (Siehe Abbildung \ref{figExampleBlackBackgroundWithWhithArea}).
+
+\bigskip\noindent
+Eine Fib-Darstellung:
+%RGB Farben ( (r,g,b) Vektor) Bild mit 1.000 Pixel horizontal und vertikal mit wei"sem Hintergrund und einem schwarzen Strich
+root( ( 1, 0 ) , , ( ( dim(2, 1, 2), vector( 2, naturalNumber(1999), naturalNumber(1999) ) ), ( property(colorRGB), vector( 3 , naturalNumber(255), naturalNumber(255) , naturalNumber(255)) ) ), , , , list( for( y, $[$(0;1999)$]$, for( x, $[$(0;1999)$]$, pr( $(0;0;0)_{colorRGB}$, p((x,y)) ) ) ), for( x, $[$(10;1000)$]$, for( y, $[$(10;1000)$]$,  pr( $(255;255;255)_{colorRGB}$, p((x,y)) ) ) ) )  , , )
+
+%root((1,0),,((dim(2,1,2),vector(2,naturalNumber(1999),naturalNumber(1999))),(property(colorRGB),vector(3,naturalNumber(255),naturalNumber(255),naturalNumber(255)))),,,,list(for(y,[(0;1999)],for(x,[(0;1999)],pr((0;0;0)_{colorRGB},p((x,y))))),for(x,[(10;1000)],for(y,[(10;1000)],pr((255;255;255)_{colorRGB},p((x,y)))))),,)
+
+\bigskip\noindent
+Gr"o"senvergleiche einiger Formate:
+\begin{itemize}
+ \item Fib: L"ange dieses Fib-Objektes: 321 Bytes (Anzahl der Zeichen im String oberhalb, in der er in einer Textdatei gespeichert werden k"onnte)
+ \item Bitmapbild (ohne Header): 3 Bytes pro Punkt f"ur RGB * 2.000 * 2.000 = 12.000.000 Bytes
+ \item JPG: 29127 Byte mit Gimp: Qualit"at 85 und optimiert; 26942 Byte mit Gimp: Qualit"at 15 und optimiert;
+\end{itemize}
+\end{flushleft}
+
+\noindent
+Da die Komplexit"at des Bildes sich nicht erh"oht hat, ist die Gr"o"se der Fib-Darstellung ann"ahernd gleich geblieben. Es wurde nur etwas mehr Platz f"ur die gr"o"seren Werte ben"otigt.
+Sowohl f"ur die Bitmapbild- als auch f"ur die JPG-Darstellung hat sich der Speicherbedarf ungef"ahr vervierfacht. Der Speicherbedarf stieg bei beiden also linear mit der Anzahl der Pixel. Dadurch konnte Fib seinen Vorsprung bei der Komprimierung weiter ausbauen.
+Die Fib-Darstellung stellt eine Verkleinerung um den Faktor von rund 37000 zu Bitmapbildern und 91 zu JPG dar.
+Wenn also die Komplexit"at von Bildern weniger als liniear mit deren Inhaltsgr"o"sen (also der Anzahl der enthaltenden Punkte, d. h. nicht quadratisch mit deren Aufl"osung) steigt, werden die Komprimierungsvorteile f"ur Fib, zumindest gegen"uber Bitmap und JPG, mit zunehmender Gr"o"se der Bilder auch zunehmen.
+
+Tauchen Strukturen auf Bildern mehrfach auf, erh"oht dies die Komplexit"at des Bildes nicht so sehr wie v"ollig neue Strukturen. Mit Fib k"onnen mehrfach auftauchende "ahnliche Strukturen abgedeckt werden, wahrscheinlich oft durch einen Strukturprototyp, der dann jeweils transformiert wird. Auf den meisten aufgenommenen Bildern ist es "ublich, dass Strukturen in "ahnlicher Weise h"aufiger auftauchen. Beispiele daf"ur sind Vierecke, Fenster eines Hauses oder auch Grashalme. Mit Vergr"o"serung der Aufnahme wird daher wahrscheinlich nicht die Anzahl der unterschiedlichen Strukturen, und damit die Komplexit"at f"ur Fib, linear mit der Zunahme an Pixeln steigen, sondern es werden eher weniger neue Strukturen auftauchen, daf"ur aber werden "ahnlich Strukturen "ofter auftauchen. Dies gibt nat"urlich Fib einen Vorteil gegen"uber Bitmap und JPG bei der Komprimierung gr"o"serer Bilder.
+
+Eine Aussage im Allgemeinen "uber die Komprimierungsm"oglichkeiten von Fib kann aber leider wegen der m"oglichen gro"sen Komplexit"at von Fib-Objekten nicht getroffen werden. Es ist aber zu erwarten, dass die Komprimierungsm"oglichkeiten mit Verringerung der Komplexit"at der Multimediaobjekte (z. B. Bilder), bzw. der Objekte auf diesen, zunimmt.
+
+
+
+\subsection{"Uberdeckung von Fib-Objekten}
+%TODO zu zwei Punkten
+Definiert wird eine "Uberdeckungsrelation $<_{Fib}$ auf Fib-Objekten.
+
+\bigskip\noindent
+Dabei gilt:
+\begin{itemize}
+ \item for( x,$[B_1, \ldots ,B_{j-1}, B_j, \ldots , B_k, B_{k+1}, \ldots ,B_n]$, $Obj_1$) $<_{Fib}$ \\list(for( x,$[B_1, \ldots ,B_{j-1}, B_{k+1}, \ldots ,B_n]$, $Obj_1$), for( x,$[B_j, \ldots , B_k]$, $Obj_1$) )
+ \item for( x,$[B_1, \ldots ,B_j, (a;b), B_{j+2}, \ldots ,B_n]$, $Obj_1$) $<_{Fib}$ \\list(for( x,$[B_1, \ldots ,B_j, (a;c), B_{j+2}, \ldots ,B_n]$, $Obj_1$), for( x,$[(e;b)]$, $Obj_1$) ) Dabei entspricht der Bereich (a;b) der Wertemenge $[a, \ldots, c, e, \ldots, b]$.
+ \item for(x,$[(a;b)]$, $Obj_{1}$) $<_{Fib}$ list($Obj_1'$, $Obj_1''$), dabei entspricht der Bereich $(a; b)$ der Wertemenge $[a,b]$ und im $Obj_1'$ wurden alle Vorkommen von $x$ durch $a$ ersetzt und in $Obj_1''$ alle Vorkommen von $x$ durch $b$.
+ \item Wenn zwei Objekte ($Obj_1$ und $Obj_2$) je ein Objekt enthalten ($Obj\_e_1$ ist enthalten in $Obj_1$ und $Obj\_e_2$ ist enthalten in $Obj_2$), welche die Relation erf"ullen (Beispiel 1: $Obj\_e_1$ $<_{Fib}$ $Obj\_e_2$) und der Rest dieser Objekte ($Obj_1$, $Obj_2$) ohne die enthaltenden Objekte ($Obj\_e_1$, $Obj\_e_2$) identisch sind, dann erf"ullen auch die beiden Objekte die Relation in der gleichen Richtung (f"ur das Beispiel 1: $Obj_1 <_{Fib} Obj_2$).
+\end{itemize}
+
+Zwei Objekte, welche die Relation $<_{Fib}$ erf"ullen, realisieren das gleiche Multimediaobjekt.
+
+\bigskip\noindent
+Zu jedem Objekt ($Obj$) existiert eine Klasse von Objekten ($Obj'$), welche die Gleichung $Obj <_{Fib} Obj'$ erf"ullen.
+
+
+\subsection{Struktur der Fib-Objekte im Hypothesenraum}
+
+Wenn nun angenommen wird, dass ''nat"urliche`` Multimediaobjekte (z. B. Bilder), die etwas darstellen sollen, nicht aus v"ollig unzusammenh"angenden Eigenschaften auf den Punkten (z. B. Farbe auf Pixel) bestehen, sondern Zusammenh"ange zwischen den Eigenschaften von (benachbarten) Punkten enthalten sind und diese mit entsprechenden Bereichs- und Funktionselementen dargestellt werden k"onnen, So geh"oren zu solchen Multimediaobjekten viele Fib-Objekte mit relativ vielen Bereichselementen, die eine noch gr"o"sere Menge von Fib-Objekten "uberdecken, welche die $<_{Fib}$-Relation erf"ullen und damit zu den entsprechenden Klassen geh"oren.
+
+Die daraus gefolgerte Vermutung ist nun, dass im Hypothesenraum der Fib-Objekte die Fib-Objekte, die ''nat"urlicheren`` Multimediaobjekte entsprechen, gr"o"sere Cluster (z. B. die Menge der bez"uglich der $<_{Fib}$-Relation ordnerbaren Fib-Objekte) bilden, als die Fib-Objekte, die Multimediaobjekten mit v"ollig unzusammenh"angenden Punken entsprechen.
+Dies w"urde bedeuten, dass bei der Wanderung durch den Hypothesenraum Fib-Objekte von ''nat"urlichen`` Multimediaobjekten auf mehr Wegen in Fib-Objekte umgewandelt werden k"onnen, die "ahnlichen Multimediaobjekten entsprechen, als Fib-Objekte, die zuf"allige Multimediaobjekte (diese haben zuf"allige Eigenschaften f"ur ihre Punkte) repr"asentieren.
+
+Wie in Abschnitt \ref{secPowerOfFibOnPictures} auf Seite \pageref{secPowerOfFibOnPictures} aufgef"uhrt k"onnen zumindest alle Rastergrafiken mit entsprechenden Fib-Objekten dargestellt werden. Es wurde auch ein Algorithmus zur Erzeugung eines (ineffizienten, weil gro"sen) Fib-Objekts zu einer Rastergrafik vorgestellt (das Fib-Objekts kodiert dann die Rastergrafik). Dieser Ansatz kann wahrscheinlich auf beliebige, mit der Fib-Multimediasprache darstellbare, Multimediaobjekte erweitert werden. Auf diese Weise l"asst sich zumindest ein Anfangspunkt (Fib-Objekt $Obj$) in einem Cluster zu einem Multimediaobjekt finden. Dieses Fib-Objekt $Obj$ kann dann reduziert werden, indem beispielsweise die Fib-Objekte $Obj'$ ermittelt werden, die nach der $<_{Fib}$-Relation kleiner sind ($Obj' <_{Fib} Obj$). Diese Vorgehensweise sollte dadurch vereinfacht werden, dass ''nat"urliche`` Multimediaobjekte wahrscheinlich gr"o"sere solcher Cluster haben.
+
+\bigskip\noindent
+Zur Dichte der Repr"asentationen eines Multimediaobjekts im Hypothesenraum kann weiterhin noch Folgendes gesagt werden: 
+
+Unter den richtigen Voraussetzungen symbolisiert jedes Individuum ein Multimediaobjekt vom gesuchten Typ (siehe Abschnitt \ref{alleBilder} auf Seite \pageref{alleBilder}). Das hei"st: Wenn es beispielsweise $n$ m"ogliche Rastergrafiken gibt (z. B. $n = 100 * 100$ Bildpunkte $* 8$ Farben$ = 80.000$ M"oglichkeiten), gibt es auch nur $n$ Fib-Objektgruppen im Hypothesenraum, die unterschiedliche Rastergrafiken des Typs symbolisieren. Wenn jeder Rastergrafik eine Klasse von Fib-Objekten, die dieses repr"asentieren, zugeordnet wird, so gibt es im ganzen unendlichen Hypothesenraum nur endlich ($n$) viele verschiedene solcher Klassen, womit das Finden eines Fib-Objektes im unendlichen Hypothesenraum, das eine bestimmte Rastergrafik repr"asentiert, sich nicht mehr als ganz so unm"oglich darstellt.
+
+
+\subsection{Annahme "uber verdeckte Objekte}
+\label{annVerd}
+
+Annahme: Im genetischen Algorithmus k"onnen verdeckte Fib-Teilobjekte als Ressource f"ur neue Individuen dienen.
+
+\bigskip\noindent
+Im verdeckten Multimediaobjektbereich k"onnen sich neue Teilobjekte entwickeln, die sich nicht negativ auf die "Ahnlichkeit zum Originalmultimediaobjekt auswirken. Wenn ''Superindividuen`` vorhanden sind (starkes lokales Optimum), die wegen ihrer "Ahnlichkeit zum Originalbild die ganze Population dominieren, k"onnen sie das Bilden von neuen, weniger "ahnlichen Individuen unterdr"ucken. Trotzdem k"onnen Individuen, die das gleiche Multimediaobjekt repr"asentieren, entstehen, die verdeckte Teilobjekte enthalten, welche die "Uberwindung des aktuellen lokalen Optimums erm"oglichen. Dies setzt nat"urlich voraus, dass die "Ahnlichkeit von Individuen h"oher bewertet wird als die Gr"o"se und dass kleine "Anderungen in der Gr"o"se von Individuen die Fitness des Individuums nicht extrem ver"andern.
+
+Dies sollte ''Monokulturen`` etwas entgegenwirken.
+
+Dieser Effekt hat eventuell "Ahnlichkeit mit dem Effekt, den eine ver"anderbare Populationsgr"o"se bei genetischen Algorithmen hat. Nur wird nicht die Zahl der Individuen ver"andert, sondern die Anzahl der ''Teilgene`` dieser Individuen.
+
+
+

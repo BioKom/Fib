@@ -1,0 +1,252 @@
+Inhalt:
+
+- Einleitung
+- Verzeichnisstruktur
+- Abhaengigkeiten
+- Compilieren
+- Ausfuehren
+- Bibliotheken
+- Testen
+- Implementationsrichtlinien
+- LICENSE
+
+
+
+Einleitung
+==========
+
+Dies ist das Basisverzeichnis des Fib-Projekts.
+
+Das Fib-Projekt besteht aus folgenden Komponenten:
+- die Fib-Multimediabeschreibungssprache
+- der genetische Algorithmus zum kodieren und optimieren von Fib-Objekten
+- den Konvertern in, von und zwischen den Fib-Formaten
+
+
+Verzeichnisstruktur
+===================
+
+Dokumentation des Projekts:
+docu/: Verzeichnis mit den Dokumentationen fuer das Fib-Projekt
+gpl/: Verzeichnis mit dem Copyright-Texten, welche fuer das Projekt
+	Verwendung finden
+
+
+Implementation des Fib-Projekts:
+*/incl/: Verzeichnisse fuer die Header-/ Deklarationsdateien
+*/src/: Verzeichnisse fuer die Quellcodedateien
+*/test/: Verzeichnisse fuer die Quellcodedateien zum Testen der Implementation
+*/testruns/: Verzeichnisse fuer Scripte zum Ausfuehren kompletter
+	Testlaeufe fuer das Teilsystem
+*/testruns/basicMemtest.sh: Ein Testlauf zum Testen auf Speicherlecks im Programmsystem.
+	um diesen Testlauf ausfuehren zu koennen muss sich im Verzeichnis
+	"~/tools/LeakTracer/LeakCheck" das LeakTracer Programm von Erwin Andreasen
+	und Henner Zeller (http://www.andreasen.org/LeakTracer/) befinden
+fib/: Hauptverzeichnis der Fib-Multimediabeschreibungssprache
+	- hier liegen die Dateien zum Erzeugen der Fib-Bibliothek
+fib/incl/: Verzeichnis für die Header-/ Deklarationsdateien der Fib-Implementation
+fib/src/: Verzeichnis für die Quellcodedateien der Fib-Implementation
+enviroment/: dieses Verzeichnis enthaelt die abstrakte Version des genetischen
+	Algorithmus, auf dem der genetische Algorithmus fuer Fib aufbaut
+enviroment.fib/: dieses Verzeichnis enthaelt den genetische Algorithmus fuer Fib
+fib.algorithms/: dieses Verzeichnis beinhaltet Algorithmen fuer Fib-Objekte;
+	mit diesen koennen Fib-Objekte analysiert, bearbeitet und veraendert werden
+tinyxml/: eine Hilfsbibliothek zum Einlesen von Xml-Daten von Andrew Ellerton
+add_ons/: Hauptverzeichnis fuer Zusatzprogramme des Fib-Projekts
+add_ons/converter/: Programme zum konvertieren von, in und zwischen den
+	Fib-Multimediaformaten
+add_ons/converter/FreeImage/: Eine Hilfsbibliothek zum Einlesen von
+	Bildaten von Herve Drolon
+other_packages/: andere Pakete von externen Anbietern, welche fuer das
+	Fib-Projekt benoetigt werden
+*/version.h: die Versionsdateien fuer die jeweilige Komponente;
+	in ihnen sind unter anderem Schalter zu finden, mit denen verschiedene
+	Features geschaltet werden koennen
+*/makefile: makefile zum Erzeugen der jeweiligen Komponente (siehe
+	Abschnitt Compilieren)
+
+
+Abhaengigkeiten
+===============
+
+fib/ depends on: tinyxml/; other_packages/zlib/
+add_ons/converter/ depends on: fib/; fib.algorithms/; add_ons/converter/FreeImage/
+enviroment/ depends on: tinyxml/
+enviroment.fib/ depends on: fib/; enviroment/; enviroment.fib/operators/;
+	tinyxml/
+enviroment.fib/operators/ depends on: fib/; fib.algorithms/; enviroment.fib/
+fib.algorithms/ depends on: fib/; tinyxml/
+
+
+Compilieren
+===========
+
+Die Teilsysteme koennen mit dem jeweiligen Aufruf aus dem Teilsystemordner
+erzeugt werden. (z.B. ">cd add_ons/converter/; make test" zum Erzeugen der
+Konverter Testprogramme)
+
+
+Linux
+-----
+
+Zum Erzeugen des Programmsystems:
+>make
+
+Zum Erzeugen des Programmtestsystems:
+>make test
+
+
+Windows
+-------
+(ACHTUNG: Das System wurde unter Linux entwickelt. Bisher arbeitet es noch
+nicht vollstaendig unter Windows.
+Einige Teilsysteme funktionieren eventuell noch nicht (z.B. enviroment/ ). )
+
+Das System laesst sich mit MinGW (www.mingw.org) erzeugen.
+
+Zum Erzeugen des Programmsystems:
+>make win
+
+Zum Erzeugen des Programmtestsystems:
+>make win_test
+
+
+Voraussetzungen
+---------------
+
+Um das System zu Erzeugen sollte nur der "g++" C++ Compiler mit der
+Standard C Bibliothek benoetigt werden.
+
+Der g++ Compiler kann ueber das Paketverwaltungsystem installiert werden.
+(Oder Beispielsweise unter Ubuntu ">sudo aptitude install g++" auf der
+Komandozeile eingeben)
+
+Wenn make vor der Installation von "g++" ausgefuehrt wurde, sollte:
+	>make clean
+aufgerufen werden, um die Abhaengigkeitsdatei zu loeschen
+
+
+Ausfuehren
+==========
+
+Das Fib-System enthaelt verschiedene Programme die ausgefuehrt werden koennen.
+
+
+Der genetische Algorithmus
+--------------------------
+
+Der Algorithmus dient zur Erzeugung / Generierung von Fib-Objekten, welche
+ein Multimediaobjekt moeglichst gut darstellen. Dem Algorithmus wird
+dafuer ein bestimmtes Multimediaobjekt vorgegeben, fuer dass er
+Fib-Objekte / Individuen generiert, von denen gute selektiert werden.
+
+Verzeichnis: enviroment.fib/bin/
+
+Aufruf: runEnviroment FILE_FIB_OBJECT FOLDER_OUTPUT [MAX_ITERATIONS]
+
+Parameter:
+	FILE_FIB_OBJECT
+		Der Pfad zum Fib-Multimediaobjekt, das der genetische Algorithmus
+		verbessern soll.
+	FOLDER_OUTPUT
+		Der Pfad zum Verzeichnis in dem die generierten jeweils besten
+		Ergebnis Fib-Multimediaobjekte gespeichert werden sollen.
+	MAX_ITERATIONS (optional)
+		Die maximale Anzahl von Iterationen (/Operationen) die der
+		genetisch Algorithmus ausfuehren soll.
+
+
+Konverter
+---------
+
+Es gibt aktuell drei Konvertierungsprogramme fuer Fib:
+	- zum Konvertieren von Bilddaten in das Fib Format: convertToFib
+	- zum Konvertieren von Bilddaten in Fib in ein anderes Bildformat:
+		convertFromFib
+	- zum Konvertieren von Objekten in einem Fib-Format in das andere
+		Fib-Format: convertFibToFib
+
+Diese Programme sind im Unterverzeichnis "add_ons/converter/bin/" zu finden.
+Eine Beschreibung dieser Programme ist im Verzeichnis "add_ons/converter/"
+zu finden. (Zur Zeit nur in Englisch in der Datei "readme.txt".)
+
+
+Bibliotheken
+============
+
+
+Fib-Sprachelemente
+------------------
+
+Im Unterverzeichnis "fib/lib/" wird mit "make" eine Bibliothek mit
+Klassen fuer die Fib-Elemente erzeugt. Mit Objekten dieser Klassen koennen
+Fib-Objekte erstellt und mit diesen Fib-Objekten gearbeitet werden.
+Diese bilden die Basis des Fib-Systems.
+
+
+Fib-Algorithmen
+---------------
+
+Im Unterverzeichnis "fib/fib.algorithms/lib/" wird mit "make" eine
+Bibliothek mit Algorithmen (und Klassen) fuer das Fib-System erstellt.
+Diese Algorithmen stellen verschiedene Funktionalitaeten rund um das
+Fib-System bereit.
+Der Quellkode fuer diese Algorithmen koennen in den Unterverzeichnissen des
+"fib.algorithms/" Verzeichnis gefunden werden.
+
+
+Allgemeiner genetischer Algorithmus
+-----------------------------------
+
+Im Unterverzeichnis "enviroment/lib/" wird mit "make" eine Bibliothek mit
+Klassen fuer den grundlegenden genetischen Algorithmus erzeugt.
+Auf diesem grundlegenden genetischen Algorithmus baut der genetische
+Algorithmus fuer Fib (enviroment.fib/) auf.
+
+
+Testen
+======
+
+Fuer die meisten Komponenten des Fib-Systems gibt es automatische Tests.
+Die einzelnen Testlaeufe befinden sich jeweils in den "testcase/"
+Verzeichnissen. In den "testruns/" Verzeichnissen befinden sich kombinierte
+Testlaeufe die meist alle vorhandenen Testlaeufe aus dem jeweiligen
+Verzeichnis "testcase/" ausfuehren.
+
+
+Implementationsrichtlinien
+==========================
+
+- Der Code sollte verstaendlich und sauber geschrieben werden.
+- Der Code ist mit doxygen im Java Stil zu kommentieren, so dass eine
+  automatische Dokumentation fuer ihn erzeugt werden kann.
+- Fuer alle Aspekte (Methoden, Funktionen, ...) des Fib-Programmsystems
+  sind nach Moeglichkeit automatische Testroutinen zu erstellen und in
+  automatische Testlaeufe (unter "*/testruns/") einzubinden.
+- Alle Ressourcen die nicht zum Standard C++ System gehoeren und vom
+  Fib-Programmsystem benoetigt werden, sind separat vor zuhalten.
+- Die Implementation sollte sowohl unter Linux als auch unter Windows
+  compilierbar sein und laufen.
+  Allerdings ist Linux das Hauptimplementationssystem. Fuer die
+  automatischen Testlaeufe genuegt es, wenn sie nur unter Linux laufen.
+- Die Implementation sollte ohne Kosten (z.B. durch Lizenzen) kompilierbar
+  sein und laufen.
+
+
+LICENSE
+=======
+
+Fib-Multimediabibliothek: LESSER GENERAL PUBLIC LICENSE 3.0
+Rest des Programmsystems: GNU GENERAL PUBLIC LICENSE 3.0
+Dokumentation: GNU Free Documentation License 1.2
+
+Eine Kopie der GNU LICENSE ist im Unterverzeichnis "gpl/" zu finden.
+
+
+
+
+
+
+
+
+

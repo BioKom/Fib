@@ -1,0 +1,36 @@
+<data>
+	<set>
+		<defined_variables>
+			<variable>3</variable>
+			<variable>4</variable>
+		</defined_variables>
+		<values>
+			<vector type="set">
+				<value>1</value>
+				<value>-1</value>
+			</vector>
+			<vector type="set">
+				<value>2</value>
+				<value>4</value>
+			</vector>
+			<vector type="set">
+				<value>0</value>
+				<value>-9</value>
+			</vector>
+		</values>
+		<property>
+			<vector type="property.colorRGB">
+				<variable>3</variable>
+				<variable>4</variable>
+				<value>1</value>
+			</vector>
+			<point>
+				<vector type="position">
+					<variable>3</variable>
+					<variable>4</variable>
+				</vector>
+			</point>
+		</property>
+	</set>
+</data>
+

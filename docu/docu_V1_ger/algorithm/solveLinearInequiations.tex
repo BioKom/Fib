@@ -1,0 +1,229 @@
+%
+% Copyright (c) 2010 Betti Oesterholz
+%
+% Permission is granted to copy, distribute and/or modify this document
+% under the terms of the GNU Free Documentation License, Version 1.2 or
+% any later version published by the Free Software Foundation;
+% with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+%
+% A copy of the license is included in the file ``fdl.tex'' .
+%
+% This file contains a description how to solve linear inequiations.
+%
+
+\section{L"osen von linearen Ungleichungssystemen}
+\label{secSolveLinearInequiations}
+\index{Lineare Ungleichungssystemen|(}
+
+In diesem Abschnitt wird ein Verfahren zum L"osen eines linearen Ungleichungssystemen vorgestellt. Wenn es keine L"osung f"ur das Ungleichungssystem gibt, liefert das Verfahren eine L"osung f"ur die ersten $s$ Ungleichungen, die noch l"osbar sind ($s$ ist maximal).
+
+Das Verfahren ist Iterativ "uber den Ungleichungen. Au"serdem ist der Berechnungsaufwand des Verfahren vermutlich Liniar mit der Anzahl der Ungleichungen (oder besser $s$) und der Anzahl ($d$) der Parameter ($a_i$).
+
+
+\subsection{Problem}
+
+Das Kernproblem ist die L"osung der Ungleichungen $U_i$ mit $i = 1, \ldots, s$ mit maximalen $s$ und $s \leq n$ .
+
+\bigskip\noindent
+\textbf{Ungleichungsystem:}
+\begin{eqnarray*}
+U_1: y_1 &\leq&  a_1 * x_{1.1} + a_2 * x_{1.2} + \ldots + a_d * x_{1.d}\\
+U_2: y_2 &\leq&  a_1 * x_{2.1} + a_2 * x_{2.2} + \ldots + a_d * x_{2.d}\\
+\vdots & & \\
+U_n: y_n &\leq&  a_1 * x_{n.1} + a_2 * x_{n.2} + \ldots + a_d * x_{n.d}\\
+\end{eqnarray*}
+\textbf{Gegeben:} $y_i$ und $x_{i.k}$
+
+\noindent
+\textbf{Gesucht:} $a_i$
+
+
+\subsection{Vorrausetzungen}
+
+Die L"osung des Problems setzt folgende Dinge vorraus:
+\begin{itemize}
+ \item Eine Anzahl von lineare Ungleichungen $U_i$, welche die L"osung einschr"anken
+ \item Keine weiteren Einschr"ankungen der L"osung (sollten welche existieren, kann das Verfahren eventuell angepasst werden)
+ \item Feste Anzahl $d$ von Parametern $a_i$, welche die Dimension $d$ des L"osungsraums bestimmen
+ \item Feste Werte f"ur die Faktoren $x_i$ und $y_{i.k}$
+ \item Eine (endliche) maximale L"osungsmenge (Hyperk"orper der maximal m"oglichen L"osungen)
+\end{itemize}
+
+
+\subsection{Urspr"ungliches Problem}
+
+Das urspr"ungliches Problem, zu dessen L"osung dieses Verfahren von mir entwickelt wurde, ist die Polynomapproximation (und Splineapproximation) mit festen Freiheitsgraden.
+Dabei sind f"ur die Kurve nicht feste Punkte vorgegeben, sonder f"ur jeden Punkt ein Wert f"ur die Y-Koordinate und ein m"oglicher Bereich f"ur die X-Koordinate. Der Bereich der X-Koordinate mu"s dabei eingehalten werden.
+
+Beispielsweise kann sich der Bereich f"ur die X-Koordinate einfach schon daraus ergeben, dass die Werte Ganzzahlen sind und die Funktionswerte des Polynoms auf Ganzzahlen gerundet werden. Dann w"are es unvernu"nftig die Ganzzahlwerte mit dem Polynom interpolieren zu wollen, da dann das Polynom viel komplizierter wird, als es eigendlich m"usste.
+
+Damit ergibt sich f"ur eine Kurve f"ur die unterschiedlichen Werte der Y-Ko\-or\-di\-na\-te jeweils eine Ungleichung der Form:
+$y_u \leq  a_0 + a_1 * x^{1} + a_2 * x^{2} + \ldots + a_d * x^{d} \leq y_o$ 
+Diese kann jeweils in zwei Ungleichungen aufgespalten werden der Form: $y_u \leq  a_0 + a_1 * x^{1} + a_2 * x^{2} + \ldots + a_d * x^{d}$ und $-y_u \leq -a_0 - a_1 * x^{1} - a_2 * x^{2} - \ldots - a_d * x^{d}$
+
+So ergeben sich f"ur die $p$ Punkte $2p$ (=$n$) Ungleichungen f"ur das hier vorgestellte Verfahren.
+
+
+\subsection{L"osungsansatz}
+
+F"ur die L"osung werden die Ungleichungen als lineare Hyperfl"achen angesehen, welche den konvexen Hyperk"orper der L"osungen begrenzen. Dabei ist die Anzahl der Dimension gleich der Anzahl der Parameter $d$.
+
+Um den Hyperk"orper der L"osungen zu bestimmen, werden nacheinander die Hyperfl"achen (zu den Ungleichungen) hinzugef"ugt. Dabei wird der Hyperk"orper der L"osungen immer weiter eingeschr"ankt. Wenn der Hyperk"orper der L"osungen durch das hinzuf"ugen der n"achsten Ungleichung verschwinden w"urde (dann w"urde keine L"osungen mehr existieren), wird das Verfahren gestoppt und ein Punkt aus dem Hyperk"orper der L"osungen als L"osung zur"uckgegeben.
+
+
+\subsection{Grundlagen}
+
+Das Verfahren baut auf Folgenden Grundlagen auf:
+(Im Nachfolgenden ist mit Hyperk"orper ein Hyperk"orper gemeint, der endlich ist und durch Randhyperebenen definiert bzw. gebildet wird, und Schnittfl"achen sind Schnittfl"achen von Hyperebenen.)
+%TODO wo ben"otigt in L"osung (Punkte)
+\begin{itemize}
+ \item Jeder ebene Schnitt durch konvexen Hyperk"orper hat wieder als Schnittfl"ache einenen konvexen Hyperk"orper
+ \begin{itemize}
+  \item Geraden (ein dimensionale Hyperk"orper) haben immer maximal zwei Schnittpunkte
+ \end{itemize}
+ \item Die Orrientierung von linearen Hyperfl"achen durch Normalform (Richtung des Normalvektors immer nach innen vom Hyperk"orper)
+ \begin{itemize}
+  \item Alle Eckpunkte des konvexen Hyperk"orpers liegen immer in Richtung der Normalvektoren seiner Seitenfl"achen oder auf diesen
+ \end{itemize}
+ \item Liniare Hyperebenen (z. B. Fl"achen) au"serhalb des Hyperk"orpers k"onnen nicht mehr zu seiner Form beitragen (k"onnen ignoriert werden)
+ \begin{itemize}
+  \item Hyperfl"achen, welche keine Schnittpunkte mit dem Hyperk"orper haben, liegen au"serhalb dieses
+ \end{itemize}
+ \item Neue k dimensionale Schnittk"orper m"ussen immer auf neuen h dimensionale Hyperfl"achen liegen, mit $k < l$ (neue Hyperfl"achen erzeugen nur Schnittk"orper, welche auf ihnen liegen)
+ \begin{itemize}
+  \item Alle k dimensionale Randfl"achen des Hyperk"orpers liegen auf $k+1$ dimensionale Randfl"achen des Hyperk"orpers oder auf keinen Randfl"achen. Zwar k"onnen g dimensionale Hyperfl"achen in R"aumen mit mehr wie drei Dimensionen auch Schnittfl"achen haben, deren Dimension kleiner als $g-1$ ist, nur k"onnen diese Schnittfl"achen nicht die g dimensionalen Hyperfl"achen beranden/eingrenzen und damit auch keine Randfl"achen eines endlichen Hyperk"orpers sein, bei dem die g dimensionalen Hyperfl"achen Randfl"achen sind. Dies folgt daraus, dass ein endlicher Hyperk"orper auch immer nur endliche Randfl"achen hat, die zu ihm geh"oren. Um eine g dimensionalen Randfl"ache endlich zu machen, muss sie durch $g-1$ dimensionalen Randfl"achen begrenzt sein. Nur eindimensionale Punkte ben"otigen keine Randfl"achen, da sie schon endlich sind.
+  \item Punkte begrenzen und definieren jeden k dimensionalen Hyperk"orper. Punkte ben"otigen keine begrenzenden Randfl"achen, da sie schon endlich sind. Jede g dimensionalen Randebene (mit g gr"o"ser 0) hat $g-1$ dimensionale Randebenen, die Sie begrenzen und definieren. Damit wird jede g dimensionalen Randebene auch durch die (0 dimensionale) Randpunkte, die sie ent"alt, begrenzt und definiert. Zur Untersuchung eines konvexen Hyperk"orpers, der durch Hyperebenen gebildet wird, reicht also die Untersuchung seiner Eckpunkte aus.
+ \end{itemize}
+ \item Liniare Hyperebenen k"onnen nur maximal eine Schnitthyperebenen mit anderen liniare Hyperebenen haben
+ \begin{itemize}
+  \item Neue Hyperebnen erh"ohen die Anzahl der Schnitthyperebenen auf anderen Hyperebenen maximal um Eins
+ \end{itemize}
+\end{itemize}
+
+
+\subsection{L"osung}
+
+\subsubsection{Eingabeparameter:}
+\begin{itemize}
+ \item Anzahl der Parameter $d$
+ \item Anzahl der Ungleichungen $p$
+ \item Den Vektor $U$ der Ungleichungen $U_i$
+ \item Ein Wert $v_{max}$ f"ur den maximalen Wert der angenommen werden kann (in allen Dimensionen), alternativ direkt einen Hyperkubus oder -k"orper der maximalen L"osungsmenge
+\end{itemize}
+
+\subsubsection{Wichtige Daten:}
+\begin{itemize}
+ \item Z"ahler $i$ f"ur die aktuell zu integrierende Ungleichung, initial auf 1
+ \item Die Menge $K$ der Hyperfl"achen (der Dimensionalit"at $dim$) die den konvexer Hyperk"orper der m"oglichen L"osungen begrenzen, mit je Verweise zu den Hyperfl"achen, die sie enthalten ($dim-1$) und in den sie enthalten sind ($dim+1$)
+ \item Der Vektor $E$ mit allen Eckpunkte $E_k$ des konvexer Hyperk"orper der m"oglichen L"osungen
+ \item Listen $LS_g$ mit noch zu pr"ufenden Schnittebenen $S$, welche $g$ Dimensional sind
+ \item Die aktuelle Hyperebene $H$ mit dem Normalenvektors $N$ zur aktuellen Ungleichung $U_i$
+\end{itemize}
+
+\subsubsection{Vorgehen:}
+
+Das hier vorgestellte Verfahren ist optimiert. Alle "uberfl"ussigen Hyperebenen werden in ihm ignoriert.
+
+\begin{itemize}
+ \item [] 0 Initialisiere die Hyperebenen ($K$ und $E$) mit dem Hyperk"orper der maximalen L"osungsmenge (eventuell unter Zuhilfenahme von $v_{max}$)
+ \item [] 1 Pr"ufe $i$:
+ \item [] 1.1 Fall 1: Wenn $i$ gr"o"ser $n$, setze $i$ auf $n$ und gehe zu ``8. L"osung ermitteln''
+ \item [] 1.2 Sonst: Nehme n"achste Ungleichung $U_i$
+ \item [] 1.2.1 Erstelle eine orientierte Hyperfl"ache $H$ f"ur aktuelle Ungleichung $U_i=U[i]$ als Normalgleichung, mit dem Normalenvektor $N$ in Richtung der zul"assigen L"osungen. Aus der Ungleichung $U_i$ in der Form $y_i \leq  a_1 * x_{i.1} + a_2 * x_{i.2} + \ldots + a_d * x_{i.d}$ wird die Normalengleichung $ \vec{x_i} \cdot \vec{a} - y_i = 0$ mit $\vec{x_i} = (x_{i.1}, \ldots, x_{i.d})^T$ und $\vec{a} = (a_{1}, \ldots, a_{d})^T$
+ \item [] 2. Pr"ufe f"ur alle Punkte auf welcher Seite der Hyperflache $H$ sie liegen
+ \item [] 2.1 Fall 1: alle Eckpunkte $E_k$  liegen in Richtung des Normalenvektors $N$ oder auf der Hyperebene -> erh"ohe Z"ahler $i$ und gehe zu 1. (die Hyperfl"ache $H$ schr"ankt die L"osungsmenge nicht weiter ein, d. h. $H$ ist nicht relevant)
+ \item [] 2.2 Fall 2: alle Eckpunkte $E_k$ liegen nicht in Richtung des Normalenvektors $N$ -> erniedrige Z"ahler $i$ und gehe zu ``8. L"osung ermitteln'' (durch die Hinzunahme der Ungleichung $U_i$ g"abe es keine L"osungen mehr, bzw. die Ungleichung $U_i$ macht das bisherige Gleichungsystem unl"osbar)
+ \item [] 2.3 Sonst: einige Eckpunkte $E_k$ liegen in Richtung des Normalenvektors $N$, andere nicht -> gehe zu Schritt 3., bzw. integriere die Hyperfl"ache $H$ in den konvexer Hyperk"orper der m"oglichen L"osungen
+ \item [] 3. F"ur jede Hyperfl"ache $H_e$ mit der Dimensionalit"at $n-1$ (diese entsprechen den Ungleichungen) aus $K$ (konvexer Hyperk"orper der m"oglichen L"osungen):
+ \item [] 3.1 Berechne die Schnittebene (Dimensionalit"at ist $n-2$) von $H_e$ und $H$
+ \item [] 3.1.1 Fall 1: wenn keine Schnittebene existiert -> gehe zu 3.1 und pr"ufe die n"achste Hyperfl"ache $H_e$
+%TODO 3.1.1 Fall 2: wenn eine Schnittebene $S$ gleich $H$
+ \item [] 3.1.2 Sonst: wenn eine Schnittebene $S$ existiert:
+ \item [] 3.1.2.1 Wenn eine identische Hyperfl"ache wie die Schnittebene $S$ in den Hyperfl"achen $K$ existiert (bzw. es existiert keine neue Hyperfl"ache) 
+ \item [] 3.1.2.1.1 Vermerke zu der gefundenen Schnittebene als Verweise die Hyperfl"ache $H$ als die enthaltende Hyperfl"ache
+ \item [] 3.1.2.1.2 F"uge zu der Hyperfl"ache $H$ als Verweise die Schnittebene $S$ als eine enthaltende Hyperfl"achen hinzu
+ \item [] 3.1.2.1.3 gehe zu 3.1 und pr"ufe die n"achste Hyperfl"ache $H_e$
+ \item [] 3.1.2.2 Vermerke zu der Schnittebene $S$ als Verweise die Hyperfl"achen $H$ und $H_e$ als die enthaltenden Hyperfl"achen
+ \item [] 3.1.2.3 F"uge zu den Hyperfl"achen $H$ und $H_e$ als Verweise die Schnittebene $S$ als eine enthaltende Hyperfl"achen hinzu
+ \item [] 3.1.2.4 F"uge Schnittebene $S$ zu der Liste $LS_{n-2}$ mit noch zu pr"ufenden Schnittebene hinzu
+ \item [] 3.1.2.5 F"uge die Schnittebene $S$ zu den Hyperfl"achen $K$ hinzu
+ \item [] 3.1.2.6 Gehe zu 3.1 und pr"ufe die n"achste Hyperfl"ache $H_e$
+ \item [] 4. F"uge Schnittebenen der Schnittebenen hinzu: f"ur $d_s={n-2}$ bis $d_s={1}$ ($d_s$ ist die Dimensionalit"at der gepr"uften Schnittebenen)
+ \item [] 4.1 Nehme und entferne die letzte Schnittebene $S$ von der List $LS_{d_s}$ (mit den noch zu pr"ufenden Schnittebene der Dimensionalit"at $d_s$):
+ \item [] 4.1.1 F"ur jede Hyperfl"ache $HS$ die $S$ enth"alt:
+ \item [] 4.1.1.1 F"ur jede Hyperfl"ache $HU$ die in $HS$ enthalten ist ($HU$ hat Dimensionalit"at $d_s$)
+ \item [] 4.1.1.1.1 Berechne Schnittebene $SU$ (hat Dimensionalit"at $d_s-1$) von $S$ und $HU$
+ \item [] 4.1.1.1.1 Fall 1: wenn keine Schnittebene $SU$ existiert -> gehe zu 4.1.1.1 und pr"ufe die n"achste Hyperfl"ache $HU$
+ \item [] 4.1.1.1.1 Sonst: wenn eine Schnittebene $SU$ existiert:
+ \item [] 4.1.1.1.1.1 Wenn eine identische Hyperfl"ache (diese sollte in $HU$ schon enthalten sein) wie die Schnittebene $SU$ in den Hyperfl"achen $K$ existiert (bzw. es existiert keine neue Schnitthyperfl"ache)
+ \item [] 4.1.1.1.1.1.1 Vermerke zu der gefundenen Schnittebene als Verweise die Hyperfl"ache $S$ als die enthaltende Hyperfl"ache
+ \item [] 4.1.1.1.1.1.2 F"uge zu der Hyperfl"ache $S$ als Verweis die Schnittebene $SU$ f"ur eine enthaltende Hyperfl"achen hinzu
+ \item [] 4.1.1.1.1.1.3 gehe zu 4.1.1.1 und pr"ufe die n"achste Hyperfl"ache $HU$
+ \item [] 4.1.1.1.1.2 Vermerke zu der Schnittebene $SU$ als Verweise die Hyperfl"achen $S$ und $HU$ als die enthaltenden Hyperfl"achen
+ \item [] 4.1.1.1.1.3 F"uge zu den Hyperfl"achen $S$ und $HU$ als Verweise die Schnittebene $SU$ f"ur eine enthaltende Hyperfl"achen hinzu
+ \item [] 4.1.1.1.1.4 F"uge Schnittebene $SU$ zu der Liste $LS_{d_s-1}$ mit noch zu pr"ufenden Schnittebene hinzu
+ \item [] 4.1.1.1.1.5 F"uge die Schnittebene $SU$ zu den Hyperfl"achen $K$ hinzu
+ \item [] 4.1.1.1.1.6 Gehe zu 4.1.1.1 und pr"ufe die n"achste Hyperfl"ache $HU$
+ \item [] 4.2 Wenn $LS_{d_s}$ nicht leer ist, gehe zu 4.1
+ \item [] 4.3 Wenn $d_s$ gr"o"ser $1$ ist ernidrige $d_s$ und gehe zu 4
+ \item [] 5. Entferne alle nicht mehr ben"otigten Eckpunkte:
+ \item [] 5.1 Entferne alle Eckpunkte (bzw. Hyperfl"achen der Dimensionalit"at 0), inclusive Verweise auf sie, aus $K$ und $E$ die nicht in Richtung des Normalenvektors $N$ der Hyperfl"ache $H$ von einer Seite von $H$ liegen (bzw. entferne die Eckpunkte, welche die Hyperfl"ache $H$ aus dem Hyperk"orper der m"oglichen L"osungen $K$ abschneidet)
+ \item [] 5.2 Entferne die "Uberfl"ussigen Eckpunkte die durch $H$ hinzukamen, nehme und entferne den letzten Eckpunkte $E$ von der List $LS_{0}$  mit noch zu pr"ufenden Schnittebene der Dimensionalit"at $0$:
+ \item [] 5.2.1 F"ur jede Hyperfl"ache bzw. Gerade $G$ die $E$ enth"alt:
+ \item [] 5.2.1.1 Fall 1: Enth"alt die Gerade $G$ maximal zwei Eckpunkte bzw. Hyperebenen -> gehe zu 5.2.1 und pr"ufe die n"achste Gerade $G$
+ \item [] 5.2.1.2 Sonst: Enth"alt die Gerade $G$ mehr als zwei (bzw. drei) Eckpunkte bzw. Hyperebenen (die Eckpunkte bilden dann keinen konvexen K"orper auf $G$ mehr):
+ \item [] 5.2.1.2.1 Ermittle den mittleren Punkt $PM$ der drei Schnittpunkte auf $G$ (bzw. enthaltenden Hyperebenen) und die beiden anderen Punkte $P_1$ und $P_2$
+ \item [] 5.2.1.2.2 F"ur jede Hyperfl"ache $H_e$ mit der Dimensionalit"at $n-1$ (diese entsprechen den begrenzenden Ungleichungen $U_i$) aus $K$ die den Punkt $PM$ (indirekt) enth"alt:
+ \item [] 5.2.1.2.2.1 Fall 1: beide Punkt $P_1$ und $P_2$ liegen in Richtung des Normalenvektors $N_e$ der Hyperfl"ache $H_e$ von einer Seite von $H_e$ oder auf $H_e$ (also in der L"osungsmenge) -> gehe zu 5.2.1.2.2 und pr"ufe die n"achste Hyperfl"ache $H_e$
+ \item [] 5.2.1.2.2.2 Sonst: der Punkt $P_r$ liegen nicht in Richtung des Normalenvektors $N_e$ der Hyperfl"ache $H_e$ von einer Seite von $H_e$ oder auf $H_e$ (also ist er nicht in der L"osungsmenge)
+ \item [] 5.2.1.2.2.2.1 Entferne den Punkt $P_r$ aus der Menge der Eckpunkte $E$ (inclusive Verweise auf ihn)
+ \item [] 5.2.1.2.2.2.1 Wenn $E$ nicht entfernt wurde ($E \neq P_r$), gehe zu Schritt 5.2.1 und pr"ufe die n"achste Gerade $G$, sonst gehe zu 5.2 und pr"ufe den n"achsten Eckpunkt $E$
+ \item [] 6. Entferne alle nicht mehr ben"otigten Hyperfl"achen: f"ur $d_h = 1$ bis $d_h = (n-1)$ (Dies sind alle Hyperfl"achen, die keine Eckpunkte des konvexen Hyperk"orper der L"osungen enthalten und damit nicht zu ihm geh"oren.)
+ \item [] 6.1 Entferne alle Hyperflachen, inclusive Verweise zu ihnen, der Dimensionalit"at $d_h$ die keine Hyperfl"achen (diese haben Dimensionalit"at $d_h-1$) mehr enthalten
+ \item [] 7. wenn $i < n$: erh"ohe Z"ahler $i$ und gehe zu 1. (sonst 8.)
+ \item [] 8. \textbf{L"osung ermitteln:}
+ \item [] 8.1. Alternative 1:
+ \item [] 8.1.1. Gebe $E$ als Eckpunkte der (konvexen) L"osungsmenge und $i$ als Anzahl der erf"ullten Ungleichungen zur"uck (eine L"osung kann dann aus dem Bereich $E$ ermittelt werden)
+ \item [] 8.1. Alternative 2:
+ \item [] 8.1.1. Nehme den Mittelpunkt /Schwerpunkt $M$ aller Eckpunkte $E_k$: $M = 1 / \sharp E * \sum_{i=1}^{\sharp E} E_k$
+ \item [] 8.1.2. Gebe $M$ als L"osung und $i$ als Anzahl der erf"ullten Ungleichungen zur"uck
+\end{itemize}
+
+
+\subsection{Optimierte L"osung}
+
+
+F"ur die optimierte L"osung werden alle Randhyperebenen au"ser Punkten, Geraden und Hyperebenen der Dimensionalit"at $d-1$ weggelassen. Der hier gegebene Algorithmus ist f"ur mindestens drei Parameter ($3 \leq d$). Wenn die L"osung nur zwei oder ein Parameter hat, kann ein anderer Algorithmus verwendet werden, bzw. der nachfolgende Algorthmus angepasst werden.
+
+\begin{itemize}
+ \item [] 0 Initialisiere die Hyperebenen ($K$ und $E$) mit dem Hyperk"orper der maximalen L"osungsmenge (eventuell unter Zuhilfenahme von $v_{max}$)
+ \item [] 1 Pr"ufe $i$:
+ \item [] 1.1 Fall 1: Wenn $i$ gr"o"ser $n$, setze $i$ auf $n$ und gehe zu ``8. L"osung ermitteln''
+ \item [] 1.2 Sonst: Nehme n"achste Ungleichung $U_i$
+ \item [] 1.2.1 Erstelle eine orientierte Hyperfl"ache $H$ f"ur aktuelle Ungleichung $U_i=U[i]$ als Normalgleichung, mit dem Normalenvektor $N$ in Richtung der zul"assigen L"osungen. Aus der Ungleichung $U_i$ in der Form $y_i \leq  a_1 * x_{i.1} + a_2 * x_{i.2} + \ldots + a_d * x_{i.d}$ wird die Normalengleichung $ \vec{x_i} \cdot \vec{a} - y_i = 0$ mit $\vec{x_i} = (x_{i.1}, \ldots, x_{i.d})^T$ und $\vec{a} = (a_{1}, \ldots, a_{d})^T$
+ \item [] 2. Pr"ufe f"ur alle Punkte auf welcher Seite der Hyperflache $H$ sie liegen
+ \item [] 2.1 Fall 1: alle Eckpunkte $E_k$  liegen in Richtung des Normalenvektors $N$ oder auf der Hyperebene -> erh"ohe Z"ahler $i$ und gehe zu 1. (die Hyperfl"ache $H$ schr"ankt die L"osungsmenge nicht weiter ein, d. h. $H$ ist nicht relevant)
+ \item [] 2.2 Fall 2: alle Eckpunkte $E_k$ liegen nicht in Richtung des Normalenvektors $N$ -> erniedrige Z"ahler $i$ und gehe zu ``8. L"osung ermitteln'' (durch die Hinzunahme der Ungleichung $U_i$ g"abe es keine L"osungen mehr, bzw. die Ungleichung $U_i$ macht das bisherige Gleichungsystem unl"osbar)
+ \item [] 2.3 Sonst: einige Eckpunkte $E_k$ liegen in Richtung des Normalenvektors $N$, andere nicht -> gehe zu Schritt 3., bzw. integriere die Hyperfl"ache $H$ in den konvexer Hyperk"orper der m"oglichen L"osungen
+ \item [] 3 ermittle alle (Rand-) Linien/Geraden $L_z$ des Hyperk"orpers $K$ zwischen den Eckpunkten $E_o$ nicht in Richtung des Normalenvektors $N$ und Eckpunkten $E_i$ in dessen Richtung (ignoriere Eckpunkte $E_{ho}$ auf $H$)
+ \item [] 3.1 f"ur jede dieser Geraden $L_z$: ermittle Schnittpunkte $E_{hn}$ mit der Hyperfl"ache $H$ und f"uge sie zum Hyperk"orper hinzu
+ \item [] 3.2 finde Geraden zwischen den Schnittpunkten auf $H$, welche einen konvexen K"orper bilden: f"ur jeden Schnittpunkt $E_{h1}$ auf $H$ ( $\{E_{h1}\} = \{E_{h2}\} = \{E_{ho}\} \cup \{E_{hn}\}$ ) ermittle alle Schnittpunkt $E_{h2}$ auf $H$ die gemeinsam auf mindestens $d-2$ anderen Hyperfl"achen $H_a$ ($H \neq H_a$) liegen. (Diese Hyperfl"achen sollten zusammen mit der Hyperfl"ache $H$ als Schnittfl"ache eine Gerade haben. Da $H$ die Dimensionalit"at $d-1$ hat und der Schnitt mit jeder weiteren ($d-1$ dimensionalen) Hyperfl"achen die Dimensionalit"at der Schnittfl"ache um eins verringert.)
+%needed all hyperplanes of point \item [] 3.2.1 wenn $E_{h1}$ auf der Geraden $L_{1}$ und $E_{h2}$ auf der Geraden $L_{2}$ liegt und die Geraden $L_{1}$ und $L_{2}$ gemeinsam auf Hyperfl"achen $H_l$ liegen, dann liegen auch $E_{h1}$ und $E_{h2}$ auf den Hyperfl"achen $H_l$
+ \item [] 3.2.1 ermittle Geraden $G$ zwischen $E_{h1}$ und $E_{h2}$ die gemeinsam auf gemeinsammen anderen Hyperfl"ache $H_l$ liegen
+ \item [] 3.2.2 f"uge Geraden $G$ zu $K$ und als auf $H$ liegend hinzu
+ \item [] 3.2.3 f"uge $E_{h1}$ und $E_{h2}$ als auf $G$ liegend hinzu
+ \item [] 4. entferne alle Eckpunkte $E_k$ die nicht in Richtung des Normalenvektors $N$ von $H$ liegen
+ \item [] 5. entferne alle Gerade $G$ die nur noch einen Eckpunkt besitzen
+ \item [] 6. entferne alle Hyperfl"achen auf denen keine Geraden mehr liegen
+ \item [] 7. wenn $i < n$: erh"ohe Z"ahler $i$ und gehe zu 1. (sonst 8.)
+ \item [] 8. \textbf{L"osung ermitteln:}
+ \item [] 8.1. Alternative 1:
+ \item [] 8.1.1. Gebe $E$ als Eckpunkte der (konvexen) L"osungsmenge und $i$ als Anzahl der erf"ullten Ungleichungen zur"uck (eine L"osung kann dann aus dem Bereich $E$ ermittelt werden)
+ \item [] 8.1. Alternative 2:
+ \item [] 8.1.1. Nehme den Mittelpunkt /Schwerpunkt $M$ aller Eckpunkte $E_k$: $M = 1 / \sharp E * \sum_{i=1}^{\sharp E} E_k$
+ \item [] 8.1.2. Gebe $M$ als L"osung und $i$ als Anzahl der erf"ullten Ungleichungen zur"uck
+\end{itemize}
+
+\index{Lineare Ungleichungssystemen|)}
+
+

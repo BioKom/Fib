@@ -1,0 +1,17 @@
+<data>
+	<list>
+		<point>
+			<vector type="position">
+				<value>-3</value>
+				<value>-3</value>
+			</vector>
+		</point>
+		<point>
+			<vector type="position">
+				<variable>4</variable>
+				<variable>5</variable>
+			</vector>
+		</point>
+	</list>
+</data>
+

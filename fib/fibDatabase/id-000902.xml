@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fib_object
+			  xmlns:xsd="http://www.w3.org/2001/XMLSchema-instance"
+			  xmlns="http://www.fib-development.org/"
+			  xsd:schemaLocation="http://www.fib-development.org/fib.xsd">
+	<root>
+		<multimedia_info fib_version="3" db_version="2"/>
+		<optionalpart>
+			<pair key="name" value="evalue fraction"/>
+			<pair key="description" value="This object evalues wich part / fraction of a given pixel is right a line f(x) = a_0 + a_1 * x (e. g. for antialising). (A pixel (x,y) goes in the first dimension from x to x+1 and in the second dimension from y to y+1 .)"/>
+			<pair key="inVar1::description" value="the first parameter a_0 for the line f(x)"/>
+			<pair key="inVar2::description" value="the slope or gradien (second parameter) a_1 for the line f(x)"/>
+			<pair key="inVar3::description" value="position of the pixle in dimension 1 (x)"/>
+			<pair key="inVar4::description" value="position of the pixle in dimension 2 (y)"/>
+			<pair key="subObj1::description" value="the object for the to return part / fraction of a given pixel which is right a line f(x) = a_0 + a_1 * x"/>
+			<pair key="subObj1::outVar1::description" value="the part / fraction of a given pixel which is right a line f(x) = a_0 + a_1 * x"/>
+			<pair key="author" value="Betti Oesterholz"/>
+			<pair key="author::email" value="Oesterholz@Fib-Development.org"/>
+			<pair key="copyright" value="LGPL3"/>
+		</optionalpart>
+		<input_variables>
+			<variable number="1" default="0"/>
+			<variable number="2" default="0"/>
+			<variable number="3" default="0"/>
+			<variable number="4" default="0"/>
+		</input_variables>
+		<domains>
+			<inVar number="3">
+				<domainReference subdomain="1">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="4">
+				<domainReference subdomain="2">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<externSubobject number="1">
+				<vector elements="1">
+					<!--actually any number is possible;
+						the next line is just a space holder-->
+					<naturalNumberB bit="0" />
+				</vector>
+			</externSubobject>
+			<externObject>
+				<vector elements="4">
+					<integer min="-901" max="-900" /><!--Identifier-->
+					<integer min="4" max="4" /><!--number input values-->
+					<naturalNumber max="1" /><!--number subobjects-->
+					<naturalNumber max="1" /><!--number output values-->
+				</vector>
+			</externObject>
+			<externObjectInput identifier="-900">
+				<vector elements="4">
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+				</vector>
+			</externObjectInput>
+			<externObjectInput identifier="-901">
+				<vector elements="4">
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+				</vector>
+			</externObjectInput>
+			<subfunction>
+				<integer min="0" max="0" />
+			</subfunction>
+		</domains>
+		<database_identifiers>
+			<identifier>-900</identifier>
+			<identifier>-901</identifier>
+		</database_identifiers>
+		<main_fib_object>
+			<if><!-- if a_1 < 0 then right of = above of; else right of = below of  -->
+				<condition>
+					<lo>
+						<variable>2</variable>
+						<value>0</value>
+					</lo>
+				</condition>
+				<obj identifier="-901">
+					<vector type="externObjectInput">
+						<variable>1</variable>
+						<variable>2</variable>
+						<variable>3</variable>
+						<variable>4</variable>
+					</vector>
+					<subobject>
+						<output_variables>
+							<variable>5</variable>
+						</output_variables>
+						<subobject number="1">
+							<vector type="externSubobject">
+								<variable>5</variable>
+							</vector>
+						</subobject>
+					</subobject>
+				</obj>
+				<!-- else right of = below -->
+				<obj identifier="-900">
+					<vector type="externObjectInput">
+					<variable>1</variable>
+					<variable>2</variable>
+					<variable>3</variable>
+					<variable>4</variable>
+					</vector>
+					<subobject>
+						<output_variables>
+							<variable>5</variable>
+						</output_variables>
+						<subobject number="1">
+							<vector type="externSubobject">
+								<variable>5</variable>
+							</vector>
+						</subobject>
+					</subobject>
+				</obj>
+			</if>
+		</main_fib_object>
+	</root>
+</fib_object>

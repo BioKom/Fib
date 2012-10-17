@@ -1,0 +1,412 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fib_object
+			  xmlns:xsd="http://www.w3.org/2001/XMLSchema-instance"
+			  xmlns="http://www.fib-development.org/"
+			  xsd:schemaLocation="http://www.fib-development.org/fib.xsd">
+	<root>
+		<multimedia_info fib_version="3" db_version="2"/>
+		<optionalpart>
+			<pair key="name" value="function antialising for 2 lines"/>
+			<pair key="description" value="This object evalues wich part / fraction of a pixel is between (in f(x) = y = dim 2 direction) the lines f_1(x) = a_0 + a_1 * x and f_2(x) = b_0 + b_1 * x (e. g. for antialising)."/>
+			<pair key="inVar1::description" value="the first parameter a_0 for the line f_1(x)"/>
+			<pair key="inVar2::description" value="the slope or gradien (second parameter) a_1 for the line f_1(x)"/>
+			<pair key="inVar3::description" value="the first parameter b_0 for the line f_2(x)"/>
+			<pair key="inVar4::description" value="the slope or gradien (second parameter) b_1 for the line f_2(x)"/>
+			<pair key="inVar5::description" value="position of the pixle in dimension 1 (x)"/>
+			<pair key="inVar6::description" value="position of the pixle in dimension 2 (y)"/>
+			<pair key="subObj1::description" value="the object for the to return part / fraction of a pixel is between the lines f_1(x) = a_0 + a_1 * x and f_2(x) = b_0 + b_1 * x"/>
+			<pair key="subObj1::outVar1::description" value="the part / fraction of a pixel which is between the lines f_1(x) = a_0 + a_1 * x and f_2(x) = b_0 + b_1 * x"/>
+			<pair key="author" value="Betti Oesterholz"/>
+			<pair key="author::email" value="Oesterholz@Fib-Development.org"/>
+			<pair key="copyright" value="LGPL3"/>
+		</optionalpart>
+		<input_variables>
+			<variable number="1" default="0"/>
+			<variable number="2" default="0"/>
+			<variable number="3" default="0"/>
+			<variable number="4" default="0"/>
+			<variable number="5" default="0"/>
+			<variable number="6" default="0"/>
+		</input_variables>
+		<domains>
+			<inVar number="5">
+				<domainReference subdomain="1">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="6">
+				<domainReference subdomain="2">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<externSubobject number="1">
+				<vector elements="1">
+					<!--actually any number is possible;
+						the next line is just a space holder-->
+					<naturalNumberB bit="0" />
+				</vector>
+			</externSubobject>
+			<externObject>
+				<vector elements="4">
+					<integer min="-915" max="-95" /><!--Identifier-->
+					<integer min="4" max="5" /><!--number input values-->
+					<naturalNumber max="1" /><!--number subobjects-->
+					<naturalNumber max="3" /><!--number output values-->
+				</vector>
+			</externObject>
+			<externObjectInput identifier="-95">
+				<vector elements="4">
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+				</vector>
+			</externObjectInput>
+			<externObjectInput identifier="-900">
+				<vector elements="4">
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+				</vector>
+			</externObjectInput>
+			<externObjectInput identifier="-915">
+				<vector elements="5">
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+				</vector>
+			</externObjectInput>
+			<subfunction>
+				<integer min="0" max="1" />
+			</subfunction>
+		</domains>
+		<database_identifiers>
+			<identifier>-95</identifier>
+			<identifier>-900</identifier>
+			<identifier>-915</identifier>
+		</database_identifiers>
+		<main_fib_object>
+			<!-- 1. evalue intersection of lines
+				  2. if intersection is in pixle -> split pixle at intersection in two areas ( following A(x) is the area of / below x)
+					- for area 1: abs( A( f_1) - A(f_2) )
+					- for area 2: abs( A(f_1) - A(f_2) )
+				  2. else if intersection is not in pixle
+				  - area: abs( A(f_1) - A(f_2) )
+			-->
+			<!-- evalue intersection of lines -->
+			<obj identifier="-95">
+				<vector type="externObjectInput">
+					<variable>1</variable>
+					<variable>2</variable>
+					<variable>3</variable>
+					<variable>4</variable>
+				</vector>
+				<subobject>
+					<output_variables>
+						<variable>7</variable>
+						<variable>8</variable>
+						<variable>9</variable>
+					</output_variables>
+					<if><!-- if intersection is in pixle -->
+						<condition>
+							<and>
+								<lo><!--intersection exists-->
+									<value>0</value>
+									<variable>9</variable>
+								</lo>
+								<and>
+									<!--intersection in pixle area -->
+									<not><!-- not outside pixle in x direction -->
+										<or>
+											<lo>
+												<variable>7</variable>
+												<variable>5</variable>
+											</lo>
+											<lo>
+												<add>
+													<variable>5</variable>
+													<value>1</value>
+												</add>
+												<variable>7</variable>
+											</lo>
+										</or>
+									</not>
+									<not><!-- not outside pixle in y direction -->
+										<or>
+											<lo>
+												<variable>8</variable>
+												<variable>6</variable>
+											</lo>
+											<lo>
+												<add>
+													<variable>6</variable>
+													<value>1</value>
+												</add>
+												<variable>8</variable>
+											</lo>
+										</or>
+									</not>
+								</and>
+							</and>
+						</condition>
+						
+						<!-- split pixle at intersection in two areas -->
+						<obj identifier="-915"><!-- evalue area 1 A(f_1) -->
+							<vector type="externObjectInput">
+								<variable>1</variable>
+								<variable>2</variable>
+								<variable>5</variable>
+								<variable>7</variable>
+								<variable>6</variable>
+							</vector>
+							<subobject>
+								<output_variables>
+									<variable>10</variable>
+								</output_variables>
+								<obj identifier="-915"><!-- evalue area 1 A(f_2) -->
+									<vector type="externObjectInput">
+										<variable>3</variable>
+										<variable>4</variable>
+										<variable>5</variable>
+										<variable>7</variable>
+										<variable>6</variable>
+									</vector>
+									<subobject>
+										<output_variables>
+											<variable>11</variable>
+										</output_variables>
+										<function define_variable="12">
+											<!-- right pixle x border = x + 1 -->
+											<subfunction>
+												<add>
+													<variable>5</variable>
+													<value>1</value>
+												</add>
+											</subfunction>
+											<obj identifier="-915"><!-- evalue area 2 A(f_1) -->
+												<vector type="externObjectInput">
+													<variable>1</variable>
+													<variable>2</variable>
+													<variable>7</variable>
+													<variable>12</variable>
+													<variable>6</variable>
+												</vector>
+												<subobject>
+													<output_variables>
+														<variable>13</variable>
+													</output_variables>
+													<obj identifier="-915"><!-- evalue area 2 A(f_2) -->
+														<vector type="externObjectInput">
+															<variable>3</variable>
+															<variable>4</variable>
+															<variable>7</variable>
+															<variable>12</variable>
+															<variable>6</variable>
+														</vector>
+														<subobject>
+															<output_variables>
+																<variable>14</variable>
+															</output_variables>
+															<function define_variable="15">
+																<!-- area between lines =
+																		area 1: abs( A(f_1) - A(f_2) )
+																		+ area 2: abs( A(f_1) - A(f_2) ) -->
+																<subfunction>
+																	<add>
+																		<if>
+																			<gr>
+																				<variable>10</variable>
+																				<variable>11</variable>
+																			</gr>
+																			<sub><!--A(f_1) - A(f_2)-->
+																				<variable>10</variable>
+																				<variable>11</variable>
+																			</sub>
+																			<!-- else if  ( A(f_1) - A(f_2) ) lower 0 (-> A(f_1) < A(f_2) ) -->
+																			<sub><!-- A(f_2) - A(f_1) -->
+																				<variable>11</variable>
+																				<variable>10</variable>
+																			</sub>
+																		</if>
+																		<if>
+																			<gr>
+																				<variable>13</variable>
+																				<variable>14</variable>
+																			</gr>
+																			<sub><!--A(f_1) - A(f_2)-->
+																				<variable>13</variable>
+																				<variable>14</variable>
+																			</sub>
+																			<!-- else if  ( A(f_1) - A(f_2) ) lower 0 (-> A(f_1) < A(f_2) ) -->
+																			<sub><!-- A(f_2) - A(f_1) -->
+																				<variable>14</variable>
+																				<variable>13</variable>
+																			</sub>
+																		</if>
+																	</add>
+																</subfunction>
+																<subobject number="1">
+																	<vector type="externSubobject">
+																		<variable>15</variable>
+																	</vector>
+																</subobject>
+															</function>
+														</subobject>
+													</obj>
+												</subobject>
+											</obj>
+										</function>
+									</subobject>
+								</obj>
+							</subobject>
+						</obj>
+						
+						<!-- else if intersection is not in pixle:
+							- case 2: both areas 1: area = 0
+							- case 3: both areas 0: area = 0
+							(combine case 2 and 3)
+							- case 4: first area 1 second 0 -> area = 1
+							- case 5: first area 0 second 1 -> area = 1
+							(combine case 4 and 5)
+							- case 6: one area between 0 and 1 -> evalue area
+							-->
+						<obj identifier="-900"><!-- evalue A(f_1) -->
+							<vector type="externObjectInput">
+								<variable>1</variable>
+								<variable>2</variable>
+								<variable>5</variable>
+								<variable>6</variable>
+							</vector>
+							<subobject>
+								<output_variables>
+									<variable>10</variable>
+								</output_variables>
+								<obj identifier="-900"><!-- evalue A(f_2) -->
+									<vector type="externObjectInput">
+										<variable>3</variable>
+										<variable>4</variable>
+										<variable>5</variable>
+										<variable>6</variable>
+									</vector>
+									<subobject>
+										<output_variables>
+											<variable>11</variable>
+										</output_variables>
+										<if><!-- - case 4: first area 1 second 0 -> area = 1
+												- case 5: first area 0 second 1 -> area = 1 -->
+											<condition>
+												<or>
+													<not>
+														<or>
+															<lo>
+																<variable>10</variable>
+																<value>1</value>
+															</lo>
+															<gr>
+																<variable>11</variable>
+																<value>0</value>
+															</gr>
+														</or>
+													</not>
+													<not>
+														<or>
+															<gr>
+																<variable>10</variable>
+																<value>0</value>
+															</gr>
+															<lo>
+																<variable>11</variable>
+																<value>1</value>
+															</lo>
+														</or>
+													</not>
+												</or>
+											</condition>
+											<subobject number="1">
+												<vector type="externSubobject">
+													<value>1</value>
+												</vector>
+											</subobject>
+											<!-- else -->
+											<if>
+												<condition>
+													<or>
+														<and>
+															<gr>
+																<variable>10</variable>
+																<value>0</value>
+															</gr>
+															<lo>
+																<variable>10</variable>
+																<value>1</value>
+															</lo>
+														</and>
+														<and>
+															<gr>
+																<variable>11</variable>
+																<value>0</value>
+															</gr>
+															<lo>
+																<variable>11</variable>
+																<value>1</value>
+															</lo>
+														</and>
+													</or>
+												</condition>
+												<!-- case 5: one area between 0 and 1 -->
+												<function define_variable="12">
+													<!-- area between lines =
+														area: A(f_1) - A(f_2), if lower 0: A( pixle ) (= 1) - (A(f_1) - A(f_2)) = 1 - (A(f_1) - A(f_2)) -->
+													<subfunction>
+														<if>
+															<gr>
+																<variable>10</variable>
+																<variable>11</variable>
+															</gr>
+															<sub><!--A(f_1) - A(f_2)-->
+																<variable>10</variable>
+																<variable>11</variable>
+															</sub>
+															<!-- else if  ( A(f_1) - A(f_2) < 0 )  (-> A(f_1) < A(f_2) ) lower 0 -->
+															<sub><!-- A(f_2) - A(f_1) -->
+																<variable>11</variable>
+																<variable>10</variable>
+															</sub>
+														</if>
+													</subfunction>
+													<subobject number="1">
+														<vector type="externSubobject">
+															<variable>12</variable>
+														</vector>
+													</subobject>
+												</function>
+												<!-- else:
+													- case 1: both areas 1: area = 0
+													- case 2: both areas 0: area = 0
+												-->
+												<subobject number="1">
+													<vector type="externSubobject">
+														<value>0</value>
+													</vector>
+												</subobject>
+											</if>
+										</if>
+									</subobject>
+								</obj>
+							</subobject>
+						</obj>
+					</if>
+				</subobject>
+			</obj>
+		</main_fib_object>
+	</root>
+</fib_object>

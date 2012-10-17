@@ -1,0 +1,16 @@
+<data>
+	<obj identifier="7">
+		<vector type="externObjectInput">
+		</vector>
+		<subobject>
+			<output_variables/>
+			<point>
+				<vector type="position">
+					<value>99</value>
+					<value>99</value>
+				</vector>
+			</point>
+		</subobject>
+	</obj>
+</data>
+
