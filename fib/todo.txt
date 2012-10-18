@@ -1,0 +1,310 @@
+
+
+- Errors in tFibObjectStore: compressed domain to small;
+	cDomainSingle::createGoodDomain() for integer domain; lower bound
+		(rounding error in connection with scaling factor ? )
+
+		
+database object -200, -250:
+	replace circle (id -50, id -56) with half circle (id -511, id -561)
+
+	
+database objects to create: (x = dim 1 ?=? horizontal; y = dim 2 ?=? vertikal)
+	order pr 2: -513; -517; -518; -5100
+	order 2: -42, -43, -48, -49, -510, -560, -200, -250, -350; -351; -500; -501; -511;
+	- id -5000 and id -5005 replace lines with lines with rounded edges
+	- Line:
+	-- id -200 line in two dimensions from an start point (x_1, y_1) to an end point (x_2, y_2) with a given width with rounded ends
+	--- use id -510
+	-- id -250 line antialised in two dimensions from an start point (x_1, y_1) to an end point (x_2, y_2) with a given width with rounded ends
+	
+	- Dreiecke mit einer oder zwei Seiten antialised
+	-- id -350 triangle with one sides antialised
+	--- 6 Parameters corner points: ( x_1, y_2 ), ( x_2, y_2 ), ( x_3, x_3 )
+	--- triangle side betwean points ( x_1, y_2 ), ( x_2, y_2 ) antialised
+	-- id -351 triangle with two sides antialised
+	--- 6 Parameters corner points: ( x_1, y_2 ) and ( x_2, y_2 ), ( x_3, x_3 )
+	--- triangle side betwean points ( x_1, y_2 ), ( x_2, y_2 ) and ( x_2, y_2 ), ( x_3, x_3 ) antialised
+	-- id -42 rectangle; border line widht w (not filled)
+    - inVar1 : position of the start point in dimension 1 (x_s)
+    - inVar2 : position of the start point in dimension 2 (y_s)
+    - inVar3 : position of the end point in dimension 1 (x_e)
+    - inVar4 : position of the end point in dimension 2 (y_e)
+    - inVar5 : the width of the line in points
+	-- id -43 quadrangle; border line widht w (not filled)
+    - inVar1 : position of the first point p_1 in dimension 1 (x_1)
+    - inVar2 : position of the first point p_1 in dimension 2 (y_1)
+    - inVar3 : position of the second point p_2 in dimension 1 (x_2)
+    - inVar4 : position of the second point p_2 in dimension 2 (y_2)
+    - inVar5 : position of the 3. point p_3 in dimension 1 (x_3)
+    - inVar6 : position of the 3. point p_3 in dimension 2 (y_3)
+    - inVar7 : position of the 4. point p_4 in dimension 1 (x_4)
+    - inVar8 : position of the 4. point p_4 in dimension 2 (y_4)
+    - inVar9 : the width of the line in points
+    -- id -48 quadrangle; border line widht w (not filled); The points of the quadrangle are given back as variables of the subobject.
+    - inVar1 : position of the first point p_1 in dimension 1 (x_1)
+    - inVar2 : position of the first point p_1 in dimension 2 (y_1)
+    - inVar3 : position of the second point p_2 in dimension 1 (x_2)
+    - inVar4 : position of the second point p_2 in dimension 2 (y_2)
+    - inVar5 : position of the 3. point p_3 in dimension 1 (x_3)
+    - inVar6 : position of the 3. point p_3 in dimension 2 (y_3)
+    - inVar7 : position of the 4. point p_4 in dimension 1 (x_4)
+    - inVar8 : position of the 4. point p_4 in dimension 2 (y_4)
+    - inVar9 : the width of the line in points
+    - subObj1 : The points of the quadrangle. The subobject is called for every point on the quadrangle.
+    -- id -49 quadrangle antialising; border line widht w (not filled); The points of the quadrangle are given back as variables of the subobject.
+    - inVar1 : position of the first point p_1 in dimension 1 (x_1)
+    - inVar2 : position of the first point p_1 in dimension 2 (y_1)
+    - inVar3 : position of the second point p_2 in dimension 1 (x_2)
+    - inVar4 : position of the second point p_2 in dimension 2 (y_2)
+    - inVar5 : position of the 3. point p_3 in dimension 1 (x_3)
+    - inVar6 : position of the 3. point p_3 in dimension 2 (y_3)
+    - inVar7 : position of the 4. point p_4 in dimension 1 (x_4)
+    - inVar8 : position of the 4. point p_4 in dimension 2 (y_4)
+    - inVar9 : the width of the line in points
+    - subObj1 : The points of the quadrangle. The subobject is called for every point on the quadrangle.
+
+	- Ellipse
+	-- id -500 ellipse
+	--- 5 parameters: middle point ( x, y ); major axis or transverse diameter a; minor axis or conjugate diameter b; angle in radian betwean (counter clockwise, in positiy Dim 2 direction) the 1 dimension achsis (x) and the major axis
+	-- id -501 ellipse
+	--- 5 parameters: foci point 1 ( x_1, y_1 ); foci point 2 ( x_2, y_2 ); size of the major axis m
+	- sector of a circle;
+	-- id -510 sector of a circle
+	--- 4 parameter; middle point ( x, y ), radius r; angle s in radian betwean (counter clockwise, in positiy Dim 2 direction) the 1 dimension achsis (x) and sector begin and angle e in radian betwean the 1 dimension achsis (x) and sector end
+	--- use object -311
+	-- id -511 part of a circle (start point + end point: line and circle part betwean them filled)
+	--- 4 parameter; middle point ( x, y ), radius r; angle s in radian betwean (counter clockwise, in positiy Dim 2 direction) the 1 dimension achsis (x) and circle part begin and angle e in radian betwean the 1 dimension achsis (x) and circle part end
+	- Kreissrand (Dicke x)
+	
+	-- id -513 circle border part of given width
+	--- 6 parameter; middle point ( x, y ), radius r; width; angle s in radian betwean (counter clockwise, in positiy Dim 2 direction) the 1 dimension achsis (x) and circle part begin and angle e in radian betwean the 1 dimension achsis (x) and circle part end
+	-- id -518 circle border part of given width with subobject for points
+	--- 6 parameter; middle point ( x, y ), radius r; width; angle s in radian betwean (counter clockwise, in positiy Dim 2 direction) the 1 dimension achsis (x) and circle part begin and angle e in radian betwean the 1 dimension achsis (x) and circle part end
+	--- like id -513
+
+	--- id {-500; -501; -511; -510} + 5 with subobject for points
+	--- id {-500; -501; -511; -510; -512; -513} + 50 antialised
+	
+	- Comic Körperteile (ab id -5000 ? eingeteilt nach Teile: Auge, Augenbraun, Mund, Nase, Ohr, Arm, Bein, Fuss, Zeh, Arm, Hand, Finger, Rumpf, Brust, Kopf, Kinn, Wangen, Hals, Haare, ... )
+	-- Eingeteilt nach: Genre - Körperteil
+	-- Comic Kleidung: ( Tshirt, Pollover, Hose, Shuhe, Rock, Top, ... )
+	-- id -5000 till 5099 stickmans
+	
+	
+	
+	- id -5100 till 5200 simple faces
+	-- id -5100 smily face
+	--- Parameter: center head x and y, radius head, number (=radius/radius head) mouth (positiv = smile, negativ = bad, 0 = line ), mouth start and end angle, angle head (x y plane), angle head (x z plane), angle head (y z plane)
+	--- output parameters (if radius 0 -> part not existing):
+	---- center head x and y, radius head, (circle) center mouth, mouth start and end angle (inclusive angle head), (line) width mouth
+	---- center point right eye x and y, radius right eye
+	---- center point left eye x and y, radius left eye
+	---- center point nose x and y, radius nose
+	---- center point right ear x and y, radius right ear
+	---- center point left ear x and y, radius left ear
+	---- center point top of head x and y (+ ears: for hair)
+	-- (id -5101 till id -5109 simpler smily face than -5100)
+	
+	- more copyrights:
+	-- GNU lesser
+	-- open document
+	-- open domain
+	-- Creative Commons
+	--- Attribution (by): Licensees may copy, distribute, display and perform the work and make derivative works based on it only if they give the author or licensor the credits in the manner specified by these.
+	--- Non-commercial: Noncommercial (nc) 	Licensees may copy, distribute, display, and perform the work and make derivative works based on it only for noncommercial purposes.
+	--- Non-derivative: No Derivative Works (nd) 	Licensees may copy, distribute, display and perform only verbatim copies of the work, not derivative works based on it.
+	--- Share-alike: Share-alike (sa) 	Licensees may distribute derivative works only under a license identical to the license that governs the original work. (See also copyleft.)
+	-- ...
+	
+test database create OK again (for change in: -410,-411,-415,-416, -50, -55, -56 ):
+	- adapt after the pattern of (changes in) -415 and -416: -465, -466, -467, -468 
+	dbId-000021.xml  dbId-000041.xml  dbId-000056.xml  dbId-000080.xml  dbId-000428.xml  dbId-000475.xml  dbId-000480.xml
+	dbId-000026.xml  dbId-000046.xml  dbId-000070.xml  dbId-000081.xml  dbId-000465.xml  dbId-000476.xml  dbId-000481.xml
+	dbId-000027.xml  dbId-000047.xml  dbId-000071.xml  dbId-000422.xml  dbId-000466.xml  dbId-000477.xml  dbId-000482.xml
+	dbId-000035.xml  dbId-000050.xml  dbId-000075.xml  dbId-000423.xml  dbId-000467.xml  dbId-000478.xml
+	dbId-000036.xml  dbId-000055.xml  dbId-000076.xml  dbId-000427.xml  dbId-000468.xml  dbId-000479.xml
+
+test for database objects (prio 7):
+	- 410, 411, 415, 416; 420; 421; 425; 426; 30
+	- ???
+
+
+cDomainReference test:
+	- cDomains::getDirectDomain()
+	- cDomains::getDirectDomainForElement()
+	- domain references test:
+		-- cDomains::getDomainReference() testen
+		-- cDomains::getDomainForReferenceDomain() testen
+		-- cDomains::getDomain() testen
+		-- cDomains::getDomainForElement() testen
+		-- cDomains::getDirectDomainForElement()
+		-- equal test
+
+
+testen (prio 3):
+  - tFibElementStructur test for (const) getSuperiorRootElement()
+  - cDomain ( all children ) Test:
+		- bool isReference() const;
+		- bool isScalar() const;
+		- bool isVector() const;
+
+
+testen fuer cTypeProperty (prio 7):
+  - cTypeProperty( const cTypeProperty &typeProperty, const cDomain & domain )
+  - operator<(), lowerTypeProperty( *, *) and lowerTypeProperty()
+  -? isOverwritenTyp( const cTypeProperty & typeToCheck ) const
+  -? isOverwritenTyp( const unsignedIntFib & uiTypeToCheck ) const
+  -? bool isOverwriting() const
+  -? bool isOverwriting( const unsignedIntFib & uiTypeToCheck )
+  - cDomainVectorBasis * cDomainVectorBasis::createGoodDomain( const list< cFibVector * > & liVectors )
+
+testen fuer cVectorProperty (prio 7):
+  - operator<() and lowerPropertyVector(); distanceOfProperty() and distanceOfPropertyToNull() moved from cFibObjectFitnessBasicAlgorithm to hear and distanceToProperty() and distanceOfPropertyToNull() added
+  - bool isOverwritenVector( const cVectorProperty & vectorToCheck ) const
+  - bool isOverwriting() const
+  - bool isEvalued() const
+
+
+testen (prio 7):
+  - cEvaluePositionList methods not tested in tEvalueObject
+  - cEvaluePositionListMemLimit mit tEvalueObject testen
+  - cFibVector: operator<() and lowerVector()
+  - cEvaluePositionList::distanceOfProperties()
+  - cEvaluePositionList::toFibObject()
+  - cList( list< cFibElement * > liUnderObjects, cFibElement * pInSuperiorElement = NULL );
+  - tDomain alle typen und domains store* and restore* testen
+  - cFunctionTwoValue : const cUnderFunction * get*UnderFunction() const;
+	- cRoot::checkExternSubobjects()
+	- cRoot::generateExternSubojectsDefinitions()
+	- set< longInt > cRoot::getUsedDatabaseIdentifiers() const
+	- void cRoot::addUsedDatabaseIdentifier( const longFib lIdentifier )
+	- bool cRoot::deleteUsedDatabaseIdentifier( const longFib lIdentifier )
+	- cDomain isInBoundaries()
+	- cVector* ::getValueDomain()
+	- cTypeElement and children classes check isInherited()
+	- cDomains::getDomainForReferenceDomain( pReferenceDomain, NULL );
+
+
+neue Fib-Elemente einfuegen:
+ - cFibBranch::evalueCountersForObject()
+ - cFibElement (restore*)
+ - cFibElement::getTypeName()
+
+
+test neue Fib-elemente einfuegen:
+  - tGeneratorForFibObjects
+  - tGenerateFibObjects
+  - tFibObjectVariable
+  - tFibObjectStore
+  - tFibObject
+  - tFibElementStructur
+  - tEvalueObject
+  - countElementsAndBits
+
+test neue underfunction einfuegen:
+  - cUnderFunction
+  - tGeneratorForFibObjects
+  - tFunction
+  - tEvalueObject
+
+
+cRoot:
+	 - den xml-stream so anpassen, dass Zahlen beliebiger laenge immer mit voller Praezision geschrieben werden
+	 - wenn isValidObject() implementiert ist
+		- storeXml()
+		- store(x,y,z)
+	- storeBit(): fuer property Typen die existieren aber keinen zugehörigen Def.bereich haben, einen Wertedefinitionsbereich erzeugen (z.B. Standarddef. nehemen)
+	- addSubRootObject() das sub-root-objekt nur einfügen, wenn der identifier noch nicht im aktuellen root-element verwendet wird
+
+
+- bei store auf den checksum property den stream in ein checksum stream umwandeln
+- beim copy von Variable definierenden Elementen, muessen diese die Variable in den Unterobjekt austauschen
+
+
+??? cFunctionDelay <?-?> container
+
+
+Nice to have
+============
+
+isValidFibElement(): checks if variables is defined higer?
+
+tGeneratorForFibObjects:
+	- cExtObject prefer identifiers of non database objects
+
+testObjects/1_testFibDBObjects/: tests for all database objects
+
+constructoren mit unterfunctions pointern statt Referencen:
+	- cFunctionAdd
+	- cFunctionSub
+	- cFunctionMult
+	- cFunctionDiv
+	- cFunctionExp
+	- cFunctionMin
+	- cFunctionMax
+  + alle testen
+
+	- cFunctionAbs
+	- cFunctionSin
+	- cFunctionLog
+	- cFunctionArcsin
+  + alle testen
+
+
+cFibElement:
+  - operatoren ++ und -- fuer next und previos
+  - getConstFibElement() besseres handling von const pointern
+ 
+cFibElement implementieren:
+  - isValidObject()
+  - getNextFibElement( char ) + getFibElement( char ) + getAllFibElements( char ) für 'w'=wrong implementieren
+
+implementieren:
+  - UnderFunction -> SubFunction
+
+cFibVector::setValue() und getValue() implementieren ? :
+  - nur Werte aus dem Defbereich einsetzen und zurueckgeben (ganzer Vektor)
+
+tDomainVector:
+  - check isCompatible() for more domains + comparrisson
+
+Check if all variables used in the to include fib-object are defined higher:
+  bool overwriteObjectWithObject( cFibElement *fibObject, const char cType='u', const unsignedIntFib elementPoint=0, bool bDeleteOld=true, bool bAbsolute=false );
+  bool insertObjectInElement( cFibElement *fibObject, const char cType='u', const unsignedIntFib elementPoint=0, bool first=true, bool bAbsolute=false );
+
+beim Abspeichern ? :
+  - cFibElemen::adaptDomains() + cFibVector::adaptDomains() damit Vectoren ihre Domains anpassen 
+  - cDomains mit methode "cDoamin * createEnlargedDomain( domainValue )" versehen die, wenn nötig, die domain für den Wert domainValue erweitert, sie gibt einen Zeiger ungleich NULL zurück, wenn dafuer eine andere cDomain erzeugt werden muß, der Zeiger zeigt dann auf die erzeugte cDomain
+
+restoreXml() beim Laden von xml:
+  - check on xsd definition
+
+
+unsignedIntFib typeElementPointToElementPoint( const char cType, const unsignedIntFib elementPoint, bool bAbsolute=false )
+  - umstellen auf: longFib typeElementPointToElementPoint( const char cType, const longFib elementPoint, bool bAbsolute=false )
+
+cRoot::exportCommentsIntoOptionalPart(): eleminate duplicate key, value pairs
+
+cRoot::getNumberOfExternSubobjects(): speed up -> if domains dont changed till last time return last number
+cRoot::generateNeededDomains(): generate domains for all typs (properties and positions)
+
+Testen:
+  - tFibElementStructur: equalElement(): same element but different underobjects (cList)
+  -? cType="w" fuer wrong element
+
+tFibObjectStore:
+  - add random domains
+
+tGeneratorForFibObjects:
+  - @param ulMaximalEvaluedPoints a roughly number of points the fib-object should evalue to; (this test didn't includes /checks variables, so it basicly just works for dFractionsOfUsedVariables = 0.0): include variable check
+
+cComment:
+  - *Xml(): save string in Xml compatible Format
+
+tFibElementStructur:
+  - testMoveLimbElementUpOnObject() move comment
+
+
+
+

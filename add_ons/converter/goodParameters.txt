@@ -1,0 +1,30 @@
+
+good parameterers
+=================
+
+   -mode=r -rl -max_area_diff=4 -min_points=3 -max_diff=64 -rfd -rpawp
+   -mode=r -rl -max_area_diff=4 -min_points=3 -max_diff=32 -rfd -rpawp -min_pfa=1
+   -mode=r -rl -max_area_diff=4 -min_points=3 -max_diff=32 -rfd -rpawp
+   -mode=r -rl -max_area_diff=4 -min_points=3 -max_diff=64 -rfd -rpawp -minColDist=2 -expColDistFactor=1.2
+
+Wikitanface:
+   -mode=r -rl -max_area_diff=4 -min_points=3 -max_diff=32 -rfd -rpawp -min_pfa=1
+   -mode=r -rl -max_area_diff=4 -min_points=3 -max_diff=32 -rfd -rpawp
+
+good Parameters:
+  -rfd: without loos of precision
+  -addN: reduce quallity picture
+  -min_pfa=1: reduce quallity picture
+
+parameters to test:
+  -minColDist=2
+  -expColDistFactor=1.2
+
+
+bad parameterers
+================
+
+Not usefull options (just cost time):
+  -correct_missing_points or -cmp: no missing points exists normally
+
+

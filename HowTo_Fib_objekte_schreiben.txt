@@ -1,0 +1,51 @@
+
+HowTo: Fib Objekte "per Hand" schreiben
+=======================================
+
+Hier ein paar Tipps fuer alle die Fib Objekte das erste mal "per Hand" mit
+einem Editor in XML schreiben wollen.
+
+Mit ein paar Hilfsmitteln kann man sich das Schreiben von XML leichter
+machen. Dazu gehoert Beispielsweise ein Editor der fuer XML ausgelegt ist
+(z.B. unter Windows Notepad++ von http://notepad-plus-plus.org/ oder unter
+Linux Quanta). Mit Befehlen wie z.B. "xmllint" unter Linux kann die
+erzeugte XML Datei auf einfache XML Fehler ueberprüft werden.
+
+Leider gibt es noch keine XSD Datei für Fib.
+
+
+Fib-Objekte zu Bilder konvertieren
+----------------------------------
+
+Mit dem Programm "convertFromFib" im Verzeichnis "add_ons/converter/bin/"
+koennen entsprechende Fib-Objekte in ihre entsprechende Repraesentation
+uebersetzen.
+Mehr dazu in der "add_ons/converter/bin/liesmich.txt" Datei.
+Wie das Programm erzeugt werden kann finden Sie in "liesmich.txt"
+(im aktuelle Verzeichnis).
+
+
+Beispiele fuer korrekte Fib-Objekte
+-----------------------------------
+
+Eine gute Quelle fuer das "copy & past" Erstellen von Fib Objekten bzw.
+Beispiele fuer korrekte Fib-Objekte koennen im Unterverzeichnis
+"fib/testObjects/" gefunden werden. Die Datei
+"fib/testObjects/testWithEvalue.txt" listet die Verzeichnisse und
+Dateinamen (+ ".xml" in den gleichnamigen Verzeichnissen) von
+korrekten Fib-XML-Objekten auf.
+
+
+Fib Datenbank
+-------------
+
+Eine Weitere Quelle für korrekte Fib-Objekte ist die Fib Datenbank.
+
+Die in Ihr enthaltenden Fib-Objekte koennen ueber deren Identifizierer
+auch in anderen Fib-Objekten mittels des exteren Objekts Elements
+verwendet werden.
+Mit hilfe der Datenbankobjekte koennen so schnell komplexere Objekte
+erstellt werden.
+
+
+

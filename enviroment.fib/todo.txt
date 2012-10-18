@@ -1,0 +1,40 @@
+
+test:
+  - cIndividualSelectionWeel::getClassName()
+  - cMaximumReached::getClassName() const
+  - string cSelectIndividualToDeleteWeel::getClassName() const
+  - string cResourceCheck::getClassName() const
+  - string cChoosOperator::getClassName() const
+  - cEvaluePositionList * cFibObjectFitnessAlgorithm::getOriginalPositionList() const
+  - const cFibElement * cFibIndividual::getFibObject() const
+
+tFibObjectFitnessBasicAlgorithmus test:
+  - Dimensions: (-x till +y) with scalingfactor
+
+
+tEnviroment:
+  - fix getCpuRunTime()
+
+
+nice to have:
+=============
+
+cFibObjectFitness*Algorithmus:
+  - bestimmte Eigenschaftstypen vorher herrausfiltern und seperat mit besserer Aehnlichkeitsfunktion bewerten (z.B. Bilddaten)
+
+tFibObjectFitnessBasicAlgorithmus:
+  - original fib -object auch mit cEvaluePositionListMemLimit auswerten
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 

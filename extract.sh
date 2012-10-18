@@ -18,6 +18,8 @@
 #  18.03.2012  Oesterholz  file liesmich.txt added
 #  26.09.2012  Oesterholz  glpk added
 #  26.09.2012  Oesterholz  FreeImage version changed to 3.15.3
+#  18.10.2012  Oesterholz  operators directory splineMax4ParamBorder added;
+#  	fib.algorithms/nConvertToFib/ added
 #
 
 
@@ -47,7 +49,8 @@ export ALGORITHM_FOLDERS="fib.algorithms/
 	fib.algorithms/nReduceFibObject/ fib.algorithms/nTidyFibObjects/
 	fib.algorithms/nCorrectFibObject/
 	fib.algorithms/nEvalueFibObject/nNeededUnderobjects/
-	fib.algorithms/nAnalyse/nFibObject/ fib.algorithms/nCluster/"
+	fib.algorithms/nAnalyse/nFibObject/ fib.algorithms/nCluster/
+	fib.algorithms/nConvertToFib/"
 
 # paths to the folders for the directories
 export OPERATORS_FOLDERS="enviroment.fib/operators/
@@ -56,7 +59,9 @@ export OPERATORS_FOLDERS="enviroment.fib/operators/
 	enviroment.fib/operators/findArea/even/goodPolynomBorder/
 	enviroment.fib/operators/findArea/similar/goodPolynomBorder/
 	enviroment.fib/operators/findArea/even/splineMax4ParamBorderItrFast/
-	enviroment.fib/operators/findArea/similar/splineMax4ParamBorderItrFast/"
+	enviroment.fib/operators/findArea/similar/splineMax4ParamBorderItrFast/
+	enviroment.fib/operators/findArea/even/splineMax4ParamBorder/
+	enviroment.fib/operators/findArea/similar/splineMax4ParamBorder/"
 
 # extra folders which should be created in te extract (needed for EXTRA_FILES)
 export EXTRA_FOLDERS_TO_CREATE="testruns/

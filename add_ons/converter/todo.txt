@@ -1,0 +1,34 @@
+
+
+- convertFromFib mit Eingabeparameter "-p=1,2,3.2,7" oder
+	"--parameter=1,2,3.2,7" oder "-p=1;2;3.2;7"
+- convertFromFib mit Eingabesubobjekte "-subObj1=subobjectFile.fib"
+
+- readme.txt + liesmich.txt: create
+
+- Fehlfarben beim konvertieren nach Fib beseitigen
+
+- Error: wenn nur Dateinamen als parameter gegeben laeuft der Speicher ueber
+
+nConvertFromFib: transparency mit allen Domain groessen (cEvalueSimpleRGBA255 als neue Klasse erweitern)
+
+nice to have:
+=============
+
+nConvert*:
+	 - include image description
+
+
+-reduce2 -r2 Ideen:
+	- In eigene Datei
+   - Speicherplatz schonen: nor loka Bereiche und überdeckung bestimmen und Fib-Objekte gleich erzeugen
+   - 1. und (2.) Ableitung zum finden von Farbverläufen und Kanten bestimmen
+   - Antialising durch externes Objekt Element
+   -? Standard Objekte suchen (Kreise, Rechtecke)
+
+
+
+
+
+
+ 

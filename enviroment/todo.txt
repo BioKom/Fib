@@ -1,0 +1,38 @@
+
+clone() testen:
+  - ...
+
+test:
+  - cFibIndividual() copy constructor
+  - cIndividual::updateFitness()
+
+
+
+cEnviroment:
+  - insertIndividual(): update fitness not every time + add evaluation time
+  - operationStatusChange()
+  -- reevalue the operation costs for the individuals
+  - #include <sys/times.h>
+    clock_t times(struct tms *buf); //evalue process time
+  - const metods which dosn't clone Individual:
+	 - getBestIndividual()
+	 - getIndividual()
+
+nice to have
+============
+
+cOperatorFitnessAlgorithmBasic::restoreXmlOperationsData():
+  - check on xsd
+
+cEnviroment::stop():
+  - stop the operations; all at the same time (treads), without Segmentation faults (with bool bDontDeleteOperation + list liOperationsToDelete ? )
+
+cIndividual:
+  - nur clonbare objects akzeptirern und clone( bool ) implementieren
+ 
+untested:
+  - cChoosOperator; cIndividualSelectionWeel; cMaximumReached; cResourceCheck; cSelectIndividualToDeleteWeel
+
+if the fitnessvalue is dynamic adapt cEnviroment::liLivingIndividualInfos and cEnviroment::liDeadIndividualInfos
+
+

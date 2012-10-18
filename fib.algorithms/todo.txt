@@ -1,0 +1,56 @@
+
+
+cHyperplaneBody ist noch fehlerhaft (wegen Rundungsfehlern?)
+
+cHyperplaneBodySimple:
+  - korrigiere FEATURE_HYPERPLANE_BODY_SIMPLE_ADD_INEQUIATIONS_SAVE_ON_BIG_NUMBERS Fehler
+  - weiter implementieren?: FEATURE_HYPERPLANE_BODY_SIMPLE_ADD_INEQUIATIONS_NO_DOUBLE_POINTS
+
+test:
+  - cHyperplane(const nLinearInequation::cInequation< tFactors > & inequation, unsigned int uiInNumberOfDimensions )
+  - cHyperplane::fillType
+  - cInequation<tFactors>::isTrue()
+  - cInequation<tFactors>::isFalse()
+  - cInequation<tFactors>::sameInequiation()
+  - cInequation<tFactors>::antiInequiation()
+  - tPolynom:  tY cPolynom::evalueGoodPolynom( const vector< cDataPointRange< tX, tY> > & vecData, unsigned long ulTimeNeed = 1024 );
+  - nD2::createSplineItrFastBorderAreasForPoints( setMinimumArea, setMaximumArea, ... )
+  - nAnalyse::nFibObject::nBits::evalueMaxFunctionValuesMantissaBits
+  - nCluster all classes and functions
+
+testen fib::algorithms::nD1::cPolynomRange<tX, tY>:
+  - tY getRangeSizeSum()
+  - vector< cLinearConstrainFix<tY> > createLinearInequations( const vector< cDataPointRange< tX, tY> > & vecData, unsigned int uiMaxPolynomOrder )
+
+
+testen fib::algorithms::nD1::cPolynom<tX, tY>:
+  - ??
+
+testen fib::algorithms::nCorrectFibObject::nCorrectPoints:
+
+
+
+nice to have:
+=============
+
+test for:
+  - cInequation<tFactors>
+
+
+t_nD1_createAreasForPoints:
+  - more testcases see TODO
+
+nD1::cPolynom:
+  - cUnderFunction * toFibUnderFunction( cFibVariable * pVariable ) const: create with Hornerschema; new method for direct translate
+
+
+nD2::createAreasForPoints():
+  - for constant polynoms: don't create a funcion element, but include value directly in the area boundery
+
+
+fib::algorithms::nCorrectFibObject::nCorrectPoints::replaceWrongPoints():
+  - for fast evaluation: case if ( liDistancesCountedWrong.size() == 1)
+
+nDn/test/tHyperplane.cpp:
+  - some TODOs because of rounding errors still open
+
