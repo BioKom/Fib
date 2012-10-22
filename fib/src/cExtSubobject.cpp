@@ -34,6 +34,8 @@ History:
 06.11.2011  Oesterholz  created
 29.01.2011  Oesterholz  FEATURE_EXT_SUBOBJECT_INPUT_VECTOR implemented:
 	the input values are now a vector of values
+22.11.2012  Oesterholz  Bugfix: a root element can be called more than one
+	time by external objects
 */
 
 //TODO debugging switches
@@ -670,7 +672,7 @@ bool cExtSubobject::evalueObject( iEvaluePosition & evaluePosition,
 		//no calling external object -> no subobject to evalue
 		return false;
 	}
-	cExtObject * pCallingExtObject = pSuperiorRoot->pExtObjectElm;
+	cExtObject * pCallingExtObject = pSuperiorRoot->getCallingExtObject();
 	
 	if ( pCallingExtObject == NULL ){
 		//no calling external object -> no subobject to evalue
@@ -790,7 +792,7 @@ bool cExtSubobject::evalueObject( iEvalueFibElement & evalueFibElement,
 		//no calling external object -> no subobject to evalue
 		return false;
 	}
-	cExtObject * pCallingExtObject = pSuperiorRoot->pExtObjectElm;
+	cExtObject * pCallingExtObject = pSuperiorRoot->getCallingExtObject();
 	
 	if ( pCallingExtObject == NULL ){
 		//no calling external object -> no subobject to evalue
@@ -879,7 +881,7 @@ unsignedLongFib cExtSubobject::getTimeNeed( unsignedLongFib lMaxTime ) const{
 		//no calling external object -> no subobject to evalue
 		return 2;
 	}
-	cExtObject * pCallingExtObject = pSuperiorRoot->pExtObjectElm;
+	cExtObject * pCallingExtObject = pSuperiorRoot->getCallingExtObject();
 	
 	if ( pCallingExtObject == NULL ){
 		//no calling external object -> no subobject to evalue

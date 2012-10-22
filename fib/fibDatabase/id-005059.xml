@@ -7,7 +7,7 @@
 		<multimedia_info fib_version="3" db_version="3"/>
 		<optionalpart>
 			<pair key="name" value="stickman framework"/>
-			<pair key="description" value="This object represents a stickman framework. The stickman has a body, a head, two arms and two legs, with each one joint in the arms and legs. You have to provide the stickman parts as a subobject (see below). The arms will begin at 1/4 of the body size below the body start (wher the head is). The head will 1/4 (of its radius) overlap the body. The arms length will be the part 0.62 (= golden ratio) of the body or legs. The upper part of arms and legs start at the body, the lower parts start at the other end of the upper parts. The lower part length will be the part 0.62 (= golden ratio) of ther upper part."/>
+			<pair key="description" value="This object represents a stickman framework. The stickman has a body, a head, two arms and two legs, with each one joint in the arms and legs. You have to provide the stickman parts as a subobject (see below). The arms will begin at 1/4 of the body size below the body start (wher the head is). The head will 1/4 (of its radius) overlap the body. The arms length will be the part 0.62 (= golden ratio) of the body or legs. The upper part of arms and legs start at the body, the lower parts start at the other end of the upper parts. The lower part length will be equal ther upper part."/>
 			
 			<pair key="inVar1::description" value="position of the stickman start point (lower end of first (right) lower leg) in dimension 1 (x_lrle)"/>
 			<pair key="inVar2::description" value="position of the stickman start point (lower end of first (right) lower leg) in dimension 2 (y_lrle)"/>
@@ -390,11 +390,11 @@
 																	</subfunction>
 																	<function define_variable="29">
 																		<!-- evalue the lenght of the upper leg l_lu
-																			  l_lu = sp * 0.62 -->
+																			  l_lu = sp * 0.5 -->
 																		<subfunction>
 																			<mult>
 																				<variable>28</variable>
-																				<value>0.62</value>
+																				<value>0.5</value>
 																			</mult>
 																		</subfunction>
 																		<function define_variable="30">
@@ -722,21 +722,18 @@
 						</subfunction>
 						<function define_variable="49">
 							<!-- evalue length of the upper arms l_au;
-								l_au = sp * 0.62 * 0.62 (= sp * (golden ratio)^2) = sp * 0.38 -->
+								l_au = sp * 0.62 * 0.5 (= sp * (golden ratio)^2) = sp * 0.38 -->
 							<subfunction>
 								<mult>
 									<variable>28</variable>
-									<value>0.38</value>
+									<value>0.31</value>
 								</mult>
 							</subfunction>
 							<function define_variable="50">
 								<!-- evalue length of the lower arms l_al;
-									  l_al = sp * 0.62 * 0.38 (= sp * (golden ratio)^3) = sp * 0.24 -->
+									  l_al = l_au -->
 								<subfunction>
-									<mult>
-										<variable>28</variable>
-										<value>0.24</value>
-									</mult>
+									<variable>49</variable>
 								</subfunction>
 								<!-- evalue end point of the right upper arm (= start point lower right arm);
 									x_arue = x_arls = x_arus + l_au * sin( alpha_aur )

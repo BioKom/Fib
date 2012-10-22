@@ -38,7 +38,7 @@ History:
 27.09.2010  Oesterholz  generateNeededDomains() method added
 07.08.2011  Oesterholz  isDefinedVariable() and getDefinedVariables() with
 	pCallingFibElement
-09.08.2011  Oesterholz  changes for cExtObject: (new: pExtObjectElm,
+09.08.2011  Oesterholz  changes for cExtObject: (new: liPExtObjectElm,
 	setCallingFibElement(), unsetCallingFibElement() )
 15.08.2011  Oesterholz  syncUnderobjects() renamed to syncSubobjects()
 19.10.2011  Oesterholz  FEATURE_EQUAL_FIB_OBJECT implemented
@@ -46,6 +46,8 @@ History:
 29.01.2011  Oesterholz  FEATURE_EXT_SUBOBJECT_INPUT_VECTOR implemented:
 	the input values are now a vector of values;
 	getValidDomains() + getValidPureValueDomains() bInherit added
+22.11.2012  Oesterholz  Bugfix: a root element can be called more than one
+	time by external objects
 */
 
 #ifndef ___C_ROOT_H__
@@ -178,16 +180,37 @@ private:
 	 *
 	 * @see backupVariablesValues()
 	 */
-	list< cFibVariable * > liStoredInputVariables;
+	list< list< cFibVariable * > > liLiStoredInputVariables;
 	
 	/**
 	 * A pointer to the extern object element which calls /uses this
 	 * root-object.
 	 * @see cExtObject
+	 * @see getCallingExtObject()
 	 * @see setCallingFibElement()
+	 * @see unsetCallingFibElement()
 	 * @see evalueObject()
 	 */
-	cExtObject * pExtObjectElm;
+	list< cExtObject * > liPExtObjectElm;
+	
+	/**
+	 * The stored input variables of this root-object.
+	 * It is neccessary to store the values of the input variables, while
+	 * storing the object, because the values of the input variables will be
+	 * set to ther number for storing, but the values of the input variables
+	 * could be change from a user beforhand and shouldn't change while
+	 * storing.
+	 * This is not real class data, but helpdata for storing. (const
+	 * methods shouldn't fear to change this.)
+	 *
+	 * @see cExtObject
+	 * @see liPExtObjectElm()
+	 * @see setCallingFibElement()
+	 * @see unsetCallingFibElement()
+	 * @see evalueObject()
+	 */
+	list< list< cFibVariable * > > liLiStoredBelowVariables;
+	
 	
 	/**
 	 * The object for the Fib database.
@@ -1363,11 +1386,26 @@ protected:
 		edDirection direction = ED_HIGHER,
 		const cFibElement * pCallingFibElement = NULL );
 	
+	
+	/**
+	 * This method returns the extern object element which calls /uses this
+	 * root-object.
+	 *
+	 * @see liPExtObjectElm
+	 * @see setCallingFibElement()
+	 * @see unsetCallingFibElement()
+	 * @see cExtObject
+	 * @see evalueObject()
+	 * @return extern object element which calls /uses this root-object
+	 * 	(if NULL non exists)
+	 */
+	cExtObject * getCallingExtObject();
+
 	/**
 	 * This method sets the given extern object element as the element
 	 * which calls /uses this root-object.
 	 *
-	 * @see pExtObjectElm
+	 * @see liPExtObjectElm
 	 * @see unsetCallingFibElement()
 	 * @see cExtObject
 	 * @see evalueObject()
@@ -1378,7 +1416,7 @@ protected:
 	
 	/**
 	 * This Method unsets the actual calling / using Fib-element.
-	 * @see pExtObjectElm
+	 * @see liPExtObjectElm
 	 * @see setCallingFibElement()
 	 * @see evalueObject()
 	 */

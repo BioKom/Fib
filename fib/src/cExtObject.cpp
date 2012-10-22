@@ -990,6 +990,9 @@ bool cExtObject::evalueObject( iEvaluePosition & evaluePosition,
 			getAccessibleRootObject( lIdentifier );
 		
 		if ( pExternalRootObject == NULL ){
+#ifdef DEBUG_EVALUE
+			printf( "cExtObject::evalueObject() with identifier %li external root object is NULL \n ", lTmpIdentifier);
+#endif //DEBUG_EVALUE
 			return false;
 		}
 		//set this cExtObject element as calling
@@ -1381,8 +1384,6 @@ bool cExtObject::equalInternal( const cFibElement & fibObject,
 		
 		const cRoot * pOtherExternalRootObject =
 			((cExtObject*)(&fibObject))->getAccessibleRootObject( lIdentifier );
-		
-/*TODO comment in*/
 		
 		if ( pExternalRootObject != pOtherExternalRootObject ){
 			//not equal pointers

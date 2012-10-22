@@ -7,7 +7,7 @@
 		<multimedia_info fib_version="3" db_version="3"/>
 		<optionalpart>
 			<pair key="name" value="stickman framework"/>
-			<pair key="description" value="This object represents a stickman framework. The stickman has a body, a head, two arms and two legs, with each one joint in the arms and legs. You have to provide the stickman parts as subobjects (see below). The arms will begin at 1/4 of the body size below the body start (wher the head is). The head will 1/4 (of its radius) overlap the body. The arms length will be the part 0.62 (= golden ratio) of the body or legs. The upper part of arms and legs start at the body, the lower parts start at the other end of the upper parts. The lower part length will be the part 0.62 (= golden ratio) of ther upper part."/>
+			<pair key="description" value="This object represents a stickman framework. The stickman has a body, a head, two arms and two legs, with each one joint in the arms and legs. You have to provide the stickman parts as subobjects (see below). The arms will begin at 1/4 of the body size below the body start (wher the head is). The head will 1/4 (of its radius) overlap the body. The arms length will be the part 0.62 (= golden ratio) of the body or legs. The upper part of arms and legs start at the body, the lower parts start at the other end of the upper parts. The lower part length will be equal ther upper part."/>
 			
 			<pair key="inVar1::description" value="position of the stickman start point (lower end of first (right) lower leg) in dimension 1 (x_lrle)"/>
 			<pair key="inVar2::description" value="position of the stickman start point (lower end of first (right) lower leg) in dimension 2 (y_lrle)"/>

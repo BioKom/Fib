@@ -7,7 +7,7 @@
 		<multimedia_info fib_version="3" db_version="3"/>
 		<optionalpart>
 			<pair key="name" value="stickman"/>
-			<pair key="description" value="This object draws a stickman. The points of the stickman are given back as variables of the subobject. The stickman has a body, a head, two arms and two legs, with each one joint in the arms and legs. The arms will begin at 1/4 of the body size below the body start (wher the head is). The head will 1/4 (of its radius) overlap the body. The arms length will be the part 0.62 (= golden ratio) of the body or legs. The upper part of arms and legs start at the body, the lower parts start at the other end of the upper parts. The lower part length will be the part 0.62 (= golden ratio) of ther upper part."/>
+			<pair key="description" value="This object draws a stickman. The points of the stickman are given back as variables of the subobject. The stickman has a body, a head, two arms and two legs, with each one joint in the arms and legs. The arms will begin at 1/4 of the body size below the body start (wher the head is). The head will 1/4 (of its radius) overlap the body. The arms length will be the part 0.62 (= golden ratio) of the body or legs. The upper part of arms and legs start at the body, the lower parts start at the other end of the upper parts. The lower part length will be equal ther upper part."/>
 			
 			<pair key="inVar1::description" value="position of the stickman start point (lower end of first (right) lower leg) in dimension 1"/>
 			<pair key="inVar2::description" value="position of the stickman start point (lower end of first (right) lower leg) in dimension 2"/>

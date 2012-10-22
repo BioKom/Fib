@@ -21,6 +21,8 @@
 #
 # History:
 #  18.09.2012  Oesterholz  created
+#  22.10.2012  Oesterholz  Bugfix: "</variable>" part needed, else 8 could
+#  	become (if rename_variables 1 30 11) 29
 #
 
 if [ $# -lt 4 ]; then
@@ -55,8 +57,8 @@ do
 			NewVariableValue=$((${ActualVariable} + ${Delta}))
 			echo "Setting ${ActualVariable} to ${NewVariableValue}"
 			
-			sed -e "s~<variable>${ActualVariable}~<variable>${NewVariableValue}~g" ${File} > ${File}.tmp1
-			sed -e "s~define_variable=\"${ActualVariable}~define_variable=\"${NewVariableValue}~g" ${File}.tmp1 > ${File}.tmp2
+			sed -e "s~<variable>${ActualVariable}</variable>~<variable>${NewVariableValue}</variable>~g" ${File} > ${File}.tmp1
+			sed -e "s~define_variable=\"${ActualVariable}\"~define_variable=\"${NewVariableValue}\"~g" ${File}.tmp1 > ${File}.tmp2
 			
 			rm -f ${File}.tmp1
 			mv -f ${File}.tmp2 ${File}

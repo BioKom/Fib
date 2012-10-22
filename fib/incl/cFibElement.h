@@ -525,7 +525,7 @@ public:
 	 * @see isDefinedVariable()
 	 * @param variable the variable to check if it is used
 	 * @param direction the direction from this Fib-element, in which the
-	 * 	variable should be used; standardvalue is ED_POSITION so yust
+	 * 	variable should be used; standard value is ED_POSITION so yust
 	 * 	this Fib-element will be checked
 	 * @return true if the variable is used, else false
 	 */
@@ -539,7 +539,7 @@ public:
 	 * @see cFibVariable
 	 * @see isDefinedVariable()
 	 * @param direction the direction from this Fib-element, in which the
-	 * 	variable should be used; standardvalue is ED_POSITION so yust
+	 * 	variable should be used; standard value is ED_POSITION so yust
 	 * 	this Fib-element will be checked
 	 * @return the set with all variables used in the given direction from
 	 * 	this Fib-element
@@ -554,7 +554,7 @@ public:
 	 * @see isUsedVariable()
 	 * @param variable the variable to check if it is defined
 	 * @param direction the direction from this Fib-element, in which the
-	 * 	variable should be defined; standardvalue is ED_POSITION so yust
+	 * 	variable should be defined; standard value is ED_POSITION so yust
 	 * 	this Fib-element will be checked
 	 * @return true if the variable is defined, else false
 	 */
@@ -569,7 +569,7 @@ public:
 	 * @see getUsedVariables()
 	 * @see isDefinedVariable()
 	 * @param direction the direction from this Fib-element, in which the
-	 * 	variable should be defined; standardvalue is ED_HIGHER so yust
+	 * 	variable should be defined; standard value is ED_HIGHER so yust
 	 * 	higher Fib-elements will be checked
 	 * @return the set with all variables defined in the given direction from
 	 * 	this Fib-element
@@ -584,7 +584,7 @@ public:
 	 * @see isUsedVariable()
 	 * @param setVariable the set with the  variable to check, if it is defined
 	 * @param direction the direction from this Fib-element, in which the
-	 * 	variables should be defined; standardvalue is ED_HIGHER so yust
+	 * 	variables should be defined; standard value is ED_HIGHER so yust
 	 * 	higher Fib-elements will be checked
 	 * @return true if the variables is are all defined, else false
 	 */
@@ -797,7 +797,7 @@ public:
 	 * @param fibElement the Fib-element to insert
 	 * @param bAbsolute if the lNumber is an absolute value for the wool
 	 * 	Fib-object
-	 * @param bCheckVariables if true (standardvalue) it will be checked if
+	 * @param bCheckVariables if true (standard value) it will be checked if
 	 * 	the variables the Fib-element defines are needed, else the 
 	 * 	Fib-element will be removed even if its variables are needed elsewher
 	 * @return true if the Fib-element fibElement was inserted, else false
@@ -897,7 +897,7 @@ public:
 	 * 	Fib-elements of the given type cType, to check
 	 * @param bAbsolute if the elementPoint is an absolute value for the wool
 	 * 	Fib-object
-	 * @param bCheckVariables if true (standardvalue) it will be checked if
+	 * @param bCheckVariables if true (standard value) it will be checked if
 	 * 	the variables the Fib-element defines are needed, else the 
 	 * 	Fib-element will be removed even if its variables are needed elsewher
 	 * @return true if the Fib-element is deletable, else false
@@ -915,7 +915,7 @@ public:
 	 * 	Fib-elements of the given type cType, to remove
 	 * @param bAbsolute if the elementPoint is an absolute value for the wool
 	 * 	Fib-object
-	 * @param bCheckVariables if true (standardvalue) it will be checked if
+	 * @param bCheckVariables if true (standard value) it will be checked if
 	 * 	the variables the Fib-element defines are needed, else the 
 	 * 	Fib-element will be removed even if its variables are needed elsewher
 	 * @return true if the Fib-element was removed, else false
@@ -936,7 +936,7 @@ public:
 	 * 	Fib-elements of the given type cType, to cut
 	 * @param bAbsolute if the elementPoint is an absolute value for the wool
 	 * 	Fib-object
-	 * @param bCheckVariables if true (standardvalue) it will be checked if
+	 * @param bCheckVariables if true (standard value) it will be checked if
 	 * 	the variables the Fib-element defines are needed, else the 
 	 * 	Fib-element will be removed even if its variables are needed elsewher
 	 * @return the pointer to the cuted Fib-element or NULL, if the fib
@@ -1826,7 +1826,7 @@ protected:
 	 * @see isUsedVariable()
 	 * @param variable the variable to check if it is defined
 	 * @param direction the direction from this Fib-element, in which the
-	 * 	variable should be defined; standardvalue is ED_POSITION so yust
+	 * 	variable should be defined; standard value is ED_POSITION so yust
 	 * 	this Fib-element will be checked
 	 * @param pCallingFibElement the Fib-Element which called this method
 	 * @return true if the variable is used, else false
@@ -1845,7 +1845,7 @@ protected:
 	 * @see getUsedVariables()
 	 * @see isDefinedVariable()
 	 * @param direction the direction from this Fib-element, in which the
-	 * 	variable should be used; standardvalue is ED_POSITION so yust
+	 * 	variable should be used; standard value is ED_POSITION so yust
 	 * 	this Fib-element will be checked
 	 * @param pCallingFibElement the Fib-Element which called this method
 	 * @return the set with all variables used in the given direction from

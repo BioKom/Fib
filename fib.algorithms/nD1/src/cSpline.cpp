@@ -886,8 +886,6 @@ template<class tX, class tY> unsigned long fib::algorithms::nD1::cSpline<tX, tY>
 					= uiMaxNumberOfParameters * 2 + m * 2
 				rows   = m (= for each data point)
 			*/
-
-	//TODO check
 		
 			const unsigned long ulDataPointsToInclude = 1 +
 				ulActualIndexOfLastDataPoint - ulIndexDataPointActualPolynomStart;
@@ -1050,7 +1048,7 @@ template<class tX, class tY> unsigned long fib::algorithms::nD1::cSpline<tX, tY>
 				cout<<"   the solution is OK"<<endl<<flush;
 			}
 			switch ( iProblemStatus ){
-				case GLP_OPT:   cout<<"solution is optimal"<<endl;break;
+				case GLP_OPT:    cout<<"solution is optimal"<<endl;break;
 				case GLP_FEAS:   cout<<"solution is feasible"<<endl;break;
 				case GLP_INFEAS: cout<<"solution is infeasible"<<endl;break;
 				case GLP_NOFEAS: cout<<"problem has no feasible solution"<<endl;break;
@@ -1073,17 +1071,21 @@ template<class tX, class tY> unsigned long fib::algorithms::nD1::cSpline<tX, tY>
 				GLP_ETMLIM: The search was prematurely terminated, because the
 					time limit has been exceeded.*/
 #ifdef DEBUG_C_SPLINE
-			switch ( uiResultSimplex ){
-				case 0:   cout<<endl<<"solution found; evalue actual error"<<endl;break;
-				case GLP_EITLIM: cout<<endl<<"iteration limit reached; evalue actual error"<<endl;break;
-				case GLP_ETMLIM: cout<<endl<<"time limit reached; evalue actual error"<<endl;break;
-				default: cout<<"solver result status unknown (uiResultSimplex="<<uiResultSimplex<<")"<<endl;break;
-			}
+				switch ( uiResultSimplex ){
+					case 0:   cout<<endl<<"solution found; evalue actual error"<<endl;break;
+					case GLP_EITLIM: cout<<endl<<"iteration limit reached; evalue actual error"<<endl;break;
+					case GLP_ETMLIM: cout<<endl<<"time limit reached; evalue actual error"<<endl;break;
+					default: cout<<"solver result status unknown (uiResultSimplex="<<uiResultSimplex<<")"<<endl;break;
+				}
 #endif
 				//get result of the solver
 				//evalue actual error
 				double dErrorSumNewPolynom = 0.0;
 				bool bErrorOk = true;
+				
+				const double dMaxErrorForSpline = ((double)maxError) *
+					( ((double)ulActualIndexOfLastDataPoint) /
+						((double)ulNumberOfDataPoints) );
 				
 				for ( unsigned long ulActualCol = uiNumberOfParameterColumns + 1;
 						ulActualCol <= ulNumberOfColumns; ulActualCol++ ){
@@ -1096,8 +1098,7 @@ template<class tX, class tY> unsigned long fib::algorithms::nD1::cSpline<tX, tY>
 					
 					dErrorSumNewPolynom += dAbsErrorActualValue;
 					
-					if ( ( maxError * ( ((double)ulActualIndexOfLastDataPoint) /
-								((double)ulNumberOfDataPoints) ) <
+					if ( ( dMaxErrorForSpline <
 								( dLastErrorSum + dErrorSumNewPolynom ) ) ||
 							( dMaxErrorPerValue < dAbsErrorActualValue ) ){
 						//error to great
@@ -1131,7 +1132,7 @@ template<class tX, class tY> unsigned long fib::algorithms::nD1::cSpline<tX, tY>
 						actualPolynom.vecFactors.push_back( dActualFactor );
 					}
 					//remove all higher polynom factors which are 0
-					while ( ( ! actualPolynom.vecFactors.empty() ) &&
+					while ( ( 1 < actualPolynom.vecFactors.size() ) && //don't remove constant
 							( actualPolynom.vecFactors.back() == 0.0 ) ){
 						
 						actualPolynom.vecFactors.pop_back();
@@ -1192,7 +1193,7 @@ template<class tX, class tY> unsigned long fib::algorithms::nD1::cSpline<tX, tY>
 				//last error is not greater as the max error -> add data points
 				/* if for the actual points a good spline was found
 				-> try to find spline for data points till the middle of actual data
-				points and the last data points for wich not a good spline was found */
+				point and the last data points for wich not a good spline was found */
 #ifdef DEBUG_C_SPLINE
 				cout<<endl<<"Found polynom acepted, for data points till index: "<<
 					ulActualIndexOfLastDataPoint<<endl;
@@ -1216,7 +1217,7 @@ template<class tX, class tY> unsigned long fib::algorithms::nD1::cSpline<tX, tY>
 			}else{/*if no spline found or error is to great on actual data points
 				-> reduce number of data points for the spline
 				-> try to find spline for data points till the middle of actual data
-				points and the last data points for wich a good spline was found */
+				point and the last data points for wich a good spline was found */
 #ifdef DEBUG_C_SPLINE
 				cout<<endl<<"found polynom not acepted, for data points till index: "<<
 					ulActualIndexOfLastDataPoint<<endl;
@@ -1255,10 +1256,11 @@ template<class tX, class tY> unsigned long fib::algorithms::nD1::cSpline<tX, tY>
 #endif
 		dLastErrorSum += errorSumActualPolynom;
 		//add actual polynom to the spline
-		if ( ! vecPolynoms.empty() ){
+		if ( ( ! vecPolynoms.empty() ) &&
+				( 0 < ulIndexDataPointActualPolynomStart ) ){
 			//add next not found data point to border
 #ifdef DEBUG_C_SPLINE
-			cout<<endl<<"Add border: "<< vecData[ ulIndexDataPointActualPolynomStart ].x <<endl;
+			cout<<endl<<"Add border: "<< vecData[ ulIndexDataPointActualPolynomStart - 1 ].x <<endl;
 #endif
 			vecBorders.push_back( vecData[ ulIndexDataPointActualPolynomStart - 1 ].x );
 		}//else don't add border point for last spline for the data points
@@ -1268,6 +1270,7 @@ template<class tX, class tY> unsigned long fib::algorithms::nD1::cSpline<tX, tY>
 	}//end while some points missing in the spline
 	
 	if ( ulIndexLastGoodDataPoint == 0 ){
+		//no data points found -> restore old spline
 		vecPolynoms = vecOldPolynoms;
 		vecBorders  = vecOldBorders;
 	}

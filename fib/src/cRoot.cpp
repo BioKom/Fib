@@ -7,7 +7,7 @@
  *
  * System: C++
  *
- * This class represents the root-Fib-element.
+ * This class represents the root-Fib element.
  * Copyright (C) @c LGPL3 2009 Betti Oesterholz
  *
  * This program is free software: you can redistribute it and/or modify
@@ -39,7 +39,7 @@ History:
 18.07.2011  Oesterholz  compressed storing for comments added
 07.08.2011  Oesterholz  isDefinedVariable() and getDefinedVariables() with
 	pCallingFibElement
-09.08.2011  Oesterholz  changes for cExtObject: (new: pExtObjectElm,
+09.08.2011  Oesterholz  changes for cExtObject: (new: liPExtObjectElm,
 	setCallingFibElement(), unsetCallingFibElement(); changed generateNeededDomains() )
 15.08.2011  Oesterholz  syncUnderobjects() renamed to syncSubobjects()
 19.08.2011  Oesterholz  XML element name "valuedomains" changed to "valueDomains"
@@ -59,10 +59,12 @@ History:
 29.01.2012  Oesterholz  FEATURE_EXT_SUBOBJECT_INPUT_VECTOR implemented:
 	the input values are now a vector of values;
 	getValidDomains() + getValidPureValueDomains() bInherit added
-15.03.2012  Oesterholz  Bugfix: set pExtObjectElm to NULL if not used
+15.03.2012  Oesterholz  Bugfix: set liPExtObjectElm to NULL if not used
 01.04.2012  Oesterholz  DEBUG_RESTORE_XML implemented
 18.04.2012  Oesterholz  Bugfix: replace FirstChild()->ToElement() with
 	FirstChildElement()
+22.11.2012  Oesterholz  Bugfix: a root element can be called more than one
+	time by external objects
 */
 
 
@@ -137,8 +139,7 @@ cFibDatabase * cRoot::pFibDatabase = NULL;
 cRoot::cRoot( cFibElement * pInMainFibObject,
 		cRoot * pInSuperiorRootElement ):
 		cFibBranch( list<cFibElement*>(), pInSuperiorRootElement ),
-		pMainFibObject( NULL ), multimediaInfo( this ), pChecksum( NULL ),
-		pExtObjectElm( NULL ){
+		pMainFibObject( NULL ), multimediaInfo( this ), pChecksum( NULL ){
 	
 #ifdef FEATURE_FAST_UPDATE
 	fibObjectCounts.vecNumberOfFibElements[
@@ -190,15 +191,14 @@ cRoot::cRoot( cFibElement * pInMainFibObject,
  * @param pInSuperiorRootElement the root-Element in which this
  * 	root-element is an subobject
  * @param pInPreviousFibElement the Fib-Element which stands in th order
- * 	of Fib-elements befor this Fib-element
+ * 	of Fib elements befor this Fib element
  * @param pInMainFibObject the main Fib-object of this root-element
  */
 cRoot::cRoot( cRoot * pInSuperiorRootElement ,
 		cFibElement * pInPreviousFibElement ,
 		cFibElement * pInMainFibObject ):
 		cFibBranch( pInSuperiorRootElement, pInPreviousFibElement, pInMainFibObject ),
-		multimediaInfo( this ), pChecksum( NULL ),
-		pExtObjectElm( NULL ){
+		multimediaInfo( this ), pChecksum( NULL ){
 	
 	pMainFibObject = pInMainFibObject;
 	
@@ -234,7 +234,7 @@ cRoot::cRoot( const cRoot & rootElement ):
 #ifndef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 		,liExternSubobjects( rootElement.liExternSubobjects )
 #endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-		, pExtObjectElm( NULL ){
+		{
 
 	fibUnderObjects.push_back( NULL );
 	
@@ -275,13 +275,12 @@ cRoot::cRoot( const cRoot & rootElement ):
  * 		- 2 loading warning, invalid data in pXmlRootElement, maybe the loaded
  * 			object is wrong
  * @param liDefinedVariables a list with the defined variables for the
- * 	to restore Fib-element, every variable should have it's number
+ * 	to restore Fib element, every variable should have it's number
  * 	(the number under which it is stored) as it's value
  */
 cRoot::cRoot( const TiXmlElement * pXmlRootElement, intFib & outStatus,
 		list<cFibVariable*> & liDefinedVariables ):
-		pMainFibObject( NULL ), multimediaInfo( this ), pChecksum( NULL ),
-		pExtObjectElm( NULL ){
+		pMainFibObject( NULL ), multimediaInfo( this ), pChecksum( NULL ){
 	
 	fibUnderObjects.push_back( NULL );
 	
@@ -330,8 +329,8 @@ cRoot::cRoot( const TiXmlElement * pXmlRootElement, intFib & outStatus,
 		
 		switch ( iType ){
 			case TiXmlNode::ELEMENT:{
-				/*check if this is a valid Fib-element xml -element, create
-				the apropirate Fib-element and call its restoreXml() method*/
+				/*check if this is a valid Fib element xml -element, create
+				the apropirate Fib element and call its restoreXml() method*/
 				const TiXmlElement * pXmlElement = pChild->ToElement();
 				if ( pXmlElement == NULL ){
 					outStatus = 2;
@@ -695,12 +694,11 @@ cRoot::cRoot( const TiXmlElement * pXmlRootElement, intFib & outStatus,
  * 		- 2 loading warning, invalid data in stream, maybe the loaded
  * 			object is wrong
  * @param pNextRoot the next higher root-element for the to restore
- * 	Fib-elements, or the last restored root-element;
- * 	if NULL the next Fib-element restored will be an root-element
+ * 	Fib elements, or the last restored root-element;
+ * 	if NULL the next Fib element restored will be an root-element
  */
 cRoot::cRoot( cReadBits & iBitStream, intFib & outStatus, cRoot * pNextRoot ):
-		pMainFibObject( NULL ), multimediaInfo( this ), pChecksum( NULL ),
-		pExtObjectElm( NULL ){
+		pMainFibObject( NULL ), multimediaInfo( this ), pChecksum( NULL ){
 
 	DEBUG_OUT_L2(<<"Running compressed restore root constructor"<<endl);
 	
@@ -1392,11 +1390,31 @@ cRoot::~cRoot(){
 		delete (liInputVariables.back().first);
 		liInputVariables.pop_back();
 	}
-	//delete old backup inputvariable list
-	while ( ! liStoredInputVariables.empty() ){
-		//the old values will be overwritten
-		delete (liStoredInputVariables.back());
-		liStoredInputVariables.pop_back();
+	//delete old backup input variable list
+	while ( ! liLiStoredInputVariables.empty() ){
+		
+		list< cFibVariable * > & liStoredInputVariables =
+			liLiStoredInputVariables.back();
+		
+		while ( ! liStoredInputVariables.empty() ){
+			//the old values will be overwritten
+			delete (liStoredInputVariables.back());
+			liStoredInputVariables.pop_back();
+		}
+		liLiStoredInputVariables.pop_back();
+	}
+	//delete old backup below defined variable list
+	while ( ! liLiStoredBelowVariables.empty() ){
+		
+		list< cFibVariable * > & liStoredBelowVariables =
+			liLiStoredBelowVariables.back();
+		
+		while ( ! liStoredBelowVariables.empty() ){
+			//the old values will be overwritten
+			delete (liStoredBelowVariables.back());
+			liStoredBelowVariables.pop_back();
+		}
+		liLiStoredBelowVariables.pop_back();
 	}
 	//new root instance created
 }
@@ -1404,7 +1422,7 @@ cRoot::~cRoot(){
 
 /**
  * @see getTypeName
- * @return a character for the typ of the Fib-element
+ * @return a character for the typ of the Fib element
  * Types are:
  * 	- u: element of unknown typ
  * 	- p: point
@@ -1426,9 +1444,9 @@ char cRoot::getType() const{
 
 
 /**
- * This method checks, if this Fib-element is an valid Fib-element.
+ * This method checks, if this Fib element is an valid Fib element.
  *
- * @return true if this Fib-element is an valid Fib-element, else false
+ * @return true if this Fib element is an valid Fib element, else false
  */
 bool cRoot::isValidFibElement() const{
 	if ( ! cFibBranch::isValidFibElement() ){
@@ -1444,14 +1462,14 @@ bool cRoot::isValidFibElement() const{
 
 /**
  * This method checks if the given variable is defined in the given
- * direction from this Fib-element.
+ * direction from this Fib element.
  *
  * @see cFibVariable
  * @see isUsedVariable()
  * @param variable the variable to check if it is defined
- * @param direction the direction from this Fib-element, in which the
+ * @param direction the direction from this Fib element, in which the
  * 	variable should be defined; standardvalue is ED_POSITION so yust
- * 	this Fib-element will be checked
+ * 	this Fib element will be checked
  * @param pCallingFibElement the Fib-Element which called this method
  * @return true if the variable is used, else false
  */
@@ -1542,19 +1560,19 @@ bool cRoot::isDefinedVariableInternal( const cFibVariable *variable,
 
 /**
  * This method returns all variables defined in the given direction from
- * this Fib-element.
+ * this Fib element.
  * This is for intern use to get the correct data from
  * getDefinedVariables() without pCallingFibElement.
  *
  * @see cFibVariable
  * @see getUsedVariables()
  * @see isDefinedVariable()
- * @param direction the direction from this Fib-element, in which the
+ * @param direction the direction from this Fib element, in which the
  * 	variable should be used; standardvalue is ED_POSITION so yust
- * 	this Fib-element will be checked
+ * 	this Fib element will be checked
  * @param pCallingFibElement the Fib-Element which called this method
  * @return the set with all variables used in the given direction from
- * 	this Fib-element
+ * 	this Fib element
  */
 list<cFibVariable*> cRoot::getDefinedVariablesInternal( edDirection direction,
 		const cFibElement * pCallingFibElement ){
@@ -1641,10 +1659,10 @@ list<cFibVariable*> cRoot::getDefinedVariablesInternal( edDirection direction,
 
 
 /**
- * This method checks, if all Fib-elements of this Fib-object
+ * This method checks, if all Fib elements of this Fib-object
  * have the subobjects they need to be correct.
  *
- * @return true if all Fib-elements of this Fib-object have the
+ * @return true if all Fib elements of this Fib-object have the
  * 	subobjects they need to be correct, else false
  */
 bool cRoot::hasUnderAllObjects( ) const{
@@ -1686,31 +1704,31 @@ bool cRoot::evalueObject( iEvaluePosition & evaluePosition,
 
 /**
  * This method evaluades the Fib-object.
- * Evertime a Fib-elements, with a type of the given type chars in
+ * Evertime a Fib elements, with a type of the given type chars in
  * liCFibElementTyps, is reached while evaluation, it is given
  * back with the properties which it has.
  * Ever pointelement is given back. The type chars for pointelements
  * don't need to be in the list liCFibElementTyps.
  *
  * @param evalueFibElement a reference to the object with the
- * 	evalueElement() method to evalue /store the Fib-elements and ther
- * 	properties; everytime a Fib-element (with one of the type given
+ * 	evalueElement() method to evalue /store the Fib elements and ther
+ * 	properties; everytime a Fib element (with one of the type given
  * 	in liCFibElementTyps) is reached in the evaluation, the method
- * 	evalueElement() of this objects is called with the Fib-element
- * 	and the properties of the Fib-element; @see iEvalueFibElement
+ * 	evalueElement() of this objects is called with the Fib element
+ * 	and the properties of the Fib element; @see iEvalueFibElement
  * @param objectPoint the object point in the order of true partobjects
  * 	to evalue
  * @param liVecProperties a list with the property vectors which should
  * 	be global for the evalued object
  * @param liCFibElementTyps a list with the type chars (@see getType)
- * 	of the Fib-elements to return
+ * 	of the Fib elements to return
  * @return if the evalueation was successfull true, else false
  */
 bool cRoot::evalueObject( iEvalueFibElement & evalueFibElement,
 		const unsignedIntFib objectPoint,
 		list<cVectorProperty> & liVecProperties,
 		const list<char> & liCFibElementTyps ){
-	//check if this Fib-element should be given back with evalueElement()
+	//check if this Fib element should be given back with evalueElement()
 	for ( list<char>::const_iterator itrCType = liCFibElementTyps.begin();
 			itrCType != liCFibElementTyps.end(); itrCType++ ){
 		
@@ -1831,7 +1849,7 @@ unsignedLongFib cRoot::getCompressedSize( bool bWriteOptionalPart ) const{
 	//16 bit for the optional information field
 	ulCompressedSize += 16;
 	
-	//summ compressed size of all Fib-element properties
+	//summ compressed size of all Fib element properties
 	if ( pChecksum ){
 		//an checksumfield exists
 		ulCompressedSize += 32 + 64 * 2;
@@ -2060,7 +2078,7 @@ unsignedLongFib cRoot::getCompressedSize( bool bWriteOptionalPart ) const{
 
 
 /**
- * @return true if this Fib-element is movebel else false
+ * @return true if this Fib element is movebel else false
  */
 bool cRoot::isMovable() const{
 	//root-element isn't moveble
@@ -2069,17 +2087,17 @@ bool cRoot::isMovable() const{
 
 
 /**
- * This method copies the Fib-element on the specified position.
- * Variables which are not defined in the Fib-element but used
+ * This method copies the Fib element on the specified position.
+ * Variables which are not defined in the Fib element but used
  * don't change ther reference.
  *
  * @see getType()
- * @param cType the type of the Fib-element to copy
- * @param elementPoint the number of the Fib-element, in the order of
- * 	Fib-elements of the given type cType, to copy
+ * @param cType the type of the Fib element to copy
+ * @param elementPoint the number of the Fib element, in the order of
+ * 	Fib elements of the given type cType, to copy
  * @param bAbsolute if the lNumber is an absolute value for the wool
  * 	Fib-object
- * @return the copy of the Fib-element
+ * @return the copy of the Fib element
  */
 cFibElement *cRoot::copyElement( const char cType, const unsignedIntFib
 		elementPoint, bool bAbsolute ) const{
@@ -2105,7 +2123,7 @@ cFibElement *cRoot::copyElement( const char cType, const unsignedIntFib
  * This method checks if the given Fib-object is equal to this fib
  * -object.
  * Variables can be others, but must be defined and used in equivalent
- * Fib-elements.
+ * Fib elements.
  *
  * @param fibObject the Fib-object to which this Fib-object should be
  * 	equal
@@ -2191,12 +2209,12 @@ bool cRoot::equalInternal( const cFibElement & fibObject,
 
 
 /**
- * This method checks if the given Fib-element is equal to this fib
+ * This method checks if the given Fib element is equal to this fib
  * -element.
  * The subobjects arn't compared, not even ther count is compared.
  * Used variables can be others.
  *
- * @param fibElement the Fib-element to which this Fib-element should be
+ * @param fibElement the Fib element to which this Fib element should be
  * 	equal
  * @param mapEqualRootObjects the root objects of this object that wher
  * 	already checked as equal
@@ -2215,7 +2233,7 @@ bool cRoot::equalInternal( const cFibElement & fibObject,
  * 			variables to the same values as the key Fib element
  * @param bCheckExternalObjects if true the external objects of
  * 	cExtObject will be compared
- * @return true if this Fib-element is equal to the given Fib-object,
+ * @return true if this Fib element is equal to the given Fib-object,
  * 	else false
  */
 bool cRoot::equalElementInternal( const cFibElement & fibElement,
@@ -2308,16 +2326,16 @@ bool cRoot::equalElementInternal( const cFibElement & fibElement,
 
 
 /**
- * This method checks if the given Fib-element sets the variable to
- * the same values as this Fib-element.
+ * This method checks if the given Fib element sets the variable to
+ * the same values as this Fib element.
  *
- * @param pVariableOwn a pointer to a defined variable in this Fib-element,
- * 	it is compared to the equivalent variable in the given Fib-element
+ * @param pVariableOwn a pointer to a defined variable in this Fib element,
+ * 	it is compared to the equivalent variable in the given Fib element
  * 	fibElement
- * @param fibElement the Fib-element to which this Fib-element should be
+ * @param fibElement the Fib element to which this Fib element should be
  * 	compared
  * @param pVariable a pointer to a defined variable in the other
- * 	Fib-element fibElement
+ * 	Fib element fibElement
  * @param mapEqualRootObjects the root objects of this object that wher
  * 	already checked as equal
  * 	map entries:
@@ -2335,8 +2353,8 @@ bool cRoot::equalElementInternal( const cFibElement & fibElement,
  * 			variables to the same values as the key Fib element
  * @param bCheckExternalObjects if true the external objects of
  * 	cExtObject will be compared
- * @return true if this Fib-element sets the variable to the same
- * 	values as given Fib-element
+ * @return true if this Fib element sets the variable to the same
+ * 	values as given Fib element
  */
 bool cRoot::equalValuesSetInternal( const cFibVariable * pVariableOwn,
 		const cFibElement & fibElement,
@@ -2402,7 +2420,7 @@ bool cRoot::equalValuesSetInternal( const cFibVariable * pVariableOwn,
  * This method checks if the given Fib-object is equal to this Fib
  * -object.
  * Variables can be others, but must be defined and used in equivalent
- * Fib-elements.
+ * Fib elements.
  *
  * @param fibObject the Fib-object to which this Fib-object should be
  * 	equal
@@ -2428,14 +2446,14 @@ bool cRoot::equal( const cFibElement & fibObject ) const{
 
 
 /**
- * This method checks if the given Fib-element is equal to this fib
+ * This method checks if the given Fib element is equal to this fib
  * -element.
  * The subobjects arn't compared, not even ther count is compared.
  * Used variables can be others.
  *
- * @param fibElement the Fib-element to which this Fib-element should be
+ * @param fibElement the Fib element to which this Fib element should be
  * 	equal
- * @return true if this Fib-element is equal to the given Fib-object,
+ * @return true if this Fib element is equal to the given Fib-object,
  * 	else false
  */
 bool cRoot::equalElement( const cFibElement & fibElement ) const{
@@ -2526,18 +2544,18 @@ bool cRoot::equalElement( const cFibElement & fibElement ) const{
 
 
 /**
- * This method checks if the given Fib-element sets the variable to
- * the same values as this Fib-element.
+ * This method checks if the given Fib element sets the variable to
+ * the same values as this Fib element.
  *
- * @param variableOwn a pointer to a defined variable in this Fib-element,
+ * @param variableOwn a pointer to a defined variable in this Fib element,
  * 	it is compared to the equivalent variable fibElement in the given
- * 	Fib-element fibElement
- * @param fibElement the Fib-element to which this Fib-element should be
+ * 	Fib element fibElement
+ * @param fibElement the Fib element to which this Fib element should be
  * 	compared
  * @param variable a pointer to a defined variable in the other 
- * 	Fib-element fibElement
- * @return true if this Fib-element sets the variable to the same
- * 	values as this Fib-element
+ * 	Fib element fibElement
+ * @return true if this Fib element sets the variable to the same
+ * 	values as this Fib element
  */
 bool cRoot::equalValuesSet( const cFibVariable * variableOwn,
 		const cFibElement & fibElement,
@@ -2820,26 +2838,26 @@ bool cRoot::storeXml( ostream & stream ) const{
 
 
 /**
- * This method inserts the given Fib-element fibElement on the
- * specified position. The replaced Fib-element will be the subobject
- * of the inserted Fib-element fibElement.
+ * This method inserts the given Fib element fibElement on the
+ * specified position. The replaced Fib element will be the subobject
+ * of the inserted Fib element fibElement.
  *
  * @see getNumberOfElement()
  * @see getNumberOfElements()
  * @see getType()
- * @param cType the type of the Fib-element insted of which the given
- * 	Fib-element fibElement should be inserted
- * @param elementPoint the number of the Fib-element, in the order of
- * 	Fib-elements of the given type cType, in which position the given
- * 	Fib-element fibElement should be inserted; if 0 the given
- * 	fibElement will be inserted under this Fib-element
- * @param fibElement the Fib-element to insert
+ * @param cType the type of the Fib element insted of which the given
+ * 	Fib element fibElement should be inserted
+ * @param elementPoint the number of the Fib element, in the order of
+ * 	Fib elements of the given type cType, in which position the given
+ * 	Fib element fibElement should be inserted; if 0 the given
+ * 	fibElement will be inserted under this Fib element
+ * @param fibElement the Fib element to insert
  * @param bAbsolute if the lNumber is an absolute value for the wool
  * 	Fib-object
  * @param bCheckVariables if true (standardvalue) it will be checked if
- * 	the variables the Fib-element defines are needed, else the 
- * 	Fib-element will be removed even if its variables are needed elsewher
- * @return true if the Fib-element fibElement was inserted, else false
+ * 	the variables the Fib element defines are needed, else the 
+ * 	Fib element will be removed even if its variables are needed elsewher
+ * @return true if the Fib element fibElement was inserted, else false
  */
 bool cRoot::insertElement( cFibElement *fibElement, const char cType,
 		const unsignedIntFib elementPoint, bool bAbsolute,
@@ -2865,10 +2883,10 @@ bool cRoot::insertElement( cFibElement *fibElement, const char cType,
  * @see getNumberOfElements()
  * @see overwriteObjectWithObject()
  * @see getType()
- * @param cType the type of the Fib-element, on which position the 
+ * @param cType the type of the Fib element, on which position the 
  * 	given Fib-object fibObject should be inserted
- * @param elementPoint the number of the Fib-element, in the order of
- * 	Fib-elements of the given type cType, on which position the given
+ * @param elementPoint the number of the Fib element, in the order of
+ * 	Fib elements of the given type cType, on which position the given
  * 	Fib-object fibObject should be inserted
  * @param fibObject the Fib-object to insert
  * @param first if true, the inserted object will be the first
@@ -2980,7 +2998,7 @@ bool cRoot::insertObjectInElement( cFibElement *fibObject, const char cType,
 			}
 #endif //FEATURE_SIMPLE_CONSTRUCTOR
 #ifdef FEATURE_FAST_UPDATE
-			//set superior Fib-element
+			//set superior Fib element
 			fibUnderObjects.front()->pSuperiorElement = this;
 			pFibElementPosition->pSuperiorElement = fibUnderObjects.front();
 			fibObject->pSuperiorElement = fibUnderObjects.front();
@@ -3018,10 +3036,10 @@ bool cRoot::insertObjectInElement( cFibElement *fibObject, const char cType,
  * @see getNumberOfElements()
  * @see insertObjectInElement()
  * @see getType()
- * @param cType the type of the Fib-element, on which position the 
+ * @param cType the type of the Fib element, on which position the 
  * 	given Fib-object fibObject should be inserted
- * @param elementPoint the number of the Fib-element, in the order of
- * 	Fib-elements of the given type cType, on which position the given
+ * @param elementPoint the number of the Fib element, in the order of
+ * 	Fib elements of the given type cType, on which position the given
  * 	Fib-object fibObject should be inserted
  * @param fibObject the Fib-object to insert
  * @param bDeleteOld if true, delete the old Fib-object from the memory
@@ -3172,22 +3190,22 @@ bool cRoot::overwriteObjectWithObject( cFibElement *fibObject, const char cType,
 
 
 /**
- * This method cuts the Fib-element on the specified position.
+ * This method cuts the Fib element on the specified position.
  * This works like removeElement(), except that the removed element is 
  * returned.
  *
  * @see isDeletableElement()
  * @see removeElement()
  * @see getType()
- * @param cType the type of the Fib-element to cut
- * @param elementPoint the number of the Fib-element, in the order of
- * 	Fib-elements of the given type cType, to cut
+ * @param cType the type of the Fib element to cut
+ * @param elementPoint the number of the Fib element, in the order of
+ * 	Fib elements of the given type cType, to cut
  * @param bAbsolute if the elementPoint is an absolute value for the wool
  * 	Fib-object
  * @param bCheckVariables if true (standardvalue) it will be checked if
- * 	the variables the Fib-element defines are needed, else the 
- * 	Fib-element will be removed even if its variables are needed elsewher
- * @return the pointer to the cuted Fib-element or NULL, if the Fib
+ * 	the variables the Fib element defines are needed, else the 
+ * 	Fib element will be removed even if its variables are needed elsewher
+ * @return the pointer to the cuted Fib element or NULL, if the Fib
  * 	-element couldn't cut
  */
 cFibElement * cRoot::cutElement( const char cType, const unsignedIntFib
@@ -3205,28 +3223,28 @@ cFibElement * cRoot::cutElement( const char cType, const unsignedIntFib
 
 /**
  * This method moves a Fib-limb -element (cFibLimb) on the specified
- * position over iHowfar Fib-elements.
+ * position over iHowfar Fib elements.
  * Moving is stoped if an invalid Fib-object would result (e.g. no Fib
- * -element can be moved over an Fib-elements that defines a variable
- * the moved Fib-element uses).
- * Moving an Fib-element into an listelement will result in an
+ * -element can be moved over an Fib elements that defines a variable
+ * the moved Fib element uses).
+ * Moving an Fib element into an listelement will result in an
  * listelement with the moved element in everyone of it's subobjects.
  *
  * @see isDeletableElement()
  * @see removeElement()
  * @see getType()
- * @param cType the type of the Fib-element to move
- * @param elementPoint the number of the Fib-element, in the order of
- * 	Fib-elements of the given type cType, to move
- * @param iHowfar the number of Fib-elements over which the to move
- * 	Fib-element should be moved; if this value is positiv the Fib
- * 	-element will be moved over Fib-elements it contains else over
- * 	Fib-elements it is contained in
+ * @param cType the type of the Fib element to move
+ * @param elementPoint the number of the Fib element, in the order of
+ * 	Fib elements of the given type cType, to move
+ * @param iHowfar the number of Fib elements over which the to move
+ * 	Fib element should be moved; if this value is positiv the Fib
+ * 	-element will be moved over Fib elements it contains else over
+ * 	Fib elements it is contained in
  * @param bAbsolute if the elementPoint is an absolute value for the wool
  * 	Fib-object
  * @return the number of Fib-Elements over which the to move Fib
- * 	-element was moved; if this value is positiv the Fib-element
- * 	was moved over Fib-elements it contains else over Fib-elements
+ * 	-element was moved; if this value is positiv the Fib element
+ * 	was moved over Fib elements it contains else over Fib elements
  * 	it is contained in
  */
 intFib cRoot::moveLimbElement( const char cType, const
@@ -3376,7 +3394,7 @@ cRoot * cRoot::getRootObject( longFib lIdentifier ){
 
 
 /**
- * This method returns the identifiers of all from this Fib-element
+ * This method returns the identifiers of all from this Fib element
  * accessible root-objects of this object.
  *
  * @return the identifiers of all accessible root-objects
@@ -3388,7 +3406,7 @@ list<longFib> cRoot::getAllAccessibleRootObjectIdentifiers() const{
 
 
 /**
- * This method returns the from this Fib-element accessible root
+ * This method returns the from this Fib element accessible root
  * -object for the given identifier. If non such exists the Nullpoint 
  * NULL is returned.
  *
@@ -3404,9 +3422,9 @@ cRoot * cRoot::getAccessibleRootObject( longFib lIdentifier ){
 
 
 /**
- * This method returns the domains that are valid for this Fib-element.
+ * This method returns the domains that are valid for this Fib element.
  *
- * @return the domains that are valid for this Fib-element
+ * @return the domains that are valid for this Fib element
  */
 cDomains cRoot::getValidDomains() const{
 	
@@ -3415,11 +3433,11 @@ cDomains cRoot::getValidDomains() const{
 
 
 /**
- * This method returns the domains that are valid for this Fib-element.
+ * This method returns the domains that are valid for this Fib element.
  *
  * @param bInherit if true just inherited domains of this root element will
  * 	be returned else if false all domains will be returned
- * @return the domains that are valid for this Fib-element
+ * @return the domains that are valid for this Fib element
  */
 cDomains cRoot::getValidDomains( const bool bInherit ) const{
 
@@ -3464,14 +3482,14 @@ cDomains cRoot::getValidDomains( const bool bInherit ) const{
 
 /**
  * This method returns the value domains that are valid for this
- * Fib-element.
+ * Fib element.
  * Just value domains are returned.
  *
  * @see getValidValueDomains()
  * @see getValidDomains()
  * @param bInherit if true just inherited domains of this root element will
  * 	be returned else if false all domains will be returned
- * @return the value domains that are valid for this Fib-element
+ * @return the value domains that are valid for this Fib element
  */
 cDomains cRoot::getValidPureValueDomains( const bool bInherit ) const{
 
@@ -3515,12 +3533,12 @@ cDomains cRoot::getValidPureValueDomains( const bool bInherit ) const{
 
 /**
  * This method returns the domains for value that are valid for this
- * Fib-element.
+ * Fib element.
  * Missing value domains are added from the (non value) domains.
  *
  * @see getValidPureValueDomains()
  * @see getValidDomains()
- * @return the value domains that are valid for this Fib-element
+ * @return the value domains that are valid for this Fib element
  */
 cDomains cRoot::getValidValueDomains() const{
 
@@ -3749,18 +3767,18 @@ void cRoot::generateNeededDomains( const bool bAddAllValueDomains ){
 	
 	
 	//just check subobjects
-	DEBUG_OUT_L2(<<"cRoot("<<this<<")::generateNeededDomains() searching the Fib-elements"<<endl<<flush);
+	DEBUG_OUT_L2(<<"cRoot("<<this<<")::generateNeededDomains() searching the Fib elements"<<endl<<flush);
 #ifdef FEATURE_GENERATE_NEEDED_DOMAINS
 	unsignedLongFib uiElementsToCheck =
 		pMainFibObject->getNumberOfElements();
-	//for every Fib-element in the Fib-object
+	//for every Fib element in the Fib-object
 	for ( cFibElement * pActualFibElement = pMainFibObject;
 			( pActualFibElement != NULL ) && ( 0 < uiElementsToCheck );
 			pActualFibElement = pActualFibElement->getNextFibElement(),
 			uiElementsToCheck-- ){
 #else //FEATURE_GENERATE_NEEDED_DOMAINS
 	unsignedLongFib uiElementsToCheck = getNumberOfElements();
-	//for every Fib-element in the Fib-object
+	//for every Fib element in the Fib-object
 	for ( cFibElement * pActualFibElement = this;
 			( pActualFibElement != NULL ) && ( 0 < uiElementsToCheck );
 			pActualFibElement = pActualFibElement->getNextFibElement(),
@@ -3771,7 +3789,7 @@ void cRoot::generateNeededDomains( const bool bAddAllValueDomains ){
 		const char cActualType = pActualFibElement->getType();
 		
 		if ( ( cActualType == 'f' ) || ( cActualType == 'i' ) ){
-			/*if the Fib-element is an functionelement
+			/*if the Fib element is an functionelement
 			-> search for all values*/
 			
 			//the list with the underfunctions, wich whern't searched
@@ -3861,7 +3879,7 @@ void cRoot::generateNeededDomains( const bool bAddAllValueDomains ){
 			}//end while open subelements exists
 		//end if function or if-element
 		}else if ( cActualType == 'a' ){
-			/*if the Fib-element is an areaelement
+			/*if the Fib element is an areaelement
 			-> add all values in the subareas to the liValuesInAreas*/
 			cArea * pArea = (cArea*)pActualFibElement;
 			const unsignedIntFib uiNumberOfSubareas = pArea->getNumberOfSubareas();
@@ -5170,7 +5188,7 @@ unsignedIntFib cRoot::getNumberOfOutputVariables(
  * 	- every subobject in main -Fib-object of this root-object
  * 	is also defined in the root-object
  * 	- the number of output values in the definition and the
- * 	subobject Fib-element(s) are the same
+ * 	subobject Fib element(s) are the same
  * 	- ever subobject which is defined in this root-object is used
  * 	somewhere in the main -Fib-object
  *
@@ -5205,7 +5223,7 @@ unsignedIntFib cRoot::checkExternSubobjects(
 	unsignedLongFib ulMaxSubobjectNumber = 0;
 	
 	unsignedLongFib uiElementsToCheck = pMainFibObject->getNumberOfElements( 's' );
-	//for every Fib-element in the Fib-object
+	//for every Fib element in the Fib-object
 	for ( cExtSubobject * pActualSubobject = ((cExtSubobject*)(pMainFibObject->getNextFibElement( 's' )));
 			( pActualSubobject != NULL ) && ( 0 < uiElementsToCheck );
 			pActualSubobject = ((cExtSubobject*)(pActualSubobject->getNextFibElement( 's' ))),
@@ -5278,7 +5296,7 @@ unsignedIntFib cRoot::checkExternSubobjects(
  * root-object.
  * possible errors which aborts the generation process:
  * 	- the number of output values in the the subobject
- *		Fib-elements are not the same
+ *		Fib elements are not the same
  * 	-the numbers of the subobjects dosn't go from 1 till n
  *
  * @param iErrorNumber a pointer to an integerfild, wher an errornumber
@@ -5312,7 +5330,7 @@ unsignedIntFib cRoot::generateExternSubobjectsDefinitions(
 	unsignedLongFib ulMaxSubobjectNumber = 0;
 	
 	unsignedLongFib uiElementsToCheck = pMainFibObject->getNumberOfElements( 's' );
-	//for every Fib-element in the Fib-object
+	//for every Fib element in the Fib-object
 	for ( cExtSubobject * pActualSubobject = ((cExtSubobject*)(pMainFibObject->getNextFibElement( 's' )));
 			( pActualSubobject != NULL ) && ( 0 < uiElementsToCheck );
 			pActualSubobject = ((cExtSubobject*)(pActualSubobject->getNextFibElement( 's' ))),
@@ -5582,7 +5600,7 @@ bool cRoot::setNumberOfOutputVariables(
  * 	- every subobject in main -Fib-object of this root-object
  * 	is also defined in the root-object
  * 	- the number of output variables in the definition and the
- * 	subobject Fib-element(s) are the same
+ * 	subobject Fib element(s) are the same
  * 	- ever subobject which is defined in this root-object is used
  * 	somewhere in the main -Fib-object
  *
@@ -5617,7 +5635,7 @@ unsignedIntFib cRoot::checkExternSubobjects(
 	unsignedLongFib ulMaxSubobjectNumber = 0;
 	
 	unsignedLongFib uiElementsToCheck = pMainFibObject->getNumberOfElements( 's' );
-	//for every Fib-element in the Fib-object
+	//for every Fib element in the Fib-object
 	for ( cExtSubobject * pActualSubobject = ((cExtSubobject*)(pMainFibObject->getNextFibElement( 's' )));
 			( pActualSubobject != NULL ) && ( 0 < uiElementsToCheck );
 			pActualSubobject = ((cExtSubobject*)(pActualSubobject->getNextFibElement( 's' ))),
@@ -5687,7 +5705,7 @@ unsignedIntFib cRoot::checkExternSubobjects(
  * root-object.
  * possible errors which aborts the generation process:
  * 	- the number of output variables in the the subobject
- *		Fib-elements are not the same
+ *		Fib elements are not the same
  * 	-the numbers of the subobjects dosn't go from 1 till n
  *
  * @param iErrorNumber a pointer to an integerfild, wher an errornumber
@@ -5720,7 +5738,7 @@ unsignedIntFib cRoot::generateExternSubobjectsDefinitions(
 	unsignedLongFib ulMaxSubobjectNumber = 0;
 	
 	unsignedLongFib uiElementsToCheck = pMainFibObject->getNumberOfElements( 's' );
-	//for every Fib-element in the Fib-object
+	//for every Fib element in the Fib-object
 	for ( cExtSubobject * pActualSubobject = ((cExtSubobject*)(pMainFibObject->getNextFibElement( 's' )));
 			( pActualSubobject != NULL ) && ( 0 < uiElementsToCheck );
 			pActualSubobject = ((cExtSubobject*)(pActualSubobject->getNextFibElement( 's' ))),
@@ -6174,8 +6192,8 @@ void cRoot::setChecksum( const cVectorChecksum * pInChecksum ){
  * This method stores this Fib-object in the compressed Fib-format
  * into the given stream.
  * It is needed becouse the stream can yust store byts but the size of
- * Fib-elements can be any number of bits. Because of that ther have to
- * be a possibility to exchange the missing bits betwean the Fib-elements.
+ * Fib elements can be any number of bits. Because of that ther have to
+ * be a possibility to exchange the missing bits betwean the Fib elements.
  *
  * @see store
  * @param stream the stream where this Fib-object should be stored to
@@ -6195,8 +6213,8 @@ bool cRoot::storeBit( ostream & stream, char & cRestBits,
  * This method stores this Fib-object in the compressed Fib-format
  * into the given stream.
  * It is needed becouse the stream can yust store byts but the size of
- * Fib-elements can be any number of bits. Because of that ther have to
- * be a possibility to exchange the missing bits betwean the Fib-elements.
+ * Fib elements can be any number of bits. Because of that ther have to
+ * be a possibility to exchange the missing bits betwean the Fib elements.
  *
  * @see store
  * @param stream the stream where this Fib-object should be stored to
@@ -7012,10 +7030,10 @@ bool cRoot::storeBit( ostream & stream, char & cRestBits,
 #ifdef FEATURE_FAST_UPDATE
 
 /**
- * This method cuts the connections of this Fib-element to the
- * given Fib-element.
+ * This method cuts the connections of this Fib element to the
+ * given Fib element.
  *
- * @param pFibElement the Fib-element to which to cut the connection
+ * @param pFibElement the Fib element to which to cut the connection
  */
 void cRoot::cutConnectionsTo( const cFibElement * pFibElement ){
 	
@@ -7053,16 +7071,16 @@ void cRoot::cutConnectionsTo( const cFibElement * pFibElement ){
 
 
 /**
- * This method updates the Fib-element counters of all branchelements in
+ * This method updates the Fib element counters of all branchelements in
  * this branchelement.
  *
- * @return the numbers with which the Fib-element counters wher updated
+ * @return the numbers with which the Fib element counters wher updated
  */
 cFibObjectCounts cRoot::updateCounters(){
 	
 	cFibObjectCounts newFibObjectCounts;
 	
-	//add number of Fib-elements of the typs of all subobjects
+	//add number of Fib elements of the typs of all subobjects
 	for ( list<cFibElement *>::const_iterator
 			itrUnderobject = fibUnderObjects.begin();
 			itrUnderobject != fibUnderObjects.end(); itrUnderobject++ ){
@@ -7105,11 +7123,11 @@ void cRoot::backupVariablesValues( bool bStoreValues ){
 	if ( bStoreValues ){
 		//store the variables values
 		//clear old stored backupvariablelist
-		while ( ! liStoredInputVariables.empty() ){
-			//the old values will be overwritten
-			delete (liStoredInputVariables.back());
-			liStoredInputVariables.pop_back();
-		}
+		
+		liLiStoredInputVariables.push_back( list< cFibVariable * >() );
+		list< cFibVariable * > & liStoredInputVariables =
+			liLiStoredInputVariables.back();
+		
 		for ( list< pair< cFibVariable *, doubleFib > >::iterator
 				itrActualVariable = liInputVariables.begin();
 				itrActualVariable != liInputVariables.end();
@@ -7120,7 +7138,11 @@ void cRoot::backupVariablesValues( bool bStoreValues ){
 		return;
 	}else{// restore the variable values
 		list< pair< cFibVariable *, doubleFib > >::iterator
-					itrActualVariable = liInputVariables.begin();
+				itrActualVariable = liInputVariables.begin();
+		
+		list< cFibVariable * > & liStoredInputVariables =
+			liLiStoredInputVariables.back();
+		
 		for ( list< cFibVariable * >::iterator
 				itrActualStoredVariable = liStoredInputVariables.begin();
 				itrActualStoredVariable != liStoredInputVariables.end() &&
@@ -7129,6 +7151,13 @@ void cRoot::backupVariablesValues( bool bStoreValues ){
 			
 			*(itrActualVariable->first) = (**itrActualStoredVariable);
 		}
+		// remove restored input variables from stored input variables stack
+		while ( ! liStoredInputVariables.empty() ){
+			//the old values will be overwritten
+			delete (liStoredInputVariables.back());
+			liStoredInputVariables.pop_back();
+		}
+		liLiStoredInputVariables.pop_back();
 	}
 }
 
@@ -7251,7 +7280,7 @@ cRoot * cRoot::getRootObjectDown( longFib lIdentifier ){
 
 
 /**
- * This method returns the identifiers of all from this Fib-element
+ * This method returns the identifiers of all from this Fib element
  * accessible root-objects of this object.
  *
  * @param pRoot a pointer to the root element, for which the
@@ -7303,7 +7332,7 @@ list<longFib> cRoot::getAllAccessibleRootObjectIdentifiers( const cRoot *pRoot )
 
 
 /**
- * This method returns the from this Fib-element accessible root
+ * This method returns the from this Fib element accessible root
  * -object for the given identifier. If non such exists the Nullpoint 
  * NULL is returned.
  *
@@ -7666,7 +7695,7 @@ void cRoot::extractCommentsFromOptionalPart(){
 /**
  * This method copies the connected object with the given number in the
  * order of connected objects.
- * For this every Fib-element, beginning from this Fib-element, that
+ * For this every Fib element, beginning from this Fib element, that
  * is part of the connected object will be copied.
  * Variables which are not defined in the connected object but used
  * don't change ther reference.
@@ -7895,12 +7924,33 @@ cRoot * cRoot::copyInternal( const unsignedIntFib uiObjectPoint ) const{
 }
 
 
+/**
+ * This method returns the extern object element which calls /uses this
+ * root-object.
+ *
+ * @see liPExtObjectElm
+ * @see setCallingFibElement()
+ * @see unsetCallingFibElement()
+ * @see cExtObject
+ * @see evalueObject()
+ * @return extern object element which calls /uses this root-object
+ * 	(if NULL non exists)
+ */
+cExtObject * cRoot::getCallingExtObject(){
+	
+	if ( liPExtObjectElm.empty() ){
+		//no external object element which calls this root element
+		return NULL;
+	}
+	return liPExtObjectElm.back();
+}
+
 
 /**
  * This method sets the given extern object element as the element
  * which calls /uses this root-object.
  *
- * @see pExtObjectElm
+ * @see liPExtObjectElm
  * @see unsetCallingFibElement()
  * @see cExtObject
  * @see evalueObject()
@@ -7909,19 +7959,46 @@ cRoot * cRoot::copyInternal( const unsignedIntFib uiObjectPoint ) const{
  */
 void cRoot::setCallingFibElement( cExtObject * pInExtObjectElm ){
 	
-	//unset old calling /using Fib-element
-	unsetCallingFibElement();
-	
 	if ( pInExtObjectElm == NULL ){
-		//no new calling /using Fib-element to set
+		//no new calling /using Fib element to set
 		return;
 	}
 	backupVariablesValues( true );
-	pExtObjectElm = pInExtObjectElm;
+	if ( ! liPExtObjectElm.empty() ){
+		/*if this root element was called / used befor
+		 -> store all variable values of variables below this root element*/
+		liLiStoredBelowVariables.push_back( list< cFibVariable * >() );
+		list< cFibVariable * > & liStoredBelowVariables =
+			liLiStoredBelowVariables.back();
+		
+		//get variables used below
+		const list< cFibVariable * > liVariablesDefinedBelow =
+			getDefinedVariables( ED_BELOW );
+		
+#ifdef DEBUG_EVALUE
+		const long lId = pInExtObjectElm->getIdentifier();
+		printf( "cRoot(=%p)::setCallingFibElement() store below defined variables (%i calling elements wher set before, the actual id is %li): ", this, liPExtObjectElm.size(), lId );
+#endif //DEBUG_EVALUE
+		
+		for ( list< cFibVariable * >::const_iterator
+				itrActualVariable = liVariablesDefinedBelow.begin();
+				itrActualVariable != liVariablesDefinedBelow.end();
+				itrActualVariable++ ){
+			
+#ifdef DEBUG_EVALUE
+			printf( "%lf, ", (*itrActualVariable)->getValue() );
+#endif //DEBUG_EVALUE
+			liStoredBelowVariables.push_back( new cFibVariable( **itrActualVariable ) );
+		}
+#ifdef DEBUG_EVALUE
+		printf( "\n " );
+#endif //DEBUG_EVALUE
+	}//end if store defined variables below
+	liPExtObjectElm.push_back( pInExtObjectElm );
 	
 	//set the input variable values of the calling /using extern object element
 	const cVectorExtObject * vecInputValuesGiven =
-		pExtObjectElm->getInputVector();
+		pInExtObjectElm->getInputVector();
 	const unsignedIntFib uiNumberOfInputValues =
 		vecInputValuesGiven->getNumberOfElements();
 	list< pair< cFibVariable *, doubleFib > >::iterator
@@ -7953,17 +8030,57 @@ void cRoot::setCallingFibElement( cExtObject * pInExtObjectElm ){
 
 
 /**
- * This Method unsets the actual calling / using Fib-element.
- * @see pExtObjectElm
+ * This Method unsets the actual calling / using Fib element.
+ * @see liPExtObjectElm
  * @see setCallingFibElement()
  * @see evalueObject()
  */
 void cRoot::unsetCallingFibElement(){
 	
-	if ( pExtObjectElm != NULL ){
-		//an using Fib-element exists -> unset it
+	if ( ! liPExtObjectElm.empty() ){
+		//an using Fib element exists -> unset it
 		backupVariablesValues( false );
-		pExtObjectElm = NULL;
+		if ( ! liLiStoredBelowVariables.empty() ){
+			/*if this root element was called / used befor the actual calling element
+			-> restore all variable values of variables above this root element*/
+			
+			//get variables used below
+			list< cFibVariable * > liVariablesDefinedBelow =
+				getDefinedVariables( ED_BELOW );
+		
+			list< cFibVariable * >::iterator
+				itrActualVariable = liVariablesDefinedBelow.begin();
+			
+			list< cFibVariable * > & liStoredBelowVariables =
+				liLiStoredBelowVariables.back();
+			
+#ifdef DEBUG_EVALUE
+			const long lId = liPExtObjectElm.back()->getIdentifier();
+			printf( "cRoot(=%p)::unsetCallingFibElement() restore below defined variables (unset %i'th calling element with id %li): ", this, liPExtObjectElm.size(), lId );
+#endif //DEBUG_EVALUE
+			for ( list< cFibVariable * >::iterator
+					itrActualStoredVariable = liStoredBelowVariables.begin();
+					itrActualStoredVariable != liStoredBelowVariables.end() &&
+					itrActualVariable != liVariablesDefinedBelow.end();
+					itrActualStoredVariable++, itrActualVariable++ ){
+				
+				(**itrActualVariable) = (**itrActualStoredVariable);
+#ifdef DEBUG_EVALUE
+				printf( "%lf, ", (*itrActualVariable)->getValue() );
+#endif //DEBUG_EVALUE
+			}
+#ifdef DEBUG_EVALUE
+			printf( "\n " );
+#endif //DEBUG_EVALUE
+			// remove restored input variables from stored input variables stack
+			while ( ! liStoredBelowVariables.empty() ){
+				//the old values will be overwritten
+				delete (liStoredBelowVariables.back());
+				liStoredBelowVariables.pop_back();
+			}
+			liLiStoredBelowVariables.pop_back();
+		}//end if ( ! liLiStoredBelowVariables.empty() ) restore below defined variables
+		liPExtObjectElm.pop_back();
 	}
 }
 

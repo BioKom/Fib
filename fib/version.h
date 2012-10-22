@@ -41,6 +41,7 @@ History:
 26.11.2011  Oesterholz  FEATURE_FIB_DB_USE_TREADS added
 29.01.2012  Oesterholz  FEATURE_EXT_SUBOBJECT_INPUT_VECTOR added
 09.03.2012  Oesterholz  new version numbers for Fib and Fib database
+22.10.2012  Oesterholz  DEBUG_EVALUE added
 */
 
 
@@ -75,6 +76,12 @@ History:
  */
 //#define DEBUG_RESTORE_XML
 
+/**
+ * With this switch on the evalueObject() functionality can be debugged.
+ *
+ * @see evalueObject()
+ */
+//#define DEBUG_EVALUE
 
 /**
  * With this feature the element number will be written as a XML attribute

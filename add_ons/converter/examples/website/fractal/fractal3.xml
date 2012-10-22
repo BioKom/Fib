@@ -1,0 +1,826 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fib_object
+			xmlns:xsd="http://www.w3.org/2001/XMLSchema-instance"
+			xmlns="http://www.biokom.info/"
+			xsd:schemaLocation="http://www.biokom.info/fib.xsd">
+<root>
+	<multimedia_info fib_version="3" db_version="3"/>
+	<optionalpart>
+		<pair key="description" value="This object creats a kind of fractal."/>
+		<pair key="call" value="../../../bin/convertFromFib fractal3.xml fractal3.png"/>
+	</optionalpart>
+	<domains>
+		<dim count="2">
+			<dimension number="1" direction="horizontal"/>
+			<dimension number="2" direction="vertical"/>
+			<vector elements="2">
+				<naturalNumber max="512" />
+				<naturalNumber max="512" />
+			</vector>
+		</dim>
+		<property name="colorRGB" >
+			<vector elements="3">
+				<naturalNumber max="255" />
+				<naturalNumber max="255" />
+				<naturalNumber max="255" />
+			</vector>
+		</property>
+		
+		<externObject>
+			<vector elements="4">
+				<integer min="-200" max="10" /><!--Identifier-->
+				<integer min="3" max="10" /><!--number input values-->
+				<naturalNumber max="2" /><!--number of maximal subobjects-->
+				<naturalNumber max="5" /><!--number of maximal output values-->
+			</vector>
+		</externObject>
+		<externObjectInput identifier="9">
+			<vector elements="10">
+				<naturalNumber max="0" />
+				<naturalNumber max="0" />
+				<naturalNumber max="0" />
+				<naturalNumber max="0" />
+				<naturalNumber max="0" />
+				<naturalNumber max="0" />
+				<naturalNumber max="0" />
+				<naturalNumber max="0" />
+				<naturalNumber max="0" />
+				<naturalNumber max="0" />
+			</vector>
+		</externObjectInput>
+		<externObjectInput identifier="10">
+			<vector elements="10">
+				<naturalNumber max="0" />
+				<naturalNumber max="0" />
+				<naturalNumber max="0" />
+				<naturalNumber max="0" />
+				<naturalNumber max="0" />
+				<naturalNumber max="0" />
+				<naturalNumber max="0" />
+				<naturalNumber max="0" />
+				<naturalNumber max="0" />
+				<naturalNumber max="0" />
+			</vector>
+		</externObjectInput>
+		<subfunction>
+			<naturalNumber scalingfactor="0.00001" max="2400000"/>
+		</subfunction>
+	</domains>
+	<database_identifiers>
+		<identifier>-200</identifier>
+	</database_identifiers>
+	<main_fib_object>
+		<property>
+			<vector type="property.colorRGB">
+				<value>255</value> <value>0</value> <value>0</value>
+			</vector>
+			<obj identifier="8">
+				<vector type="externObjectInput">
+					<value>150</value><!-- position of the start point p in dimension 1 (x_1) -->
+					<value>100</value><!-- position of the start point p in dimension 1 (y_1) -->
+					<value>-0.8</value><!-- angle alpha_1 -->
+					<value>100</value><!-- absolut length of line 1 -->
+					<value>10.0</value><!-- width of line 1 -->
+					<value>-1.2</value><!-- relativ angle alpha_2 to line 1 -->
+					<value>0.6</value><!-- relativ length of line 2 to line 1 -->
+					<value>0.3</value><!-- relativ angle alpha_3 to line 1 -->
+					<value>0.8</value><!-- relativ length of line 3 to line 1 -->
+					<value>1.1</value><!-- relativ angle alpha_4 to line 1 -->
+					<value>0.7</value><!-- relativ length of line 4 to line 1 -->
+				</vector>
+				<subobject>
+					<output_variables>
+						<variable>1</variable>
+						<variable>2</variable>
+						<variable>3</variable>
+						<variable>4</variable>
+						<variable>5</variable>
+					</output_variables>
+					<function define_variable="6">
+						<subfunction>
+							<sub>
+								<variable>1</variable>
+								<mult>
+									<variable>4</variable>
+									<sin> <variable>3</variable> </sin>
+								</mult>
+							</sub>
+						</subfunction>
+						<function define_variable="7">
+							<subfunction>
+								<add>
+									<variable>2</variable>
+									<mult>
+										<variable>4</variable>
+										<sin>
+											<add>
+												<variable>3</variable>
+												<value>1.5708</value>
+											</add>
+										</sin>
+									</mult>
+								</add>
+							</subfunction>
+							<property>
+								<vector type="property.colorRGB">
+									<variable>1</variable> <variable>2</variable> <variable>5</variable>
+								</vector>
+								<obj identifier="-200">
+									<vector type="externObjectInput">
+										<variable>1</variable>
+										<variable>2</variable>
+										<variable>6</variable>
+										<variable>7</variable>
+										<variable>5</variable>
+									</vector>
+								</obj>
+							</property>
+						</function>
+					</function>
+				</subobject>
+				<subobject>
+					<output_variables>
+						<variable>1</variable>
+						<variable>2</variable>
+						<variable>3</variable>
+						<variable>4</variable>
+						<variable>5</variable>
+					</output_variables>
+					<property>
+						<vector type="property.colorRGB">
+							<variable>1</variable> <variable>2</variable> <variable>5</variable>
+						</vector>
+						<obj identifier="-200">
+							<vector type="externObjectInput">
+								<variable>1</variable>
+								<variable>2</variable>
+								<variable>3</variable>
+								<variable>4</variable>
+								<variable>5</variable>
+							</vector>
+						</obj>
+					</property>
+				</subobject>
+			</obj>
+		</property>
+	</main_fib_object>
+	<sub_roots>
+		<sub_root identifier="8">
+			<root>
+				<optionalpart>
+					<pair key="description" value="This object duplicates subobject 9 tree times recursivly."/>
+					<pair key="inVar1::description" value="position of the start point p in dimension 1 (x_1)"/>
+					<pair key="inVar2::description" value="position of the start point p in dimension 1 (y_1)"/>
+					<pair key="inVar3::description" value="angle alpha_1"/>
+					<pair key="inVar4::description" value="absolut length of line 1"/>
+					<pair key="inVar5::description" value="width of line 1"/>
+					<pair key="inVar6::description" value="relativ angle alpha_2 to line 1"/>
+					<pair key="inVar7::description" value="relativ length of line 2 to line 1"/>
+					<pair key="inVar8::description" value="relativ angle alpha_3 to line 1"/>
+					<pair key="inVar9::description" value="relativ length of line 3 to line 1"/>
+					<pair key="inVar10::description" value="relativ angle alpha_4 to line 1"/>
+					<pair key="inVar11::description" value="relativ length of line 4 to line 1"/>
+					
+					<pair key="subObj1::outVar1::description" value="position of the subobject start point in dimension 1 (x)"/>
+					<pair key="subObj1::outVar2::description" value="position of the subobject start point in dimension 2 (y)"/>
+					<pair key="subObj1::outVar3::description" value="angle of the subobject alpha"/>
+					<pair key="subObj1::outVar4::description" value="length of the subobject"/>
+					<pair key="subObj1::outVar5::description" value="width of the subobject"/>
+					
+					<pair key="subObj2::outVar1::description" value="position of the subobject start point in dimension 1 (x_s)"/>
+					<pair key="subObj2::outVar2::description" value="position of the subobject start point in dimension 2 (y_s)"/>
+					<pair key="subObj2::outVar3::description" value="position of the subobject end point in dimension 1 (x_e)"/>
+					<pair key="subObj2::outVar4::description" value="position of the subobject end point in dimension 2 (y_e)"/>
+					<pair key="subObj2::outVar5::description" value="width of the subobject alpha"/>
+					
+				</optionalpart>
+				<input_variables>
+					<variable number="1" default="0"/>
+					<variable number="2" default="0"/>
+					<variable number="3" default="0"/>
+					<variable number="4" default="0"/>
+					<variable number="5" default="0"/>
+					<variable number="6" default="0"/>
+					<variable number="7" default="0"/>
+					<variable number="8" default="0"/>
+					<variable number="9" default="0"/>
+					<variable number="10" default="0"/>
+					<variable number="11" default="0"/>
+				</input_variables>
+				<domains>
+					<externSubobject number="1">
+						<vector elements="5">
+							<!--actually any numbers are possible;
+							the next lines are just a space holder -->
+							<naturalNumberB bit="0" />
+							<naturalNumberB bit="0" />
+							<naturalNumberB bit="0" />
+							<naturalNumberB bit="0" />
+							<naturalNumberB bit="0" />
+						</vector>
+					</externSubobject>
+					<externSubobject number="2">
+						<vector elements="5">
+							<!--actually any numbers are possible;
+							 the next lines are just a space holder -->
+							<naturalNumberB bit="0" />
+							<naturalNumberB bit="0" />
+							<naturalNumberB bit="0" />
+							<naturalNumberB bit="0" />
+							<naturalNumberB bit="0" />
+						</vector>
+					</externSubobject>
+				</domains>
+				<main_fib_object>
+					<obj identifier="9">
+						<vector type="externObjectInput">
+							<variable>1</variable><!-- position of the start point p in dimension 1 (x_1) -->
+							<variable>2</variable><!-- position of the start point p in dimension 1 (y_1) -->
+							<variable>3</variable><!-- angle alpha_1 -->
+							<variable>4</variable><!-- absolut length of line 1 -->
+							<variable>5</variable><!-- width of line 1 -->
+							<variable>6</variable><!-- relativ angle alpha_2 to line 1 -->
+							<variable>7</variable><!-- relativ length of line 2 to line 1 -->
+							<variable>8</variable><!-- relativ angle alpha_3 to line 1 -->
+							<variable>9</variable><!-- relativ length of line 3 to line 1 -->
+							<variable>10</variable><!-- relativ angle alpha_4 to line 1 -->
+							<variable>11</variable><!-- relativ length of line 4 to line 1 -->
+						</vector>
+						<subobject>
+							<output_variables>
+								<variable>12</variable>
+								<variable>13</variable>
+								<variable>14</variable>
+								<variable>15</variable>
+								<variable>16</variable>
+							</output_variables>
+							<obj identifier="9">
+								<vector type="externObjectInput">
+									<variable>12</variable><!-- position of the start point p in dimension 1 (x_1) -->
+									<variable>13</variable><!-- position of the start point p in dimension 1 (y_1) -->
+									<variable>14</variable><!-- angle alpha_1 -->
+									<variable>15</variable><!-- absolut length of line 1 -->
+									<variable>16</variable><!-- width of line 1 -->
+									<variable>6</variable><!-- relativ angle alpha_2 to line 1 -->
+									<variable>7</variable><!-- relativ length of line 2 to line 1 -->
+									<variable>8</variable><!-- relativ angle alpha_3 to line 1 -->
+									<variable>9</variable><!-- relativ length of line 3 to line 1 -->
+									<variable>10</variable><!-- relativ angle alpha_4 to line 1 -->
+									<variable>11</variable><!-- relativ length of line 4 to line 1 -->
+								</vector>
+								<subobject>
+									<output_variables>
+										<variable>17</variable>
+										<variable>18</variable>
+										<variable>19</variable>
+										<variable>20</variable>
+										<variable>21</variable>
+									</output_variables>
+									<obj identifier="9">
+										<vector type="externObjectInput">
+											<variable>17</variable><!-- position of the start point p in dimension 1 (x_1) -->
+											<variable>18</variable><!-- position of the start point p in dimension 1 (y_1) -->
+											<variable>19</variable><!-- angle alpha_1 -->
+											<variable>20</variable><!-- absolut length of line 1 -->
+											<variable>21</variable><!-- width of line 1 -->
+											<variable>6</variable><!-- relativ angle alpha_2 to line 1 -->
+											<variable>7</variable><!-- relativ length of line 2 to line 1 -->
+											<variable>8</variable><!-- relativ angle alpha_3 to line 1 -->
+											<variable>9</variable><!-- relativ length of line 3 to line 1 -->
+											<variable>10</variable><!-- relativ angle alpha_4 to line 1 -->
+											<variable>11</variable><!-- relativ length of line 4 to line 1 -->
+										</vector>
+										<subobject>
+											<output_variables>
+												<variable>22</variable>
+												<variable>23</variable>
+												<variable>24</variable>
+												<variable>25</variable>
+												<variable>26</variable>
+											</output_variables>
+											<subobject number="1">
+												<vector type="externSubobject">
+													<variable>22</variable>
+													<variable>23</variable>
+													<variable>24</variable>
+													<variable>25</variable>
+													<variable>26</variable>
+												</vector>
+											</subobject>
+										</subobject>
+										<subobject>
+											<output_variables>
+												<variable>22</variable>
+												<variable>23</variable>
+												<variable>24</variable>
+												<variable>25</variable>
+												<variable>26</variable>
+											</output_variables>
+											<subobject number="2">
+												<vector type="externSubobject">
+													<variable>22</variable>
+													<variable>23</variable>
+													<variable>24</variable>
+													<variable>25</variable>
+													<variable>26</variable>
+												</vector>
+											</subobject>
+										</subobject>
+									</obj>
+								</subobject>
+								<subobject>
+									<output_variables>
+										<variable>17</variable>
+										<variable>18</variable>
+										<variable>19</variable>
+										<variable>20</variable>
+										<variable>21</variable>
+									</output_variables>
+									<subobject number="2">
+										<vector type="externSubobject">
+											<variable>17</variable>
+											<variable>18</variable>
+											<variable>19</variable>
+											<variable>20</variable>
+											<variable>21</variable>
+										</vector>
+									</subobject>
+								</subobject>
+							</obj>
+						</subobject>
+						<subobject>
+							<output_variables>
+								<variable>12</variable>
+								<variable>13</variable>
+								<variable>14</variable>
+								<variable>15</variable>
+								<variable>16</variable>
+							</output_variables>
+							<subobject number="2">
+								<vector type="externSubobject">
+									<variable>12</variable>
+									<variable>13</variable>
+									<variable>14</variable>
+									<variable>15</variable>
+									<variable>16</variable>
+								</vector>
+							</subobject>
+						</subobject>
+					</obj>
+				</main_fib_object>
+			</root>
+		</sub_root>
+		<sub_root identifier="9">
+			<root>
+				<optionalpart>
+					<pair key="description" value="This object duplicates subobject 10 tree times recursivly."/>
+					<pair key="inVar1::description" value="position of the start point p in dimension 1 (x_1)"/>
+					<pair key="inVar2::description" value="position of the start point p in dimension 1 (y_1)"/>
+					<pair key="inVar3::description" value="angle alpha_1"/>
+					<pair key="inVar4::description" value="absolut length of line 1"/>
+					<pair key="inVar5::description" value="width of line 1"/>
+					<pair key="inVar6::description" value="relativ angle alpha_2 to line 1"/>
+					<pair key="inVar7::description" value="relativ length of line 2 to line 1"/>
+					<pair key="inVar8::description" value="relativ angle alpha_3 to line 1"/>
+					<pair key="inVar9::description" value="relativ length of line 3 to line 1"/>
+					<pair key="inVar10::description" value="relativ angle alpha_4 to line 1"/>
+					<pair key="inVar11::description" value="relativ length of line 4 to line 1"/>
+					
+					<pair key="subObj1::outVar1::description" value="position of the subobject start point in dimension 1 (x)"/>
+					<pair key="subObj1::outVar2::description" value="position of the subobject start point in dimension 2 (y)"/>
+					<pair key="subObj1::outVar3::description" value="angle of the subobject alpha"/>
+					<pair key="subObj1::outVar4::description" value="length of the subobject"/>
+					<pair key="subObj1::outVar5::description" value="width of the subobject"/>
+					
+					<pair key="subObj2::outVar1::description" value="position of the subobject start point in dimension 1 (x_s)"/>
+					<pair key="subObj2::outVar2::description" value="position of the subobject start point in dimension 2 (y_s)"/>
+					<pair key="subObj2::outVar3::description" value="position of the subobject end point in dimension 1 (x_e)"/>
+					<pair key="subObj2::outVar4::description" value="position of the subobject end point in dimension 2 (y_e)"/>
+					<pair key="subObj2::outVar5::description" value="width of the subobject alpha"/>
+					
+				</optionalpart>
+				<input_variables>
+					<variable number="1" default="0"/>
+					<variable number="2" default="0"/>
+					<variable number="3" default="0"/>
+					<variable number="4" default="0"/>
+					<variable number="5" default="0"/>
+					<variable number="6" default="0"/>
+					<variable number="7" default="0"/>
+					<variable number="8" default="0"/>
+					<variable number="9" default="0"/>
+					<variable number="10" default="0"/>
+					<variable number="11" default="0"/>
+				</input_variables>
+				<domains>
+					<externSubobject number="1">
+						<vector elements="5">
+							<!--actually any numbers are possible;
+							the next lines are just a space holder -->
+							<naturalNumberB bit="0" />
+							<naturalNumberB bit="0" />
+							<naturalNumberB bit="0" />
+							<naturalNumberB bit="0" />
+							<naturalNumberB bit="0" />
+						</vector>
+					</externSubobject>
+					<externSubobject number="2">
+						<vector elements="5">
+							<!--actually any numbers are possible;
+							 the next lines are just a space holder -->
+							<naturalNumberB bit="0" />
+							<naturalNumberB bit="0" />
+							<naturalNumberB bit="0" />
+							<naturalNumberB bit="0" />
+							<naturalNumberB bit="0" />
+						</vector>
+					</externSubobject>
+				</domains>
+				<main_fib_object>
+					<obj identifier="10">
+						<vector type="externObjectInput">
+							<variable>1</variable><!-- position of the start point p in dimension 1 (x_1) -->
+							<variable>2</variable><!-- position of the start point p in dimension 1 (y_1) -->
+							<variable>3</variable><!-- angle alpha_1 -->
+							<variable>4</variable><!-- absolut length of line 1 -->
+							<variable>5</variable><!-- width of line 1 -->
+							<variable>6</variable><!-- relativ angle alpha_2 to line 1 -->
+							<variable>7</variable><!-- relativ length of line 2 to line 1 -->
+							<variable>8</variable><!-- relativ angle alpha_3 to line 1 -->
+							<variable>9</variable><!-- relativ length of line 3 to line 1 -->
+							<variable>10</variable><!-- relativ angle alpha_4 to line 1 -->
+							<variable>11</variable><!-- relativ length of line 4 to line 1 -->
+						</vector>
+						<subobject>
+							<output_variables>
+								<variable>12</variable>
+								<variable>13</variable>
+								<variable>14</variable>
+								<variable>15</variable>
+								<variable>16</variable>
+							</output_variables>
+							<obj identifier="10">
+								<vector type="externObjectInput">
+									<variable>12</variable><!-- position of the start point p in dimension 1 (x_1) -->
+									<variable>13</variable><!-- position of the start point p in dimension 1 (y_1) -->
+									<variable>14</variable><!-- angle alpha_1 -->
+									<variable>15</variable><!-- absolut length of line 1 -->
+									<variable>16</variable><!-- width of line 1 -->
+									<variable>6</variable><!-- relativ angle alpha_2 to line 1 -->
+									<variable>7</variable><!-- relativ length of line 2 to line 1 -->
+									<variable>8</variable><!-- relativ angle alpha_3 to line 1 -->
+									<variable>9</variable><!-- relativ length of line 3 to line 1 -->
+									<variable>10</variable><!-- relativ angle alpha_4 to line 1 -->
+									<variable>11</variable><!-- relativ length of line 4 to line 1 -->
+								</vector>
+								<subobject>
+									<output_variables>
+										<variable>17</variable>
+										<variable>18</variable>
+										<variable>19</variable>
+										<variable>20</variable>
+										<variable>21</variable>
+									</output_variables>
+									<obj identifier="10">
+										<vector type="externObjectInput">
+											<variable>17</variable><!-- position of the start point p in dimension 1 (x_1) -->
+											<variable>18</variable><!-- position of the start point p in dimension 1 (y_1) -->
+											<variable>19</variable><!-- angle alpha_1 -->
+											<variable>20</variable><!-- absolut length of line 1 -->
+											<variable>21</variable><!-- width of line 1 -->
+											<variable>6</variable><!-- relativ angle alpha_2 to line 1 -->
+											<variable>7</variable><!-- relativ length of line 2 to line 1 -->
+											<variable>8</variable><!-- relativ angle alpha_3 to line 1 -->
+											<variable>9</variable><!-- relativ length of line 3 to line 1 -->
+											<variable>10</variable><!-- relativ angle alpha_4 to line 1 -->
+											<variable>11</variable><!-- relativ length of line 4 to line 1 -->
+										</vector>
+										<subobject>
+											<output_variables>
+												<variable>22</variable>
+												<variable>23</variable>
+												<variable>24</variable>
+												<variable>25</variable>
+												<variable>26</variable>
+											</output_variables>
+											<subobject number="1">
+												<vector type="externSubobject">
+													<variable>22</variable>
+													<variable>23</variable>
+													<variable>24</variable>
+													<variable>25</variable>
+													<variable>26</variable>
+												</vector>
+											</subobject>
+										</subobject>
+										<subobject>
+											<output_variables>
+												<variable>22</variable>
+												<variable>23</variable>
+												<variable>24</variable>
+												<variable>25</variable>
+												<variable>26</variable>
+											</output_variables>
+											<subobject number="2">
+												<vector type="externSubobject">
+													<variable>22</variable>
+													<variable>23</variable>
+													<variable>24</variable>
+													<variable>25</variable>
+													<variable>26</variable>
+												</vector>
+											</subobject>
+										</subobject>
+									</obj>
+								</subobject>
+								<subobject>
+									<output_variables>
+										<variable>17</variable>
+										<variable>18</variable>
+										<variable>19</variable>
+										<variable>20</variable>
+										<variable>21</variable>
+									</output_variables>
+									<subobject number="2">
+										<vector type="externSubobject">
+											<variable>17</variable>
+											<variable>18</variable>
+											<variable>19</variable>
+											<variable>20</variable>
+											<variable>21</variable>
+										</vector>
+									</subobject>
+								</subobject>
+							</obj>
+						</subobject>
+						<subobject>
+							<output_variables>
+								<variable>12</variable>
+								<variable>13</variable>
+								<variable>14</variable>
+								<variable>15</variable>
+								<variable>16</variable>
+							</output_variables>
+							<subobject number="2">
+								<vector type="externSubobject">
+									<variable>12</variable>
+									<variable>13</variable>
+									<variable>14</variable>
+									<variable>15</variable>
+									<variable>16</variable>
+								</vector>
+							</subobject>
+						</subobject>
+					</obj>
+				</main_fib_object>
+			</root>
+		</sub_root>
+		<sub_root identifier="10">
+			<root>
+				<optionalpart>
+					<pair key="description" value="This object represents a tree with one basis line and tree branches."/>
+					<pair key="inVar1::description" value="position of the start point p in dimension 1 (x_1)"/>
+					<pair key="inVar2::description" value="position of the start point p in dimension 1 (y_1)"/>
+					<pair key="inVar3::description" value="angle alpha_1"/>
+					<pair key="inVar4::description" value="absolut length of line 1"/>
+					<pair key="inVar5::description" value="width of line 1"/>
+					<pair key="inVar6::description" value="relativ angle alpha_2 to line 1"/>
+					<pair key="inVar7::description" value="relativ length of line 2 to line 1"/>
+					<pair key="inVar8::description" value="relativ angle alpha_3 to line 1"/>
+					<pair key="inVar9::description" value="relativ length of line 3 to line 1"/>
+					<pair key="inVar10::description" value="relativ angle alpha_4 to line 1"/>
+					<pair key="inVar11::description" value="relativ length of line 4 to line 1"/>
+					
+					<pair key="subObj1::outVar1::description" value="position of the subobject start point in dimension 1 (x)"/>
+					<pair key="subObj1::outVar2::description" value="position of the subobject start point in dimension 2 (y)"/>
+					<pair key="subObj1::outVar3::description" value="angle of the subobject alpha"/>
+					<pair key="subObj1::outVar4::description" value="length of the subobject"/>
+					<pair key="subObj1::outVar5::description" value="width of the subobject"/>
+				
+					<pair key="subObj2::outVar1::description" value="position of the subobject start point in dimension 1 (x_s)"/>
+					<pair key="subObj2::outVar2::description" value="position of the subobject start point in dimension 2 (y_s)"/>
+					<pair key="subObj2::outVar3::description" value="position of the subobject end point in dimension 1 (x_e)"/>
+					<pair key="subObj2::outVar4::description" value="position of the subobject end point in dimension 2 (y_e)"/>
+					<pair key="subObj2::outVar5::description" value="width of the subobject alpha"/>
+					
+				</optionalpart>
+				<input_variables>
+					<variable number="1" default="0"/>
+					<variable number="2" default="0"/>
+					<variable number="3" default="0"/>
+					<variable number="4" default="0"/>
+					<variable number="5" default="0"/>
+					<variable number="6" default="0"/>
+					<variable number="7" default="0"/>
+					<variable number="8" default="0"/>
+					<variable number="9" default="0"/>
+					<variable number="10" default="0"/>
+					<variable number="11" default="0"/>
+				</input_variables>
+				<domains>
+					
+					<externSubobject number="1">
+						<vector elements="5">
+							<!--actually any numbers are possible;
+								the next lines are just a space holder -->
+							<naturalNumberB bit="0" />
+							<naturalNumberB bit="0" />
+							<naturalNumberB bit="0" />
+							<naturalNumberB bit="0" />
+							<naturalNumberB bit="0" />
+						</vector>
+					</externSubobject>
+					<externSubobject number="2">
+						<vector elements="5">
+							<!--actually any numbers are possible;
+								the next lines are just a space holder -->
+							<naturalNumberB bit="0" />
+							<naturalNumberB bit="0" />
+							<naturalNumberB bit="0" />
+							<naturalNumberB bit="0" />
+							<naturalNumberB bit="0" />
+						</vector>
+					</externSubobject>
+				</domains>
+				<main_fib_object>
+					<function define_variable="12"><!-- evalue x central point -->
+						<!-- x_c = x_s + l_1 * sin( alpha_1 ) -->
+						<subfunction>
+							<sub>
+								<variable>1</variable>
+								<mult>
+									<variable>4</variable>
+									<sin>
+										<variable>3</variable>
+									</sin>
+								</mult>
+							</sub>
+						</subfunction>
+						<function define_variable="13"><!-- evalue y central point -->
+							<!-- y_c = y_s + l_1 * cos( alpha_1 ) -->
+							<subfunction>
+								<add>
+									<variable>2</variable>
+									<mult>
+										<variable>4</variable>
+										<sin>
+											<add>
+												<variable>3</variable>
+												<value>1.5708</value>
+											</add>
+										</sin>
+									</mult>
+								</add>
+							</subfunction>
+							<list>
+								<!-- subobject 1 -->
+								<function define_variable="14"><!-- evalue absolut alpha of subobject 1 -->
+									<subfunction>
+										<add>
+											<variable>6</variable>
+											<variable>3</variable>
+										</add>
+									</subfunction>
+									<function define_variable="15"><!-- evalue absolut length of subobject 1 -->
+										<subfunction>
+											<mult>
+												<variable>4</variable>
+												<variable>7</variable>
+											</mult>
+										</subfunction>
+										<if><!-- if absolut length < 0.5 -> do nothing -->
+											<condition>
+												<lo>
+													<variable>15</variable>
+													<value>0.5</value>
+												</lo>
+											</condition>
+											<point/>
+											<!-- else -->
+											<function define_variable="16"><!-- evalue absolut width of subobject 1 -->
+												<subfunction>
+													<mult>
+														<variable>5</variable>
+														<variable>7</variable>
+													</mult>
+												</subfunction>
+												<subobject number="1">
+													<vector type="externSubobject">
+														<variable>12</variable><!-- start point (=central point) of subobject in dimension 1 (x_c) -->
+														<variable>13</variable><!-- start point (=central point) of subobject in dimension 2 (y_c) -->
+														<variable>14</variable><!-- absolut alpha of subobject -->
+														<variable>15</variable><!-- absolut length of subobject -->
+														<variable>16</variable><!-- absolut width of subobject -->
+													</vector>
+												</subobject>
+											</function>
+										</if>
+									</function>
+								</function>
+								<!-- subobject 2 -->
+								<function define_variable="14"><!-- evalue absolut alpha of subobject -->
+									<subfunction>
+										<add>
+											<variable>8</variable>
+											<variable>3</variable>
+										</add>
+									</subfunction>
+									<function define_variable="15"><!-- evalue absolut length of subobject -->
+										<subfunction>
+											<mult>
+												<variable>4</variable>
+												<variable>9</variable>
+											</mult>
+										</subfunction>
+										<if><!-- if absolut length < 0.5 -> do nothing -->
+											<condition>
+												<lo>
+													<variable>15</variable>
+													<value>0.5</value>
+												</lo>
+											</condition>
+											<point/>
+											<!-- else -->
+											<function define_variable="16"><!-- evalue absolut width of subobject -->
+												<subfunction>
+													<mult>
+														<variable>5</variable>
+														<variable>9</variable>
+													</mult>
+												</subfunction>
+												<subobject number="1">
+													<vector type="externSubobject">
+														<variable>12</variable><!-- start point (=central point) of subobject in dimension 1 (x_c) -->
+														<variable>13</variable><!-- start point (=central point) of subobject in dimension 2 (y_c) -->
+														<variable>14</variable><!-- absolut alpha of subobject -->
+														<variable>15</variable><!-- absolut length of subobject -->
+														<variable>16</variable><!-- absolut width of subobject -->
+													</vector>
+												</subobject>
+											</function>
+										</if>
+									</function>
+								</function>
+								<!-- subobject 3 -->
+								<function define_variable="14"><!-- evalue absolut alpha of subobject -->
+									<subfunction>
+										<add>
+											<variable>10</variable>
+											<variable>3</variable>
+										</add>
+									</subfunction>
+									<function define_variable="15"><!-- evalue absolut length of subobject -->
+										<subfunction>
+											<mult>
+												<variable>4</variable>
+												<variable>11</variable>
+											</mult>
+										</subfunction>
+										<if><!-- if absolut length < 0.5 -> do nothing -->
+											<condition>
+												<lo>
+													<variable>15</variable>
+													<value>0.5</value>
+												</lo>
+											</condition>
+											<point/>
+											<!-- else -->
+											<function define_variable="16"><!-- evalue absolut width of subobject -->
+												<subfunction>
+													<mult>
+														<variable>5</variable>
+														<variable>11</variable>
+													</mult>
+												</subfunction>
+												<subobject number="1">
+													<vector type="externSubobject">
+														<variable>12</variable><!-- start point (=central point) of subobject in dimension 1 (x_c) -->
+														<variable>13</variable><!-- start point (=central point) of subobject in dimension 2 (y_c) -->
+														<variable>14</variable><!-- absolut alpha of subobject -->
+														<variable>15</variable><!-- absolut length of subobject -->
+														<variable>16</variable><!-- absolut width of subobject -->
+													</vector>
+												</subobject>
+											</function>
+										</if>
+									</function>
+								</function>
+								<!-- line object -->
+								<subobject number="2">
+									<vector type="externSubobject">
+										<variable>1</variable><!-- start point of line in dimension 1 (x_s) -->
+										<variable>2</variable><!-- start point of line in dimension 2 (y_s) -->
+										<variable>12</variable><!-- end point of line in dimension 1 (x_e) -->
+										<variable>13</variable><!-- end point of line in dimension 2 (y_e) -->
+										<variable>5</variable><!-- width of line -->
+									</vector>
+								</subobject>
+							</list>
+						</function>
+					</function>
+				</main_fib_object>
+			</root>
+		</sub_root>
+	</sub_roots>
+</root>
+</fib_object>
