@@ -93,7 +93,8 @@ History:
 18.04.2010  Oesterholz  evalueObject() methods changed: not a function but
 	an object is given to evalue the data
 10.11.2011  Oesterholz  Bugfix: evalueObject() don't overwrite properties
-29.11.2011  Oesterholz  evalue number of folers wher errors occured
+29.11.2011  Oesterholz  evalue number of folders wher errors occured
+22.10.2012  Oesterholz  if an error occured when evaluing points: output data
 */
 
 #include "version.h"
@@ -1009,6 +1010,41 @@ unsigned int comparePositionData( const list< pair< cVectorPosition, list< cVect
 				iReturn++;
 			}
 		}
+	}
+	if ( 0 < iReturn ){
+		//if errors occured
+		cerr<<endl<<endl<<"Correct data:"<<endl<<flush;
+	
+		for ( list< pair< cVectorPosition, list< cVectorProperty > > >::const_iterator
+					itrPosition = liPositionDataCorrect.begin();
+				itrPosition != liPositionDataCorrect.end(); itrPosition++ ){
+			
+			itrPosition->first.storeXml( cerr );
+			
+			for ( list< cVectorProperty >::const_iterator
+						itrProperty = itrPosition->second.begin();
+					itrProperty != itrPosition->second.end(); itrProperty++ ){
+						
+				itrProperty->storeXml( cerr );
+			}
+		}
+		
+		cerr<<flush<<endl<<endl<<"Evalued data:"<<endl<<flush;
+	
+		for ( list< pair< cVectorPosition, list< cVectorProperty > > >::const_iterator
+				itrPosition = liPositionDataEvalued.begin();
+				itrPosition != liPositionDataEvalued.end(); itrPosition++ ){
+			
+			itrPosition->first.storeXml( cerr );
+			
+			for ( list< cVectorProperty >::const_iterator
+						itrProperty = itrPosition->second.begin();
+					itrProperty != itrPosition->second.end(); itrProperty++ ){
+				
+				itrProperty->storeXml( cerr );
+			}
+		}
+		cerr<<endl<<endl<<flush;
 	}
 	return iReturn;
 }

@@ -77,3 +77,4 @@ fibMatrixA1Vec0
 fibMatrixA3Vec0
 fibMatrixA3VE2Vec8
 fibMatrixA2VE1Vec3MatA1VE3Vec2MA2MVE1
+fractal
