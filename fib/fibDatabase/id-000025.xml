@@ -118,40 +118,32 @@
 							</subobject>
 						</area>
 						<!--go from x to x (greater differnce)-->
-						<function define_variable="6">
-							<subfunction>
-								<sub>
-									<variable>2</variable>
-									<mult>
-										<variable>1</variable>
-										<variable>5</variable>
-									</mult>
-								</sub>
-							</subfunction>
-							<area define_variable="7">
-								<vector type="subarea">
-									<variable>1</variable>
-									<variable>3</variable>
-								</vector>
-								<function define_variable="8">
-									<subfunction>
-										<add>
-											<variable>6</variable>
-											<mult>
-												<variable>7</variable>
-												<variable>5</variable>
-											</mult>
-										</add>
-									</subfunction>
-									<subobject number="1">
-										<vector type="externSubobject">
-											<variable>7</variable>
-											<variable>8</variable>
-										</vector>
-									</subobject>
-								</function>
-							</area>
-						</function>
+						<area define_variable="6">
+							<vector type="subarea">
+								<variable>1</variable>
+								<variable>3</variable>
+							</vector>
+							<function define_variable="7">
+								<subfunction>
+									<add>
+										<mult>
+											<sub>
+												<variable>6</variable>
+												<variable>1</variable>
+											</sub>
+											<variable>5</variable>
+										</mult>
+										<variable>2</variable>
+									</add>
+								</subfunction>
+								<subobject number="1">
+									<vector type="externSubobject">
+										<variable>6</variable>
+										<variable>7</variable>
+									</vector>
+								</subobject>
+							</function>
+						</area>
 					</if>
 					<!--go from y to y (greater differnce)-->
 					<function define_variable="6">
@@ -169,40 +161,32 @@
 								</sub>
 							</div>
 						</subfunction>
-						<function define_variable="7">
-							<subfunction>
-								<sub>
-									<variable>1</variable>
-									<mult>
-										<variable>2</variable>
-										<variable>6</variable>
-									</mult>
-								</sub>
-							</subfunction>
-							<area define_variable="8">
-								<vector type="subarea">
-									<variable>2</variable>
-									<variable>4</variable>
-								</vector>
-								<function define_variable="9">
-									<subfunction>
-										<add>
-											<variable>7</variable>
-											<mult>
-												<variable>8</variable>
-												<variable>6</variable>
-											</mult>
-										</add>
-									</subfunction>
-									<subobject number="1">
-										<vector type="externSubobject">
-											<variable>9</variable>
-											<variable>8</variable>
-										</vector>
-									</subobject>
-								</function>
-							</area>
-						</function>
+						<area define_variable="7">
+							<vector type="subarea">
+								<variable>2</variable>
+								<variable>4</variable>
+							</vector>
+							<function define_variable="8">
+								<subfunction>
+									<add>
+										<mult>
+											<sub>
+												<variable>7</variable>
+												<variable>2</variable>
+											</sub>
+											<variable>6</variable>
+										</mult>
+										<variable>1</variable>
+									</add>
+								</subfunction>
+								<subobject number="1">
+									<vector type="externSubobject">
+										<variable>8</variable>
+										<variable>7</variable>
+									</vector>
+								</subobject>
+							</function>
+						</area>
 					</function>
 				</if>
 			</function>

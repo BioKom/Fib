@@ -70,12 +70,20 @@
 			</externSubobject>
 			<externObject>
 				<vector elements="4">
-					<integer min="-46" max="-46" /><!--Identifier-->
+					<integer min="-25" max="-46" /><!--Identifier-->
 					<integer min="8" max="8" /><!--number input values-->
 					<naturalNumber max="1" /><!--number subobjects-->
 					<naturalNumber max="2" /><!--number output values-->
 				</vector>
 			</externObject>
+			<externObjectInput identifier="-25">
+				<vector elements="4">
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+				</vector>
+			</externObjectInput>
 			<externObjectInput identifier="-46">
 				<vector elements="8">
 					<naturalNumber max="0" />
@@ -93,20 +101,50 @@
 			</subfunction>
 		</domains>
 		<database_identifiers>
+			<identifier>-25</identifier>
 			<identifier>-46</identifier>
 		</database_identifiers>
 		<main_fib_object>
 			<!-- draw a quadrangle with help of object with id -46;
 				For this evalue the four corner points of the quadrangle:
 					(a_1, b_1), (a_2, b_2), (a_3, b_3), (a_4, b_4) -->
-			<if>
+			<if><!-- if line width lower 1.5 -> draw normal line or nothing -->
 				<condition>
 					<lo>
 						<variable>5</variable>
-						<value>1</value>
+						<value>1.5</value>
 					</lo>
 				</condition>
-				<point/><!-- line width lower 1 -->
+				<if>
+					<condition>
+						<lo>
+							<variable>5</variable>
+							<value>0.5</value>
+						</lo>
+					</condition>
+					<point/><!-- line width lower 0.5 -> do nothing -->
+					<!-- else line widt betwean 0.5 and 1.5 -> draw line with object -20 -->
+					<obj identifier="-25">
+						<vector type="externObjectInput">
+							<variable>1</variable>
+							<variable>2</variable>
+							<variable>3</variable>
+							<variable>4</variable>
+						</vector>
+						<subobject>
+							<output_variables>
+								<variable>6</variable>
+								<variable>7</variable>
+							</output_variables>
+							<subobject number="1">
+								<vector type="externSubobject">
+									<variable>6</variable>
+									<variable>7</variable>
+								</vector>
+							</subobject>
+						</subobject>
+					</obj>
+				</if>
 				<!-- else -->
 				<if><!-- if x_1 == x_2 then line vertical -->
 					<condition>
