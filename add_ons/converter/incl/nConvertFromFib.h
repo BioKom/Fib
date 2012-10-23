@@ -67,11 +67,17 @@ namespace nConvertFromFib{
 	 * 		1: the ulMaxEvaluationTimeInSec was reached, the object was not
 	 * 			fully evalued
 	 * 		-1: an error occurrd
+	 * @param pPathForFileToStoreImage a string to the path wher to store the
+	 * 	actual picture, if the functionality for the file type exists, the
+	 * 	current evalued picture data will be saved to the file every
+	 * 	INTERVALL_TO_SAVE_CURRENT_PICTURE secounds
+	* 	@see cEvalueSimpleRGBA255Sec
 	 * @return the created FreeImagePlus object (pleas delete it after usage)
 	 * 	or NULL, if non could be created
 	 */
 	fipImage * convertToFipImage( const cFibElement & fibMultimediaObject,
-		unsigned long ulMaxEvaluationTimeInSec = 0, int * pOutStatus = NULL );
+		unsigned long ulMaxEvaluationTimeInSec = 0, int * pOutStatus = NULL,
+		const char * pPathForFileToStoreImage = NULL );
 
 
 }//end namespace nConvertFromFib

@@ -40,6 +40,7 @@ History:
 	cDomain and not cDomainSingle 
 22.03.2012  Oesterholz  possibility to decode image with transparency
 	implemented ( with the help of cEvalueSimpleRGBA255 )
+23.10.2012  Oesterholz  changes to store intermediate result
 */
 
 //TODO for testing
@@ -73,7 +74,6 @@ History:
 
 
 using namespace nConvertFromFib;
-
 
 
 
@@ -171,6 +171,26 @@ public:
 	 */
 	time_t tmStartTime;
 	
+	
+#ifdef FEATURE_CONVERT_FROM_FIB_INTERVALL_TO_SAVE_CURRENT_PICTURE
+	/**
+	 * The path wher to store the intermediate result picture.
+	 */
+	string szPathForFileToStoreIntermediateResultImage;
+	
+	/**
+	 * Every which seconds to store the intermediate result picture.
+	 */
+	long lSecoundsBetweanIntermediateResultSaves;
+	
+	/**
+	 * Time after which to store the next intermediate result.
+	 */
+	time_t tmNextIntermediateResultTime;
+	
+#endif //FEATURE_CONVERT_FROM_FIB_INTERVALL_TO_SAVE_CURRENT_PICTURE
+	
+	
 	/**
 	 * standard constructor
 	 *
@@ -179,14 +199,30 @@ public:
 	 * @param ulInMaxEvaluationTimeInSec the maximal time for evaluation in
 	 * 	seconds, till the creation of this object (if 0 time is unlimeted)
 	 * 	@see ulMaxEvaluationTimeInSec
+	 * @param pInPathForFileToStoreIntermediateResultImage the path wher to
+	 * 	store the intermediate result picture, if NULL non is stored
+	 * @param ulInSecoundsBetweanIntermediateResultSaves every which
+	 * 	seconds to store the intermediate result picture
 	 */
 	cEvalueSimpleRGBA255Sec( const unsigned int uiInMaxX, const unsigned int uiInMaxY,
-			unsigned long ulInMaxEvaluationTimeInSec = 0 ):
+			unsigned long ulInMaxEvaluationTimeInSec = 0,
+			const char * pInPathForFileToStoreIntermediateResultImage = NULL,
+			unsigned long ulInSecoundsBetweanIntermediateResultSaves = 10 ):
 			cEvalueSimpleRGBA255( uiInMaxX, uiInMaxY ),
 			lMaxEvaluationTimeInSec( ulInMaxEvaluationTimeInSec ),
-			tmStartTime( time( NULL ) ){
-		//nothing to do
+			tmStartTime( time( NULL ) )
+#ifdef FEATURE_CONVERT_FROM_FIB_INTERVALL_TO_SAVE_CURRENT_PICTURE
+			, szPathForFileToStoreIntermediateResultImage(
+				pInPathForFileToStoreIntermediateResultImage ),
+			lSecoundsBetweanIntermediateResultSaves(
+				( pInPathForFileToStoreIntermediateResultImage != NULL ) ? ulInSecoundsBetweanIntermediateResultSaves : -1 ){
+		
+		tmNextIntermediateResultTime = tmStartTime + lSecoundsBetweanIntermediateResultSaves;
 	}
+#else //FEATURE_CONVERT_FROM_FIB_INTERVALL_TO_SAVE_CURRENT_PICTURE
+	{//nothing to do
+	}
+#endif //FEATURE_CONVERT_FROM_FIB_INTERVALL_TO_SAVE_CURRENT_PICTURE
 
 	
 	/**
@@ -224,6 +260,32 @@ public:
 			//max time reached
 			return false;
 		}
+		
+#ifdef FEATURE_CONVERT_FROM_FIB_INTERVALL_TO_SAVE_CURRENT_PICTURE
+		if ( ( 0 <= lSecoundsBetweanIntermediateResultSaves ) &&
+				( tmNextIntermediateResultTime <= time( NULL ) ) ){
+			//save actual (intermediate result) picture
+			fipImage * pCovertedObject = convertToFipImage();
+			
+			if ( pCovertedObject ){
+				//output the multimedia object
+				
+				/*cout<<"Saving the intermediate result multimedia object to the file \""<<
+					szPathForFileToStoreIntermediateResultImage <<"\" . "<<endl;*/
+				const bool bObjectConverted = pCovertedObject->save( szPathForFileToStoreIntermediateResultImage.c_str() );
+				if ( ! bObjectConverted ){
+					cerr<<"Error: Couldn't save to the file \""<< szPathForFileToStoreIntermediateResultImage <<"\" ." <<endl;
+				}
+				delete pCovertedObject;
+			}else{
+				cerr<<"Error: Could not convert the data into a multimedia object."<<endl;
+			}
+			
+			tmNextIntermediateResultTime = time( NULL ) +
+				lSecoundsBetweanIntermediateResultSaves;
+		}
+#endif //FEATURE_CONVERT_FROM_FIB_INTERVALL_TO_SAVE_CURRENT_PICTURE
+		
 		return bPointEvalued;
 	}
 	
@@ -296,11 +358,17 @@ public:
  * 		1: the ulMaxEvaluationTimeInSec was reached, the object was not
  * 			fully evalued
  * 		-1: an error occurrd
+ * @param pPathForFileToStoreImage a string to the path wher to store the
+ * 	actual picture, if the functionality for the file type exists, the
+ * 	current evalued picture data will be saved to the file every
+ * 	FEATURE_CONVERT_FROM_FIB_INTERVALL_TO_SAVE_CURRENT_PICTURE seconds
+ * 	@see cEvalueSimpleRGBA255Sec
  * @return the created FreeImagePlus object (please delete it after usage)
  * 	or NULL, if non could be created
  */
 fipImage * nConvertFromFib::convertToFipImage( const cFibElement & fibMultimediaObject,
-		unsigned long ulMaxEvaluationTimeInSec, int * pOutStatus ){
+		unsigned long ulMaxEvaluationTimeInSec, int * pOutStatus,
+		const char * pPathForFileToStoreImage ){
 	
 	DEBUG_OUT_L1( <<"nConvertFromFib::convertToFipImage() started"<<endl; );
 	
@@ -568,7 +636,11 @@ fipImage * nConvertFromFib::convertToFipImage( const cFibElement & fibMultimedia
 			 * object for cEvalueSimpleRGBA255Sec*/
 			DEBUG_OUT_L1( <<"Using cEvalueSimpleRGBA255Sec to evalue image data"<<endl );
 			
-			cEvalueSimpleRGBA255Sec evalueSimpleRGBA255Sec( ulWidth, ulHeight, ulMaxEvaluationTimeInSec );
+			cEvalueSimpleRGBA255Sec evalueSimpleRGBA255Sec( ulWidth, ulHeight, ulMaxEvaluationTimeInSec
+#ifdef FEATURE_CONVERT_FROM_FIB_INTERVALL_TO_SAVE_CURRENT_PICTURE
+				,pPathForFileToStoreImage, FEATURE_CONVERT_FROM_FIB_INTERVALL_TO_SAVE_CURRENT_PICTURE
+#endif //FEATURE_CONVERT_FROM_FIB_INTERVALL_TO_SAVE_CURRENT_PICTURE
+				);
 			const bool bObjectEvalued = fibMultimediaObject.evalueObjectSimple(
 				evalueSimpleRGBA255Sec );
 			

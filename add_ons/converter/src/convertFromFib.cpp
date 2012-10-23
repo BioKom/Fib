@@ -52,6 +52,7 @@ History:
 25.02.2010  Oesterholz  created
 23.08.2010  Oesterholz  output of call info added
 23.08.2010  Oesterholz  continue after restor warning
+23.10.2012  Oesterholz  changes to store intermediate result
 */
 
 #include "version.h"
@@ -157,7 +158,8 @@ int main(int argc, char* argv[]){
 	//convert into a multimedia object
 	int iOutStatus = 0;
 	fipImage * pCovertedObject = nConvertFromFib::convertToFipImage(
-		*pRestoredFibObject, ulMaxEvaluationTimeInSec, &iOutStatus );
+		*pRestoredFibObject, ulMaxEvaluationTimeInSec, &iOutStatus,
+		pFileForStoringData );
 	
 	if ( iOutStatus != 0 ){
 		cout<<"The output status is: "<< iOutStatus <<endl;
@@ -168,7 +170,7 @@ int main(int argc, char* argv[]){
 		
 		cout<<"Saving the converted multimedia object to the file \""<<
 			pFileForStoringData <<"\" . "<<endl;
-		bool bObjectConverted = pCovertedObject->save( pFileForStoringData );
+		const bool bObjectConverted = pCovertedObject->save( pFileForStoringData );
 		if ( ! bObjectConverted ){
 			cerr<<"Error: Couldn't save to the file \""<< pFileForStoringData <<"\" ." <<endl;
 			if ( pRestoredFibObject ){
@@ -179,6 +181,7 @@ int main(int argc, char* argv[]){
 			}
 			return 4;
 		}
+		delete pCovertedObject;
 	}else{
 		cerr<<"Error: Could not convert the data into a multimedia object."<<endl;
 		if ( pRestoredFibObject ){
@@ -191,9 +194,6 @@ int main(int argc, char* argv[]){
 	}
 	if ( pRestoredFibObject ){
 		cFibElement::deleteObject( pRestoredFibObject );
-	}
-	if ( pCovertedObject ){
-		delete pCovertedObject;
 	}
 	return iOutStatus;
 }

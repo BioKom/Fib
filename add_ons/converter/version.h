@@ -58,7 +58,7 @@ History:
 
 
 /**
- * With this feature the the loaded fib-object will be balanced
+ * With this feature the the loaded Fib object will be balanced
  * The value of the definition, is the number of underobjects in the
  * balanced listtree.
  *
@@ -71,7 +71,7 @@ History:
 
 
 /**
- * With this feature the loaded fib-object will be converted to
+ * With this feature the loaded Fib object will be converted to
  * an image with the given number of bits per color value (red, green and
  * blue).
  *
@@ -81,6 +81,19 @@ History:
 History:
 */
 #define FEATURE_FROM_FIB_BITS_PER_RGB_COLOR_VALUE 8
+
+/**
+ * With this feature the loaded Fib object will store an intermediate
+ * result picture.
+ * The number determines every which seconds to store the intermediate
+ * result picture.
+ *
+ * created: 23.10.2012  Betti Oesterholz
+ * Status: implemened and tested (23.10.2012)
+ *//*
+History:
+*/
+#define FEATURE_CONVERT_FROM_FIB_INTERVALL_TO_SAVE_CURRENT_PICTURE 30
 
 
 /**
@@ -104,7 +117,7 @@ History:
 /**
  * With this feature when converting pictures to fib with convertReduced()
  * the small areas will be processed first and added to the end for
- * evaluing the fib-object. They will overlap bigger areas, so
+ * evaluing the Fib object. They will overlap bigger areas, so
  * processing time and storing memmory can be saved.
  *
  * The value of the define will determine the size of the classes for the
