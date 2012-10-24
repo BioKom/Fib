@@ -33,6 +33,7 @@
 History:
 25.02.2010  Oesterholz  created
 11.05.2010  Oesterholz  max time for evaluation included
+23.10.2012  Oesterholz  changes to store intermediate result
 */
 
 #ifndef ___N_CONVERT_FROM_FIB_H__

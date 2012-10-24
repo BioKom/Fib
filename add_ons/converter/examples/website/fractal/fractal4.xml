@@ -7,7 +7,10 @@
 	<multimedia_info fib_version="3" db_version="3"/>
 	<optionalpart>
 		<pair key="description" value="This object creats a kind of fractal."/>
-		<pair key="call" value="../../../bin/convertFromFib fractal3.xml fractal3.png"/>
+		<pair key="call" value="convertFromFib fractal4.xml fractal4.png"/>
+		<pair key="author" value="Betti Oesterholz"/>
+		<pair key="author::email" value="Oesterholz@Fib-Development.org"/>
+		<pair key="copyright" value="LGPL3"/>
 	</optionalpart>
 	<domains>
 		<dim count="2">
@@ -211,7 +214,7 @@
 					<externSubobject number="1">
 						<vector elements="5">
 							<!--actually any numbers are possible;
-							the next lines are just a space holder -->
+											 the next lines are just a space holder -->
 							<naturalNumberB bit="0" />
 							<naturalNumberB bit="0" />
 							<naturalNumberB bit="0" />
@@ -222,7 +225,7 @@
 					<externSubobject number="2">
 						<vector elements="5">
 							<!--actually any numbers are possible;
-							 the next lines are just a space holder -->
+											 the next lines are just a space holder -->
 							<naturalNumberB bit="0" />
 							<naturalNumberB bit="0" />
 							<naturalNumberB bit="0" />
@@ -416,7 +419,7 @@
 					<externSubobject number="1">
 						<vector elements="5">
 							<!--actually any numbers are possible;
-							the next lines are just a space holder -->
+											 the next lines are just a space holder -->
 							<naturalNumberB bit="0" />
 							<naturalNumberB bit="0" />
 							<naturalNumberB bit="0" />
@@ -427,7 +430,7 @@
 					<externSubobject number="2">
 						<vector elements="5">
 							<!--actually any numbers are possible;
-							 the next lines are just a space holder -->
+											 the next lines are just a space holder -->
 							<naturalNumberB bit="0" />
 							<naturalNumberB bit="0" />
 							<naturalNumberB bit="0" />
@@ -596,7 +599,7 @@
 					<pair key="subObj1::outVar3::description" value="angle of the subobject alpha"/>
 					<pair key="subObj1::outVar4::description" value="length of the subobject"/>
 					<pair key="subObj1::outVar5::description" value="width of the subobject"/>
-				
+					
 					<pair key="subObj2::outVar1::description" value="position of the subobject start point in dimension 1 (x_s)"/>
 					<pair key="subObj2::outVar2::description" value="position of the subobject start point in dimension 2 (y_s)"/>
 					<pair key="subObj2::outVar3::description" value="position of the subobject end point in dimension 1 (x_e)"/>
@@ -622,7 +625,7 @@
 					<externSubobject number="1">
 						<vector elements="5">
 							<!--actually any numbers are possible;
-								the next lines are just a space holder -->
+											 the next lines are just a space holder -->
 							<naturalNumberB bit="0" />
 							<naturalNumberB bit="0" />
 							<naturalNumberB bit="0" />
@@ -633,7 +636,7 @@
 					<externSubobject number="2">
 						<vector elements="5">
 							<!--actually any numbers are possible;
-								the next lines are just a space holder -->
+											 the next lines are just a space holder -->
 							<naturalNumberB bit="0" />
 							<naturalNumberB bit="0" />
 							<naturalNumberB bit="0" />
@@ -689,138 +692,190 @@
 											</mult>
 										</subfunction>
 										<if><!-- if absolut length < 0.5 -> do nothing -->
-											<condition>
-												<lo>
-													<variable>15</variable>
-													<value>0.5</value>
-												</lo>
-											</condition>
-											<point/>
-											<!-- else -->
-											<function define_variable="16"><!-- evalue absolut width of subobject 1 -->
-												<subfunction>
-													<mult>
-														<variable>5</variable>
-														<variable>7</variable>
-													</mult>
-												</subfunction>
-												<subobject number="1">
-													<vector type="externSubobject">
-														<variable>12</variable><!-- start point (=central point) of subobject in dimension 1 (x_c) -->
-														<variable>13</variable><!-- start point (=central point) of subobject in dimension 2 (y_c) -->
-														<variable>14</variable><!-- absolut alpha of subobject -->
-														<variable>15</variable><!-- absolut length of subobject -->
-														<variable>16</variable><!-- absolut width of subobject -->
-													</vector>
-												</subobject>
-											</function>
-										</if>
+												<condition>
+													<lo>
+														<variable>15</variable>
+														<value>0.5</value>
+													</lo>
+												</condition>
+												<point/>
+												<!-- else -->
+												<function define_variable="16"><!-- evalue absolut width of subobject 1 -->
+													<subfunction>
+														<mult>
+															<variable>5</variable>
+															<variable>7</variable>
+														</mult>
+													</subfunction>
+													<if><!-- if line width lower 0.5 -> do nothing -->
+														<condition>
+															<lo>
+																<variable>16</variable>
+																<value>0.5</value>
+															</lo>
+														</condition>
+														<point/>
+														<!-- else -->
+														<subobject number="1">
+															<vector type="externSubobject">
+																<variable>12</variable><!-- start point (=central point) of subobject in dimension 1 (x_c) -->
+																<variable>13</variable><!-- start point (=central point) of subobject in dimension 2 (y_c) -->
+																<variable>14</variable><!-- absolut alpha of subobject -->
+																<variable>15</variable><!-- absolut length of subobject -->
+																<variable>16</variable><!-- absolut width of subobject -->
+															</vector>
+														</subobject>
+													</if>
+												</function>
+											</if>
+										</function>
 									</function>
-								</function>
-								<!-- subobject 2 -->
-								<function define_variable="14"><!-- evalue absolut alpha of subobject -->
-									<subfunction>
-										<add>
-											<variable>8</variable>
-											<variable>3</variable>
-										</add>
-									</subfunction>
-									<function define_variable="15"><!-- evalue absolut length of subobject -->
+									<!-- subobject 2 -->
+									<function define_variable="14"><!-- evalue absolut alpha of subobject -->
 										<subfunction>
-											<mult>
-												<variable>4</variable>
-												<variable>9</variable>
-											</mult>
+											<add>
+												<variable>8</variable>
+												<variable>3</variable>
+											</add>
 										</subfunction>
-										<if><!-- if absolut length < 0.5 -> do nothing -->
-											<condition>
-												<lo>
-													<variable>15</variable>
-													<value>0.5</value>
-												</lo>
-											</condition>
-											<point/>
-											<!-- else -->
-											<function define_variable="16"><!-- evalue absolut width of subobject -->
-												<subfunction>
-													<mult>
-														<variable>5</variable>
-														<variable>9</variable>
-													</mult>
-												</subfunction>
-												<subobject number="1">
-													<vector type="externSubobject">
-														<variable>12</variable><!-- start point (=central point) of subobject in dimension 1 (x_c) -->
-														<variable>13</variable><!-- start point (=central point) of subobject in dimension 2 (y_c) -->
-														<variable>14</variable><!-- absolut alpha of subobject -->
-														<variable>15</variable><!-- absolut length of subobject -->
-														<variable>16</variable><!-- absolut width of subobject -->
-													</vector>
-												</subobject>
+										<function define_variable="15"><!-- evalue absolut length of subobject -->
+											<subfunction>
+												<mult>
+													<variable>4</variable>
+													<variable>9</variable>
+												</mult>
+											</subfunction>
+											<if><!-- if absolut length < 0.5 -> do nothing -->
+													<condition>
+														<lo>
+															<variable>15</variable>
+															<value>0.5</value>
+														</lo>
+													</condition>
+													<point/>
+													<!-- else -->
+													<function define_variable="16"><!-- evalue absolut width of subobject -->
+														<subfunction>
+															<mult>
+																<variable>5</variable>
+																<variable>9</variable>
+															</mult>
+														</subfunction>
+														<if><!-- if line width lower 0.5 -> do nothing -->
+															<condition>
+																<lo>
+																	<variable>16</variable>
+																	<value>0.5</value>
+																</lo>
+															</condition>
+															<point/>
+															<!-- else -->
+															<subobject number="1">
+																<vector type="externSubobject">
+																	<variable>12</variable><!-- start point (=central point) of subobject in dimension 1 (x_c) -->
+																	<variable>13</variable><!-- start point (=central point) of subobject in dimension 2 (y_c) -->
+																	<variable>14</variable><!-- absolut alpha of subobject -->
+																	<variable>15</variable><!-- absolut length of subobject -->
+																	<variable>16</variable><!-- absolut width of subobject -->
+																</vector>
+															</subobject>
+														</if>
+													</function>
+												</if>
 											</function>
-										</if>
-									</function>
-								</function>
-								<!-- subobject 3 -->
-								<function define_variable="14"><!-- evalue absolut alpha of subobject -->
-									<subfunction>
-										<add>
-											<variable>10</variable>
-											<variable>3</variable>
-										</add>
-									</subfunction>
-									<function define_variable="15"><!-- evalue absolut length of subobject -->
-										<subfunction>
-											<mult>
-												<variable>4</variable>
-												<variable>11</variable>
-											</mult>
-										</subfunction>
-										<if><!-- if absolut length < 0.5 -> do nothing -->
-											<condition>
-												<lo>
-													<variable>15</variable>
-													<value>0.5</value>
-												</lo>
-											</condition>
-											<point/>
-											<!-- else -->
-											<function define_variable="16"><!-- evalue absolut width of subobject -->
+										</function>
+										<!-- subobject 3 -->
+										<function define_variable="14"><!-- evalue absolut alpha of subobject -->
+											<subfunction>
+												<add>
+													<variable>10</variable>
+													<variable>3</variable>
+												</add>
+											</subfunction>
+											<function define_variable="15"><!-- evalue absolut length of subobject -->
 												<subfunction>
 													<mult>
-														<variable>5</variable>
+														<variable>4</variable>
 														<variable>11</variable>
 													</mult>
 												</subfunction>
-												<subobject number="1">
-													<vector type="externSubobject">
-														<variable>12</variable><!-- start point (=central point) of subobject in dimension 1 (x_c) -->
-														<variable>13</variable><!-- start point (=central point) of subobject in dimension 2 (y_c) -->
-														<variable>14</variable><!-- absolut alpha of subobject -->
-														<variable>15</variable><!-- absolut length of subobject -->
-														<variable>16</variable><!-- absolut width of subobject -->
-													</vector>
-												</subobject>
+												<if><!-- if absolut length < 0.5 -> do nothing -->
+														<condition>
+															<lo>
+																<variable>15</variable>
+																<value>0.5</value>
+															</lo>
+														</condition>
+														<point/>
+														<!-- else -->
+														<function define_variable="16"><!-- evalue absolut width of subobject -->
+															<subfunction>
+																<mult>
+																	<variable>5</variable>
+																	<variable>11</variable>
+																</mult>
+															</subfunction>
+															<if><!-- if line width lower 0.5 -> do nothing -->
+																<condition>
+																	<lo>
+																		<variable>16</variable>
+																		<value>0.5</value>
+																	</lo>
+																</condition>
+																<point/>
+																<!-- else -->
+																<subobject number="1">
+																	<vector type="externSubobject">
+																		<variable>12</variable><!-- start point (=central point) of subobject in dimension 1 (x_c) -->
+																		<variable>13</variable><!-- start point (=central point) of subobject in dimension 2 (y_c) -->
+																		<variable>14</variable><!-- absolut alpha of subobject -->
+																		<variable>15</variable><!-- absolut length of subobject -->
+																		<variable>16</variable><!-- absolut width of subobject -->
+																	</vector>
+																</subobject>
+															</if>
+														</function>
+													</if>
+												</function>
 											</function>
-										</if>
+											<!-- line object -->
+											<if><!-- if absolut length < 0.5 -> do nothing -->
+													<condition>
+														<and>
+															<lo>
+																<abs> <sub>
+																		<variable>1</variable>
+																		<variable>12</variable>
+																	</sub></abs>
+																<value>0.5</value>
+															</lo>
+															<lo>
+																<abs> <sub>
+																		<variable>2</variable>
+																		<variable>13</variable>
+																	</sub></abs>
+																<value>0.5</value>
+															</lo>
+														</and>
+													</condition>
+													<point/>
+													<!-- else -->
+													<subobject number="2">
+														<vector type="externSubobject">
+															<variable>1</variable><!-- start point of line in dimension 1 (x_s) -->
+															<variable>2</variable><!-- start point of line in dimension 2 (y_s) -->
+															<variable>12</variable><!-- end point of line in dimension 1 (x_e) -->
+															<variable>13</variable><!-- end point of line in dimension 2 (y_e) -->
+															<variable>5</variable><!-- width of line -->
+														</vector>
+													</subobject>
+												</if>
+											</list>
+										</function>
 									</function>
-								</function>
-								<!-- line object -->
-								<subobject number="2">
-									<vector type="externSubobject">
-										<variable>1</variable><!-- start point of line in dimension 1 (x_s) -->
-										<variable>2</variable><!-- start point of line in dimension 2 (y_s) -->
-										<variable>12</variable><!-- end point of line in dimension 1 (x_e) -->
-										<variable>13</variable><!-- end point of line in dimension 2 (y_e) -->
-										<variable>5</variable><!-- width of line -->
-									</vector>
-								</subobject>
-							</list>
-						</function>
-					</function>
-				</main_fib_object>
-			</root>
-		</sub_root>
-	</sub_roots>
+								</main_fib_object>
+							</root>
+						</sub_root>
+					</sub_roots>
 </root>
 </fib_object>
