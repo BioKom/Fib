@@ -84,16 +84,9 @@
 History:
 14.03.2010  Oesterholz  created
 15.03.2012  Oesterholz  changes for windows compatibility
+25.10.2012  Oesterholz  Bugfix: delay handling improved
 */
 
-/* TODO
- * Still errors:
- * "Error: The enviroment cpu runtime is 0 s , but shouldn't be 0 s ."
- * 
- * In:
- * - "TESTPASE 15 : Testing running the enviroment cEnviroment with start()"
- * - "TESTPASE 18 : Testing running the enviroment cEnviroment with run() in seperate tread"
- */
 
 
 #include "version.h"
@@ -210,6 +203,12 @@ int main(int argc,char* argv[]){
 }
 
 
+#ifdef WINDOWS
+	#include <windows.h>
+#else//WINDOWS
+	#include <unistd.h>
+#endif//WINDOWS
+
 /**
  * This function will sleep for the given number of milli seconds.
  *
@@ -220,11 +219,35 @@ void fibMilliSleep( unsigned long ulMilliSecondsToSleep ){
 #ifdef WINDOWS
 	Sleep( ulMilliSecondsToSleep );
 #else//WINDOWS
+	
 	struct timespec timeToWait;
+	timeToWait.tv_sec  = ulMilliSecondsToSleep / 1000L;
+	timeToWait.tv_nsec = ( ulMilliSecondsToSleep % 1000) * 1000000L; //1000000L = 1 ms
 	struct timespec remainingTime;
-	timeToWait.tv_sec  = 0;
-	timeToWait.tv_nsec = ulMilliSecondsToSleep * 1000000L; //1000000L = 1 ms
-	nanosleep( &timeToWait, &remainingTime );
+
+	//for debugging:
+	//cout<<"Milliseconds to sleep="<<ulMilliSecondsToSleep<<"   time now="<<time( NULL )<<endl;
+	
+	int iReturnNanosleep = 1;
+	while ( iReturnNanosleep != 0 ){
+		//for debugging:
+		//cout<<"befor timeToWait.tv_sec="<<timeToWait.tv_sec<<"   timeToWait.tv_nsec="<<timeToWait.tv_nsec<<endl;
+
+		remainingTime.tv_sec  = 0;
+		remainingTime.tv_nsec = 0;
+		iReturnNanosleep = nanosleep( &timeToWait, &remainingTime );
+		
+		/*for debugging:
+		cout<<"after timeToWait.tv_sec="<<timeToWait.tv_sec<<"   timeToWait.tv_nsec="<<timeToWait.tv_nsec<<
+			"  nanosleep return="<<iReturnNanosleep<<"   time now="<<time( NULL )<<endl;
+		cout<<"   remainingTime.tv_sec="<<remainingTime.tv_sec<<
+			"   remainingTime.tv_nsec="<<remainingTime.tv_nsec<<endl;*/
+		
+		if ( iReturnNanosleep != 0 ){
+			//wait some more
+			timeToWait = remainingTime;
+		}
+	}
 #endif//WINDOWS
 }
 
@@ -691,20 +714,20 @@ int testParameter( unsigned long &ulTestphase ){
 		//check the getLastStartTime() methode from cEnviroment
 		if ( pEnviroment->getLastStartTime() == 0 ){
 		
-			cout<<"The enviroment last starttime is correctly "<<
+			cout<<"The enviroment last start time is correctly "<<
 				pEnviroment->getLastStartTime() <<"  . "<<endl;
 		}else{
-			cerr<<"Error: The enviroment last starttime is "<<
+			cerr<<"Error: The enviroment last start time is "<<
 				pEnviroment->getLastStartTime() <<"  , but should be "<< 0 <<" ."<<endl;
 			iReturn++;
 		}
 		//check the getFirstStartTime() methode from cEnviroment
 		if ( pEnviroment->getFirstStartTime() == 0 ){
 		
-			cout<<"The enviroment first starttime is correctly "<<
+			cout<<"The enviroment first start time is correctly "<<
 				pEnviroment->getFirstStartTime() <<". "<<endl;
 		}else{
-			cerr<<"Error: The enviroment first starttime is "<<
+			cerr<<"Error: The enviroment first start time is "<<
 				pEnviroment->getFirstStartTime() <<", but should be "<< 0 <<" ."<<endl;
 			iReturn++;
 		}
@@ -995,20 +1018,20 @@ int testParameter( unsigned long &ulTestphase ){
 		//check the getLastStartTime() methode from cEnviroment
 		if ( pEnviroment->getLastStartTime() == 0 ){
 		
-			cout<<"The enviroment last starttime is correctly "<<
+			cout<<"The enviroment last start time is correctly "<<
 				pEnviroment->getLastStartTime() <<"  . "<<endl;
 		}else{
-			cerr<<"Error: The enviroment last starttime is "<<
+			cerr<<"Error: The enviroment last start time is "<<
 				pEnviroment->getLastStartTime() <<"  , but should be "<< 0 <<" ."<<endl;
 			iReturn++;
 		}
 		//check the getFirstStartTime() methode from cEnviroment
 		if ( pEnviroment->getFirstStartTime() == 0 ){
 		
-			cout<<"The enviroment first starttime is correctly "<<
+			cout<<"The enviroment first start time is correctly "<<
 				pEnviroment->getFirstStartTime() <<". "<<endl;
 		}else{
-			cerr<<"Error: The enviroment first starttime is "<<
+			cerr<<"Error: The enviroment first start time is "<<
 				pEnviroment->getFirstStartTime() <<", but should be "<< 0 <<" ."<<endl;
 			iReturn++;
 		}
@@ -1322,20 +1345,20 @@ int testParameter( unsigned long &ulTestphase ){
 		//check the getLastStartTime() methode from cEnviroment
 		if ( pEnviroment->getLastStartTime() == 0 ){
 		
-			cout<<"The enviroment last starttime is correctly "<<
+			cout<<"The enviroment last start time is correctly "<<
 				pEnviroment->getLastStartTime() <<"  . "<<endl;
 		}else{
-			cerr<<"Error: The enviroment last starttime is "<<
+			cerr<<"Error: The enviroment last start time is "<<
 				pEnviroment->getLastStartTime() <<"  , but should be "<< 0 <<" ."<<endl;
 			iReturn++;
 		}
 		//check the getFirstStartTime() methode from cEnviroment
 		if ( pEnviroment->getFirstStartTime() == 0 ){
 		
-			cout<<"The enviroment first starttime is correctly "<<
+			cout<<"The enviroment first start time is correctly "<<
 				pEnviroment->getFirstStartTime() <<". "<<endl;
 		}else{
-			cerr<<"Error: The enviroment first starttime is "<<
+			cerr<<"Error: The enviroment first start time is "<<
 				pEnviroment->getFirstStartTime() <<", but should be "<< 0 <<" ."<<endl;
 			iReturn++;
 		}
@@ -1517,20 +1540,20 @@ int testParameter( unsigned long &ulTestphase ){
 		//check the getLastStartTime() methode from cEnviroment
 		if ( pEnviroment->getLastStartTime() == 0 ){
 		
-			cout<<"The enviroment last starttime is correctly "<<
+			cout<<"The enviroment last start time is correctly "<<
 				pEnviroment->getLastStartTime() <<"  . "<<endl;
 		}else{
-			cerr<<"Error: The enviroment last starttime is "<<
+			cerr<<"Error: The enviroment last start time is "<<
 				pEnviroment->getLastStartTime() <<"  , but should be "<< 0 <<" ."<<endl;
 			iReturn++;
 		}
 		//check the getFirstStartTime() methode from cEnviroment
 		if ( pEnviroment->getFirstStartTime() == 0 ){
 		
-			cout<<"The enviroment first starttime is correctly "<<
+			cout<<"The enviroment first start time is correctly "<<
 				pEnviroment->getFirstStartTime() <<". "<<endl;
 		}else{
-			cerr<<"Error: The enviroment first starttime is "<<
+			cerr<<"Error: The enviroment first start time is "<<
 				pEnviroment->getFirstStartTime() <<", but should be "<< 0 <<" ."<<endl;
 			iReturn++;
 		}
@@ -1712,20 +1735,20 @@ int testParameter( unsigned long &ulTestphase ){
 		//check the getLastStartTime() methode from cEnviroment
 		if ( pEnviroment->getLastStartTime() == 0 ){
 		
-			cout<<"The enviroment last starttime is correctly "<<
+			cout<<"The enviroment last start time is correctly "<<
 				pEnviroment->getLastStartTime() <<"  . "<<endl;
 		}else{
-			cerr<<"Error: The enviroment last starttime is "<<
+			cerr<<"Error: The enviroment last start time is "<<
 				pEnviroment->getLastStartTime() <<"  , but should be "<< 0 <<" ."<<endl;
 			iReturn++;
 		}
 		//check the getFirstStartTime() methode from cEnviroment
 		if ( pEnviroment->getFirstStartTime() == 0 ){
 		
-			cout<<"The enviroment first starttime is correctly "<<
+			cout<<"The enviroment first start time is correctly "<<
 				pEnviroment->getFirstStartTime() <<". "<<endl;
 		}else{
-			cerr<<"Error: The enviroment first starttime is "<<
+			cerr<<"Error: The enviroment first start time is "<<
 				pEnviroment->getFirstStartTime() <<", but should be "<< 0 <<" ."<<endl;
 			iReturn++;
 		}
@@ -1907,20 +1930,20 @@ int testParameter( unsigned long &ulTestphase ){
 		//check the getLastStartTime() methode from cEnviroment
 		if ( pEnviroment->getLastStartTime() == 0 ){
 		
-			cout<<"The enviroment last starttime is correctly "<<
+			cout<<"The enviroment last start time is correctly "<<
 				pEnviroment->getLastStartTime() <<"  . "<<endl;
 		}else{
-			cerr<<"Error: The enviroment last starttime is "<<
+			cerr<<"Error: The enviroment last start time is "<<
 				pEnviroment->getLastStartTime() <<"  , but should be "<< 0 <<" ."<<endl;
 			iReturn++;
 		}
 		//check the getFirstStartTime() methode from cEnviroment
 		if ( pEnviroment->getFirstStartTime() == 0 ){
 		
-			cout<<"The enviroment first starttime is correctly "<<
+			cout<<"The enviroment first start time is correctly "<<
 				pEnviroment->getFirstStartTime() <<". "<<endl;
 		}else{
-			cerr<<"Error: The enviroment first starttime is "<<
+			cerr<<"Error: The enviroment first start time is "<<
 				pEnviroment->getFirstStartTime() <<", but should be "<< 0 <<" ."<<endl;
 			iReturn++;
 		}
@@ -2102,20 +2125,20 @@ int testParameter( unsigned long &ulTestphase ){
 		//check the getLastStartTime() methode from cEnviroment
 		if ( pEnviroment->getLastStartTime() == 0 ){
 		
-			cout<<"The enviroment last starttime is correctly "<<
+			cout<<"The enviroment last start time is correctly "<<
 				pEnviroment->getLastStartTime() <<"  . "<<endl;
 		}else{
-			cerr<<"Error: The enviroment last starttime is "<<
+			cerr<<"Error: The enviroment last start time is "<<
 				pEnviroment->getLastStartTime() <<"  , but should be "<< 0 <<" ."<<endl;
 			iReturn++;
 		}
 		//check the getFirstStartTime() methode from cEnviroment
 		if ( pEnviroment->getFirstStartTime() == 0 ){
 		
-			cout<<"The enviroment first starttime is correctly "<<
+			cout<<"The enviroment first start time is correctly "<<
 				pEnviroment->getFirstStartTime() <<". "<<endl;
 		}else{
-			cerr<<"Error: The enviroment first starttime is "<<
+			cerr<<"Error: The enviroment first start time is "<<
 				pEnviroment->getFirstStartTime() <<", but should be "<< 0 <<" ."<<endl;
 			iReturn++;
 		}
@@ -2297,20 +2320,20 @@ int testParameter( unsigned long &ulTestphase ){
 		//check the getLastStartTime() methode from cEnviroment
 		if ( pEnviroment->getLastStartTime() == 0 ){
 		
-			cout<<"The enviroment last starttime is correctly "<<
+			cout<<"The enviroment last start time is correctly "<<
 				pEnviroment->getLastStartTime() <<"  . "<<endl;
 		}else{
-			cerr<<"Error: The enviroment last starttime is "<<
+			cerr<<"Error: The enviroment last start time is "<<
 				pEnviroment->getLastStartTime() <<"  , but should be "<< 0 <<" ."<<endl;
 			iReturn++;
 		}
 		//check the getFirstStartTime() methode from cEnviroment
 		if ( pEnviroment->getFirstStartTime() == 0 ){
 		
-			cout<<"The enviroment first starttime is correctly "<<
+			cout<<"The enviroment first start time is correctly "<<
 				pEnviroment->getFirstStartTime() <<". "<<endl;
 		}else{
-			cerr<<"Error: The enviroment first starttime is "<<
+			cerr<<"Error: The enviroment first start time is "<<
 				pEnviroment->getFirstStartTime() <<", but should be "<< 0 <<" ."<<endl;
 			iReturn++;
 		}
@@ -2491,20 +2514,20 @@ int testParameter( unsigned long &ulTestphase ){
 		//check the getLastStartTime() methode from cEnviroment
 		if ( pEnviroment->getLastStartTime() == 0 ){
 		
-			cout<<"The enviroment last starttime is correctly "<<
+			cout<<"The enviroment last start time is correctly "<<
 				pEnviroment->getLastStartTime() <<"  . "<<endl;
 		}else{
-			cerr<<"Error: The enviroment last starttime is "<<
+			cerr<<"Error: The enviroment last start time is "<<
 				pEnviroment->getLastStartTime() <<"  , but should be "<< 0 <<" ."<<endl;
 			iReturn++;
 		}
 		//check the getFirstStartTime() methode from cEnviroment
 		if ( pEnviroment->getFirstStartTime() == 0 ){
 		
-			cout<<"The enviroment first starttime is correctly "<<
+			cout<<"The enviroment first start time is correctly "<<
 				pEnviroment->getFirstStartTime() <<". "<<endl;
 		}else{
-			cerr<<"Error: The enviroment first starttime is "<<
+			cerr<<"Error: The enviroment first start time is "<<
 				pEnviroment->getFirstStartTime() <<", but should be "<< 0 <<" ."<<endl;
 			iReturn++;
 		}
@@ -2641,20 +2664,20 @@ int testRun( unsigned long &ulTestphase ){
 	//check the getLastStartTime() methode from cEnviroment
 	if ( pEnviroment->getLastStartTime() == 0 ){
 	
-		cout<<"The enviroment last starttime is correctly "<<
+		cout<<"The enviroment last start time is correctly "<<
 			pEnviroment->getLastStartTime() <<"  . "<<endl;
 	}else{
-		cerr<<"Error: The enviroment last starttime is "<<
+		cerr<<"Error: The enviroment last start time is "<<
 			pEnviroment->getLastStartTime() <<"  , but should be "<< 0 <<" ."<<endl;
 		iReturn++;
 	}
 	//check the getFirstStartTime() methode from cEnviroment
 	if ( pEnviroment->getFirstStartTime() == 0 ){
 	
-		cout<<"The enviroment first starttime is correctly "<<
+		cout<<"The enviroment first start time is correctly "<<
 			pEnviroment->getFirstStartTime() <<". "<<endl;
 	}else{
-		cerr<<"Error: The enviroment first starttime is "<<
+		cerr<<"Error: The enviroment first start time is "<<
 			pEnviroment->getFirstStartTime() <<", but should be "<< 0 <<" ."<<endl;
 		iReturn++;
 	}
@@ -2701,9 +2724,9 @@ int testRun( unsigned long &ulTestphase ){
 	time_t tmLastStartTime = pEnviroment->getLastStartTime();
 	if ( tmLastStartTime != 0 ){
 	
-		cout<<"The enviroment last starttime is correctly not 0 . "<<endl;
+		cout<<"The enviroment last start time is correctly not 0 . "<<endl;
 	}else{
-		cerr<<"Error: The enviroment last starttime is "<<
+		cerr<<"Error: The enviroment last start time is "<<
 			tmLastStartTime <<" , but shouldn't be "<< 0 <<" ."<<endl;
 		iReturn++;
 	}
@@ -2711,10 +2734,10 @@ int testRun( unsigned long &ulTestphase ){
 	time_t tmFirstStartTime = pEnviroment->getFirstStartTime();
 	if ( tmFirstStartTime != 0 ){
 	
-		cout<<"The enviroment first starttime is "<<
+		cout<<"The enviroment first start time is "<<
 			tmFirstStartTime<<" and correctly not 0. "<<endl;
 	}else{
-		cerr<<"Error: The enviroment first starttime is "<<
+		cerr<<"Error: The enviroment first start time is "<<
 			tmFirstStartTime <<", but shouldn't be "<< 0 <<" ."<<endl;
 		iReturn++;
 	}
@@ -2746,7 +2769,7 @@ int testRun( unsigned long &ulTestphase ){
 		iReturn++;
 	}
 	{//1 second wait
-		fibMilliSleep( 100 );
+		fibMilliSleep( 1100 );
 	}
 	//check the isRunning() methode from cEnviroment
 	if ( pEnviroment->isRunning() ){
@@ -2761,10 +2784,12 @@ int testRun( unsigned long &ulTestphase ){
 	if ( dCpuTime != 0.0 ){
 	
 		cout<<"The enviroment cpu runtime is "<<
-			pEnviroment->getCpuRunTime()<<" and correctly not 0 s . "<<endl;
+			dCpuTime<<" and correctly not 0 s . "<<endl;
 	}else{
 		cerr<<"Error: The enviroment cpu runtime is "<<
-			pEnviroment->getCpuRunTime() <<" s , but shouldn't be "<< 0.0 <<" s ."<<endl;
+			dCpuTime <<" s , but shouldn't be "<< 0.0 <<" s ."<<endl;
+		cerr<<"   Last start time="<<tmLastStartTime<<" actual time="<<
+			time( NULL )<<endl;
 		iReturn++;
 	}
 	//check the getNumberOfRunningOperations() methode from cEnviroment
@@ -2788,16 +2813,16 @@ int testRun( unsigned long &ulTestphase ){
 	pEnviroment->stop();
 	
 	{//1 second wait
-		fibMilliSleep( 100 );
+		fibMilliSleep( 1100 );
 	}
 	
 	//check the getLastStartTime() methode from cEnviroment
 	time_t tmLastStartTime2 = pEnviroment->getLastStartTime();
 	if ( tmLastStartTime2 == tmLastStartTime ){
 	
-		cout<<"The enviroment last starttime is correctly "<< tmLastStartTime <<" . "<<endl;
+		cout<<"The enviroment last start time is correctly "<< tmLastStartTime <<" . "<<endl;
 	}else{
-		cerr<<"Error: The enviroment last starttime is "<<
+		cerr<<"Error: The enviroment last start time is "<<
 			tmLastStartTime2 <<" , but should be "<< tmLastStartTime <<" ."<<endl;
 		iReturn++;
 	}
@@ -2805,10 +2830,10 @@ int testRun( unsigned long &ulTestphase ){
 	time_t tmFirstStartTime2 = pEnviroment->getFirstStartTime();
 	if ( tmFirstStartTime2 == tmFirstStartTime ){
 	
-		cout<<"The enviroment first starttime is correctly "<<
+		cout<<"The enviroment first start time is correctly "<<
 			tmFirstStartTime2<<" . "<<endl;
 	}else{
-		cerr<<"Error: The enviroment first starttime is "<<
+		cerr<<"Error: The enviroment first start time is "<<
 			tmFirstStartTime2 <<", but should be "<< tmFirstStartTime <<" ."<<endl;
 		iReturn++;
 	}
@@ -2872,10 +2897,10 @@ int testRun( unsigned long &ulTestphase ){
 	time_t tmLastStartTime3 = pEnviroment->getLastStartTime();
 	if ( tmLastStartTime2 < tmLastStartTime3 ){
 	
-		cout<<"The enviroment last starttime is "<< tmLastStartTime3 <<
+		cout<<"The enviroment last start time is "<< tmLastStartTime3 <<
 			" and correctly greater "<< tmLastStartTime2 <<" . "<<endl;
 	}else{
-		cerr<<"Error: The enviroment last starttime is "<<
+		cerr<<"Error: The enviroment last start time is "<<
 			tmLastStartTime3 <<" , but should be greater "<< tmLastStartTime2 <<" ."<<endl;
 		iReturn++;
 	}
@@ -2883,10 +2908,10 @@ int testRun( unsigned long &ulTestphase ){
 	time_t tmFirstStartTime3 = pEnviroment->getFirstStartTime();
 	if ( tmFirstStartTime == tmFirstStartTime3 ){
 	
-		cout<<"The enviroment first starttime is correctly "<<
+		cout<<"The enviroment first start time is correctly "<<
 			tmFirstStartTime3<<" . "<<endl;
 	}else{
-		cerr<<"Error: The enviroment first starttime is "<<
+		cerr<<"Error: The enviroment first start time is "<<
 			tmFirstStartTime3 <<", but should be "<< tmFirstStartTime <<" ."<<endl;
 		iReturn++;
 	}
@@ -2905,9 +2930,9 @@ int testRun( unsigned long &ulTestphase ){
 			" operations called, but ther should be operations called ."<<endl;
 		iReturn++;
 	}
-	//2 second wait
+	//1 second wait
 	{//delay if enougth enviroments are running
-		fibMilliSleep( 90 );
+		fibMilliSleep( 1130 );
 	}
 	//check the isRunning() methode from cEnviroment
 	if ( pEnviroment->isRunning() ){
@@ -2937,9 +2962,9 @@ int testRun( unsigned long &ulTestphase ){
 	time_t tmLastStartTime4 = pEnviroment->getLastStartTime();
 	if ( tmLastStartTime4 == tmLastStartTime3 ){
 	
-		cout<<"The enviroment last starttime is correctly "<< tmLastStartTime4 <<" . "<<endl;
+		cout<<"The enviroment last start time is correctly "<< tmLastStartTime4 <<" . "<<endl;
 	}else{
-		cerr<<"Error: The enviroment last starttime is "<<
+		cerr<<"Error: The enviroment last start time is "<<
 			tmLastStartTime4 <<" , but should be "<< tmLastStartTime3 <<" ."<<endl;
 		iReturn++;
 	}
@@ -2947,10 +2972,10 @@ int testRun( unsigned long &ulTestphase ){
 	time_t tmFirstStartTime4 = pEnviroment->getFirstStartTime();
 	if ( tmFirstStartTime4 == tmFirstStartTime4 ){
 	
-		cout<<"The enviroment first starttime is correctly "<<
+		cout<<"The enviroment first start time is correctly "<<
 			tmFirstStartTime4<<" . "<<endl;
 	}else{
-		cerr<<"Error: The enviroment first starttime is "<<
+		cerr<<"Error: The enviroment first start time is "<<
 			tmFirstStartTime4 <<", but should be "<< tmFirstStartTime3 <<" ."<<endl;
 		iReturn++;
 	}
@@ -3064,20 +3089,20 @@ int testRun( unsigned long &ulTestphase ){
 	//check the getLastStartTime() methode from cEnviroment
 	if ( pEnviroment->getLastStartTime() == 0 ){
 	
-		cout<<"The enviroment last starttime is correctly "<<
+		cout<<"The enviroment last start time is correctly "<<
 			pEnviroment->getLastStartTime() <<"  . "<<endl;
 	}else{
-		cerr<<"Error: The enviroment last starttime is "<<
+		cerr<<"Error: The enviroment last start time is "<<
 			pEnviroment->getLastStartTime() <<"  , but should be "<< 0 <<" ."<<endl;
 		iReturn++;
 	}
 	//check the getFirstStartTime() methode from cEnviroment
 	if ( pEnviroment->getFirstStartTime() == 0 ){
 	
-		cout<<"The enviroment first starttime is correctly "<<
+		cout<<"The enviroment first start time is correctly "<<
 			pEnviroment->getFirstStartTime() <<". "<<endl;
 	}else{
-		cerr<<"Error: The enviroment first starttime is "<<
+		cerr<<"Error: The enviroment first start time is "<<
 			pEnviroment->getFirstStartTime() <<", but should be "<< 0 <<" ."<<endl;
 		iReturn++;
 	}
@@ -3118,9 +3143,9 @@ int testRun( unsigned long &ulTestphase ){
 	time_t tmLastStartTimeRun = pEnviroment->getLastStartTime();
 	if ( tmLastStartTimeRun != 0 ){
 	
-		cout<<"The enviroment last starttime is correctly not 0 . "<<endl;
+		cout<<"The enviroment last start time is correctly not 0 . "<<endl;
 	}else{
-		cerr<<"Error: The enviroment last starttime is "<<
+		cerr<<"Error: The enviroment last start time is "<<
 			tmLastStartTimeRun <<" , but shouldn't be "<< 0 <<" ."<<endl;
 		iReturn++;
 	}
@@ -3128,10 +3153,10 @@ int testRun( unsigned long &ulTestphase ){
 	time_t tmFirstStartTimeRun = pEnviroment->getFirstStartTime();
 	if ( tmFirstStartTimeRun != 0 ){
 	
-		cout<<"The enviroment first starttime is "<<
+		cout<<"The enviroment first start time is "<<
 			tmFirstStartTimeRun <<" and correctly not 0. "<<endl;
 	}else{
-		cerr<<"Error: The enviroment first starttime is "<<
+		cerr<<"Error: The enviroment first start time is "<<
 			tmFirstStartTimeRun <<", but shouldn't be "<< 0 <<" ."<<endl;
 		iReturn++;
 	}
@@ -3157,7 +3182,7 @@ int testRun( unsigned long &ulTestphase ){
 	}
 	
 	{//1 second wait
-		fibMilliSleep( 100 );
+		fibMilliSleep( 1100 );
 	}
 	
 	//running the enviroment
@@ -3176,9 +3201,9 @@ int testRun( unsigned long &ulTestphase ){
 	time_t tmLastStartTimeRun2 = pEnviroment->getLastStartTime();
 	if ( tmLastStartTimeRun < tmLastStartTimeRun2 ){
 	
-		cout<<"The enviroment last starttime is correctly greater "<< tmLastStartTimeRun <<" . "<<endl;
+		cout<<"The enviroment last start time is correctly greater "<< tmLastStartTimeRun <<" . "<<endl;
 	}else{
-		cerr<<"Error: The enviroment last starttime is "<<
+		cerr<<"Error: The enviroment last start time is "<<
 			tmLastStartTimeRun2 <<" , but should be greater "<< tmLastStartTimeRun <<" ."<<endl;
 		iReturn++;
 	}
@@ -3186,10 +3211,10 @@ int testRun( unsigned long &ulTestphase ){
 	time_t tmFirstStartTimeRun2 = pEnviroment->getFirstStartTime();
 	if ( tmFirstStartTimeRun == tmFirstStartTimeRun2 ){
 	
-		cout<<"The enviroment first starttime is correctly "<<
+		cout<<"The enviroment first start time is correctly "<<
 			tmFirstStartTimeRun <<" . "<<endl;
 	}else{
-		cerr<<"Error: The enviroment first starttime is "<<
+		cerr<<"Error: The enviroment first start time is "<<
 			tmFirstStartTimeRun2 <<", but should be "<< tmFirstStartTimeRun <<" ."<<endl;
 		iReturn++;
 	}
@@ -3287,20 +3312,20 @@ int testRun( unsigned long &ulTestphase ){
 	//check the getLastStartTime() methode from cEnviroment
 	if ( pEnviroment->getLastStartTime() == 0 ){
 	
-		cout<<"The enviroment last starttime is correctly "<<
+		cout<<"The enviroment last start time is correctly "<<
 			pEnviroment->getLastStartTime() <<"  . "<<endl;
 	}else{
-		cerr<<"Error: The enviroment last starttime is "<<
+		cerr<<"Error: The enviroment last start time is "<<
 			pEnviroment->getLastStartTime() <<"  , but should be "<< 0 <<" ."<<endl;
 		iReturn++;
 	}
 	//check the getFirstStartTime() methode from cEnviroment
 	if ( pEnviroment->getFirstStartTime() == 0 ){
 	
-		cout<<"The enviroment first starttime is correctly "<<
+		cout<<"The enviroment first start time is correctly "<<
 			pEnviroment->getFirstStartTime() <<". "<<endl;
 	}else{
-		cerr<<"Error: The enviroment first starttime is "<<
+		cerr<<"Error: The enviroment first start time is "<<
 			pEnviroment->getFirstStartTime() <<", but should be "<< 0 <<" ."<<endl;
 		iReturn++;
 	}
@@ -3362,9 +3387,9 @@ int testRun( unsigned long &ulTestphase ){
 	time_t tmLastStartTimeTRun = pEnviroment->getLastStartTime();
 	if ( tmLastStartTimeTRun != 0 ){
 	
-		cout<<"The enviroment last starttime is correctly not 0 . "<<endl;
+		cout<<"The enviroment last start time is correctly not 0 . "<<endl;
 	}else{
-		cerr<<"Error: The enviroment last starttime is "<<
+		cerr<<"Error: The enviroment last start time is "<<
 			tmLastStartTimeTRun <<" , but shouldn't be "<< 0 <<" ."<<endl;
 		iReturn++;
 	}
@@ -3372,10 +3397,10 @@ int testRun( unsigned long &ulTestphase ){
 	time_t tmFirstStartTimeTRun = pEnviroment->getFirstStartTime();
 	if ( tmFirstStartTimeTRun != 0 ){
 	
-		cout<<"The enviroment first starttime is "<<
+		cout<<"The enviroment first start time is "<<
 			tmFirstStartTimeTRun <<" and correctly not 0. "<<endl;
 	}else{
-		cerr<<"Error: The enviroment first starttime is "<<
+		cerr<<"Error: The enviroment first start time is "<<
 			tmFirstStartTimeTRun <<", but shouldn't be "<< 0 <<" ."<<endl;
 		iReturn++;
 	}
@@ -3405,8 +3430,8 @@ int testRun( unsigned long &ulTestphase ){
 			lOperationsCalledTRun <<" , but should be "<< 0 <<" ."<<endl;
 		iReturn++;
 	}
-	{//2 second wait
-		fibMilliSleep( 10 );
+	{//1 second wait
+		fibMilliSleep( 1100 );
 	}
 	//check the isRunning() methode from cEnviroment
 	if ( pEnviroment->isRunning() ){
@@ -3432,16 +3457,16 @@ int testRun( unsigned long &ulTestphase ){
 	pEnviroment->stop();
 	
 	{//1 second wait
-		fibMilliSleep( 100 );
+		fibMilliSleep( 1100 );
 	}
 	
 	//check the getLastStartTime() methode from cEnviroment
 	time_t tmLastStartTimeTRun2 = pEnviroment->getLastStartTime();
 	if ( tmLastStartTimeTRun2 == tmLastStartTimeTRun ){
 	
-		cout<<"The enviroment last starttime is correctly "<< tmLastStartTimeTRun <<" . "<<endl;
+		cout<<"The enviroment last start time is correctly "<< tmLastStartTimeTRun <<" . "<<endl;
 	}else{
-		cerr<<"Error: The enviroment last starttime is "<<
+		cerr<<"Error: The enviroment last start time is "<<
 			tmLastStartTimeTRun2 <<" , but should be "<< tmLastStartTimeTRun <<" ."<<endl;
 		iReturn++;
 	}
@@ -3449,10 +3474,10 @@ int testRun( unsigned long &ulTestphase ){
 	time_t tmFirstStartTimeTRun2 = pEnviroment->getFirstStartTime();
 	if ( tmFirstStartTimeTRun2 == tmFirstStartTimeTRun ){
 	
-		cout<<"The enviroment first starttime is correctly "<<
+		cout<<"The enviroment first start time is correctly "<<
 			tmFirstStartTimeTRun2<<" . "<<endl;
 	}else{
-		cerr<<"Error: The enviroment first starttime is "<<
+		cerr<<"Error: The enviroment first start time is "<<
 			tmFirstStartTimeTRun2 <<", but should be "<< tmFirstStartTimeTRun <<" ."<<endl;
 		iReturn++;
 	}
@@ -3533,10 +3558,10 @@ int testRun( unsigned long &ulTestphase ){
 	time_t tmLastStartTimeTRun3 = pEnviroment->getLastStartTime();
 	if ( tmLastStartTimeTRun2 < tmLastStartTimeTRun3 ){
 	
-		cout<<"The enviroment last starttime is "<< tmLastStartTimeTRun3 <<
+		cout<<"The enviroment last start time is "<< tmLastStartTimeTRun3 <<
 			" and correctly greater "<< tmLastStartTimeTRun2 <<" . "<<endl;
 	}else{
-		cerr<<"Error: The enviroment last starttime is "<<
+		cerr<<"Error: The enviroment last start time is "<<
 			tmLastStartTimeTRun3 <<" , but should be greater "<< tmLastStartTimeTRun2 <<" ."<<endl;
 		iReturn++;
 	}
@@ -3544,10 +3569,10 @@ int testRun( unsigned long &ulTestphase ){
 	time_t tmFirstStartTimeTRun3 = pEnviroment->getFirstStartTime();
 	if ( tmFirstStartTimeTRun == tmFirstStartTimeTRun3 ){
 	
-		cout<<"The enviroment first starttime is correctly "<<
+		cout<<"The enviroment first start time is correctly "<<
 			tmFirstStartTimeTRun3<<" . "<<endl;
 	}else{
-		cerr<<"Error: The enviroment first starttime is "<<
+		cerr<<"Error: The enviroment first start time is "<<
 			tmFirstStartTimeTRun3 <<", but should be "<< tmFirstStartTimeTRun <<" ."<<endl;
 		iReturn++;
 	}
@@ -3578,8 +3603,8 @@ int testRun( unsigned long &ulTestphase ){
 		iReturn++;
 	}
 	//1 second wait
-	{//delay if enougth enviroments are running
-		fibMilliSleep( 100 );
+	{//delay 1 s
+		fibMilliSleep( 1170 );
 	}
 	//check the isRunning() methode from cEnviroment
 	if ( pEnviroment->isRunning() ){
@@ -3609,9 +3634,9 @@ int testRun( unsigned long &ulTestphase ){
 	time_t tmLastStartTimeTRun4 = pEnviroment->getLastStartTime();
 	if ( tmLastStartTimeTRun4 == tmLastStartTimeTRun3 ){
 	
-		cout<<"The enviroment last starttime is correctly "<< tmLastStartTimeTRun4 <<" . "<<endl;
+		cout<<"The enviroment last start time is correctly "<< tmLastStartTimeTRun4 <<" . "<<endl;
 	}else{
-		cerr<<"Error: The enviroment last starttime is "<<
+		cerr<<"Error: The enviroment last start time is "<<
 			tmLastStartTimeTRun4 <<" , but should be "<< tmLastStartTimeTRun3 <<" ."<<endl;
 		iReturn++;
 	}
@@ -3619,10 +3644,10 @@ int testRun( unsigned long &ulTestphase ){
 	time_t tmFirstStartTimeTRun4 = pEnviroment->getFirstStartTime();
 	if ( tmFirstStartTimeTRun4 == tmFirstStartTimeTRun4 ){
 	
-		cout<<"The enviroment first starttime is correctly "<<
+		cout<<"The enviroment first start time is correctly "<<
 			tmFirstStartTimeTRun4<<" . "<<endl;
 	}else{
-		cerr<<"Error: The enviroment first starttime is "<<
+		cerr<<"Error: The enviroment first start time is "<<
 			tmFirstStartTimeTRun4 <<", but should be "<< tmFirstStartTimeTRun3 <<" ."<<endl;
 		iReturn++;
 	}
@@ -3766,20 +3791,20 @@ int testOperationStatusChange( unsigned long &ulTestphase ){
 	//check the getLastStartTime() methode from cEnviroment
 	if ( pEnviroment->getLastStartTime() == 0 ){
 	
-		cout<<"The enviroment last starttime is correctly "<<
+		cout<<"The enviroment last start time is correctly "<<
 			pEnviroment->getLastStartTime() <<"  . "<<endl;
 	}else{
-		cerr<<"Error: The enviroment last starttime is "<<
+		cerr<<"Error: The enviroment last start time is "<<
 			pEnviroment->getLastStartTime() <<"  , but should be "<< 0 <<" ."<<endl;
 		iReturn++;
 	}
 	//check the getFirstStartTime() methode from cEnviroment
 	if ( pEnviroment->getFirstStartTime() == 0 ){
 	
-		cout<<"The enviroment first starttime is correctly "<<
+		cout<<"The enviroment first start time is correctly "<<
 			pEnviroment->getFirstStartTime() <<". "<<endl;
 	}else{
-		cerr<<"Error: The enviroment first starttime is "<<
+		cerr<<"Error: The enviroment first start time is "<<
 			pEnviroment->getFirstStartTime() <<", but should be "<< 0 <<" ."<<endl;
 		iReturn++;
 	}
@@ -4002,20 +4027,20 @@ int testOperationStatusChange( unsigned long &ulTestphase ){
 	//check the getLastStartTime() methode from cEnviroment
 	if ( pEnviroment->getLastStartTime() == 0 ){
 	
-		cout<<"The enviroment last starttime is correctly "<<
+		cout<<"The enviroment last start time is correctly "<<
 			pEnviroment->getLastStartTime() <<"  . "<<endl;
 	}else{
-		cerr<<"Error: The enviroment last starttime is "<<
+		cerr<<"Error: The enviroment last start time is "<<
 			pEnviroment->getLastStartTime() <<"  , but should be "<< 0 <<" ."<<endl;
 		iReturn++;
 	}
 	//check the getFirstStartTime() methode from cEnviroment
 	if ( pEnviroment->getFirstStartTime() == 0 ){
 	
-		cout<<"The enviroment first starttime is correctly "<<
+		cout<<"The enviroment first start time is correctly "<<
 			pEnviroment->getFirstStartTime() <<". "<<endl;
 	}else{
-		cerr<<"Error: The enviroment first starttime is "<<
+		cerr<<"Error: The enviroment first start time is "<<
 			pEnviroment->getFirstStartTime() <<", but should be "<< 0 <<" ."<<endl;
 		iReturn++;
 	}
@@ -4043,6 +4068,10 @@ public:
 	cTestIndividualListener():
 			pIndividualAdded( NULL ), uiIndividualsAdded( 0 ),
 			pIndividualDeleted( NULL ), uiIndividualsDeleted( 0 ){
+		//nothing to do
+	}
+
+	virtual ~cTestIndividualListener(){
 		//nothing to do
 	}
 
