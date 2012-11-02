@@ -29,7 +29,7 @@
  * @see cFibObjectFitnessBasic
  * This class of fib -enviroment algorithm is for creating fib -fitness
  * objects.
- * The better (higher) the fitness the better the fib -object, the more likly
+ * The better (higher) the fitness the better the Fib object, the more likly
  * it should live and children should be created from it.
  *
  */
@@ -39,11 +39,14 @@ History:
 18.04.2010  Oesterholz  evalueObject() methods changed: not a function but
 	an object is given to evalue the data
 30.04.2010  Oesterholz  using cEvaluePositionListMemLimit to evalue the
-	given (non original) fib -objects
+	given (non original) Fib objects
 05.07.2010  Oesterholz  some functions moved to classes in namespace fib
 02.09.2010  Oesterholz  using cEvaluePositionListLimit to evalue the
-	given (non original) fib -objects
+	given (non original) Fib objects
 12.09.2010  Oesterholz  changes for the getOriginalPositionList() method
+31.10.2012  Oesterholz  cFibObjectFitnessAlgorithm() constructor with
+	input reference Fib object created
+02.11.2012  Oesterholz  Bugfix: mutex for original individual
 */
 
 
@@ -91,9 +94,9 @@ cFibObjectFitnessBasicAlgorithm::cFibObjectFitnessBasicAlgorithm():
  * 	Beware: this object won't be copied, so don't delete it as long
  * 	as this object exists
  * @param dInWeightDistanceToOriginal the weight for the distance to original value
- * @param dInWeightSize the weight for the fib -object size value
+ * @param dInWeightSize the weight for the Fib object size value
  * @param dInWeightEvaluationTime the weight for the evaluation time of
- * 	the fib -object
+ * 	the Fib object
  */
 cFibObjectFitnessBasicAlgorithm::cFibObjectFitnessBasicAlgorithm(
 		cFibIndividual * pInOriginalIndividual,
@@ -121,20 +124,20 @@ cFibObjectFitnessBasicAlgorithm::cFibObjectFitnessBasicAlgorithm(
  * constructor
  *
  * @see cFibObjectFitnessBasic
- * @param  pOriginalFibElement the fib -object with which the fitness
+ * @param  pInOriginalFibElement the Fib object with which the fitness
  * 	should be evalued;
  * 	Beware: this object won't be copied, so don't delete it as long
  * 	as this object exists
  * @param dInWeightDistanceToOriginal the weight for the distance to original value
- * @param dInWeightSize the weight for the fib -object size value
+ * @param dInWeightSize the weight for the Fib object size value
  * @param dInWeightEvaluationTime the weight for the evaluation time of
- * 	the fib -object
+ * 	the Fib object
  */
 cFibObjectFitnessBasicAlgorithm::cFibObjectFitnessBasicAlgorithm(
-		cFibElement * pOriginalFibElement,
+		cFibElement * pInOriginalFibElement,
 		double dInWeightDistanceToOriginal, double dInWeightSize,
 		double dInWeightEvaluationTime ):
-		cFibObjectFitnessAlgorithm( pOriginalFibElement ),
+		cFibObjectFitnessAlgorithm( pInOriginalFibElement ),
 		dWeightDistanceToOriginal( dInWeightDistanceToOriginal ),
 		dWeightSize( dInWeightSize ),
 		dWeightEvaluationTime( dInWeightEvaluationTime ){
@@ -142,11 +145,41 @@ cFibObjectFitnessBasicAlgorithm::cFibObjectFitnessBasicAlgorithm(
 	pBestCaseFitness = new cFibObjectFitnessBasic( 0.0, 0, 0,
 		dWeightDistanceToOriginal, dWeightSize, dWeightEvaluationTime, this );
 	
-	if ( pOriginalFibElement != NULL ){
-		pWorstCaseFitness = evalueFitness( pOriginalFibElement );
+	if ( pInOriginalFibElement != NULL ){
+		pWorstCaseFitness = evalueFitness( pInOriginalFibElement );
 	}else{
 		pWorstCaseFitness = NULL;
 	}
+	if ( pOriginalIndividual ){
+		pOriginalIndividual->updateFitness( this );
+	}
+}
+
+
+/**
+ * constructor
+ *
+ * @see cFibObjectFitnessBasic
+ * @param  inOriginalFibElement the fib object with which the fitness
+ * 	should be evalued
+ * @param dInWeightDistanceToOriginal the weight for the distance to original value
+ * @param dInWeightSize the weight for the Fib object size value
+ * @param dInWeightEvaluationTime the weight for the evaluation time of
+ * 	the Fib object
+ */
+cFibObjectFitnessBasicAlgorithm::cFibObjectFitnessBasicAlgorithm(
+		const cFibElement & inOriginalFibElement,
+		double dInWeightDistanceToOriginal, double dInWeightSize,
+		double dInWeightEvaluationTime ):
+		cFibObjectFitnessAlgorithm( inOriginalFibElement ),
+		dWeightDistanceToOriginal( dInWeightDistanceToOriginal ),
+		dWeightSize( dInWeightSize ),
+		dWeightEvaluationTime( dInWeightEvaluationTime ){
+	
+	pBestCaseFitness = new cFibObjectFitnessBasic( 0.0, 0, 0,
+		dWeightDistanceToOriginal, dWeightSize, dWeightEvaluationTime, this );
+	
+	pWorstCaseFitness = evalueFitness( & inOriginalFibElement );
 	if ( pOriginalIndividual ){
 		pOriginalIndividual->updateFitness( this );
 	}
@@ -238,7 +271,7 @@ cFibObjectFitnessBasic * cFibObjectFitnessBasicAlgorithm::evalueFitness(
  * This function evalues the fitness for the given fib -individual.
  *
  * @see pOriginalIndividual
- * @param fibObject the fib -object for which a fitnessobject should
+ * @param fibObject the Fib object for which a fitnessobject should
  * 	be created
  * @return the fitnessobject for the fitness of the given fibObject or
  * 	NULL, if no fitness could be created
@@ -251,7 +284,7 @@ cFibObjectFitnessBasic * cFibObjectFitnessBasicAlgorithm::evalueFitness(
 	}
 
 #ifdef FATURE_MAX_FITNESS_EVALUATION_TIME
-	//evalue the dimensions of the original fib -object
+	//evalue the dimensions of the original Fib object
 	const long long lEvaluationTime =
 		fibObject->getTimeNeed( (ulNumberOfPoints + 1000000) * 1000000 );
 	
@@ -276,37 +309,44 @@ cFibObjectFitnessBasic * cFibObjectFitnessBasicAlgorithm::evalueFitness(
 
 
 /**
- * This method evalues the difference betwean the orginal fib -object
- * and the given fib -object fibObject on an area.
+ * This method evalues the difference betwean the orginal Fib object
+ * and the given Fib object fibObject on an area.
  * It is the sum of the distances of all values of propertyvectorelements
- * betwean the represented and original fib -object of all positions
+ * betwean the represented and original Fib object of all positions
  * which are inside the dimension bounderies and are in fibObjectArea,
  * if given (not NULL).
  * Properties of positions that aren't evalued are taken to be 0 in all
  * vectorelements (nullvector).
  *
- * @param fibObject the fib -object to which the difference is to evalue
+ * @param fibObject the Fib object to which the difference is to evalue
  * @param fibObjectArea if given (not NULL) the points/positions of
- * 	this (evalued) fib -object are the positions for which the
+ * 	this (evalued) Fib object are the positions for which the
  * 	distance is evalued (other points will be ignored)
- * @return a value for the difference betwean the orginal fib -object
- * 	and the given fib -object fibObject, or -1.0 if an error occured
+ * @return a value for the difference betwean the orginal Fib object
+ * 	and the given Fib object fibObject, or -1.0 if an error occured
  */
 double cFibObjectFitnessBasicAlgorithm::evalueDistance(
 		const cFibElement * fibObject, const cFibElement * fibObjectArea ) const{
 	
 	DEBUG_OUT_L2(<<"cFibObjectFitnessBasicAlgorithm::evalueDistance( "<<fibObject<<", "<<fibObjectArea<<") started"<<endl);
 	
+//TODO mutex for pOriginalIndividual also for changing it in parents
+	
+	
+	pthread_mutex_lock( &mutexOriginalIndividual );
+	
 	if ( (pOriginalIndividual == NULL) ||
 			(((cFibIndividual*)pOriginalIndividual)->getFibObject() == NULL) ||
 			( fibObject == NULL ) ){
 		//can't evalue a distance
+		pthread_mutex_unlock( &mutexOriginalIndividual );
 		return -1.0;
 	}
 	if ( ! bOriginalEvalued ){
-		//evalue the dimensions of the original fib -object
+		//evalue the dimensions of the original Fib object
 		if ( ! ( evalueOriginalDimensions() ) ){
-			DEBUG_OUT_EL1( <<"Error: The original fib -object dimensions couldn't be evalued."<<endl );
+			DEBUG_OUT_EL1( <<"Error: The original Fib object dimensions couldn't be evalued."<<endl );
+			pthread_mutex_unlock( &mutexOriginalIndividual );
 			return -1.0;
 		}
 		//evalue the fibObject fibElement
@@ -319,12 +359,15 @@ double cFibObjectFitnessBasicAlgorithm::evalueDistance(
 		const bool bObjectEvalued = ((cFibIndividual*)pOriginalIndividual)->
 			getFibObject()->evalueObjectSimple( *pEvaluedPositionsDataOriginal );
 		if ( ! bObjectEvalued ){
-			DEBUG_OUT_EL1( <<"Error: The original fib -object couldn't be evalued."<<endl );
+			DEBUG_OUT_EL1( <<"Error: The original Fib object couldn't be evalued."<<endl );
+			pthread_mutex_unlock( &mutexOriginalIndividual );
 			return -1.0;
 		}
 		pEvaluedPositionsDataOriginal->sortPositionsData();
 		bOriginalEvalued = true;
 	}
+	pthread_mutex_unlock( &mutexOriginalIndividual );
+	
 	if ( (pdDirectionMinimum == NULL) || (pdDirectionMaximum == NULL) ||
 			(pdDirectionScaling == NULL) || (pdDirectionSize == NULL) || 
 			(pVecDomainDimension == NULL) ){
@@ -338,7 +381,7 @@ double cFibObjectFitnessBasicAlgorithm::evalueDistance(
 
 	const bool bObjectEvalued = fibObject->evalueObjectSimple( evaluedPositionData );
 	if ( ! bObjectEvalued ){
-		DEBUG_OUT_EL1( <<"Error: The given fib -object couldn't be evalued."<<endl );
+		DEBUG_OUT_EL1( <<"Error: The given Fib object couldn't be evalued."<<endl );
 		return -1.0;
 	}
 	
@@ -355,7 +398,7 @@ double cFibObjectFitnessBasicAlgorithm::evalueDistance(
 	//evalue the fibObject fibObjectArea
 	const bool bAreaObjectEvalued = fibObjectArea->evalueObjectSimple( evaluedPositionDataArea );
 	if ( ! bAreaObjectEvalued ){
-		DEBUG_OUT_EL1( <<"Error: The given fib -object for the area couldn't be evalued."<<endl );
+		DEBUG_OUT_EL1( <<"Error: The given Fib object for the area couldn't be evalued."<<endl );
 		return -1.0;
 	}
 	
@@ -366,15 +409,15 @@ double cFibObjectFitnessBasicAlgorithm::evalueDistance(
 
 
 /**
- * This method evalues the difference betwean the orginal fib -object
+ * This method evalues the difference betwean the orginal Fib object
  * and the given points with ther properties.
  * It is the sum of the distances of all values of propertyvectorelements
- * betwean the represented and original fib -object of all positions
+ * betwean the represented and original Fib object of all positions
  * which are inside the dimension bounderies.
  *
  * @param liPointWithProperties the list with the points and ther
  * 	properties for which to evalue the distance
- * @return a value for the difference betwean the orginal fib -object
+ * @return a value for the difference betwean the orginal Fib object
  * 	and the given liPointWithProperties, or -1.0 if an error occured
  */
 double cFibObjectFitnessBasicAlgorithm::evalueDistance(
@@ -383,15 +426,19 @@ double cFibObjectFitnessBasicAlgorithm::evalueDistance(
 	
 	DEBUG_OUT_L2(<<"cFibObjectFitnessBasicAlgorithm::evalueDistance( "<< &liPointWithProperties<<" ) started"<<endl);
 	
+	pthread_mutex_lock( &mutexOriginalIndividual );
+
 	if ( (&liPointWithProperties == NULL) ||
 			(((cFibIndividual*)pOriginalIndividual)->getFibObject() == NULL) ){
 		//can't evalue a distance
+		pthread_mutex_unlock( &mutexOriginalIndividual );
 		return -1.0;
 	}
 	if ( ! bOriginalEvalued ){
-		//evalue the dimensions of the original fib -object
+		//evalue the dimensions of the original Fib object
 		if ( ! ( evalueOriginalDimensions() ) ){
-			DEBUG_OUT_EL1( <<"Error: The original fib -object dimensions couldn't be evalued."<<endl );
+			DEBUG_OUT_EL1( <<"Error: The original Fib object dimensions couldn't be evalued."<<endl );
+			pthread_mutex_unlock( &mutexOriginalIndividual );
 			return -1.0;
 		}
 		//evalue the fibObject fibElement
@@ -404,7 +451,8 @@ double cFibObjectFitnessBasicAlgorithm::evalueDistance(
 		const bool bObjectEvalued = ((cFibIndividual*)pOriginalIndividual)->
 			getFibObject()->evalueObjectSimple( *pEvaluedPositionsDataOriginal );
 		if ( ! bObjectEvalued ){
-			DEBUG_OUT_EL1( <<"Error: The original fib -object couldn't be evalued."<<endl );
+			DEBUG_OUT_EL1( <<"Error: The original Fib object couldn't be evalued."<<endl );
+			pthread_mutex_unlock( &mutexOriginalIndividual );
 			return -1.0;
 		}
 		pEvaluedPositionsDataOriginal->sortPositionsData();
@@ -414,6 +462,7 @@ double cFibObjectFitnessBasicAlgorithm::evalueDistance(
 			(pdDirectionScaling == NULL) || (pdDirectionSize == NULL) || 
 			(pVecDomainDimension == NULL) ){
 		DEBUG_OUT_EL1( <<"Error: Dimension values missing."<<endl );
+		pthread_mutex_unlock( &mutexOriginalIndividual );
 		return -1.0;
 	}
 	
@@ -450,10 +499,10 @@ double cFibObjectFitnessBasicAlgorithm::evalueDistance(
 	
 	while ( (itrPositionOriginal != pEvaluedPositionsDataOriginal->liEvaluedPositionData.end()) ||
 			(itrPositionGiven != liPointWithProperties.end()) ){
-		//for every position in the original fib -object
+		//for every position in the original Fib object
 		
 		if ( itrPositionGiven == liPointWithProperties.end() ){
-			/*if equivallent position is not in the given fib -object
+			/*if equivallent position is not in the given Fib object
 			-> compare original positions properties against given background*/
 			//if no equivallent background properties add to nullvector
 			if ( ! pVecDomainDimension->isElement( itrPositionOriginal->first ) ){
@@ -469,7 +518,7 @@ double cFibObjectFitnessBasicAlgorithm::evalueDistance(
 			pNewPosition = &(itrPositionOriginal->first);
 			itrPositionOriginal++;
 		}else if ( itrPositionOriginal == pEvaluedPositionsDataOriginal->liEvaluedPositionData.end() ){
-			//for points in the given fib -object but not in the original fib -object
+			//for points in the given Fib object but not in the original Fib object
 			if ( ! pVecDomainDimension->isElement( itrPositionGiven->first ) ){
 				//position not in dimension bounderies -> skip it
 				itrPositionGiven++;
@@ -484,7 +533,7 @@ double cFibObjectFitnessBasicAlgorithm::evalueDistance(
 			pNewPosition = &(itrPositionGiven->first);
 			itrPositionGiven++;
 		}else if ( cEvaluePositionList::lowerPositionPair( *itrPositionOriginal, *itrPositionGiven ) ){
-			/*if equivallent position is not in the given fib -object
+			/*if equivallent position is not in the given Fib object
 			-> compare original positions properties against given background*/
 			if ( ! pVecDomainDimension->isElement( itrPositionOriginal->first ) ){
 				//position not in dimension bounderies -> skip it
@@ -512,7 +561,7 @@ double cFibObjectFitnessBasicAlgorithm::evalueDistance(
 			pNewPosition = &(itrPositionGiven->first);
 			itrPositionGiven++;
 		}else{//both are equal ( itrPositionOriginal->first == itrPositionGiven->first )
-			//if equivallent position is in the given fib -object
+			//if equivallent position is in the given Fib object
 			if ( ! pVecDomainDimension->isElement( itrPositionGiven->first ) ){
 				//position not in dimension bounderies -> skip it
 				itrPositionGiven++;
@@ -592,16 +641,17 @@ double cFibObjectFitnessBasicAlgorithm::evalueDistance(
 	dDistance += (double)ulJustBackground * cEvaluePositionList::distanceOfProperties(
 		liBackgroundPropertiesOriginal, liBackgroundPropertiesGiven );
 	
+	pthread_mutex_unlock( &mutexOriginalIndividual );
 	return dDistance;
 }
 
 
 
 /**
- * This method evalues the difference betwean the orginal fib -object
- * and the given fib -object fibObject on an area.
+ * This method evalues the difference betwean the orginal Fib object
+ * and the given Fib object fibObject on an area.
  * It is the sum of the distances of all values of propertyvectorelements
- * betwean the represented and original fib -object of all positions
+ * betwean the represented and original Fib object of all positions
  * which are inside the dimension bounderies and are in fibObjectArea.
  *
  * @param liPointWithProperties the list with the points and ther
@@ -611,7 +661,7 @@ double cFibObjectFitnessBasicAlgorithm::evalueDistance(
  * 	will be ignored)
  * 	(the list< cVectorProperty > is included for consistencie, but
  * 	it is ignored in this method)
- * @return a value for the difference betwean the orginal fib -object
+ * @return a value for the difference betwean the orginal Fib object
  * 	and the given liPointWithProperties, or -1.0 if an error occured
  */
 double cFibObjectFitnessBasicAlgorithm::evalueDistanceInArea(
@@ -622,15 +672,19 @@ double cFibObjectFitnessBasicAlgorithm::evalueDistanceInArea(
 	
 	DEBUG_OUT_L2(<<"cFibObjectFitnessBasicAlgorithm::evalueDistanceInArea( "<<&liPointWithProperties<<", "<<&liPointWithPropertiesOfArea<<") started"<<endl);
 	
+	pthread_mutex_lock( &mutexOriginalIndividual );
+	
 	if ( (pOriginalIndividual == NULL) ||
 			(((cFibIndividual*)pOriginalIndividual)->getFibObject() == NULL) ){
 		//can't evalue a distance
+		pthread_mutex_unlock( &mutexOriginalIndividual );
 		return -1.0;
 	}
 	if ( ! bOriginalEvalued ){
-		//evalue the dimensions of the original fib -object
+		//evalue the dimensions of the original Fib object
 		if ( ! ( evalueOriginalDimensions() ) ){
-			DEBUG_OUT_EL1( <<"Error: The original fib -object dimensions couldn't be evalued."<<endl );
+			DEBUG_OUT_EL1( <<"Error: The original Fib object dimensions couldn't be evalued."<<endl );
+			pthread_mutex_unlock( &mutexOriginalIndividual );
 			return -1.0;
 		}
 		//evalue the fibObject fibElement
@@ -643,7 +697,8 @@ double cFibObjectFitnessBasicAlgorithm::evalueDistanceInArea(
 		const bool bObjectEvalued = ((cFibIndividual*)pOriginalIndividual)->
 			getFibObject()->evalueObjectSimple( *pEvaluedPositionsDataOriginal );
 		if ( ! bObjectEvalued ){
-			DEBUG_OUT_EL1( <<"Error: The original fib -object couldn't be evalued."<<endl );
+			DEBUG_OUT_EL1( <<"Error: The original Fib object couldn't be evalued."<<endl );
+			pthread_mutex_unlock( &mutexOriginalIndividual );
 			return -1.0;
 		}
 		pEvaluedPositionsDataOriginal->sortPositionsData();
@@ -653,6 +708,7 @@ double cFibObjectFitnessBasicAlgorithm::evalueDistanceInArea(
 			(pdDirectionScaling == NULL) || (pdDirectionSize == NULL) || 
 			(pVecDomainDimension == NULL) ){
 		DEBUG_OUT_EL1( <<"Error: Dimension values missing."<<endl );
+		pthread_mutex_unlock( &mutexOriginalIndividual );
 		return -1.0;
 	}
 	
@@ -706,12 +762,12 @@ double cFibObjectFitnessBasicAlgorithm::evalueDistanceInArea(
 	}
 	itrPositionAreaOriginal = itrPositionAreaGiven;
 	
-	//for every position in the original fib -object and in fibObjectArea
+	//for every position in the original Fib object and in fibObjectArea
 	while ( ( (itrPositionOriginal != pEvaluedPositionsDataOriginal->liEvaluedPositionData.end()) ||
 			(itrPositionGiven != liPointWithProperties.end()) ) &&
 			( (itrPositionAreaOriginal != liPointWithPropertiesOfArea.end()) ||
 					(itrPositionAreaGiven != liPointWithPropertiesOfArea.end()) ) ){
-		//for every position in the original fib -object
+		//for every position in the original Fib object
 		
 		if ( (itrPositionGiven != liPointWithProperties.end()) &&
 				(itrPositionAreaGiven == liPointWithPropertiesOfArea.end()) ){
@@ -761,7 +817,7 @@ double cFibObjectFitnessBasicAlgorithm::evalueDistanceInArea(
 		}else{/*both original and given position are positions in the area
 			(or one have reached ther end)*/
 			if ( itrPositionGiven == liPointWithProperties.end() ){
-				/*if equivallent position is not in the given fib -object
+				/*if equivallent position is not in the given Fib object
 				-> compare original positions properties against given background*/
 				//if no equivallent background properties add to nullvector
 				if ( ! pVecDomainDimension->isElement( itrPositionOriginal->first ) ){
@@ -777,7 +833,7 @@ double cFibObjectFitnessBasicAlgorithm::evalueDistanceInArea(
 				itrPositionAreaOriginal++;
 				itrPositionOriginal++;
 			}else if ( itrPositionOriginal == pEvaluedPositionsDataOriginal->liEvaluedPositionData.end() ){
-				//for points in the given fib -object but not in the original fib -object
+				//for points in the given Fib object but not in the original Fib object
 				if ( ! pVecDomainDimension->isElement( itrPositionGiven->first ) ){
 					//position not in dimension bounderies -> skip it
 					itrPositionGiven++;
@@ -792,7 +848,7 @@ double cFibObjectFitnessBasicAlgorithm::evalueDistanceInArea(
 				itrPositionAreaGiven++;
 				itrPositionGiven++;
 			}else if ( cEvaluePositionList::lowerPositionPair( *itrPositionOriginal, *itrPositionGiven ) ){
-				/*if equivallent position is not in the given fib -object
+				/*if equivallent position is not in the given Fib object
 				-> compare original positions properties against given background*/
 				if ( ! pVecDomainDimension->isElement( itrPositionOriginal->first ) ){
 					//position not in dimension bounderies -> skip it
@@ -821,7 +877,7 @@ double cFibObjectFitnessBasicAlgorithm::evalueDistanceInArea(
 				itrPositionGiven++;
 			}else{/*both are equal ( itrPositionOriginal->first == itrPositionGiven->first ==
 					itrPositionAreaOriginal->first == itrPositionAreaGiven->first )*/
-				//if equivallent position is in the given fib -object
+				//if equivallent position is in the given Fib object
 				if ( ! pVecDomainDimension->isElement( itrPositionGiven->first ) ){
 					//position not in dimension bounderies -> skip it
 					itrPositionGiven++;
@@ -847,6 +903,8 @@ double cFibObjectFitnessBasicAlgorithm::evalueDistanceInArea(
 	dDistance += (double)ulJustBackground * cEvaluePositionList::distanceOfProperties(
 		liBackgroundPropertiesOriginal, liBackgroundPropertiesGiven );
 	
+	pthread_mutex_unlock( &mutexOriginalIndividual );
+	
 	return dDistance;
 }
 
@@ -869,7 +927,7 @@ string cFibObjectFitnessBasicAlgorithm::getClassName() const{
  *
  * @see getOriginalIndividual()
  * @see pOriginalIndividual
- * @param pInOriginalIndividual a point to the originalindividual to set
+ * @param pInOriginalIndividual a point to the original individual to set
  * 	Beware: this object won't be copied, so don't delete it as long
  * 	as this object exists
  * @return true if the originalindividual is set to originalIndividum,
@@ -901,7 +959,7 @@ bool cFibObjectFitnessBasicAlgorithm::setOriginalIndividual(
  *
  * @see getOriginalIndividual()
  * @see pOriginalIndividual
- * @param pInOriginalIndividual a point to the fib -originalindividual to set
+ * @param pInOriginalIndividual a point to the fib original individual to set
  * 	Beware: this object won't be copied, so don't delete it as long
  * 	as this object exists
  * @return true if the originalindividual is set to pInOriginalIndividual,
@@ -933,7 +991,7 @@ bool cFibObjectFitnessBasicAlgorithm::setOriginalIndividual(
  *
  * @see getOriginalIndividual()
  * @see pOriginalIndividual
- * @param pInOriginalFibObject the fib -object with which the fitness
+ * @param pInOriginalFibObject the Fib object with which the fitness
  * 	should be evalued;
  * 	Beware: this object won't be copied, so don't delete it as long
  * 	as this object exists

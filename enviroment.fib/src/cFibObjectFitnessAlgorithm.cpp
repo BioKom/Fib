@@ -27,7 +27,7 @@
  * @see cObjectFitness
  * This header specifies the abstract basisclass of fib -enviroment algorithm
  * for creating fib -fitness objects.
- * The better (higher) the fitness the better the fib -object, the more likly
+ * The better (higher) the fitness the better the Fib object, the more likly
  * it should live and children should be created from it.
  *
  */
@@ -35,7 +35,13 @@
 History:
 26.02.2010  Oesterholz  created
 12.09.2010  Oesterholz  getOriginalPositionList() method implemented
+31.10.2012  Oesterholz  cFibObjectFitnessAlgorithm() constructor with
+	input reference Fib object created
+02.11.2012  Oesterholz  Bugfix: mutex for original individual
 */
+
+//TODO weg
+//#define DEBUG
 
 #include "cFibObjectFitnessAlgorithm.h"
 
@@ -101,6 +107,8 @@ cFibObjectFitnessAlgorithm::cFibObjectFitnessAlgorithm(
 		bStandardDimensionDomain( false ), pVecDomainDimension( NULL ),
 		ulNumberOfPoints( 1 ){
 	
+	pthread_mutex_lock( &mutexOriginalIndividual );
+	
 	if ( pOriginalIndividual ){
 		//evalue the root -elements of the individual
 		pOriginalRoots = createRootTree(
@@ -109,7 +117,7 @@ cFibObjectFitnessAlgorithm::cFibObjectFitnessAlgorithm(
 		balanceFibTreeLists( (cFibElement*)(pOriginalIndividual->getObject()),
 			FEATURE_ALGORITHM_WITH_BALANCED_FIB_OBJECT );
 #endif //FEATURE_ALGORITHM_WITH_BALANCED_FIB_OBJECT
-		//evalue the dimensions of the original fib -object
+		//evalue the dimensions of the original Fib object
 		evalueOriginalDimensions();
 		pEvaluedPositionsDataOriginal = new cEvaluePositionListLimit( ulNumberOfPoints * 2,
 			pVecDomainDimension, false, 0, ulNumberOfPoints * 64 );
@@ -120,7 +128,7 @@ cFibObjectFitnessAlgorithm::cFibObjectFitnessAlgorithm(
 			pEvaluedPositionsDataOriginal->sortPositionsData();
 			bOriginalEvalued = true;
 		}else{
-			DEBUG_OUT_EL1( <<"Error: The original fib -object couldn't be evalued."<<endl );
+			DEBUG_OUT_EL1( <<"Error: The original Fib object couldn't be evalued."<<endl );
 			bOriginalEvalued = false;
 			if ( pEvaluedPositionsDataOriginal ){
 				delete pEvaluedPositionsDataOriginal;
@@ -131,13 +139,15 @@ cFibObjectFitnessAlgorithm::cFibObjectFitnessAlgorithm(
 		pOriginalRoots = NULL;
 		bOriginalEvalued = false;
 	}
+	
+	pthread_mutex_unlock( &mutexOriginalIndividual );
 }
 
 
 /**
  * constructor
  *
- * @param pInOriginalFibObject the fib -object with which the fitness
+ * @param pInOriginalFibObject the Fib object with which the fitness
  * 	should be evalued;
  * 	Beware: this object won't be copied, so don't delete it as long
  * 	as this object exists
@@ -150,6 +160,8 @@ cFibObjectFitnessAlgorithm::cFibObjectFitnessAlgorithm(
 		pdDirectionSize( NULL ),
 		bStandardDimensionDomain( false ), pVecDomainDimension( NULL ),
 		ulNumberOfPoints( 1 ){
+	
+	pthread_mutex_lock( &mutexOriginalIndividual );
 	
 	if ( pInOriginalFibObject ){
 		//cIndividualInfo parameter
@@ -168,7 +180,7 @@ cFibObjectFitnessAlgorithm::cFibObjectFitnessAlgorithm(
 		balanceFibTreeLists( (cFibElement*)(pOriginalIndividual->getObject()),
 			FEATURE_ALGORITHM_WITH_BALANCED_FIB_OBJECT );
 #endif //FEATURE_ALGORITHM_WITH_BALANCED_FIB_OBJECT
-		//evalue the dimensions of the original fib -object
+		//evalue the dimensions of the original Fib object
 		evalueOriginalDimensions();
 		pEvaluedPositionsDataOriginal = new cEvaluePositionListLimit( ulNumberOfPoints * 2,
 			pVecDomainDimension, false, 0, ulNumberOfPoints * 64 );
@@ -179,7 +191,7 @@ cFibObjectFitnessAlgorithm::cFibObjectFitnessAlgorithm(
 			pEvaluedPositionsDataOriginal->sortPositionsData();
 			bOriginalEvalued = true;
 		}else{
-			DEBUG_OUT_EL1( <<"Error: The original fib -object couldn't be evalued."<<endl );
+			DEBUG_OUT_EL1( <<"Error: The original Fib object couldn't be evalued."<<endl );
 			bOriginalEvalued = false;
 			if ( pEvaluedPositionsDataOriginal ){
 				delete pEvaluedPositionsDataOriginal;
@@ -191,6 +203,65 @@ cFibObjectFitnessAlgorithm::cFibObjectFitnessAlgorithm(
 		bOriginalIsFibObject = false;
 		pOriginalRoots = NULL;
 	}
+	
+	pthread_mutex_unlock( &mutexOriginalIndividual );
+}
+
+
+/**
+ * constructor
+ *
+ * @param inOriginalFibObject the fib object with which the fitness
+ * 	should be evalued;
+ */
+cFibObjectFitnessAlgorithm::cFibObjectFitnessAlgorithm(
+		const cFibElement & inOriginalFibObject ):
+		pEvaluedPositionsDataOriginal( NULL ), bOriginalEvalued( false ),
+		uiNumberOfDimensions( 0 ), pdDirectionMinimum( NULL ),
+		pdDirectionMaximum( NULL ), pdDirectionScaling( NULL ),
+		pdDirectionSize( NULL ),
+		bStandardDimensionDomain( false ), pVecDomainDimension( NULL ),
+		ulNumberOfPoints( 1 ){
+	
+	pthread_mutex_lock( &mutexOriginalIndividual );
+	
+	//cIndividualInfo parameter
+	const cFibObjectFitness fitnessDummy( 0.0 );
+	const list<cIndividualIdentifier> liParents;
+	
+	cFibElement * pInOriginalFibObject = inOriginalFibObject.clone();
+	
+	pOriginalIndividual = new cFibIndividual( pInOriginalFibObject,
+		cIndividualInfo( 0, liParents, fitnessDummy,
+		"originalInvividual", "", cOperationIdentifier( 0 ),
+		time_t( NULL ), 0.0, NULL ), true );
+	bOriginalIsFibObject = true;
+	
+	//evalue the root -elements of the individual
+	pOriginalRoots = createRootTree( pInOriginalFibObject);
+#ifdef FEATURE_ALGORITHM_WITH_BALANCED_FIB_OBJECT
+	balanceFibTreeLists( (cFibElement*)(pOriginalIndividual->getObject()),
+		FEATURE_ALGORITHM_WITH_BALANCED_FIB_OBJECT );
+#endif //FEATURE_ALGORITHM_WITH_BALANCED_FIB_OBJECT
+	//evalue the dimensions of the original Fib object
+	evalueOriginalDimensions();
+	pEvaluedPositionsDataOriginal = new cEvaluePositionListLimit( ulNumberOfPoints * 2,
+		pVecDomainDimension, false, 0, ulNumberOfPoints * 64 );
+	
+	const bool bObjectEvalued = pInOriginalFibObject->
+		evalueObjectSimple( *pEvaluedPositionsDataOriginal );
+	if ( bObjectEvalued ){
+		pEvaluedPositionsDataOriginal->sortPositionsData();
+		bOriginalEvalued = true;
+	}else{
+		DEBUG_OUT_EL1( <<"Error: The original Fib object couldn't be evalued."<<endl );
+		bOriginalEvalued = false;
+		if ( pEvaluedPositionsDataOriginal ){
+			delete pEvaluedPositionsDataOriginal;
+			pEvaluedPositionsDataOriginal = NULL;
+		}
+	}
+	pthread_mutex_unlock( &mutexOriginalIndividual );
 }
 
 
@@ -211,6 +282,8 @@ cFibObjectFitnessAlgorithm::cFibObjectFitnessAlgorithm(
 		bStandardDimensionDomain( false ), pVecDomainDimension( NULL ),
 		ulNumberOfPoints( 1 ){
 	
+	pthread_mutex_lock( &mutexOriginalIndividual );
+	
 	if ( bOriginalIsFibObject ){
 		//cIndividualInfo parameter
 		const cFibObjectFitness fitnessDummy( 0.0 );
@@ -219,10 +292,10 @@ cFibObjectFitnessAlgorithm::cFibObjectFitnessAlgorithm(
 		pOriginalIndividual = new cFibIndividual(
 			const_cast<cFibElement*>(
 			const_cast<cFibObjectFitnessAlgorithm*>(
-				& objectFitnessAlgorithm )->getOriginalFibObject() ),
+				& objectFitnessAlgorithm )->getOriginalFibObject()->clone() ),
 			cIndividualInfo( 0, liParents, fitnessDummy,
 			"originalInvividual", "", cOperationIdentifier( 0 ),
-			time_t( NULL ), 0.0, NULL ), false );
+			time_t( NULL ), 0.0, NULL ), true );
 	}
 
 	if ( pOriginalIndividual ){
@@ -233,7 +306,7 @@ cFibObjectFitnessAlgorithm::cFibObjectFitnessAlgorithm(
 		balanceFibTreeLists( (cFibElement*)(pOriginalIndividual->getObject()),
 			FEATURE_ALGORITHM_WITH_BALANCED_FIB_OBJECT );
 #endif //FEATURE_ALGORITHM_WITH_BALANCED_FIB_OBJECT
-		//evalue the dimensions of the original fib -object
+		//evalue the dimensions of the original Fib object
 		evalueOriginalDimensions();
 		pEvaluedPositionsDataOriginal = new cEvaluePositionListLimit( ulNumberOfPoints * 2,
 			pVecDomainDimension, false, 0, ulNumberOfPoints * 64 );
@@ -244,7 +317,7 @@ cFibObjectFitnessAlgorithm::cFibObjectFitnessAlgorithm(
 			pEvaluedPositionsDataOriginal->sortPositionsData();
 			bOriginalEvalued = true;
 		}else{
-			DEBUG_OUT_EL1( <<"Error: The original fib -object couldn't be evalued."<<endl );
+			DEBUG_OUT_EL1( <<"Error: The original Fib object couldn't be evalued."<<endl );
 			bOriginalEvalued = false;
 			if ( pEvaluedPositionsDataOriginal ){
 				delete pEvaluedPositionsDataOriginal;
@@ -254,6 +327,7 @@ cFibObjectFitnessAlgorithm::cFibObjectFitnessAlgorithm(
 	}else{
 		pOriginalRoots = NULL;
 	}
+	pthread_mutex_unlock( &mutexOriginalIndividual );
 }
 
 
@@ -261,6 +335,8 @@ cFibObjectFitnessAlgorithm::cFibObjectFitnessAlgorithm(
  * destructor
  */
 cFibObjectFitnessAlgorithm::~cFibObjectFitnessAlgorithm(){
+	
+	pthread_mutex_lock( &mutexOriginalIndividual );
 	
 	if ( pEvaluedPositionsDataOriginal ){
 		delete pEvaluedPositionsDataOriginal;
@@ -287,6 +363,8 @@ cFibObjectFitnessAlgorithm::~cFibObjectFitnessAlgorithm(){
 	if ( bStandardDimensionDomain && ( pVecDomainDimension != NULL ) ){
 		delete pVecDomainDimension;
 	}
+	
+	pthread_mutex_unlock( &mutexOriginalIndividual );
 }
 
 
@@ -341,6 +419,8 @@ bool cFibObjectFitnessAlgorithm::setOriginalIndividual(
 bool cFibObjectFitnessAlgorithm::setOriginalIndividual(
 		cFibIndividual * pInOriginalIndividual ){
 	
+	pthread_mutex_lock( &mutexOriginalIndividual );
+	
 	bOriginalEvalued = false;
 	if ( pEvaluedPositionsDataOriginal ){
 		delete pEvaluedPositionsDataOriginal;
@@ -365,7 +445,7 @@ bool cFibObjectFitnessAlgorithm::setOriginalIndividual(
 		balanceFibTreeLists( (cFibElement*)(pOriginalIndividual->getObject()),
 			FEATURE_ALGORITHM_WITH_BALANCED_FIB_OBJECT );
 #endif //FEATURE_ALGORITHM_WITH_BALANCED_FIB_OBJECT
-		//evalue the dimensions of the original fib -object
+		//evalue the dimensions of the original Fib object
 		bRetunValue = evalueOriginalDimensions();
 		pEvaluedPositionsDataOriginal = new cEvaluePositionListLimit( ulNumberOfPoints * 2,
 			pVecDomainDimension, false, 0, ulNumberOfPoints * 64 );
@@ -376,7 +456,7 @@ bool cFibObjectFitnessAlgorithm::setOriginalIndividual(
 			pEvaluedPositionsDataOriginal->sortPositionsData();
 			bOriginalEvalued = true;
 		}else{
-			DEBUG_OUT_EL1( <<"Error: The original fib -object couldn't be evalued."<<endl );
+			DEBUG_OUT_EL1( <<"Error: The original Fib object couldn't be evalued."<<endl );
 			if ( pEvaluedPositionsDataOriginal ){
 				delete pEvaluedPositionsDataOriginal;
 				pEvaluedPositionsDataOriginal = NULL;
@@ -384,6 +464,8 @@ bool cFibObjectFitnessAlgorithm::setOriginalIndividual(
 			bRetunValue = false;
 		}
 	}
+	pthread_mutex_unlock( &mutexOriginalIndividual );
+	
 	return bRetunValue;
 }
 
@@ -395,7 +477,7 @@ bool cFibObjectFitnessAlgorithm::setOriginalIndividual(
  *
  * @see getOriginalIndividual()
  * @see pOriginalIndividual
- * @param pInOriginalFibObject the fib -object with which the fitness
+ * @param pInOriginalFibObject the Fib object with which the fitness
  * 	should be evalued;
  * 	Beware: this object won't be copied, so don't delete it as long
  * 	as this object exists
@@ -403,23 +485,34 @@ bool cFibObjectFitnessAlgorithm::setOriginalIndividual(
  * 	else false
  */
 bool cFibObjectFitnessAlgorithm::setOriginalFibObject(
-		cFibElement  * pInOriginalFibObject ){
+		cFibElement * pInOriginalFibObject ){
+	
+	DEBUG_OUT_L2(<<"cFibObjectFitnessAlgorithm("<<this<<")::setOriginalFibObject(pInOriginalFibObject="<<pInOriginalFibObject<<") start"<<endl<<flush);
+	
+	pthread_mutex_lock( &mutexOriginalIndividual );
 	
 	bOriginalEvalued = false;
 	if ( pEvaluedPositionsDataOriginal ){
+		DEBUG_OUT_L2(<<"cFibObjectFitnessAlgorithm("<<this<<")::setOriginalFibObject(): delete pEvaluedPositionsDataOriginal ("<<pEvaluedPositionsDataOriginal<<")"<<endl<<flush);
 		delete pEvaluedPositionsDataOriginal;
 		pEvaluedPositionsDataOriginal = NULL;
 	}
 	if ( bOriginalIsFibObject && ( pOriginalIndividual != NULL ) ){
+		DEBUG_OUT_L2(<<"cFibObjectFitnessAlgorithm("<<this<<")::setOriginalFibObject(): delete pOriginalIndividual ("<<pOriginalIndividual<<")"<<endl<<flush);
 		delete pOriginalIndividual;
+		pOriginalIndividual = NULL;
+		bOriginalIsFibObject = false;
 	}
 	if ( pOriginalRoots ){
+		DEBUG_OUT_L2(<<"cFibObjectFitnessAlgorithm("<<this<<")::setOriginalFibObject(): delete pOriginalRoots ("<<pOriginalRoots<<")"<<endl<<flush);
 		cFibElement::deleteObject( pOriginalRoots );
 		pOriginalRoots = NULL;
 	}
+	DEBUG_OUT_L2(<<"cFibObjectFitnessAlgorithm("<<this<<")::setOriginalFibObject(): set pInOriginalFibObject ("<<pInOriginalFibObject<<")"<<endl<<flush);
 	bool bReturnValue = true;
 	if ( pInOriginalFibObject != NULL ){
 		//cIndividualInfo parameter
+		DEBUG_OUT_L2(<<"cFibObjectFitnessAlgorithm("<<this<<")::setOriginalFibObject(): create individual"<<endl<<flush);
 		cFibObjectFitness fitnessDummy( 0.0 );
 		
 		pOriginalIndividual = new cFibIndividual( pInOriginalFibObject,
@@ -429,23 +522,26 @@ bool cFibObjectFitnessAlgorithm::setOriginalFibObject(
 		bOriginalIsFibObject = true;
 		
 		//evalue the root -elements of the individual
+		DEBUG_OUT_L3(<<"cFibObjectFitnessAlgorithm("<<this<<")::setOriginalFibObject(): evalue the root -elements of the individual"<<endl<<flush);
 		pOriginalRoots = createRootTree( pInOriginalFibObject );
 #ifdef FEATURE_ALGORITHM_WITH_BALANCED_FIB_OBJECT
 		balanceFibTreeLists( (cFibElement*)(pOriginalIndividual->getObject()),
 			FEATURE_ALGORITHM_WITH_BALANCED_FIB_OBJECT );
 #endif //FEATURE_ALGORITHM_WITH_BALANCED_FIB_OBJECT
-		//evalue the dimensions of the original fib -object
+		//evalue the dimensions of the original Fib object
+		DEBUG_OUT_L3(<<"cFibObjectFitnessAlgorithm("<<this<<")::setOriginalFibObject(): evalue the dimensions of the original Fib object"<<endl<<flush);
 		bReturnValue = evalueOriginalDimensions();
 		pEvaluedPositionsDataOriginal = new cEvaluePositionListLimit( ulNumberOfPoints * 2,
 			pVecDomainDimension, false, 0, ulNumberOfPoints * 64 );
 		
+		DEBUG_OUT_L3(<<"cFibObjectFitnessAlgorithm("<<this<<")::setOriginalFibObject(): evalue position data ( evalueObjectSimple() )"<<endl<<flush);
 		const bool bObjectEvalued = pInOriginalFibObject->
 			evalueObjectSimple( *pEvaluedPositionsDataOriginal );
 		if ( bObjectEvalued ){
 			pEvaluedPositionsDataOriginal->sortPositionsData();
 			bOriginalEvalued = true;
 		}else{
-			DEBUG_OUT_EL1( <<"Error: The original fib -object couldn't be evalued."<<endl );
+			DEBUG_OUT_EL1( <<"Error: The original Fib object couldn't be evalued."<<endl );
 			if ( pEvaluedPositionsDataOriginal ){
 				delete pEvaluedPositionsDataOriginal;
 				pEvaluedPositionsDataOriginal = NULL;
@@ -453,9 +549,15 @@ bool cFibObjectFitnessAlgorithm::setOriginalFibObject(
 			bReturnValue = false;
 		}
 	}else{
+		DEBUG_OUT_L2(<<"cFibObjectFitnessAlgorithm("<<this<<")::setOriginalFibObject(): no orignal individual given, set NULL"<<endl<<flush);
 		pOriginalIndividual  = NULL;
 		bOriginalIsFibObject = false;
 	}
+	
+	DEBUG_OUT_L2(<<"cFibObjectFitnessAlgorithm("<<this<<")::setOriginalFibObject(pInOriginalFibObject="<<pInOriginalFibObject<<") ended with bReturnValue="<<(bReturnValue?"true":"false")<<endl<<flush);
+	
+	pthread_mutex_unlock( &mutexOriginalIndividual );
+	
 	return bReturnValue;
 }
 
@@ -469,7 +571,13 @@ bool cFibObjectFitnessAlgorithm::setOriginalFibObject(
  */
 cFibIndividual * cFibObjectFitnessAlgorithm::getOriginalIndividual(){
 
-	return (cFibIndividual*)pOriginalIndividual;
+	pthread_mutex_lock( &mutexOriginalIndividual );
+	
+	cFibIndividual * pOutOriginalFibIndividual = (cFibIndividual*)pOriginalIndividual;
+	
+	pthread_mutex_unlock( &mutexOriginalIndividual );
+	
+	return pOutOriginalFibIndividual;
 }
 
 
@@ -485,7 +593,14 @@ const cFibElement * cFibObjectFitnessAlgorithm::getOriginalFibObject(){
 	if ( pOriginalIndividual == NULL ){
 		return NULL;
 	}//else
-	return ((cFibIndividual*)pOriginalIndividual)->getFibObject();
+	pthread_mutex_lock( &mutexOriginalIndividual );
+	
+	cFibElement * pOutOriginalFibObject =
+		((cFibIndividual*)pOriginalIndividual)->getFibObject();
+	
+	pthread_mutex_unlock( &mutexOriginalIndividual );
+	
+	return pOutOriginalFibObject;
 }
 
 
@@ -496,7 +611,7 @@ const cFibElement * cFibObjectFitnessAlgorithm::getOriginalFibObject(){
  * @return a pointer to the originalindividual root -elements;
  * 	The originalindividual is the individual with which the
  * 	fitness is evalued. This methods will yust return ther
- * 	root -elements, with the main -fib -objects set to NULL.
+ * 	root -elements, with the main -Fib objects set to NULL.
  */
 const cRoot * cFibObjectFitnessAlgorithm::getOriginalIndividualRoot(){
 
@@ -505,14 +620,14 @@ const cRoot * cFibObjectFitnessAlgorithm::getOriginalIndividualRoot(){
 
 
 /**
- * This function extracts the root -element tree from the fib -object.
+ * This function extracts the root -element tree from the Fib object.
  * The root -elements will have the same structur as in the given
- * fib -object, but empty points for ther main fib objects.
+ * Fib object, but empty points for ther main fib objects.
  * Beware: delete the returnd fib object after usage.
  *
- * @param pFibObject the fib -object wher to extract the root -elements
- * @return a fib -object with just root -elements of the given
- * 	fib -object pFibObject
+ * @param pFibObject the Fib object wher to extract the root -elements
+ * @return a Fib object with just root -elements of the given
+ * 	Fib object pFibObject
  */
 cRoot * cFibObjectFitnessAlgorithm::createRootTree( const cFibElement * pFibObject ){
 	
@@ -544,7 +659,7 @@ cRoot * cFibObjectFitnessAlgorithm::createRootTree( const cFibElement * pFibObje
 
 
 /**
- * @return the evalued positionslist of the original fib -object or NULL,
+ * @return the evalued positionslist of the original Fib object or NULL,
  * 	if no exists
  */
 const cEvaluePositionList * cFibObjectFitnessAlgorithm::getOriginalPositionList() const{
@@ -555,7 +670,7 @@ const cEvaluePositionList * cFibObjectFitnessAlgorithm::getOriginalPositionList(
 
 
 /**
- * This method evalues the dimensions variables for the original fib -object.
+ * This method evalues the dimensions variables for the original Fib object.
  *
  * evalued class members are:
  * @see uiNumberOfDimensions;
@@ -570,7 +685,7 @@ const cEvaluePositionList * cFibObjectFitnessAlgorithm::getOriginalPositionList(
  */
 bool cFibObjectFitnessAlgorithm::evalueOriginalDimensions() const{
 
-	DEBUG_OUT_L2(<<"cFibObjectFitnessBasicAlgorithm::evalueOriginalDimensions() called"<<endl);
+	DEBUG_OUT_L2(<<"cFibObjectFitnessAlgorithm::evalueOriginalDimensions() called"<<endl);
 	
 	if ( pdDirectionMinimum != NULL ){
 		delete[] pdDirectionMinimum;
@@ -588,12 +703,19 @@ bool cFibObjectFitnessAlgorithm::evalueOriginalDimensions() const{
 		delete pVecDomainDimension;
 	}
 	
-	//evalue the dimensions of the original fib -object
-	cDomains validDomains = const_cast<cFibObjectFitnessAlgorithm*>(
-		this)->getOriginalFibObject()->getValidDomains();
+	//evalue the dimensions of the original Fib object
+	DEBUG_OUT_L3(<<"cFibObjectFitnessAlgorithm::evalueOriginalDimensions(): evalue the dimensions of the original Fib object ( this->getOriginalFibObject() = "<<(((cFibIndividual*)(const_cast<cFibObjectFitnessAlgorithm*>(
+		this)->pOriginalIndividual))->getFibObject())<<" )"<<endl);
+	cDomains validDomains = (((cFibIndividual*)((const_cast<cFibObjectFitnessAlgorithm*>(
+		this))->pOriginalIndividual))->
+		getFibObject())->getValidDomains();
 
 	//evalue the (basic) area to check (the dimensions on which the original is defined)
+	DEBUG_OUT_L3(<<"cFibObjectFitnessAlgorithm::evalueOriginalDimensions(): evalue the (basic) area to check (the dimensions on which the original is defined)"<<endl);
+	DEBUG_OUT_L3(<<"   validDomains.getNumberOfDomains(): "<<validDomains.getNumberOfDomains()<<flush);
+	
 	cDomain * pDomainDimension = validDomains.getDomainForElement( cTypeDimension() );
+	DEBUG_OUT_L3(<<"   pDomainDimension= "<<pDomainDimension<<endl<<flush);
 	
 	bStandardDimensionDomain = false;
 	if ( pDomainDimension == NULL ){
@@ -611,6 +733,7 @@ bool cFibObjectFitnessAlgorithm::evalueOriginalDimensions() const{
 	
 	ulNumberOfPoints   = 1;
 	
+	DEBUG_OUT_L3(<<"cFibObjectFitnessAlgorithm::evalueOriginalDimensions(): start for dimensions"<<endl<<flush);
 	for ( unsigned int uiActualDimension = 1;
 			uiActualDimension <= uiNumberOfDimensions; uiActualDimension++ ){
 		
@@ -651,10 +774,10 @@ bool cFibObjectFitnessAlgorithm::evalueOriginalDimensions() const{
 		
 		ulNumberOfPoints *= pdDirectionSize[ uiActualDimension - 1 ];
 
-		DEBUG_OUT_L4(<<"Dimension "<<uiActualDimension<<" size="<< pdDirectionSize[ uiActualDimension - 1 ] <<" ."<<endl);
+		DEBUG_OUT_L4(<<"Dimension "<<uiActualDimension<<" size="<< pdDirectionSize[ uiActualDimension - 1 ] <<" ."<<endl<<flush);
 	}
 	
-	DEBUG_OUT_L2(<<"cFibObjectFitnessBasicAlgorithm::evalueOriginalDimensions() done"<<endl);
+	DEBUG_OUT_L2(<<"cFibObjectFitnessAlgorithm::evalueOriginalDimensions() done"<<endl<<flush);
 	
 	return true;
 }

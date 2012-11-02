@@ -124,6 +124,11 @@ int main(int argc, char* argv[]){
 		ifstream inFile( pFileWithOriginalData );
 		intFib outStatus = 0;
 		
+		if ( ! inFile.good() ){
+			cerr<<"Error: Can't open file."<<endl;
+			return 1;
+		}
+		
 		pRestoredFibObject = cFibElement::restoreXml( inFile , &outStatus );
 		
 		if ( outStatus == 0 ){
@@ -134,12 +139,17 @@ int main(int argc, char* argv[]){
 				pFileWithOriginalData <<"\" not successfull. (return status="<< outStatus <<")"<<endl;
 		}else{//( outStatus < 0 )
 			cerr<<"Error: Restoring Fib object in the Xml format from the file \""<<
-				pFileWithOriginalData <<"\" not successfull. "<<endl;
+				pFileWithOriginalData <<"\" not successfull. (return status="<< outStatus <<")"<<endl;
 			return 1;
 		}
 	}else{//restore to file in compressed format
 		ifstream inFile( pFileWithOriginalData, ios_base::in | ios_base::binary );
 		intFib outStatus = 0;
+		
+		if ( ! inFile.good() ){
+			cerr<<"Error: Can't open file."<<endl;
+			return 1;
+		}
 		
 		pRestoredFibObject = cFibElement::restore( inFile , &outStatus );
 		
@@ -148,7 +158,7 @@ int main(int argc, char* argv[]){
 				pFileWithOriginalData <<"\" successfull. "<<endl;
 		}else if ( 0 < outStatus ){
 			cerr<<"Warning: Restoring Fib object in the compressed format from the file \""<<
-				pFileWithOriginalData <<"\" not successfull. "<<endl;
+				pFileWithOriginalData <<"\" not successfull. (return status="<< outStatus <<")"<<endl;
 		}else{
 			cerr<<"Error: Restoring Fib object in the compressed format from the file \""<<
 				pFileWithOriginalData <<"\" not successfull. (return status="<< outStatus <<")"<<endl;

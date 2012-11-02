@@ -55,7 +55,7 @@ using namespace enviroment::fib;
 cFibIndividual::cFibIndividual( cFibElement * pInFibObject,
 		const cIndividualInfo & inIndividalInfo,
 		bool bInDeleteObjectOnDestruction ):
-		cIndividual( pInFibObject, inIndividalInfo, bInDeleteObjectOnDestruction),
+		cIndividual( pInFibObject, inIndividalInfo, bInDeleteObjectOnDestruction ),
 		pFibObject( pInFibObject ){
 	//nothing to do
 }

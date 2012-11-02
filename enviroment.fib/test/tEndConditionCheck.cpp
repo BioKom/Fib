@@ -53,6 +53,7 @@ History:
 16.09.2010  Oesterholz  getClassName() added
 24.11.2011  Oesterholz  wait some time befor check isRunning() of enviroment
 15.03.2012  Oesterholz  changes for windows compatibility
+26.10.2012  Oesterholz  fibMilliSleep() delay handling improved (from tEnviroment)
 */
 
 #include "version.h"
@@ -111,6 +112,12 @@ int main(int argc,char* argv[]){
 }
 
 
+#ifdef WINDOWS
+	#include <windows.h>
+#else//WINDOWS
+	#include <unistd.h>
+#endif//WINDOWS
+
 /**
  * This function will sleep for the given number of milli seconds.
  *
@@ -121,11 +128,35 @@ void fibMilliSleep( unsigned long ulMilliSecondsToSleep ){
 #ifdef WINDOWS
 	Sleep( ulMilliSecondsToSleep );
 #else//WINDOWS
+	
 	struct timespec timeToWait;
+	timeToWait.tv_sec  = ulMilliSecondsToSleep / 1000L;
+	timeToWait.tv_nsec = ( ulMilliSecondsToSleep % 1000) * 1000000L; //1000000L = 1 ms
 	struct timespec remainingTime;
-	timeToWait.tv_sec  = 0;
-	timeToWait.tv_nsec = ulMilliSecondsToSleep * 1000000L; //1000000L = 1 ms
-	nanosleep( &timeToWait, &remainingTime );
+
+	//for debugging:
+	//cout<<"Milliseconds to sleep="<<ulMilliSecondsToSleep<<"   time now="<<time( NULL )<<endl;
+	
+	int iReturnNanosleep = 1;
+	while ( iReturnNanosleep != 0 ){
+		//for debugging:
+		//cout<<"befor timeToWait.tv_sec="<<timeToWait.tv_sec<<"   timeToWait.tv_nsec="<<timeToWait.tv_nsec<<endl;
+
+		remainingTime.tv_sec  = 0;
+		remainingTime.tv_nsec = 0;
+		iReturnNanosleep = nanosleep( &timeToWait, &remainingTime );
+		
+		/*for debugging:
+		cout<<"after timeToWait.tv_sec="<<timeToWait.tv_sec<<"   timeToWait.tv_nsec="<<timeToWait.tv_nsec<<
+			"  nanosleep return="<<iReturnNanosleep<<"   time now="<<time( NULL )<<endl;
+		cout<<"   remainingTime.tv_sec="<<remainingTime.tv_sec<<
+			"   remainingTime.tv_nsec="<<remainingTime.tv_nsec<<endl;*/
+		
+		if ( iReturnNanosleep != 0 ){
+			//wait some more
+			timeToWait = remainingTime;
+		}
+	}
 #endif//WINDOWS
 }
 
@@ -570,12 +601,13 @@ int startEnviroment( cEndConditionCheck * pEndConditionCheck ){
 #endif //FEATURE_SIMPLE_CONSTRUCTOR
 	rootOrg.setNumberOfInputVariables( 1 );
 
-	cout<<"cFibObjectFitnessBasicAlgorithm fibObjectAlgorithmBasic( &rootOrg, 1, 1.0, 1.0 );"<<endl;
-	cFibObjectFitnessBasicAlgorithm fibObjectAlgorithmBasic( &rootOrg, 1, 1.0, 1.0 );
+	cout<<"cFibObjectFitnessBasicAlgorithm fibObjectAlgorithmBasic( rootOrg, 1, 1.0, 1.0 );"<<endl;
+	cFibObjectFitnessBasicAlgorithm fibObjectAlgorithmBasic( rootOrg, 1, 1.0, 1.0 );
 	
 	//set the parameter of the enviroment
 	cout<<"bParameterSet = cEnviroment::setParameter( &initEnviroment, &fibObjectAlgorithmBasic, pEndConditionCheck );"<<endl;
-	bool bParameterSet = cEnviroment::setParameter( &initEnviroment, &fibObjectAlgorithmBasic, pEndConditionCheck );
+	const bool bParameterSet = cEnviroment::setParameter(
+		&initEnviroment, &fibObjectAlgorithmBasic, pEndConditionCheck );
 
 	if ( bParameterSet ){
 	
@@ -592,11 +624,12 @@ int startEnviroment( cEndConditionCheck * pEndConditionCheck ){
 	
 		cout<<"An instance of the enviroment could be correctly created. "<<endl;
 	}else{
-		cerr<<"Error: An instance of the enviroment couldn't be created."<<endl;
+		cerr<<"Error: An instance of the enviroment couldn't be created."<<endl<<flush;
 		iReturn++;
+		return iReturn;
 	}
 	//start the enviroment
-	cout<<"pEnviroment->start(); "<<endl;
+	cout<<"pEnviroment->start(); "<<endl<<flush;
 	pEnviroment->start();
 	
 	return iReturn;
@@ -1033,6 +1066,7 @@ int testEndConditionCheck( unsigned long &ulTestphase ){
 		return iReturn;
 	}
 	
+	cout<<"pEnviroment->insertIndividual( &orgIndividual="<<&orgIndividual<<" ); "<<endl<<flush;
 	pEnviroment->insertIndividual( &orgIndividual );
 	
 	fibMilliSleep( 10 );

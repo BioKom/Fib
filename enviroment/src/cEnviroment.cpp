@@ -90,7 +90,7 @@ using namespace enviroment;
 namespace enviroment{
 
 #ifdef WINDOWS
-static HANDLE mutexIndividuals = CreateMutex( 
+static HANDLE mutexIndividuals = CreateMutex(
 	NULL,	// default security attributes
 	FALSE,	// initially not owned
 	NULL);	// unnamed mutex
@@ -134,7 +134,7 @@ public:
 	 */
 	~cIndividualInformation(){
 		
-/*don't delete the individual hear; this object isn't respnsible for it,
+/*don't delete the individual here; this object isn't responsible for it,
 but the enviroment destructor is
 		if ( pIndividual ){
 			delete pIndividual;
@@ -844,13 +844,13 @@ bool cEnviroment::start(){
 
 #ifdef WINDOWS
 	DWORD   dwThreadId = 0;
-	pThreadEnviroment = CreateThread( 
+	pThreadEnviroment = CreateThread(
 		NULL, //default security attributes
-		0, //use default stack size  
+		0, //use default stack size
 		(LPTHREAD_START_ROUTINE)&(cEnviroment::runTread), //thread function name
-		this, //argument to thread function 
-		0, //use default creation flags 
-		&dwThreadId ); //returns the thread identifier 
+		this, //argument to thread function
+		0, //use default creation flags
+		&dwThreadId ); //returns the thread identifier
 	
 	const int iReturn = ( pThreadEnviroment == NULL ) ? 1 : 0 ;
 #else //WINDOWS
@@ -903,8 +903,14 @@ bool cEnviroment::run(){
 	
 	//initializize the enviroment
 	DEBUG_OUT_L2(<<"Init enviroment"<<endl<<flush);
-	pInitEnviroment->initEnviroment();
+	if ( pInitEnviroment ){
+		pInitEnviroment->initEnviroment();
+	}else{
+		DEBUG_OUT_EL2(<<"Can't init enviroment. No object for it."<<endl<<flush);
+		return false;
+	}
 	
+	DEBUG_OUT_L2(<<"While the enviroment isn't stoped, execute operations"<<endl<<flush);
 	//while the enviroment isn't stoped, execute operations
 	while ( ( ! bStopFlag ) && ( ! pEndCondition->endConditionCheck() ) ){
 		
@@ -1461,6 +1467,7 @@ bool cEnviroment::insertIndividual( const cIndividual * pInIndividual,
 		return false;
 	}
 	//create a copy of the individual
+	DEBUG_OUT_L3(<<"cEnviroment::insertIndividual(): create a copy of the individual"<<endl<<flush);
 	cIndividual * pIndividualClone = pInIndividual->clone( true );
 	//check the fitness of the individual
 	bool bFitnessUpdated = false;
@@ -1472,7 +1479,7 @@ bool cEnviroment::insertIndividual( const cIndividual * pInIndividual,
 			getFitnessAlgorithm() );
 	}
 	if ( bFitnessUpdated ){
-		DEBUG_OUT_L2(<<"cEnviroment::insertIndividual("<< pInIndividual <<", "<<pProducerOperation<<") fitnessvalue updated"<<endl<<flush);
+		DEBUG_OUT_L2(<<"cEnviroment::insertIndividual("<< pInIndividual <<", "<<pProducerOperation<<") fitness value updated"<<endl<<flush);
 		//TODO: add evaluation time of the fitness to the operation time
 		
 		//TODO: remember when and how often the fitness was updated for the operation
@@ -1481,12 +1488,14 @@ bool cEnviroment::insertIndividual( const cIndividual * pInIndividual,
 	
 	if ( pProducerOperation ){
 		//remember the operation for the individual
+		DEBUG_OUT_L3(<<"cEnviroment::insertIndividual(): remember the operation for the individual"<<endl<<flush);
 		pthread_mutex_lock( & mutexOperationsRunning );
 		mapRunningOperations[ const_cast<cOperation *>( pProducerOperation ) ].liCreatedIndividuals.
 			push_back( *(pIndividualClone->getInfo()) );
 		pthread_mutex_unlock( & mutexOperationsRunning );
 	}
 	//insert the new individual
+	DEBUG_OUT_L3(<<"cEnviroment::insertIndividual(): insert the new individual"<<endl<<flush);
 	pthread_mutex_lock( & mutexIndividuals );
 	
 	mapLivingIndividuals.insert( make_pair( pIndividualClone->getInfo()->getIdentifier(),
@@ -1497,6 +1506,7 @@ bool cEnviroment::insertIndividual( const cIndividual * pInIndividual,
 	
 	pthread_mutex_lock( & mutexIndividualListeners );
 	//notify the listeners for population changes about the new individual
+	DEBUG_OUT_L3(<<"cEnviroment::insertIndividual(): notify the listeners for population changes about the new individual"<<endl<<flush);
 	for ( set<clNewIndividualListener *>::iterator
 			itrIndividualListener = setIndividualListener.begin();
 			itrIndividualListener != setIndividualListener.end(); itrIndividualListener++ ){
@@ -1507,6 +1517,7 @@ bool cEnviroment::insertIndividual( const cIndividual * pInIndividual,
 	pthread_mutex_unlock( & mutexIndividuals );
 	
 	//if to much individuals are in the population
+	DEBUG_OUT_L3(<<"cEnviroment::insertIndividual(): if to much individuals are in the population"<<endl<<flush);
 	while ( pMaximumIndividuals->maximumReached() ){
 		//till the maximal numer of individuals isn't reached -> delete individual
 		removeIndividual( pSelectIndividualToDelete->getIndividualIdentifier() );

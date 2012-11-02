@@ -34,6 +34,7 @@
 /*
 History:
 26.02.2010  Oesterholz  created
+02.11.2012  Oesterholz  Bugfix: mutex for original individual
 */
 
 
@@ -47,7 +48,15 @@ using namespace enviroment;
  */
 cObjectFitnessAlgorithm::cObjectFitnessAlgorithm():
 		pOriginalIndividual( NULL ){
-	//nothing to do
+	
+#ifdef WINDOWS
+	mutexOriginalIndividual = CreateMutex(
+		NULL,	// default security attributes
+		FALSE,	// initially not owned
+		NULL);	// unnamed mutex
+#else //WINDOWS
+	pthread_mutex_init( &mutexOriginalIndividual, NULL );
+#endif //WINDOWS
 }
 
 
@@ -61,7 +70,15 @@ cObjectFitnessAlgorithm::cObjectFitnessAlgorithm():
  */
 cObjectFitnessAlgorithm::cObjectFitnessAlgorithm( cIndividual * pInOriginalIndividual ):
 		pOriginalIndividual( pInOriginalIndividual ){
-	//nothing to do
+	
+#ifdef WINDOWS
+	mutexOriginalIndividual = CreateMutex(
+		NULL,	// default security attributes
+		FALSE,	// initially not owned
+		NULL);	// unnamed mutex
+#else //WINDOWS
+	pthread_mutex_init( &mutexOriginalIndividual, NULL );
+#endif //WINDOWS
 }
 
 
@@ -73,14 +90,27 @@ cObjectFitnessAlgorithm::cObjectFitnessAlgorithm( cIndividual * pInOriginalIndiv
 cObjectFitnessAlgorithm::cObjectFitnessAlgorithm( const cObjectFitnessAlgorithm &
 		objectFitnessAlgorithm ):
 		pOriginalIndividual( objectFitnessAlgorithm.pOriginalIndividual ){
-	//nothing to do
+	
+#ifdef WINDOWS
+	mutexOriginalIndividual = CreateMutex(
+		NULL,	// default security attributes
+		FALSE,	// initially not owned
+		NULL);	// unnamed mutex
+#else //WINDOWS
+	pthread_mutex_init( &mutexOriginalIndividual, NULL );
+#endif //WINDOWS
 }
 
 /**
  * Destructor of the class cObjectFitnessAlgorithm.
  */
 cObjectFitnessAlgorithm::~cObjectFitnessAlgorithm(){
-	//nothing to do
+	
+#ifdef WINDOWS
+	CloseHandle( mutexOriginalIndividual );
+#else //WINDOWS
+	pthread_mutex_destroy( &mutexOriginalIndividual );
+#endif //WINDOWS
 }
 
 
@@ -105,7 +135,12 @@ string cObjectFitnessAlgorithm::getClassName() const{
  * 	else false
  */
 bool cObjectFitnessAlgorithm::setOriginalIndividual( cIndividual * pInOriginalIndividual ){
+	
+	pthread_mutex_lock( &mutexOriginalIndividual );
+	
 	pOriginalIndividual = pInOriginalIndividual;
+	
+	pthread_mutex_unlock( &mutexOriginalIndividual );
 	return true;
 }
 
@@ -118,7 +153,14 @@ bool cObjectFitnessAlgorithm::setOriginalIndividual( cIndividual * pInOriginalIn
  * 	fitness is evalued.
  */
 cIndividual * cObjectFitnessAlgorithm::getOriginalIndividual(){
-	return pOriginalIndividual;
+	
+	pthread_mutex_lock( &mutexOriginalIndividual );
+	
+	cIndividual * pOutOriginalIndividual = pOriginalIndividual;
+	
+	pthread_mutex_unlock( &mutexOriginalIndividual );
+	
+	return pOutOriginalIndividual;
 }
 
 /**
@@ -130,10 +172,38 @@ cIndividual * cObjectFitnessAlgorithm::getOriginalIndividual(){
  */
 const cIndividual * cObjectFitnessAlgorithm::getOriginalIndividual() const{
 
-	return pOriginalIndividual;
+	pthread_mutex_lock( &mutexOriginalIndividual );
+	
+	const cIndividual * pOutOriginalIndividual = pOriginalIndividual;
+	
+	pthread_mutex_unlock( &mutexOriginalIndividual );
+	
+	return pOutOriginalIndividual;
 }
 
 
+#ifdef WINDOWS
+/**
+ * Wraper function for windows.
+ * Wait till the given mutex is free and than locks it.
+ * @param pMutexHandle pointer to the mutex to lock.
+ */
+void cObjectFitnessAlgorithm::pthread_mutex_lock( HANDLE * pMutexHandle ){
+	
+	WaitForSingleObject( &pMutexHandle, INFINITE);
+}
+
+/**
+ * Wraper function for windows.
+ * Unlocks the given mutex.
+ * @param pMutexHandle pointer to the mutex to unlock.
+ */
+void cObjectFitnessAlgorithm::pthread_mutex_unlock( HANDLE * pMutexHandle ){
+	
+	ReleaseMutex( &pMutexHandle );
+}
+
+#endif //WINDOWS
 
 
 

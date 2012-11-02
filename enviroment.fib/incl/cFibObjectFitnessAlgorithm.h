@@ -28,7 +28,7 @@
  * @see cObjectFitnessAlgorithm
  * This header specifies the abstract basisclass of fib -enviroment algorithm
  * for creating fib -fitness objects.
- * The better (higher) the fitness the better the fib -object, the more likly
+ * The better (higher) the fitness the better the Fib object, the more likly
  * it should live and children should be created from it.
  *
  */
@@ -36,6 +36,8 @@
 History:
 26.02.2010  Oesterholz  created
 12.09.2010  Oesterholz  getOriginalPositionList() method implemented
+31.10.2012  Oesterholz  cFibObjectFitnessAlgorithm() constructor with
+	input reference Fib object created
 */
 
 #ifndef ___C_FIB_OBJECT_FITNESS_ALGORITHMUS_H__
@@ -67,24 +69,24 @@ protected:
 	
 	/**
 	 * the root -elements of original object, without ther
-	 * main -fib -objects (they are replaced by empty points)
+	 * main -Fib objects (they are replaced by empty points)
 	 */
 	cRoot * pOriginalRoots;
 	
 	/**
-	 * if true the original individual is given as an fib -object cFibElement
+	 * if true the original individual is given as an fib object cFibElement
 	 * and not an cFibIndividual
 	 */
 	bool bOriginalIsFibObject;
 	
 	/**
-	 * The evalued position list of the original fib -object or NULL, if
+	 * The evalued position list of the original Fib object or NULL, if
 	 * non exists.
 	 */
 	mutable cEvaluePositionList * pEvaluedPositionsDataOriginal;
 	
 	/**
-	 * If true the positionsdata of the original fib -object
+	 * If true the positionsdata of the original Fib object
 	 * liEvaluedPositionsDataOriginal was evalued, else false.
 	 */
 	mutable bool bOriginalEvalued;
@@ -210,12 +212,20 @@ public:
 	/**
 	 * constructor
 	 *
-	 * @param pInOriginalFibObject the fib -object with which the fitness
+	 * @param pInOriginalFibObject the Fib object with which the fitness
 	 * 	should be evalued;
 	 * 	Beware: this object won't be copied, so don't delete it as long
 	 * 	as this object exists
 	 */
 	cFibObjectFitnessAlgorithm( cFibElement * pInOriginalFibObject );
+
+	/**
+	 * constructor
+	 *
+	 * @param inOriginalFibObject the fib object with which the fitness
+	 * 	should be evalued;
+	 */
+	cFibObjectFitnessAlgorithm( const cFibElement & inOriginalFibObject );
 
 	/**
 	 * copyconstructor
@@ -296,7 +306,7 @@ public:
 	 *
 	 * @see getOriginalIndividual()
 	 * @see pOriginalIndividual
-	 * @param pInOriginalFibObject the fib -object with which the fitness
+	 * @param pInOriginalFibObject the Fib object with which the fitness
 	 * 	should be evalued;
 	 * 	Beware: this object won't be copied, so don't delete it as long
 	 * 	as this object exists
@@ -331,7 +341,7 @@ public:
 	 * 	or NULL if non exists;
 	 * 	The originalindividual is the individual with which the
 	 * 	fitness is evalued. This methods will yust return ther
-	 * 	root -elements, with the main -fib -objects set to NULL.
+	 * 	root -elements, with the main -Fib objects set to NULL.
 	 */
 	const cRoot * getOriginalIndividualRoot();
 
@@ -366,7 +376,7 @@ public:
 	virtual const cFibObjectFitness * getWorstCaseFitness() const = 0;
 	
 	/**
-	 * @return the evalued positionslist of the original fib -object or
+	 * @return the evalued positionslist of the original Fib object or
 	 * 	NULL, if no exists
 	 */
 	const cEvaluePositionList * getOriginalPositionList() const;
@@ -375,19 +385,19 @@ public:
 protected:
 
 	/**
-	 * This function extracts the root -element tree from the fib -object.
+	 * This function extracts the root -element tree from the Fib object.
 	 * The root -elements will have the same structur as in the given
-	 * fib -object, but  empty points for ther main -fib -objects.
+	 * Fib object, but  empty points for ther main -Fib objects.
 	 * Beware: delete the returnd fib object after usage.
 	 *
-	 * @param pFibObject the fib -object wher to extract the root -elements
-	 * @return a fib -object with just root -elements of the given
-	 * 	fib -object pFibObject
+	 * @param pFibObject the Fib object wher to extract the root -elements
+	 * @return a Fib object with just root -elements of the given
+	 * 	Fib object pFibObject
 	 */
 	cRoot * createRootTree( const cFibElement * pFibObject );
 
 	/**
-	 * This method evalues the dimensions variables for the original fib -object.
+	 * This method evalues the dimensions variables for the original Fib object.
 	 *
 	 * evalued class members are:
 	 * @see uiNumberOfDimensions;

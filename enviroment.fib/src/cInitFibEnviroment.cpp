@@ -35,7 +35,12 @@
 /*
 History:
 15.03.2010  Oesterholz  created
+15.03.2010  Oesterholz  in initEnviroment() lokal pOriginalIndividual
+	changed to pIndOriginalIndividual
 */
+
+//TODO weg
+//#define DEBUG
 
 
 #include "cInitFibEnviroment.h"
@@ -97,48 +102,64 @@ cInitFibEnviroment::~cInitFibEnviroment(){
  */
 bool cInitFibEnviroment::initEnviroment() const{
 	
+	DEBUG_OUT_L2(<<"cInitFibEnviroment("<<this<<")::initEnviroment() start"<<endl<<flush);
+	
+	DEBUG_OUT_L2(<<"cInitFibEnviroment("<<this<<")::initEnviroment(): get enviroment"<<endl<<flush);
 	cEnviroment * pEnviroment = cEnviroment::getInstance();
 	
 	if ( pEnviroment == NULL ){
 		//can't initialisize
+		DEBUG_OUT_EL2(<<"cInitFibEnviroment("<<this<<")::initEnviroment() done; Error: can't initialisize, no enviroment"<<endl<<flush);
 		return false;
 	}
+	DEBUG_OUT_L2(<<"cInitFibEnviroment("<<this<<")::initEnviroment(): get fitness algorithm"<<endl<<flush);
 	const cObjectFitnessAlgorithm * pFitnessAlgorithm =
 		pEnviroment->getFitnessAlgorithm();
 	
 	if ( pFitnessAlgorithm == NULL ){
 		//can't initialisize
+		DEBUG_OUT_EL2(<<"cInitFibEnviroment("<<this<<")::initEnviroment() done; Error: can't initialisize, no fitness algorithm"<<endl<<flush);
 		return false;
 	}
 	if ( pFitnessAlgorithm->getClassName().compare( 0, 17, "cFibObjectFitness" ) != 0 ){
 		//can't initialisize -> not an fib -enviroment
+		DEBUG_OUT_EL2(<<"cInitFibEnviroment("<<this<<")::initEnviroment() done; Error: can't initialisize -> not an fib enviroment, but "<<pFitnessAlgorithm->getClassName()<<endl<<flush);
 		return false;
 	}
 	if ( pOriginalIndividual ){
-		//load the originalindividual
+		//load the original individual
+		DEBUG_OUT_L2(<<"cInitFibEnviroment("<<this<<")::initEnviroment(): load the original individual ("<<pOriginalIndividual<<") into the fitness algorithm ("<<pFitnessAlgorithm<<")"<<endl<<flush);
 		((cFibObjectFitnessAlgorithm*)(pFitnessAlgorithm))->
 			setOriginalFibObject( pOriginalIndividual );
 	}
 	
 	//insert a individual into the enviroment (cEnviroment)
-	cFibIndividual * pOriginalIndividual = ((cFibObjectFitnessAlgorithm*)(
+	DEBUG_OUT_L2(<<"cInitFibEnviroment("<<this<<")::initEnviroment(): get original individual"<<endl<<flush);
+	cFibIndividual * pIndOriginalIndividual = ((cFibObjectFitnessAlgorithm*)(
 		pFitnessAlgorithm))->getOriginalIndividual();
+		
+	DEBUG_OUT_L2(<<"cInitFibEnviroment("<<this<<")::initEnviroment(): the original individual ("<<pIndOriginalIndividual<<") will be used"<<endl<<flush);
 	
-	if ( pOriginalIndividual == NULL ){
+	if ( pIndOriginalIndividual == NULL ){
 		//can't initialisize -> not original individual
+		DEBUG_OUT_EL2(<<"cInitFibEnviroment("<<this<<")::initEnviroment() done; Error: can't initialisize -> not original individual"<<endl<<flush);
 		return false;
 	}
+	DEBUG_OUT_L2(<<"cInitFibEnviroment("<<this<<")::initEnviroment(): set the original individual ("<<pIndOriginalIndividual<<") for the the enviroment"<<endl<<flush);
 	const bool bIndividualInserted =
-		pEnviroment->insertIndividual( pOriginalIndividual );
+		pEnviroment->insertIndividual( pIndOriginalIndividual );
 	if ( ! bIndividualInserted ){
 		//can't initialisize
+		DEBUG_OUT_EL2(<<"cInitFibEnviroment("<<this<<")::initEnviroment() done; Error: can't initialisize"<<endl<<flush);
 		return false;
 	}
 	
 	if ( pEnviroment->getOperatorFitnessAlgorithm() == NULL ){
-		//the enviromentparameters arn't correct
+		//the enviroment parameters arn't correct
+		DEBUG_OUT_EL2(<<"cInitFibEnviroment("<<this<<")::initEnviroment() done; Error: the enviroment parameters arn't correct"<<endl<<flush);
 		return false;
 	}
+	DEBUG_OUT_L2(<<"cInitFibEnviroment("<<this<<")::initEnviroment(): get list of possible operators"<<endl<<flush);
 	list<const cOperation*> liOperations =
 		pEnviroment->getOperatorFitnessAlgorithm()->getPossibleOperators();
 	//call the cInitOperator
@@ -147,19 +168,27 @@ bool cInitFibEnviroment::initEnviroment() const{
 		
 		if ( (*itrOperation)->getName() == "cInitOperator" ){
 			
+			DEBUG_OUT_L2(<<"cInitFibEnviroment("<<this<<")::initEnviroment(): create init operator ("<<(*itrOperation)<<")"<<endl<<flush);
+			
 			cOperationIdentifier operationId( pEnviroment->getAlgorithmIdentifier() );
 			
 			cOperation * pInitOperation = (*itrOperation)->createInstance( operationId );
 			
 			if ( pInitOperation != NULL ){
+				DEBUG_OUT_L2(<<"cInitFibEnviroment("<<this<<")::initEnviroment(): call init operator ("<<(*itrOperation)<<")"<<endl<<flush);
 				pInitOperation->run();
 				delete pInitOperation;
 			}else{//error: couldn't create the init operation
+				DEBUG_OUT_EL2(<<"cInitFibEnviroment("<<this<<")::initEnviroment() done; Error: couldn't create the init operation"<<endl<<flush);
+				
 				return false;
 			}
 			break;
 		}
 	}
+	
+	DEBUG_OUT_L2(<<"cInitFibEnviroment("<<this<<")::initEnviroment() done"<<endl<<flush);
+	
 	return true;
 }
 

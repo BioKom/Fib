@@ -30,7 +30,7 @@
  * @see cObjectFitnessAlgorithm
  * This header specifies the simple class of fib -enviroment algorithm
  * for creating fib -fitness objects.
- * The better (higher) the fitness the better the fib -object, the more likly
+ * The better (higher) the fitness the better the Fib object, the more likly
  * it should live and children should be created from it.
  *
  */
@@ -40,9 +40,11 @@ History:
 18.04.2010  Oesterholz  evalueObject() methods changed: not a function but
 	an object is given to evalue the data
 30.04.2010  Oesterholz  using cEvaluePositionListMemLimit to evalue the
-	given (non original) fib -objects
+	given (non original) Fib objects
 05.07.2010  Oesterholz  some functions moved to classes in namespace fib
 12.09.2010  Oesterholz  changes for the getOriginalPositionList() method
+31.10.2012  Oesterholz  cFibObjectFitnessAlgorithm() constructor with
+	input reference Fib object created
 */
 
 #ifndef ___C_FIB_OBJECT_FITNESS_BASIC_ALGORITHMUS_H__
@@ -86,7 +88,7 @@ protected:
 	 */
 	double dWeightEvaluationTime;
 	
-//helpvariable members
+//help variable members
 
 	/**
 	 * A pointer to the best possible fitness the algorithm can create.
@@ -122,9 +124,9 @@ public:
 	 * 	Beware: this object won't be copied, so don't delete it as long
 	 * 	as this object exists
 	 * @param dInWeightDistanceToOriginal the weight for the distance to original value
-	 * @param dInWeightSize the weight for the fib -object size value
+	 * @param dInWeightSize the weight for the Fib object size value
 	 * @param dInWeightEvaluationTime the weight for the evaluation time of
-	 * 	the fib -object
+	 * 	the Fib object
 	 */
 	cFibObjectFitnessBasicAlgorithm( cFibIndividual * pInOriginalIndividual,
 		double dInWeightDistanceToOriginal=1.0, double dInWeightSize=1.0,
@@ -134,16 +136,31 @@ public:
 	 * constructor
 	 *
 	 * @see cFibObjectFitnessBasic
-	 * @param  pOriginalFibElement the fib -object with which the fitness
+	 * @param  pOriginalFibElement the Fib object with which the fitness
 	 * 	should be evalued;
 	 * 	Beware: this object won't be copied, so don't delete it as long
 	 * 	as this object exists
 	 * @param dInWeightDistanceToOriginal the weight for the distance to original value
-	 * @param dInWeightSize the weight for the fib -object size value
+	 * @param dInWeightSize the weight for the Fib object size value
 	 * @param dInWeightEvaluationTime the weight for the evaluation time of
-	 * 	the fib -object
+	 * 	the Fib object
 	 */
 	cFibObjectFitnessBasicAlgorithm( cFibElement * pOriginalFibElement,
+		double dInWeightDistanceToOriginal=1.0, double dInWeightSize=1.0,
+		double dInWeightEvaluationTime=1.0 );
+
+	/**
+	 * constructor
+	 *
+	 * @see cFibObjectFitnessBasic
+	 * @param  inOriginalFibElement the Fib object with which the fitness
+	 * 	should be evalued
+	 * @param dInWeightDistanceToOriginal the weight for the distance to original value
+	 * @param dInWeightSize the weight for the Fib object size value
+	 * @param dInWeightEvaluationTime the weight for the evaluation time of
+	 * 	the Fib object
+	 */
+	cFibObjectFitnessBasicAlgorithm( const cFibElement & inOriginalFibElement,
 		double dInWeightDistanceToOriginal=1.0, double dInWeightSize=1.0,
 		double dInWeightEvaluationTime=1.0 );
 
@@ -189,7 +206,7 @@ public:
 	 * Beware: You have to delete the returned fitness after usage.
 	 *
 	 * @see pOriginalIndividual
-	 * @param fibObject the fib -object for which a fitnessobject should
+	 * @param fibObject the Fib object for which a fitnessobject should
 	 * 	be created
 	 * @return the fitnessobject for the fitness of the given fibObject or
 	 * 	NULL, if no fitness could be created
@@ -197,43 +214,43 @@ public:
 	virtual cFibObjectFitnessBasic * evalueFitness( const cFibElement * fibObject ) const;
 
 	/**
-	 * This method evalues the difference betwean the orginal fib -object
-	 * and the given fib -object fibObject on an area.
+	 * This method evalues the difference betwean the orginal Fib object
+	 * and the given Fib object fibObject on an area.
 	 * It is the sum of the distances of all values of propertyvectorelements
-	 * betwean the represented and original fib -object of all positions
+	 * betwean the represented and original Fib object of all positions
 	 * which are inside the dimension bounderies and are in fibObjectArea,
 	 * if given (not NULL).
 	 *
-	 * @param fibObject the fib -object to which the difference is to evalue
+	 * @param fibObject the Fib object to which the difference is to evalue
 	 * @param fibObjectArea if given (not NULL) the points/positions of
-	 * 	this (evalued) fib -object are the positions for which the
+	 * 	this (evalued) Fib object are the positions for which the
 	 * 	distance is evalued (other points will be ignored)
-	 * @return a value for the difference betwean the orginal fib -object
-	 * 	and the given fib -object fibObject, or -1.0 if an error occured
+	 * @return a value for the difference betwean the orginal Fib object
+	 * 	and the given Fib object fibObject, or -1.0 if an error occured
 	 */
 	virtual double evalueDistance( const cFibElement *fibElement,
 		const cFibElement *fibElementArea=NULL  ) const;
 
 	/**
-	 * This method evalues the difference betwean the orginal fib -object
+	 * This method evalues the difference betwean the orginal Fib object
 	 * and the given points with ther properties.
 	 * It is the sum of the distances of all values of propertyvectorelements
-	 * betwean the represented and original fib -object of all positions
+	 * betwean the represented and original Fib object of all positions
 	 * which are inside the dimension bounderies.
 	 *
 	 * @param liPointWithProperties the list with the points and ther
 	 * 	properties for which to evalue the distance
-	 * @return a value for the difference betwean the orginal fib -object
+	 * @return a value for the difference betwean the orginal Fib object
 	 * 	and the given liPointWithProperties, or -1.0 if an error occured
 	 */
 	virtual double evalueDistance( list< pair< cVectorPosition,
 		list< cVectorProperty > > > & liPointWithProperties ) const;
 
 	/**
-	 * This method evalues the difference betwean the orginal fib -object
-	 * and the given fib -object fibObject on an area.
+	 * This method evalues the difference betwean the orginal Fib object
+	 * and the given Fib object fibObject on an area.
 	 * It is the sum of the distances of all values of propertyvectorelements
-	 * betwean the represented and original fib -object of all positions
+	 * betwean the represented and original Fib object of all positions
 	 * which are inside the dimension bounderies and are in fibObjectArea.
 	 *
 	 * @param liPointWithProperties the list with the points and ther
@@ -243,7 +260,7 @@ public:
 	 * 	will be ignored)
 	 * 	(the list< cVectorProperty > is included for consistencie, but
 	 * 	it is ignored in this method)
-	 * @return a value for the difference betwean the orginal fib -object
+	 * @return a value for the difference betwean the orginal Fib object
 	 * 	and the given liPointWithProperties, or -1.0 if an error occured
 	 */
 	virtual double evalueDistanceInArea( list< pair< cVectorPosition,
@@ -293,7 +310,7 @@ public:
 	 *
 	 * @see getOriginalIndividual()
 	 * @see pOriginalIndividual
-	 * @param pInOriginalFibObject the fib -object with which the fitness
+	 * @param pInOriginalFibObject the Fib object with which the fitness
 	 * 	should be evalued;
 	 * 	Beware: this object won't be copied, so don't delete it as long
 	 * 	as this object exists

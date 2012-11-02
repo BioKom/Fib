@@ -16,6 +16,14 @@ tEnviroment:
   - fix getCpuRunTime()
 
 
+cFibObjectFitness*Algorithm:
+	- prevent use (like evalueFitness() ) of an individual (object) which is
+	deleted at the time (including original individual)
+
+cFibObjectFitnessBasicAlgorithm:
+	- getBestFitness() + getWorstCaseFitness() of fitness which is updated
+	-- use mutex + only return objects (not pointers)
+
 nice to have:
 =============
 

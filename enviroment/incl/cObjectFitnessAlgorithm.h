@@ -34,6 +34,7 @@
 /*
 History:
 26.02.2010  Oesterholz  created
+02.11.2012  Oesterholz  Bugfix: mutex for original individual
 */
 
 #ifndef ___C_OBJECT_FITNESS_ALGORITHMUS_H__
@@ -44,6 +45,7 @@ History:
 #include "cObjectFitness.h"
 
 #include <string>
+#include <pthread.h>
 
 
 using std::string;
@@ -66,6 +68,12 @@ protected:
 	 */
 	cIndividual * pOriginalIndividual;
 	
+#ifdef WINDOWS
+	mutable HANDLE mutexOriginalIndividual;
+#else //WINDOWS
+	mutable pthread_mutex_t mutexOriginalIndividual;
+#endif //WINDOWS
+
 public:
 
 	/**
@@ -175,6 +183,24 @@ public:
 	 * @return a refernce to the worst case fitness or NULL, if non can be created
 	 */
 	virtual const cObjectFitness * getWorstCaseFitness() const = 0;
+
+protected:
+	
+#ifdef WINDOWS
+	/**
+	 * Wraper function for windows.
+	 * Wait till the given mutex is free and than locks it.
+	 * @param pMutexHandle pointer to the mutex to lock.
+	 */
+	static void pthread_mutex_lock( HANDLE * pMutexHandle );
+
+	/**
+	 * Wraper function for windows.
+	 * Unlocks the given mutex.
+	 * @param pMutexHandle pointer to the mutex to unlock.
+	 */
+	static void pthread_mutex_unlock( HANDLE * pMutexHandle );
+#endif //WINDOWS
 
 };//end class cObjectFitnessAlgorithm
 
