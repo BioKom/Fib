@@ -531,6 +531,26 @@ Beispiel:
 \end{itemize}
 
 
+\paragraph{Modulo}
+\index{Funktion!Modulo}
+\index{Funktion!mod}
+
+Diese Funktion stellt den symmetrischen Modulo Operator bereit. Der symmetrische Modulo Operator gibt den Rest beim ganzzahliger Division aus.
+( $mod( x, y ) = x - y * int(x/y)$; wobei $int$ das Abschneiden der Nachkommastellen bezeichnet )
+
+\bigskip\noindent
+Syntax:
+$UF=mod( UF_1, UF_2 )$
+
+\bigskip\noindent
+Beispiele:
+\begin{itemize}
+ \item $fun(x, mod( -12.3, 3 ), Obj)$; der zur"uckgegebene Wert ist $-0.3$
+ \item $fun(x, mod( 6.5, 0.5 ), Obj)$; der zur"uckgegebene Wert ist $0$
+ \item $fun(x, mod( -4.687, -3 ), Obj)$; der zur"uckgegebene Wert ist $-1.687$
+\end{itemize}
+
+
 \paragraph{Exponent}
 \index{Funktion!Exponential}
 
@@ -674,6 +694,7 @@ Beispiele:
  \item $fun(x, round(6.5), Obj)$; der zur"uckgegebene Wert ist 7
  \item $fun(x, round(-4.687), Obj)$; der zur"uckgegebene Wert ist -5
 \end{itemize}
+
 
 %TODO? floor ceil
 

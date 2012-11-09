@@ -509,6 +509,26 @@ Examples:
 \end{itemize}
 
 
+\paragraph{Modulo}
+\index{Funktion!modulo}
+\index{Funktion!mod}
+
+This function provides the symmetric modulo operator. The symmetric modulo operator returns the remainder of the integer division.
+( $mod(x, y) = x - y * int (x / y)$, where $int$ refers to the truncation of the decimal digits)
+
+\bigskip\noindent
+Syntax:
+$UF=mod( UF_1, UF_2 )$
+
+\bigskip\noindent
+Examples:
+\begin{itemize}
+ \item $fun(x, mod( -12.3, 3 ), Obj)$; the evalued value is $-0.3$
+ \item $fun(x, mod( 6.5, 0.5 ), Obj)$; the evalued value is $0$
+ \item $fun(x, mod( -4.687, -3 ), Obj)$; the evalued value is $-1.687$
+\end{itemize}
+
+
 \paragraph{Exponent}
 \index{function!exponent}
 

@@ -6778,7 +6778,7 @@ Diese Methode gibt eine Ganzzahl zur"uck, "uber die der Typ der Unterfunktion be
 	25 & \verb|cFunctionMin|: Minimum & \verb|FUNCTION_MIN| \\\hline
 	26 & \verb|cFunctionMax|: Maximum & \verb|FUNCTION_MAX| \\\hline
 	30 & \verb|cFunctionIf|: If-Funktion & \verb|FUNCTION_IF| \\\hline
-	31 & \verb|cFunctionDelay|: Delay-Funktion & \verb|FUNCTION_DELAY| \\\hline
+	31 & \verb|cFunctionMod|: Modulo-Funktion & \verb|FUNCTION_MOD| \\\hline
 \end{tabular}
 
 
@@ -7431,6 +7431,50 @@ Diese Methode gibt den Wert des Quotienten der Werte der enthaltenden Unterfunkt
 
 \bigskip\noindent
 \textbf{R"uckgabe:} Den Wert des Quotienten der Werte der enthaltenden Unterfunktionen (mit \verb|getValue()| dieser ermittelt).
+
+
+
+\subsubsection{cFunctionMod f"ur Modulo}\index{Funktion!cFunctionMod}\index{cFunctionMod}\index{Funktion!Modulo}
+
+Die Klasse \verb|cFunctionMod| realisiert den symmetrischen Modulo Operator zweier Zahlen bzw. Unterfunktionswerte. 
+Der symmetrische Modulo Operator gibt den Rest beim ganzzahliger Division von $W_1$ und $W_2$ aus.
+( $mod( W_1, W_2 ) = W_1 - W_2 * int(W_1/W_2)$; wobei $int$ das Abschneiden der Nachkommastellen bezeichnet ) Die ersten Unterfunktion liefert also den Dividend und die zweite den Divisor des Quotienten.
+
+\paragraph{cFunctionMod}
+
+\ \\\\\noindent
+\textbf{Syntax:} \verb|cFunctionMod(| \\\verb| cUnderFunction * pFirstUnderFunction,| \\\verb| cUnderFunction * pSecondUnderFunction )|
+
+\bigskip\noindent
+Der Konstruktor der Modulounterfunktion, er erstellt eine Modulounterfunktion. Dabei wird keine Kopie von den Objekten \verb|pFirstUnderFunction| oder \verb|pSecondUnderFunction| erstellt.
+
+\bigskip\noindent
+\textbf{Eingabeparameter:}
+\begin{itemize}
+ \item \verb|pFirstUnderFunction|: Einen Zeiger auf die erste Unterfunktion, welche die Modulounterfunktion enthalten soll. Die "ubergebene Unterfunktion \verb|pFirstUnderFunction| wird vor dem Einf"ugen nicht kopiert.
+ \item \verb|pSecondUnderFunction|: Einen Zeiger auf die zweite Unterfunktion, welche die Modulounterfunktion enthalten soll. Die "ubergebene Unterfunktion \verb|pSecondUnderFunction| wird vor dem Einf"ugen nicht kopiert.
+\end{itemize}
+
+\bigskip\noindent
+\textbf{R"uckgabe:} keine
+
+
+\paragraph{getValue}\index{cFunctionMod!getValue()}\index{getValue()}
+
+\ \\\\\noindent
+\textbf{Syntax:} \verb|doubleFib getValue() const|
+
+\bigskip\noindent
+Diese Methode gibt den Wert der symmetrische Modulo Operator der enthaltenden Unterfunktionen (mit \verb|getValue()| dieser ermittelt) zur"uck.
+( $mod( W_1, W_2 ) = W_1 - W_2 * int(W_1/W_2)$; wobei $int$ das Abschneiden der Nachkommastellen bezeichnet )
+
+\bigskip\noindent
+\textbf{Eingabeparameter:} keine
+
+\bigskip\noindent
+\textbf{R"uckgabe:} Den Wert der symmetrische Modulo Operator der enthaltenden Unterfunktionen (mit \verb|getValue()| dieser ermittelt).
+
+
 
 
 \subsubsection{cFunctionExp f"ur Exponent}\index{Funktion!cFunctionExp}\index{cFunctionExp}\index{Funktion!Exponential}

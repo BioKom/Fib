@@ -26,12 +26,12 @@
  *
  *
  * This file contains the test for the children class of cFunctionTwoValue, which
- * represents a value Fib -underfunction.
+ * represents a value Fib -subfunction.
  *
  *
  * What's tested of class cFunctionTwoValue:
  * 	- cFunctionTwoValue( cUnderFunction & firstUnderfunction, cUnderFunction & secondUnderfunction, cUnderFunction * pInSuperiorFunction = NULL, cFibElement * pInDefiningFibElement = NULL );
- * 	- cFunctionTwoValue( const cFunctionTwoValue & underfunction, cUnderFunction * pInSuperiorFunction = NULL, cFibElement *pInDefiningFibElement = NULL );
+ * 	- cFunctionTwoValue( const cFunctionTwoValue & subfunction, cUnderFunction * pInSuperiorFunction = NULL, cFibElement *pInDefiningFibElement = NULL );
  * 	- cFunctionTwoValue( const TiXmlElement * pXmlElement, intFib & outStatus, list<cFibVariable*> & liDefinedVariables, cUnderFunction * pInSuperiorFunction = NULL, cFibElement * pInDefiningFibElement = NULL );
  * 	-cFunctionTwoValue( cReadBits & iBitStream, intFib & outStatus, list<cFibVariable*> & liDefinedVariables, const cDomainSingle * pInDomainValue, const cDomainSingle * pInDomainVariable, cUnderFunction * pInSuperiorFunction = NULL, cFibElement * pInDefiningFibElement = NULL );
  * 	- ~cFunctionTwoValue();
@@ -61,12 +61,12 @@
  * 	- bool store( ostream & stream, char & cRestBits, unsigned char & uiRestBitPosition ) const;
  * 	- unsignedIntFib getType() const;
  * 	- string getUnderFunctionName() const;
- * 	- bool equal( const cUnderFunction &underfunction ) const;
- * 	- bool operator==( const cUnderFunction &underfunction ) const;
- * 	- bool operator!=( const cUnderFunction &underfunction ) const;
+ * 	- bool equal( const cUnderFunction &subfunction ) const;
+ * 	- bool operator==( const cUnderFunction &subfunction ) const;
+ * 	- bool operator!=( const cUnderFunction &subfunction ) const;
  * 	- cUnderFunction * clone( cUnderFunction * pInSuperiorUnderFunction = NULL, cFibElement *pInDefiningFibElement = NULL) const;
  *
- * tested two values underfunctions:
+ * tested two values subfunctions:
  * 	- cFunctionAdd
  * 	- cFunctionSub
  * 	- cFunctionMult
@@ -75,7 +75,7 @@
  * 	- cFunctionMin
  * 	- cFunctionMax
  *
- * from other mudules tested two values underfunctions:
+ * from other mudules tested two values subfunctions:
  * 	- cFunctionIf
  * 	- cFunctionDelay
  *
@@ -85,6 +85,7 @@ History:
 02.05.2010  Oesterholz  created
 02.05.2010  Oesterholz  comparisson of getValue() values with savety bounderies
 04.04.2011  Oesterholz  storing to binary stream
+09.11.2012  Oesterholz  cFunctionMod added
 */
 
 #include "version.h"
@@ -93,6 +94,7 @@ History:
 #include "cFunctionSub.h"
 #include "cFunctionMult.h"
 #include "cFunctionDiv.h"
+#include "cFunctionMod.h"
 #include "cFunctionExp.h"
 #include "cFunctionMin.h"
 #include "cFunctionMax.h"
@@ -157,7 +159,7 @@ template <class tUnderFunctionTwoValue> int testValue(
 
 
 
-/** the type of the actual underfunction which is tested */
+/** the type of the actual subfunction which is tested */
 unsigned int uiActualUnderfunctionType = 0;
 
 
@@ -172,7 +174,7 @@ int main(int argc, char* argv[]){
 	cout<<      "================================================================="<<endl;
 	cout<<      "================================================================="<<endl;
 	
-	for ( unsigned int iType = 1; iType <= 7; iType++ ){
+	for ( unsigned int iType = 1; iType <= 8; iType++ ){
 		
 		cFunctionValue firstUnderfunction( 1.0 );
 		cFunctionValue secondUnderfunction( 1.0 );
@@ -297,7 +299,24 @@ int main(int argc, char* argv[]){
 				iReturn += testValue( ulTestphase, function  );
 
 			}break;
-			default://no underfunction type skip it
+			case 8:{
+				cout<<endl<<"Running Test for methods of the class of cFunctionMod"<<endl;
+				cout<<      "====================================================="<<endl;
+				uiActualUnderfunctionType = 8;
+				cFunctionMod function( firstUnderfunction, secondUnderfunction );
+				
+				iReturn += testCostructor( ulTestphase, function );
+				iReturn += testEqual( ulTestphase, function  );
+				iReturn += testUnderfunctions( ulTestphase, function );
+				iReturn += testCopy( ulTestphase, function  );
+				iReturn += testStoreXml( ulTestphase, function  );
+				iReturn += testStore( ulTestphase, function  );
+				iReturn += testVariable( ulTestphase, function  );
+				iReturn += testDefiningFibElement( ulTestphase, function  );
+				iReturn += testValue( ulTestphase, function  );
+
+			}break;
+			default://no subfunction type skip it
 				continue;
 		}
 	}
@@ -367,7 +386,7 @@ bool isEqual( doubleFib dValue1, doubleFib dValue2 ){
 
 
 /**
- * @return the actual underfunction type number
+ * @return the actual subfunction type number
  * 	@see cUnderFunction::getType()
  * 	@see uiActualUnderfunctionType
  */
@@ -382,13 +401,14 @@ unsignedIntFib getActualFunctionType(){
 		case 5: return cUnderFunction::FUNCTION_EXP;//cFunctionExp
 		case 6: return cUnderFunction::FUNCTION_MIN;//cFunctionMin
 		case 7: return cUnderFunction::FUNCTION_MAX;//cFunctionMax
+		case 8: return cUnderFunction::FUNCTION_MOD;//cFunctionMod
 	}
 	return 0;
 }
 
 
 /**
- * @return the actual underfunction type number
+ * @return the actual subfunction type number
  * 	@see cUnderFunction::getUnderFunctionName()
  * 	@see uiActualUnderfunctionType
  */
@@ -403,20 +423,21 @@ string getActualFunctionName(){
 		case 5: return "exp";//cFunctionExp
 		case 6: return "min";//cFunctionMin
 		case 7: return "max";//cFunctionMax
+		case 8: return "mod";//cFunctionMod
 	}
 	return "";
 }
 
 
 /**
- * This function evalues the value for the actual underfunction type if
+ * This function evalues the value for the actual subfunction type if
  * the both values are given.
  *
- * @param dValue1 the first value (value of the first underfunction) for
+ * @param dValue1 the first value (value of the first subfunction) for
  * 	the function to evalue
- * @param dValue2 the second value (value of the second underfunction) for
+ * @param dValue2 the second value (value of the second subfunction) for
  * 	the function to evalue
- * @return the value for the actual underfunction
+ * @return the value for the actual subfunction
  */
 doubleFib getActualFunctionValue( doubleFib dValue1, doubleFib dValue2 ){
 
@@ -427,34 +448,42 @@ doubleFib getActualFunctionValue( doubleFib dValue1, doubleFib dValue2 ){
 		case 3: return (dValue1 * dValue2);//cFunctionMult
 		case 4:{;//cFunctionDiv
 			if ( dValue2 == 0.0 ){
+				//x/0 not defined -> 0
 				return 0.0;
 			}//else
 			return (dValue1 / dValue2);
 		}break;
 		case 5:{
 			if ( (dValue1 == 0.0) && (dValue2 < 0.0) ){
-				//1/0 not defined -> 0
+				//0^-x is like 1/0 not defined -> 0
 				return 0.0;
 			}
 			return pow( dValue1, dValue2 );//cFunctionExp
 		}break;
 		case 6: return std::min( dValue1, dValue2 );//cFunctionMin
 		case 7: return std::max( dValue1, dValue2 );//cFunctionMax
+		case 8:{
+			if ( ( dValue1 == 0.0 ) || ( dValue2 == 0.0 ) ){
+				//x/0 not defined -> 0
+				return 0.0;
+			}//else
+			return std::fmod( dValue1, dValue2 );//cFunctionMod
+		};
 	}
 	return 0.0;
 }
 
 
 /**
- * This function returns the compressed underfunction initiation for the
- * actual underfunction type.
+ * This function returns the compressed subfunction initiation for the
+ * actual subfunction type.
  * The initiation is returned without the leading 0x03, for initiation
- * of 2'ary underfunctions.
+ * of 2'ary subfunctions.
  *
- * @return the compressed underfunction initiation for the actual
- * 	underfunction type
+ * @return the compressed subfunction initiation for the actual
+ * 	subfunction type
  */
-unsigned char getActualFunctionCInitiation(){
+unsigned char getActualFunctionInitiation(){
 
 	switch ( uiActualUnderfunctionType ){
 	
@@ -465,30 +494,35 @@ unsigned char getActualFunctionCInitiation(){
 		case 5: return 0x04;//cFunctionExp
 		case 6: return 0x05;//cFunctionMin
 		case 7: return 0x06;//cFunctionMax
+		case 8: return 0x17;//cFunctionMod = 0001 0 111
 	}
 	return 0x00;
 }
 
 
 /**
- * This function returns bits for the compressed underfunction initiation
- * for the actual underfunction type.
+ * This function returns bits for the compressed subfunction initiation
+ * for the actual subfunction type.
  * This also includes the 2 bits for the initiation for the leading 0x03,
- * for initiation of 2'ary underfunctions.
+ * for initiation of 2'ary subfunctions.
  *
- * @return the bits for the compressed underfunction initiation
+ * @return the bits for the compressed subfunction initiation
  */
-unsigned int getActualFunctionCInitiationBits(){
-
-	return 5;
+unsigned int getActualFunctionInitiationBits(){
+	
+	if ( uiActualUnderfunctionType <= 7 ){
+		return 5;
+	}
+	return 10;
 }
 
+//TODO for mod
 
 /**
- * This function adds the compressed underfunction initiation for the
- * actual underfunction type.
+ * This function adds the compressed subfunction initiation for the
+ * actual subfunction type.
  * This also includes the initiation for the leading 0x03, for initiation
- * of 2'ary underfunctions.
+ * of 2'ary subfunctions.
  * The buffer should contain 2 Byts more than for the data plus the null
  * shift from uiNullShift .
  * (min pcBuffer byts size = uiNumberOfByts + 2 + int((uiNullShift + 7) / 8) )
@@ -499,23 +533,33 @@ unsigned int getActualFunctionCInitiationBits(){
  * @param uiNullShift the number of 0 bits to add befor the initiation
  * @return a pointer to the char puffer wher the initiation is added
  */
-unsigned char * addCInitiationForActualFunction( unsigned char * pcBuffer,
+unsigned char * addInitiationForActualFunction( unsigned char * pcBuffer,
 		unsigned int uiNumberOfDataByts, unsigned int uiNullShift = 0 ){
 	
 	/*shift the buffer bits to make space for the initiation and the
 	uiNullShift; it will be filled at the front with 0 bits*/
-	unsigned int uiBitsToShift = 2 + 3 + uiNullShift;
+	unsigned int uiBitsToShift =  getActualFunctionInitiationBits() + uiNullShift;
 	if ( uiNumberOfDataByts != 0 ){
-		for ( long lActualByte = uiNumberOfDataByts - 1;
-				lActualByte >= 0; lActualByte-- ){
-			
-			if ( uiBitsToShift % 8 != 0 ){
-				pcBuffer[ lActualByte + uiBitsToShift / 8 + 1 ] =
-					pcBuffer[ lActualByte ] >> (7 - (uiBitsToShift - 1) % 8);
+		if ( uiBitsToShift % 8 != 0 ){
+			for ( long lActualByte = uiNumberOfDataByts - 1;
+					lActualByte >= 0; lActualByte-- ){
+				
+				char cActualByte = pcBuffer[ lActualByte ];
+				pcBuffer[ lActualByte ] = 0;
+				
+				pcBuffer[ lActualByte + uiBitsToShift / 8 + 1 ] |=
+					cActualByte >> (7 - (uiBitsToShift - 1) % 8);
+				
+				pcBuffer[ lActualByte + uiBitsToShift / 8 ] |=
+					cActualByte << (uiBitsToShift % 8);
 			}
+		}else{//shift full byts
+			for ( long lActualByte = uiNumberOfDataByts - 1;
+					lActualByte >= 0; lActualByte-- ){
 			
-			pcBuffer[ lActualByte + uiBitsToShift / 8 ] =
-				pcBuffer[ lActualByte ] << (uiBitsToShift % 8);
+				pcBuffer[ lActualByte + uiBitsToShift / 8 ] =
+					pcBuffer[ lActualByte ] << (uiBitsToShift % 8);
+			}
 		}
 	}
 	//fill the leading uiBitsToShift bits with 0
@@ -528,14 +572,14 @@ unsigned char * addCInitiationForActualFunction( unsigned char * pcBuffer,
 	pcBuffer[ (uiBitsToShift / 8) ] = pcBuffer[ (uiBitsToShift / 8) ] & ucMask;
 	
 	//add the initiation shifted with uiNullShift
-	//add the two value underfunction initiator
+	//add the two value subfunction initiator
 	pcBuffer[ (uiNullShift / 8) ] = pcBuffer[ (uiNullShift / 8) ] | (0x03 << (uiNullShift % 8) );
 	if ( (uiNullShift % 8) == 7 ){
 		pcBuffer[ (uiNullShift / 8) + 1 ] = pcBuffer[ (uiNullShift / 8) + 1 ] | 0x01;
 	}
 	
-	//add the underfunction type initiator
-	unsigned char ucUnderfunctionType = getActualFunctionCInitiation();
+	//add the subfunction type initiator
+	unsigned char ucUnderfunctionType = getActualFunctionInitiation();
 	const unsigned int uiShiftTillUfType = uiNullShift + 2;
 	pcBuffer[ (uiShiftTillUfType / 8) ] = pcBuffer[ (uiShiftTillUfType / 8) ] | (ucUnderfunctionType << (uiShiftTillUfType % 8) );
 	if ( (uiShiftTillUfType % 8) != 0 ){
@@ -607,7 +651,7 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 	cFibVariable * pVariableX =  rootEmpty.getInputVariable( 10 );
 	
 	ulTestphase++;
-	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing constructing empty cFunctionTwoValue underfunction"<<endl;
+	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing constructing empty cFunctionTwoValue subfunction"<<endl;
 
 	cout<<"cFunctionValue underFunctionValue1( 1.0 );"<<endl;
 	cFunctionValue underFunctionValue1( 1.0 );
@@ -631,39 +675,40 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 	cDomain * pVariableDomain = typeVariable.getStandardDomain();
 	unsigned long ulTimeNeed = 1 + pFirstUnderfunction->getTimeNeed() +
 		 pSecondUnderfunction->getTimeNeed();
-	unsigned long ulCompressedSize = 5 + pFirstUnderfunction->getCompressedSize() +
+	unsigned long ulCompressedSize = getActualFunctionInitiationBits() +
+		pFirstUnderfunction->getCompressedSize() +
 		 pSecondUnderfunction->getCompressedSize();	
  
 	//check the getValue() methode from cFunctionTwoValue
 	if ( isEqual( underFunctionTwoValue1.getValue(), dValue )  ){
 	
-		cout<<"The underfunction value is correctly "<<
+		cout<<"The subfunction value is correctly "<<
 			underFunctionTwoValue1.getValue() <<" . "<<endl;
 	}else{
-		cerr<<"Error: The underfunction value is "<<
+		cerr<<"Error: The subfunction value is "<<
 			underFunctionTwoValue1.getValue() <<" but should be "<< dValue <<" ."<<endl;
 		iReturn++;
 	}
-	//check the underfunctions
+	//check the subfunctions
 	//check getFirstUnderFunction()
 	if ( underFunctionTwoValue1.getFirstUnderFunction() != NULL  ){
 	
 		if ( underFunctionTwoValue1.getFirstUnderFunction() != pFirstUnderfunction  ){
 		
-			cout<<"The first underfunction dosn't points to the object set as the first underfunction . "<<endl;
+			cout<<"The first subfunction dosn't points to the object set as the first subfunction . "<<endl;
 		}else{
-			cerr<<"Error: The first underfunction points to the object set as the first underfunction."<<endl;
+			cerr<<"Error: The first subfunction points to the object set as the first subfunction."<<endl;
 			iReturn++;
 		}
 		if ( *(underFunctionTwoValue1.getFirstUnderFunction()) == *pFirstUnderfunction  ){
 		
-			cout<<"The first underfunction is equal to the underfunction set as the first underfunction . "<<endl;
+			cout<<"The first subfunction is equal to the subfunction set as the first subfunction . "<<endl;
 		}else{
-			cerr<<"Error: The first underfunction isn't equal to the underfunction set as the first underfunction."<<endl;
+			cerr<<"Error: The first subfunction isn't equal to the subfunction set as the first subfunction."<<endl;
 			iReturn++;
 		}
 	}else{
-		cerr<<"Error: The first underfunction is NULL ."<<endl;
+		cerr<<"Error: The first subfunction is NULL ."<<endl;
 		iReturn++;
 	}
 	//check getSecondUnderFunction()
@@ -671,29 +716,29 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 	
 		if ( underFunctionTwoValue1.getSecondUnderFunction() != pSecondUnderfunction  ){
 		
-			cout<<"The second underfunction dosn't points to the object set as the second underfunction . "<<endl;
+			cout<<"The second subfunction dosn't points to the object set as the second subfunction . "<<endl;
 		}else{
-			cerr<<"Error: The second underfunction points to the object set as the second underfunction."<<endl;
+			cerr<<"Error: The second subfunction points to the object set as the second subfunction."<<endl;
 			iReturn++;
 		}
 		if ( *(underFunctionTwoValue1.getSecondUnderFunction()) == *pSecondUnderfunction  ){
 		
-			cout<<"The second underfunction is equal to the underfunction set as the second underfunction . "<<endl;
+			cout<<"The second subfunction is equal to the subfunction set as the second subfunction . "<<endl;
 		}else{
-			cerr<<"Error: The second underfunction isn't equal to the underfunction set as the second underfunction."<<endl;
+			cerr<<"Error: The second subfunction isn't equal to the subfunction set as the second subfunction."<<endl;
 			iReturn++;
 		}
 	}else{
-		cerr<<"Error: The second underfunction is NULL ."<<endl;
+		cerr<<"Error: The second subfunction is NULL ."<<endl;
 		iReturn++;
 	}
 	//check the getDefiningFibElement() methode from cFunctionTwoValue
 	if ( underFunctionTwoValue1.getDefiningFibElement() == pDefiningFibElement  ){
 	
-		cout<<"The underfunction defining fib -element is correctly "<<
+		cout<<"The subfunction defining fib -element is correctly "<<
 			underFunctionTwoValue1.getDefiningFibElement() <<" . "<<endl;
 	}else{
-		cerr<<"Error: The underfunction defining fib -element is "<<
+		cerr<<"Error: The subfunction defining fib -element is "<<
 			underFunctionTwoValue1.getDefiningFibElement() <<
 			" but should be "<< pDefiningFibElement <<" ."<<endl;
 		iReturn++;
@@ -701,10 +746,10 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 	//check the getSuperiorUnderFunction() methode from cFunctionTwoValue
 	if ( underFunctionTwoValue1.getSuperiorUnderFunction() == pSuperiorUnderFunction  ){
 	
-		cout<<"The superior underfunction of the underfunction correctly "<<
+		cout<<"The superior subfunction of the subfunction correctly "<<
 			underFunctionTwoValue1.getSuperiorUnderFunction() <<" . "<<endl;
 	}else{
-		cerr<<"Error: The superior underfunction of the underfunction is "<<
+		cerr<<"Error: The superior subfunction of the subfunction is "<<
 			underFunctionTwoValue1.getSuperiorUnderFunction() <<
 			" but should be "<< pSuperiorUnderFunction <<" ."<<endl;
 		iReturn++;
@@ -713,17 +758,17 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 	//check the isValid() methode from cFunctionTwoValue
 	if ( ! underFunctionTwoValue1.isValid() ){
 	
-		cout<<"The underfunction is correctly not valid . "<<endl;
+		cout<<"The subfunction is correctly not valid . "<<endl;
 	}else{
-		cerr<<"Error: The underfunction is valid ."<<endl;
+		cerr<<"Error: The subfunction is valid ."<<endl;
 		iReturn++;
 	}
 	//check the getType() methode from cFunctionTwoValue
 	if ( underFunctionTwoValue1.getType() == getActualFunctionType() ){
 	
-		cout<<"The underfunction type is correctly FUNCTION_VARIABLE. "<<endl;
+		cout<<"The subfunction type is correctly FUNCTION_VARIABLE. "<<endl;
 	}else{
-		cerr<<"Error: The type of the underfunction is not FUNCTION_VARIABLE ( "<<
+		cerr<<"Error: The type of the subfunction is not FUNCTION_VARIABLE ( "<<
 			cUnderFunction::FUNCTION_VARIABLE <<" ), but "<<
 			underFunctionTwoValue1.getType() <<" ."<<endl;
 		iReturn++;
@@ -731,20 +776,20 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 	//check the getUnderFunctionName() methode from cFunctionTwoValue
 	if ( underFunctionTwoValue1.getUnderFunctionName() == getActualFunctionName() ){
 	
-		cout<<"The underfunction name is correctly "<<
+		cout<<"The subfunction name is correctly "<<
 			underFunctionTwoValue1.getUnderFunctionName() <<" . "<<endl;
 	}else{
-		cerr<<"Error: The name of the underfunction is not \"variable\", but "<<
+		cerr<<"Error: The name of the subfunction is not \"variable\", but "<<
 			underFunctionTwoValue1.getUnderFunctionName() <<" ."<<endl;
 		iReturn++;
 	}
 	//check the getNumberOfUnderFunctions() methode from cFunctionTwoValue
 	if ( underFunctionTwoValue1.getNumberOfUnderFunctions() == 2 ){
 	
-		cout<<"The underfunction number of underfunctions is correctly "<<
+		cout<<"The subfunction number of subfunctions is correctly "<<
 			underFunctionTwoValue1.getNumberOfUnderFunctions() <<" . "<<endl;
 	}else{
-		cerr<<"Error: The underfunction number of underfunctions is "<<
+		cerr<<"Error: The subfunction number of subfunctions is "<<
 			underFunctionTwoValue1.getNumberOfUnderFunctions() <<" , but should be 2 ."<<endl;
 		iReturn++;
 	}
@@ -753,14 +798,14 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 	if ( pTypeOfUnderFunction != NULL ){
 		if ( * pTypeOfUnderFunction == typeUnderFunction ){
 		
-			cout<<"The given back element type for the underfunction is correct. "<<endl;
+			cout<<"The given back element type for the subfunction is correct. "<<endl;
 		}else{
-			cerr<<"Error: The given back element type for the underfunction is not correct."<<endl;
+			cerr<<"Error: The given back element type for the subfunction is not correct."<<endl;
 			iReturn++;
 		}
 		delete pTypeOfUnderFunction;
 	}else{
-		cerr<<"Error: The given back element type for the underfunction is NULL ."<<endl;
+		cerr<<"Error: The given back element type for the subfunction is NULL ."<<endl;
 		iReturn++;
 	}
 	//check the getDomain() methode from cFunctionTwoValue
@@ -769,21 +814,21 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 		if ( pRetUnderFunctionDomain != NULL ){
 			if ( * pRetUnderFunctionDomain == * pUnderFunctionDomain ){
 			
-				cout<<"The given back domain for the underfunction is correct. "<<endl;
+				cout<<"The given back domain for the subfunction is correct. "<<endl;
 			}else{
-				cerr<<"Error: The given back domain for the underfunction is not correct."<<endl;
+				cerr<<"Error: The given back domain for the subfunction is not correct."<<endl;
 				iReturn++;
 			}
 		}else{
-			cerr<<"Error: The given back domain for the underfunction is NULL ."<<endl;
+			cerr<<"Error: The given back domain for the subfunction is NULL ."<<endl;
 			iReturn++;
 		}
 	}else{
 		if ( pRetUnderFunctionDomain == NULL ){
 		
-			cout<<"The given back domain for the underfunction is correctly NULL . "<<endl;
+			cout<<"The given back domain for the subfunction is correctly NULL . "<<endl;
 		}else{
-			cerr<<"Error: The given back domain for the underfunction is not NULL ."<<endl;
+			cerr<<"Error: The given back domain for the subfunction is not NULL ."<<endl;
 			iReturn++;
 		}
 	}
@@ -793,21 +838,21 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 		if ( pRetValueDomain != NULL ){
 			if ( * pRetValueDomain == * pValueDomain ){
 			
-				cout<<"The given back valuedomain for the underfunction is correct. "<<endl;
+				cout<<"The given back valuedomain for the subfunction is correct. "<<endl;
 			}else{
-				cerr<<"Error: The given back valuedomain for the underfunction is not correct."<<endl;
+				cerr<<"Error: The given back valuedomain for the subfunction is not correct."<<endl;
 				iReturn++;
 			}
 		}else{
-			cerr<<"Error: The given back valuedomain for the underfunction is NULL ."<<endl;
+			cerr<<"Error: The given back valuedomain for the subfunction is NULL ."<<endl;
 			iReturn++;
 		}
 	}else{
 		if ( pRetValueDomain == NULL ){
 		
-			cout<<"The given back valuedomain for the underfunction is correctly NULL . "<<endl;
+			cout<<"The given back valuedomain for the subfunction is correctly NULL . "<<endl;
 		}else{
-			cerr<<"Error: The given back valuedomain for the underfunction is not NULL ."<<endl;
+			cerr<<"Error: The given back valuedomain for the subfunction is not NULL ."<<endl;
 			iReturn++;
 		}
 	}
@@ -817,18 +862,18 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 		if ( pRetStandardDomain != NULL ){
 			if ( * pRetStandardDomain == * pStandardDomain ){
 			
-				cout<<"The given back the standarddomain for the underfunction is correct. "<<endl;
+				cout<<"The given back the standarddomain for the subfunction is correct. "<<endl;
 			}else{
-				cerr<<"Error: The given back the standarddomain domain for the underfunction is not correct."<<endl;
+				cerr<<"Error: The given back the standarddomain domain for the subfunction is not correct."<<endl;
 				iReturn++;
 			}
 			delete pRetStandardDomain;
 		}else{
-			cerr<<"Error: The given back the standarddomain domain for the underfunction is NULL ."<<endl;
+			cerr<<"Error: The given back the standarddomain domain for the subfunction is NULL ."<<endl;
 			iReturn++;
 		}
 	}else{
-		cerr<<"Error: The given back the standarddomain domain for the underfunction is not NULL ."<<endl;
+		cerr<<"Error: The given back the standarddomain domain for the subfunction is not NULL ."<<endl;
 	}
 	//check the getVariableDomain() methode from cFunctionTwoValue
 	cDomain * pRetVariableDomain = underFunctionTwoValue1.getVariableDomain();
@@ -836,22 +881,22 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 		if ( pRetVariableDomain != NULL ){
 			if ( * pRetVariableDomain == * pVariableDomain ){
 			
-				cout<<"The given back variabledomain for the underfunction is correct. "<<endl;
+				cout<<"The given back variabledomain for the subfunction is correct. "<<endl;
 			}else{
-				cerr<<"Error: The given back variabledomain for the underfunction is not correct."<<endl;
+				cerr<<"Error: The given back variabledomain for the subfunction is not correct."<<endl;
 				iReturn++;
 			}
 			delete pRetVariableDomain;
 		}else{
-			cerr<<"Error: The given back variabledomain for the underfunction is NULL ."<<endl;
+			cerr<<"Error: The given back variabledomain for the subfunction is NULL ."<<endl;
 			iReturn++;
 		}
 	}else{
 		if ( pRetVariableDomain == NULL ){
 		
-			cout<<"The given back variabledomain for the underfunction is correctly NULL . "<<endl;
+			cout<<"The given back variabledomain for the subfunction is correctly NULL . "<<endl;
 		}else{
-			cerr<<"Error: The given back variabledomain for the underfunction is not NULL ."<<endl;
+			cerr<<"Error: The given back variabledomain for the subfunction is not NULL ."<<endl;
 			iReturn++;
 			delete pRetVariableDomain;
 		}
@@ -879,24 +924,24 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 	//check the isUsedVariable() methode from cFunctionTwoValue
 	if ( ! underFunctionTwoValue1.isUsedVariable( pVariableX ) ){
 	
-		cout<<"The variable pVariableX isn't used in the underfunction. "<<endl;
+		cout<<"The variable pVariableX isn't used in the subfunction. "<<endl;
 	}else{
-		cerr<<"Error: The variable pVariableX is used in the underfunction. "<<endl;
+		cerr<<"Error: The variable pVariableX is used in the subfunction. "<<endl;
 		iReturn++;
 	}
 	//check the getUsedVariables() methode from cFunctionTwoValue
 	set<cFibVariable*> setUsedVariables = underFunctionTwoValue1.getUsedVariables();
 	if ( setUsedVariables.empty() ){
 	
-		cout<<"Ther are correctly no used variables are given back from the underfunction. "<<endl;
+		cout<<"Ther are correctly no used variables are given back from the subfunction. "<<endl;
 	}else{
-		cerr<<"Error: Ther are used variables are given back from the underfunction. "<<endl;
+		cerr<<"Error: Ther are used variables are given back from the subfunction. "<<endl;
 		iReturn++;
 	}
 
 
 	ulTestphase++;
-	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing constructing an full cFunctionTwoValue underfunction, testing the included underFunctionTwoValue1"<<endl;
+	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing constructing an full cFunctionTwoValue subfunction, testing the included underFunctionTwoValue1"<<endl;
 
 	cout<<"cFunctionVariable underFunctionVariable1( pVariable1 );"<<endl;
 	cFunctionVariable underFunctionVariable1( pVariable1 );
@@ -935,38 +980,38 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 	pVariableDomain = domainNaturalNumberBit3.clone();
 	ulTimeNeed = 1 + pFirstUnderfunction->getTimeNeed() +
 		 pSecondUnderfunction->getTimeNeed();
-	ulCompressedSize = 5 + 9 + 9;
+	ulCompressedSize = getActualFunctionInitiationBits() + 9 + 9;
  
 	//check the getValue() methode from cFunctionTwoValue
 	if ( isEqual( pFunctionToTest->getValue(), dValue ) ){
 	
-		cout<<"The underfunction value is correctly "<<
+		cout<<"The subfunction value is correctly "<<
 			pFunctionToTest->getValue() <<" . "<<endl;
 	}else{
-		cerr<<"Error: The underfunction value is "<<
+		cerr<<"Error: The subfunction value is "<<
 			pFunctionToTest->getValue() <<" but should be "<< dValue <<" ."<<endl;
 		iReturn++;
 	}
-	//check the underfunctions
+	//check the subfunctions
 	//check getFirstUnderFunction()
 	if ( pFunctionToTest->getFirstUnderFunction() != NULL  ){
 	
 		if ( pFunctionToTest->getFirstUnderFunction() != pFirstUnderfunction  ){
 		
-			cout<<"The first underfunction dosn't points to the object set as the first underfunction . "<<endl;
+			cout<<"The first subfunction dosn't points to the object set as the first subfunction . "<<endl;
 		}else{
-			cerr<<"Error: The first underfunction points to the object set as the first underfunction."<<endl;
+			cerr<<"Error: The first subfunction points to the object set as the first subfunction."<<endl;
 			iReturn++;
 		}
 		if ( *(pFunctionToTest->getFirstUnderFunction()) == *pFirstUnderfunction  ){
 		
-			cout<<"The first underfunction is equal to the underfunction set as the first underfunction . "<<endl;
+			cout<<"The first subfunction is equal to the subfunction set as the first subfunction . "<<endl;
 		}else{
-			cerr<<"Error: The first underfunction isn't equal to the underfunction set as the first underfunction."<<endl;
+			cerr<<"Error: The first subfunction isn't equal to the subfunction set as the first subfunction."<<endl;
 			iReturn++;
 		}
 	}else{
-		cerr<<"Error: The first underfunction is NULL ."<<endl;
+		cerr<<"Error: The first subfunction is NULL ."<<endl;
 		iReturn++;
 	}
 	//check getSecondUnderFunction()
@@ -974,29 +1019,29 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 	
 		if ( pFunctionToTest->getSecondUnderFunction() != pSecondUnderfunction  ){
 		
-			cout<<"The second underfunction dosn't points to the object set as the second underfunction . "<<endl;
+			cout<<"The second subfunction dosn't points to the object set as the second subfunction . "<<endl;
 		}else{
-			cerr<<"Error: The second underfunction points to the object set as the second underfunction."<<endl;
+			cerr<<"Error: The second subfunction points to the object set as the second subfunction."<<endl;
 			iReturn++;
 		}
 		if ( *(pFunctionToTest->getSecondUnderFunction()) == *pSecondUnderfunction  ){
 		
-			cout<<"The second underfunction is equal to the underfunction set as the second underfunction . "<<endl;
+			cout<<"The second subfunction is equal to the subfunction set as the second subfunction . "<<endl;
 		}else{
-			cerr<<"Error: The second underfunction isn't equal to the underfunction set as the second underfunction."<<endl;
+			cerr<<"Error: The second subfunction isn't equal to the subfunction set as the second subfunction."<<endl;
 			iReturn++;
 		}
 	}else{
-		cerr<<"Error: The second underfunction is NULL ."<<endl;
+		cerr<<"Error: The second subfunction is NULL ."<<endl;
 		iReturn++;
 	}
 	//check the getDefiningFibElement() methode from cFunctionTwoValue
 	if ( pFunctionToTest->getDefiningFibElement() == pDefiningFibElement  ){
 	
-		cout<<"The underfunction defining fib -element is correctly "<<
+		cout<<"The subfunction defining fib -element is correctly "<<
 			pFunctionToTest->getDefiningFibElement() <<" . "<<endl;
 	}else{
-		cerr<<"Error: The underfunction defining fib -element is "<<
+		cerr<<"Error: The subfunction defining fib -element is "<<
 			pFunctionToTest->getDefiningFibElement() <<
 			" but should be "<< pDefiningFibElement <<" ."<<endl;
 		iReturn++;
@@ -1004,10 +1049,10 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 	//check the getSuperiorUnderFunction() methode from cFunctionTwoValue
 	if ( pFunctionToTest->getSuperiorUnderFunction() == pSuperiorUnderFunction  ){
 	
-		cout<<"The superior underfunction of the underfunction correctly "<<
+		cout<<"The superior subfunction of the subfunction correctly "<<
 			pFunctionToTest->getSuperiorUnderFunction() <<" . "<<endl;
 	}else{
-		cerr<<"Error: The superior underfunction of the underfunction is "<<
+		cerr<<"Error: The superior subfunction of the subfunction is "<<
 			pFunctionToTest->getSuperiorUnderFunction() <<
 			" but should be "<< pSuperiorUnderFunction <<" ."<<endl;
 		iReturn++;
@@ -1016,17 +1061,17 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 	//check the isValid() methode from cFunctionTwoValue
 	if ( pFunctionToTest->isValid() ){
 	
-		cout<<"The underfunction is correctly valid . "<<endl;
+		cout<<"The subfunction is correctly valid . "<<endl;
 	}else{
-		cerr<<"Error: The underfunction is not valid ."<<endl;
+		cerr<<"Error: The subfunction is not valid ."<<endl;
 		iReturn++;
 	}
 	//check the getType() methode from cFunctionTwoValue
 	if ( pFunctionToTest->getType() == getActualFunctionType() ){
 	
-		cout<<"The underfunction type is correctly FUNCTION_VARIABLE. "<<endl;
+		cout<<"The subfunction type is correctly FUNCTION_VARIABLE. "<<endl;
 	}else{
-		cerr<<"Error: The type of the underfunction is not FUNCTION_VARIABLE ( "<<
+		cerr<<"Error: The type of the subfunction is not FUNCTION_VARIABLE ( "<<
 			cUnderFunction::FUNCTION_VARIABLE <<" ), but "<<
 			pFunctionToTest->getType() <<" ."<<endl;
 		iReturn++;
@@ -1034,20 +1079,20 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 	//check the getUnderFunctionName() methode from cFunctionTwoValue
 	if ( pFunctionToTest->getUnderFunctionName() == getActualFunctionName() ){
 	
-		cout<<"The underfunction name is correctly "<<
+		cout<<"The subfunction name is correctly "<<
 			pFunctionToTest->getUnderFunctionName() <<" . "<<endl;
 	}else{
-		cerr<<"Error: The name of the underfunction is not \"variable\", but "<<
+		cerr<<"Error: The name of the subfunction is not \"variable\", but "<<
 			pFunctionToTest->getUnderFunctionName() <<" ."<<endl;
 		iReturn++;
 	}
 	//check the getNumberOfUnderFunctions() methode from cFunctionTwoValue
 	if ( pFunctionToTest->getNumberOfUnderFunctions() == 2 ){
 	
-		cout<<"The underfunction number of underfunctions is correctly "<<
+		cout<<"The subfunction number of subfunctions is correctly "<<
 			pFunctionToTest->getNumberOfUnderFunctions() <<" . "<<endl;
 	}else{
-		cerr<<"Error: The underfunction number of underfunctions is "<<
+		cerr<<"Error: The subfunction number of subfunctions is "<<
 			pFunctionToTest->getNumberOfUnderFunctions() <<" , but should be 2 ."<<endl;
 		iReturn++;
 	}
@@ -1056,14 +1101,14 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 	if ( pTypeOfUnderFunction != NULL ){
 		if ( * pTypeOfUnderFunction == typeUnderFunction ){
 		
-			cout<<"The given back element type for the underfunction is correct. "<<endl;
+			cout<<"The given back element type for the subfunction is correct. "<<endl;
 		}else{
-			cerr<<"Error: The given back element type for the underfunction is not correct."<<endl;
+			cerr<<"Error: The given back element type for the subfunction is not correct."<<endl;
 			iReturn++;
 		}
 		delete pTypeOfUnderFunction;
 	}else{
-		cerr<<"Error: The given back element type for the underfunction is NULL ."<<endl;
+		cerr<<"Error: The given back element type for the subfunction is NULL ."<<endl;
 		iReturn++;
 	}
 	//check the getDomain() methode from cFunctionTwoValue
@@ -1072,21 +1117,21 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 		if ( pRetUnderFunctionDomain != NULL ){
 			if ( * pRetUnderFunctionDomain == * pUnderFunctionDomain ){
 			
-				cout<<"The given back domain for the underfunction is correct. "<<endl;
+				cout<<"The given back domain for the subfunction is correct. "<<endl;
 			}else{
-				cerr<<"Error: The given back domain for the underfunction is not correct."<<endl;
+				cerr<<"Error: The given back domain for the subfunction is not correct."<<endl;
 				iReturn++;
 			}
 		}else{
-			cerr<<"Error: The given back domain for the underfunction is NULL ."<<endl;
+			cerr<<"Error: The given back domain for the subfunction is NULL ."<<endl;
 			iReturn++;
 		}
 	}else{
 		if ( pRetUnderFunctionDomain == NULL ){
 		
-			cout<<"The given back domain for the underfunction is correctly NULL . "<<endl;
+			cout<<"The given back domain for the subfunction is correctly NULL . "<<endl;
 		}else{
-			cerr<<"Error: The given back domain for the underfunction is not NULL ."<<endl;
+			cerr<<"Error: The given back domain for the subfunction is not NULL ."<<endl;
 			iReturn++;
 		}
 	}
@@ -1096,21 +1141,21 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 		if ( pRetValueDomain != NULL ){
 			if ( * pRetValueDomain == * pValueDomain ){
 			
-				cout<<"The given back valuedomain for the underfunction is correct. "<<endl;
+				cout<<"The given back valuedomain for the subfunction is correct. "<<endl;
 			}else{
-				cerr<<"Error: The given back valuedomain for the underfunction is not correct."<<endl;
+				cerr<<"Error: The given back valuedomain for the subfunction is not correct."<<endl;
 				iReturn++;
 			}
 		}else{
-			cerr<<"Error: The given back valuedomain for the underfunction is NULL ."<<endl;
+			cerr<<"Error: The given back valuedomain for the subfunction is NULL ."<<endl;
 			iReturn++;
 		}
 	}else{
 		if ( pRetValueDomain == NULL ){
 		
-			cout<<"The given back valuedomain for the underfunction is correctly NULL . "<<endl;
+			cout<<"The given back valuedomain for the subfunction is correctly NULL . "<<endl;
 		}else{
-			cerr<<"Error: The given back valuedomain for the underfunction is not NULL ."<<endl;
+			cerr<<"Error: The given back valuedomain for the subfunction is not NULL ."<<endl;
 			iReturn++;
 		}
 	}
@@ -1120,18 +1165,18 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 		if ( pRetStandardDomain != NULL ){
 			if ( * pRetStandardDomain == * pStandardDomain ){
 			
-				cout<<"The given back the standarddomain for the underfunction is correct. "<<endl;
+				cout<<"The given back the standarddomain for the subfunction is correct. "<<endl;
 			}else{
-				cerr<<"Error: The given back the standarddomain domain for the underfunction is not correct."<<endl;
+				cerr<<"Error: The given back the standarddomain domain for the subfunction is not correct."<<endl;
 				iReturn++;
 			}
 			delete pRetStandardDomain;
 		}else{
-			cerr<<"Error: The given back the standarddomain domain for the underfunction is NULL ."<<endl;
+			cerr<<"Error: The given back the standarddomain domain for the subfunction is NULL ."<<endl;
 			iReturn++;
 		}
 	}else{
-		cerr<<"Error: The given back the standarddomain domain for the underfunction is not NULL ."<<endl;
+		cerr<<"Error: The given back the standarddomain domain for the subfunction is not NULL ."<<endl;
 	}
 	//check the getVariableDomain() methode from cFunctionTwoValue
 	pRetVariableDomain = pFunctionToTest->getVariableDomain();
@@ -1139,22 +1184,22 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 		if ( pRetVariableDomain != NULL ){
 			if ( * pRetVariableDomain == * pVariableDomain ){
 			
-				cout<<"The given back variabledomain for the underfunction is correct. "<<endl;
+				cout<<"The given back variabledomain for the subfunction is correct. "<<endl;
 			}else{
-				cerr<<"Error: The given back variabledomain for the underfunction is not correct."<<endl;
+				cerr<<"Error: The given back variabledomain for the subfunction is not correct."<<endl;
 				iReturn++;
 			}
 			delete pRetVariableDomain;
 		}else{
-			cerr<<"Error: The given back variabledomain for the underfunction is NULL ."<<endl;
+			cerr<<"Error: The given back variabledomain for the subfunction is NULL ."<<endl;
 			iReturn++;
 		}
 	}else{
 		if ( pRetVariableDomain == NULL ){
 		
-			cout<<"The given back variabledomain for the underfunction is correctly NULL . "<<endl;
+			cout<<"The given back variabledomain for the subfunction is correctly NULL . "<<endl;
 		}else{
-			cerr<<"Error: The given back variabledomain for the underfunction is not NULL ."<<endl;
+			cerr<<"Error: The given back variabledomain for the subfunction is not NULL ."<<endl;
 			iReturn++;
 			delete pRetVariableDomain;
 		}
@@ -1182,18 +1227,18 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 	//check the isUsedVariable() methode from cFunctionTwoValue
 	if ( ! pFunctionToTest->isUsedVariable( pVariableX ) ){
 	
-		cout<<"The variable pVariableX isn't used in the underfunction. "<<endl;
+		cout<<"The variable pVariableX isn't used in the subfunction. "<<endl;
 	}else{
-		cerr<<"Error: The variable pVariableX is used in the underfunction. "<<endl;
+		cerr<<"Error: The variable pVariableX is used in the subfunction. "<<endl;
 		iReturn++;
 	}
 	//check the getUsedVariables() methode from cFunctionTwoValue
 	setUsedVariables = pFunctionToTest->getUsedVariables();
 	if ( setUsedVariables.empty() ){
 	
-		cout<<"Ther are correctly no used variables are given back from the underfunction. "<<endl;
+		cout<<"Ther are correctly no used variables are given back from the subfunction. "<<endl;
 	}else{
-		cerr<<"Error: Ther are used variables are given back from the underfunction. "<<endl;
+		cerr<<"Error: Ther are used variables are given back from the subfunction. "<<endl;
 		iReturn++;
 	}
 	
@@ -1214,7 +1259,8 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 	pVariableDomain = domainNaturalNumberBit3.clone();
 	ulTimeNeed = 1 + pFirstUnderfunction->getTimeNeed() +
 		 pSecondUnderfunction->getTimeNeed();
-	ulCompressedSize = 5 + 5 + (5 + 9 + 9);
+	ulCompressedSize = getActualFunctionInitiationBits() + 5 +
+		(getActualFunctionInitiationBits() + 9 + 9);
 	
 	set<cFibVariable*> setUsedVariablesCorrect;
 	setUsedVariablesCorrect.insert( pVariable1 );
@@ -1222,33 +1268,33 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 	//check the getValue() methode from cFunctionTwoValue
 	if ( isEqual( pFunctionToTest->getValue(), dValue ) ){
 	
-		cout<<"The underfunction value is correctly "<<
+		cout<<"The subfunction value is correctly "<<
 			pFunctionToTest->getValue() <<" . "<<endl;
 	}else{
-		cerr<<"Error: The underfunction value is "<<
+		cerr<<"Error: The subfunction value is "<<
 			pFunctionToTest->getValue() <<" but should be "<< dValue <<" ."<<endl;
 		iReturn++;
 	}
-	//check the underfunctions
+	//check the subfunctions
 	//check getFirstUnderFunction()
 	if ( pFunctionToTest->getFirstUnderFunction() != NULL  ){
 	
 		if ( pFunctionToTest->getFirstUnderFunction() != pFirstUnderfunction  ){
 		
-			cout<<"The first underfunction dosn't points to the object set as the first underfunction . "<<endl;
+			cout<<"The first subfunction dosn't points to the object set as the first subfunction . "<<endl;
 		}else{
-			cerr<<"Error: The first underfunction points to the object set as the first underfunction."<<endl;
+			cerr<<"Error: The first subfunction points to the object set as the first subfunction."<<endl;
 			iReturn++;
 		}
 		if ( *(pFunctionToTest->getFirstUnderFunction()) == *pFirstUnderfunction  ){
 		
-			cout<<"The first underfunction is equal to the underfunction set as the first underfunction . "<<endl;
+			cout<<"The first subfunction is equal to the subfunction set as the first subfunction . "<<endl;
 		}else{
-			cerr<<"Error: The first underfunction isn't equal to the underfunction set as the first underfunction."<<endl;
+			cerr<<"Error: The first subfunction isn't equal to the subfunction set as the first subfunction."<<endl;
 			iReturn++;
 		}
 	}else{
-		cerr<<"Error: The first underfunction is NULL ."<<endl;
+		cerr<<"Error: The first subfunction is NULL ."<<endl;
 		iReturn++;
 	}
 	//check getSecondUnderFunction()
@@ -1256,29 +1302,29 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 	
 		if ( pFunctionToTest->getSecondUnderFunction() != pSecondUnderfunction  ){
 		
-			cout<<"The second underfunction dosn't points to the object set as the second underfunction . "<<endl;
+			cout<<"The second subfunction dosn't points to the object set as the second subfunction . "<<endl;
 		}else{
-			cerr<<"Error: The second underfunction points to the object set as the second underfunction."<<endl;
+			cerr<<"Error: The second subfunction points to the object set as the second subfunction."<<endl;
 			iReturn++;
 		}
 		if ( *(pFunctionToTest->getSecondUnderFunction()) == *pSecondUnderfunction  ){
 		
-			cout<<"The second underfunction is equal to the underfunction set as the second underfunction . "<<endl;
+			cout<<"The second subfunction is equal to the subfunction set as the second subfunction . "<<endl;
 		}else{
-			cerr<<"Error: The second underfunction isn't equal to the underfunction set as the second underfunction."<<endl;
+			cerr<<"Error: The second subfunction isn't equal to the subfunction set as the second subfunction."<<endl;
 			iReturn++;
 		}
 	}else{
-		cerr<<"Error: The second underfunction is NULL ."<<endl;
+		cerr<<"Error: The second subfunction is NULL ."<<endl;
 		iReturn++;
 	}
 	//check the getDefiningFibElement() methode from cFunctionTwoValue
 	if ( pFunctionToTest->getDefiningFibElement() == pDefiningFibElement  ){
 	
-		cout<<"The underfunction defining fib -element is correctly "<<
+		cout<<"The subfunction defining fib -element is correctly "<<
 			pFunctionToTest->getDefiningFibElement() <<" . "<<endl;
 	}else{
-		cerr<<"Error: The underfunction defining fib -element is "<<
+		cerr<<"Error: The subfunction defining fib -element is "<<
 			pFunctionToTest->getDefiningFibElement() <<
 			" but should be "<< pDefiningFibElement <<" ."<<endl;
 		iReturn++;
@@ -1286,10 +1332,10 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 	//check the getSuperiorUnderFunction() methode from cFunctionTwoValue
 	if ( pFunctionToTest->getSuperiorUnderFunction() == pSuperiorUnderFunction  ){
 	
-		cout<<"The superior underfunction of the underfunction correctly "<<
+		cout<<"The superior subfunction of the subfunction correctly "<<
 			pFunctionToTest->getSuperiorUnderFunction() <<" . "<<endl;
 	}else{
-		cerr<<"Error: The superior underfunction of the underfunction is "<<
+		cerr<<"Error: The superior subfunction of the subfunction is "<<
 			pFunctionToTest->getSuperiorUnderFunction() <<
 			" but should be "<< pSuperiorUnderFunction <<" ."<<endl;
 		iReturn++;
@@ -1298,17 +1344,17 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 	//check the isValid() methode from cFunctionTwoValue
 	if ( ! pFunctionToTest->isValid() ){
 	
-		cout<<"The underfunction is correctly not valid . "<<endl;
+		cout<<"The subfunction is correctly not valid . "<<endl;
 	}else{
-		cerr<<"Error: The underfunction is valid ."<<endl;
+		cerr<<"Error: The subfunction is valid ."<<endl;
 		iReturn++;
 	}
 	//check the getType() methode from cFunctionTwoValue
 	if ( pFunctionToTest->getType() == getActualFunctionType() ){
 	
-		cout<<"The underfunction type is correctly FUNCTION_VARIABLE. "<<endl;
+		cout<<"The subfunction type is correctly FUNCTION_VARIABLE. "<<endl;
 	}else{
-		cerr<<"Error: The type of the underfunction is not FUNCTION_VARIABLE ( "<<
+		cerr<<"Error: The type of the subfunction is not FUNCTION_VARIABLE ( "<<
 			cUnderFunction::FUNCTION_VARIABLE <<" ), but "<<
 			pFunctionToTest->getType() <<" ."<<endl;
 		iReturn++;
@@ -1316,20 +1362,20 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 	//check the getUnderFunctionName() methode from cFunctionTwoValue
 	if ( pFunctionToTest->getUnderFunctionName() == getActualFunctionName() ){
 	
-		cout<<"The underfunction name is correctly "<<
+		cout<<"The subfunction name is correctly "<<
 			pFunctionToTest->getUnderFunctionName() <<" . "<<endl;
 	}else{
-		cerr<<"Error: The name of the underfunction is not \"variable\", but "<<
+		cerr<<"Error: The name of the subfunction is not \"variable\", but "<<
 			pFunctionToTest->getUnderFunctionName() <<" ."<<endl;
 		iReturn++;
 	}
 	//check the getNumberOfUnderFunctions() methode from cFunctionTwoValue
 	if ( pFunctionToTest->getNumberOfUnderFunctions() == 2 ){
 	
-		cout<<"The underfunction number of underfunctions is correctly "<<
+		cout<<"The subfunction number of subfunctions is correctly "<<
 			pFunctionToTest->getNumberOfUnderFunctions() <<" . "<<endl;
 	}else{
-		cerr<<"Error: The underfunction number of underfunctions is "<<
+		cerr<<"Error: The subfunction number of subfunctions is "<<
 			pFunctionToTest->getNumberOfUnderFunctions() <<" , but should be 2 ."<<endl;
 		iReturn++;
 	}
@@ -1338,14 +1384,14 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 	if ( pTypeOfUnderFunction != NULL ){
 		if ( * pTypeOfUnderFunction == typeUnderFunction ){
 		
-			cout<<"The given back element type for the underfunction is correct. "<<endl;
+			cout<<"The given back element type for the subfunction is correct. "<<endl;
 		}else{
-			cerr<<"Error: The given back element type for the underfunction is not correct."<<endl;
+			cerr<<"Error: The given back element type for the subfunction is not correct."<<endl;
 			iReturn++;
 		}
 		delete pTypeOfUnderFunction;
 	}else{
-		cerr<<"Error: The given back element type for the underfunction is NULL ."<<endl;
+		cerr<<"Error: The given back element type for the subfunction is NULL ."<<endl;
 		iReturn++;
 	}
 	//check the getDomain() methode from cFunctionTwoValue
@@ -1354,21 +1400,21 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 		if ( pRetUnderFunctionDomain != NULL ){
 			if ( * pRetUnderFunctionDomain == * pUnderFunctionDomain ){
 			
-				cout<<"The given back domain for the underfunction is correct. "<<endl;
+				cout<<"The given back domain for the subfunction is correct. "<<endl;
 			}else{
-				cerr<<"Error: The given back domain for the underfunction is not correct."<<endl;
+				cerr<<"Error: The given back domain for the subfunction is not correct."<<endl;
 				iReturn++;
 			}
 		}else{
-			cerr<<"Error: The given back domain for the underfunction is NULL ."<<endl;
+			cerr<<"Error: The given back domain for the subfunction is NULL ."<<endl;
 			iReturn++;
 		}
 	}else{
 		if ( pRetUnderFunctionDomain == NULL ){
 		
-			cout<<"The given back domain for the underfunction is correctly NULL . "<<endl;
+			cout<<"The given back domain for the subfunction is correctly NULL . "<<endl;
 		}else{
-			cerr<<"Error: The given back domain for the underfunction is not NULL ."<<endl;
+			cerr<<"Error: The given back domain for the subfunction is not NULL ."<<endl;
 			iReturn++;
 		}
 	}
@@ -1378,21 +1424,21 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 		if ( pRetValueDomain != NULL ){
 			if ( * pRetValueDomain == * pValueDomain ){
 			
-				cout<<"The given back valuedomain for the underfunction is correct. "<<endl;
+				cout<<"The given back valuedomain for the subfunction is correct. "<<endl;
 			}else{
-				cerr<<"Error: The given back valuedomain for the underfunction is not correct."<<endl;
+				cerr<<"Error: The given back valuedomain for the subfunction is not correct."<<endl;
 				iReturn++;
 			}
 		}else{
-			cerr<<"Error: The given back valuedomain for the underfunction is NULL ."<<endl;
+			cerr<<"Error: The given back valuedomain for the subfunction is NULL ."<<endl;
 			iReturn++;
 		}
 	}else{
 		if ( pRetValueDomain == NULL ){
 		
-			cout<<"The given back valuedomain for the underfunction is correctly NULL . "<<endl;
+			cout<<"The given back valuedomain for the subfunction is correctly NULL . "<<endl;
 		}else{
-			cerr<<"Error: The given back valuedomain for the underfunction is not NULL ."<<endl;
+			cerr<<"Error: The given back valuedomain for the subfunction is not NULL ."<<endl;
 			iReturn++;
 		}
 	}
@@ -1402,18 +1448,18 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 		if ( pRetStandardDomain != NULL ){
 			if ( * pRetStandardDomain == * pStandardDomain ){
 			
-				cout<<"The given back the standarddomain for the underfunction is correct. "<<endl;
+				cout<<"The given back the standarddomain for the subfunction is correct. "<<endl;
 			}else{
-				cerr<<"Error: The given back the standarddomain domain for the underfunction is not correct."<<endl;
+				cerr<<"Error: The given back the standarddomain domain for the subfunction is not correct."<<endl;
 				iReturn++;
 			}
 			delete pRetStandardDomain;
 		}else{
-			cerr<<"Error: The given back the standarddomain domain for the underfunction is NULL ."<<endl;
+			cerr<<"Error: The given back the standarddomain domain for the subfunction is NULL ."<<endl;
 			iReturn++;
 		}
 	}else{
-		cerr<<"Error: The given back the standarddomain domain for the underfunction is not NULL ."<<endl;
+		cerr<<"Error: The given back the standarddomain domain for the subfunction is not NULL ."<<endl;
 	}
 	//check the getVariableDomain() methode from cFunctionTwoValue
 	pRetVariableDomain = pFunctionToTest->getVariableDomain();
@@ -1421,22 +1467,22 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 		if ( pRetVariableDomain != NULL ){
 			if ( * pRetVariableDomain == * pVariableDomain ){
 			
-				cout<<"The given back variabledomain for the underfunction is correct. "<<endl;
+				cout<<"The given back variabledomain for the subfunction is correct. "<<endl;
 			}else{
-				cerr<<"Error: The given back variabledomain for the underfunction is not correct."<<endl;
+				cerr<<"Error: The given back variabledomain for the subfunction is not correct."<<endl;
 				iReturn++;
 			}
 			delete pRetVariableDomain;
 		}else{
-			cerr<<"Error: The given back variabledomain for the underfunction is NULL ."<<endl;
+			cerr<<"Error: The given back variabledomain for the subfunction is NULL ."<<endl;
 			iReturn++;
 		}
 	}else{
 		if ( pRetVariableDomain == NULL ){
 		
-			cout<<"The given back variabledomain for the underfunction is correctly NULL . "<<endl;
+			cout<<"The given back variabledomain for the subfunction is correctly NULL . "<<endl;
 		}else{
-			cerr<<"Error: The given back variabledomain for the underfunction is not NULL ."<<endl;
+			cerr<<"Error: The given back variabledomain for the subfunction is not NULL ."<<endl;
 			iReturn++;
 			delete pRetVariableDomain;
 		}
@@ -1464,24 +1510,24 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 	//check the isUsedVariable() methode from cFunctionTwoValue
 	if ( ! pFunctionToTest->isUsedVariable( pVariableX ) ){
 	
-		cout<<"The variable pVariableX isn't used in the underfunction. "<<endl;
+		cout<<"The variable pVariableX isn't used in the subfunction. "<<endl;
 	}else{
-		cerr<<"Error: The variable pVariableX is used in the underfunction. "<<endl;
+		cerr<<"Error: The variable pVariableX is used in the subfunction. "<<endl;
 		iReturn++;
 	}
 	//check the getUsedVariables() methode from cFunctionTwoValue
 	setUsedVariables = pFunctionToTest->getUsedVariables();
 	if ( setUsedVariables == setUsedVariablesCorrect ){
 	
-		cout<<"The correct used variables are given back from the underfunction. "<<endl;
+		cout<<"The correct used variables are given back from the subfunction. "<<endl;
 	}else{
-		cerr<<"Error: The used variables are given back from the underfunction arn't correct. "<<endl;
+		cerr<<"Error: The used variables are given back from the subfunction arn't correct. "<<endl;
 		iReturn++;
 	}
 
 
 	ulTestphase++;
-	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing constructing an full cFunctionTwoValue underfunction with depth 3, testing the included underFunctionTwoValue1"<<endl;
+	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing constructing an full cFunctionTwoValue subfunction with depth 3, testing the included underFunctionTwoValue1"<<endl;
 
 	cout<<"cFunctionVariable underFunctionVariable2( pVariable2 );"<<endl;
 	cFunctionVariable underFunctionVariable2( pVariable2 );
@@ -1505,40 +1551,40 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 	ulTimeNeed = 1 + pFirstUnderfunction->getTimeNeed() +
 		 pSecondUnderfunction->getTimeNeed();
 	
-	ulCompressedSize = 5 + 9 + 9;
+	ulCompressedSize = getActualFunctionInitiationBits() + 9 + 9;
 	
 	setUsedVariablesCorrect.clear();
 	
 	//check the getValue() methode from cFunctionTwoValue
 	if ( isEqual( pFunctionToTest->getValue(), dValue ) ){
 	
-		cout<<"The underfunction value is correctly "<<
+		cout<<"The subfunction value is correctly "<<
 			pFunctionToTest->getValue() <<" . "<<endl;
 	}else{
-		cerr<<"Error: The underfunction value is "<<
+		cerr<<"Error: The subfunction value is "<<
 			pFunctionToTest->getValue() <<" but should be "<< dValue <<" ."<<endl;
 		iReturn++;
 	}
-	//check the underfunctions
+	//check the subfunctions
 	//check getFirstUnderFunction()
 	if ( pFunctionToTest->getFirstUnderFunction() != NULL  ){
 	
 		if ( pFunctionToTest->getFirstUnderFunction() != pFirstUnderfunction  ){
 		
-			cout<<"The first underfunction dosn't points to the object set as the first underfunction . "<<endl;
+			cout<<"The first subfunction dosn't points to the object set as the first subfunction . "<<endl;
 		}else{
-			cerr<<"Error: The first underfunction points to the object set as the first underfunction."<<endl;
+			cerr<<"Error: The first subfunction points to the object set as the first subfunction."<<endl;
 			iReturn++;
 		}
 		if ( *(pFunctionToTest->getFirstUnderFunction()) == *pFirstUnderfunction  ){
 		
-			cout<<"The first underfunction is equal to the underfunction set as the first underfunction . "<<endl;
+			cout<<"The first subfunction is equal to the subfunction set as the first subfunction . "<<endl;
 		}else{
-			cerr<<"Error: The first underfunction isn't equal to the underfunction set as the first underfunction."<<endl;
+			cerr<<"Error: The first subfunction isn't equal to the subfunction set as the first subfunction."<<endl;
 			iReturn++;
 		}
 	}else{
-		cerr<<"Error: The first underfunction is NULL ."<<endl;
+		cerr<<"Error: The first subfunction is NULL ."<<endl;
 		iReturn++;
 	}
 	//check getSecondUnderFunction()
@@ -1546,29 +1592,29 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 	
 		if ( pFunctionToTest->getSecondUnderFunction() != pSecondUnderfunction  ){
 		
-			cout<<"The second underfunction dosn't points to the object set as the second underfunction . "<<endl;
+			cout<<"The second subfunction dosn't points to the object set as the second subfunction . "<<endl;
 		}else{
-			cerr<<"Error: The second underfunction points to the object set as the second underfunction."<<endl;
+			cerr<<"Error: The second subfunction points to the object set as the second subfunction."<<endl;
 			iReturn++;
 		}
 		if ( *(pFunctionToTest->getSecondUnderFunction()) == *pSecondUnderfunction  ){
 		
-			cout<<"The second underfunction is equal to the underfunction set as the second underfunction . "<<endl;
+			cout<<"The second subfunction is equal to the subfunction set as the second subfunction . "<<endl;
 		}else{
-			cerr<<"Error: The second underfunction isn't equal to the underfunction set as the second underfunction."<<endl;
+			cerr<<"Error: The second subfunction isn't equal to the subfunction set as the second subfunction."<<endl;
 			iReturn++;
 		}
 	}else{
-		cerr<<"Error: The second underfunction is NULL ."<<endl;
+		cerr<<"Error: The second subfunction is NULL ."<<endl;
 		iReturn++;
 	}
 	//check the getDefiningFibElement() methode from cFunctionTwoValue
 	if ( pFunctionToTest->getDefiningFibElement() == pDefiningFibElement  ){
 	
-		cout<<"The underfunction defining fib -element is correctly "<<
+		cout<<"The subfunction defining fib -element is correctly "<<
 			pFunctionToTest->getDefiningFibElement() <<" . "<<endl;
 	}else{
-		cerr<<"Error: The underfunction defining fib -element is "<<
+		cerr<<"Error: The subfunction defining fib -element is "<<
 			pFunctionToTest->getDefiningFibElement() <<
 			" but should be "<< pDefiningFibElement <<" ."<<endl;
 		iReturn++;
@@ -1576,10 +1622,10 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 	//check the getSuperiorUnderFunction() methode from cFunctionTwoValue
 	if ( pFunctionToTest->getSuperiorUnderFunction() == pSuperiorUnderFunction  ){
 	
-		cout<<"The superior underfunction of the underfunction correctly "<<
+		cout<<"The superior subfunction of the subfunction correctly "<<
 			pFunctionToTest->getSuperiorUnderFunction() <<" . "<<endl;
 	}else{
-		cerr<<"Error: The superior underfunction of the underfunction is "<<
+		cerr<<"Error: The superior subfunction of the subfunction is "<<
 			pFunctionToTest->getSuperiorUnderFunction() <<
 			" but should be "<< pSuperiorUnderFunction <<" ."<<endl;
 		iReturn++;
@@ -1588,17 +1634,17 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 	//check the isValid() methode from cFunctionTwoValue
 	if ( pFunctionToTest->isValid() ){
 	
-		cout<<"The underfunction is correctly valid . "<<endl;
+		cout<<"The subfunction is correctly valid . "<<endl;
 	}else{
-		cerr<<"Error: The underfunction is not valid ."<<endl;
+		cerr<<"Error: The subfunction is not valid ."<<endl;
 		iReturn++;
 	}
 	//check the getType() methode from cFunctionTwoValue
 	if ( pFunctionToTest->getType() == getActualFunctionType() ){
 	
-		cout<<"The underfunction type is correctly FUNCTION_VARIABLE. "<<endl;
+		cout<<"The subfunction type is correctly FUNCTION_VARIABLE. "<<endl;
 	}else{
-		cerr<<"Error: The type of the underfunction is not FUNCTION_VARIABLE ( "<<
+		cerr<<"Error: The type of the subfunction is not FUNCTION_VARIABLE ( "<<
 			cUnderFunction::FUNCTION_VARIABLE <<" ), but "<<
 			pFunctionToTest->getType() <<" ."<<endl;
 		iReturn++;
@@ -1606,20 +1652,20 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 	//check the getUnderFunctionName() methode from cFunctionTwoValue
 	if ( pFunctionToTest->getUnderFunctionName() == getActualFunctionName() ){
 	
-		cout<<"The underfunction name is correctly "<<
+		cout<<"The subfunction name is correctly "<<
 			pFunctionToTest->getUnderFunctionName() <<" . "<<endl;
 	}else{
-		cerr<<"Error: The name of the underfunction is not \"variable\", but "<<
+		cerr<<"Error: The name of the subfunction is not \"variable\", but "<<
 			pFunctionToTest->getUnderFunctionName() <<" ."<<endl;
 		iReturn++;
 	}
 	//check the getNumberOfUnderFunctions() methode from cFunctionTwoValue
 	if ( pFunctionToTest->getNumberOfUnderFunctions() == 2 ){
 	
-		cout<<"The underfunction number of underfunctions is correctly "<<
+		cout<<"The subfunction number of subfunctions is correctly "<<
 			pFunctionToTest->getNumberOfUnderFunctions() <<" . "<<endl;
 	}else{
-		cerr<<"Error: The underfunction number of underfunctions is "<<
+		cerr<<"Error: The subfunction number of subfunctions is "<<
 			pFunctionToTest->getNumberOfUnderFunctions() <<" , but should be 2 ."<<endl;
 		iReturn++;
 	}
@@ -1628,14 +1674,14 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 	if ( pTypeOfUnderFunction != NULL ){
 		if ( * pTypeOfUnderFunction == typeUnderFunction ){
 		
-			cout<<"The given back element type for the underfunction is correct. "<<endl;
+			cout<<"The given back element type for the subfunction is correct. "<<endl;
 		}else{
-			cerr<<"Error: The given back element type for the underfunction is not correct."<<endl;
+			cerr<<"Error: The given back element type for the subfunction is not correct."<<endl;
 			iReturn++;
 		}
 		delete pTypeOfUnderFunction;
 	}else{
-		cerr<<"Error: The given back element type for the underfunction is NULL ."<<endl;
+		cerr<<"Error: The given back element type for the subfunction is NULL ."<<endl;
 		iReturn++;
 	}
 	//check the getDomain() methode from cFunctionTwoValue
@@ -1644,21 +1690,21 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 		if ( pRetUnderFunctionDomain != NULL ){
 			if ( * pRetUnderFunctionDomain == * pUnderFunctionDomain ){
 			
-				cout<<"The given back domain for the underfunction is correct. "<<endl;
+				cout<<"The given back domain for the subfunction is correct. "<<endl;
 			}else{
-				cerr<<"Error: The given back domain for the underfunction is not correct."<<endl;
+				cerr<<"Error: The given back domain for the subfunction is not correct."<<endl;
 				iReturn++;
 			}
 		}else{
-			cerr<<"Error: The given back domain for the underfunction is NULL ."<<endl;
+			cerr<<"Error: The given back domain for the subfunction is NULL ."<<endl;
 			iReturn++;
 		}
 	}else{
 		if ( pRetUnderFunctionDomain == NULL ){
 		
-			cout<<"The given back domain for the underfunction is correctly NULL . "<<endl;
+			cout<<"The given back domain for the subfunction is correctly NULL . "<<endl;
 		}else{
-			cerr<<"Error: The given back domain for the underfunction is not NULL ."<<endl;
+			cerr<<"Error: The given back domain for the subfunction is not NULL ."<<endl;
 			iReturn++;
 		}
 	}
@@ -1668,21 +1714,21 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 		if ( pRetValueDomain != NULL ){
 			if ( * pRetValueDomain == * pValueDomain ){
 			
-				cout<<"The given back valuedomain for the underfunction is correct. "<<endl;
+				cout<<"The given back valuedomain for the subfunction is correct. "<<endl;
 			}else{
-				cerr<<"Error: The given back valuedomain for the underfunction is not correct."<<endl;
+				cerr<<"Error: The given back valuedomain for the subfunction is not correct."<<endl;
 				iReturn++;
 			}
 		}else{
-			cerr<<"Error: The given back valuedomain for the underfunction is NULL ."<<endl;
+			cerr<<"Error: The given back valuedomain for the subfunction is NULL ."<<endl;
 			iReturn++;
 		}
 	}else{
 		if ( pRetValueDomain == NULL ){
 		
-			cout<<"The given back valuedomain for the underfunction is correctly NULL . "<<endl;
+			cout<<"The given back valuedomain for the subfunction is correctly NULL . "<<endl;
 		}else{
-			cerr<<"Error: The given back valuedomain for the underfunction is not NULL ."<<endl;
+			cerr<<"Error: The given back valuedomain for the subfunction is not NULL ."<<endl;
 			iReturn++;
 		}
 	}
@@ -1692,18 +1738,18 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 		if ( pRetStandardDomain != NULL ){
 			if ( * pRetStandardDomain == * pStandardDomain ){
 			
-				cout<<"The given back the standarddomain for the underfunction is correct. "<<endl;
+				cout<<"The given back the standarddomain for the subfunction is correct. "<<endl;
 			}else{
-				cerr<<"Error: The given back the standarddomain domain for the underfunction is not correct."<<endl;
+				cerr<<"Error: The given back the standarddomain domain for the subfunction is not correct."<<endl;
 				iReturn++;
 			}
 			delete pRetStandardDomain;
 		}else{
-			cerr<<"Error: The given back the standarddomain domain for the underfunction is NULL ."<<endl;
+			cerr<<"Error: The given back the standarddomain domain for the subfunction is NULL ."<<endl;
 			iReturn++;
 		}
 	}else{
-		cerr<<"Error: The given back the standarddomain domain for the underfunction is not NULL ."<<endl;
+		cerr<<"Error: The given back the standarddomain domain for the subfunction is not NULL ."<<endl;
 	}
 	//check the getVariableDomain() methode from cFunctionTwoValue
 	pRetVariableDomain = pFunctionToTest->getVariableDomain();
@@ -1711,22 +1757,22 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 		if ( pRetVariableDomain != NULL ){
 			if ( * pRetVariableDomain == * pVariableDomain ){
 			
-				cout<<"The given back variabledomain for the underfunction is correct. "<<endl;
+				cout<<"The given back variabledomain for the subfunction is correct. "<<endl;
 			}else{
-				cerr<<"Error: The given back variabledomain for the underfunction is not correct."<<endl;
+				cerr<<"Error: The given back variabledomain for the subfunction is not correct."<<endl;
 				iReturn++;
 			}
 			delete pRetVariableDomain;
 		}else{
-			cerr<<"Error: The given back variabledomain for the underfunction is NULL ."<<endl;
+			cerr<<"Error: The given back variabledomain for the subfunction is NULL ."<<endl;
 			iReturn++;
 		}
 	}else{
 		if ( pRetVariableDomain == NULL ){
 		
-			cout<<"The given back variabledomain for the underfunction is correctly NULL . "<<endl;
+			cout<<"The given back variabledomain for the subfunction is correctly NULL . "<<endl;
 		}else{
-			cerr<<"Error: The given back variabledomain for the underfunction is not NULL ."<<endl;
+			cerr<<"Error: The given back variabledomain for the subfunction is not NULL ."<<endl;
 			iReturn++;
 			delete pRetVariableDomain;
 		}
@@ -1754,24 +1800,24 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 	//check the isUsedVariable() methode from cFunctionTwoValue
 	if ( ! pFunctionToTest->isUsedVariable( pVariableX ) ){
 	
-		cout<<"The variable pVariableX isn't used in the underfunction. "<<endl;
+		cout<<"The variable pVariableX isn't used in the subfunction. "<<endl;
 	}else{
-		cerr<<"Error: The variable pVariableX is used in the underfunction. "<<endl;
+		cerr<<"Error: The variable pVariableX is used in the subfunction. "<<endl;
 		iReturn++;
 	}
 	//check the getUsedVariables() methode from cFunctionTwoValue
 	setUsedVariables = pFunctionToTest->getUsedVariables();
 	if ( setUsedVariables == setUsedVariablesCorrect ){
 	
-		cout<<"The correct used variables are given back from the underfunction. "<<endl;
+		cout<<"The correct used variables are given back from the subfunction. "<<endl;
 	}else{
-		cerr<<"Error: The used variables are given back from the underfunction arn't correct. "<<endl;
+		cerr<<"Error: The used variables are given back from the subfunction arn't correct. "<<endl;
 		iReturn++;
 	}
 	
 
 	ulTestphase++;
-	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the constructed full cFunctionTwoValue underfunction with depth 3, testing the included underFunctionTwoValue2"<<endl;
+	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the constructed full cFunctionTwoValue subfunction with depth 3, testing the included underFunctionTwoValue2"<<endl;
 	
 	pFunctionToTest = (cFunctionTwoValue*)underFunctionTwoValue3.getFirstUnderFunction();
 	
@@ -1788,40 +1834,41 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 	ulTimeNeed = 1 + pFirstUnderfunction->getTimeNeed() +
 		 pSecondUnderfunction->getTimeNeed();
 	
-	ulCompressedSize = 5 + 5 + (5 + 9 + 9);
+	ulCompressedSize = getActualFunctionInitiationBits() + 5 +
+		(getActualFunctionInitiationBits() + 9 + 9);
 	
 	setUsedVariablesCorrect.insert( pVariable1 );
 	
 	//check the getValue() methode from cFunctionTwoValue
 	if ( isEqual( pFunctionToTest->getValue(), dValue ) ){
 	
-		cout<<"The underfunction value is correctly "<<
+		cout<<"The subfunction value is correctly "<<
 			pFunctionToTest->getValue() <<" . "<<endl;
 	}else{
-		cerr<<"Error: The underfunction value is "<<
+		cerr<<"Error: The subfunction value is "<<
 			pFunctionToTest->getValue() <<" but should be "<< dValue <<" ."<<endl;
 		iReturn++;
 	}
-	//check the underfunctions
+	//check the subfunctions
 	//check getFirstUnderFunction()
 	if ( pFunctionToTest->getFirstUnderFunction() != NULL  ){
 	
 		if ( pFunctionToTest->getFirstUnderFunction() != pFirstUnderfunction  ){
 		
-			cout<<"The first underfunction dosn't points to the object set as the first underfunction . "<<endl;
+			cout<<"The first subfunction dosn't points to the object set as the first subfunction . "<<endl;
 		}else{
-			cerr<<"Error: The first underfunction points to the object set as the first underfunction."<<endl;
+			cerr<<"Error: The first subfunction points to the object set as the first subfunction."<<endl;
 			iReturn++;
 		}
 		if ( *(pFunctionToTest->getFirstUnderFunction()) == *pFirstUnderfunction  ){
 		
-			cout<<"The first underfunction is equal to the underfunction set as the first underfunction . "<<endl;
+			cout<<"The first subfunction is equal to the subfunction set as the first subfunction . "<<endl;
 		}else{
-			cerr<<"Error: The first underfunction isn't equal to the underfunction set as the first underfunction."<<endl;
+			cerr<<"Error: The first subfunction isn't equal to the subfunction set as the first subfunction."<<endl;
 			iReturn++;
 		}
 	}else{
-		cerr<<"Error: The first underfunction is NULL ."<<endl;
+		cerr<<"Error: The first subfunction is NULL ."<<endl;
 		iReturn++;
 	}
 	//check getSecondUnderFunction()
@@ -1829,29 +1876,29 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 	
 		if ( pFunctionToTest->getSecondUnderFunction() != pSecondUnderfunction  ){
 		
-			cout<<"The second underfunction dosn't points to the object set as the second underfunction . "<<endl;
+			cout<<"The second subfunction dosn't points to the object set as the second subfunction . "<<endl;
 		}else{
-			cerr<<"Error: The second underfunction points to the object set as the second underfunction."<<endl;
+			cerr<<"Error: The second subfunction points to the object set as the second subfunction."<<endl;
 			iReturn++;
 		}
 		if ( *(pFunctionToTest->getSecondUnderFunction()) == *pSecondUnderfunction  ){
 		
-			cout<<"The second underfunction is equal to the underfunction set as the second underfunction . "<<endl;
+			cout<<"The second subfunction is equal to the subfunction set as the second subfunction . "<<endl;
 		}else{
-			cerr<<"Error: The second underfunction isn't equal to the underfunction set as the second underfunction."<<endl;
+			cerr<<"Error: The second subfunction isn't equal to the subfunction set as the second subfunction."<<endl;
 			iReturn++;
 		}
 	}else{
-		cerr<<"Error: The second underfunction is NULL ."<<endl;
+		cerr<<"Error: The second subfunction is NULL ."<<endl;
 		iReturn++;
 	}
 	//check the getDefiningFibElement() methode from cFunctionTwoValue
 	if ( pFunctionToTest->getDefiningFibElement() == pDefiningFibElement  ){
 	
-		cout<<"The underfunction defining fib -element is correctly "<<
+		cout<<"The subfunction defining fib -element is correctly "<<
 			pFunctionToTest->getDefiningFibElement() <<" . "<<endl;
 	}else{
-		cerr<<"Error: The underfunction defining fib -element is "<<
+		cerr<<"Error: The subfunction defining fib -element is "<<
 			pFunctionToTest->getDefiningFibElement() <<
 			" but should be "<< pDefiningFibElement <<" ."<<endl;
 		iReturn++;
@@ -1859,10 +1906,10 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 	//check the getSuperiorUnderFunction() methode from cFunctionTwoValue
 	if ( pFunctionToTest->getSuperiorUnderFunction() == pSuperiorUnderFunction  ){
 	
-		cout<<"The superior underfunction of the underfunction correctly "<<
+		cout<<"The superior subfunction of the subfunction correctly "<<
 			pFunctionToTest->getSuperiorUnderFunction() <<" . "<<endl;
 	}else{
-		cerr<<"Error: The superior underfunction of the underfunction is "<<
+		cerr<<"Error: The superior subfunction of the subfunction is "<<
 			pFunctionToTest->getSuperiorUnderFunction() <<
 			" but should be "<< pSuperiorUnderFunction <<" ."<<endl;
 		iReturn++;
@@ -1871,17 +1918,17 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 	//check the isValid() methode from cFunctionTwoValue
 	if ( pFunctionToTest->isValid() ){
 	
-		cout<<"The underfunction is correctly valid . "<<endl;
+		cout<<"The subfunction is correctly valid . "<<endl;
 	}else{
-		cerr<<"Error: The underfunction is not valid ."<<endl;
+		cerr<<"Error: The subfunction is not valid ."<<endl;
 		iReturn++;
 	}
 	//check the getType() methode from cFunctionTwoValue
 	if ( pFunctionToTest->getType() == getActualFunctionType() ){
 	
-		cout<<"The underfunction type is correctly FUNCTION_VARIABLE. "<<endl;
+		cout<<"The subfunction type is correctly FUNCTION_VARIABLE. "<<endl;
 	}else{
-		cerr<<"Error: The type of the underfunction is not FUNCTION_VARIABLE ( "<<
+		cerr<<"Error: The type of the subfunction is not FUNCTION_VARIABLE ( "<<
 			cUnderFunction::FUNCTION_VARIABLE <<" ), but "<<
 			pFunctionToTest->getType() <<" ."<<endl;
 		iReturn++;
@@ -1889,20 +1936,20 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 	//check the getUnderFunctionName() methode from cFunctionTwoValue
 	if ( pFunctionToTest->getUnderFunctionName() == getActualFunctionName() ){
 	
-		cout<<"The underfunction name is correctly "<<
+		cout<<"The subfunction name is correctly "<<
 			pFunctionToTest->getUnderFunctionName() <<" . "<<endl;
 	}else{
-		cerr<<"Error: The name of the underfunction is not \"variable\", but "<<
+		cerr<<"Error: The name of the subfunction is not \"variable\", but "<<
 			pFunctionToTest->getUnderFunctionName() <<" ."<<endl;
 		iReturn++;
 	}
 	//check the getNumberOfUnderFunctions() methode from cFunctionTwoValue
 	if ( pFunctionToTest->getNumberOfUnderFunctions() == 2 ){
 	
-		cout<<"The underfunction number of underfunctions is correctly "<<
+		cout<<"The subfunction number of subfunctions is correctly "<<
 			pFunctionToTest->getNumberOfUnderFunctions() <<" . "<<endl;
 	}else{
-		cerr<<"Error: The underfunction number of underfunctions is "<<
+		cerr<<"Error: The subfunction number of subfunctions is "<<
 			pFunctionToTest->getNumberOfUnderFunctions() <<" , but should be 2 ."<<endl;
 		iReturn++;
 	}
@@ -1911,14 +1958,14 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 	if ( pTypeOfUnderFunction != NULL ){
 		if ( * pTypeOfUnderFunction == typeUnderFunction ){
 		
-			cout<<"The given back element type for the underfunction is correct. "<<endl;
+			cout<<"The given back element type for the subfunction is correct. "<<endl;
 		}else{
-			cerr<<"Error: The given back element type for the underfunction is not correct."<<endl;
+			cerr<<"Error: The given back element type for the subfunction is not correct."<<endl;
 			iReturn++;
 		}
 		delete pTypeOfUnderFunction;
 	}else{
-		cerr<<"Error: The given back element type for the underfunction is NULL ."<<endl;
+		cerr<<"Error: The given back element type for the subfunction is NULL ."<<endl;
 		iReturn++;
 	}
 	//check the getDomain() methode from cFunctionTwoValue
@@ -1927,21 +1974,21 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 		if ( pRetUnderFunctionDomain != NULL ){
 			if ( * pRetUnderFunctionDomain == * pUnderFunctionDomain ){
 			
-				cout<<"The given back domain for the underfunction is correct. "<<endl;
+				cout<<"The given back domain for the subfunction is correct. "<<endl;
 			}else{
-				cerr<<"Error: The given back domain for the underfunction is not correct."<<endl;
+				cerr<<"Error: The given back domain for the subfunction is not correct."<<endl;
 				iReturn++;
 			}
 		}else{
-			cerr<<"Error: The given back domain for the underfunction is NULL ."<<endl;
+			cerr<<"Error: The given back domain for the subfunction is NULL ."<<endl;
 			iReturn++;
 		}
 	}else{
 		if ( pRetUnderFunctionDomain == NULL ){
 		
-			cout<<"The given back domain for the underfunction is correctly NULL . "<<endl;
+			cout<<"The given back domain for the subfunction is correctly NULL . "<<endl;
 		}else{
-			cerr<<"Error: The given back domain for the underfunction is not NULL ."<<endl;
+			cerr<<"Error: The given back domain for the subfunction is not NULL ."<<endl;
 			iReturn++;
 		}
 	}
@@ -1951,21 +1998,21 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 		if ( pRetValueDomain != NULL ){
 			if ( * pRetValueDomain == * pValueDomain ){
 			
-				cout<<"The given back valuedomain for the underfunction is correct. "<<endl;
+				cout<<"The given back valuedomain for the subfunction is correct. "<<endl;
 			}else{
-				cerr<<"Error: The given back valuedomain for the underfunction is not correct."<<endl;
+				cerr<<"Error: The given back valuedomain for the subfunction is not correct."<<endl;
 				iReturn++;
 			}
 		}else{
-			cerr<<"Error: The given back valuedomain for the underfunction is NULL ."<<endl;
+			cerr<<"Error: The given back valuedomain for the subfunction is NULL ."<<endl;
 			iReturn++;
 		}
 	}else{
 		if ( pRetValueDomain == NULL ){
 		
-			cout<<"The given back valuedomain for the underfunction is correctly NULL . "<<endl;
+			cout<<"The given back valuedomain for the subfunction is correctly NULL . "<<endl;
 		}else{
-			cerr<<"Error: The given back valuedomain for the underfunction is not NULL ."<<endl;
+			cerr<<"Error: The given back valuedomain for the subfunction is not NULL ."<<endl;
 			iReturn++;
 		}
 	}
@@ -1975,18 +2022,18 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 		if ( pRetStandardDomain != NULL ){
 			if ( * pRetStandardDomain == * pStandardDomain ){
 			
-				cout<<"The given back the standarddomain for the underfunction is correct. "<<endl;
+				cout<<"The given back the standarddomain for the subfunction is correct. "<<endl;
 			}else{
-				cerr<<"Error: The given back the standarddomain domain for the underfunction is not correct."<<endl;
+				cerr<<"Error: The given back the standarddomain domain for the subfunction is not correct."<<endl;
 				iReturn++;
 			}
 			delete pRetStandardDomain;
 		}else{
-			cerr<<"Error: The given back the standarddomain domain for the underfunction is NULL ."<<endl;
+			cerr<<"Error: The given back the standarddomain domain for the subfunction is NULL ."<<endl;
 			iReturn++;
 		}
 	}else{
-		cerr<<"Error: The given back the standarddomain domain for the underfunction is not NULL ."<<endl;
+		cerr<<"Error: The given back the standarddomain domain for the subfunction is not NULL ."<<endl;
 	}
 	//check the getVariableDomain() methode from cFunctionTwoValue
 	pRetVariableDomain = pFunctionToTest->getVariableDomain();
@@ -1994,22 +2041,22 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 		if ( pRetVariableDomain != NULL ){
 			if ( * pRetVariableDomain == * pVariableDomain ){
 			
-				cout<<"The given back variabledomain for the underfunction is correct. "<<endl;
+				cout<<"The given back variabledomain for the subfunction is correct. "<<endl;
 			}else{
-				cerr<<"Error: The given back variabledomain for the underfunction is not correct."<<endl;
+				cerr<<"Error: The given back variabledomain for the subfunction is not correct."<<endl;
 				iReturn++;
 			}
 			delete pRetVariableDomain;
 		}else{
-			cerr<<"Error: The given back variabledomain for the underfunction is NULL ."<<endl;
+			cerr<<"Error: The given back variabledomain for the subfunction is NULL ."<<endl;
 			iReturn++;
 		}
 	}else{
 		if ( pRetVariableDomain == NULL ){
 		
-			cout<<"The given back variabledomain for the underfunction is correctly NULL . "<<endl;
+			cout<<"The given back variabledomain for the subfunction is correctly NULL . "<<endl;
 		}else{
-			cerr<<"Error: The given back variabledomain for the underfunction is not NULL ."<<endl;
+			cerr<<"Error: The given back variabledomain for the subfunction is not NULL ."<<endl;
 			iReturn++;
 			delete pRetVariableDomain;
 		}
@@ -2037,24 +2084,24 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 	//check the isUsedVariable() methode from cFunctionTwoValue
 	if ( ! pFunctionToTest->isUsedVariable( pVariableX ) ){
 	
-		cout<<"The variable pVariableX isn't used in the underfunction. "<<endl;
+		cout<<"The variable pVariableX isn't used in the subfunction. "<<endl;
 	}else{
-		cerr<<"Error: The variable pVariableX is used in the underfunction. "<<endl;
+		cerr<<"Error: The variable pVariableX is used in the subfunction. "<<endl;
 		iReturn++;
 	}
 	//check the getUsedVariables() methode from cFunctionTwoValue
 	setUsedVariables = pFunctionToTest->getUsedVariables();
 	if ( setUsedVariables == setUsedVariablesCorrect ){
 	
-		cout<<"The correct used variables are given back from the underfunction. "<<endl;
+		cout<<"The correct used variables are given back from the subfunction. "<<endl;
 	}else{
-		cerr<<"Error: The used variables are given back from the underfunction arn't correct. "<<endl;
+		cerr<<"Error: The used variables are given back from the subfunction arn't correct. "<<endl;
 		iReturn++;
 	}
 	
 
 	ulTestphase++;
-	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the constructed full cFunctionTwoValue underfunction with depth 3, testing the included underFunctionTwoValue3"<<endl;
+	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the constructed full cFunctionTwoValue subfunction with depth 3, testing the included underFunctionTwoValue3"<<endl;
 	
 	pFunctionToTest = (cFunctionTwoValue*)&underFunctionTwoValue3;
 	
@@ -2071,40 +2118,42 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 	ulTimeNeed = 1 + pFirstUnderfunction->getTimeNeed() +
 		 pSecondUnderfunction->getTimeNeed();
 	
-	ulCompressedSize = 5 + 5 +( 5 + 5 + (5 + 9 + 9) );
+	ulCompressedSize = getActualFunctionInitiationBits() + 5 +
+		( getActualFunctionInitiationBits() + 5 +
+		(getActualFunctionInitiationBits() + 9 + 9) );
 	
 	setUsedVariablesCorrect.insert( pVariable2 );
 	
 	//check the getValue() methode from cFunctionTwoValue
 	if ( isEqual( pFunctionToTest->getValue(), dValue ) ){
 	
-		cout<<"The underfunction value is correctly "<<
+		cout<<"The subfunction value is correctly "<<
 			pFunctionToTest->getValue() <<" . "<<endl;
 	}else{
-		cerr<<"Error: The underfunction value is "<<
+		cerr<<"Error: The subfunction value is "<<
 			pFunctionToTest->getValue() <<" but should be "<< dValue <<" ."<<endl;
 		iReturn++;
 	}
-	//check the underfunctions
+	//check the subfunctions
 	//check getFirstUnderFunction()
 	if ( pFunctionToTest->getFirstUnderFunction() != NULL  ){
 	
 		if ( pFunctionToTest->getFirstUnderFunction() != pFirstUnderfunction  ){
 		
-			cout<<"The first underfunction dosn't points to the object set as the first underfunction . "<<endl;
+			cout<<"The first subfunction dosn't points to the object set as the first subfunction . "<<endl;
 		}else{
-			cerr<<"Error: The first underfunction points to the object set as the first underfunction."<<endl;
+			cerr<<"Error: The first subfunction points to the object set as the first subfunction."<<endl;
 			iReturn++;
 		}
 		if ( *(pFunctionToTest->getFirstUnderFunction()) == *pFirstUnderfunction  ){
 		
-			cout<<"The first underfunction is equal to the underfunction set as the first underfunction . "<<endl;
+			cout<<"The first subfunction is equal to the subfunction set as the first subfunction . "<<endl;
 		}else{
-			cerr<<"Error: The first underfunction isn't equal to the underfunction set as the first underfunction."<<endl;
+			cerr<<"Error: The first subfunction isn't equal to the subfunction set as the first subfunction."<<endl;
 			iReturn++;
 		}
 	}else{
-		cerr<<"Error: The first underfunction is NULL ."<<endl;
+		cerr<<"Error: The first subfunction is NULL ."<<endl;
 		iReturn++;
 	}
 	//check getSecondUnderFunction()
@@ -2112,29 +2161,29 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 	
 		if ( pFunctionToTest->getSecondUnderFunction() != pSecondUnderfunction  ){
 		
-			cout<<"The second underfunction dosn't points to the object set as the second underfunction . "<<endl;
+			cout<<"The second subfunction dosn't points to the object set as the second subfunction . "<<endl;
 		}else{
-			cerr<<"Error: The second underfunction points to the object set as the second underfunction."<<endl;
+			cerr<<"Error: The second subfunction points to the object set as the second subfunction."<<endl;
 			iReturn++;
 		}
 		if ( *(pFunctionToTest->getSecondUnderFunction()) == *pSecondUnderfunction  ){
 		
-			cout<<"The second underfunction is equal to the underfunction set as the second underfunction . "<<endl;
+			cout<<"The second subfunction is equal to the subfunction set as the second subfunction . "<<endl;
 		}else{
-			cerr<<"Error: The second underfunction isn't equal to the underfunction set as the second underfunction."<<endl;
+			cerr<<"Error: The second subfunction isn't equal to the subfunction set as the second subfunction."<<endl;
 			iReturn++;
 		}
 	}else{
-		cerr<<"Error: The second underfunction is NULL ."<<endl;
+		cerr<<"Error: The second subfunction is NULL ."<<endl;
 		iReturn++;
 	}
 	//check the getDefiningFibElement() methode from cFunctionTwoValue
 	if ( pFunctionToTest->getDefiningFibElement() == pDefiningFibElement  ){
 	
-		cout<<"The underfunction defining fib -element is correctly "<<
+		cout<<"The subfunction defining fib -element is correctly "<<
 			pFunctionToTest->getDefiningFibElement() <<" . "<<endl;
 	}else{
-		cerr<<"Error: The underfunction defining fib -element is "<<
+		cerr<<"Error: The subfunction defining fib -element is "<<
 			pFunctionToTest->getDefiningFibElement() <<
 			" but should be "<< pDefiningFibElement <<" ."<<endl;
 		iReturn++;
@@ -2142,10 +2191,10 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 	//check the getSuperiorUnderFunction() methode from cFunctionTwoValue
 	if ( pFunctionToTest->getSuperiorUnderFunction() == pSuperiorUnderFunction  ){
 	
-		cout<<"The superior underfunction of the underfunction correctly "<<
+		cout<<"The superior subfunction of the subfunction correctly "<<
 			pFunctionToTest->getSuperiorUnderFunction() <<" . "<<endl;
 	}else{
-		cerr<<"Error: The superior underfunction of the underfunction is "<<
+		cerr<<"Error: The superior subfunction of the subfunction is "<<
 			pFunctionToTest->getSuperiorUnderFunction() <<
 			" but should be "<< pSuperiorUnderFunction <<" ."<<endl;
 		iReturn++;
@@ -2154,17 +2203,17 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 	//check the isValid() methode from cFunctionTwoValue
 	if ( pFunctionToTest->isValid() ){
 	
-		cout<<"The underfunction is correctly valid . "<<endl;
+		cout<<"The subfunction is correctly valid . "<<endl;
 	}else{
-		cerr<<"Error: The underfunction is not valid ."<<endl;
+		cerr<<"Error: The subfunction is not valid ."<<endl;
 		iReturn++;
 	}
 	//check the getType() methode from cFunctionTwoValue
 	if ( pFunctionToTest->getType() == getActualFunctionType() ){
 	
-		cout<<"The underfunction type is correctly FUNCTION_VARIABLE. "<<endl;
+		cout<<"The subfunction type is correctly FUNCTION_VARIABLE. "<<endl;
 	}else{
-		cerr<<"Error: The type of the underfunction is not FUNCTION_VARIABLE ( "<<
+		cerr<<"Error: The type of the subfunction is not FUNCTION_VARIABLE ( "<<
 			cUnderFunction::FUNCTION_VARIABLE <<" ), but "<<
 			pFunctionToTest->getType() <<" ."<<endl;
 		iReturn++;
@@ -2172,20 +2221,20 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 	//check the getUnderFunctionName() methode from cFunctionTwoValue
 	if ( pFunctionToTest->getUnderFunctionName() == getActualFunctionName() ){
 	
-		cout<<"The underfunction name is correctly "<<
+		cout<<"The subfunction name is correctly "<<
 			pFunctionToTest->getUnderFunctionName() <<" . "<<endl;
 	}else{
-		cerr<<"Error: The name of the underfunction is not \"variable\", but "<<
+		cerr<<"Error: The name of the subfunction is not \"variable\", but "<<
 			pFunctionToTest->getUnderFunctionName() <<" ."<<endl;
 		iReturn++;
 	}
 	//check the getNumberOfUnderFunctions() methode from cFunctionTwoValue
 	if ( pFunctionToTest->getNumberOfUnderFunctions() == 2 ){
 	
-		cout<<"The underfunction number of underfunctions is correctly "<<
+		cout<<"The subfunction number of subfunctions is correctly "<<
 			pFunctionToTest->getNumberOfUnderFunctions() <<" . "<<endl;
 	}else{
-		cerr<<"Error: The underfunction number of underfunctions is "<<
+		cerr<<"Error: The subfunction number of subfunctions is "<<
 			pFunctionToTest->getNumberOfUnderFunctions() <<" , but should be 2 ."<<endl;
 		iReturn++;
 	}
@@ -2194,14 +2243,14 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 	if ( pTypeOfUnderFunction != NULL ){
 		if ( * pTypeOfUnderFunction == typeUnderFunction ){
 		
-			cout<<"The given back element type for the underfunction is correct. "<<endl;
+			cout<<"The given back element type for the subfunction is correct. "<<endl;
 		}else{
-			cerr<<"Error: The given back element type for the underfunction is not correct."<<endl;
+			cerr<<"Error: The given back element type for the subfunction is not correct."<<endl;
 			iReturn++;
 		}
 		delete pTypeOfUnderFunction;
 	}else{
-		cerr<<"Error: The given back element type for the underfunction is NULL ."<<endl;
+		cerr<<"Error: The given back element type for the subfunction is NULL ."<<endl;
 		iReturn++;
 	}
 	//check the getDomain() methode from cFunctionTwoValue
@@ -2210,21 +2259,21 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 		if ( pRetUnderFunctionDomain != NULL ){
 			if ( * pRetUnderFunctionDomain == * pUnderFunctionDomain ){
 			
-				cout<<"The given back domain for the underfunction is correct. "<<endl;
+				cout<<"The given back domain for the subfunction is correct. "<<endl;
 			}else{
-				cerr<<"Error: The given back domain for the underfunction is not correct."<<endl;
+				cerr<<"Error: The given back domain for the subfunction is not correct."<<endl;
 				iReturn++;
 			}
 		}else{
-			cerr<<"Error: The given back domain for the underfunction is NULL ."<<endl;
+			cerr<<"Error: The given back domain for the subfunction is NULL ."<<endl;
 			iReturn++;
 		}
 	}else{
 		if ( pRetUnderFunctionDomain == NULL ){
 		
-			cout<<"The given back domain for the underfunction is correctly NULL . "<<endl;
+			cout<<"The given back domain for the subfunction is correctly NULL . "<<endl;
 		}else{
-			cerr<<"Error: The given back domain for the underfunction is not NULL ."<<endl;
+			cerr<<"Error: The given back domain for the subfunction is not NULL ."<<endl;
 			iReturn++;
 		}
 	}
@@ -2234,21 +2283,21 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 		if ( pRetValueDomain != NULL ){
 			if ( * pRetValueDomain == * pValueDomain ){
 			
-				cout<<"The given back valuedomain for the underfunction is correct. "<<endl;
+				cout<<"The given back valuedomain for the subfunction is correct. "<<endl;
 			}else{
-				cerr<<"Error: The given back valuedomain for the underfunction is not correct."<<endl;
+				cerr<<"Error: The given back valuedomain for the subfunction is not correct."<<endl;
 				iReturn++;
 			}
 		}else{
-			cerr<<"Error: The given back valuedomain for the underfunction is NULL ."<<endl;
+			cerr<<"Error: The given back valuedomain for the subfunction is NULL ."<<endl;
 			iReturn++;
 		}
 	}else{
 		if ( pRetValueDomain == NULL ){
 		
-			cout<<"The given back valuedomain for the underfunction is correctly NULL . "<<endl;
+			cout<<"The given back valuedomain for the subfunction is correctly NULL . "<<endl;
 		}else{
-			cerr<<"Error: The given back valuedomain for the underfunction is not NULL ."<<endl;
+			cerr<<"Error: The given back valuedomain for the subfunction is not NULL ."<<endl;
 			iReturn++;
 		}
 	}
@@ -2258,18 +2307,18 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 		if ( pRetStandardDomain != NULL ){
 			if ( * pRetStandardDomain == * pStandardDomain ){
 			
-				cout<<"The given back the standarddomain for the underfunction is correct. "<<endl;
+				cout<<"The given back the standarddomain for the subfunction is correct. "<<endl;
 			}else{
-				cerr<<"Error: The given back the standarddomain domain for the underfunction is not correct."<<endl;
+				cerr<<"Error: The given back the standarddomain domain for the subfunction is not correct."<<endl;
 				iReturn++;
 			}
 			delete pRetStandardDomain;
 		}else{
-			cerr<<"Error: The given back the standarddomain domain for the underfunction is NULL ."<<endl;
+			cerr<<"Error: The given back the standarddomain domain for the subfunction is NULL ."<<endl;
 			iReturn++;
 		}
 	}else{
-		cerr<<"Error: The given back the standarddomain domain for the underfunction is not NULL ."<<endl;
+		cerr<<"Error: The given back the standarddomain domain for the subfunction is not NULL ."<<endl;
 	}
 	//check the getVariableDomain() methode from cFunctionTwoValue
 	pRetVariableDomain = pFunctionToTest->getVariableDomain();
@@ -2277,22 +2326,22 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 		if ( pRetVariableDomain != NULL ){
 			if ( * pRetVariableDomain == * pVariableDomain ){
 			
-				cout<<"The given back variabledomain for the underfunction is correct. "<<endl;
+				cout<<"The given back variabledomain for the subfunction is correct. "<<endl;
 			}else{
-				cerr<<"Error: The given back variabledomain for the underfunction is not correct."<<endl;
+				cerr<<"Error: The given back variabledomain for the subfunction is not correct."<<endl;
 				iReturn++;
 			}
 			delete pRetVariableDomain;
 		}else{
-			cerr<<"Error: The given back variabledomain for the underfunction is NULL ."<<endl;
+			cerr<<"Error: The given back variabledomain for the subfunction is NULL ."<<endl;
 			iReturn++;
 		}
 	}else{
 		if ( pRetVariableDomain == NULL ){
 		
-			cout<<"The given back variabledomain for the underfunction is correctly NULL . "<<endl;
+			cout<<"The given back variabledomain for the subfunction is correctly NULL . "<<endl;
 		}else{
-			cerr<<"Error: The given back variabledomain for the underfunction is not NULL ."<<endl;
+			cerr<<"Error: The given back variabledomain for the subfunction is not NULL ."<<endl;
 			iReturn++;
 			delete pRetVariableDomain;
 		}
@@ -2320,18 +2369,18 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 	//check the isUsedVariable() methode from cFunctionTwoValue
 	if ( ! pFunctionToTest->isUsedVariable( pVariableX ) ){
 	
-		cout<<"The variable pVariableX isn't used in the underfunction. "<<endl;
+		cout<<"The variable pVariableX isn't used in the subfunction. "<<endl;
 	}else{
-		cerr<<"Error: The variable pVariableX is used in the underfunction. "<<endl;
+		cerr<<"Error: The variable pVariableX is used in the subfunction. "<<endl;
 		iReturn++;
 	}
 	//check the getUsedVariables() methode from cFunctionTwoValue
 	setUsedVariables = pFunctionToTest->getUsedVariables();
 	if ( setUsedVariables == setUsedVariablesCorrect ){
 	
-		cout<<"The correct used variables are given back from the underfunction. "<<endl;
+		cout<<"The correct used variables are given back from the subfunction. "<<endl;
 	}else{
-		cerr<<"Error: The used variables are given back from the underfunction arn't correct. "<<endl;
+		cerr<<"Error: The used variables are given back from the subfunction arn't correct. "<<endl;
 		iReturn++;
 	}
 	
@@ -2349,16 +2398,16 @@ template <class tUnderFunctionTwoValue> int testCostructor(
 
 
 /**
- * This method tests the falues of an underfunction of a function.
+ * This method tests the falues of an subfunction of a function.
  *
  *
- * @param pUnderfunction a pointer to the underfunction to test
- * @param pUnderfunctionOriginal a pointer to the underfunction which
- * 	should be equal to the underfunction to test (but not the same object)
+ * @param pUnderfunction a pointer to the subfunction to test
+ * @param pUnderfunctionOriginal a pointer to the subfunction which
+ * 	should be equal to the subfunction to test (but not the same object)
  * @param pSuperiorUnderFunction the defining superior function the
- * 	underfunction to test should have
+ * 	subfunction to test should have
  * @param pDefiningFibElement the defining fib -element the
- * 	underfunction to test should have
+ * 	subfunction to test should have
  * @return the number of erros occured in the test
  */
 int checkUnderFunction( cUnderFunction * pUnderfunction,
@@ -2369,36 +2418,36 @@ int checkUnderFunction( cUnderFunction * pUnderfunction,
 	
 	if ( pUnderfunction != pUnderfunctionOriginal ){
 	
-		cout<<"   The underfunction dosn't points to the object set as the underfunction . "<<endl;
+		cout<<"   The subfunction dosn't points to the object set as the subfunction . "<<endl;
 	}else{
-		cerr<<"   Error: The underfunction points to the object set as the underfunction."<<endl;
+		cerr<<"   Error: The subfunction points to the object set as the subfunction."<<endl;
 		iReturn++;
 	}
 	if ( pUnderfunction == NULL ){
-		cerr<<"   Error: The underfunction to check is NULL."<<endl;
+		cerr<<"   Error: The subfunction to check is NULL."<<endl;
 		iReturn++;
 		return iReturn;
 	}
 	if ( pUnderfunction == NULL ){
-		cerr<<"   Error: The underfunction to check against is NULL."<<endl;
+		cerr<<"   Error: The subfunction to check against is NULL."<<endl;
 		iReturn++;
 		return iReturn;
 	}
 	
 	if ( *pUnderfunction == *pUnderfunctionOriginal ){
 	
-		cout<<"   The underfunction is equal to the underfunction set as the underfunction . "<<endl;
+		cout<<"   The subfunction is equal to the subfunction set as the subfunction . "<<endl;
 	}else{
-		cerr<<"   Error: The underfunction isn't equal to the underfunction set as the underfunction."<<endl;
+		cerr<<"   Error: The subfunction isn't equal to the subfunction set as the subfunction."<<endl;
 		iReturn++;
 	}
 	//check the getSuperiorUnderFunction() methode from cFunctionTwoValue
 	if ( pUnderfunction->getSuperiorUnderFunction() == pSuperiorUnderFunction  ){
 	
-		cout<<"   The superior underfunction of the underfunction correctly "<<
+		cout<<"   The superior subfunction of the subfunction correctly "<<
 			pUnderfunction->getSuperiorUnderFunction() <<" . "<<endl;
 	}else{
-		cerr<<"   Error: The superior underfunction of the underfunction is "<<
+		cerr<<"   Error: The superior subfunction of the subfunction is "<<
 			pUnderfunction->getSuperiorUnderFunction() <<
 			" but should be "<< pSuperiorUnderFunction <<" ."<<endl;
 		iReturn++;
@@ -2406,10 +2455,10 @@ int checkUnderFunction( cUnderFunction * pUnderfunction,
 	//check the getDefiningFibElement() methode from cFunctionTwoValue
 	if ( pUnderfunction->getDefiningFibElement() == pDefiningFibElement  ){
 	
-		cout<<"   The underfunction defining fib -element is correctly "<<
+		cout<<"   The subfunction defining fib -element is correctly "<<
 			pUnderfunction->getDefiningFibElement() <<" . "<<endl;
 	}else{
-		cerr<<"   Error: The underfunction defining fib -element is "<<
+		cerr<<"   Error: The subfunction defining fib -element is "<<
 			pUnderfunction->getDefiningFibElement() <<
 			" but should be "<< pDefiningFibElement <<" ."<<endl;
 		iReturn++;
@@ -2420,7 +2469,7 @@ int checkUnderFunction( cUnderFunction * pUnderfunction,
 
 
 /**
- * This method tests the methods for the underfunctions of the
+ * This method tests the methods for the subfunctions of the
  * cFunctionTwoValue class.
  *
  * methods tested:
@@ -2441,7 +2490,7 @@ template <class tUnderFunctionTwoValue> int testUnderfunctions(
 	
 
 	ulTestphase++;
-	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing method for setting the first underfunction"<<endl;
+	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing method for setting the first subfunction"<<endl;
 	
 	cout<<"cPoint point1;"<<endl;
 	cPoint point1;
@@ -2788,13 +2837,13 @@ template <class tUnderFunctionTwoValue> int testEqual(
 	cout<<"tUnderFunctionTwoValue underFunctionTwoValueDE1_V1_V2( underFunctionValue1_V1, underFunctionValue1_V2, NULL, &rootSimple1 );"<<endl;
 	tUnderFunctionTwoValue underFunctionTwoValueDE1_V1_V2( underFunctionValue1_V1, underFunctionValue1_V2, NULL, &rootSimple1 );
 	
-	//function with superior underfunction
+	//function with superior subfunction
 	cout<<"cFunctionValue underFunctionSup( 3.33 );"<<endl;
 	cFunctionValue underFunctionSup( 3.333 );
 	cout<<"tUnderFunctionTwoValue underFunctionTwoValueSup1_V1_V2( underFunctionValue1_V1, underFunctionValue1_V2, & underFunctionSup );"<<endl;
 	tUnderFunctionTwoValue underFunctionTwoValueSup1_V1_V2( underFunctionValue1_V1, underFunctionValue1_V2, & underFunctionSup );
 
-	//underfunction with domains set
+	//subfunction with domains set
 	cout<<"root1 rootSimple1;"<<endl;
 	cRoot root1;
 	
@@ -2809,7 +2858,7 @@ template <class tUnderFunctionTwoValue> int testEqual(
 	cout<<"tUnderFunctionTwoValue underFunctionTwoValueDom1_V1_V2( underFunctionValue1_V1, underFunctionValue1_V2, NULL, &root1 );"<<endl;
 	tUnderFunctionTwoValue underFunctionTwoValueDom1_V1_V2( underFunctionValue1_V1, underFunctionValue1_V2, NULL, &root1 );
 	
-	//function with defining fib -element and superior underfunction
+	//function with defining fib -element and superior subfunction
 	cout<<"cRoot rootSimple2;"<<endl;
 	cRoot rootSimple2;
 	cout<<"cFunctionValue underFunctionSup2( 5.0 );"<<endl;
@@ -3020,28 +3069,28 @@ template <class tUnderFunctionTwoValue> int testEqual(
 
 
 /**
- * This method tests if the given underfunction is not conected to other
- * underfunctions or fib -elements.
+ * This method tests if the given subfunction is not conected to other
+ * subfunctions or fib -elements.
  *
- * @param underfunctionObject1 the underfunction to check
+ * @param subfunctionObject1 the subfunction to check
  * @return the number of errors occured in the test
  */
-int testNotConnectedUnderFunction( const cUnderFunction & underfunctionObject1 ){
+int testNotConnectedUnderFunction( const cUnderFunction & subfunctionObject1 ){
 	
 	int iReturn=0;//returnvalue of the test; the number of occured Errors
 	
 	//check the getNextFibElement() methode
-	if ( underfunctionObject1.getSuperiorUnderFunction() == NULL ){
+	if ( subfunctionObject1.getSuperiorUnderFunction() == NULL ){
 	
-		cout<<"The superior underfunctionpointer for the functionelement is correctly NULL . "<<endl;
+		cout<<"The superior subfunctionpointer for the functionelement is correctly NULL . "<<endl;
 	}else{
-		cerr<<"Error: The superior underfunctionpointer for the functionelement is not NULL, but "<<
-			underfunctionObject1.getSuperiorUnderFunction() <<" ."<<endl;
+		cerr<<"Error: The superior subfunctionpointer for the functionelement is not NULL, but "<<
+			subfunctionObject1.getSuperiorUnderFunction() <<" ."<<endl;
 		iReturn++;
 	}
 	
 	//check the getDefiningFibElement() methode
-	if ( underfunctionObject1.getDefiningFibElement() == NULL ){
+	if ( subfunctionObject1.getDefiningFibElement() == NULL ){
 	
 		cout<<"The defining fib -elementpointer for the function is correctly NULL. "<<endl;
 	}else{
@@ -3057,7 +3106,7 @@ int testNotConnectedUnderFunction( const cUnderFunction & underfunctionObject1 )
  * This method tests the copy methods and copyconstructor of the cFunctionTwoValue class.
  *
  * methods tested:
- * 	- cFunctionTwoValue( const cFunctionTwoValue & underfunction, cUnderFunction * pInSuperiorFunction = NULL, cFibElement *pInDefiningFibElement = NULL );
+ * 	- cFunctionTwoValue( const cFunctionTwoValue & subfunction, cUnderFunction * pInSuperiorFunction = NULL, cFibElement *pInDefiningFibElement = NULL );
  * 	- cUnderFunction * clone( cUnderFunction * pInSuperiorUnderFunction = NULL, cFibElement *pInDefiningFibElement = NULL) const;
  *
  * @param ulTestphase a reference to the number for the testphase
@@ -3108,7 +3157,7 @@ template <class tUnderFunctionTwoValue> int testCopy(
 
 
 	ulTestphase++;
-	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing copying a cFunctionTwoValue with variable underfunctions"<<endl;
+	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing copying a cFunctionTwoValue with variable subfunctions"<<endl;
 
 	cout<<"cRoot rootEmpty;"<<endl;
 	cRoot rootEmpty;
@@ -3154,9 +3203,9 @@ template <class tUnderFunctionTwoValue> int testCopy(
 
 
 	ulTestphase++;
-	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing copying a cFunctionTwoValue with a superior underfunction and defining fib -element"<<endl;
+	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing copying a cFunctionTwoValue with a superior subfunction and defining fib -element"<<endl;
 
-	//function with defining fib -element and superior underfunction
+	//function with defining fib -element and superior subfunction
 	cout<<"cRoot rootSimple;"<<endl;
 	cRoot rootSimple;
 	cout<<"cFunctionValue underFunctionSup( 325.142 );"<<endl;
@@ -3196,9 +3245,9 @@ template <class tUnderFunctionTwoValue> int testCopy(
 
 
 	ulTestphase++;
-	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing copying a cFunctionTwoValue with a superior underfunction and defining fib -element which will be changed"<<endl;
+	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing copying a cFunctionTwoValue with a superior subfunction and defining fib -element which will be changed"<<endl;
 
-	//function with defining fib -element and superior underfunction
+	//function with defining fib -element and superior subfunction
 	cout<<"cRoot rootSimple2;"<<endl;
 	cRoot rootSimple2;
 	cout<<"cFunctionValue underFunctionSup2( 42.0 );"<<endl;
@@ -3244,12 +3293,12 @@ template <class tUnderFunctionTwoValue> int testCopy(
 
 /**
  * This method tests a in the xml -format stored cFunctionTwoValue.
- * The underfunctions of the cFunctionTwoValue should be two value underfunction
+ * The subfunctions of the cFunctionTwoValue should be two value subfunction
  * ( cFunctionValue ).
  *
  * @param szFilename the name of the file wher the cFunctionTwoValue is stored
- * @param dValue1 the value of the first underfunction
- * @param dValue2 the value of the second underfunction
+ * @param dValue1 the value of the first subfunction
+ * @param dValue2 the value of the second subfunction
  * @return the number of errors occured in the test
  */
 int testXmlFunctionTwoValue( const string szFilename, double dValue1, double dValue2 ){
@@ -3290,11 +3339,11 @@ int testXmlFunctionTwoValue( const string szFilename, double dValue1, double dVa
 		iReturn++;
 		return iReturn;
 	}
-	//check the underfunctions
+	//check the subfunctions
 	xmlHandleRoot = TiXmlHandle( pXmlElement );
 	pXmlElement = xmlHandleRoot.FirstChild().Element();
 	
-	//check the first underfunctions
+	//check the first subfunctions
 	const string szFunctionValueElementName = "value";
 	if ( pXmlElement ) {
 		string szElementName = pXmlElement->Value();
@@ -3308,7 +3357,7 @@ int testXmlFunctionTwoValue( const string szFilename, double dValue1, double dVa
 		}
 		
 		const char * pcValue = pXmlElement->GetText();
-		cout<<"The value of the underfunction is: "<< pcValue <<endl;
+		cout<<"The value of the subfunction is: "<< pcValue <<endl;
 		//converting value to double
 		double dXmlValue;
 		int iReadValues = sscanf ( pcValue, "%lf", & dXmlValue );
@@ -3326,12 +3375,12 @@ int testXmlFunctionTwoValue( const string szFilename, double dValue1, double dVa
 		}
 
 	}else{// pXmlElement == NULL ->no root handle
-		cerr<<"Error: No first underfunction handle in \""<< szFilename <<"\"."<<endl;
+		cerr<<"Error: No first subfunction handle in \""<< szFilename <<"\"."<<endl;
 		iReturn++;
 		return iReturn;
 	}
 
-	//check the first underfunctions
+	//check the first subfunctions
 	pXmlElement = pXmlElement->NextSiblingElement();
 	if ( pXmlElement ) {
 		string szElementName = pXmlElement->Value();
@@ -3345,7 +3394,7 @@ int testXmlFunctionTwoValue( const string szFilename, double dValue1, double dVa
 		}
 		
 		const char * pcValue = pXmlElement->GetText();
-		cout<<"The value of the underfunction is: "<< pcValue <<endl;
+		cout<<"The value of the subfunction is: "<< pcValue <<endl;
 		//converting value to double
 		double dXmlValue;
 		int iReadValues = sscanf ( pcValue, "%lf", & dXmlValue );
@@ -3363,7 +3412,7 @@ int testXmlFunctionTwoValue( const string szFilename, double dValue1, double dVa
 		}
 
 	}else{// pXmlElement == NULL ->no root handle
-		cerr<<"Error: No first underfunction handle in \""<< szFilename <<"\"."<<endl;
+		cerr<<"Error: No first subfunction handle in \""<< szFilename <<"\"."<<endl;
 		iReturn++;
 		return iReturn;
 	}
@@ -3395,7 +3444,7 @@ template <class tUnderFunctionTwoValue> int testStoreXml(
 	unsigned int iReturn = 0;
 
 	ulTestphase++;
-	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the storeXml() method on an underfunction with valuefunctions with 1.0 and 2.0"<<endl;
+	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the storeXml() method on an subfunction with valuefunctions with 1.0 and 2.0"<<endl;
 		
 	cout<<"list<cFibVariable*> liDefinedVariables;"<<endl;
 	list<cFibVariable*> liDefinedVariables;
@@ -3446,9 +3495,9 @@ template <class tUnderFunctionTwoValue> int testStoreXml(
 		}
 		if ( underFunctionTwoValue1Loaded.getType() == getActualFunctionType() ){
 		
-			cout<<"The loaded underfunction has the correct type. "<<endl;
+			cout<<"The loaded subfunction has the correct type. "<<endl;
 		}else{
-			cerr<<"Error: The loaded underfunction has the type "<<
+			cerr<<"Error: The loaded subfunction has the type "<<
 				underFunctionTwoValue1Loaded.getType() <<" , but should have the type "<<
 				getActualFunctionType() <<" ."<<endl;
 			iReturn++;
@@ -3479,9 +3528,9 @@ template <class tUnderFunctionTwoValue> int testStoreXml(
 		if ( pUnderFunctionTwoValue1Loaded ){
 			if ( pUnderFunctionTwoValue1Loaded->getType() == getActualFunctionType() ){
 			
-				cout<<"The loaded underfunction has the correct type. "<<endl;
+				cout<<"The loaded subfunction has the correct type. "<<endl;
 			}else{
-				cerr<<"Error: The loaded underfunction has the type "<<
+				cerr<<"Error: The loaded subfunction has the type "<<
 					pUnderFunctionTwoValue1Loaded->getType() <<" , but should have the type "<<
 					getActualFunctionType() <<" ."<<endl;
 				iReturn++;
@@ -3496,7 +3545,7 @@ template <class tUnderFunctionTwoValue> int testStoreXml(
 				&underFunctionValue2, pUnderFunctionTwoValue1Loaded, NULL );
 			delete pUnderFunctionTwoValue1Loaded;
 		}else{
-			cerr<<"Error: No underfunction loaded ."<<endl;
+			cerr<<"Error: No subfunction loaded ."<<endl;
 			iReturn++;
 		}
 		if ( liDefinedVariables != liDefinedVariablesOrg ){
@@ -3527,9 +3576,9 @@ template <class tUnderFunctionTwoValue> int testStoreXml(
 		}
 		if ( underFunctionTwoValue1LoadedFull.getType() == getActualFunctionType() ){
 		
-			cout<<"The loaded underfunction has the correct type. "<<endl;
+			cout<<"The loaded subfunction has the correct type. "<<endl;
 		}else{
-			cerr<<"Error: The loaded underfunction has the type "<<
+			cerr<<"Error: The loaded subfunction has the type "<<
 				underFunctionTwoValue1LoadedFull.getType() <<" , but should have the type "<<
 				getActualFunctionType() <<" ."<<endl;
 			iReturn++;
@@ -3539,10 +3588,10 @@ template <class tUnderFunctionTwoValue> int testStoreXml(
 		//check the getDefiningFibElement() methode from cFunctionTwoValue
 		if ( underFunctionTwoValue1LoadedFull.getDefiningFibElement() == &rootSimple  ){
 		
-			cout<<"The underfunction defining fib -element is correctly "<<
+			cout<<"The subfunction defining fib -element is correctly "<<
 				underFunctionTwoValue1LoadedFull.getDefiningFibElement() <<" . "<<endl;
 		}else{
-			cerr<<"Error: The underfunction defining fib -element is "<<
+			cerr<<"Error: The subfunction defining fib -element is "<<
 				underFunctionTwoValue1LoadedFull.getDefiningFibElement() <<
 				" but should be rootSimple="<< &rootSimple <<" ."<<endl;
 			iReturn++;
@@ -3550,10 +3599,10 @@ template <class tUnderFunctionTwoValue> int testStoreXml(
 		//check the getSuperiorUnderFunction() methode from cFunctionTwoValue
 		if ( underFunctionTwoValue1LoadedFull.getSuperiorUnderFunction() == &underFunctionSup  ){
 		
-			cout<<"The superior underfunction of the underfunction correctly "<<
+			cout<<"The superior subfunction of the subfunction correctly "<<
 				underFunctionTwoValue1LoadedFull.getSuperiorUnderFunction() <<" . "<<endl;
 		}else{
-			cerr<<"Error: The superior underfunction of the underfunction is "<<
+			cerr<<"Error: The superior subfunction of the subfunction is "<<
 				underFunctionTwoValue1LoadedFull.getSuperiorUnderFunction() <<
 				" but should be underFunctionSup="<< &underFunctionSup <<" ."<<endl;
 			iReturn++;
@@ -3586,9 +3635,9 @@ template <class tUnderFunctionTwoValue> int testStoreXml(
 		if ( pUnderFunctionTwoValue1LoadedFull ){
 			if ( pUnderFunctionTwoValue1LoadedFull->getType() == getActualFunctionType() ){
 			
-				cout<<"The loaded underfunction has the correct type. "<<endl;
+				cout<<"The loaded subfunction has the correct type. "<<endl;
 			}else{
-				cerr<<"Error: The loaded underfunction has the type "<<
+				cerr<<"Error: The loaded subfunction has the type "<<
 					pUnderFunctionTwoValue1LoadedFull->getType() <<" , but should have the type "<<
 					getActualFunctionType() <<" ."<<endl;
 				iReturn++;
@@ -3597,10 +3646,10 @@ template <class tUnderFunctionTwoValue> int testStoreXml(
 			//check the getDefiningFibElement() methode from cFunctionTwoValue
 			if ( pUnderFunctionTwoValue1LoadedFull->getDefiningFibElement() == &rootSimple  ){
 			
-				cout<<"The underfunction defining fib -element is correctly "<<
+				cout<<"The subfunction defining fib -element is correctly "<<
 					pUnderFunctionTwoValue1LoadedFull->getDefiningFibElement() <<" . "<<endl;
 			}else{
-				cerr<<"Error: The underfunction defining fib -element is "<<
+				cerr<<"Error: The subfunction defining fib -element is "<<
 					pUnderFunctionTwoValue1LoadedFull->getDefiningFibElement() <<
 					" but should be rootSimple="<< &rootSimple <<" ."<<endl;
 				iReturn++;
@@ -3608,10 +3657,10 @@ template <class tUnderFunctionTwoValue> int testStoreXml(
 			//check the getSuperiorUnderFunction() methode from cFunctionTwoValue
 			if ( pUnderFunctionTwoValue1LoadedFull->getSuperiorUnderFunction() == &underFunctionSup  ){
 			
-				cout<<"The superior underfunction of the underfunction correctly "<<
+				cout<<"The superior subfunction of the subfunction correctly "<<
 					pUnderFunctionTwoValue1LoadedFull->getSuperiorUnderFunction() <<" . "<<endl;
 			}else{
-				cerr<<"Error: The superior underfunction of the underfunction is "<<
+				cerr<<"Error: The superior subfunction of the subfunction is "<<
 					pUnderFunctionTwoValue1LoadedFull->getSuperiorUnderFunction() <<
 					" but should be underFunctionSup="<< &underFunctionSup <<" ."<<endl;
 				iReturn++;
@@ -3625,7 +3674,7 @@ template <class tUnderFunctionTwoValue> int testStoreXml(
 			
 			delete pUnderFunctionTwoValue1LoadedFull;
 		}else{
-			cerr<<"Error: No underfunction loaded ."<<endl;
+			cerr<<"Error: No subfunction loaded ."<<endl;
 			iReturn++;
 		}
 		if ( liDefinedVariables != liDefinedVariablesOrg ){
@@ -3640,7 +3689,7 @@ template <class tUnderFunctionTwoValue> int testStoreXml(
 	
 	
 	ulTestphase++;
-	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the storeXml() method on an underfunction with valuefunctions with given superior underfunction and defining fib -element"<<endl;
+	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the storeXml() method on an subfunction with valuefunctions with given superior subfunction and defining fib -element"<<endl;
 
 	cout<<"cFunctionValue underFunctionValue3( 3.0 );"<<endl;
 	cFunctionValue underFunctionValue3( 3.0 );
@@ -3691,9 +3740,9 @@ template <class tUnderFunctionTwoValue> int testStoreXml(
 		}
 		if ( underFunctionTwoValue1Loaded.getType() == getActualFunctionType() ){
 		
-			cout<<"The loaded underfunction has the correct type. "<<endl;
+			cout<<"The loaded subfunction has the correct type. "<<endl;
 		}else{
-			cerr<<"Error: The loaded underfunction has the type "<<
+			cerr<<"Error: The loaded subfunction has the type "<<
 				underFunctionTwoValue1Loaded.getType() <<" , but should have the type "<<
 				getActualFunctionType() <<" ."<<endl;
 			iReturn++;
@@ -3724,18 +3773,18 @@ template <class tUnderFunctionTwoValue> int testStoreXml(
 		if ( pUnderFunctionTwoValue1Loaded ){
 			if ( pUnderFunctionTwoValue1Loaded->getType() == getActualFunctionType() ){
 			
-				cout<<"The loaded underfunction has the correct type. "<<endl;
+				cout<<"The loaded subfunction has the correct type. "<<endl;
 			}else{
-				cerr<<"Error: The loaded underfunction has the type "<<
+				cerr<<"Error: The loaded subfunction has the type "<<
 					pUnderFunctionTwoValue1Loaded->getType() <<" , but should have the type "<<
 					getActualFunctionType() <<" ."<<endl;
 				iReturn++;
 			}
 			if ( pUnderFunctionTwoValue1Loaded->getType() == getActualFunctionType() ){
 			
-				cout<<"The loaded underfunction has the correct type. "<<endl;
+				cout<<"The loaded subfunction has the correct type. "<<endl;
 			}else{
-				cerr<<"Error: The loaded underfunction has the type "<<
+				cerr<<"Error: The loaded subfunction has the type "<<
 					pUnderFunctionTwoValue1Loaded->getType() <<" , but should have the type "<<
 					getActualFunctionType() <<" ."<<endl;
 				iReturn++;
@@ -3750,7 +3799,7 @@ template <class tUnderFunctionTwoValue> int testStoreXml(
 				&underFunctionValue4, pUnderFunctionTwoValue1Loaded, NULL );
 			delete pUnderFunctionTwoValue1Loaded;
 		}else{
-			cerr<<"Error: No underfunction loaded ."<<endl;
+			cerr<<"Error: No subfunction loaded ."<<endl;
 			iReturn++;
 		}
 		if ( liDefinedVariables != liDefinedVariablesOrg ){
@@ -3781,9 +3830,9 @@ template <class tUnderFunctionTwoValue> int testStoreXml(
 		}
 		if ( underFunctionTwoValue1LoadedFull.getType() == getActualFunctionType() ){
 		
-			cout<<"The loaded underfunction has the correct type. "<<endl;
+			cout<<"The loaded subfunction has the correct type. "<<endl;
 		}else{
-			cerr<<"Error: The loaded underfunction has the type "<<
+			cerr<<"Error: The loaded subfunction has the type "<<
 				underFunctionTwoValue1LoadedFull.getType() <<" , but should have the type "<<
 				getActualFunctionType() <<" ."<<endl;
 			iReturn++;
@@ -3793,10 +3842,10 @@ template <class tUnderFunctionTwoValue> int testStoreXml(
 		//check the getDefiningFibElement() methode from cFunctionTwoValue
 		if ( underFunctionTwoValue1LoadedFull.getDefiningFibElement() == &rootSimple  ){
 		
-			cout<<"The underfunction defining fib -element is correctly "<<
+			cout<<"The subfunction defining fib -element is correctly "<<
 				underFunctionTwoValue1LoadedFull.getDefiningFibElement() <<" . "<<endl;
 		}else{
-			cerr<<"Error: The underfunction defining fib -element is "<<
+			cerr<<"Error: The subfunction defining fib -element is "<<
 				underFunctionTwoValue1LoadedFull.getDefiningFibElement() <<
 				" but should be rootSimple="<< &rootSimple <<" ."<<endl;
 			iReturn++;
@@ -3804,10 +3853,10 @@ template <class tUnderFunctionTwoValue> int testStoreXml(
 		//check the getSuperiorUnderFunction() methode from cFunctionTwoValue
 		if ( underFunctionTwoValue1LoadedFull.getSuperiorUnderFunction() == &underFunctionSup  ){
 		
-			cout<<"The superior underfunction of the underfunction correctly "<<
+			cout<<"The superior subfunction of the subfunction correctly "<<
 				underFunctionTwoValue1LoadedFull.getSuperiorUnderFunction() <<" . "<<endl;
 		}else{
-			cerr<<"Error: The superior underfunction of the underfunction is "<<
+			cerr<<"Error: The superior subfunction of the subfunction is "<<
 				underFunctionTwoValue1LoadedFull.getSuperiorUnderFunction() <<
 				" but should be underFunctionSup="<< &underFunctionSup <<" ."<<endl;
 			iReturn++;
@@ -3840,9 +3889,9 @@ template <class tUnderFunctionTwoValue> int testStoreXml(
 		if ( pUnderFunctionTwoValue1LoadedFull ){
 			if ( pUnderFunctionTwoValue1LoadedFull->getType() == getActualFunctionType() ){
 			
-				cout<<"The loaded underfunction has the correct type. "<<endl;
+				cout<<"The loaded subfunction has the correct type. "<<endl;
 			}else{
-				cerr<<"Error: The loaded underfunction has the type "<<
+				cerr<<"Error: The loaded subfunction has the type "<<
 					pUnderFunctionTwoValue1LoadedFull->getType() <<" , but should have the type "<<
 					getActualFunctionType() <<" ."<<endl;
 				iReturn++;
@@ -3851,10 +3900,10 @@ template <class tUnderFunctionTwoValue> int testStoreXml(
 			//check the getDefiningFibElement() methode from cFunctionTwoValue
 			if ( pUnderFunctionTwoValue1LoadedFull->getDefiningFibElement() == &rootSimple  ){
 			
-				cout<<"The underfunction defining fib -element is correctly "<<
+				cout<<"The subfunction defining fib -element is correctly "<<
 					pUnderFunctionTwoValue1LoadedFull->getDefiningFibElement() <<" . "<<endl;
 			}else{
-				cerr<<"Error: The underfunction defining fib -element is "<<
+				cerr<<"Error: The subfunction defining fib -element is "<<
 					pUnderFunctionTwoValue1LoadedFull->getDefiningFibElement() <<
 					" but should be rootSimple="<< &rootSimple <<" ."<<endl;
 				iReturn++;
@@ -3862,10 +3911,10 @@ template <class tUnderFunctionTwoValue> int testStoreXml(
 			//check the getSuperiorUnderFunction() methode from cFunctionTwoValue
 			if ( pUnderFunctionTwoValue1LoadedFull->getSuperiorUnderFunction() == &underFunctionSup  ){
 			
-				cout<<"The superior underfunction of the underfunction correctly "<<
+				cout<<"The superior subfunction of the subfunction correctly "<<
 					pUnderFunctionTwoValue1LoadedFull->getSuperiorUnderFunction() <<" . "<<endl;
 			}else{
-				cerr<<"Error: The superior underfunction of the underfunction is "<<
+				cerr<<"Error: The superior subfunction of the subfunction is "<<
 					pUnderFunctionTwoValue1LoadedFull->getSuperiorUnderFunction() <<
 					" but should be underFunctionSup="<< &underFunctionSup <<" ."<<endl;
 				iReturn++;
@@ -3879,7 +3928,7 @@ template <class tUnderFunctionTwoValue> int testStoreXml(
 			
 			delete pUnderFunctionTwoValue1LoadedFull;
 		}else{
-			cerr<<"Error: No underfunction loaded ."<<endl;
+			cerr<<"Error: No subfunction loaded ."<<endl;
 			iReturn++;
 		}
 		if ( liDefinedVariables != liDefinedVariablesOrg ){
@@ -3915,7 +3964,7 @@ template <class tUnderFunctionTwoValue> int testStore(
 
 	int iReturn = 0;//returnvalue of the test; the number of occured Errors
 
-	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the store() method an simple underfunction"<<endl;
+	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the store() method an simple subfunction"<<endl;
 
 	cout<<"cRoot root;"<<endl;
 	cRoot root;
@@ -3963,7 +4012,8 @@ template <class tUnderFunctionTwoValue> int testStore(
 	tUnderFunctionTwoValue underFunctionTwoValue1( underFunctionValue1, underFunctionValue2, NULL, &root );
 
 	//test get compressed size
-	unsigned int uiCompressedSize = 5 + 2 * (2 + 16);
+	unsigned int uiCompressedSize = getActualFunctionInitiationBits() +
+		2 * (2 + 16);
 	if ( (unsigned int)(underFunctionTwoValue1.getCompressedSize()) == uiCompressedSize ){
 	
 		cout<<"The compressed size of the function is correctly "<<
@@ -4010,15 +4060,16 @@ template <class tUnderFunctionTwoValue> int testStore(
 	}
 	//test stored data
 	unsigned char cFunctionTwoValue1[] = { 0x04, 0x00, 0x20, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-	addCInitiationForActualFunction( cFunctionTwoValue1, 5 );
-	iReturn += compareBytsWithFile( szFileNameBuffer, (char*)cFunctionTwoValue1, 5 + 1 );
+	addInitiationForActualFunction( cFunctionTwoValue1, 5 );
+	iReturn += compareBytsWithFile( szFileNameBuffer, (char*)cFunctionTwoValue1,
+		 (uiCompressedSize - 1) / 8 + 1 );
 
 	char cFunctionName = 0x00;
 	ifstream * pFileIn = new ifstream( szFileNameBuffer, ios_base::in | ios_base::binary );
 	if ( (pFileIn != NULL) && ( pFileIn->good() ) ){
 		
 		cReadBits iBitStream( * pFileIn );
-		iBitStream.readBits( &cFunctionName, getActualFunctionCInitiationBits() );
+		iBitStream.readBits( &cFunctionName, getActualFunctionInitiationBits() );
 		intFib outStatus = 0;
 		cout<<"tUnderFunctionTwoValue underFunctionTwoValue1Loaded( iBitStream, outStatus, liDefinedVariables, pValueDomain, pVariableDomain ); "<<endl;
 		tUnderFunctionTwoValue underFunctionTwoValue1Loaded( iBitStream, outStatus, liDefinedVariables, pValueDomain, pVariableDomain );
@@ -4032,9 +4083,9 @@ template <class tUnderFunctionTwoValue> int testStore(
 		}
 		if ( underFunctionTwoValue1Loaded.getType() == getActualFunctionType() ){
 		
-			cout<<"The loaded underfunction has the correct type. "<<endl;
+			cout<<"The loaded subfunction has the correct type. "<<endl;
 		}else{
-			cerr<<"Error: The loaded underfunction has the type "<<
+			cerr<<"Error: The loaded subfunction has the type "<<
 				underFunctionTwoValue1Loaded.getType() <<" , but should have the type "<<
 				getActualFunctionType() <<" ."<<endl;
 			iReturn++;
@@ -4067,9 +4118,9 @@ template <class tUnderFunctionTwoValue> int testStore(
 		if ( pUnderFunctionTwoValue1Loaded ){
 			if ( pUnderFunctionTwoValue1Loaded->getType() == getActualFunctionType() ){
 			
-				cout<<"The loaded underfunction has the correct type. "<<endl;
+				cout<<"The loaded subfunction has the correct type. "<<endl;
 			}else{
-				cerr<<"Error: The loaded underfunction has the type "<<
+				cerr<<"Error: The loaded subfunction has the type "<<
 					pUnderFunctionTwoValue1Loaded->getType() <<" , but should have the type "<<
 					getActualFunctionType() <<" ."<<endl;
 				iReturn++;
@@ -4084,7 +4135,7 @@ template <class tUnderFunctionTwoValue> int testStore(
 				&underFunctionValue2, pUnderFunctionTwoValue1Loaded, NULL );
 			delete pUnderFunctionTwoValue1Loaded;
 		}else{
-			cerr<<"Error: No underfunction loaded ."<<endl;
+			cerr<<"Error: No subfunction loaded ."<<endl;
 			iReturn++;
 		}
 		if ( liDefinedVariables != liDefinedVariablesOrg ){
@@ -4101,7 +4152,7 @@ template <class tUnderFunctionTwoValue> int testStore(
 		delete pFileIn;
 		pFileIn = new ifstream( szFileNameBuffer, ios_base::in | ios_base::binary );
 		cReadBits iBitStream3( * pFileIn );
-		iBitStream3.readBits( &cFunctionName, getActualFunctionCInitiationBits() );
+		iBitStream3.readBits( &cFunctionName, getActualFunctionInitiationBits() );
 		outStatus = 0;
 		cout<<"tUnderFunctionTwoValue underFunctionTwoValue1LoadedFull( iBitStream3, "<<
 			"outStatus, liDefinedVariables, pValueDomain, pVariableDomain, &underFunctionSup, &rootSimple ); "<<endl;
@@ -4117,9 +4168,9 @@ template <class tUnderFunctionTwoValue> int testStore(
 		}
 		if ( underFunctionTwoValue1LoadedFull.getType() == getActualFunctionType() ){
 		
-			cout<<"The loaded underfunction has the correct type. "<<endl;
+			cout<<"The loaded subfunction has the correct type. "<<endl;
 		}else{
-			cerr<<"Error: The loaded underfunction has the type "<<
+			cerr<<"Error: The loaded subfunction has the type "<<
 				underFunctionTwoValue1LoadedFull.getType() <<" , but should have the type "<<
 				getActualFunctionType() <<" ."<<endl;
 			iReturn++;
@@ -4129,10 +4180,10 @@ template <class tUnderFunctionTwoValue> int testStore(
 		//check the getDefiningFibElement() methode from cFunctionTwoValue
 		if ( underFunctionTwoValue1LoadedFull.getDefiningFibElement() == &rootSimple  ){
 		
-			cout<<"The underfunction defining fib -element is correctly "<<
+			cout<<"The subfunction defining fib -element is correctly "<<
 				underFunctionTwoValue1LoadedFull.getDefiningFibElement() <<" . "<<endl;
 		}else{
-			cerr<<"Error: The underfunction defining fib -element is "<<
+			cerr<<"Error: The subfunction defining fib -element is "<<
 				underFunctionTwoValue1LoadedFull.getDefiningFibElement() <<
 				" but should be rootSimple="<< &rootSimple <<" ."<<endl;
 			iReturn++;
@@ -4140,10 +4191,10 @@ template <class tUnderFunctionTwoValue> int testStore(
 		//check the getSuperiorUnderFunction() methode from cFunctionTwoValue
 		if ( underFunctionTwoValue1LoadedFull.getSuperiorUnderFunction() == &underFunctionSup  ){
 		
-			cout<<"The superior underfunction of the underfunction correctly "<<
+			cout<<"The superior subfunction of the subfunction correctly "<<
 				underFunctionTwoValue1LoadedFull.getSuperiorUnderFunction() <<" . "<<endl;
 		}else{
-			cerr<<"Error: The superior underfunction of the underfunction is "<<
+			cerr<<"Error: The superior subfunction of the subfunction is "<<
 				underFunctionTwoValue1LoadedFull.getSuperiorUnderFunction() <<
 				" but should be underFunctionSup="<< &underFunctionSup <<" ."<<endl;
 			iReturn++;
@@ -4176,9 +4227,9 @@ template <class tUnderFunctionTwoValue> int testStore(
 		if ( pUnderFunctionTwoValue1LoadedFull ){
 			if ( pUnderFunctionTwoValue1LoadedFull->getType() == getActualFunctionType() ){
 			
-				cout<<"The loaded underfunction has the correct type. "<<endl;
+				cout<<"The loaded subfunction has the correct type. "<<endl;
 			}else{
-				cerr<<"Error: The loaded underfunction has the type "<<
+				cerr<<"Error: The loaded subfunction has the type "<<
 					pUnderFunctionTwoValue1LoadedFull->getType() <<" , but should have the type "<<
 					getActualFunctionType() <<" ."<<endl;
 				iReturn++;
@@ -4187,10 +4238,10 @@ template <class tUnderFunctionTwoValue> int testStore(
 			//check the getDefiningFibElement() methode from cFunctionTwoValue
 			if ( pUnderFunctionTwoValue1LoadedFull->getDefiningFibElement() == &rootSimple  ){
 			
-				cout<<"The underfunction defining fib -element is correctly "<<
+				cout<<"The subfunction defining fib -element is correctly "<<
 					pUnderFunctionTwoValue1LoadedFull->getDefiningFibElement() <<" . "<<endl;
 			}else{
-				cerr<<"Error: The underfunction defining fib -element is "<<
+				cerr<<"Error: The subfunction defining fib -element is "<<
 					pUnderFunctionTwoValue1LoadedFull->getDefiningFibElement() <<
 					" but should be rootSimple="<< &rootSimple <<" ."<<endl;
 				iReturn++;
@@ -4198,10 +4249,10 @@ template <class tUnderFunctionTwoValue> int testStore(
 			//check the getSuperiorUnderFunction() methode from cFunctionTwoValue
 			if ( pUnderFunctionTwoValue1LoadedFull->getSuperiorUnderFunction() == &underFunctionSup  ){
 			
-				cout<<"The superior underfunction of the underfunction correctly "<<
+				cout<<"The superior subfunction of the subfunction correctly "<<
 					pUnderFunctionTwoValue1LoadedFull->getSuperiorUnderFunction() <<" . "<<endl;
 			}else{
-				cerr<<"Error: The superior underfunction of the underfunction is "<<
+				cerr<<"Error: The superior subfunction of the subfunction is "<<
 					pUnderFunctionTwoValue1LoadedFull->getSuperiorUnderFunction() <<
 					" but should be underFunctionSup="<< &underFunctionSup <<" ."<<endl;
 				iReturn++;
@@ -4215,7 +4266,7 @@ template <class tUnderFunctionTwoValue> int testStore(
 			
 			delete pUnderFunctionTwoValue1LoadedFull;
 		}else{
-			cerr<<"Error: No underfunction loaded ."<<endl;
+			cerr<<"Error: No subfunction loaded ."<<endl;
 			iReturn++;
 		}
 		if ( liDefinedVariables != liDefinedVariablesOrg ){
@@ -4264,7 +4315,7 @@ template <class tUnderFunctionTwoValue> int testStore(
 	tUnderFunctionTwoValue underFunctionTwoValue2( underFunctionValue3, underFunctionValue4, NULL, &root );
 	
 	//test get compressed size
-	uiCompressedSize = 5 + 2 * (2 + 6);
+	uiCompressedSize = getActualFunctionInitiationBits() + 2 * (2 + 6);
 	if ( (unsigned int)(underFunctionTwoValue2.getCompressedSize()) == uiCompressedSize ){
 	
 		cout<<"The compressed size of the function is correctly "<<
@@ -4297,7 +4348,7 @@ template <class tUnderFunctionTwoValue> int testStore(
 	}
 	//test stored data
 	unsigned char szUnderFunctionTwoValue2[] = { 0x0C, 0x10, 0x00, 0x00, 0x00, 0x00, 0x00 };
-	addCInitiationForActualFunction( szUnderFunctionTwoValue2, 2 );
+	addInitiationForActualFunction( szUnderFunctionTwoValue2, 2 );
 	iReturn += compareBytsWithFile( szFileNameBuffer, (char*)szUnderFunctionTwoValue2, (uiCompressedSize - 1) / 8 + 1 );
 	
 	ucRestBit = cRestBit;
@@ -4318,7 +4369,7 @@ template <class tUnderFunctionTwoValue> int testStore(
 	if ( (pFileIn != NULL) && ( pFileIn->good() ) ){
 		
 		cReadBits iBitStream( * pFileIn );
-		iBitStream.readBits( &cFunctionName, getActualFunctionCInitiationBits() );
+		iBitStream.readBits( &cFunctionName, getActualFunctionInitiationBits() );
 		intFib outStatus = 0;
 		cout<<"tUnderFunctionTwoValue underFunctionTwoValue2Loaded( iBitStream, outStatus, liDefinedVariables, pValueDomain, pVariableDomain ); "<<endl;
 		tUnderFunctionTwoValue underFunctionTwoValue2Loaded( iBitStream, outStatus, liDefinedVariables, pValueDomain, pVariableDomain );
@@ -4332,9 +4383,9 @@ template <class tUnderFunctionTwoValue> int testStore(
 		}
 		if ( underFunctionTwoValue2Loaded.getType() == getActualFunctionType() ){
 		
-			cout<<"The loaded underfunction has the correct type. "<<endl;
+			cout<<"The loaded subfunction has the correct type. "<<endl;
 		}else{
-			cerr<<"Error: The loaded underfunction has the type "<<
+			cerr<<"Error: The loaded subfunction has the type "<<
 				underFunctionTwoValue2Loaded.getType() <<" , but should have the type "<<
 				getActualFunctionType() <<" ."<<endl;
 			iReturn++;
@@ -4367,9 +4418,9 @@ template <class tUnderFunctionTwoValue> int testStore(
 		if ( pUnderFunctionTwoValue2Loaded ){
 			if ( pUnderFunctionTwoValue2Loaded->getType() == getActualFunctionType() ){
 			
-				cout<<"The loaded underfunction has the correct type. "<<endl;
+				cout<<"The loaded subfunction has the correct type. "<<endl;
 			}else{
-				cerr<<"Error: The loaded underfunction has the type "<<
+				cerr<<"Error: The loaded subfunction has the type "<<
 					pUnderFunctionTwoValue2Loaded->getType() <<" , but should have the type "<<
 					getActualFunctionType() <<" ."<<endl;
 				iReturn++;
@@ -4384,7 +4435,7 @@ template <class tUnderFunctionTwoValue> int testStore(
 				&underFunctionValue4, pUnderFunctionTwoValue2Loaded, NULL );
 			delete pUnderFunctionTwoValue2Loaded;
 		}else{
-			cerr<<"Error: No underfunction loaded ."<<endl;
+			cerr<<"Error: No subfunction loaded ."<<endl;
 			iReturn++;
 		}
 		if ( liDefinedVariables != liDefinedVariablesOrg ){
@@ -4401,7 +4452,7 @@ template <class tUnderFunctionTwoValue> int testStore(
 		delete pFileIn;
 		pFileIn = new ifstream( szFileNameBuffer, ios_base::in | ios_base::binary );
 		cReadBits iBitStream3( * pFileIn );
-		iBitStream3.readBits( &cFunctionName, getActualFunctionCInitiationBits() );
+		iBitStream3.readBits( &cFunctionName, getActualFunctionInitiationBits() );
 		outStatus = 0;
 		cout<<"tUnderFunctionTwoValue underFunctionTwoValue2LoadedFull( iBitStream3, "<<
 			"outStatus, liDefinedVariables, pValueDomain, pVariableDomain, &underFunctionSup, &rootSimple ); "<<endl;
@@ -4417,9 +4468,9 @@ template <class tUnderFunctionTwoValue> int testStore(
 		}
 		if ( underFunctionTwoValue2LoadedFull.getType() == getActualFunctionType() ){
 		
-			cout<<"The loaded underfunction has the correct type. "<<endl;
+			cout<<"The loaded subfunction has the correct type. "<<endl;
 		}else{
-			cerr<<"Error: The loaded underfunction has the type "<<
+			cerr<<"Error: The loaded subfunction has the type "<<
 				underFunctionTwoValue2LoadedFull.getType() <<" , but should have the type "<<
 				getActualFunctionType() <<" ."<<endl;
 			iReturn++;
@@ -4429,10 +4480,10 @@ template <class tUnderFunctionTwoValue> int testStore(
 		//check the getDefiningFibElement() methode from cFunctionTwoValue
 		if ( underFunctionTwoValue2LoadedFull.getDefiningFibElement() == &rootSimple  ){
 		
-			cout<<"The underfunction defining fib -element is correctly "<<
+			cout<<"The subfunction defining fib -element is correctly "<<
 				underFunctionTwoValue2LoadedFull.getDefiningFibElement() <<" . "<<endl;
 		}else{
-			cerr<<"Error: The underfunction defining fib -element is "<<
+			cerr<<"Error: The subfunction defining fib -element is "<<
 				underFunctionTwoValue2LoadedFull.getDefiningFibElement() <<
 				" but should be rootSimple="<< &rootSimple <<" ."<<endl;
 			iReturn++;
@@ -4440,10 +4491,10 @@ template <class tUnderFunctionTwoValue> int testStore(
 		//check the getSuperiorUnderFunction() methode from cFunctionTwoValue
 		if ( underFunctionTwoValue2LoadedFull.getSuperiorUnderFunction() == &underFunctionSup  ){
 		
-			cout<<"The superior underfunction of the underfunction correctly "<<
+			cout<<"The superior subfunction of the subfunction correctly "<<
 				underFunctionTwoValue2LoadedFull.getSuperiorUnderFunction() <<" . "<<endl;
 		}else{
-			cerr<<"Error: The superior underfunction of the underfunction is "<<
+			cerr<<"Error: The superior subfunction of the subfunction is "<<
 				underFunctionTwoValue2LoadedFull.getSuperiorUnderFunction() <<
 				" but should be underFunctionSup="<< &underFunctionSup <<" ."<<endl;
 			iReturn++;
@@ -4476,9 +4527,9 @@ template <class tUnderFunctionTwoValue> int testStore(
 		if ( pUnderFunctionTwoValue2LoadedFull ){
 			if ( pUnderFunctionTwoValue2LoadedFull->getType() == getActualFunctionType() ){
 			
-				cout<<"The loaded underfunction has the correct type. "<<endl;
+				cout<<"The loaded subfunction has the correct type. "<<endl;
 			}else{
-				cerr<<"Error: The loaded underfunction has the type "<<
+				cerr<<"Error: The loaded subfunction has the type "<<
 					pUnderFunctionTwoValue2LoadedFull->getType() <<" , but should have the type "<<
 					getActualFunctionType() <<" ."<<endl;
 				iReturn++;
@@ -4487,10 +4538,10 @@ template <class tUnderFunctionTwoValue> int testStore(
 			//check the getDefiningFibElement() methode from cFunctionTwoValue
 			if ( pUnderFunctionTwoValue2LoadedFull->getDefiningFibElement() == &rootSimple  ){
 			
-				cout<<"The underfunction defining fib -element is correctly "<<
+				cout<<"The subfunction defining fib -element is correctly "<<
 					pUnderFunctionTwoValue2LoadedFull->getDefiningFibElement() <<" . "<<endl;
 			}else{
-				cerr<<"Error: The underfunction defining fib -element is "<<
+				cerr<<"Error: The subfunction defining fib -element is "<<
 					pUnderFunctionTwoValue2LoadedFull->getDefiningFibElement() <<
 					" but should be rootSimple="<< &rootSimple <<" ."<<endl;
 				iReturn++;
@@ -4498,10 +4549,10 @@ template <class tUnderFunctionTwoValue> int testStore(
 			//check the getSuperiorUnderFunction() methode from cFunctionTwoValue
 			if ( pUnderFunctionTwoValue2LoadedFull->getSuperiorUnderFunction() == &underFunctionSup  ){
 			
-				cout<<"The superior underfunction of the underfunction correctly "<<
+				cout<<"The superior subfunction of the subfunction correctly "<<
 					pUnderFunctionTwoValue2LoadedFull->getSuperiorUnderFunction() <<" . "<<endl;
 			}else{
-				cerr<<"Error: The superior underfunction of the underfunction is "<<
+				cerr<<"Error: The superior subfunction of the subfunction is "<<
 					pUnderFunctionTwoValue2LoadedFull->getSuperiorUnderFunction() <<
 					" but should be underFunctionSup="<< &underFunctionSup <<" ."<<endl;
 				iReturn++;
@@ -4515,7 +4566,7 @@ template <class tUnderFunctionTwoValue> int testStore(
 			
 			delete pUnderFunctionTwoValue2LoadedFull;
 		}else{
-			cerr<<"Error: No underfunction loaded ."<<endl;
+			cerr<<"Error: No subfunction loaded ."<<endl;
 			iReturn++;
 		}
 		if ( liDefinedVariables != liDefinedVariablesOrg ){
@@ -4536,7 +4587,7 @@ template <class tUnderFunctionTwoValue> int testStore(
 	tUnderFunctionTwoValue underFunctionTwoValue3( underFunctionValue3, underFunctionValue4, NULL, &root );
 	
 	//test get compressed size
-	uiCompressedSize = 5 + 2 * (2 + 6);
+	uiCompressedSize = getActualFunctionInitiationBits() + 2 * (2 + 6);
 	if ( (unsigned int)(underFunctionTwoValue3.getCompressedSize()) == uiCompressedSize ){
 	
 		cout<<"The compressed size of the function is correctly "<<
@@ -4570,7 +4621,7 @@ template <class tUnderFunctionTwoValue> int testStore(
 	}
 	//test stored data
 	unsigned char szUnderFunctionTwoValue3[] = { 0x0C, 0x10, 0x00, 0x00, 0x00, 0x00, 0x00 };
-	addCInitiationForActualFunction( szUnderFunctionTwoValue3, 2, cRestBitPositionOrginal );
+	addInitiationForActualFunction( szUnderFunctionTwoValue3, 2, cRestBitPositionOrginal );
 	szUnderFunctionTwoValue3[ 0 ] = szUnderFunctionTwoValue3[ 0 ] | 0x01;
 	iReturn += compareBytsWithFile( szFileNameBuffer, (char*)szUnderFunctionTwoValue3, (uiCompressedSize + cRestBitPositionOrginal) / 8 + 1 );
 	
@@ -4593,7 +4644,7 @@ template <class tUnderFunctionTwoValue> int testStore(
 		
 		cReadBits iBitStream( * pFileIn );
 		long cBuffer;
-		iBitStream.readBits( cBuffer, ((unsigned int)(cRestBitPositionOrginal + getActualFunctionCInitiationBits())) );
+		iBitStream.readBits( cBuffer, ((unsigned int)(cRestBitPositionOrginal + getActualFunctionInitiationBits())) );
 		intFib outStatus = 0;
 		cout<<"tUnderFunctionTwoValue underFunctionTwoValue3Loaded( iBitStream, outStatus, liDefinedVariables, pValueDomain, pVariableDomain ); "<<endl;
 		tUnderFunctionTwoValue underFunctionTwoValue3Loaded( iBitStream, outStatus, liDefinedVariables, pValueDomain, pVariableDomain );
@@ -4607,9 +4658,9 @@ template <class tUnderFunctionTwoValue> int testStore(
 		}
 		if ( underFunctionTwoValue3Loaded.getType() == getActualFunctionType() ){
 		
-			cout<<"The loaded underfunction has the correct type. "<<endl;
+			cout<<"The loaded subfunction has the correct type. "<<endl;
 		}else{
-			cerr<<"Error: The loaded underfunction has the type "<<
+			cerr<<"Error: The loaded subfunction has the type "<<
 				underFunctionTwoValue3Loaded.getType() <<" , but should have the type "<<
 				getActualFunctionType() <<" ."<<endl;
 			iReturn++;
@@ -4617,7 +4668,7 @@ template <class tUnderFunctionTwoValue> int testStore(
 		int iErrorsEqual = testCompareTwoEqualObjects( underFunctionTwoValue3Loaded, "underFunctionTwoValue3Loaded", underFunctionTwoValue3, "underFunctionTwoValue3" );
 		iReturn += testNotConnectedUnderFunction( underFunctionTwoValue3Loaded );
 		if ( iErrorsEqual != 0 ){
-			cerr<<"Error: Loaded underfunction not equal (value="<<
+			cerr<<"Error: Loaded subfunction not equal (value="<<
 				underFunctionTwoValue3Loaded.getValue() <<")."<<endl;
 		}
 		iReturn += iErrorsEqual;
@@ -4648,9 +4699,9 @@ template <class tUnderFunctionTwoValue> int testStore(
 		if ( pUnderFunctionTwoValue3Loaded ){
 			if ( pUnderFunctionTwoValue3Loaded->getType() == getActualFunctionType() ){
 			
-				cout<<"The loaded underfunction has the correct type. "<<endl;
+				cout<<"The loaded subfunction has the correct type. "<<endl;
 			}else{
-				cerr<<"Error: The loaded underfunction has the type "<<
+				cerr<<"Error: The loaded subfunction has the type "<<
 					pUnderFunctionTwoValue3Loaded->getType() <<" , but should have the type "<<
 					getActualFunctionType() <<" ."<<endl;
 				iReturn++;
@@ -4658,7 +4709,7 @@ template <class tUnderFunctionTwoValue> int testStore(
 			iErrorsEqual = testCompareTwoEqualObjects( * pUnderFunctionTwoValue3Loaded, "pUnderFunctionTwoValue3Loaded", underFunctionTwoValue3, "underFunctionTwoValue3" );
 			iReturn += testNotConnectedUnderFunction( * pUnderFunctionTwoValue3Loaded );
 			if ( iErrorsEqual != 0 ){
-				cerr<<"Error: Loaded underfunction not equal (value="<<
+				cerr<<"Error: Loaded subfunction not equal (value="<<
 					underFunctionTwoValue3Loaded.getValue() <<")."<<endl;
 			}
 			iReturn += iErrorsEqual;
@@ -4670,7 +4721,7 @@ template <class tUnderFunctionTwoValue> int testStore(
 				&underFunctionValue4, pUnderFunctionTwoValue3Loaded, NULL );
 			delete pUnderFunctionTwoValue3Loaded;
 		}else{
-			cerr<<"Error: No underfunction loaded ."<<endl;
+			cerr<<"Error: No subfunction loaded ."<<endl;
 			iReturn++;
 		}
 		if ( liDefinedVariables != liDefinedVariablesOrg ){
@@ -4688,7 +4739,7 @@ template <class tUnderFunctionTwoValue> int testStore(
 		delete pFileIn;
 		pFileIn = new ifstream( szFileNameBuffer, ios_base::in | ios_base::binary );
 		cReadBits iBitStream3( * pFileIn );
-		iBitStream3.readBits( cBuffer, ((unsigned int)(cRestBitPositionOrginal + getActualFunctionCInitiationBits())) );
+		iBitStream3.readBits( cBuffer, ((unsigned int)(cRestBitPositionOrginal + getActualFunctionInitiationBits())) );
 		outStatus = 0;
 		cout<<"tUnderFunctionTwoValue underFunctionTwoValue3LoadedFull( iBitStream3, "<<
 			"outStatus, liDefinedVariables, pValueDomain, pVariableDomain, &underFunctionSup, &rootSimple ); "<<endl;
@@ -4704,9 +4755,9 @@ template <class tUnderFunctionTwoValue> int testStore(
 		}
 		if ( underFunctionTwoValue3LoadedFull.getType() == getActualFunctionType() ){
 		
-			cout<<"The loaded underfunction has the correct type. "<<endl;
+			cout<<"The loaded subfunction has the correct type. "<<endl;
 		}else{
-			cerr<<"Error: The loaded underfunction has the type "<<
+			cerr<<"Error: The loaded subfunction has the type "<<
 				underFunctionTwoValue3LoadedFull.getType() <<" , but should have the type "<<
 				getActualFunctionType() <<" ."<<endl;
 			iReturn++;
@@ -4716,10 +4767,10 @@ template <class tUnderFunctionTwoValue> int testStore(
 		//check the getDefiningFibElement() methode from cFunctionTwoValue
 		if ( underFunctionTwoValue3LoadedFull.getDefiningFibElement() == &rootSimple  ){
 		
-			cout<<"The underfunction defining fib -element is correctly "<<
+			cout<<"The subfunction defining fib -element is correctly "<<
 				underFunctionTwoValue3LoadedFull.getDefiningFibElement() <<" . "<<endl;
 		}else{
-			cerr<<"Error: The underfunction defining fib -element is "<<
+			cerr<<"Error: The subfunction defining fib -element is "<<
 				underFunctionTwoValue3LoadedFull.getDefiningFibElement() <<
 				" but should be rootSimple="<< &rootSimple <<" ."<<endl;
 			iReturn++;
@@ -4727,10 +4778,10 @@ template <class tUnderFunctionTwoValue> int testStore(
 		//check the getSuperiorUnderFunction() methode from cFunctionTwoValue
 		if ( underFunctionTwoValue3LoadedFull.getSuperiorUnderFunction() == &underFunctionSup  ){
 		
-			cout<<"The superior underfunction of the underfunction correctly "<<
+			cout<<"The superior subfunction of the subfunction correctly "<<
 				underFunctionTwoValue3LoadedFull.getSuperiorUnderFunction() <<" . "<<endl;
 		}else{
-			cerr<<"Error: The superior underfunction of the underfunction is "<<
+			cerr<<"Error: The superior subfunction of the subfunction is "<<
 				underFunctionTwoValue3LoadedFull.getSuperiorUnderFunction() <<
 				" but should be underFunctionSup="<< &underFunctionSup <<" ."<<endl;
 			iReturn++;
@@ -4764,9 +4815,9 @@ template <class tUnderFunctionTwoValue> int testStore(
 		if ( pUnderFunctionTwoValue3LoadedFull ){
 			if ( pUnderFunctionTwoValue3LoadedFull->getType() == getActualFunctionType() ){
 			
-				cout<<"The loaded underfunction has the correct type. "<<endl;
+				cout<<"The loaded subfunction has the correct type. "<<endl;
 			}else{
-				cerr<<"Error: The loaded underfunction has the type "<<
+				cerr<<"Error: The loaded subfunction has the type "<<
 					pUnderFunctionTwoValue3LoadedFull->getType() <<" , but should have the type "<<
 					getActualFunctionType() <<" ."<<endl;
 				iReturn++;
@@ -4775,10 +4826,10 @@ template <class tUnderFunctionTwoValue> int testStore(
 			//check the getDefiningFibElement() methode from cFunctionTwoValue
 			if ( pUnderFunctionTwoValue3LoadedFull->getDefiningFibElement() == &rootSimple  ){
 			
-				cout<<"The underfunction defining fib -element is correctly "<<
+				cout<<"The subfunction defining fib -element is correctly "<<
 					pUnderFunctionTwoValue3LoadedFull->getDefiningFibElement() <<" . "<<endl;
 			}else{
-				cerr<<"Error: The underfunction defining fib -element is "<<
+				cerr<<"Error: The subfunction defining fib -element is "<<
 					pUnderFunctionTwoValue3LoadedFull->getDefiningFibElement() <<
 					" but should be rootSimple="<< &rootSimple <<" ."<<endl;
 				iReturn++;
@@ -4786,10 +4837,10 @@ template <class tUnderFunctionTwoValue> int testStore(
 			//check the getSuperiorUnderFunction() methode from cFunctionTwoValue
 			if ( pUnderFunctionTwoValue3LoadedFull->getSuperiorUnderFunction() == &underFunctionSup  ){
 			
-				cout<<"The superior underfunction of the underfunction correctly "<<
+				cout<<"The superior subfunction of the subfunction correctly "<<
 					pUnderFunctionTwoValue3LoadedFull->getSuperiorUnderFunction() <<" . "<<endl;
 			}else{
-				cerr<<"Error: The superior underfunction of the underfunction is "<<
+				cerr<<"Error: The superior subfunction of the subfunction is "<<
 					pUnderFunctionTwoValue3LoadedFull->getSuperiorUnderFunction() <<
 					" but should be underFunctionSup="<< &underFunctionSup <<" ."<<endl;
 				iReturn++;
@@ -4802,7 +4853,7 @@ template <class tUnderFunctionTwoValue> int testStore(
 				&underFunctionValue4, pUnderFunctionTwoValue3LoadedFull, &rootSimple );
 			delete pUnderFunctionTwoValue3LoadedFull;
 		}else{
-			cerr<<"Error: No underfunction loaded ."<<endl;
+			cerr<<"Error: No subfunction loaded ."<<endl;
 			iReturn++;
 		}
 		if ( liDefinedVariables != liDefinedVariablesOrg ){
@@ -4925,10 +4976,10 @@ template <class tUnderFunctionTwoValue> int testVariable(
 	if ( isEqual( underFunctionTwoValue1.getValue(), dValue ) ){
 	
 		cout<<"The the value "<< underFunctionTwoValue1.getValue() <<
-			" was correctly returned by the underfunction. "<<endl;
+			" was correctly returned by the subfunction. "<<endl;
 	}else{
 		cerr<<"Error: The the value "<< underFunctionTwoValue1.getValue() <<
-			" was returned by the underfunction, but it should be "<< dValue <<" . "<<endl;
+			" was returned by the subfunction, but it should be "<< dValue <<" . "<<endl;
 		iReturn++;
 	}
 
@@ -5456,7 +5507,8 @@ template <class tUnderFunctionTwoValue> int testValue(
 			cout<<"The result from "<< itrUf->first <<" and "<< itrUf->second <<
 				" is correctly "<< ufTwoValue.getValue() <<" . "<<endl;
 		}else{
-			cerr<<"Error: The result from "<< itrUf->first <<" and "<< itrUf->second <<
+			cerr<<"Error: The result from "<<getActualFunctionName()<<" "<<
+				itrUf->first <<" and "<< itrUf->second <<
 				" is "<< ufTwoValue.getValue() <<" , but should be "<< dResult <<" . "<<endl;
 			iReturn++;
 		}
@@ -5482,7 +5534,8 @@ template <class tUnderFunctionTwoValue> int testValue(
 			cout<<"The result from "<< dValue1 <<" and "<< dValue2 <<
 				" is correctly "<< ufTwoValue.getValue() <<" . "<<endl;
 		}else{
-			cerr<<"Error: The result from "<< dValue1 <<" and "<< dValue2 <<
+			cerr<<"Error: The result from "<<getActualFunctionName()<<" "
+				<< dValue1 <<" and "<< dValue2 <<
 				" is "<< ufTwoValue.getValue() <<" , but should be "<< dResult <<" . "<<endl;
 			iReturn++;
 		}

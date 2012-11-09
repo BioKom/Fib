@@ -37,6 +37,7 @@ History:
 23.06.2011  Oesterholz  cFunctionIf and cFunctionRound included for restoring
 19.10.2011  Oesterholz  FEATURE_EQUAL_FIB_OBJECT implemented
 01.04.2012  Oesterholz  DEBUG_RESTORE_XML implemented
+09.11.2012  Oesterholz  class cFunctionMod included
 */
 
 
@@ -51,6 +52,7 @@ History:
 #include "cFunctionSub.h"
 #include "cFunctionMult.h"
 #include "cFunctionDiv.h"
+#include "cFunctionMod.h"
 #include "cFunctionExp.h"
 #include "cFunctionMin.h"
 #include "cFunctionMax.h"
@@ -361,6 +363,10 @@ cUnderFunction * cUnderFunction::restoreXml( const TiXmlElement * pXmlElement,
 		pUnderFunctionRestored = new cFunctionDiv( pXmlElement, iReturnValue,
 			liDefinedVariables, pInSuperiorFunction, pInDefiningFibElement );
 		
+	}else if ( szElementType == "mod" ){
+		pUnderFunctionRestored = new cFunctionMod( pXmlElement, iReturnValue,
+			liDefinedVariables, pInSuperiorFunction, pInDefiningFibElement );
+		
 	}else if ( szElementType == "exp" ){
 		pUnderFunctionRestored = new cFunctionExp( pXmlElement, iReturnValue,
 			liDefinedVariables, pInSuperiorFunction, pInDefiningFibElement );
@@ -596,7 +602,7 @@ cUnderFunction * cUnderFunction::restore( cReadBits & iBitStream,
 		
 		}else if ( cFunctionNamePure == 0x07 ){//111 subfunctions with 10 bits as initiator
 		
-			//read the subfunctionname
+			//read the subfunction name
 			cFunctionName = 0x00;
 			uiBitsRead = iBitStream.readBits( &cFunctionName, 5 );
 			if ( ! iBitStream.getStream()->good() ){
@@ -611,9 +617,15 @@ cUnderFunction * cUnderFunction::restore( cReadBits & iBitStream,
 			/*clear bits not needed for the function ary type*/
 			cFunctionNamePure = cFunctionName & 0x1F;
 			
-			if ( cFunctionNamePure == 0x00 ){//if subfunction 000
+			if ( cFunctionNamePure == 0x00 ){//if subfunction 0 0000
 				DEBUG_OUT_L2(<<"cUnderFunction::restoring cFunctionIf"<<endl);
 				pUnderFunctionRestored = new cFunctionIf( iBitStream, iReturnValue,
+					liDefinedVariables, pInDomainValue, pInDomainVariable,
+					pInSuperiorFunction, pInDefiningFibElement );
+				
+			}else if ( cFunctionNamePure == 0x02 ){//if subfunction 0 0010
+				DEBUG_OUT_L2(<<"cUnderFunction::restoring cFunctionMod"<<endl);
+				pUnderFunctionRestored = new cFunctionMod( iBitStream, iReturnValue,
 					liDefinedVariables, pInDomainValue, pInDomainVariable,
 					pInSuperiorFunction, pInDefiningFibElement );
 				

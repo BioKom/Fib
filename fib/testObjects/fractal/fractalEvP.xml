@@ -1,7 +1,7 @@
 <data>
 	<vector type="position">
-		<value>5910969341337677 * 2^(-48)</value>
-		<value>15</value>
+		<value>2955487255457141 * 2^(-47)</value>
+		<value>18</value>
 	</vector>
 	<vector type="property.colorRGB">
 		<value>255</value>
@@ -14,35 +14,7 @@
 		<value>2955487255457141 * 2^(-47)</value>
 	</vector>
 	<vector type="position">
-		<value>5910969341337677 * 2^(-48)</value>
-		<value>15</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>-7074254294673575 * 2^(-51)</value>
-		<value>2.5</value>
-		<value>2955487255457141 * 2^(-47)</value>
-	</vector>
-	<vector type="position">
-		<value>5910969341337677 * 2^(-48)</value>
-		<value>16</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>-7074254294673575 * 2^(-51)</value>
-		<value>2.5</value>
-		<value>2955487255457141 * 2^(-47)</value>
-	</vector>
-	<vector type="position">
-		<value>5910969341337677 * 2^(-48)</value>
+		<value>738871555385455 * 2^(-45)</value>
 		<value>17</value>
 	</vector>
 	<vector type="property.colorRGB">
@@ -56,35 +28,7 @@
 		<value>2955487255457141 * 2^(-47)</value>
 	</vector>
 	<vector type="position">
-		<value>5910969341337677 * 2^(-48)</value>
-		<value>18</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>-7074254294673575 * 2^(-51)</value>
-		<value>2.5</value>
-		<value>2955487255457141 * 2^(-47)</value>
-	</vector>
-	<vector type="position">
-		<value>5910969341337677 * 2^(-48)</value>
-		<value>15</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>-7074254294673575 * 2^(-51)</value>
-		<value>2.5</value>
-		<value>2955487255457141 * 2^(-47)</value>
-	</vector>
-	<vector type="position">
-		<value>5910969341337677 * 2^(-48)</value>
+		<value>2955485187626499 * 2^(-47)</value>
 		<value>16</value>
 	</vector>
 	<vector type="property.colorRGB">
@@ -98,35 +42,7 @@
 		<value>2955487255457141 * 2^(-47)</value>
 	</vector>
 	<vector type="position">
-		<value>5910969341337677 * 2^(-48)</value>
-		<value>17</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>-7074254294673575 * 2^(-51)</value>
-		<value>2.5</value>
-		<value>2955487255457141 * 2^(-47)</value>
-	</vector>
-	<vector type="position">
-		<value>5910969341337677 * 2^(-48)</value>
-		<value>18</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>-7074254294673575 * 2^(-51)</value>
-		<value>2.5</value>
-		<value>2955487255457141 * 2^(-47)</value>
-	</vector>
-	<vector type="position">
-		<value>5910969341337677 * 2^(-48)</value>
+		<value>1477742076855589 * 2^(-46)</value>
 		<value>15</value>
 	</vector>
 	<vector type="property.colorRGB">
@@ -136,348 +52,12 @@
 	</vector>
 	<vector type="property.colorRGB">
 		<value>-7074254294673575 * 2^(-51)</value>
-		<value>2.5</value>
-		<value>2955487255457141 * 2^(-47)</value>
-	</vector>
-	<vector type="position">
-		<value>5910969341337677 * 2^(-48)</value>
-		<value>16</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>-7074254294673575 * 2^(-51)</value>
-		<value>2.5</value>
-		<value>2955487255457141 * 2^(-47)</value>
-	</vector>
-	<vector type="position">
-		<value>5910969341337677 * 2^(-48)</value>
-		<value>17</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>-7074254294673575 * 2^(-51)</value>
-		<value>2.5</value>
-		<value>2955487255457141 * 2^(-47)</value>
-	</vector>
-	<vector type="position">
-		<value>5910969341337677 * 2^(-48)</value>
-		<value>18</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>-7074254294673575 * 2^(-51)</value>
-		<value>2.5</value>
-		<value>2955487255457141 * 2^(-47)</value>
-	</vector>
-	<vector type="position">
-		<value>2955487255457141 * 2^(-47)</value>
-		<value>18</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>-7074254294673575 * 2^(-51)</value>
-		<value>2.5</value>
-		<value>2955487255457141 * 2^(-47)</value>
-	</vector>
-	<vector type="position">
-		<value>5910969341337677 * 2^(-48)</value>
-		<value>15</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>-7074254294673575 * 2^(-51)</value>
-		<value>2.5</value>
-		<value>2955487255457141 * 2^(-47)</value>
-	</vector>
-	<vector type="position">
-		<value>5910969341337677 * 2^(-48)</value>
-		<value>16</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>-7074254294673575 * 2^(-51)</value>
-		<value>2.5</value>
-		<value>2955487255457141 * 2^(-47)</value>
-	</vector>
-	<vector type="position">
-		<value>5910969341337677 * 2^(-48)</value>
-		<value>17</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>-7074254294673575 * 2^(-51)</value>
-		<value>2.5</value>
-		<value>2955487255457141 * 2^(-47)</value>
-	</vector>
-	<vector type="position">
-		<value>5910969341337677 * 2^(-48)</value>
-		<value>18</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>-7074254294673575 * 2^(-51)</value>
-		<value>2.5</value>
-		<value>2955487255457141 * 2^(-47)</value>
-	</vector>
-	<vector type="position">
-		<value>5910969341337677 * 2^(-48)</value>
-		<value>15</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>-7074254294673575 * 2^(-51)</value>
-		<value>2.5</value>
-		<value>2955487255457141 * 2^(-47)</value>
-	</vector>
-	<vector type="position">
-		<value>5910969341337677 * 2^(-48)</value>
-		<value>16</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>-7074254294673575 * 2^(-51)</value>
-		<value>2.5</value>
-		<value>2955487255457141 * 2^(-47)</value>
-	</vector>
-	<vector type="position">
-		<value>5910969341337677 * 2^(-48)</value>
-		<value>17</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>-7074254294673575 * 2^(-51)</value>
-		<value>2.5</value>
-		<value>2955487255457141 * 2^(-47)</value>
-	</vector>
-	<vector type="position">
-		<value>5910969341337677 * 2^(-48)</value>
-		<value>18</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>-7074254294673575 * 2^(-51)</value>
-		<value>2.5</value>
-		<value>2955487255457141 * 2^(-47)</value>
-	</vector>
-	<vector type="position">
-		<value>5910969341337677 * 2^(-48)</value>
-		<value>15</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>-7074254294673575 * 2^(-51)</value>
-		<value>2.5</value>
-		<value>2955487255457141 * 2^(-47)</value>
-	</vector>
-	<vector type="position">
-		<value>5910969341337677 * 2^(-48)</value>
-		<value>16</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>-7074254294673575 * 2^(-51)</value>
-		<value>2.5</value>
-		<value>2955487255457141 * 2^(-47)</value>
-	</vector>
-	<vector type="position">
-		<value>5910969341337677 * 2^(-48)</value>
-		<value>17</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>-7074254294673575 * 2^(-51)</value>
-		<value>2.5</value>
-		<value>2955487255457141 * 2^(-47)</value>
-	</vector>
-	<vector type="position">
-		<value>5910969341337677 * 2^(-48)</value>
-		<value>18</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>-7074254294673575 * 2^(-51)</value>
-		<value>2.5</value>
-		<value>2955487255457141 * 2^(-47)</value>
-	</vector>
-	<vector type="position">
-		<value>5910969341337677 * 2^(-48)</value>
-		<value>15</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>-7074254294673575 * 2^(-51)</value>
-		<value>2.5</value>
-		<value>2955487255457141 * 2^(-47)</value>
-	</vector>
-	<vector type="position">
-		<value>5910969341337677 * 2^(-48)</value>
-		<value>16</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>-7074254294673575 * 2^(-51)</value>
-		<value>2.5</value>
-		<value>2955487255457141 * 2^(-47)</value>
-	</vector>
-	<vector type="position">
-		<value>5910969341337677 * 2^(-48)</value>
-		<value>17</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>-7074254294673575 * 2^(-51)</value>
-		<value>2.5</value>
-		<value>2955487255457141 * 2^(-47)</value>
-	</vector>
-	<vector type="position">
-		<value>5910969341337677 * 2^(-48)</value>
-		<value>18</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>-7074254294673575 * 2^(-51)</value>
-		<value>2.5</value>
-		<value>2955487255457141 * 2^(-47)</value>
-	</vector>
-	<vector type="position">
-		<value>2955487255457141 * 2^(-47)</value>
-		<value>18</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>-7074254294673575 * 2^(-52)</value>
-		<value>2.5</value>
-		<value>2955487255457141 * 2^(-47)</value>
-	</vector>
-	<vector type="position">
-		<value>20</value>
-		<value>18</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>-7074254294673575 * 2^(-52)</value>
-		<value>2.5</value>
-		<value>2955487255457141 * 2^(-47)</value>
-	</vector>
-	<vector type="position">
-		<value>6614661952686175 * 2^(-48)</value>
-		<value>18</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>-7074254294673575 * 2^(-52)</value>
-		<value>2.5</value>
-		<value>2955487255457141 * 2^(-47)</value>
-	</vector>
-	<vector type="position">
-		<value>23</value>
-		<value>18</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>-7074254294673575 * 2^(-52)</value>
 		<value>2.5</value>
 		<value>2955487255457141 * 2^(-47)</value>
 	</vector>
 	<vector type="position">
 		<value>21</value>
-		<value>18</value>
+		<value>5066549580772819 * 2^(-48)</value>
 	</vector>
 	<vector type="property.colorRGB">
 		<value>255</value>
@@ -491,7 +71,7 @@
 	</vector>
 	<vector type="position">
 		<value>22</value>
-		<value>18</value>
+		<value>5066549580772819 * 2^(-48)</value>
 	</vector>
 	<vector type="property.colorRGB">
 		<value>255</value>
@@ -505,35 +85,7 @@
 	</vector>
 	<vector type="position">
 		<value>23</value>
-		<value>18</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>-7074254294673575 * 2^(-52)</value>
-		<value>2.5</value>
-		<value>2955487255457141 * 2^(-47)</value>
-	</vector>
-	<vector type="position">
-		<value>20</value>
-		<value>18</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>-7074254294673575 * 2^(-52)</value>
-		<value>2.5</value>
-		<value>2955487255457141 * 2^(-47)</value>
-	</vector>
-	<vector type="position">
-		<value>23</value>
-		<value>18</value>
+		<value>5066549580772819 * 2^(-48)</value>
 	</vector>
 	<vector type="property.colorRGB">
 		<value>255</value>
@@ -576,132 +128,6 @@
 	<vector type="position">
 		<value>2955487255457141 * 2^(-47)</value>
 		<value>20</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>0</value>
-		<value>2.5</value>
-		<value>2955487255457141 * 2^(-47)</value>
-	</vector>
-	<vector type="position">
-		<value>2955487255457141 * 2^(-47)</value>
-		<value>18</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>0</value>
-		<value>2.5</value>
-		<value>2955487255457141 * 2^(-47)</value>
-	</vector>
-	<vector type="position">
-		<value>2955487255457141 * 2^(-47)</value>
-		<value>18</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>0</value>
-		<value>2.5</value>
-		<value>2955487255457141 * 2^(-47)</value>
-	</vector>
-	<vector type="position">
-		<value>2955487255457141 * 2^(-47)</value>
-		<value>20</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>0</value>
-		<value>2.5</value>
-		<value>2955487255457141 * 2^(-47)</value>
-	</vector>
-	<vector type="position">
-		<value>2955487255457141 * 2^(-47)</value>
-		<value>20</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>0</value>
-		<value>2.5</value>
-		<value>2955487255457141 * 2^(-47)</value>
-	</vector>
-	<vector type="position">
-		<value>2955487255457141 * 2^(-47)</value>
-		<value>19</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>0</value>
-		<value>2.5</value>
-		<value>2955487255457141 * 2^(-47)</value>
-	</vector>
-	<vector type="position">
-		<value>2955487255457141 * 2^(-47)</value>
-		<value>18</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>0</value>
-		<value>2.5</value>
-		<value>2955487255457141 * 2^(-47)</value>
-	</vector>
-	<vector type="position">
-		<value>2955487255457141 * 2^(-47)</value>
-		<value>20</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>0</value>
-		<value>2.5</value>
-		<value>2955487255457141 * 2^(-47)</value>
-	</vector>
-	<vector type="position">
-		<value>2955487255457141 * 2^(-47)</value>
-		<value>19</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>0</value>
-		<value>2.5</value>
-		<value>2955487255457141 * 2^(-47)</value>
-	</vector>
-	<vector type="position">
-		<value>2955487255457141 * 2^(-47)</value>
-		<value>18</value>
 	</vector>
 	<vector type="property.colorRGB">
 		<value>255</value>
@@ -967,49 +393,7 @@
 	</vector>
 	<vector type="position">
 		<value>16</value>
-		<value>23</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>-7074254294673575 * 2^(-52)</value>
-		<value>2.5</value>
-		<value>16</value>
-	</vector>
-	<vector type="position">
-		<value>16</value>
-		<value>23</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>-7074254294673575 * 2^(-52)</value>
-		<value>2.5</value>
-		<value>16</value>
-	</vector>
-	<vector type="position">
-		<value>5207287069142389 * 2^(-48)</value>
-		<value>23</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>-7074254294673575 * 2^(-52)</value>
-		<value>2.5</value>
-		<value>16</value>
-	</vector>
-	<vector type="position">
-		<value>18</value>
-		<value>23</value>
+		<value>1618481116079151 * 2^(-46)</value>
 	</vector>
 	<vector type="property.colorRGB">
 		<value>255</value>
@@ -1023,7 +407,7 @@
 	</vector>
 	<vector type="position">
 		<value>17</value>
-		<value>23</value>
+		<value>1618481116079151 * 2^(-46)</value>
 	</vector>
 	<vector type="property.colorRGB">
 		<value>255</value>
@@ -1037,35 +421,7 @@
 	</vector>
 	<vector type="position">
 		<value>18</value>
-		<value>23</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>-7074254294673575 * 2^(-52)</value>
-		<value>2.5</value>
-		<value>16</value>
-	</vector>
-	<vector type="position">
-		<value>16</value>
-		<value>23</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>-7074254294673575 * 2^(-52)</value>
-		<value>2.5</value>
-		<value>16</value>
-	</vector>
-	<vector type="position">
-		<value>18</value>
-		<value>23</value>
+		<value>1618481116079151 * 2^(-46)</value>
 	</vector>
 	<vector type="property.colorRGB">
 		<value>255</value>
@@ -1121,133 +477,7 @@
 	</vector>
 	<vector type="position">
 		<value>16</value>
-		<value>23</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>0</value>
-		<value>2.5</value>
-		<value>16</value>
-	</vector>
-	<vector type="position">
-		<value>16</value>
-		<value>23</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>0</value>
-		<value>2.5</value>
-		<value>16</value>
-	</vector>
-	<vector type="position">
-		<value>16</value>
-		<value>25</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>0</value>
-		<value>2.5</value>
-		<value>16</value>
-	</vector>
-	<vector type="position">
-		<value>16</value>
-		<value>25</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>0</value>
-		<value>2.5</value>
-		<value>16</value>
-	</vector>
-	<vector type="position">
-		<value>16</value>
-		<value>24</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>0</value>
-		<value>2.5</value>
-		<value>16</value>
-	</vector>
-	<vector type="position">
-		<value>16</value>
-		<value>23</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>0</value>
-		<value>2.5</value>
-		<value>16</value>
-	</vector>
-	<vector type="position">
-		<value>16</value>
-		<value>25</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>0</value>
-		<value>2.5</value>
-		<value>16</value>
-	</vector>
-	<vector type="position">
-		<value>16</value>
-		<value>24</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>0</value>
-		<value>2.5</value>
-		<value>16</value>
-	</vector>
-	<vector type="position">
-		<value>16</value>
-		<value>23</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>0</value>
-		<value>2.5</value>
-		<value>16</value>
-	</vector>
-	<vector type="position">
-		<value>3799912185598603 * 2^(-48)</value>
-		<value>23</value>
+		<value>1618481116079151 * 2^(-46)</value>
 	</vector>
 	<vector type="property.colorRGB">
 		<value>255</value>
@@ -1260,36 +490,8 @@
 		<value>16</value>
 	</vector>
 	<vector type="position">
-		<value>13</value>
-		<value>23</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>7074254294673575 * 2^(-52)</value>
-		<value>2.5</value>
-		<value>16</value>
-	</vector>
-	<vector type="position">
-		<value>16</value>
-		<value>23</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>7074254294673575 * 2^(-52)</value>
-		<value>2.5</value>
-		<value>16</value>
-	</vector>
-	<vector type="position">
-		<value>16</value>
-		<value>23</value>
+		<value>15</value>
+		<value>3236961198242981 * 2^(-47)</value>
 	</vector>
 	<vector type="property.colorRGB">
 		<value>255</value>
@@ -1303,63 +505,7 @@
 	</vector>
 	<vector type="position">
 		<value>14</value>
-		<value>23</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>7074254294673575 * 2^(-52)</value>
-		<value>2.5</value>
-		<value>16</value>
-	</vector>
-	<vector type="position">
-		<value>15</value>
-		<value>23</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>7074254294673575 * 2^(-52)</value>
-		<value>2.5</value>
-		<value>16</value>
-	</vector>
-	<vector type="position">
-		<value>16</value>
-		<value>23</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>7074254294673575 * 2^(-52)</value>
-		<value>2.5</value>
-		<value>16</value>
-	</vector>
-	<vector type="position">
-		<value>13</value>
-		<value>23</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>7074254294673575 * 2^(-52)</value>
-		<value>2.5</value>
-		<value>16</value>
-	</vector>
-	<vector type="position">
-		<value>16</value>
-		<value>23</value>
+		<value>809240041081915 * 2^(-45)</value>
 	</vector>
 	<vector type="property.colorRGB">
 		<value>255</value>
@@ -1774,194 +920,12 @@
 	</vector>
 	<vector type="property.colorRGB">
 		<value>0</value>
-		<value>2.5</value>
-		<value>6192449487653421 * 2^(-49)</value>
-	</vector>
-	<vector type="position">
-		<value>6192449487653421 * 2^(-49)</value>
-		<value>18</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>0</value>
-		<value>2.5</value>
-		<value>6192449487653421 * 2^(-49)</value>
-	</vector>
-	<vector type="position">
-		<value>6192449487653421 * 2^(-49)</value>
-		<value>18</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>0</value>
-		<value>2.5</value>
-		<value>6192449487653421 * 2^(-49)</value>
-	</vector>
-	<vector type="position">
-		<value>6192449487653421 * 2^(-49)</value>
-		<value>20</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>0</value>
-		<value>2.5</value>
-		<value>6192449487653421 * 2^(-49)</value>
-	</vector>
-	<vector type="position">
-		<value>6192449487653421 * 2^(-49)</value>
-		<value>20</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>0</value>
-		<value>2.5</value>
-		<value>6192449487653421 * 2^(-49)</value>
-	</vector>
-	<vector type="position">
-		<value>6192449487653421 * 2^(-49)</value>
-		<value>19</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>0</value>
-		<value>2.5</value>
-		<value>6192449487653421 * 2^(-49)</value>
-	</vector>
-	<vector type="position">
-		<value>6192449487653421 * 2^(-49)</value>
-		<value>18</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>0</value>
-		<value>2.5</value>
-		<value>6192449487653421 * 2^(-49)</value>
-	</vector>
-	<vector type="position">
-		<value>6192449487653421 * 2^(-49)</value>
-		<value>20</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>0</value>
-		<value>2.5</value>
-		<value>6192449487653421 * 2^(-49)</value>
-	</vector>
-	<vector type="position">
-		<value>6192449487653421 * 2^(-49)</value>
-		<value>19</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>0</value>
-		<value>2.5</value>
-		<value>6192449487653421 * 2^(-49)</value>
-	</vector>
-	<vector type="position">
-		<value>6192449487653421 * 2^(-49)</value>
-		<value>18</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>0</value>
-		<value>2.5</value>
-		<value>6192449487653421 * 2^(-49)</value>
-	</vector>
-	<vector type="position">
-		<value>1196268651027409 * 2^(-47)</value>
-		<value>18</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>7074254294673575 * 2^(-52)</value>
-		<value>2.5</value>
-		<value>6192449487653421 * 2^(-49)</value>
-	</vector>
-	<vector type="position">
-		<value>8</value>
-		<value>18</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>7074254294673575 * 2^(-52)</value>
-		<value>2.5</value>
-		<value>6192449487653421 * 2^(-49)</value>
-	</vector>
-	<vector type="position">
-		<value>6192449487653421 * 2^(-49)</value>
-		<value>18</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>7074254294673575 * 2^(-52)</value>
 		<value>2.5</value>
 		<value>6192449487653421 * 2^(-49)</value>
 	</vector>
 	<vector type="position">
 		<value>11</value>
-		<value>18</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>7074254294673575 * 2^(-52)</value>
-		<value>2.5</value>
-		<value>6192449487653421 * 2^(-49)</value>
-	</vector>
-	<vector type="position">
-		<value>9</value>
-		<value>18</value>
+		<value>2533269620809805 * 2^(-47)</value>
 	</vector>
 	<vector type="property.colorRGB">
 		<value>255</value>
@@ -1975,7 +939,7 @@
 	</vector>
 	<vector type="position">
 		<value>10</value>
-		<value>18</value>
+		<value>633317146723621 * 2^(-45)</value>
 	</vector>
 	<vector type="property.colorRGB">
 		<value>255</value>
@@ -1988,8 +952,8 @@
 		<value>6192449487653421 * 2^(-49)</value>
 	</vector>
 	<vector type="position">
-		<value>11</value>
-		<value>18</value>
+		<value>9</value>
+		<value>2533267552979163 * 2^(-47)</value>
 	</vector>
 	<vector type="property.colorRGB">
 		<value>255</value>
@@ -2002,35 +966,7 @@
 		<value>6192449487653421 * 2^(-49)</value>
 	</vector>
 	<vector type="position">
-		<value>8</value>
-		<value>18</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>7074254294673575 * 2^(-52)</value>
-		<value>2.5</value>
-		<value>6192449487653421 * 2^(-49)</value>
-	</vector>
-	<vector type="position">
-		<value>11</value>
-		<value>18</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>7074254294673575 * 2^(-52)</value>
-		<value>2.5</value>
-		<value>6192449487653421 * 2^(-49)</value>
-	</vector>
-	<vector type="position">
-		<value>6192449487653421 * 2^(-49)</value>
+		<value>6192449487501509 * 2^(-49)</value>
 		<value>18</value>
 	</vector>
 	<vector type="property.colorRGB">
@@ -2044,21 +980,7 @@
 		<value>6192449487653421 * 2^(-49)</value>
 	</vector>
 	<vector type="position">
-		<value>6192449487653421 * 2^(-49)</value>
-		<value>18</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>7074254294673575 * 2^(-51)</value>
-		<value>2.5</value>
-		<value>6192449487653421 * 2^(-49)</value>
-	</vector>
-	<vector type="position">
-		<value>6192449487653421 * 2^(-49)</value>
+		<value>6192453623162793 * 2^(-49)</value>
 		<value>17</value>
 	</vector>
 	<vector type="property.colorRGB">
@@ -2072,7 +994,7 @@
 		<value>6192449487653421 * 2^(-49)</value>
 	</vector>
 	<vector type="position">
-		<value>6192449487653421 * 2^(-49)</value>
+		<value>6192457758824077 * 2^(-49)</value>
 		<value>16</value>
 	</vector>
 	<vector type="property.colorRGB">
@@ -2086,357 +1008,7 @@
 		<value>6192449487653421 * 2^(-49)</value>
 	</vector>
 	<vector type="position">
-		<value>6192449487653421 * 2^(-49)</value>
-		<value>15</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>7074254294673575 * 2^(-51)</value>
-		<value>2.5</value>
-		<value>6192449487653421 * 2^(-49)</value>
-	</vector>
-	<vector type="position">
-		<value>6192449487653421 * 2^(-49)</value>
-		<value>18</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>7074254294673575 * 2^(-51)</value>
-		<value>2.5</value>
-		<value>6192449487653421 * 2^(-49)</value>
-	</vector>
-	<vector type="position">
-		<value>6192449487653421 * 2^(-49)</value>
-		<value>17</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>7074254294673575 * 2^(-51)</value>
-		<value>2.5</value>
-		<value>6192449487653421 * 2^(-49)</value>
-	</vector>
-	<vector type="position">
-		<value>6192449487653421 * 2^(-49)</value>
-		<value>16</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>7074254294673575 * 2^(-51)</value>
-		<value>2.5</value>
-		<value>6192449487653421 * 2^(-49)</value>
-	</vector>
-	<vector type="position">
-		<value>6192449487653421 * 2^(-49)</value>
-		<value>15</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>7074254294673575 * 2^(-51)</value>
-		<value>2.5</value>
-		<value>6192449487653421 * 2^(-49)</value>
-	</vector>
-	<vector type="position">
-		<value>6192449487653421 * 2^(-49)</value>
-		<value>18</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>7074254294673575 * 2^(-51)</value>
-		<value>2.5</value>
-		<value>6192449487653421 * 2^(-49)</value>
-	</vector>
-	<vector type="position">
-		<value>6192449487653421 * 2^(-49)</value>
-		<value>17</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>7074254294673575 * 2^(-51)</value>
-		<value>2.5</value>
-		<value>6192449487653421 * 2^(-49)</value>
-	</vector>
-	<vector type="position">
-		<value>6192449487653421 * 2^(-49)</value>
-		<value>16</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>7074254294673575 * 2^(-51)</value>
-		<value>2.5</value>
-		<value>6192449487653421 * 2^(-49)</value>
-	</vector>
-	<vector type="position">
-		<value>6192449487653421 * 2^(-49)</value>
-		<value>15</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>7074254294673575 * 2^(-51)</value>
-		<value>2.5</value>
-		<value>6192449487653421 * 2^(-49)</value>
-	</vector>
-	<vector type="position">
-		<value>3096229913403315 * 2^(-48)</value>
-		<value>15</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>7074254294673575 * 2^(-51)</value>
-		<value>2.5</value>
-		<value>6192449487653421 * 2^(-49)</value>
-	</vector>
-	<vector type="position">
-		<value>6192449487653421 * 2^(-49)</value>
-		<value>18</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>7074254294673575 * 2^(-51)</value>
-		<value>2.5</value>
-		<value>6192449487653421 * 2^(-49)</value>
-	</vector>
-	<vector type="position">
-		<value>6192449487653421 * 2^(-49)</value>
-		<value>17</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>7074254294673575 * 2^(-51)</value>
-		<value>2.5</value>
-		<value>6192449487653421 * 2^(-49)</value>
-	</vector>
-	<vector type="position">
-		<value>6192449487653421 * 2^(-49)</value>
-		<value>16</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>7074254294673575 * 2^(-51)</value>
-		<value>2.5</value>
-		<value>6192449487653421 * 2^(-49)</value>
-	</vector>
-	<vector type="position">
-		<value>6192449487653421 * 2^(-49)</value>
-		<value>15</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>7074254294673575 * 2^(-51)</value>
-		<value>2.5</value>
-		<value>6192449487653421 * 2^(-49)</value>
-	</vector>
-	<vector type="position">
-		<value>6192449487653421 * 2^(-49)</value>
-		<value>18</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>7074254294673575 * 2^(-51)</value>
-		<value>2.5</value>
-		<value>6192449487653421 * 2^(-49)</value>
-	</vector>
-	<vector type="position">
-		<value>6192449487653421 * 2^(-49)</value>
-		<value>17</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>7074254294673575 * 2^(-51)</value>
-		<value>2.5</value>
-		<value>6192449487653421 * 2^(-49)</value>
-	</vector>
-	<vector type="position">
-		<value>6192449487653421 * 2^(-49)</value>
-		<value>16</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>7074254294673575 * 2^(-51)</value>
-		<value>2.5</value>
-		<value>6192449487653421 * 2^(-49)</value>
-	</vector>
-	<vector type="position">
-		<value>6192449487653421 * 2^(-49)</value>
-		<value>15</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>7074254294673575 * 2^(-51)</value>
-		<value>2.5</value>
-		<value>6192449487653421 * 2^(-49)</value>
-	</vector>
-	<vector type="position">
-		<value>6192449487653421 * 2^(-49)</value>
-		<value>18</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>7074254294673575 * 2^(-51)</value>
-		<value>2.5</value>
-		<value>6192449487653421 * 2^(-49)</value>
-	</vector>
-	<vector type="position">
-		<value>6192449487653421 * 2^(-49)</value>
-		<value>17</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>7074254294673575 * 2^(-51)</value>
-		<value>2.5</value>
-		<value>6192449487653421 * 2^(-49)</value>
-	</vector>
-	<vector type="position">
-		<value>6192449487653421 * 2^(-49)</value>
-		<value>16</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>7074254294673575 * 2^(-51)</value>
-		<value>2.5</value>
-		<value>6192449487653421 * 2^(-49)</value>
-	</vector>
-	<vector type="position">
-		<value>6192449487653421 * 2^(-49)</value>
-		<value>15</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>7074254294673575 * 2^(-51)</value>
-		<value>2.5</value>
-		<value>6192449487653421 * 2^(-49)</value>
-	</vector>
-	<vector type="position">
-		<value>6192449487653421 * 2^(-49)</value>
-		<value>18</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>7074254294673575 * 2^(-51)</value>
-		<value>2.5</value>
-		<value>6192449487653421 * 2^(-49)</value>
-	</vector>
-	<vector type="position">
-		<value>6192449487653421 * 2^(-49)</value>
-		<value>17</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>7074254294673575 * 2^(-51)</value>
-		<value>2.5</value>
-		<value>6192449487653421 * 2^(-49)</value>
-	</vector>
-	<vector type="position">
-		<value>6192449487653421 * 2^(-49)</value>
-		<value>16</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>7074254294673575 * 2^(-51)</value>
-		<value>2.5</value>
-		<value>6192449487653421 * 2^(-49)</value>
-	</vector>
-	<vector type="position">
-		<value>6192449487653421 * 2^(-49)</value>
+		<value>6192461894485361 * 2^(-49)</value>
 		<value>15</value>
 	</vector>
 	<vector type="property.colorRGB">

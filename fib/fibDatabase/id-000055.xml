@@ -79,7 +79,7 @@
 						<variable>3</variable>
 					</vector>
 					<function define_variable="5">
-						<!-- b = r^2 - a^2 -->
+						<!-- b^2 = r^2 - a^2 -->
 						<subfunction>
 							<sub>
 								<exp>

@@ -94,7 +94,7 @@ public:
 	static const unsignedIntFib FUNCTION_MIN    = 25; // cFunctionMin
 	static const unsignedIntFib FUNCTION_MAX    = 26; // cFunctionMax
 	static const unsignedIntFib FUNCTION_IF     = 30; // cFunctionIf
-	static const unsignedIntFib FUNCTION_DELAY  = 31; // cFunctionDelay
+	static const unsignedIntFib FUNCTION_MOD    = 31; // cFunctionMod
 
 protected:
 
