@@ -55,8 +55,8 @@ History:
 **************************************/
 
 //versions information for the Fib Multimedialanguage
-#define FIB_VERSION          4
-#define FIB_VERSION_NAME     V1.2.1
+#define FIB_VERSION          5
+#define FIB_VERSION_NAME     V1.2.2
 
 //versions information for the Fib database
 #define FIB_DB_VERSION      4

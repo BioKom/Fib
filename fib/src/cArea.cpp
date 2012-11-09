@@ -472,9 +472,13 @@ bool cArea::evalueObject( iEvaluePosition & evaluePosition,
 	for ( list<cVectorArea>::const_iterator itrSubArea = liSubAreas.begin();
 			 itrSubArea != liSubAreas.end(); itrSubArea++ ){
 #ifdef FEATURE_DIRECT_UNDERAREAVALUES
-		longFib lLowerBound = itrSubArea->getLowerBound();
-		longFib lUpperBound = itrSubArea->getUpperBound();
+		const longFib lLowerBound = itrSubArea->getLowerBound();
+		const longFib lUpperBound = itrSubArea->getUpperBound();
 		
+#ifdef DEBUG_EVALUE
+		printf( "cArea::evalueObject() going from %li to %li\n", lLowerBound, lUpperBound );
+#endif //DEBUG_EVALUE
+
 		if ( lLowerBound < lUpperBound ){
 			//go in increasing order
 			for ( longFib lActualValue = lLowerBound; lActualValue <= lUpperBound;
@@ -507,6 +511,17 @@ bool cArea::evalueObject( iEvaluePosition & evaluePosition,
 		}
 #else
 		const list<longFib> liVariableValues = itrSubArea->getAreaValues();
+		
+#ifdef DEBUG_EVALUE
+		printf( "cArea::evalueObject() setting values: " );
+		for ( list<longFib>::const_iterator itrValue = liVariableValues.begin();
+				itrValue != liVariableValues.end(); itrValue++ ){
+			
+			const long lActualValue = (*itrValue);
+			printf( "%li, ", lActualValue );
+		}
+		printf( "\n");
+#endif //DEBUG_EVALUE
 		
 		for ( list<longFib>::const_iterator itrValue = liVariableValues.begin();
 				itrValue != liVariableValues.end(); itrValue++ ){
@@ -576,6 +591,10 @@ bool cArea::evalueObject( iEvalueFibElement & evalueFibElement,
 		longFib lLowerBound = itrSubArea->getLowerBound();
 		longFib lUpperBound = itrSubArea->getUpperBound();
 		
+#ifdef DEBUG_EVALUE
+		printf( "cArea::evalueObject() going from %li to %li\n", lLowerBound, lUpperBound );
+#endif //DEBUG_EVALUE
+		
 		if ( lLowerBound < lUpperBound ){
 			//go in increasing order
 			for ( longFib lActualValue = lLowerBound; lActualValue <= lUpperBound;
@@ -608,6 +627,17 @@ bool cArea::evalueObject( iEvalueFibElement & evalueFibElement,
 		}
 #else
 		const list<longFib> liVariableValues = itrSubArea->getAreaValues();
+		
+#ifdef DEBUG_EVALUE
+		printf( "cArea::evalueObject() setting values: " );
+		for ( list<longFib>::const_iterator itrValue = liVariableValues.begin();
+				itrValue != liVariableValues.end(); itrValue++ ){
+			
+			const long lActualValue = (*itrValue);
+			printf( "%li, ", lActualValue );
+		}
+		printf( "\n");
+#endif //DEBUG_EVALUE
 		
 		for ( list<longFib>::const_iterator itrValue = liVariableValues.begin();
 				itrValue != liVariableValues.end(); itrValue++ ){

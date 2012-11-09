@@ -25,9 +25,9 @@
  *
  *
  * This class represents a Fib if-function.
- * It gives back the value of the first underfunction if the condition is
- * true, else the value of the second underfunction.
- * ( if( condition, underfunction1, underfunction2) )
+ * It gives back the value of the first subfunction if the condition is
+ * true, else the value of the second subfunction.
+ * ( if( condition, subfunction1, subfunction2) )
  *
  */
 /*
@@ -46,18 +46,18 @@ using namespace fib;
 
 
 /**
- * The constructor of the underfunction.
+ * The constructor of the subfunction.
  *
- * @param firstUnderfunction the first underfunction for the function
+ * @param firstUnderfunction the first subfunction for the function
  * 	@see pFirstUnderfunction
  * @param condition the condition for the function
  * 	@see pCondition
- * @param secondUnderfunction the second underfunction for the function
+ * @param secondUnderfunction the second subfunction for the function
  * 	@see pSecondUnderfunction
- * @param pInSuperiorFunction the underfunction which contains the
- * 	new underfunction
+ * @param pInSuperiorFunction the subfunction which contains the
+ * 	new subfunction
  * @param pInDefiningFibElement the fib -element which defines/ uses
- * 	the new underfunction
+ * 	the new subfunction
  */
 cFunctionIf::cFunctionIf( const cCondition & condition,
 		const cUnderFunction & firstUnderfunction,
@@ -73,23 +73,23 @@ cFunctionIf::cFunctionIf( const cCondition & condition,
 
 
 /**
- * The constructor of the underfunction.
+ * The constructor of the subfunction.
  *
  * @param pInCondition a pointer to the condition for the function
  * 	Beware: It (pInCondition) won't be copied.
  * 	@see pCondition
- * @param pInFirstUnderfunction a pointer to the first underfunction
+ * @param pInFirstUnderfunction a pointer to the first subfunction
  *		for the function
  * 	Beware: It (pInFirstUnderfunction) won't be copied.
  * 	@see pFirstUnderfunction
- * @param pInSecondUnderfunction a pointer to the second underfunction
+ * @param pInSecondUnderfunction a pointer to the second subfunction
  * 	for the function
  * 	Beware: It (pInSecondUnderfunction) won't be copied.
  * 	@see pSecondUnderfunction
- * @param pInSuperiorFunction the underfunction which contains the
- * 	new underfunction
+ * @param pInSuperiorFunction the subfunction which contains the
+ * 	new subfunction
  * @param pInDefiningFibElement the fib -element which defines/ uses
- * 	the new underfunction
+ * 	the new subfunction
  */
 cFunctionIf::cFunctionIf( cCondition * pInCondition,
 		cUnderFunction * pInFirstUnderfunction,
@@ -105,30 +105,30 @@ cFunctionIf::cFunctionIf( cCondition * pInCondition,
 
 
 /**
- * The copy constructor of the underfunction.
- * This constructor will also copy the underfunctions of the given
+ * The copy constructor of the subfunction.
+ * This constructor will also copy the subfunctions of the given
  * function.
  *
- * @param underfunction the underfunction which to copy
- * @param pInSuperiorFunction the underfunction which contains the
- * 	new underfunction
+ * @param subfunction the subfunction which to copy
+ * @param pInSuperiorFunction the subfunction which contains the
+ * 	new subfunction
  * @param pInDefiningFibElement the fib -element which defines/ uses
- * 	the new underfunction
+ * 	the new subfunction
  */
-cFunctionIf::cFunctionIf( const cFunctionIf & underfunction,
+cFunctionIf::cFunctionIf( const cFunctionIf & subfunction,
 		cUnderFunction * pInSuperiorFunction,
 		cFibElement *pInDefiningFibElement ):
-		cFunctionTwoValue( underfunction, pInSuperiorFunction, pInDefiningFibElement ),
+		cFunctionTwoValue( subfunction, pInSuperiorFunction, pInDefiningFibElement ),
 		pCondition( NULL ){
 	
-	setCondition( *(underfunction.getCondition()) );
+	setCondition( *(subfunction.getCondition()) );
 }
 
 
 /**
- * The constructor for restoring a value underfunction from an TinyXml element.
+ * The constructor for restoring a value subfunction from an TinyXml element.
  *
- * @param pXmlNode a pointer to the TinyXml node the underfunction is stored in
+ * @param pXmlNode a pointer to the TinyXml node the subfunction is stored in
  * @param outStatus An reference to an integervalue where the errorvalue
  * 	can be stored to.
  * 	possible errorvalues are:
@@ -141,10 +141,10 @@ cFunctionIf::cFunctionIf( const cFunctionIf & underfunction,
  * @param liDefinedVariables a list with the defined variables for the
  * 	to restore fib -element, every variable should have it's number
  * 	(the number under which it is stored) as it's value
- * @param pInSuperiorFunction the underfunction which contains the
- * 	new underfunction
+ * @param pInSuperiorFunction the subfunction which contains the
+ * 	new subfunction
  * @param pInDefiningFibElement the fib -element which defines/ uses
- * 	the new underfunction
+ * 	the new subfunction
  */
 cFunctionIf::cFunctionIf( const TiXmlElement * pXmlElement, intFib & outStatus,
 		list<cFibVariable*> & liDefinedVariables,
@@ -158,7 +158,7 @@ cFunctionIf::cFunctionIf( const TiXmlElement * pXmlElement, intFib & outStatus,
 		outStatus = -1;
 		return;
 	}
-	//check the underfunction type
+	//check the subfunction type
 	string szElementType( pXmlElement->Value() );
 	if ( szElementType != getUnderFunctionName() ){
 		//wrong element type to restore
@@ -169,7 +169,7 @@ cFunctionIf::cFunctionIf( const TiXmlElement * pXmlElement, intFib & outStatus,
 	//restore the condition of the function
 	const TiXmlElement * pXmlElementUf = NULL;
 	if ( pXmlElement->FirstChild() == NULL ){
-		//Error: no underfunctions
+		//Error: no subfunctions
 		outStatus = -1;
 		return;
 	}
@@ -183,11 +183,11 @@ cFunctionIf::cFunctionIf( const TiXmlElement * pXmlElement, intFib & outStatus,
 	}
 	pXmlElementUf = pXmlElementUf->NextSiblingElement();
 	if ( pXmlElementUf == NULL ){
-		//Error: no first underfunction
+		//Error: no first subfunction
 		outStatus = -1;
 		return;
 	}
-	//restore the two underfunctions
+	//restore the two subfunctions
 	pFirstUnderfunction = cUnderFunction::restoreXml( pXmlElementUf, outStatus,
 		liDefinedVariables, this, pInDefiningFibElement );
 	
@@ -196,7 +196,7 @@ cFunctionIf::cFunctionIf( const TiXmlElement * pXmlElement, intFib & outStatus,
 	}
 	pXmlElementUf = pXmlElementUf->NextSiblingElement();
 	if ( pXmlElementUf == NULL ){
-		//Error: no second underfunction
+		//Error: no second subfunction
 		outStatus = -1;
 		return;
 	}
@@ -207,12 +207,12 @@ cFunctionIf::cFunctionIf( const TiXmlElement * pXmlElement, intFib & outStatus,
 
 
 /**
- * This constructor restores a value underfunction from the stream
+ * This constructor restores a value subfunction from the stream
  * where it is stored in the compressed fib -format.
  * Beware: The bits for the functiontype should be allready readed, this
- * 	constructor reads yust the two underfunctions.
+ * 	constructor reads yust the two subfunctions.
  *
- * @param iBitStream the stream where this underfunction is stored to in,
+ * @param iBitStream the stream where this subfunction is stored to in,
  * 	because this stream is an cReadBits, any number of bits can be
  * 	readed from it
  * @param outStatus An reference to an integervalue where the errorvalue
@@ -228,12 +228,12 @@ cFunctionIf::cFunctionIf( const TiXmlElement * pXmlElement, intFib & outStatus,
  * @param liDefinedVariables a list with the defined variables for the
  * 	to restore fib -element, every variable should have it's number
  * 	(the number under which it is stored) as it's value
- * @param pInDomainValue the domain for value underfunction
+ * @param pInDomainValue the domain for value subfunction
  * @param pInDomainVariable the domain for variables
- * @param pInSuperiorFunction the underfunction which contains the
- * 	new underfunction
+ * @param pInSuperiorFunction the subfunction which contains the
+ * 	new subfunction
  * @param pInDefiningFibElement the fib -element which defines/ uses
- * 	the new underfunction
+ * 	the new subfunction
  */
 cFunctionIf::cFunctionIf( cReadBits & iBitStream, intFib & outStatus,
 		list<cFibVariable*> & liDefinedVariables,
@@ -259,7 +259,7 @@ cFunctionIf::cFunctionIf( cReadBits & iBitStream, intFib & outStatus,
 		return;
 	}
 	
-	//restore the two underfunctions
+	//restore the two subfunctions
 	pFirstUnderfunction = cUnderFunction::restore( iBitStream, outStatus,
 		liDefinedVariables, pInDomainValue, pInDomainVariable,
 		this, pInDefiningFibElement );
@@ -274,7 +274,7 @@ cFunctionIf::cFunctionIf( cReadBits & iBitStream, intFib & outStatus,
 
 
 /**
- * The destructor of the underfunction.
+ * The destructor of the subfunction.
  */
 cFunctionIf::~cFunctionIf(){
 	
@@ -285,14 +285,14 @@ cFunctionIf::~cFunctionIf(){
 
 
 /**
- * This method returns if this underfunction is valid, else false.
- * All values in the underfunction and it's underfunctions must be
- * inside the underfunction domain. All variables must be defined over
- * this underfunction.
- * No underfunction should contain itselfor should be contained in one
- * of its underfunctions (no cycles allowed).
+ * This method returns if this subfunction is valid, else false.
+ * All values in the subfunction and it's subfunctions must be
+ * inside the subfunction domain. All variables must be defined over
+ * this subfunction.
+ * No subfunction should contain itselfor should be contained in one
+ * of its subfunctions (no cycles allowed).
  *
- * @return true if this underfunction is valid, else false
+ * @return true if this subfunction is valid, else false
  */
 bool cFunctionIf::isValid() const{
 	
@@ -310,7 +310,7 @@ bool cFunctionIf::isValid() const{
 
 
 /**
- * This method checks if the given variable is used in this underfunction.
+ * This method checks if the given variable is used in this subfunction.
  *
  * @see cFibVariable
  * @param pVariable the variable to check if it is used
@@ -329,15 +329,15 @@ bool cFunctionIf::isUsedVariable( const cFibVariable * pVariable ) const{
 
 
 /**
- * This method returns all variables used in this underfunction.
+ * This method returns all variables used in this subfunction.
  *
  * @see cFibVariable
- * @return all variables used in this underfunction
+ * @return all variables used in this subfunction
  */
 set< cFibVariable* > cFunctionIf::getUsedVariables(){
 	
 	
-	//get variables from both underfunctions
+	//get variables from both subfunctions
 	set<cFibVariable*> setUsedVariables =
 		cFunctionTwoValue::getUsedVariables();
 	
@@ -354,7 +354,7 @@ set< cFibVariable* > cFunctionIf::getUsedVariables(){
 
 /**
  * This method replace the variable variableOld with the variable
- * variableNew in the underfunction.
+ * variableNew in the subfunction.
  *
  * @see cFibVariable
  * @see isVariable()
@@ -385,19 +385,19 @@ bool cFunctionIf::replaceVariable( cFibVariable * pVariableOld,
 
 
 /**
- * Sets the Fib-element which defines/ uses this underfunction.
+ * Sets the Fib-element which defines/ uses this subfunction.
  * If the given pointer is the nullpointer (standardvalue), no
- * Fib-element defines this underfunction.
+ * Fib-element defines this subfunction.
  *
  * @param definingFibElement a pointer to the Fib-element which
- * 	defines/ uses this underfunction
+ * 	defines/ uses this subfunction
  * @param bCheckDomains get the domains of the defining element and
- * 	check the underfunctionelements with it
+ * 	check the subfunctionelements with it
  */
 void cFunctionIf::setDefiningFibElement( cFibElement * fibElement,
 		bool bCheckDomains ){
 	
-	//set the defining fib -elements in both underfunctions
+	//set the defining fib -elements in both subfunctions
 	if ( pCondition ){
 		pCondition->setDefiningFibElement( fibElement, bCheckDomains );
 	}
@@ -407,7 +407,7 @@ void cFunctionIf::setDefiningFibElement( cFibElement * fibElement,
 
 /**
  * This method evaluades a value for the time needed to evalue the
- * underfunction.
+ * subfunction.
  * This value should not exceed lMaxTime, if the value for the time
  * is greater than lMaxTime the evaluation will be stopt and lMaxTime
  * returned. If lMaxTime is 0 (for infinity) the evaluation won't be
@@ -417,17 +417,17 @@ void cFunctionIf::setDefiningFibElement( cFibElement * fibElement,
  * @param lMaxTime the maximum time for the evaluation, the returned
  * 	exceed this value; the value 0 stands for infinity, so the
  * 	evaluation won't be stoped
- * @return a value for the time needed to evalue this underfunction
+ * @return a value for the time needed to evalue this subfunction
  */
 unsignedLongFib cFunctionIf::getTimeNeed( unsignedLongFib lMaxTime ) const{
 	
 	if ( lMaxTime == 1 ){
-		//the time is needed for the underfunction
+		//the time is needed for the subfunction
 		return 1;
 	}
 	unsignedLongFib ulTimeNeed = 0;
 	
-	//get the time need from in both underfunctions
+	//get the time need from in both subfunctions
 	if ( pCondition ){
 		
 		if ( lMaxTime == 0 ){
@@ -480,9 +480,9 @@ unsignedLongFib cFunctionIf::getCompressedSize() const{
 
 
 /**
- * Returns the value of the underfunction or 0 if non such exists.
+ * Returns the value of the subfunction or 0 if non such exists.
  *
- * @return the value of the underfunction or 0 if non
+ * @return the value of the subfunction or 0 if non
  * 	such exists
  */
 doubleFib cFunctionIf::getValue() const{
@@ -491,12 +491,12 @@ doubleFib cFunctionIf::getValue() const{
 	const bool bCondition = ( pCondition != NULL ) ?
 		pCondition->getValue() : false;
 	
-	//get the values of the two underfunctions
+	//get the values of the two subfunctions
 	if ( bCondition ){
 		//evalue first subfunction
 		if ( pFirstUnderfunction ){
 			return pFirstUnderfunction->getValue();
-		}else{//no first underfunction -> get the nullvalue of the domain for the value
+		}else{//no first subfunction -> get the nullvalue of the domain for the value
 			cDomainSingle * pDomain = getDomain();
 			bool bStandardDomain = false;
 			if ( pDomain == NULL ){
@@ -513,7 +513,7 @@ doubleFib cFunctionIf::getValue() const{
 	}//else evalue second subfunction
 	if ( pSecondUnderfunction ){
 		return pSecondUnderfunction->getValue();
-	}//else no second underfunction -> get the nullvalue of the domain for the value
+	}//else no second subfunction -> get the nullvalue of the domain for the value
 	cDomainSingle * pDomain = getDomain();
 	bool bStandardDomain = false;
 	if ( pDomain == NULL ){
@@ -530,13 +530,13 @@ doubleFib cFunctionIf::getValue() const{
 
 
 /**
- * This method stores this underfunction in the XML -format into the
+ * This method stores this subfunction in the XML -format into the
  * given stream.
  * Variables should have ther number as ther value.
  *
- * @param stream the stream where this underfunctionshould be
+ * @param stream the stream where this subfunctionshould be
  * 	stored to
- * @return true if this underfunction is stored, else false
+ * @return true if this subfunction is stored, else false
  */
 bool cFunctionIf::storeXml( ostream &stream ) const{
 
@@ -552,7 +552,7 @@ bool cFunctionIf::storeXml( ostream &stream ) const{
 	}else{
 		bSubElementsStoredCorrect = false;
 	}
-	//store both underfunctions in the xml -format
+	//store both subfunctions in the xml -format
 	if ( pFirstUnderfunction ){
 		bSubElementsStoredCorrect =
 			pFirstUnderfunction->storeXml( stream );
@@ -590,7 +590,7 @@ bool cFunctionIf::store( ostream & stream, char & cRestBits,
 	
 	if ( ( pCondition == NULL ) || ( pFirstUnderfunction == NULL ) ||
 			( pSecondUnderfunction == NULL ) ){
-		//condition or a underfunction is missing -> can't store
+		//condition or a subfunction is missing -> can't store
 		return false;
 	}
 	//store the identifier for the function if
@@ -600,27 +600,27 @@ bool cFunctionIf::store( ostream & stream, char & cRestBits,
 	if ( ! bInitiationStored ){
 		return false;
 	}
-	//store the first underfunction
+	//store the first subfunction
 	const bool bConditionStored =
 		pCondition->store( stream, cRestBits, uiRestBitPosition );
 	
 	if ( ! bConditionStored ){
 		return false;
 	}
-	//store the first underfunction
+	//store the first subfunction
 	const bool bFirstUnderfunctionStored =
 		pFirstUnderfunction->store( stream, cRestBits, uiRestBitPosition );
 	
 	if ( ! bFirstUnderfunctionStored ){
 		return false;
 	}
-	//store the second underfunction
+	//store the second subfunction
 	return pSecondUnderfunction->store( stream, cRestBits, uiRestBitPosition );
 }
 
 
 /**
- * @return the type for the underfunction
+ * @return the type for the subfunction
  */
 unsignedIntFib cFunctionIf::getType() const{
 
@@ -629,7 +629,7 @@ unsignedIntFib cFunctionIf::getType() const{
 
 
 /**
- * @return the name for the underfunction
+ * @return the name for the subfunction
  */
 string cFunctionIf::getUnderFunctionName() const{
 
@@ -638,12 +638,12 @@ string cFunctionIf::getUnderFunctionName() const{
 
 
 /**
- * This method duplicates this whole underfunction.
- * Underfunctions of this underfunction are also cloned.
+ * This method duplicates this whole subfunction.
+ * Underfunctions of this subfunction are also cloned.
  *
- * @param pSuperiorUnderFunction the underfunction which contains
+ * @param pSuperiorUnderFunction the subfunction which contains
  * @param pInDefiningFibElement the Fib -element which defines/ uses
- * @return the cloned/ duplicated underfunction
+ * @return the cloned/ duplicated subfunction
  */
 cFunctionIf * cFunctionIf::clone(
 		cUnderFunction * pInSuperiorUnderFunction,
@@ -656,11 +656,11 @@ cFunctionIf * cFunctionIf::clone(
 #ifdef FEATURE_EQUAL_FIB_OBJECT
 
 /**
- * This method checks if the given underfunction is equal to this underfunction.
+ * This method checks if the given subfunction is equal to this subfunction.
  * Variables can be others, but must be defined and used in equivalent
  * Fib-elements.
  *
- * @param underfunction the underfunction to compare with this underfunction
+ * @param subfunction the subfunction to compare with this subfunction
  * @param mapEqualRootObjects the root objects of this object that wher
  * 	already checked as equal
  * 	map entries:
@@ -680,19 +680,19 @@ cFunctionIf * cFunctionIf::clone(
  * 	cExtObject will be compared
  * @return true if the given variable is equal to this variable, else false
  */
-bool cFunctionIf::equalInternal( const cUnderFunction & underfunction,
+bool cFunctionIf::equalInternal( const cUnderFunction & subfunction,
 		map< const cRoot *, const cRoot * > & mapEqualRootObjects,
 		map< const cFibElement *, const cFibElement * > & mapEqualDefinedVariables,
 		const bool bCheckExternalObjects ) const{
 
-	if ( & underfunction == NULL ){
+	if ( & subfunction == NULL ){
 		return false;
 	}
-	if ( getType() != underfunction.getType() ){
-		//underfunctions don't have the same type
+	if ( getType() != subfunction.getType() ){
+		//subfunctions don't have the same type
 		return false;
 	}
-	const cFunctionIf * pFunctionTwoValue = (const cFunctionIf *)( & underfunction);
+	const cFunctionIf * pFunctionTwoValue = (const cFunctionIf *)( & subfunction);
 	
 	//compare the condition
 	if ( pCondition != NULL ){
@@ -710,7 +710,7 @@ bool cFunctionIf::equalInternal( const cUnderFunction & underfunction,
 		}
 	}
 	
-	//compare the first underfunction
+	//compare the first subfunction
 	if ( pFirstUnderfunction != NULL ){
 		if ( pFunctionTwoValue->pFirstUnderfunction == NULL ){
 			return false;
@@ -726,7 +726,7 @@ bool cFunctionIf::equalInternal( const cUnderFunction & underfunction,
 		}
 	}
 		
-	//compare the second underfunction
+	//compare the second subfunction
 	if ( pSecondUnderfunction != NULL ){
 		if ( pFunctionTwoValue->pSecondUnderfunction == NULL ){
 			return false;
@@ -747,21 +747,21 @@ bool cFunctionIf::equalInternal( const cUnderFunction & underfunction,
 #else //FEATURE_EQUAL_FIB_OBJECT
 
 /**
- * This Method checks if the given underfunction is equal to this underfunction.
+ * This Method checks if the given subfunction is equal to this subfunction.
  *
- * @param underfunction the underfunction to compare with this underfunction
- * @return true if the given underfunction is equal to this underfunction, else false
+ * @param subfunction the subfunction to compare with this subfunction
+ * @return true if the given subfunction is equal to this subfunction, else false
  */
-bool cFunctionIf::equal( const cUnderFunction & underfunction ) const{
+bool cFunctionIf::equal( const cUnderFunction & subfunction ) const{
 
-	if ( & underfunction == NULL ){
+	if ( & subfunction == NULL ){
 		return false;
 	}
-	if ( getType() != underfunction.getType() ){
-		//underfunctions don't have the same type
+	if ( getType() != subfunction.getType() ){
+		//subfunctions don't have the same type
 		return false;
 	}
-	const cFunctionIf * pFunctionTwoValue = (const cFunctionIf *)( & underfunction);
+	const cFunctionIf * pFunctionTwoValue = (const cFunctionIf *)( & subfunction);
 	
 	//compare the condition
 	if ( pCondition != NULL ){
@@ -778,7 +778,7 @@ bool cFunctionIf::equal( const cUnderFunction & underfunction ) const{
 		}
 	}
 	
-	//compare the first underfunction
+	//compare the first subfunction
 	if ( pFirstUnderfunction != NULL ){
 		if ( pFunctionTwoValue->pFirstUnderfunction == NULL ){
 			return false;
@@ -793,7 +793,7 @@ bool cFunctionIf::equal( const cUnderFunction & underfunction ) const{
 		}
 	}
 		
-	//compare the second underfunction
+	//compare the second subfunction
 	if ( pSecondUnderfunction != NULL ){
 		if ( pFunctionTwoValue->pSecondUnderfunction == NULL ){
 			return false;

@@ -443,6 +443,12 @@ bool cFunction::evalueObject( iEvaluePosition & evaluePosition,
 	//evalue the underobject for the subfunction value
 	const_cast<cFunction*>(this)->variableDefined.setValue(
 		pUnderFunction->getValue() );
+	
+#ifdef DEBUG_EVALUE
+	const double dEvaluedValue = ((double)variableDefined.getValue());
+	printf( "cFunction::evalueObject() evalued value: %lf\n", dEvaluedValue );
+#endif //DEBUG_EVALUE
+	
 	return pUnderObject->evalueObject( evaluePosition, objectPoint, liVecProperties );
 }
 
@@ -495,6 +501,12 @@ bool cFunction::evalueObject( iEvalueFibElement & evalueFibElement,
 	//evalue the underobject for the subfunction value
 	const_cast<cFunction*>(this)->variableDefined.setValue(
 		pUnderFunction->getValue() );
+	
+#ifdef DEBUG_EVALUE
+	const double dEvaluedValue = ((double)variableDefined.getValue());
+	printf( "cFunction::evalueObject() evalued value: %lf\n", dEvaluedValue );
+#endif //DEBUG_EVALUE
+	
 	return pUnderObject->evalueObject( evalueFibElement, objectPoint,
 		liVecProperties, liCFibElementTyps );
 }

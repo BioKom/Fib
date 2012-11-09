@@ -330,9 +330,6 @@ double cFibObjectFitnessBasicAlgorithm::evalueDistance(
 	
 	DEBUG_OUT_L2(<<"cFibObjectFitnessBasicAlgorithm::evalueDistance( "<<fibObject<<", "<<fibObjectArea<<") started"<<endl);
 	
-//TODO mutex for pOriginalIndividual also for changing it in parents
-	
-	
 	pthread_mutex_lock( &mutexOriginalIndividual );
 	
 	if ( (pOriginalIndividual == NULL) ||
