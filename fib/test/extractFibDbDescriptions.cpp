@@ -35,6 +35,7 @@
  * 		The format in which the extracted descriptions should be printed.
  * 		possible formats are:
  * 			-n: normal
+ * 			-m: wiki Markdown
  * 	DATABASE_PATH: the path to the Fib database to load
  *
  */
@@ -58,6 +59,7 @@ History:
 #include <ctime>
 #include <list>
 #include <map>
+#include <string>
 
 
 using namespace fib;
@@ -65,6 +67,105 @@ using namespace std;
 
 
 int extractAllDbObjectsDescriptions( const char cFormat );
+
+
+/**
+ * class for the head lines for the database objects
+ */
+class cDBHeadline{
+public:
+	
+	/**
+	 * The identifier befor which to write the headline.
+	 * (Identifiers are positiv absolut values.)
+	 */
+	unsigned long uiIdentifierBeginArea;
+	
+	/**
+	 * The text of the headline.
+	 */
+	string szHeadline;
+	
+	/**
+	 * The headline level.
+	 * 0 is the top most headline level
+	 */
+	unsigned int uiHeadlineLevel;
+	
+	
+	/**
+	 * parameter constructor
+	 */
+	cDBHeadline( const unsigned int uiInIdentifierBeginArea,
+			const string & szInHeadline,
+			const unsigned int uiInHeadlineLevel=0 ):
+			uiIdentifierBeginArea( uiInIdentifierBeginArea ),
+			szHeadline( szInHeadline ), uiHeadlineLevel( uiInHeadlineLevel ){
+		
+	}
+	
+	
+	/**
+	 * This method compares on lower for this headline.
+	 *
+	 * @see uiIdentifierBeginArea
+	 * @see uiHeadlineLevel
+	 * @param otherHeadline the Fib DB headline to compare to
+	 * @return true if this headline has a lower uiIdentifierBeginArea than
+	 * 	that of otherHeadline, else if the uiIdentifierBeginArea are equal true
+	 * 	if the uiHeadlineLevel of this is lower, else false
+	 */
+	virtual bool operator<( const cDBHeadline & otherHeadline ) const{
+		
+		if ( uiIdentifierBeginArea == otherHeadline.uiIdentifierBeginArea ){
+			
+			return uiHeadlineLevel < otherHeadline.uiHeadlineLevel;
+		}
+		
+		return uiIdentifierBeginArea < otherHeadline.uiIdentifierBeginArea;
+	}
+	
+};//end class cDBHeadline
+
+
+/**
+ * The list with the sorted headlines for the data base.
+ */
+list< cDBHeadline > liHeadlines;
+
+
+/**
+ * This method fills the liHeadlines with the headlines.
+ * @see liHeadlines
+ */
+void createHedlines(){
+	
+	liHeadlines.push_back( cDBHeadline( 0, "Nothing" ) );
+	liHeadlines.push_back( cDBHeadline( 1, "-1 till -9 points (abs( Identifier ) = number of dimensions" ) );
+	liHeadlines.push_back( cDBHeadline( 10, "-10 till -19 License" ) );
+	liHeadlines.push_back( cDBHeadline( 20, "-20 till -999 2 dimensional objects" ) );
+	liHeadlines.push_back( cDBHeadline( 20, "-20 till -29 lines", 1 ) );
+	liHeadlines.push_back( cDBHeadline( 30, "-30 till -39 triangles", 1 ) );
+	liHeadlines.push_back( cDBHeadline( 40, "-40 till -49 rectangles", 1 ) );
+	liHeadlines.push_back( cDBHeadline( 50, "-50 till -59 circles", 1 ) );
+	liHeadlines.push_back( cDBHeadline( 60, "-60 till -69 open for futur use", 1 ) );
+	liHeadlines.push_back( cDBHeadline( 70, "-70 till -89 tiles", 1 ) );
+	liHeadlines.push_back( cDBHeadline( 90, "-90 till -99 functions", 1 ) );
+	liHeadlines.push_back( cDBHeadline( 200, "-200 till -299 lines 2", 1 ) );
+	liHeadlines.push_back( cDBHeadline( 300, "-300 till -399 triangles 2", 1 ) );
+	liHeadlines.push_back( cDBHeadline( 400, "-400 till -499 rectangles 2", 1 ) );
+	liHeadlines.push_back( cDBHeadline( 500, "-500 till -599 circles 2", 1 ) );
+	liHeadlines.push_back( cDBHeadline( 600, "-600 till -899 open for futur use", 1 ) );
+	liHeadlines.push_back( cDBHeadline( 900, "-900 till -999 functions 2", 1 ) );
+	liHeadlines.push_back( cDBHeadline( 1000, "-1000 till -1999 algorithms" ) );
+	liHeadlines.push_back( cDBHeadline( 2000, "-2000 till -2999 descriptions" ) );
+	liHeadlines.push_back( cDBHeadline( 3000, "-3000 till -3999 3 dimensional objects" ) );
+	liHeadlines.push_back( cDBHeadline( 4000, "-4000 till -4999 4 dimensional objects" ) );
+	liHeadlines.push_back( cDBHeadline( 5000, "-5000 till -5100 stickmans" ) );
+	
+	liHeadlines.sort();
+}
+
 
 
 int main(int argc, char* argv[]){
@@ -91,7 +192,9 @@ int main(int argc, char* argv[]){
 			}
 		}
 	}
-
+	
+	createHedlines();
+	
 	//database path has to be checked befor an instance of the database was created
 	iReturn += extractAllDbObjectsDescriptions( cFormat );
 
@@ -110,6 +213,7 @@ int main(int argc, char* argv[]){
  * @param cFormat The format in which the extracted descriptions should be printed.
  * 	possible formats are:
  * 		-n: normal
+ * 		-m: wiki Markdown
  * @return the number of erros occured in the test
  */
 int extractAllDbObjectsDescriptions( const char cFormat ){
@@ -130,19 +234,57 @@ int extractAllDbObjectsDescriptions( const char cFormat ){
 	
 	liAllDatabaseObjects.sort();
 	liAllDatabaseObjects.reverse();
-
+	
+	list< cDBHeadline >::const_iterator itrNextHeadline = liHeadlines.begin();
+	
 	for ( list< longFib >::iterator itrActualIdentifier = liAllDatabaseObjects.begin();
 			itrActualIdentifier != liAllDatabaseObjects.end(); itrActualIdentifier++ ){
 		
 		longFib & lActualIdentifier = (*itrActualIdentifier);
-
+		
+		while ( ( itrNextHeadline != liHeadlines.end() ) &&
+				( itrNextHeadline->uiIdentifierBeginArea <= (unsigned long)( 0 - lActualIdentifier ) ) ){
+			//write next headline
+			cout<<endl;
+			cout<<endl;
+			if ( cFormat == 'm' ){
+				//format markdown
+				for ( unsigned int uiLevel = 0;
+						uiLevel < itrNextHeadline->uiHeadlineLevel; uiLevel++ ){
+					cout<<"#";
+				}
+				cout<<"# "<<itrNextHeadline->szHeadline<<endl;
+			}else{//default
+				for ( unsigned int uiLevel = 0;
+						uiLevel < itrNextHeadline->uiHeadlineLevel; uiLevel++ ){
+					cout<<"#";
+				}
+				cout<<"# "<<itrNextHeadline->szHeadline<<" #";
+				for ( unsigned int uiLevel = 0;
+						uiLevel < itrNextHeadline->uiHeadlineLevel; uiLevel++ ){
+					cout<<"#";
+				}
+				cout<<endl;
+			}
+			cout<<endl;
+			
+			itrNextHeadline++;
+		}
+		
+		
 		cRoot * pRootLoaded = pFibDatabase->getFibObject( lActualIdentifier );
 		if ( pRootLoaded == NULL ){
 			cerr<<"Error: Could not load database object with identifier: "<<lActualIdentifier<<" : "<<endl;
 			continue;
 		}
 		
-		cout<<" - "<<lActualIdentifier<<" : ";
+		if ( cFormat == 'm' ){
+			//format markdown
+			cout<<"* ";
+		}else{//default
+			cout<<" - ";
+		}
+		cout<<lActualIdentifier<<" : ";
 		
 		//write the optional part information
 		cOptionalPart * pOptionalPart = pRootLoaded->getOptionalPart();
@@ -178,7 +320,12 @@ int extractAllDbObjectsDescriptions( const char cFormat ){
 			}
 			
 			if ( uiActualEntry != 1 ){
-				cout<<"    - ";
+				if ( cFormat == 'm' ){
+					//format markdown
+					cout<<"   * ";
+				}else{//default
+					cout<<"    - ";
+				}
 			}
 			
 			cout<<szFirstPart<<paEntry.second<<endl;
