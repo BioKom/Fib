@@ -476,7 +476,9 @@ bool cArea::evalueObject( iEvaluePosition & evaluePosition,
 		const longFib lUpperBound = itrSubArea->getUpperBound();
 		
 #ifdef DEBUG_EVALUE
-		printf( "cArea::evalueObject() going from %li to %li\n", lLowerBound, lUpperBound );
+		const long liLowerBound = lLowerBound;
+		const long liUpperBound = lUpperBound;
+		printf( "cArea::evalueObject() going from %li to %li\n", liLowerBound, liUpperBound );
 #endif //DEBUG_EVALUE
 
 		if ( lLowerBound < lUpperBound ){
@@ -592,7 +594,9 @@ bool cArea::evalueObject( iEvalueFibElement & evalueFibElement,
 		longFib lUpperBound = itrSubArea->getUpperBound();
 		
 #ifdef DEBUG_EVALUE
-		printf( "cArea::evalueObject() going from %li to %li\n", lLowerBound, lUpperBound );
+		const long liLowerBound = lLowerBound;
+		const long liUpperBound = lUpperBound;
+		printf( "cArea::evalueObject() going from %li to %li\n", liLowerBound, liUpperBound );
 #endif //DEBUG_EVALUE
 		
 		if ( lLowerBound < lUpperBound ){
