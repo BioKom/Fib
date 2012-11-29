@@ -43,6 +43,7 @@
 History:
 02.12.2011  Oesterholz  created
 27.06.2011  Oesterholz  check string length befor checking for "description" ending
+29.11.2011  Oesterholz  changes for option "-m": wiki Markdown
 */
 
 #include "version.h"
