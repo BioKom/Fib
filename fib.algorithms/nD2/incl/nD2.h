@@ -130,31 +130,31 @@ namespace nD2{
 		fib::algorithms::nD1::cDataPoint<tX, tX> > & paNewLine );
 	
 	/**
-	 * This function combines the given set of points to fib-objects.
+	 * This function combines the given set of points to Fib objects.
 	 * Beware: You have to care that the created underobjects will be deleted
 	 *
 	 * @param setPoints the set with the datapoints to combine to
-	 * 	fib-objects with the help of area and function elements;
+	 * 	Fib objects with the help of area and function elements;
 	 * 	The given points should be positions in an matrix, positions in
 	 * 	the matrix but not given, will be considerd not to be in the area
 	 * 	to create.
 	 * @param pUnderobject a pointer to the underobject, which the created
-	 * 	fib-elements should contain and which should be evalued for the
+	 * 	Fib elements should contain and which should be evalued for the
 	 * 	point positions
 	 * @param pVariableX a pointer to the variable for the x position
 	 * @param pVariableY a pointer to the variable for the y position
-	 * @return a fib-object with the created fib-underobjects, wher the
+	 * @return a Fib object with the created Fib underobjects, wher the
 	 * 	given variables for the given pUnderobject will go over all
 	 * 	point positions in the given set setPoints or NULL if non
 	 * 	such could be created;
 	 * 	some positions can be evalued twice;
-	 * 	the fib-underobjects, wich evalue the most points, are on the
+	 * 	the Fib underobjects, wich evalue the most points, are on the
 	 * 	front of the listobject (have a lower underobject number);
 	 * 	if NULL is returnd, you have to care that pUnderobject will be
 	 * 	deleted, else pUnderobject will be included in one
 	 * 	underobject of the created listobject and the other underobject will
 	 * 	contain copies of pUnderobject
-	 * 	Structur of the created fib-object:
+	 * 	Structur of the created Fib object:
 	 * 		area( fun( fun( area( pUnderobject ))))
 	 * 	or if this previos given structur is not possible
 	 * 		list(
@@ -175,19 +175,19 @@ namespace nD2{
 #ifdef FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
 
 	/**
-	 * This function combines the given set of points to fib-objects,
+	 * This function combines the given set of points to Fib objects,
 	 * with the help of splies (polynoms with fixed number of parametes
 	 * uiMaxSplineParameters) .
 	 * Beware: You have to care that the created underobjects will be deleted
 	 *
 	 * uses @see nD1::cPolynom::evalueSpline()
 	 * @param setPoints the set with the datapoints to combine to
-	 * 	fib-objects with the help of area and function elements;
+	 * 	Fib objects with the help of area and function elements;
 	 * 	The given points should be positions in an matrix, positions in
 	 * 	the matrix but not given, will be considerd not to be in the area
 	 * 	to create.
 	 * @param pUnderobject a pointer to the underobject, which the created
-	 * 	fib-elements should contain and which should be evalued for the
+	 * 	Fib elements should contain and which should be evalued for the
 	 * 	point positions
 	 * @param pVariableX a pointer to the variable for the x position
 	 * @param pVariableY a pointer to the variable for the y position
@@ -201,18 +201,18 @@ namespace nD2{
 	 * 	-1 * maxValue <= vecFactors[i] <= maxValue for 0 <= i \< vecFactors.size();
 	 * 	if 0 (standard value) is given, the maximum possible value will
 	 * 	be evalued from the given data
-	 * @return a fib-object with the created fib-underobjects, wher the
+	 * @return a Fib object with the created Fib underobjects, wher the
 	 * 	given variables for the given pUnderobject will go over all
 	 * 	point positions in the given set setPoints or NULL if non
 	 * 	such could be created;
 	 * 	some positions can be evalued twice;
-	 * 	the fib-underobjects, wich evalue the most points, are on the
+	 * 	the Fib underobjects, wich evalue the most points, are on the
 	 * 	front of the listobject (have a lower underobject number);
 	 * 	if NULL is returnd, you have to care that pUnderobject will be
 	 * 	deleted, else pUnderobject will be included in one
 	 * 	underobject of the created listobject and the other underobject will
 	 * 	contain copies of pUnderobject
-	 * 	Structur of the created fib-object:
+	 * 	Structur of the created Fib object:
 	 * 		area( fun( fun( fun( area( pUnderobject )))))
 	 * 	or if this previos given structur is not possible
 	 * 		list(
@@ -234,19 +234,19 @@ namespace nD2{
 #else //FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
 
 	/**
-	 * This function combines the given set of points to fib-objects,
+	 * This function combines the given set of points to Fib objects,
 	 * with the help of splies (polynoms with fixed number of parametes
 	 * uiMaxSplineParameters) .
 	 * Beware: You have to care that the created underobjects will be deleted
 	 *
 	 * uses @see nD1::cPolynom::evalueSpline()
 	 * @param setPoints the set with the datapoints to combine to
-	 * 	fib-objects with the help of area and function elements;
+	 * 	Fib objects with the help of area and function elements;
 	 * 	The given points should be positions in an matrix, positions in
 	 * 	the matrix but not given, will be considerd not to be in the area
 	 * 	to create.
 	 * @param pUnderobject a pointer to the underobject, which the created
-	 * 	fib-elements should contain and which should be evalued for the
+	 * 	Fib elements should contain and which should be evalued for the
 	 * 	point positions
 	 * @param pVariableX a pointer to the variable for the x position
 	 * @param pVariableY a pointer to the variable for the y position
@@ -269,18 +269,18 @@ namespace nD2{
 	 * 	be evalued from the given data
 	 * @param ulMaxMemoryCost a number for the maximum memory cost this
 	 * 	method is allowed to use; if 0 the maximum memory cost is unbounded
-	 * @return a fib-object with the created fib-underobjects, wher the
+	 * @return a Fib object with the created Fib underobjects, wher the
 	 * 	given variables for the given pUnderobject will go over all
 	 * 	point positions in the given set setPoints or NULL if non
 	 * 	such could be created;
 	 * 	some positions can be evalued twice;
-	 * 	the fib-underobjects, wich evalue the most points, are on the
+	 * 	the Fib underobjects, wich evalue the most points, are on the
 	 * 	front of the listobject (have a lower underobject number);
 	 * 	if NULL is returnd, you have to care that pUnderobject will be
 	 * 	deleted, else pUnderobject will be included in one
 	 * 	underobject of the created listobject and the other underobject will
 	 * 	contain copies of pUnderobject
-	 * 	Structur of the created fib-object:
+	 * 	Structur of the created Fib object:
 	 * 		area( fun( fun( fun( area( pUnderobject )))))
 	 * 	or if this previos given structur is not possible
 	 * 		list(
@@ -304,7 +304,7 @@ namespace nD2{
 #endif //FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
 
 	/**
-	 * This function combines the given set of points to fib-objects,
+	 * This function combines the given set of points to Fib objects,
 	 * with the help of splies (polynoms with fixed number of parametes
 	 * uiMaxSplineParameters) .
 	 * Beware: You have to care that the created underobjects will be deleted
@@ -317,12 +317,12 @@ namespace nD2{
 	 * the given range points to find the polynom.
 	 *
 	 * @param setPoints the set with the datapoints to combine to
-	 * 	fib-objects with the help of area and function elements;
+	 * 	Fib objects with the help of area and function elements;
 	 * 	The given points should be positions in an matrix, positions in
 	 * 	the matrix but not given, will be considerd not to be in the area
 	 * 	to create.
 	 * @param pUnderobject a pointer to the underobject, which the created
-	 * 	fib-elements should contain and which should be evalued for the
+	 * 	Fib elements should contain and which should be evalued for the
 	 * 	point positions
 	 * @param pVariableX a pointer to the variable for the x position
 	 * @param pVariableY a pointer to the variable for the y position
@@ -348,18 +348,18 @@ namespace nD2{
 	 * 	equal or less than maxError
 	 * @param ulMaxMemoryCost a number for the maximum memory cost this
 	 * 	method is allowed to use; if 0 the maximum memory cost is unbounded
-	 * @return a fib-object with the created fib-underobjects, wher the
+	 * @return a Fib object with the created Fib underobjects, wher the
 	 * 	given variables for the given pUnderobject will go over all
 	 * 	point positions in the given set setPoints or NULL if non
 	 * 	such could be created;
 	 * 	some positions can be evalued twice;
-	 * 	the fib-underobjects, wich evalue the most points, are on the
+	 * 	the Fib underobjects, wich evalue the most points, are on the
 	 * 	front of the listobject (have a lower underobject number);
 	 * 	if NULL is returnd, you have to care that pUnderobject will be
 	 * 	deleted, else pUnderobject will be included in one
 	 * 	underobject of the created listobject and the other underobject will
 	 * 	contain copies of pUnderobject
-	 * 	Structur of the created fib-object:
+	 * 	Structur of the created Fib object:
 	 * 		area( fun( fun( fun( area( pUnderobject )))))
 	 * 	or if this previos given structur is not possible
 	 * 		list(
@@ -383,7 +383,7 @@ namespace nD2{
 
 
 	/**
-	 * This function combines the given set of points to fib-objects,
+	 * This function combines the given set of points to Fib objects,
 	 * with the help of splies (polynoms with fixed number of parametes
 	 * uiMaxSplineParameters) .
 	 * Beware: You have to care that the created underobjects will be deleted
@@ -396,20 +396,20 @@ namespace nD2{
 	 * the given range points to find the polynom.
 	 *
 	 * @param setMinimumArea the set with the datapoints to combine to
-	 * 	fib-objects with the help of area and function elements;
+	 * 	Fib objects with the help of area and function elements;
 	 * 	the created area should contain all of these points;
 	 * 	The given points should be positions in an matrix, positions in
 	 * 	the matrix but not given, will be considerd not to be in the area
 	 * 	to create.
 	 * @param setMaximumArea the set with the datapoints to combine to
-	 * 	fib-objects with the help of area and function elements;
+	 * 	Fib objects with the help of area and function elements;
 	 * 	the created area can contain these points;
 	 * 	this set should contain all points from setMinimumArea;
 	 * 	The given points should be positions in an matrix, positions in
 	 * 	the matrix but not given, will be considerd not to be in the area
 	 * 	to create.
 	 * @param pUnderobject a pointer to the underobject, which the created
-	 * 	fib-elements should contain and which should be evalued for the
+	 * 	Fib elements should contain and which should be evalued for the
 	 * 	point positions
 	 * @param pVariableX a pointer to the variable for the x position
 	 * @param pVariableY a pointer to the variable for the y position
@@ -438,18 +438,18 @@ namespace nD2{
 	 * 	equal or less than maxError
 	 * @param ulMaxMemoryCost a number for the maximum memory cost this
 	 * 	method is allowed to use; if 0 the maximum memory cost is unbounded
-	 * @return a fib-object with the created fib-underobjects, wher the
+	 * @return a Fib object with the created Fib underobjects, wher the
 	 * 	given variables for the given pUnderobject will go over all
 	 * 	point positions in the given set setPoints or NULL if non
 	 * 	such could be created;
 	 * 	some positions can be evalued twice;
-	 * 	the fib-underobjects, wich evalue the most points, are on the
+	 * 	the Fib underobjects, wich evalue the most points, are on the
 	 * 	front of the listobject (have a lower underobject number);
 	 * 	if NULL is returnd, you have to care that pUnderobject will be
 	 * 	deleted, else pUnderobject will be included in one
 	 * 	underobject of the created listobject and the other underobject will
 	 * 	contain copies of pUnderobject
-	 * 	Structur of the created fib-object:
+	 * 	Structur of the created Fib object:
 	 * 		area( fun( fun( fun( area( pUnderobject )))))
 	 * 	or if this previos given structur is not possible
 	 * 		list(
@@ -477,7 +477,7 @@ namespace nD2{
 #ifdef FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
 
 	/**
-	 * This function combines the given set of points to fib-objects,
+	 * This function combines the given set of points to Fib objects,
 	 * with the help of splies (polynoms with fixed number of parametes
 	 * uiMaxSplineParameters) .
 	 * For this the method @see nD1::cSpline::evalueSpline() will be used.
@@ -486,17 +486,17 @@ namespace nD2{
 	 * uses @see nD1::cSpline::evalueSpline()
 	 * The method should give the same result as
 	 * createSplineItrFastBorderAreasForPoints() but faster and with less
-	 * fib-elements.
+	 * Fib elements.
 	 * It will iterativ increase the number of parameters for the splines
 	 * (from 1 to uiMaxNumberOfParameters).
 	 *
 	 * @param setPoints the set with the datapoints to combine to
-	 * 	fib-objects with the help of area and function elements;
+	 * 	Fib objects with the help of area and function elements;
 	 * 	The given points should be positions in an matrix, positions in
 	 * 	the matrix but not given, will be considerd not to be in the area
 	 * 	to create.
 	 * @param pUnderobject a pointer to the underobject, which the created
-	 * 	fib-elements should contain and which should be evalued for the
+	 * 	Fib elements should contain and which should be evalued for the
 	 * 	point positions
 	 * @param pVariableX a pointer to the variable for the x position
 	 * @param pVariableY a pointer to the variable for the y position
@@ -517,18 +517,18 @@ namespace nD2{
 	 * 	find on one border point; the error on the interpolated polynom
 	 * 	for every border point in vecData will be equal or less than
 	 * 	maxErrorPerValue
-	 * @return a fib-object with the created fib-underobjects, wher the
+	 * @return a Fib object with the created Fib underobjects, wher the
 	 * 	given variables for the given pUnderobject will go over all
 	 * 	point positions in the given set setPoints or NULL if non
 	 * 	such could be created;
 	 * 	some positions can be evalued twice;
-	 * 	the fib-underobjects, wich evalue the most points, are on the
+	 * 	the Fib underobjects, wich evalue the most points, are on the
 	 * 	front of the listobject (have a lower underobject number);
 	 * 	if NULL is returnd, you have to care that pUnderobject will be
 	 * 	deleted, else pUnderobject will be included in one
 	 * 	underobject of the created listobject and the other underobject will
 	 * 	contain copies of pUnderobject
-	 * 	Structur of the created fib-object:
+	 * 	Structur of the created Fib object:
 	 * 		area( fun( fun( fun( area( pUnderobject )))))
 	 * 	or if this previos given structur is not possible
 	 * 		list(
@@ -551,7 +551,7 @@ namespace nD2{
 
 
 	/**
-	 * This function combines the given set of points to fib-objects,
+	 * This function combines the given set of points to Fib objects,
 	 * with the help of splies (polynoms with fixed number of parametes
 	 * uiMaxSplineParameters) .
 	 * For this the method @see nD1::cSpline::evalueSpline() will be used.
@@ -560,25 +560,25 @@ namespace nD2{
 	 * uses @see nD1::cSpline::evalueSpline()
 	 * The method should give the same result as
 	 * createSplineItrFastBorderAreasForPoints() but faster and with less
-	 * fib-elements.
+	 * Fib elements.
 	 * It will iterativ increase the number of parameters for the splines
 	 * (from 1 to uiMaxNumberOfParameters).
 	 *
 	 * @param setMinimumArea the set with the datapoints to combine to
-	 * 	fib-objects with the help of area and function elements;
+	 * 	Fib objects with the help of area and function elements;
 	 * 	the created area should contain all of these points;
 	 * 	The given points should be positions in an matrix, positions in
 	 * 	the matrix but not given, will be considerd not to be in the area
 	 * 	to create.
 	 * @param setMaximumArea the set with the datapoints to combine to
-	 * 	fib-objects with the help of area and function elements;
+	 * 	Fib objects with the help of area and function elements;
 	 * 	the created area can contain these points;
 	 * 	this set should contain all points from setMinimumArea;
 	 * 	The given points should be positions in an matrix, positions in
 	 * 	the matrix but not given, will be considerd not to be in the area
 	 * 	to create.
 	 * @param pUnderobject a pointer to the underobject, which the created
-	 * 	fib-elements should contain and which should be evalued for the
+	 * 	Fib elements should contain and which should be evalued for the
 	 * 	point positions
 	 * @param pVariableX a pointer to the variable for the x position
 	 * @param pVariableY a pointer to the variable for the y position
@@ -602,18 +602,18 @@ namespace nD2{
 	 * 	find on one border point; the error on the interpolated polynom
 	 * 	for every border point in vecData will be equal or less than
 	 * 	maxErrorPerValue
-	 * @return a fib-object with the created fib-underobjects, wher the
+	 * @return a Fib object with the created Fib underobjects, wher the
 	 * 	given variables for the given pUnderobject will go over all
 	 * 	point positions in the given set setPoints or NULL if non
 	 * 	such could be created;
 	 * 	some positions can be evalued twice;
-	 * 	the fib-underobjects, wich evalue the most points, are on the
+	 * 	the Fib underobjects, wich evalue the most points, are on the
 	 * 	front of the listobject (have a lower underobject number);
 	 * 	if NULL is returnd, you have to care that pUnderobject will be
 	 * 	deleted, else pUnderobject will be included in one
 	 * 	underobject of the created listobject and the other underobject will
 	 * 	contain copies of pUnderobject
-	 * 	Structur of the created fib-object:
+	 * 	Structur of the created Fib object:
 	 * 		area( fun( fun( fun( area( pUnderobject )))))
 	 * 	or if this previos given structur is not possible
 	 * 		list(
@@ -639,7 +639,7 @@ namespace nD2{
 #else //FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
 	
 	/**
-	 * This function combines the given set of points to fib-objects,
+	 * This function combines the given set of points to Fib objects,
 	 * with the help of splies (polynoms with fixed number of parametes
 	 * uiMaxSplineParameters) .
 	 * For this the method @see nD1::cSpline::evalueSpline() will be used.
@@ -648,17 +648,17 @@ namespace nD2{
 	 * uses @see nD1::cSpline::evalueSpline()
 	 * The method should give the same result as
 	 * createSplineItrFastBorderAreasForPoints() but faster and with less
-	 * fib-elements.
+	 * Fib elements.
 	 * It will iterativ increase the number of parameters for the splines
 	 * (from 1 to uiMaxNumberOfParameters).
 	 *
 	 * @param setPoints the set with the datapoints to combine to
-	 * 	fib-objects with the help of area and function elements;
+	 * 	Fib objects with the help of area and function elements;
 	 * 	The given points should be positions in an matrix, positions in
 	 * 	the matrix but not given, will be considerd not to be in the area
 	 * 	to create.
 	 * @param pUnderobject a pointer to the underobject, which the created
-	 * 	fib-elements should contain and which should be evalued for the
+	 * 	Fib elements should contain and which should be evalued for the
 	 * 	point positions
 	 * @param pVariableX a pointer to the variable for the x position
 	 * @param pVariableY a pointer to the variable for the y position
@@ -684,18 +684,18 @@ namespace nD2{
 	 * 	equal or less than maxError
 	 * @param ulMaxMemoryCost a number for the maximum memory cost this
 	 * 	method is allowed to use; if 0 the maximum memory cost is unbounded
-	 * @return a fib-object with the created fib-underobjects, wher the
+	 * @return a Fib object with the created Fib underobjects, wher the
 	 * 	given variables for the given pUnderobject will go over all
 	 * 	point positions in the given set setPoints or NULL if non
 	 * 	such could be created;
 	 * 	some positions can be evalued twice;
-	 * 	the fib-underobjects, wich evalue the most points, are on the
+	 * 	the Fib underobjects, wich evalue the most points, are on the
 	 * 	front of the listobject (have a lower underobject number);
 	 * 	if NULL is returnd, you have to care that pUnderobject will be
 	 * 	deleted, else pUnderobject will be included in one
 	 * 	underobject of the created listobject and the other underobject will
 	 * 	contain copies of pUnderobject
-	 * 	Structur of the created fib-object:
+	 * 	Structur of the created Fib object:
 	 * 		area( fun( fun( fun( area( pUnderobject )))))
 	 * 	or if this previos given structur is not possible
 	 * 		list(
@@ -719,7 +719,7 @@ namespace nD2{
 
 
 	/**
-	 * This function combines the given set of points to fib-objects,
+	 * This function combines the given set of points to Fib objects,
 	 * with the help of splies (polynoms with fixed number of parametes
 	 * uiMaxSplineParameters) .
 	 * For this the method @see nD1::cSpline::evalueSpline() will be used.
@@ -728,25 +728,25 @@ namespace nD2{
 	 * uses @see nD1::cSpline::evalueSpline()
 	 * The method should give the same result as
 	 * createSplineItrFastBorderAreasForPoints() but faster and with less
-	 * fib-elements.
+	 * Fib elements.
 	 * It will iterativ increase the number of parameters for the splines
 	 * (from 1 to uiMaxNumberOfParameters).
 	 *
 	 * @param setMinimumArea the set with the datapoints to combine to
-	 * 	fib-objects with the help of area and function elements;
+	 * 	Fib objects with the help of area and function elements;
 	 * 	the created area should contain all of these points;
 	 * 	The given points should be positions in an matrix, positions in
 	 * 	the matrix but not given, will be considerd not to be in the area
 	 * 	to create.
 	 * @param setMaximumArea the set with the datapoints to combine to
-	 * 	fib-objects with the help of area and function elements;
+	 * 	Fib objects with the help of area and function elements;
 	 * 	the created area can contain these points;
 	 * 	this set should contain all points from setMinimumArea;
 	 * 	The given points should be positions in an matrix, positions in
 	 * 	the matrix but not given, will be considerd not to be in the area
 	 * 	to create.
 	 * @param pUnderobject a pointer to the underobject, which the created
-	 * 	fib-elements should contain and which should be evalued for the
+	 * 	Fib elements should contain and which should be evalued for the
 	 * 	point positions
 	 * @param pVariableX a pointer to the variable for the x position
 	 * @param pVariableY a pointer to the variable for the y position
@@ -775,18 +775,18 @@ namespace nD2{
 	 * 	equal or less than maxError
 	 * @param ulMaxMemoryCost a number for the maximum memory cost this
 	 * 	method is allowed to use; if 0 the maximum memory cost is unbounded
-	 * @return a fib-object with the created fib-underobjects, wher the
+	 * @return a Fib object with the created Fib underobjects, wher the
 	 * 	given variables for the given pUnderobject will go over all
 	 * 	point positions in the given set setPoints or NULL if non
 	 * 	such could be created;
 	 * 	some positions can be evalued twice;
-	 * 	the fib-underobjects, wich evalue the most points, are on the
+	 * 	the Fib underobjects, wich evalue the most points, are on the
 	 * 	front of the listobject (have a lower underobject number);
 	 * 	if NULL is returnd, you have to care that pUnderobject will be
 	 * 	deleted, else pUnderobject will be included in one
 	 * 	underobject of the created listobject and the other underobject will
 	 * 	contain copies of pUnderobject
-	 * 	Structur of the created fib-object:
+	 * 	Structur of the created Fib object:
 	 * 		area( fun( fun( fun( area( pUnderobject )))))
 	 * 	or if this previos given structur is not possible
 	 * 		list(

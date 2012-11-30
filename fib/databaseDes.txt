@@ -2,11 +2,19 @@
 Extract all descriptions of Fib Database objects
 ================================================
 
+
+
+# Nothing #
+
  - 0 : nothing
     - description : This object represents a empty point with no impact.
     - author : Betti Oesterholz
     - author::email : Oesterholz@Fib-Development.org
     - copyright : LGPL3
+
+
+# -1 till -9 points (abs( Identifier ) = number of dimensions #
+
  - -1 : 1D point
     - description : This object represents a point in one dimensions.
     - inVar1 : position of the point in dimension 1
@@ -37,11 +45,23 @@ Extract all descriptions of Fib Database objects
     - author : Betti Oesterholz
     - author::email : Oesterholz@Fib-Development.org
     - copyright : LGPL3
+
+
+# -10 till -19 License #
+
  - -10 : GPL 3
     - description : GNU GENERAL PUBLIC LICENSE Version 3
     - author : Betti Oesterholz
     - author::email : Oesterholz@Fib-Development.org
     - copyright : LGPL3
+
+
+# -20 till -999 2 dimensional objects #
+
+
+
+## -20 till -29 lines ##
+
  - -20 : line
     - description : This object represents a line in two dimensions from an start point (x_1, y_1) to an end point (x_2, y_2).
     - inVar1 : position start point dimension 1 (x_1)
@@ -100,6 +120,10 @@ Extract all descriptions of Fib Database objects
     - author : Betti Oesterholz
     - author::email : Oesterholz@Fib-Development.org
     - copyright : LGPL3
+
+
+## -30 till -39 triangles ##
+
  - -30 : triangle
     - description : This object represents a filled triangle between tree points (x_1, y_1), (x_2, y_2) and (x_3, y_3).
     - inVar1 : position of the first point in dimension 1 (x_1)
@@ -140,6 +164,10 @@ Extract all descriptions of Fib Database objects
     - author : Betti Oesterholz
     - author::email : Oesterholz@Fib-Development.org
     - copyright : LGPL3
+
+
+## -40 till -49 rectangles ##
+
  - -40 : rectangle
     - description : This object represents a filled rectangle with the start point (x_s, y_s) and start point (x_e, y_e).
     - inVar1 : position of the start point in dimension 1 (x_s)
@@ -207,6 +235,10 @@ Extract all descriptions of Fib Database objects
     - author : Betti Oesterholz
     - author::email : Oesterholz@Fib-Development.org
     - copyright : LGPL3
+
+
+## -50 till -59 circles ##
+
  - -50 : circle
     - description : This object represents a filled circle with the middle point (x, y) and radius r.
     - inVar1 : position of the middle point in dimension 1 (x)
@@ -238,6 +270,14 @@ Extract all descriptions of Fib Database objects
     - author : Betti Oesterholz
     - author::email : Oesterholz@Fib-Development.org
     - copyright : LGPL3
+
+
+## -60 till -69 open for futur use ##
+
+
+
+## -70 till -89 tiles ##
+
  - -70 : tile
     - description : This object represents a tile. In the first dimension it goes from x_s to x_e. In the second dimension the area is filled between y_s and the line y_e = f( x ) = a_0 + a_1 * x + a_2 * x^2 (wher y goes from x_s to x_e).
     - inVar1 : position start point dimension 1 (x_s)
@@ -318,6 +358,10 @@ Extract all descriptions of Fib Database objects
     - author : Betti Oesterholz
     - author::email : Oesterholz@Fib-Development.org
     - copyright : LGPL3
+
+
+## -90 till -99 functions ##
+
  - -90 : function f( x, a0, a1 ) = a0 + a1 * x
     - description : This object represents a (linear) function of degree 1: f( x, a0, a1 ) = a0 + a1 * x .
     - inVar1 : x position
@@ -354,6 +398,10 @@ Extract all descriptions of Fib Database objects
     - author : Betti Oesterholz
     - author::email : Oesterholz@Fib-Development.org
     - copyright : LGPL3
+
+
+## -200 till -299 lines 2 ##
+
  - -200 : line
     - description : This object represents a line in two dimensions from an start point (x_1, y_1) to an end point (x_2, y_2) with a given width and rounded ends.
     - inVar1 : position start point dimension 1 (x_1)
@@ -378,6 +426,14 @@ Extract all descriptions of Fib Database objects
     - author : Betti Oesterholz
     - author::email : Oesterholz@Fib-Development.org
     - copyright : LGPL3
+
+
+## -300 till -399 triangles 2 ##
+
+
+
+## -400 till -499 rectangles 2 ##
+
  - -410 : quadrangle
     - description : This object represents a quadrangle (box). In the first dimension it goes from x_s to x_e. In the second dimension the area is filled between two lines y_s = f_1( x ) = a_0 + a_1 * x and y_e = f_2( x ) = b_0 + b_1 * x (wher x goes from x_s to x_e).
     - inVar1 : position start point dimension 1 (x_s)
@@ -771,12 +827,27 @@ Extract all descriptions of Fib Database objects
     - author : Betti Oesterholz
     - author::email : Oesterholz@Fib-Development.org
     - copyright : LGPL3
+
+
+## -500 till -599 circles 2 ##
+
  - -512 : circle border
     - description : This object represents a circle border with the middle point (x, y) and radius r.
     - inVar1 : position of the middle point in dimension 1 (x)
     - inVar2 : position of the middle point in dimension 2 (y)
     - inVar3 : the radius r
     - inVar4 : width of the border line (the border goes from radius r to (r - w); standard value is 1)
+    - author : Betti Oesterholz
+    - author::email : Oesterholz@Fib-Development.org
+    - copyright : LGPL3
+ - -513 : circle border part
+    - description : This object represents a circle border part with the middle point (x, y), radius r, given border line width and from start angle s clockwise till end angle e .
+    - inVar1 : position of the center point in dimension 1 (x)
+    - inVar2 : position of the center point in dimension 2 (y)
+    - inVar3 : size of the radius r
+    - inVar4 : width of the border line (the border goes from radius r to (r - w); standard value is 1)
+    - inVar5 : angle s in radian betwean (clockwise, in positiy dimension 2 direction) the 1 dimension achsis (x) for the circle center and circle part begin
+    - inVar6 : angle e in radian betwean (clockwise, in positiy dimension 2 direction) the 1 dimension achsis (x) for the circle center and circle part end
     - author : Betti Oesterholz
     - author::email : Oesterholz@Fib-Development.org
     - copyright : LGPL3
@@ -792,6 +863,28 @@ Extract all descriptions of Fib Database objects
     - author : Betti Oesterholz
     - author::email : Oesterholz@Fib-Development.org
     - copyright : LGPL3
+ - -518 : circle border part
+    - description : This object represents a circle border part with the middle point (x, y), radius r, given border line width and from start angle s clockwise till end angle e .
+    - inVar1 : position of the center point in dimension 1 (x)
+    - inVar2 : position of the center point in dimension 2 (y)
+    - inVar3 : size of the radius r
+    - inVar4 : width of the border line (the border goes from radius r to (r - w); standard value is 1)
+    - inVar5 : angle s in radian betwean (clockwise, in positiy dimension 2 direction) the 1 dimension achsis (x) for the circle center and circle part begin
+    - inVar6 : angle e in radian betwean (clockwise, in positiy dimension 2 direction) the 1 dimension achsis (x) for the circle center and circle part end
+    - subObj1 : The points of the circle. The subobject is called for every point on the circle border.
+    - subObj1::outVar1 : the position of the circle point in dimension 1 (x)
+    - subObj1::outVar2 : the position of the circle point in dimension 2 (y)
+    - author : Betti Oesterholz
+    - author::email : Oesterholz@Fib-Development.org
+    - copyright : LGPL3
+
+
+## -600 till -899 open for futur use ##
+
+
+
+## -900 till -999 functions 2 ##
+
  - -900 : evalue fraction
     - description : This object evalues wich part / fraction of a given pixel is below a line f(x) = a_0 + a_1 * x (e. g. for antialising). (A pixel (x,y) goes in the first dimension from x to x+1 and in the second dimension from y to y+1 .)
     - inVar1 : the first parameter a_0 for the line f(x)
@@ -1124,8 +1217,28 @@ Extract all descriptions of Fib Database objects
     - author : Betti Oesterholz
     - author::email : Oesterholz@Fib-Development.org
     - copyright : LGPL3
+
+
+# -1000 till -1999 algorithms #
+
+
+
+# -2000 till -2999 descriptions #
+
+
+
+# -3000 till -3999 3 dimensional objects #
+
+
+
+# -4000 till -4999 4 dimensional objects #
+
+
+
+# -5000 till -5100 stickmans #
+
  - -5000 : stickman
-    - description : This object draws a stickman. The stickman has a body, a head, two arms and two legs, with each one joint in the arms and legs. The arms will begin at 1/4 of the body size below the body start (wher the head is). The head will 1/4 (of its radius) overlap the body. The arms length will be the part 0.62 (= golden ratio) of the body or legs. The upper part of arms and legs start at the body, the lower parts start at the other end of the upper parts. The lower part length will be the part 0.62 (= golden ratio) of ther upper part.
+    - description : This object draws a stickman. The stickman has a body, a head, two arms and two legs, with each one joint in the arms and legs. The arms will begin at 1/4 of the body size below the body start (wher the head is). The head will 1/4 (of its radius) overlap the body. The arms length will be the part 0.62 (= golden ratio) of the body or legs. The upper part of arms and legs start at the body, the lower parts start at the other end of the upper parts. The lower part length will be equal ther upper part.
     - inVar1 : position of the stickman start point (lower end of first (right) lower leg) in dimension 1
     - inVar2 : position of the stickman start point (lower end of first (right) lower leg) in dimension 2
     - inVar3 : size s of stickman (top of the head to feet bottom, if legs are straight)
@@ -1145,7 +1258,7 @@ Extract all descriptions of Fib Database objects
     - author::email : Oesterholz@Fib-Development.org
     - copyright : LGPL3
  - -5005 : stickman
-    - description : This object draws a stickman. The points of the stickman are given back as variables of the subobject. The stickman has a body, a head, two arms and two legs, with each one joint in the arms and legs. The arms will begin at 1/4 of the body size below the body start (wher the head is). The head will 1/4 (of its radius) overlap the body. The arms length will be the part 0.62 (= golden ratio) of the body or legs. The upper part of arms and legs start at the body, the lower parts start at the other end of the upper parts. The lower part length will be the part 0.62 (= golden ratio) of ther upper part.
+    - description : This object draws a stickman. The points of the stickman are given back as variables of the subobject. The stickman has a body, a head, two arms and two legs, with each one joint in the arms and legs. The arms will begin at 1/4 of the body size below the body start (wher the head is). The head will 1/4 (of its radius) overlap the body. The arms length will be the part 0.62 (= golden ratio) of the body or legs. The upper part of arms and legs start at the body, the lower parts start at the other end of the upper parts. The lower part length will be equal ther upper part.
     - inVar1 : position of the stickman start point (lower end of first (right) lower leg) in dimension 1
     - inVar2 : position of the stickman start point (lower end of first (right) lower leg) in dimension 2
     - inVar3 : size s of stickman (top of the head to feet bottom, if legs are straight)
@@ -1168,7 +1281,7 @@ Extract all descriptions of Fib Database objects
     - author::email : Oesterholz@Fib-Development.org
     - copyright : LGPL3
  - -5055 : stickman framework
-    - description : This object represents a stickman framework. The stickman has a body, a head, two arms and two legs, with each one joint in the arms and legs. You have to provide a line and a circle object for the stickman parts as subobjects (see below). The arms will begin at 1/4 of the body size below the body start (wher the head is). The head will 1/4 (of its radius) overlap the body. The arms length will be the part 0.62 (= golden ratio) of the body or legs. The upper part of arms and legs start at the body, the lower parts start at the other end of the upper parts. The lower part length will be the part 0.62 (= golden ratio) of ther upper part.
+    - description : This object represents a stickman framework. The stickman has a body, a head, two arms and two legs, with each one joint in the arms and legs. You have to provide a line and a circle object for the stickman parts as subobjects (see below). The arms will begin at 1/4 of the body size below the body start (wher the head is). The head will 1/4 (of its radius) overlap the body. The arms length will be the part 0.62 (= golden ratio) of the body or legs. The upper part of arms and legs start at the body, the lower parts start at the other end of the upper parts. The lower part length will be equal ther upper part.
     - inVar1 : position of the stickman start point (lower end of first (right) lower leg) in dimension 1 (x_lrle)
     - inVar2 : position of the stickman start point (lower end of first (right) lower leg) in dimension 2 (y_lrle)
     - inVar3 : size s of stickman (top of the head to feet bottom, if legs are straight)
@@ -1198,7 +1311,7 @@ Extract all descriptions of Fib Database objects
     - author::email : Oesterholz@Fib-Development.org
     - copyright : LGPL3
  - -5056 : stickman framework
-    - description : This object represents a stickman framework. The stickman has a body, a head, two arms and two legs, with each one joint in the arms and legs. You have to provide the stickman parts as subobjects (see below). The arms will begin at 1/4 of the body size below the body start (wher the head is). The head will 1/4 (of its radius) overlap the body. The arms length will be the part 0.62 (= golden ratio) of the body or legs. The upper part of arms and legs start at the body, the lower parts start at the other end of the upper parts. The lower part length will be the part 0.62 (= golden ratio) of ther upper part.
+    - description : This object represents a stickman framework. The stickman has a body, a head, two arms and two legs, with each one joint in the arms and legs. You have to provide the stickman parts as subobjects (see below). The arms will begin at 1/4 of the body size below the body start (wher the head is). The head will 1/4 (of its radius) overlap the body. The arms length will be the part 0.62 (= golden ratio) of the body or legs. The upper part of arms and legs start at the body, the lower parts start at the other end of the upper parts. The lower part length will be equal ther upper part.
     - inVar1 : position of the stickman start point (lower end of first (right) lower leg) in dimension 1 (x_lrle)
     - inVar2 : position of the stickman start point (lower end of first (right) lower leg) in dimension 2 (y_lrle)
     - inVar3 : size s of stickman (top of the head to feet bottom, if legs are straight)
@@ -1252,7 +1365,7 @@ Extract all descriptions of Fib Database objects
     - author::email : Oesterholz@Fib-Development.org
     - copyright : LGPL3
  - -5057 : stickman framework
-    - description : This object represents a simple stickman framework. The stickman has a body, a head, two arms and two legs, but no joints in the arms or legs. You have to provide the stickman parts as subobjects (see below). The arms will begin at 1/4 of the body size below the body start (wher the head is). The head will 1/4 (of its radius) overlap the body. The arms length will be the part 0.62 (= golden ratio) of the body or legs. 
+    - description : This object represents a simple stickman framework. The stickman has a body, a head, two arms and two legs, but no joints in the arms or legs. You have to provide the stickman parts as subobjects (see below). The arms will begin at 1/4 of the body size below the body start (wher the head is). The head will 1/4 (of its radius) overlap the body. The lower part length will be equal ther upper part.
     - inVar1 : position of the stickman start point (lower end of first (right) leg) in dimension 1 (x_lre)
     - inVar2 : position of the stickman start point (lower end of first (right) leg) in dimension 2 (y_lre)
     - inVar3 : size s of stickman (top of the head to feet bottom, if legs are straight)
@@ -1302,7 +1415,7 @@ Extract all descriptions of Fib Database objects
     - author::email : Oesterholz@Fib-Development.org
     - copyright : LGPL3
  - -5058 : stickman framework
-    - description : This object represents a stickman framework. The stickman has a body, a head, two arms and two legs, with each one joint in the arms and legs. You have to provide the stickman parts as subobjects (see below). The arms will begin at 1/4 of the body size below the body start (wher the head is). The head will 1/4 (of its radius) overlap the body. The arms length will be the part 0.62 (= golden ratio) of the body or legs. The upper part of arms and legs start at the body, the lower parts start at the other end of the upper parts. The lower part length will be the part 0.62 (= golden ratio) of ther upper part.
+    - description : This object represents a stickman framework. The stickman has a body, a head, two arms and two legs, with each one joint in the arms and legs. You have to provide the stickman parts as subobjects (see below). The arms will begin at 1/4 of the body size below the body start (wher the head is). The head will 1/4 (of its radius) overlap the body. The arms length will be the part 0.62 (= golden ratio) of the body or legs. The upper part of arms and legs start at the body, the lower parts start at the other end of the upper parts. The lower part length will be equal ther upper part.
     - inVar1 : position of the stickman start point (lower end of first (right) lower leg) in dimension 1 (x_lrle)
     - inVar2 : position of the stickman start point (lower end of first (right) lower leg) in dimension 2 (y_lrle)
     - inVar3 : size s of stickman (top of the head to feet bottom, if legs are straight)
@@ -1380,7 +1493,7 @@ Extract all descriptions of Fib Database objects
     - author::email : Oesterholz@Fib-Development.org
     - copyright : LGPL3
  - -5059 : stickman framework
-    - description : This object represents a stickman framework. The stickman has a body, a head, two arms and two legs, with each one joint in the arms and legs. You have to provide the stickman parts as a subobject (see below). The arms will begin at 1/4 of the body size below the body start (wher the head is). The head will 1/4 (of its radius) overlap the body. The arms length will be the part 0.62 (= golden ratio) of the body or legs. The upper part of arms and legs start at the body, the lower parts start at the other end of the upper parts. The lower part length will be the part 0.62 (= golden ratio) of ther upper part.
+    - description : This object represents a stickman framework. The stickman has a body, a head, two arms and two legs, with each one joint in the arms and legs. You have to provide the stickman parts as a subobject (see below). The arms will begin at 1/4 of the body size below the body start (wher the head is). The head will 1/4 (of its radius) overlap the body. The arms length will be the part 0.62 (= golden ratio) of the body or legs. The upper part of arms and legs start at the body, the lower parts start at the other end of the upper parts. The lower part length will be equal ther upper part.
     - inVar1 : position of the stickman start point (lower end of first (right) lower leg) in dimension 1 (x_lrle)
     - inVar2 : position of the stickman start point (lower end of first (right) lower leg) in dimension 2 (y_lrle)
     - inVar3 : size s of stickman (top of the head to feet bottom, if legs are straight)

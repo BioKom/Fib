@@ -10,7 +10,7 @@ database object -200, -250:
 
 	
 database objects to create: (x = dim 1 ?=? horizontal; y = dim 2 ?=? vertikal)
-	order pr 2: -513; -517; -518; -5100
+	order pr 2: -5100
 	order 2: -42, -43, -48, -49, -510, -560, -200, -250, -350; -351; -500; -501; -511;
 	- id -5000 and id -5005 replace lines with lines with rounded edges
 	- Line:
@@ -77,12 +77,6 @@ database objects to create: (x = dim 1 ?=? horizontal; y = dim 2 ?=? vertikal)
 	--- 4 parameter; middle point ( x, y ), radius r; angle s in radian betwean (counter clockwise, in positiy Dim 2 direction) the 1 dimension achsis (x) and circle part begin and angle e in radian betwean the 1 dimension achsis (x) and circle part end
 	- Kreissrand (Dicke x)
 	
-	-- id -513 circle border part of given width
-	--- 6 parameter; middle point ( x, y ), radius r; width; angle s in radian betwean (counter clockwise, in positiy Dim 2 direction) the 1 dimension achsis (x) and circle part begin and angle e in radian betwean the 1 dimension achsis (x) and circle part end
-	-- id -518 circle border part of given width with subobject for points
-	--- 6 parameter; middle point ( x, y ), radius r; width; angle s in radian betwean (counter clockwise, in positiy Dim 2 direction) the 1 dimension achsis (x) and circle part begin and angle e in radian betwean the 1 dimension achsis (x) and circle part end
-	--- like id -513
-
 	--- id {-500; -501; -511; -510} + 5 with subobject for points
 	--- id {-500; -501; -511; -510; -512; -513} + 50 antialised
 	
@@ -143,8 +137,9 @@ cDomainReference test:
 
 
 testen (prio 3):
-  - tFibElementStructur test for (const) getSuperiorRootElement()
-  - cDomain ( all children ) Test:
+	- cFibVector::operator*( const double dFactor )const
+	- tFibElementStructur test for (const) getSuperiorRootElement()
+	- cDomain ( all children ) Test:
 		- bool isReference() const;
 		- bool isScalar() const;
 		- bool isVector() const;
