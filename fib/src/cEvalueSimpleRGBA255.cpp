@@ -38,6 +38,7 @@
 History:
 18.03.2012  Oesterholz  created
 10.04.2012  Oesterholz  methods of interface iImageData added
+19.12.2012  Oesterholz  alpha handling corrected
 */
 
 #include "cEvalueSimpleRGBA255.h"
@@ -280,6 +281,8 @@ bool cEvalueSimpleRGBA255::setPoint(  const cVectorPosition & vPosition,
 	/*the last found alpha value for the point;
 	 init with 1 because transparency standard value is 0*/
 	float fLastAlpha = 1.0;
+	const float fOldAlpha = ((float)(*pEntry)) / 255.0;
+	
 	bool bNoAlpha = true;//no transparency property set
 	
 	for ( list<cVectorProperty>::const_iterator
@@ -336,16 +339,12 @@ bool cEvalueSimpleRGBA255::setPoint(  const cVectorPosition & vPosition,
 			const longFib lTransparency = fib::roundToLongFib(
 				itrProperty->getValue( 1 ) );
 			//alpha_new = 255 - transparency;
-			const unsigned int uiFoundAlpha = ( lTransparency <= 0 ) ? 255 :
-				( 255 <= lTransparency ) ? 0 :
-					(255 - lTransparency);
-			fLastAlpha = ( lTransparency <= 0 ) ? 1.0 :
-				( 255 <= lTransparency ) ? 0.0 :
-					((float)(255 - lTransparency)) / 255.0;
+			fLastAlpha *= ( lTransparency <= 0 ) ? 1.0 :
+				( 255 <= lTransparency ) ? 0 : (255 - lTransparency) / 255.0;
 			
-			//const float fOldAlpha = ((float)(*pEntry)) / 255.0;
 			//alpha_matrix_new = 255.0 * ( fLastAlpha + fOldAlpha * ( 1 - fLastAlpha ) );
-			(*pEntry) = uiFoundAlpha + ((float)(*pEntry)) * ( 1.0 - fLastAlpha );
+			(*pEntry) = 255.0 * ( fLastAlpha + fOldAlpha * ( 1.0 - fLastAlpha ) );
+			
 			bNoAlpha = false;//transparency value set
 		}//else discard property
 		

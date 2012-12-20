@@ -33,6 +33,7 @@
 /*
 History:
 08.05.2010  Oesterholz  created
+19.12.2012  Oesterholz  getValue(): check if valid number
 */
 
 
@@ -214,7 +215,15 @@ doubleFib cFunctionExp::getValue() const{
 		//1/0 not defined -> 0
 		return 0.0;
 	}
-	return pow( dValue1, dValue2 );
+	const doubleFib dResult = pow( dValue1, dValue2 );
+	
+	if ( ( dResult == INFINITY ) || ( dResult == -INFINITY ) ||
+			( dResult != dResult ) ){//if is nan
+		
+		return 0;
+	}//else return result
+	
+	return dResult;
 }
 
 
