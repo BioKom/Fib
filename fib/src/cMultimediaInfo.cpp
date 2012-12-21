@@ -31,6 +31,7 @@
 /*
 History:
 24.06.2009  Oesterholz  created
+21.12.2012  Oesterholz  virtual destructor added
 */
 
 #include "cMultimediaInfo.h"
@@ -51,6 +52,15 @@ cMultimediaInfo::cMultimediaInfo( cRoot * root) :
 		masterRoot( root ){
 //nothing to do
 }
+
+/**
+ * The destructor for the multimediainfo.
+ */
+cMultimediaInfo::~cMultimediaInfo(){
+	//nothing to do
+}
+
+
 
 /**
  * This Method clones this object.

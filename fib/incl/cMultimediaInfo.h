@@ -31,6 +31,7 @@
 /*
 History:
 21.06.2009  Oesterholz  created
+21.12.2012  Oesterholz  virtual destructor added
 */
 
 #ifndef ___C_MULTIMEDIA_INFO_H__
@@ -93,6 +94,11 @@ public: //make the following constructor public for the test
 	 * @param root the root -element this multimediainfo stands in/for
 	 */
 	cMultimediaInfo( cRoot * root);
+
+	/**
+	 * The destructor for the multimediainfo.
+	 */
+	virtual ~cMultimediaInfo();
 
 	/**
 	 * This Method clones this object.
