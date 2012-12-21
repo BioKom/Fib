@@ -45,6 +45,7 @@
 # 11.09.2012   Oesterholz   standard libaries to the end
 # 14.07.2012   Oesterholz   glpk included for FEATURE_GLPK_USE_MUTEX_LINAR_PROBLEM_SOLVING
 # 14.10.2012   Oesterholz   library "-lpthread" included
+# 21.12.2012   Oesterholz   FreeImage needs libm
 
 
 
@@ -140,7 +141,7 @@ LIBS:=-L$(DIR_FIB_LIB) -lfib -L$(PATH_FIB_ALGORITHMS_LIB) -lfib_algorithms\
 #TODO remove -static ???
 LIBS_TEST:=-L$(DIR_FIB_LIB) -lfib_test -L$(PATH_FIB_ALGORITHMS_LIB) -lfib_algorithms_test\
 	-L$(DIR_GLPK_LIBS) -lglpk -lstdc++ -lm -lpthread
-LIBS_FREEIMAGE_PLUS:=-L$(DIR_FREE_IMAGE_PLUS_DIST) -lfreeimageplus
+LIBS_FREEIMAGE_PLUS:=-L$(DIR_FREE_IMAGE_PLUS_DIST) -lfreeimageplus -lm
 LIBS_WIN:=-L$(DIR_FIB_LIB) -lfib -L$(PATH_FIB_ALGORITHMS_LIB) -lfib_algorithms\
 	-L$(DIR_FREE_IMAGE_DLL) -lFreeImage -L$(DIR_GLPK_LIBS) -lglpk\
 	-static -lstdc++ -lm
