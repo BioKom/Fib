@@ -275,87 +275,92 @@
 				</area>
 			</area>
 			
-			<area  define_variable="1"><!-- for circle radius -->
-				<vector type="subarea">
-					<value>2</value>
-					<value>8</value>
+			<property>
+				<vector type="property.transparency">
+					<value>64</value>
 				</vector>
-				<area  define_variable="2"><!-- for circle border width w' -->
+				<area  define_variable="1"><!-- for circle radius -->
 					<vector type="subarea">
-						<value>1</value>
-						<value>10</value>
+						<value>2</value>
+						<value>8</value>
 					</vector>
-					<function define_variable="3">
-						<!-- r = var_1 ^ 2 - 3 -->
-						<subfunction>
-							<sub>
-								<mult>
-									<variable>1</variable>
-									<variable>1</variable>
-								</mult>
-								<value>3</value>
-							</sub>
-						</subfunction>
-						<function define_variable="4">
-							<!-- center x position of circle x = r * 3 + 100 -->
+					<area  define_variable="2"><!-- for circle border width w' -->
+						<vector type="subarea">
+							<value>1</value>
+							<value>10</value>
+						</vector>
+						<function define_variable="3">
+							<!-- r = var_1 ^ 2 - 3 -->
 							<subfunction>
-								<add>
+								<sub>
 									<mult>
-										<variable>3</variable>
-										<value>6</value>
+										<variable>1</variable>
+										<variable>1</variable>
 									</mult>
-									<value>512</value>
-								</add>
+									<value>3</value>
+								</sub>
 							</subfunction>
-							<function define_variable="5">
-								<!-- center y position of circle y = w * 130 + 100 -->
+							<function define_variable="4">
+								<!-- center x position of circle x = r * 3 + 100 -->
 								<subfunction>
 									<add>
 										<mult>
-											<variable>2</variable>
-											<value>130</value>
+											<variable>3</variable>
+											<value>6</value>
 										</mult>
-										<value>0</value>
+										<value>512</value>
 									</add>
 								</subfunction>
-								
-								<function define_variable="6">
-									<!-- line width w = w' ^ 2.5 / 6 + 5 -->
+								<function define_variable="5">
+									<!-- center y position of circle y = w * 130 + 100 -->
 									<subfunction>
 										<add>
-											<div>
-												<exp>
-													<variable>2</variable>
-													<value>2.5</value>
-												</exp>
-												<value>6</value>
-											</div>
-											<value>5</value>
+											<mult>
+												<variable>2</variable>
+												<value>130</value>
+											</mult>
+											<value>0</value>
 										</add>
 									</subfunction>
-								
-									<property>
-										<vector type="property.colorRGB">
-											<value>255</value>
-											<value>1</value>
-											<value>2</value>
-										</vector>
-										<obj identifier="-512">
-											<vector type="externObjectInput">
-												<variable>4</variable>
-												<variable>5</variable>
-												<variable>3</variable>
-												<variable>6</variable>
+									
+									<function define_variable="6">
+										<!-- line width w = w' ^ 2.5 / 6 + 5 -->
+										<subfunction>
+											<add>
+												<div>
+													<exp>
+														<variable>2</variable>
+														<value>2.5</value>
+													</exp>
+													<value>6</value>
+												</div>
+												<value>5</value>
+											</add>
+										</subfunction>
+									
+										<property>
+											<vector type="property.colorRGB">
+												<value>255</value>
+												<value>1</value>
+												<value>2</value>
 											</vector>
-										</obj>
-									</property>
-								
+											<obj identifier="-512">
+												<vector type="externObjectInput">
+													<variable>4</variable>
+													<variable>5</variable>
+													<variable>3</variable>
+													<variable>6</variable>
+												</vector>
+											</obj>
+										</property>
+									
+									</function>
 								</function>
 							</function>
 						</function>
-					</function>
+					</area>
 				</area>
-			</area>
+			</property>
 	
 		</list>
 	</main_fib_object>

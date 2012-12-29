@@ -63,7 +63,7 @@
 				</vector>
 			</area>
 			<subfunction>
-				<naturalNumber scalingfactor="0.5" max="4"/>
+				<naturalNumber scalingfactor="0.25" max="8"/>
 			</subfunction>
 		</domains>
 		<main_fib_object>
@@ -156,7 +156,7 @@
 													</sub>
 													<value>0.5</value>
 												</exp>
-												<value>1</value>
+												<value>0.75</value>
 											</add>
 											<!-- else no inner border set bi to 0 -->
 											<value>0</value>
@@ -173,19 +173,25 @@
 										</subfunction>
 										<!-- left half of circle -->
 										<function define_variable="11">
-											<!-- x_l = x - a -->
+											<!-- x_l = x - a - 1 -->
 											<subfunction>
 												<sub>
-													<variable>1</variable>
-													<variable>6</variable>
+													<sub>
+														<variable>1</variable>
+														<variable>6</variable>
+													</sub>
+													<value>1</value>
 												</sub>
 											</subfunction>
 											<function define_variable="12">
-												<!-- y_min = y - b -->
+												<!-- y_min = y - b - 1 -->
 												<subfunction>
 													<sub>
-														<variable>2</variable>
-														<variable>8</variable>
+														<sub>
+															<variable>2</variable>
+															<variable>8</variable>
+														</sub>
+														<value>1</value>
 													</sub>
 												</subfunction>
 												<function define_variable="13">
@@ -197,11 +203,14 @@
 														</add>
 													</subfunction>
 													<function define_variable="14">
-														<!-- yi_min = y - bi -->
+														<!-- yi_min = y - bi - 1 -->
 														<subfunction>
 															<sub>
-																<variable>2</variable>
-																<variable>9</variable>
+																<sub>
+																	<variable>2</variable>
+																	<variable>9</variable>
+																</sub>
+																<value>1</value>
 															</sub>
 														</subfunction>
 														<function define_variable="15">

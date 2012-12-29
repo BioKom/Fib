@@ -543,8 +543,6 @@
 				</subobject>
 			</obj>
 			
-		<!-- TODO find error -->
-			
 			<obj identifier="-56">
 				<vector type="externObjectInput">
 					<value>110.5</value>

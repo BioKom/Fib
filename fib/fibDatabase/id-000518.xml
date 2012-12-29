@@ -1424,15 +1424,18 @@
 								</if>
 							</subfunction>
 							<function define_variable="6"><!-- evalue start point of circle border in dimension 2 y_s -->
-								<subfunction> <!-- if radius is positiv -> set start point to 0 else to -1 -->
+								<subfunction> <!-- if radius is positiv -> set start point to 0 else to max( -1, r ) -->
 									<if>
 										<lo><!-- if radius is positiv -->
-											<variable>3</variable>
 											<value>0</value>
+											<variable>3</variable>
 										</lo>
 										<value>0</value>
-										<!-- else set start point to -1 -->
-										<value>-1</value>
+										<!-- else set start point to max( -1, r ) -->
+										<max>
+											<value>-1</value>
+											<variable>3</variable>
+										</max>
 									</if>
 								</subfunction>
 								
@@ -1634,15 +1637,18 @@
 								</if>
 							</subfunction>
 							<function define_variable="6"><!-- evalue start point of circle border in dimension 2 y_s -->
-								<subfunction> <!-- if radius is positiv -> set start point to 0 else to -1 -->
+								<subfunction> <!-- if radius is positiv -> set start point to 0 else to max( -1, r ) -->
 									<if>
 										<lo><!-- if radius is positiv -->
-											<variable>3</variable>
 											<value>0</value>
+											<variable>3</variable>
 										</lo>
 										<value>0</value>
-										<!-- else set start point to -1 -->
-										<value>-1</value>
+										<!-- else set start point to max( -1, r ) -->
+										<max>
+											<value>-1</value>
+											<variable>3</variable>
+										</max>
 									</if>
 								</subfunction>
 								
@@ -1805,7 +1811,7 @@
 						</externSubobject>
 						
 						<subfunction>
-							<integer scalingfactor="0.5" min="-2" max="4"/>
+							<integer scalingfactor="0.25" min="-4" max="8"/>
 						</subfunction>
 					</domains>
 					<main_fib_object>
@@ -1813,31 +1819,25 @@
 							<subfunction>
 								<arcsin><value>1</value></arcsin>
 							</subfunction>
-							<function define_variable="8"><!-- the slope s_1 of the first border (in y direction, x more per 1 y), s_1 = -1 / tan alpha -->
-								<subfunction>
-									<sub><!-- s_1 = -1 / tan( alpha ) = 0 - cos( alpha ) / sin( alpha ) = 0 - sin( PI/2 - alpha ) / sin( alpha ) -->
-										<value>0</value>
+							<function define_variable="8"><!-- the slope s_1 of the first border (in y direction, x more per 1 y), s_1 = 1 / tan alpha -->
+								<subfunction><!-- s_1 = 1 / tan( alpha ) = cos( alpha ) / sin( alpha ) = sin( PI/2 - alpha ) / sin( alpha ) -->
+									<div>
+										<sin> <sub>
+											<variable>7</variable>
+											<variable>5</variable>
+										</sub> </sin>
+										<sin><variable>5</variable></sin>
+									</div>
+								</subfunction>
+								<function define_variable="9"><!-- the slope s_2 of the second border (in x direction, y more per 1 x), s_2 = 1 / tan betha -->
+									<subfunction><!-- s_2 = 1 / tan( betha ) = cos( betha ) / sin( betha ) = sin( PI/2 - betha ) / sin( betha ) -->
 										<div>
 											<sin> <sub>
 												<variable>7</variable>
-												<variable>5</variable>
+												<variable>6</variable>
 											</sub> </sin>
-											<sin><variable>5</variable></sin>
+											<sin><variable>6</variable></sin>
 										</div>
-									</sub>
-								</subfunction>
-								<function define_variable="9"><!-- the slope s_2 of the second border (in x direction, y more per 1 x), s_2 = -1 / tan betha -->
-									<subfunction>
-										<sub><!-- s_2 = -1 / tan( betha ) = 0 - cos( betha ) / sin( betha ) = 0 - sin( PI/2 - betha ) / sin( betha ) -->
-											<value>0</value>
-											<div>
-												<sin> <sub>
-													<variable>7</variable>
-													<variable>6</variable>
-												</sub> </sin>
-												<sin><variable>6</variable></sin>
-											</div>
-										</sub>
 									</subfunction>
 									<function define_variable="10"><!-- evalue inner circle radius ri -->
 										<subfunction> <!-- if border width w is bigger than the radius r -> set inner circle radius ri to 0 -->
@@ -1971,7 +1971,14 @@
 																				</sub>
 																				<value>0.5</value>
 																			</exp>
-																			<value>1</value>
+																			<if>
+																				<lo><!-- 0 < a -->
+																					<value>0</value>
+																					<variable>13</variable>
+																				</lo>
+																				<value>1.0</value>
+																				<value>0.75</value>
+																			</if>
 																		</add>
 																		<!-- else no inner border set bi to 0 -->
 																		<value>0</value>
@@ -1987,25 +1994,25 @@
 																	<!-- left half -->
 																	<!-- note: cut parts of the x_min to xi_min line which are outside the sector -->
 																	<function define_variable="18">
-																		<!-- x_min = if ( alpha != 0 ) then max( x - b, x + s_1 * a ); else x - b; -->
+																		<!-- x_min = if ( alpha != 0 ) then max( x - b, x - s_1 * a ); else x - b; -->
 																		<subfunction>
 																			<if>
 																				<or>
 																					<lo><variable>5</variable><value>0</value></lo>
 																					<lo><value>0</value><variable>5</variable></lo>
 																				</or>
-																				<max><!-- max( x - b, x + s_1 * a ) -->
+																				<max><!-- max( x - b, x - s_1 * a ) -->
 																					<sub>
 																						<variable>1</variable>
 																						<variable>15</variable>
 																					</sub>
-																					<add>
+																					<sub>
 																						<variable>1</variable>
 																						<mult>
 																							<variable>8</variable>
 																							<variable>13</variable>
 																						</mult>
-																					</add>
+																					</sub>
 																				</max>
 																				<!-- else x - b -->
 																				<sub>
@@ -2022,18 +2029,18 @@
 																						<lo><variable>6</variable><value>0</value></lo>
 																						<lo><value>0</value><variable>6</variable></lo>
 																					</or>
-																					<min><!-- min( x - bi, x + s_2 * a ) -->
+																					<min><!-- min( x - bi, x - s_2 * a ) -->
 																						<sub>
 																							<variable>1</variable>
 																							<variable>16</variable>
 																						</sub>
-																						<add>
+																						<sub>
 																							<variable>1</variable>
 																							<mult>
 																								<variable>9</variable>
 																								<variable>13</variable>
 																							</mult>
-																						</add>
+																						</sub>
 																					</min>
 																					<!-- else x - bi -->
 																					<sub>
@@ -2131,7 +2138,7 @@
 						</externSubobject>
 						
 						<subfunction>
-							<integer scalingfactor="0.5" min="-2" max="4"/>
+							<integer scalingfactor="0.25" min="-4" max="8"/>
 						</subfunction>
 					</domains>
 					<main_fib_object>
@@ -2139,31 +2146,25 @@
 							<subfunction>
 								<arcsin><value>1</value></arcsin>
 							</subfunction>
-							<function define_variable="8"><!-- the slope s_1 of the first border (in y direction, x more per 1 y), s_1 = -1 / tan alpha -->
-								<subfunction>
-									<sub><!-- s_1 = -1 / tan( alpha ) = 0 - cos( alpha ) / sin( alpha ) = 0 - sin( PI/2 - alpha ) / sin( alpha ) -->
-										<value>0</value>
+							<function define_variable="8"><!-- the slope s_1 of the first border (in y direction, x more per 1 y), s_1 = 1 / tan alpha -->
+								<subfunction><!-- s_1 = 1 / tan( alpha ) = cos( alpha ) / sin( alpha ) = sin( PI/2 - alpha ) / sin( alpha ) -->
+									<div>
+										<sin> <sub>
+											<variable>7</variable>
+											<variable>5</variable>
+										</sub> </sin>
+										<sin><variable>5</variable></sin>
+									</div>
+								</subfunction>
+								<function define_variable="9"><!-- the slope s_2 of the second border (in x direction, y more per 1 x), s_2 = 1 / tan betha -->
+									<subfunction><!-- s_2 = 1 / tan( betha ) = cos( betha ) / sin( betha ) = sin( PI/2 - betha ) / sin( betha ) -->
 										<div>
 											<sin> <sub>
 												<variable>7</variable>
-												<variable>5</variable>
+												<variable>6</variable>
 											</sub> </sin>
-											<sin><variable>5</variable></sin>
+											<sin><variable>6</variable></sin>
 										</div>
-									</sub>
-								</subfunction>
-								<function define_variable="9"><!-- the slope s_2 of the second border (in x direction, y more per 1 x), s_2 = -1 / tan betha -->
-									<subfunction>
-										<sub><!-- s_2 = -1 / tan( betha ) = 0 - cos( betha ) / sin( betha ) = 0 - sin( PI/2 - betha ) / sin( betha ) -->
-											<value>0</value>
-											<div>
-												<sin> <sub>
-													<variable>7</variable>
-													<variable>6</variable>
-												</sub> </sin>
-												<sin><variable>6</variable></sin>
-											</div>
-										</sub>
 									</subfunction>
 									<function define_variable="10"><!-- evalue inner circle radius ri -->
 										<subfunction> <!-- if border width w is bigger than the radius r -> set inner circle radius ri to 0 -->
@@ -2297,7 +2298,14 @@
 																				</sub>
 																				<value>0.5</value>
 																			</exp>
-																			<value>1</value>
+																			<if>
+																				<lo><!-- 0 < a -->
+																					<value>0</value>
+																					<variable>13</variable>
+																				</lo>
+																				<value>1.0</value>
+																				<value>0.75</value>
+																			</if>
 																		</add>
 																		<!-- else no inner border set bi to 1 -->
 																		<value>1</value>
@@ -2314,7 +2322,7 @@
 																	<!-- left half -->
 																	<!-- note: cut parts of the x_min to xi_min line which are outside the sector -->
 																	<function define_variable="18">
-																		<!-- x_min = if ( alpha != 0 ) then min( x + b, x - s_1 * a ); else x + b; -->
+																		<!-- x_min = if ( alpha != 0 ) then min( x + b, x + s_1 * a ); else x + b; -->
 																		<subfunction>
 																			<if>
 																				<or>
@@ -2326,13 +2334,13 @@
 																						<variable>1</variable>
 																						<variable>15</variable>
 																					</add>
-																					<sub>
+																					<add>
 																						<variable>1</variable>
 																						<mult>
 																							<variable>8</variable>
 																							<variable>13</variable>
 																						</mult>
-																					</sub>
+																					</add>
 																				</min>
 																				<!-- else x + b -->
 																				<add>
@@ -2342,25 +2350,25 @@
 																			</if>
 																		</subfunction>
 																		<function define_variable="19">
-																			<!-- xi_min = if ( betha != 0 ) then min( x - bi, x + s_2 * a  ); else x - bi; -->
+																			<!-- xi_min = if ( betha != 0 ) then min( x + bi, x + s_2 * a  ); else x - bi; -->
 																			<subfunction>
 																				<if>
 																					<or>
 																						<lo><variable>6</variable><value>0</value></lo>
 																						<lo><value>0</value><variable>6</variable></lo>
 																					</or>
-																					<max><!-- max( x + bi, x - s_2 * a ) -->
+																					<max><!-- max( x + bi, x + s_2 * a ) -->
 																						<add>
 																							<variable>1</variable>
 																							<variable>16</variable>
 																						</add>
-																						<sub>
+																						<add>
 																							<variable>1</variable>
 																							<mult>
 																								<variable>9</variable>
 																								<variable>13</variable>
 																							</mult>
-																						</sub>
+																						</add>
 																					</max>
 																					<!-- else x - bi -->
 																					<add>
