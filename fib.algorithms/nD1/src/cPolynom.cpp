@@ -37,6 +37,9 @@ History:
 27.03.2011  Oesterholz  method getLastFactorIndexNotNull() added
 09.04.2011  Oesterholz  method cHyperplaneBody replaced by cHyperplaneBodyFull
 	and cHyperplaneBodySimple
+29.12.2012  Oesterholz  FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING:
+	evalueSpline(): the glp library (extern package) linear solver will be
+	used to find a spline for a vector of range data points
 */
 
 
@@ -61,6 +64,16 @@ History:
 
 #include <iostream>
 
+#ifdef FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
+	#include "mutexGlpkSolver.inc"
+	#include <glpk.h>
+	#include <limits.h>
+#endif //FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
+
+
+//for debugging
+//#define DEBUG_C_POLYNOM
+//#define DEBUG_C_POLYNOM_EVALUE
 
 //#define PRINT_INFOS
 
@@ -674,7 +687,7 @@ template<class tX, class tY> tY
 
 
 /**
- * This functions evalues the a good polynom which matches the given 
+ * This functions evalues the a good polynom which matches the given
  * range data vecInputData
  * The vector vecData is the sorted vector vecInputData.
  * for this a polynom which evalues a low error on the given data point
@@ -964,6 +977,592 @@ template<class tX, class tY> unsigned long
 	return ulPointsAdded;
 }
 
+
+
+#ifdef FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
+
+/**
+ * This functions evalues a spline, which matches all points of the
+ * given range data vecData (if possible).
+ * The y value, to wich the spline evalues the x value, will be in the
+ * bound of the range data point, so that:
+ * 	vecData[i].minY <= spline( vecData[i].x ) + error_i <= vecData[i].maxY,
+ * 	with maxError <= sum error_i
+ * 	for i = 0 till vecData.size()
+ *
+ * The evalued spline (this polynom) will have the form:
+ * The evalued polynoms (@see cPolynom) will have the form:
+ * 	y = vecFactors[ 0 ] + vecFactors[ 1 ] * x +
+ * 	vecFactors[ 2 ] * x^2 + ... +
+ * 	vecFactors[ uiNumberOfParameters - 1 ] *
+ * 		x^(uiNumberOfParameters - 1)
+ *
+ * The method will iterativ increase the number of parameters for the
+ * polynoms (from 1 to uiMaxNumberOfParameters) and will try to use
+ * all of the given range points to find the polynoms.
+ *
+ * @see evalue()
+ * @see cPolynom::evalueSplineIterativFast()
+ * @param vecInputData the data which the returend spline should match
+ * @param uiMaxNumberOfParameters the number of parameters for the spline;
+ * 	Don't choose this number to big, because the evaluation time will
+ * 	grow exponentialy with this number. Even splines with 8
+ * 	parameters will take some time.
+ * @param maxValue the maximum possible value in all parameters
+ * 	the evalued spline will allways have parameters vecFactors[i] with
+ * 	-1 * maxValue <= vecFactors[i] <= maxValue for 0 <= i \< vecFactors.size()
+ * @param maxError the maximal error for the spline to find;
+ * 	the error on the interpolated spline for vecData will be equal or
+ * 	less than maxError
+ * @param maxErrorPerValue the maximal error for the spline to find on
+ * 	one data point; the error on the interpolated spline for every data
+ * 	point in vecData will be equal or less than maxErrorPerValue;
+ * 	if maxErrorPerValue is 0 and maxError is not 0, maxErrorPerValue will
+ * 	be set to maxError / vecInputData.size()
+ * @param dWeightParameter a value for the weight of the parameters;
+ * 	with this value greater 0 it will be searched for smaal parameter;
+ * 	when searching for a solution the error is minimized and the
+ * 	spline parameter will be multiplied with this value and also minimized;
+ * 	when set to 1 a parameter increas of 1 is as bad as an error increas
+ * 	of 1, when set to 0.01 parameter increas of 100 is as bad an error increas
+ * 	of 1
+ * @return the number n of data points vecData, which the spline matches;
+ * 	the data points vecData[0] to vecData[ return - 1 ] will be
+ * 	matched by the spline
+ */
+template<class tX, class tY> unsigned long fib::algorithms::nD1::cPolynom<tX, tY>::
+	evalueSplineIterativFast(
+		const vector< cDataPointRange< tX, tY> > & vecInputData,
+		unsigned int uiMaxNumberOfParameters,
+		const tY maxValue,
+		const tY maxError,
+		const tY maxErrorPerValue,
+		const double dWeightParameter ){
+	
+#ifdef DEBUG_C_POLYNOM
+	cout<<"cPolynom<tX, tY>::evalueSpline( vecInputData, uiMaxNumberOfParameters="<<
+		uiMaxNumberOfParameters<<" , maxValue="<<maxValue<<
+		", maxError="<<maxError<<" ,maxErrorPerValue="<<
+		maxErrorPerValue<<" ) started "<<endl<<flush;
+#endif
+	if ( uiMaxNumberOfParameters == 0 ){
+		//can't create spline with 0 parameters, which match datapoints
+		return 0;
+	}
+	if ( maxValue <= ((tY)(0.0)) ){
+		//can't create spline with this maximum value
+		return 0;
+	}
+	if ( maxError < ((tY)(0.0)) ){
+		//can't create spline with negativ maximum error
+		return 0;
+	}
+	if ( maxErrorPerValue < ((tY)(0.0)) ){
+		//can't create spline with negativ maximum error
+		return 0;
+	}
+	const unsigned long ulNumberOfDataPoints = vecInputData.size();
+	
+	if ( ulNumberOfDataPoints == 0 ){
+		return 0;
+	}
+	/*if maxErrorPerValue is 0 and maxError is not 0, maxErrorPerValue will
+	be set to maxError / vecInputData.size()*/
+	const double dMaxErrorPerValue = ( maxErrorPerValue != ((tY)(0.0)) ) ?
+			maxErrorPerValue : ( maxError == ((tY)(0.0)) ) ? 0.0 :
+				( (maxError * 2.0) / ((double)ulNumberOfDataPoints) );
+	
+	vector< cDataPointRange< tX, tY> > vecData( vecInputData );
+	sort( vecData.begin(), vecData.end() );
+	
+	//for the indexs counting starts at 1, 0 stands for no data point
+	//a good polynom is a polynom, which dos not exceed its share of the error
+	/*index of the last data point for which a good polynom was found;
+	init with 0 for: no good data point found jet*/
+	unsigned long ulIndexLastGoodDataPoint = 0;
+	
+	//init LP parameters
+	glp_smcp lpControlParameter;
+	//init glp parameters with default parameters
+	glp_init_smcp( & lpControlParameter );
+	/*default parameters:
+	lpControlParameter.meth = GLP_PRIMAL;
+	lpControlParameter.pricing = GLP_PT_PSE;
+	lpControlParameter.r_test  = GLP_RT_HAR;
+	lpControlParameter.tol_bnd = 1e-7;
+	lpControlParameter.tol_dj  = 1e-7;
+	lpControlParameter.tol_piv = 1e-10;
+	lpControlParameter.obj_ll  = -DBL_MAX;
+	lpControlParameter.obj_ul  = +DBL_MAX;
+	lpControlParameter.out_frq = 200;
+	lpControlParameter.out_dly = 0;
+	*/
+	//output
+#ifdef DEBUG_C_POLYNOM
+	lpControlParameter.msg_lev = GLP_MSG_ALL; //(default: GLP MSG ALL)
+#else
+	lpControlParameter.msg_lev = GLP_OFF;  //= no output = glp_term_out( GLP_OFF );
+#endif //DEBUG_C_POLYNOM
+	//simplex iteration limit
+	lpControlParameter.it_lim  = (100000000 < INT_MAX) ? 100000000 : INT_MAX;
+	//time limit in  milli seconds
+	lpControlParameter.tm_lim  = 10000;//=10 s ; default INT_MAX
+	
+	//presolver: disable because also non optimal solutions are needed
+	lpControlParameter.presolve = GLP_OFF;
+	
+#ifdef DEBUG_C_POLYNOM
+	cout<<endl<<"Trying to find a new polynom beginning at point "<<
+		ulIndexLastGoodDataPoint<<" ."<<endl;
+#endif
+	
+	/*the index of the data point, wich could not be integrated into the
+	next polynom to generate*/
+	unsigned long ulIndexToMuchDataPoint = ulNumberOfDataPoints + 1;
+	
+	/*the index of the last data point which should be integrated into the
+	actual to generate polynom*/
+	//step 1: (= ulNumberOfDataPoints - 1) try to find spline for all data points
+	unsigned long ulActualIndexOfLastDataPoint = ulNumberOfDataPoints;
+	
+	cPolynom<tX, tY> actualPolynom;
+	
+	//if for the actual points a spline was found
+	bool bSplineFound = false;
+	
+	//while next good polynom not found
+	while ( true ){
+		/* convert actual data points to glp problem;
+		data points for actual polynom form 1 till ulActualIndexOfLastDataPoint*/
+		
+#ifdef DEBUG_C_POLYNOM
+		cout<<endl<<"Creating linear program for "<<
+			ulActualIndexOfLastDataPoint<<
+			" data points (from index 1 to index "<<ulActualIndexOfLastDataPoint<<")."<<endl<<flush;
+#endif
+#ifdef FEATURE_GLPK_USE_MUTEX_LINAR_PROBLEM_SOLVING
+	
+#ifdef WINDOWS
+		WaitForSingleObject( & mutexGlpkSolver, INFINITE);
+#else //WINDOWS
+		pthread_mutex_lock( & mutexGlpkSolver );
+#endif //WINDOWS
+		
+#endif //FEATURE_GLPK_USE_MUTEX_LINAR_PROBLEM_SOLVING
+		
+		//create glp problem
+		glp_prob * pLinearProblem = NULL;
+		pLinearProblem = glp_create_prob();
+		
+		//set problem to minimize
+		glp_set_obj_dir( pLinearProblem, GLP_MIN );
+		
+		/* Problem to solve:
+			y_i = a_0 + a_1 * x_i + ... + a_n * x_i^2 +
+					b_0 + b_1 * x_i + ... + b_n * x_i^2 + e_i + t_i
+			with:
+				0 =< a_p =< maxValue
+				-maxValue =< b_p =< 0
+			
+			minimize: z = e_1 + ... + e_m - t_1 - ... - t_m +
+				Ep * a_0 + ... + Ep * a_n - Ep * b_0 - ... - Ep * b_n
+				wher Ep (= dWeightParameter) is a smaal value
+			
+			for data points ( { y_min =< y_i =< y_max }, x_i ) for i = 1 ... m
+				( m = ulActualIndexOfLastDataPoint )
+			wher n is the number of polynom factors and e_i are the positiv
+			and t_i the negativ errors
+			
+			find: a_p and b_p with p = 0 ... n
+			constrains:
+				y_min =< y_i <= y_max
+				0 =< e_i =< dMaxErrorPerValue
+				-dMaxErrorPerValue =< t_i =< 0
+			
+			column = ( n + 1 ) * 2 + m * 2 (= for each a_p, b_p, e_i and t_i )
+				= uiMaxNumberOfParameters * 2 + m * 2
+			rows   = m (= for each data point)
+		*/
+	
+		const unsigned long ulDataPointsToInclude = ulActualIndexOfLastDataPoint;
+		
+		glp_add_rows( pLinearProblem, ulDataPointsToInclude );
+		//set y_i
+		//index starting from 0 of the actual data point
+		unsigned long ulIndexDataPoint = 0;
+		for ( unsigned long ulActualRow = 1;
+				ulActualRow <= ulDataPointsToInclude; ulActualRow++ ){
+			
+			//glp_set_row_name( pLinearProblem, ulActualRow, "y_ulActualRow" );
+			const cDataPointRange< tX, tY> & actualRangeDataPoint =
+				vecData[ ulIndexDataPoint ];
+			ulIndexDataPoint++;
+			
+			glp_set_row_bnds( pLinearProblem, ulActualRow,
+				( ( actualRangeDataPoint.minY != actualRangeDataPoint.maxY ) ?
+					GLP_DB : GLP_FX ),
+				actualRangeDataPoint.minY, actualRangeDataPoint.maxY );
+		}
+		
+		const unsigned long uiNumberOfParameterColumns =
+			uiMaxNumberOfParameters * 2;
+		const unsigned long ulNumberOfColumns =
+			uiNumberOfParameterColumns + ulDataPointsToInclude * 2;
+		glp_add_cols( pLinearProblem, ulNumberOfColumns );
+		
+		//set a_p and b_p
+		const double maxNegValue = ( maxValue == 0.0 ) ? 0.0 :
+			( 0 - ((double)maxValue) );
+		const double dNegWeightParameter = 0 - dWeightParameter;
+		const int iValueBoundType = ( maxNegValue != maxValue ) ?
+			GLP_DB : GLP_FX;
+		for ( unsigned long ulActualCol = 1;
+				ulActualCol <= uiNumberOfParameterColumns; ulActualCol++ ){
+			
+			//glp_set_col_name( pLinearProblem, 1, "a_(ulActualCol-1)" );
+			glp_set_col_bnds( pLinearProblem, ulActualCol, iValueBoundType,
+				0.0, maxValue );
+			glp_set_obj_coef( pLinearProblem, ulActualCol, dWeightParameter );
+			
+			ulActualCol++;
+			//glp_set_col_name( pLinearProblem, 1, "b_(ulActualCol-1)" );
+			glp_set_col_bnds( pLinearProblem, ulActualCol, iValueBoundType,
+				maxNegValue, 0.0 );
+			glp_set_obj_coef( pLinearProblem, ulActualCol, dNegWeightParameter );
+		}
+		
+		//set e_i and t_i
+		const double maxNegErrorPerValue = ( dMaxErrorPerValue != 0.0 ) ?
+			( 0.0 - dMaxErrorPerValue ) : 0.0;
+		const int iErrorBoundType = ( dMaxErrorPerValue != 0.0 ) ?
+			GLP_DB : GLP_FX;
+		for ( unsigned long ulActualCol = uiNumberOfParameterColumns + 1;
+				ulActualCol <= ulNumberOfColumns; ulActualCol++ ){
+			//e_i
+			//glp_set_col_name( pLinearProblem, ulActualCol, "e_(ulActualCol - uiMaxNumberOfParameters )" );
+			glp_set_col_bnds( pLinearProblem, ulActualCol, iErrorBoundType,
+				0.0, dMaxErrorPerValue );
+			glp_set_obj_coef( pLinearProblem, ulActualCol, 1.0 );
+			//t_i
+			ulActualCol++;
+			glp_set_col_bnds( pLinearProblem, ulActualCol, iErrorBoundType,
+				maxNegErrorPerValue, 0.0 );
+			glp_set_obj_coef( pLinearProblem, ulActualCol, -1.0 );
+		}
+		
+		const unsigned long ulNumberOfFactors =
+			ulDataPointsToInclude * ( uiNumberOfParameterColumns + 2 );
+		/* = ulDataPointsToInclude * uiNumberOfParameterColumns +
+				2 * ulDataPointsToInclude
+			= number x_i factors for a_p and b_p + number e_i factors
+			( for every x_i ther are ( 2 * uiMaxNumberOfParameters )
+			factors)*/
+		//index 0 not used
+		int indexRow[ ulNumberOfFactors + 1 ];
+		int indexColumn[ ulNumberOfFactors + 1 ];
+		double factorX[ ulNumberOfFactors + 1 ];
+		
+		/*set x_i factors in:
+			y_i = a_0 + a_1 * x_i + ... + a_n * x_i^2 +
+					b_0 + b_1 * x_i + ... + b_n * x_i^2 + e_i + t_m */
+		unsigned long ulActualIndex = 1;
+		//index of the actual data point starting from 0
+		ulIndexDataPoint = 0;
+		for ( unsigned long ulActualRow = 1;
+				ulActualRow <= ulDataPointsToInclude; ulActualRow++ ){
+			
+#ifdef DEBUG_C_POLYNOM
+			cout<<endl<<"(y_"<<ulIndexDataPoint<<" = "<<
+				vecData[ ulIndexDataPoint ].minY<<" ... "<<
+				vecData[ ulIndexDataPoint ].maxY<<") = ";
+#endif
+			const double actualXValue =
+				((double)(vecData[ ulIndexDataPoint ].x));
+			double actualXFactor = 1.0;
+			ulIndexDataPoint++;
+			//for every parameter
+			for ( unsigned long ulActualCol = 1;
+					ulActualCol <= uiNumberOfParameterColumns; ulActualCol++ ){
+				
+				indexRow[ ulActualIndex ]    = ulActualRow;
+				indexColumn[ ulActualIndex ] = ulActualCol;
+				factorX[ ulActualIndex ]     = actualXFactor;
+				ulActualIndex++;
+				
+				ulActualCol++;
+				indexRow[ ulActualIndex ]    = ulActualRow;
+				indexColumn[ ulActualIndex ] = ulActualCol;
+				factorX[ ulActualIndex ]     = actualXFactor;
+				ulActualIndex++;
+			
+#ifdef DEBUG_C_POLYNOM
+				cout<<"a_"<<((ulActualCol-1)/2)<<" * "<<actualXFactor<<
+					" - b_"<<((ulActualCol-1)/2)<<" * "<<actualXFactor<<" + ";
+#endif
+				actualXFactor *= actualXValue;
+			}
+		}
+		/*set e_i factors and t_i factors to 1 in
+			y_i = a_0 + a_1 * x_i + ... + a_n * x_i^2 +
+					b_0 + b_1 * x_i + ... + b_n * x_i^2 + e_i + t_m */
+		unsigned long ulActualCol = uiNumberOfParameterColumns + 1;
+		for ( unsigned long ulActualRow = 1;
+				ulActualRow <= ulDataPointsToInclude; ulActualRow++ ){
+				//e_i
+				indexRow[ ulActualIndex ]    = ulActualRow;
+				indexColumn[ ulActualIndex ] = ulActualCol;
+				factorX[ ulActualIndex ]     = 1.0;
+				ulActualIndex++;
+				ulActualCol++;
+				//t_i
+				indexRow[ ulActualIndex ]    = ulActualRow;
+				indexColumn[ ulActualIndex ] = ulActualCol;
+				factorX[ ulActualIndex ]     = 1.0;
+				ulActualIndex++;
+				ulActualCol++;
+		}
+		//store the data into the lp problem
+		glp_load_matrix( pLinearProblem, ulNumberOfFactors,
+			indexRow, indexColumn, factorX );
+		
+#ifdef DEBUG_C_POLYNOM
+		cout<<endl<<"start solving problem with "<<
+				glp_get_num_rows( pLinearProblem )<<" rows and "<<
+				glp_get_num_cols( pLinearProblem )<<" columns"<<endl<<flush;
+#endif
+		// solve problem with simplex glp solver
+		const int uiResultSimplex = glp_simplex( pLinearProblem, & lpControlParameter );
+		
+		
+		const int iProblemStatus = glp_get_status( pLinearProblem );
+		
+#ifdef DEBUG_C_POLYNOM
+		cout<<endl<<"LP solver returned;"<<endl<<flush;
+		if ( ( iProblemStatus == GLP_OPT ) ||
+				( iProblemStatus == GLP_FEAS ) ){
+			cout<<"   the solution is OK"<<endl<<flush;
+		}
+		switch ( iProblemStatus ){
+			case GLP_OPT:    cout<<"solution is optimal"<<endl;break;
+			case GLP_FEAS:   cout<<"solution is feasible"<<endl;break;
+			case GLP_INFEAS: cout<<"solution is infeasible"<<endl;break;
+			case GLP_NOFEAS: cout<<"problem has no feasible solution"<<endl;break;
+			case GLP_UNBND:  cout<<"problem has unbounded solutionl"<<endl;break;
+			case GLP_UNDEF:  cout<<"solution is undefined"<<endl;break;
+			default: cout<<"problem status unknown"<<endl;break;
+		}
+#endif
+		
+		if ( ( ( uiResultSimplex == 0 ) || //solution found
+					( uiResultSimplex == GLP_EITLIM ) || //stop because of iteration limit -> check error
+					( uiResultSimplex == GLP_ETMLIM ) )  //stop because of time limit -> check error
+				&&
+				( ( iProblemStatus == GLP_OPT ) || //optimal solution found
+					( iProblemStatus == GLP_FEAS )  //check non optimal solution also
+				) ){
+			//The LP problem instance has been successfully solved or limit reached.
+			/*GLP_EITLIM: The search was prematurely terminated, because the
+				simplex iteration limit has been exceeded.
+			GLP_ETMLIM: The search was prematurely terminated, because the
+				time limit has been exceeded.*/
+#ifdef DEBUG_C_POLYNOM
+			switch ( uiResultSimplex ){
+				case 0:   cout<<endl<<"solution found; evalue actual error"<<endl;break;
+				case GLP_EITLIM: cout<<endl<<"iteration limit reached; evalue actual error"<<endl;break;
+				case GLP_ETMLIM: cout<<endl<<"time limit reached; evalue actual error"<<endl;break;
+				default: cout<<"solver result status unknown (uiResultSimplex="<<uiResultSimplex<<")"<<endl;break;
+			}
+#endif
+			//get result of the solver
+			//evalue actual error
+			double dErrorSumNewPolynom = 0.0;
+			bool bErrorOk = true;
+			
+			const double dMaxErrorForSpline = ((double)maxError) *
+				( ((double)ulActualIndexOfLastDataPoint) /
+					((double)ulNumberOfDataPoints) );
+			
+			for ( unsigned long ulActualCol = uiNumberOfParameterColumns + 1;
+					ulActualCol <= ulNumberOfColumns; ulActualCol++ ){
+				
+				const double dErrorActualValue =
+					glp_get_col_prim( pLinearProblem, ulActualCol );
+				
+				const double dAbsErrorActualValue = ( dErrorActualValue < 0.0 ) ?
+					( 0.0 - dErrorActualValue ) : dErrorActualValue;
+				
+				dErrorSumNewPolynom += dAbsErrorActualValue;
+				
+				if ( ( dMaxErrorForSpline < dErrorSumNewPolynom ) ||
+						( dMaxErrorPerValue < dAbsErrorActualValue ) ){
+					//error to great
+#ifdef DEBUG_C_POLYNOM
+					cout<<endl<<"Dismiss found polynom, error to great: "<<
+						"dErrorSumNewPolynom="<<dErrorSumNewPolynom<<" (maxError="<<
+						maxError<<") dAbsErrorActualValue="<<dAbsErrorActualValue<<
+						" (dMaxErrorPerValue="<<dMaxErrorPerValue<<")"<<endl;
+#endif
+					bErrorOk = false;
+					break;
+				}
+			}
+			
+#ifdef DEBUG_C_POLYNOM
+			cout<<endl<<"error sum: "<<dErrorSumNewPolynom<<endl;
+#endif
+			if ( bErrorOk ){
+				
+				bSplineFound = true;
+				//set polynom factors
+				actualPolynom.vecFactors.clear();
+				for ( unsigned long ulActualCol = 1;
+						ulActualCol <= uiNumberOfParameterColumns;
+						ulActualCol += 2 ){
+					
+					const double dActualFactor =
+						glp_get_col_prim( pLinearProblem, ulActualCol ) +
+						glp_get_col_prim( pLinearProblem, ulActualCol + 1 );
+					
+					actualPolynom.vecFactors.push_back( dActualFactor );
+				}
+				//remove all higher polynom factors which are 0
+				while ( ( 1 < actualPolynom.vecFactors.size() ) && //don't remove constant
+						( actualPolynom.vecFactors.back() == 0.0 ) ){
+					
+					actualPolynom.vecFactors.pop_back();
+				}
+				
+#ifdef DEBUG_C_POLYNOM
+				cout<<endl<<"Polynom OK (error sum "<<dErrorSumNewPolynom<<") :"<<endl;
+				actualPolynom.print( cout );
+#endif
+			}
+		}else{//LP problem could not be solved
+#ifdef DEBUG_C_POLYNOM
+			cout<<endl<<"LP problem could not be solved"<<endl;
+#endif
+			/* possible returns:
+			GLP_EBADB: Unable to start the search, because the initial basis speci-
+			fied in the problem object is invalid—the number of basic
+			(auxiliary and structural) variables is not the same as the
+			number of rows in the problem object.
+			GLP_ESING: Unable to start the search, because the basis matrix corre-
+			sponding to the initial basis is singular within the working
+			precision.
+			GLP_ECOND: Unable to start the search, because the basis matrix cor-
+			responding to the initial basis is ill-conditioned, i.e. its
+			condition number is too large.
+			GLP_EBOUND: Unable to start the search, because some double-bounded
+			(auxiliary or structural) variables have incorrect bounds.
+			GLP_EFAIL: The search was prematurely terminated due to the solver
+			failure.
+			GLP_EOBJLL: The search was prematurely terminated, because the ob-
+			jective function being maximized has reached its lower
+			limit and continues decreasing (the dual simplex only).
+			GLP_EOBJUL: The search was prematurely terminated, because the ob-
+			jective function being minimized has reached its upper
+			limit and continues increasing (the dual simplex only).
+			GLP_ENOPFS: The LP problem instance has no primal feasible solution
+			(only if the LP presolver is used).
+			GLP_ENODFS: The LP problem instance has no dual feasible solution
+			(only if the LP presolver is used).
+			*/
+			bSplineFound = false;
+		}
+		//delete problem instance
+		glp_delete_prob( pLinearProblem);
+#ifdef FEATURE_GLPK_USE_MUTEX_LINAR_PROBLEM_SOLVING
+		
+#ifdef WINDOWS
+		ReleaseMutex( & mutexGlpkSolver );
+#else //WINDOWS
+		pthread_mutex_unlock( & mutexGlpkSolver );
+#endif //WINDOWS
+		
+#endif //FEATURE_GLPK_USE_MUTEX_LINAR_PROBLEM_SOLVING
+		
+		
+		if ( bSplineFound ){
+			//last error is not greater as the max error -> add data points
+			/* if for the actual points a good spline was found
+			-> try to find spline for data points till the middle of actual data
+			point and the last data points for wich not a good spline was found */
+#ifdef DEBUG_C_POLYNOM
+			cout<<endl<<"Found polynom acepted, for data points till index: "<<
+				ulActualIndexOfLastDataPoint<<endl;
+#endif
+			ulIndexLastGoodDataPoint = ulActualIndexOfLastDataPoint;
+			
+			const unsigned long ulDeltaBetweanLastGoodAndToMuch =
+				ulIndexToMuchDataPoint - ulIndexLastGoodDataPoint;
+			
+			if ( ulDeltaBetweanLastGoodAndToMuch <= 1 ){
+				/*no data points between last good and to much
+				-> can't find more data points -> stop evaluation*/
+#ifdef DEBUG_C_POLYNOM
+				cout<<endl<<"no data points between last good and to much "<<
+					"-> can't find more data points -> stop evaluation"<<endl;
+#endif
+				break;
+			}
+			
+			ulActualIndexOfLastDataPoint += ulDeltaBetweanLastGoodAndToMuch / 2;
+		}else{/*if no spline found or error is to great on actual data points
+			-> reduce number of data points for the spline
+			-> try to find spline for data points till the middle of actual data
+			point and the last data points for wich a good spline was found */
+#ifdef DEBUG_C_POLYNOM
+			cout<<endl<<"found polynom not acepted, for data points till index: "<<
+				ulActualIndexOfLastDataPoint<<endl;
+#endif
+			ulIndexToMuchDataPoint = ulActualIndexOfLastDataPoint;
+			
+			const unsigned long ulDeltaBetweanLastGoodAndToMuch =
+				ulIndexToMuchDataPoint - ulIndexLastGoodDataPoint;
+				
+			if ( ulDeltaBetweanLastGoodAndToMuch <= 1 ){
+				/*no data points between last good and to much
+				-> can't omit more data points -> stop evaluation*/
+#ifdef DEBUG_C_POLYNOM
+				cout<<endl<<"no data points between last good and to much "<<
+					"-> can't omit more data points -> stop evaluation"<<endl;
+#endif
+				break;
+			}
+			
+			ulActualIndexOfLastDataPoint -= ulDeltaBetweanLastGoodAndToMuch / 2;
+		}
+		
+	}//end while polynom not found
+	
+	if ( ! actualPolynom.vecFactors.empty() ){
+		//add last found polynom
+#ifdef DEBUG_C_POLYNOM
+		cout<<endl<<"add last found polynom:"<<endl;
+		actualPolynom.print( cout );
+#endif
+		vecFactors = actualPolynom.vecFactors;
+	}//else keep old polynom
+#ifdef DEBUG_C_POLYNOM
+	else{
+		//warning: no new spline found -> no new data points found
+		cout<<endl<<"Warning: no new data points / spline found"<<endl;
+	}
+#endif
+	
+#ifdef DEBUG_C_POLYNOM
+	cout<<"actual polynom: ";
+	print( cout );
+	cout<<"cPolynom<tX, tY>::evalueSpline( vecInputData, uiMaxNumberOfParameters="<<
+		uiMaxNumberOfParameters<<" , maxValue="<<maxValue<<
+		", maxError="<<maxError<<" ,dMaxErrorPerValue="<<
+		dMaxErrorPerValue<<" ) done; points matched: "<<(ulIndexLastGoodDataPoint + 1)<<endl;
+#endif
+	return ulIndexLastGoodDataPoint;
+}
+
+
+#else //FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
 
 
 /**
@@ -1678,6 +2277,7 @@ template<class tX, class tY> unsigned long fib::algorithms::nD1::cPolynom<tX, tY
 	return max( ulMatchedPoints, ulNumberOfMaxPointsMatched );
 }
 
+#endif //FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
 
 
 

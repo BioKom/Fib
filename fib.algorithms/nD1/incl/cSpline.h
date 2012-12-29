@@ -35,6 +35,7 @@ History:
 24.09.2012  Oesterholz  FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING:
 	evalueSpline(): the glp library (extern package) linear solver will be
 	used to find a spline for a vector of range data points
+13.12.2012  Oesterholz  parameter ulMaxPolynoms added for evalueSpline()
 */
 
 #ifndef ___N_D_1_C_SPLINE_H__
@@ -275,6 +276,8 @@ public:
 	 * 	when set to 1 a parameter increas of 1 is as bad as an error increas
 	 * 	of 1, when set to 0.01 parameter increas of 100 is as bad an error increas
 	 * 	of 1
+	 * @param ulMaxPolynoms the maximum number of polynoms the spline shoulc be
+	 * 	build of, if 0 the maximum number infinity
 	 * @return the number n of data points vecData, which the spline matches;
 	 * 	the data points vecData[0] to vecData[ return - 1 ] will be
 	 * 	matched by the spline
@@ -285,7 +288,8 @@ public:
 		const tY maxValue = 1E+36,
 		const tY maxError = 0,
 		const tY maxErrorPerValue = 0,
-		const double dWeightParameter = 0.0000000001 );
+		const double dWeightParameter = 0.0000000001,
+		const unsigned long ulMaxPolynoms = 0 );
 
 #else //FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
 

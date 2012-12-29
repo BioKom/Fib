@@ -64,6 +64,9 @@
 History:
 13.02.2011  Oesterholz  created; test of t_nD1_nPolynom.cpp imported
 13.02.2011  Oesterholz  test function testEvalueSplineIterativFast() added
+29.12.2012  Oesterholz  FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING:
+	evalueSpline(): the glp library (extern package) linear solver will be
+	used to find a spline for a vector of range data points
 */
 
 //TODO weg
@@ -99,7 +102,8 @@ int testEvalueSplineIterativFast( unsigned long &ulTestphase, int & iWarnings );
 
 
 unsigned long MAX_ITERATION = 256;
-
+//error allways good because of evaluation inexactnesses
+const double ERROR_ALLWAYS_OK = 0.0000000001;
 
 int main(int argc,char* argv[]){
 
@@ -2783,17 +2787,24 @@ int testEvalueSplineIterativFast( unsigned long &ulTestphase, int & iWarnings ){
 		
 		const cPolynom< int, double > polynomRandIntDoubleOld( polynomRandIntDouble );
 		
-		const unsigned int uiMinBitsToStoreMantissa = rand() % 32;
 		double maxValue = abs( randomValue( 1000000.0 ) ) + 1000.0;
 		if ( (rand() % 8) == 0 ){
 			maxValue = randomValue( 1000000.0 );
 		}
-
+		
+#ifdef FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
+		cout<<endl<<"polynomRandIntDouble.evalueSplineIterativFast( vecDataPoints, uiNumberOfParameters="<<
+			uiNumberOfParameters<<", maxValue="<<maxValue<<");"<<endl<<endl;
+		unsigned long uiPointsIncluded = polynomRandIntDouble.evalueSplineIterativFast(
+			vecDataPoints, uiNumberOfParameters, maxValue );
+#else //FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
+		const unsigned int uiMinBitsToStoreMantissa = rand() % 32;
 		cout<<endl<<"polynomRandIntDouble.evalueSplineIterativFast( vecDataPoints, uiNumberOfParameters="<<
 			uiNumberOfParameters<<", uiMinBitsToStoreMantissa="<<
 			uiMinBitsToStoreMantissa<<" , maxValue="<<maxValue<<");"<<endl<<endl;
 		unsigned long uiPointsIncluded = polynomRandIntDouble.evalueSplineIterativFast(
 			vecDataPoints, uiNumberOfParameters, uiMinBitsToStoreMantissa, maxValue );
+#endif //FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
 		
 		if ( 0 < uiPointsIncluded ){
 			cout<<"Founded polynom is for the "<<uiPointsIncluded<<" first "<<
@@ -2839,7 +2850,7 @@ int testEvalueSplineIterativFast( unsigned long &ulTestphase, int & iWarnings ){
 			pair< unsigned long, double > paError = polynomRandIntDouble.evalueError(
 				vecDataPointsCorrect );
 			
-			if ( paError.first != 0 ){
+			if ( ERROR_ALLWAYS_OK < paError.second ){
 				cerr<<"Warning: The polynom dosn't match the "<<uiPointsIncluded<<
 					" first range data points.";
 				cerr<<" Ther are "<<paError.first<<" wrong points with a error sum of "<<
@@ -2995,17 +3006,24 @@ int testEvalueSplineIterativFast( unsigned long &ulTestphase, int & iWarnings ){
 		
 		const cPolynom< double, double > polynomRandDoubleDoubleOld( polynomRandDoubleDouble );
 		
-		const unsigned int uiMinBitsToStoreMantissa = rand() % 32;
 		double maxValue = abs( randomValue( 1000000.0 ) ) + 1000.0;
 		if ( (rand() % 8) == 0 ){
 			maxValue = randomValue( 1000000.0 );
 		}
 		
+#ifdef FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
+		cout<<endl<<"polynomRandDoubleDouble.evalueSplineIterativFast( vecDataPoints, uiNumberOfParameters="<<
+			uiNumberOfParameters<<", maxValue="<<maxValue<<");"<<endl<<endl;
+		unsigned long uiPointsIncluded = polynomRandDoubleDouble.evalueSplineIterativFast(
+			vecDataPoints, uiNumberOfParameters, maxValue );
+#else //FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
+		const unsigned int uiMinBitsToStoreMantissa = rand() % 32;
 		cout<<endl<<"polynomRandDoubleDouble.evalueSplineIterativFast( vecDataPoints, uiNumberOfParameters="<<
 			uiNumberOfParameters<<", uiMinBitsToStoreMantissa="<<
 			uiMinBitsToStoreMantissa<<" , maxValue="<<maxValue<<");"<<endl<<endl;
 		unsigned long uiPointsIncluded = polynomRandDoubleDouble.evalueSplineIterativFast(
 			vecDataPoints, uiNumberOfParameters, uiMinBitsToStoreMantissa, maxValue );
+#endif //FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
 		
 		if ( 0 < uiPointsIncluded ){
 			cout<<"Founded polynom is for the "<<uiPointsIncluded<<" first "<<
@@ -3051,7 +3069,7 @@ int testEvalueSplineIterativFast( unsigned long &ulTestphase, int & iWarnings ){
 			pair< unsigned long, double > paError = polynomRandDoubleDouble.evalueError(
 				vecDataPointsCorrect );
 			
-			if ( paError.first != 0 ){
+			if ( ERROR_ALLWAYS_OK < paError.second ){
 				cerr<<"Warning: The polynom dosn't match the "<<uiPointsIncluded<<
 					" first range data points.";
 				cerr<<" Ther are "<<paError.first<<" wrong points with a error sum of "<<
@@ -3209,7 +3227,6 @@ int testEvalueSplineIterativFast( unsigned long &ulTestphase, int & iWarnings ){
 		
 		const cPolynom< double, double > polynomRandDoubleDouble2Old( polynomRandDoubleDouble2 );
 		
-		const unsigned int uiMinBitsToStoreMantissa = rand() % 32;
 		double maxValue = abs( randomValue( 1000000.0 ) ) + 1000.0;
 		if ( (rand() % 8) == 0 ){
 			maxValue = randomValue( 1000000.0 );
@@ -3220,11 +3237,19 @@ int testEvalueSplineIterativFast( unsigned long &ulTestphase, int & iWarnings ){
 			dMaxError = abs( dMaxError );
 		}
 		
+#ifdef FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
+		cout<<endl<<"polynomRandDoubleDouble2.evalueSplineIterativFast( vecDataPoints, uiNumberOfParameters="<<
+			uiNumberOfParameters<<", maxValue="<<maxValue<<", dMaxError="<<dMaxError<<");"<<endl<<endl;
+		unsigned long uiPointsIncluded = polynomRandDoubleDouble2.evalueSplineIterativFast(
+			vecDataPoints, uiNumberOfParameters, maxValue, dMaxError );
+#else //FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
+		const unsigned int uiMinBitsToStoreMantissa = rand() % 32;
 		cout<<endl<<"polynomRandDoubleDouble2.evalueSplineIterativFast( vecDataPoints, uiNumberOfParameters="<<
 			uiNumberOfParameters<<", uiMinBitsToStoreMantissa="<<
 			uiMinBitsToStoreMantissa<<" , maxValue="<<maxValue<<", dMaxError="<<dMaxError<<");"<<endl<<endl;
 		unsigned long uiPointsIncluded = polynomRandDoubleDouble2.evalueSplineIterativFast(
 			vecDataPoints, uiNumberOfParameters, uiMinBitsToStoreMantissa, maxValue, dMaxError );
+#endif //FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
 		
 		if ( 0 < uiPointsIncluded ){
 			cout<<"Founded polynom is for the "<<uiPointsIncluded<<" first "<<
@@ -3270,7 +3295,7 @@ int testEvalueSplineIterativFast( unsigned long &ulTestphase, int & iWarnings ){
 			pair< unsigned long, double > paError = polynomRandDoubleDouble2.evalueError(
 				vecDataPointsCorrect );
 			
-			if ( dMaxError < (paError.second * 0.99) ){
+			if ( ( dMaxError + ERROR_ALLWAYS_OK ) < (paError.second * 0.99) ){
 				cerr<<"Warning: The polynom dosn't match the "<<uiPointsIncluded<<
 					" first range data points.";
 				cerr<<" Ther are "<<paError.first<<" wrong points with a error sum of "<<

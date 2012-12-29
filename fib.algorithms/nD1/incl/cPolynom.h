@@ -35,6 +35,9 @@ History:
 07.06.2010  Oesterholz  created
 12.02.2011  Oesterholz  method evalueSpline() added
 27.03.2011  Oesterholz  method getLastFactorIndexNotNull() added
+29.12.2012  Oesterholz  FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING:
+	evalueSpline(): the glp library (extern package) linear solver will be
+	used to find a spline for a vector of range data points
 */
 
 #ifndef ___N_D_1_C_POLYNOM_H__
@@ -326,6 +329,67 @@ public:
 		const unsigned long ulMaxMemoryCost = 0 );
 
 
+#ifdef FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
+	
+	/**
+	 * This functions evalues a spline, which matches all points of the
+	 * given range data vecData (if possible).
+	 * The y value, to wich the spline evalues the x value, will be in the
+	 * bound of the range data point, so that:
+	 * 	vecData[i].minY <= spline( vecData[i].x ) + error_i <= vecData[i].maxY,
+	 * 	with maxError <= sum error_i
+	 * 	for i = 0 till vecData.size()
+	 *
+	 * The evalued spline (this polynom) will have the form:
+	 * The evalued polynoms (@see cPolynom) will have the form:
+	 * 	y = vecFactors[ 0 ] + vecFactors[ 1 ] * x +
+	 * 	vecFactors[ 2 ] * x^2 + ... +
+	 * 	vecFactors[ uiNumberOfParameters - 1 ] *
+	 * 		x^(uiNumberOfParameters - 1)
+	 *
+	 * The method will iterativ increase the number of parameters for the
+	 * polynoms (from 1 to uiMaxNumberOfParameters) and will try to use
+	 * all of the given range points to find the polynoms.
+	 *
+	 * @see evalue()
+	 * @see cPolynom::evalueSplineIterativFast()
+	 * @param vecInputData the data which the returend spline should match
+	 * @param uiMaxNumberOfParameters the number of parameters for the spline;
+	 * 	Don't choose this number to big, because the evaluation time will
+	 * 	grow exponentialy with this number. Even splines with 8
+	 * 	parameters will take some time.
+	 * @param maxValue the maximum possible value in all parameters
+	 * 	the evalued spline will allways have parameters vecFactors[i] with
+	 * 	-1 * maxValue <= vecFactors[i] <= maxValue for 0 <= i \< vecFactors.size()
+	 * @param maxError the maximal error for the spline to find;
+	 * 	the error on the interpolated spline for vecData will be equal or
+	 * 	less than maxError
+	 * @param maxErrorPerValue the maximal error for the spline to find on
+	 * 	one data point; the error on the interpolated spline for every data
+	 * 	point in vecData will be equal or less than maxErrorPerValue;
+	 * 	if maxErrorPerValue is 0 and maxError is not 0, maxErrorPerValue will
+	 * 	be set to maxError / vecInputData.size()
+	 * @param dWeightParameter a value for the weight of the parameters;
+	 * 	with this value greater 0 it will be searched for smaal parameter;
+	 * 	when searching for a solution the error is minimized and the
+	 * 	spline parameter will be multiplied with this value and also minimized;
+	 * 	when set to 1 a parameter increas of 1 is as bad as an error increas
+	 * 	of 1, when set to 0.01 parameter increas of 100 is as bad an error increas
+	 * 	of 1
+	 * @return the number n of data points vecData, which the spline matches;
+	 * 	the data points vecData[0] to vecData[ return - 1 ] will be
+	 * 	matched by the spline
+	 */
+	virtual unsigned long evalueSplineIterativFast(
+		const vector< cDataPointRange< tX, tY> > & vecInputData,
+		unsigned int uiMaxNumberOfParameters = 4,
+		const tY maxValue = 1E+36,
+		const tY maxError = 0,
+		const tY maxErrorPerValue = 0,
+		const double dWeightParameter = 0.0000000001 );
+
+#else //FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
+
 	/**
 	 * This functions evalues a spline, which matches the given range data
 	 * vecInputData
@@ -382,6 +446,7 @@ public:
 		const tY maxError = 0,
 		const unsigned long ulMaxMemoryCost = 0 );
 
+#endif //FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
 
 
 	/**

@@ -35,6 +35,7 @@ History:
 18.09.2012  Oesterholz  FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING:
 	evalueSpline(): the glp library (extern package) linear solver will be
 	used to find a spline for a vector of range data points
+13.12.2012  Oesterholz  parameter ulMaxPolynoms added for evalueSpline()
 */
 
 
@@ -711,6 +712,8 @@ template<class tX, class tY> bool fib::algorithms::nD1::cSpline<tX, tY>::
  * 	when set to 1 a parameter increas of 1 is as bad as an error increas
  * 	of 1, when set to 0.01 parameter increas of 100 is as bad an error increas
  * 	of 1
+ * @param ulMaxPolynoms the maximum number of polynoms the spline shoulc be
+ * 	build of, if 0 the maximum number infinity
  * @return the number n of data points vecData, which the spline matches;
  * 	the data points vecData[0] to vecData[ return - 1 ] will be
  * 	matched by the spline
@@ -722,7 +725,8 @@ template<class tX, class tY> unsigned long fib::algorithms::nD1::cSpline<tX, tY>
 		const tY maxValue,
 		const tY maxError,
 		const tY maxErrorPerValue,
-		const double dWeightParameter ){
+		const double dWeightParameter,
+		const unsigned long ulMaxPolynoms ){
 	
 #ifdef DEBUG_C_SPLINE
 	cout<<"cSpline<tX, tY>::evalueSpline( vecInputData, uiMaxNumberOfParameters="<<
@@ -758,8 +762,8 @@ template<class tX, class tY> unsigned long fib::algorithms::nD1::cSpline<tX, tY>
 				( (maxError * 2.0) / ((double)ulNumberOfDataPoints) );
 	
 	//remember last best spline
-	vector< cPolynom< tX, tY> > vecOldPolynoms( vecPolynoms );
-	vector< tY > vecOldBorders( vecBorders );
+	const vector< cPolynom< tX, tY> > vecOldPolynoms( vecPolynoms );
+	const vector< tY > vecOldBorders( vecBorders );
 	
 	vecPolynoms.clear();
 	vecBorders.clear();
@@ -1267,6 +1271,11 @@ template<class tX, class tY> unsigned long fib::algorithms::nD1::cSpline<tX, tY>
 		vecPolynoms.push_back( actualPolynom );
 		
 		ulIndexDataPointActualPolynomStart = ulIndexLastGoodDataPoint + 1;
+		
+		if ( ( ulMaxPolynoms != 0 ) && ( ulMaxPolynoms <= vecPolynoms.size() ) ){
+			//maximum number of polynoms for the spline reached -> stop evaluation
+			break;
+		}
 	}//end while some points missing in the spline
 	
 	if ( ulIndexLastGoodDataPoint == 0 ){
