@@ -20,6 +20,7 @@
 #  26.09.2012  Oesterholz  FreeImage version changed to 3.15.3
 #  18.10.2012  Oesterholz  operators directory splineMax4ParamBorder added;
 #  	fib.algorithms/nConvertToFib/ added
+#  02.12.2012  Oesterholz  HowTo_Fib_objekte_schreiben.txt added
 #
 
 
@@ -70,6 +71,7 @@ export EXTRA_FOLDERS_TO_CREATE="testruns/
 
 # files wich should be copied seperated
 export EXTRA_FILES="readme.txt liesmich.txt makefile version.h
+	HowTo_Fib_objekte_schreiben.txt
 	add_ons/converter/readme.txt
 	testruns/basicTestrun.sh testruns/basicMemtest.sh
 	fib.algorithms/namespaces.mk

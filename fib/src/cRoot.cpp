@@ -65,6 +65,7 @@ History:
 	FirstChildElement()
 22.11.2012  Oesterholz  Bugfix: a root element can be called more than one
 	time by external objects
+21.12.2012  Oesterholz  debugging printf formating improved
 */
 
 
@@ -7977,7 +7978,8 @@ void cRoot::setCallingFibElement( cExtObject * pInExtObjectElm ){
 		
 #ifdef DEBUG_EVALUE
 		const long lId = pInExtObjectElm->getIdentifier();
-		printf( "cRoot(=%p)::setCallingFibElement() store below defined variables (%i calling elements wher set before, the actual id is %li): ", this, liPExtObjectElm.size(), lId );
+		const int iNumberExistingCalling = liPExtObjectElm.size();
+		printf( "cRoot(=%p)::setCallingFibElement() store below defined variables (%i calling elements wher set before, the actual id is %li): ", this, iNumberExistingCalling, lId );
 #endif //DEBUG_EVALUE
 		
 		for ( list< cFibVariable * >::const_iterator
@@ -8056,7 +8058,8 @@ void cRoot::unsetCallingFibElement(){
 			
 #ifdef DEBUG_EVALUE
 			const long lId = liPExtObjectElm.back()->getIdentifier();
-			printf( "cRoot(=%p)::unsetCallingFibElement() restore below defined variables (unset %i'th calling element with id %li): ", this, liPExtObjectElm.size(), lId );
+			const int iNumberExistingCalling = liPExtObjectElm.size();
+			printf( "cRoot(=%p)::unsetCallingFibElement() restore below defined variables (unset %i'th calling element with id %li): ", this, iNumberExistingCalling, lId );
 #endif //DEBUG_EVALUE
 			for ( list< cFibVariable * >::iterator
 					itrActualStoredVariable = liStoredBelowVariables.begin();
