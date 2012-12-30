@@ -66,6 +66,8 @@ History:
 22.11.2012  Oesterholz  Bugfix: a root element can be called more than one
 	time by external objects
 21.12.2012  Oesterholz  debugging printf formating improved
+30.12.2012  Oesterholz  DEBUG_EVALUE: if debugging evalue will print first
+	optional part entry
 */
 
 
@@ -1698,6 +1700,15 @@ bool cRoot::evalueObject( iEvaluePosition & evaluePosition,
 		//nothing to evalue
 		return false;
 	}
+#ifdef DEBUG_EVALUE
+	//if exists print first optional part entry
+	if ( optionalPart.getNumberOfEntries() != 0 ){
+		pair< string, string > firstEntry = optionalPart.getEntry( 1 );
+		printf( "cRoot::evalueObject() %s: %s\n",
+			firstEntry.first.c_str(), firstEntry.second.c_str() );
+	}
+	
+#endif //DEBUG_EVALUE
 	//evalue main -Fib-object
 	return pMainFibObject->evalueObject( evaluePosition, objectPoint, liVecProperties );
 }

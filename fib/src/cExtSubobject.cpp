@@ -36,6 +36,7 @@ History:
 	the input values are now a vector of values
 22.11.2012  Oesterholz  Bugfix: a root element can be called more than one
 	time by external objects
+29.12.2012  Oesterholz  debugging evalue will print number of input variables
 */
 
 //TODO debugging switches
@@ -680,7 +681,7 @@ bool cExtSubobject::evalueObject( iEvaluePosition & evaluePosition,
 	}
 #ifdef DEBUG_EVALUE
 	const long lTmpIdentifier = pCallingExtObject->getIdentifier();
-	printf( "cExtSubobject::evalueObject() for external subobject with identifier %li and input values:", lTmpIdentifier );
+	printf( "cExtSubobject::evalueObject() for external subobject with identifier %li", lTmpIdentifier );
 #endif //DEBUG_EVALUE
 	
 	//get subobject to evalue
@@ -695,6 +696,10 @@ bool cExtSubobject::evalueObject( iEvaluePosition & evaluePosition,
 		pCallingExtObject->getOutputVariables( uiNumberOfSubobject );
 	
 	vector< cFibVariable* >::iterator itrInVar = vecInputVariables.begin();
+#ifdef DEBUG_EVALUE
+	const int uiNumberInputValues = vecInputVariables.size();
+	printf( " and %u input values:", uiNumberInputValues );
+#endif //DEBUG_EVALUE
 	
 #ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	for ( unsignedIntFib uiActualElement = 1;

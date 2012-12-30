@@ -34,7 +34,8 @@ History:
 23.01.2012  Oesterholz  input values changed to input vector
 18.04.2012  Oesterholz  Bugfix: replace FirstChild()->ToElement() with
 	FirstChildElement()
-19.08.2012 Oesterholz  Bugfix?: equal* check if same pointers
+19.08.2012  Oesterholz  Bugfix?: equal* check if same pointers
+30.12.2012  Oesterholz  debugging evalue will print number of input variables
 */
 
 
@@ -971,9 +972,9 @@ bool cExtObject::evalueObject( iEvaluePosition & evaluePosition,
 	if ( objectPoint == 0 ){
 #ifdef DEBUG_EVALUE
 		const long lTmpIdentifier = lIdentifier;
-		printf( "cExtObject::evalueObject() with identifier %li and input values:", lTmpIdentifier );
-		
 		const unsigned int uiInputValues = vecInputValues.getNumberOfElements();
+		printf( "cExtObject::evalueObject() with identifier %li and %u input values:", lTmpIdentifier, uiInputValues );
+		
 		for ( unsigned int uiActualInputValue = 1;
 				uiActualInputValue <= uiInputValues; uiActualInputValue++ ){
 			
