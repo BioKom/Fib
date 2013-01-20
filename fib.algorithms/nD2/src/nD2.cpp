@@ -44,6 +44,9 @@ History:
 24.09.2012  Oesterholz  FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING:
 	evalueSpline(): the glp library (extern package) linear solver will be
 	used to find a spline for a vector of range data points
+06.01.2013  Oesterholz  FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING:
+	evalueSplineIterativFast(): the glp library (extern package) linear
+	solver will be used to find a spline for a vector of range data points
 */
 
 
@@ -1625,69 +1628,6 @@ template <class tX>
 
 
 
-
-#ifdef FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
-
-/**
- * This function combines the given set of points to Fib objects,
- * with the help of splies (polynoms with fixed number of parametes
- * uiMaxSplineParameters) .
- * Beware: You have to care that the created subobjects will be deleted
- *
- * uses @see nD1::cPolynom::evalueSpline()
- * @param setPoints the set with the datapoints to combine to
- * 	Fib objects with the help of area and function elements;
- * 	The given points should be positions in an matrix, positions in
- * 	the matrix but not given, will be considerd not to be in the area
- * 	to create.
- * @param pUnderobject a pointer to the subobject, which the created
- * 	Fib elements should contain and which should be evalued for the
- * 	point positions
- * @param pVariableX a pointer to the variable for the x position
- * @param pVariableY a pointer to the variable for the y position
- * @param uiMaxSplineParameters the number of parameters for the spline;
- * 	Don't choose this number to big, because the evaluation time will
- * 	grow exponentialy with this number. Even splines with 8
- * 	parameters will take some time.
- * @param maxValue the maximum possible value in all parameters
- * 	the evalued spline/function elements will allways have value
- * 	parameters vecFactors[i] with
- * 	-1 * maxValue <= vecFactors[i] <= maxValue for 0 <= i \< vecFactors.size();
- * 	if 0 (standard value) is given, the maximum possible value will
- * 	be evalued from the given data
- * @return a Fib object with the created Fib subobjects, which go
- * 	over all point positions in the given set setPoints or NULL if non
- * 	such could be created;
- * 	some positions can be evalued twice;
- * 	the Fib subobjects, wich evalue the most points, are on the
- * 	front of the list-object (have a lower subobject number);
- * 	if NULL is returnd, you have to care that pUnderobject will be
- * 	deleted, else pUnderobject will be included in one
- * 	subobject of the created list-object and the other subobject will
- * 	contain copies of pUnderobject
- * 	Structur of the created Fib object:
- * 		area( fun( fun( fun( area( pUnderobject )))))
- * 	or if this previos given structur is not possible
- * 		list(
- * 		area( fun( fun( fun( area( pUnderobject )))))
- * 			...
- * 		area( fun( fun( fun( area( pUnderobject )))))
- * 		)
- */
-template <class tX>
-	cFibElement * fib::algorithms::nD2::createSplineBorderAreasForPoints(
-		const set< nD1::cDataPoint<tX, tX> > & setPoints,
-		cFibElement * pUnderobject,
-		cFibVariable * pVariableDimX,
-		cFibVariable * pVariableDimY,
-		const unsigned int uiMaxSplineParameters,
-		double maxValue ){
-	
-	DEBUG_OUT_L2(<<"createSplineBorderAreasForPoints(#setPoints="<<setPoints.size()<<", pUnderobject="<<pUnderobject<<", varX="<<pVariableDimX<<", varY="<<pVariableDimY<<", uiMaxSplineParameters="<<uiMaxSplineParameters<<", maxValue="<<maxValue<<
-	") started "<<endl<<flush);
-	
-#else //FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
-
 /**
  * This function combines the given set of points to Fib objects,
  * with the help of splies (polynoms with fixed number of parametes
@@ -1755,8 +1695,6 @@ template <class tX>
 		const unsigned long ulMaxMemoryCost ){
 	
 	DEBUG_OUT_L2(<<"createSplineBorderAreasForPoints(#setPoints="<<setPoints.size()<<", pUnderobject="<<pUnderobject<<", varX="<<pVariableDimX<<", varY="<<pVariableDimY<<", uiMaxSplineParameters="<<uiMaxSplineParameters<<", uiMinBitsToStoreMantissa="<<uiMinBitsToStoreMantissa<<", maxValue="<<maxValue<<", ulMaxMemoryCost="<<ulMaxMemoryCost<<" ) started "<<endl<<flush);
-	
-#endif //FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
 	
 	if ( setPoints.empty() ){
 		//no data points, for which to create the areas
@@ -2003,15 +1941,9 @@ template <class tX>
 			DEBUG_OUT_L2(<<"The borders are "<<(bBordersEqual?"equal":"not equal")<<endl);
 			DEBUG_OUT_L2(<<"evaluing the spline for the lower border:"<<endl<<flush);
 			cPolynom< tX, double > polynomLower;
-#ifdef FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
-			
-			const unsigned long uiPointsIncludedLower = polynomLower.evalueSpline(
-				vecRangesLower, uiMaxSplineParameters, maxValue );
-#else //FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
 			const unsigned long uiPointsIncludedLower = polynomLower.evalueSpline(
 				vecRangesLower, uiMaxSplineParameters,
 				uiMinBitsToStoreMantissa, maxValue, ulMaxMemoryCost );
-#endif //FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
 			
 #ifdef DEBUG_N_D2
 			cout<<"vecRangesLower: ";
@@ -2034,15 +1966,10 @@ template <class tX>
 					vecRangesUpper.resize( uiPointsIncludedLower );
 				}
 				DEBUG_OUT_L2(<<"evaluing the spline for the upper border:"<<endl<<flush);
-#ifdef FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
-				const unsigned long uiPointsIncludedUpper = polynomUpper.evalueSpline(
-					vecRangesUpper, uiMaxSplineParameters,
-					maxValue );
-#else //FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
 				const unsigned long uiPointsIncludedUpper = polynomUpper.evalueSpline(
 					vecRangesUpper, uiMaxSplineParameters,
 					uiMinBitsToStoreMantissa, maxValue, ulMaxMemoryCost );
-#endif //FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
+				
 				if ( uiPointsIncludedUpper < 1 ){
 					//no points included -> no upper border
 					continue;//check next area
@@ -2312,6 +2239,176 @@ template <class tX>
 }
 
 
+#ifdef FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
+
+/**
+ * This function combines the given set of points to Fib objects,
+ * with the help of splies (polynoms with fixed number of parametes
+ * uiMaxSplineParameters) .
+ * Beware: You have to care that the created subobjects will be deleted
+ *
+ * uses @see nD1::cPolynom::evalueSplineIterativFast()
+ * The method should give the same result as
+ * createSplineBorderAreasForPoints() but faster.
+ * It will iterativ increase the number of parameters for the splines
+ * (from 1 to uiMaxNumberOfParameters) and will try to not use all of
+ * the given range points to find the polynom.
+ *
+ * @param setPoints the set with the datapoints to combine to
+ * 	Fib objects with the help of area and function elements;
+ * 	The given points should be positions in an matrix, positions in
+ * 	the matrix but not given, will be considerd not to be in the area
+ * 	to create.
+ * @param pUnderobject a pointer to the subobject, which the created
+ * 	Fib elements should contain and which should be evalued for the
+ * 	point positions
+ * @param pVariableX a pointer to the variable for the x position
+ * @param pVariableY a pointer to the variable for the y position
+ * @param uiMaxSplineParameters the number of parameters for the spline;
+ * 	Don't choose this number to big, because the evaluation time will
+ * 	grow exponentialy with this number. Even splines with 8
+ * 	parameters will take some time.
+ * @param maxValue the maximum possible value in all parameters
+ * 	the evalued spline/function elements will allways have value
+ * 	parameters vecFactors[i] with
+ * 	-1 * maxValue <= vecFactors[i] <= maxValue for 0 <= i \< vecFactors.size();
+ * 	if 0 (standard value) is given, the maximum possible value will
+ * 	be evalued from the given data
+ * @param maxError the maximal error for the border polynoms to find;
+ * 	the error on the interpolated polynoms for the borders will be
+ * 	equal or less than maxError
+ * @param maxErrorPerValue the maximal error for the border polynoms to
+ * 	find on one border point; the error on the interpolated polynom
+ * 	for every border point in vecData will be equal or less than
+ * 	maxErrorPerValue
+ * @return a Fib object with the created Fib subobjects, which go
+ * 	over all point positions in the given set setPoints or NULL if non
+ * 	such could be created;
+ * 	some positions can be evalued twice;
+ * 	the Fib subobjects, wich evalue the most points, are on the
+ * 	front of the list-object (have a lower subobject number);
+ * 	if NULL is returnd, you have to care that pUnderobject will be
+ * 	deleted, else pUnderobject will be included in one
+ * 	subobject of the created list-object and the other subobject will
+ * 	contain copies of pUnderobject
+ * 	Structur of the created Fib object:
+ * 		area( fun( fun( fun( area( pUnderobject )))))
+ * 	or if this previos given structur is not possible
+ * 		list(
+ * 		area( fun( fun( fun( area( pUnderobject )))))
+ * 			...
+ * 		area( fun( fun( fun( area( pUnderobject )))))
+ * 		)
+ */
+template <class tX>
+	cFibElement * fib::algorithms::nD2::createSplineItrFastBorderAreasForPoints(
+		const set< nD1::cDataPoint<tX, tX> > & setPoints,
+		cFibElement * pUnderobject,
+		cFibVariable * pVariableDimX,
+		cFibVariable * pVariableDimY,
+		const unsigned int uiMaxSplineParameters,
+		double maxValue,
+		const double maxError,
+		const double maxErrorPerValue ){
+	
+	DEBUG_OUT_L2(<<"createSplineItrFastBorderAreasForPoints(#setPoints="<<setPoints.size()<<", pUnderobject="<<pUnderobject<<", varX="<<pVariableDimX<<", varY="<<pVariableDimY<<", uiMaxSplineParameters="<<uiMaxSplineParameters<<", maxValue="<<maxValue<<", maxError="<<maxError<<", maxErrorPerValue="<<maxErrorPerValue<<" ) started "<<endl<<flush);
+	
+	return fib::algorithms::nD2::createSplineItrFastBorderAreasForPoints(
+		setPoints, setPoints, pUnderobject, pVariableDimX, pVariableDimY,
+		uiMaxSplineParameters, (set< nD1::cDataPoint<tX, tX> > *)(NULL),
+		maxValue, maxError, maxErrorPerValue );
+}
+
+
+/**
+ * This function combines the given set of points to Fib objects,
+ * with the help of splies (polynoms with fixed number of parametes
+ * uiMaxSplineParameters) .
+ * Beware: You have to care that the created subobjects will be deleted
+ *
+ * uses @see nD1::cPolynom::evalueSplineIterativFast()
+ * The method should give the same result as
+ * createSplineBorderAreasForPoints() but faster.
+ * It will iterativ increase the number of parameters for the splines
+ * (from 1 to uiMaxNumberOfParameters) and will try to not use all of
+ * the given range points to find the polynom.
+ *
+ * @param setMinimumArea the set with the datapoints to combine to
+ * 	Fib objects with the help of area and function elements;
+ * 	the created area should contain all of these points;
+ * 	The given points should be positions in an matrix, positions in
+ * 	the matrix but not given, will be considerd not to be in the area
+ * 	to create.
+ * @param setMaximumArea the set with the datapoints to combine to
+ * 	Fib objects with the help of area and function elements;
+ * 	the created area can contain these points;
+ * 	this set should contain all points from setMinimumArea;
+ * 	The given points should be positions in an matrix, positions in
+ * 	the matrix but not given, will be considerd not to be in the area
+ * 	to create.
+ * @param pUnderobject a pointer to the subobject, which the created
+ * 	Fib elements should contain and which should be evalued for the
+ * 	point positions
+ * @param pVariableX a pointer to the variable for the x position
+ * @param pVariableY a pointer to the variable for the y position
+ * @param uiMaxSplineParameters the number of parameters for the spline;
+ * 	Don't choose this number to big, because the evaluation time will
+ * 	grow exponentialy with this number. Even splines with 8
+ * 	parameters will take some time.
+ * @param pOutSetMissingPoints if not NULL, the points not in the
+ * 	created area will be inserted/added into this set, when this
+ * 	function returns
+ * @param maxValue the maximum possible value in all parameters
+ * 	the evalued spline/function elements will allways have value
+ * 	parameters vecFactors[i] with
+ * 	-1 * maxValue <= vecFactors[i] <= maxValue for 0 <= i \< vecFactors.size();
+ * 	if 0 (standard value) is given, the maximum possible value will
+ * 	be evalued from the given data
+ * @param maxError the maximal error for the border polynoms to find;
+ * 	the error on the interpolated polynoms for the borders will be
+ * 	equal or less than maxError
+ * @param maxErrorPerValue the maximal error for the border polynoms to
+ * 	find on one border point; the error on the interpolated polynom
+ * 	for every border point in vecData will be equal or less than
+ * 	maxErrorPerValue
+ * @return a Fib object with the created Fib subobjects, which go
+ * 	over all point positions in the given set setPoints or NULL if non
+ * 	such could be created;
+ * 	some positions can be evalued twice;
+ * 	the Fib subobjects, wich evalue the most points, are on the
+ * 	front of the list-object (have a lower subobject number);
+ * 	if NULL is returnd, you have to care that pUnderobject will be
+ * 	deleted, else pUnderobject will be included in one
+ * 	subobject of the created list-object and the other subobject will
+ * 	contain copies of pUnderobject
+ * 	Structur of the created Fib object:
+ * 		area( fun( fun( fun( area( pUnderobject )))))
+ * 	or if this previos given structur is not possible
+ * 		list(
+ * 		area( fun( fun( fun( area( pUnderobject )))))
+ * 			...
+ * 		area( fun( fun( fun( area( pUnderobject )))))
+ * 		)
+ */
+template <class tX>
+	cFibElement * fib::algorithms::nD2::createSplineItrFastBorderAreasForPoints(
+		const set< nD1::cDataPoint<tX, tX> > & setMinimumArea,
+		const set< nD1::cDataPoint<tX, tX> > & setMaximumArea,
+		cFibElement * pUnderobject,
+		cFibVariable * pVariableDimX,
+		cFibVariable * pVariableDimY,
+		const unsigned int uiMaxSplineParameters,
+		set< nD1::cDataPoint<tX, tX> > * pOutSetMissingPoints,
+		double maxValue,
+		const double maxError,
+		const double maxErrorPerValue ){
+	
+	DEBUG_OUT_L2(<<"createSplineItrFastBorderAreasForPoints(setMinimumArea="<<setMinimumArea.size()<<", setMaximumArea="<<setMaximumArea.size()<<", pUnderobject="<<pUnderobject<<", varX="<<pVariableDimX<<", varY="<<pVariableDimY<<", uiMaxSplineParameters="<<uiMaxSplineParameters<<", maxValue="<<maxValue<<", maxError="<<maxError<<", maxErrorPerValue="<<maxErrorPerValue<<" ) started "<<endl<<flush);
+	
+
+#else //FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
+
+
 /**
  * This function combines the given set of points to Fib objects,
  * with the help of splies (polynoms with fixed number of parametes
@@ -2488,6 +2585,8 @@ template <class tX>
 	
 	DEBUG_OUT_L2(<<"createSplineItrFastBorderAreasForPoints(setMinimumArea="<<setMinimumArea.size()<<", setMaximumArea="<<setMaximumArea.size()<<", pUnderobject="<<pUnderobject<<", varX="<<pVariableDimX<<", varY="<<pVariableDimY<<", uiMaxSplineParameters="<<uiMaxSplineParameters<<", uiMinBitsToStoreMantissa="<<uiMinBitsToStoreMantissa<<", maxValue="<<maxValue<<", maxError="<<maxError<<", ulMaxMemoryCost="<<ulMaxMemoryCost<<" ) started "<<endl<<flush);
 	
+#endif //FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
+
 	if ( setMinimumArea.empty() ){
 		//no data points, for which to create the areas
 		return NULL;
@@ -2751,9 +2850,15 @@ template <class tX>
 			DEBUG_OUT_L2(<<"The borders are "<<(bBordersEqual?"equal":"not equal")<<endl);
 			DEBUG_OUT_L2(<<"evaluing the spline for the lower border (evalueSplineIterativFast() ):"<<endl<<flush);
 			cPolynom< tX, double > polynomLower;
+#ifdef FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
+			const unsigned long uiPointsIncludedLower = polynomLower.evalueSplineIterativFast(
+				vecRangesLower, uiMaxSplineParameters,
+				maxValue, maxError, maxErrorPerValue );
+#else //FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
 			const unsigned long uiPointsIncludedLower = polynomLower.evalueSplineIterativFast(
 				vecRangesLower, uiMaxSplineParameters,
 				uiMinBitsToStoreMantissa, maxValue, maxError, ulMaxMemoryCost );
+#endif //FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
 			
 #ifdef DEBUG_N_D2
 			cout<<"vecRangesLower: ";
@@ -2777,9 +2882,16 @@ template <class tX>
 					vecRangesUpper.resize( uiPointsIncludedLower );
 				}
 				DEBUG_OUT_L2(<<"evaluing the spline for the upper border (evalueSplineIterativFast() ):"<<endl<<flush);
+
+#ifdef FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
+			const unsigned long uiPointsIncludedUpper = polynomUpper.evalueSplineIterativFast(
+				vecRangesLower, uiMaxSplineParameters,
+				maxValue, maxError, maxErrorPerValue );
+#else //FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
 				const unsigned long uiPointsIncludedUpper = polynomUpper.evalueSplineIterativFast(
 					vecRangesUpper, uiMaxSplineParameters,
 					uiMinBitsToStoreMantissa, maxValue, maxError, ulMaxMemoryCost );
+#endif //FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
 				if ( uiPointsIncludedUpper < 1 ){
 					//no points included -> no upper border
 					continue;//check next area
@@ -3026,7 +3138,11 @@ template <class tX>
 	pList->addUnderobjects( liUnderobjects );
 #endif //FEATURE_SIMPLE_CONSTRUCTOR
 
+#ifdef FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
+	DEBUG_OUT_L2(<<"createSplineItrFastBorderAreasForPoints( setMinimumArea="<<setMinimumArea.size()<<", setMaximumArea="<<setMaximumArea.size()<<", pUnderobject="<<pUnderobject<<", varX="<<pVariableDimX<<", varY="<<pVariableDimY<<", uiMaxSplineParameters="<<uiMaxSplineParameters<<", maxValue="<<maxValue<<", maxError="<<maxError<<", maxErrorPerValue="<<maxErrorPerValue<<" ) done "<<endl<<flush);
+#else //FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
 	DEBUG_OUT_L2(<<"createSplineItrFastBorderAreasForPoints(setMinimumArea="<<setMinimumArea.size()<<", setMaximumArea="<<setMaximumArea.size()<<", pUnderobject="<<pUnderobject<<", varX="<<pVariableDimX<<", varY="<<pVariableDimY<<", uiMaxSplineParameters="<<uiMaxSplineParameters<<", uiMinBitsToStoreMantissa="<<uiMinBitsToStoreMantissa<<", maxValue="<<maxValue<<", maxError="<<maxError<<", ulMaxMemoryCost="<<ulMaxMemoryCost<<" ) done "<<endl<<flush);
+#endif //FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
 	return pList;
 }
 
@@ -3660,9 +3776,6 @@ template <class tX>
 			DEBUG_OUT_L2(<<"evaluing the spline for the lower border (evalueSpline() ):"<<endl<<flush);
 			cSpline< tX, double > splineLower;
 #ifdef FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
-			const double maxErrorPerValue = ( maxError != 0.0 ) ?
-				( maxError * 2.0 ) / vecRangesLower.size() : 0.0;
-			
 			const unsigned long uiPointsIncludedLower = splineLower.evalueSpline(
 				vecRangesLower, uiMaxSplineParameters,
 				maxValue, maxError, maxErrorPerValue );

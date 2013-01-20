@@ -38,6 +38,9 @@ History:
 24.09.2012  Oesterholz  FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING:
 	evalueSpline(): the glp library (extern package) linear solver will be
 	used to find a spline for a vector of range data points
+06.01.2013  Oesterholz  FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING:
+	evalueSplineIterativFast(): the glp library (extern package) linear
+	solver will be used to find a spline for a vector of range data points
 */
 
 #ifndef ___N_D2_H__
@@ -172,67 +175,6 @@ namespace nD2{
 		cFibVariable * pVariableDimY );
 
 
-#ifdef FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
-
-	/**
-	 * This function combines the given set of points to Fib objects,
-	 * with the help of splies (polynoms with fixed number of parametes
-	 * uiMaxSplineParameters) .
-	 * Beware: You have to care that the created underobjects will be deleted
-	 *
-	 * uses @see nD1::cPolynom::evalueSpline()
-	 * @param setPoints the set with the datapoints to combine to
-	 * 	Fib objects with the help of area and function elements;
-	 * 	The given points should be positions in an matrix, positions in
-	 * 	the matrix but not given, will be considerd not to be in the area
-	 * 	to create.
-	 * @param pUnderobject a pointer to the underobject, which the created
-	 * 	Fib elements should contain and which should be evalued for the
-	 * 	point positions
-	 * @param pVariableX a pointer to the variable for the x position
-	 * @param pVariableY a pointer to the variable for the y position
-	 * @param uiMaxSplineParameters the number of parameters for the spline;
-	 * 	Don't choose this number to big, because the evaluation time will
-	 * 	grow exponentialy with this number. Even splines with 8
-	 * 	parameters will take some time.
-	 * @param maxValue the maximum possible value in all parameters
-	 * 	the evalued spline/function elements will allways have value
-	 * 	parameters vecFactors[i] with
-	 * 	-1 * maxValue <= vecFactors[i] <= maxValue for 0 <= i \< vecFactors.size();
-	 * 	if 0 (standard value) is given, the maximum possible value will
-	 * 	be evalued from the given data
-	 * @return a Fib object with the created Fib underobjects, wher the
-	 * 	given variables for the given pUnderobject will go over all
-	 * 	point positions in the given set setPoints or NULL if non
-	 * 	such could be created;
-	 * 	some positions can be evalued twice;
-	 * 	the Fib underobjects, wich evalue the most points, are on the
-	 * 	front of the listobject (have a lower underobject number);
-	 * 	if NULL is returnd, you have to care that pUnderobject will be
-	 * 	deleted, else pUnderobject will be included in one
-	 * 	underobject of the created listobject and the other underobject will
-	 * 	contain copies of pUnderobject
-	 * 	Structur of the created Fib object:
-	 * 		area( fun( fun( fun( area( pUnderobject )))))
-	 * 	or if this previos given structur is not possible
-	 * 		list(
-	 * 		area( fun( fun( fun( area( pUnderobject )))))
-	 * 			...
-	 * 		area( fun( fun( fun( area( pUnderobject )))))
-	 * 		)
-	 * 	(some fun or areas can be missing, if they are not needed, eg. for lines)
-	 */
-	template <class tX>
-	cFibElement * createSplineBorderAreasForPoints(
-		const set< nD1::cDataPoint<tX, tX> > & setPoints,
-		cFibElement * pUnderobject,
-		cFibVariable * pVariableDimX,
-		cFibVariable * pVariableDimY,
-		const unsigned int uiMaxSplineParameters = 4,
-		const double maxValue = 0.0 );
-
-#else //FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
-
 	/**
 	 * This function combines the given set of points to Fib objects,
 	 * with the help of splies (polynoms with fixed number of parametes
@@ -301,8 +243,9 @@ namespace nD2{
 		const double maxValue = 0.0,
 		const unsigned long ulMaxMemoryCost = 100000 );
 
-#endif //FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
 
+#ifdef FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
+	
 	/**
 	 * This function combines the given set of points to Fib objects,
 	 * with the help of splies (polynoms with fixed number of parametes
@@ -330,13 +273,6 @@ namespace nD2{
 	 * 	Don't choose this number to big, because the evaluation time will
 	 * 	grow exponentialy with this number. Even splines with 8
 	 * 	parameters will take some time.
-	 * @param uiMinBitsToStoreMantissa the minimal number of bits to store
-	 * 	the mantissa of the function value parameters, when the parameter
-	 * 	is in the form: mantissa * 2^exponent ;
-	 * 	the method will try to reduce the bits, to store a parameter of the
-	 * 	returned vector, to the uiMinBitsToStoreMantissa value;
-	 * 	if uiMinBitsToStoreMantissa is 0, no optimization for the mantissa
-	 * 	bits will be done
 	 * @param maxValue the maximum possible value in all parameters
 	 * 	the evalued spline/function elements will allways have value
 	 * 	parameters vecFactors[i] with
@@ -346,8 +282,10 @@ namespace nD2{
 	 * @param maxError the maximal error for the border polynoms to find;
 	 * 	the error on the interpolated polynoms for the borders will be
 	 * 	equal or less than maxError
-	 * @param ulMaxMemoryCost a number for the maximum memory cost this
-	 * 	method is allowed to use; if 0 the maximum memory cost is unbounded
+	 * @param maxErrorPerValue the maximal error for the border polynoms to
+	 * 	find on one border point; the error on the interpolated polynom
+	 * 	for every border point in vecData will be equal or less than
+	 * 	maxErrorPerValue
 	 * @return a Fib object with the created Fib underobjects, wher the
 	 * 	given variables for the given pUnderobject will go over all
 	 * 	point positions in the given set setPoints or NULL if non
@@ -376,11 +314,9 @@ namespace nD2{
 		cFibVariable * pVariableDimX,
 		cFibVariable * pVariableDimY,
 		const unsigned int uiMaxSplineParameters = 4,
-		const unsigned int uiMinBitsToStoreMantissa = 1,
 		double maxValue = 0.0,
 		const double maxError = 0,
-		const unsigned long ulMaxMemoryCost = 100000 );
-
+		const double maxErrorPerValue = 100000 );
 
 	/**
 	 * This function combines the given set of points to Fib objects,
@@ -420,13 +356,6 @@ namespace nD2{
 	 * @param pOutSetMissingPoints if not NULL, the points not in the
 	 * 	created area will be inserted/added into this set, when this
 	 * 	function returns
-	 * @param uiMinBitsToStoreMantissa the minimal number of bits to store
-	 * 	the mantissa of the function value parameters, when the parameter
-	 * 	is in the form: mantissa * 2^exponent ;
-	 * 	the method will try to reduce the bits, to store a parameter of the
-	 * 	returned vector, to the uiMinBitsToStoreMantissa value;
-	 * 	if uiMinBitsToStoreMantissa is 0, no optimization for the mantissa
-	 * 	bits will be done
 	 * @param maxValue the maximum possible value in all parameters
 	 * 	the evalued spline/function elements will allways have value
 	 * 	parameters vecFactors[i] with
@@ -436,8 +365,10 @@ namespace nD2{
 	 * @param maxError the maximal error for the border polynoms to find;
 	 * 	the error on the interpolated polynoms for the borders will be
 	 * 	equal or less than maxError
-	 * @param ulMaxMemoryCost a number for the maximum memory cost this
-	 * 	method is allowed to use; if 0 the maximum memory cost is unbounded
+	 * @param maxErrorPerValue the maximal error for the border polynoms to
+	 * 	find on one border point; the error on the interpolated polynom
+	 * 	for every border point in vecData will be equal or less than
+	 * 	maxErrorPerValue
 	 * @return a Fib object with the created Fib underobjects, wher the
 	 * 	given variables for the given pUnderobject will go over all
 	 * 	point positions in the given set setPoints or NULL if non
@@ -468,14 +399,11 @@ namespace nD2{
 		cFibVariable * pVariableDimY,
 		const unsigned int uiMaxSplineParameters = 4,
 		set< nD1::cDataPoint<tX, tX> > * pOutSetMissingPoints = NULL,
-		const unsigned int uiMinBitsToStoreMantissa = 1,
 		double maxValue = 0.0,
 		const double maxError = 0,
-		const unsigned long ulMaxMemoryCost = 100000 );
+		const double maxErrorPerValue = 100000 );
 	
 	
-#ifdef FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
-
 	/**
 	 * This function combines the given set of points to Fib objects,
 	 * with the help of splies (polynoms with fixed number of parametes
@@ -636,7 +564,179 @@ namespace nD2{
 		const double maxError = 0.0,
 		const double maxErrorPerValue = 0.0 );
 	
+	
 #else //FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
+	
+	
+	/**
+	 * This function combines the given set of points to Fib objects,
+	 * with the help of splies (polynoms with fixed number of parametes
+	 * uiMaxSplineParameters) .
+	 * Beware: You have to care that the created underobjects will be deleted
+	 *
+	 * uses @see nD1::cPolynom::evalueSplineIterativFast()
+	 * The method should give the same result as
+	 * createSplineBorderAreasForPoints() but faster.
+	 * It will iterativ increase the number of parameters for the splines
+	 * (from 1 to uiMaxNumberOfParameters) and will try to not use all of
+	 * the given range points to find the polynom.
+	 *
+	 * @param setPoints the set with the datapoints to combine to
+	 * 	Fib objects with the help of area and function elements;
+	 * 	The given points should be positions in an matrix, positions in
+	 * 	the matrix but not given, will be considerd not to be in the area
+	 * 	to create.
+	 * @param pUnderobject a pointer to the underobject, which the created
+	 * 	Fib elements should contain and which should be evalued for the
+	 * 	point positions
+	 * @param pVariableX a pointer to the variable for the x position
+	 * @param pVariableY a pointer to the variable for the y position
+	 * @param uiMaxSplineParameters the number of parameters for the spline;
+	 * 	Don't choose this number to big, because the evaluation time will
+	 * 	grow exponentialy with this number. Even splines with 8
+	 * 	parameters will take some time.
+	 * @param uiMinBitsToStoreMantissa the minimal number of bits to store
+	 * 	the mantissa of the function value parameters, when the parameter
+	 * 	is in the form: mantissa * 2^exponent ;
+	 * 	the method will try to reduce the bits, to store a parameter of the
+	 * 	returned vector, to the uiMinBitsToStoreMantissa value;
+	 * 	if uiMinBitsToStoreMantissa is 0, no optimization for the mantissa
+	 * 	bits will be done
+	 * @param maxValue the maximum possible value in all parameters
+	 * 	the evalued spline/function elements will allways have value
+	 * 	parameters vecFactors[i] with
+	 * 	-1 * maxValue <= vecFactors[i] <= maxValue for 0 <= i \< vecFactors.size();
+	 * 	if 0 (standard value) is given, the maximum possible value will
+	 * 	be evalued from the given data
+	 * @param maxError the maximal error for the border polynoms to find;
+	 * 	the error on the interpolated polynoms for the borders will be
+	 * 	equal or less than maxError
+	 * @param ulMaxMemoryCost a number for the maximum memory cost this
+	 * 	method is allowed to use; if 0 the maximum memory cost is unbounded
+	 * @return a Fib object with the created Fib underobjects, wher the
+	 * 	given variables for the given pUnderobject will go over all
+	 * 	point positions in the given set setPoints or NULL if non
+	 * 	such could be created;
+	 * 	some positions can be evalued twice;
+	 * 	the Fib underobjects, wich evalue the most points, are on the
+	 * 	front of the listobject (have a lower underobject number);
+	 * 	if NULL is returnd, you have to care that pUnderobject will be
+	 * 	deleted, else pUnderobject will be included in one
+	 * 	underobject of the created listobject and the other underobject will
+	 * 	contain copies of pUnderobject
+	 * 	Structur of the created Fib object:
+	 * 		area( fun( fun( fun( area( pUnderobject )))))
+	 * 	or if this previos given structur is not possible
+	 * 		list(
+	 * 		area( fun( fun( fun( area( pUnderobject )))))
+	 * 			...
+	 * 		area( fun( fun( fun( area( pUnderobject )))))
+	 * 		)
+	 * 	(some fun or areas can be missing, if they are not needed, eg. for lines)
+	 */
+	template <class tX>
+	cFibElement * createSplineItrFastBorderAreasForPoints(
+		const set< nD1::cDataPoint<tX, tX> > & setPoints,
+		cFibElement * pUnderobject,
+		cFibVariable * pVariableDimX,
+		cFibVariable * pVariableDimY,
+		const unsigned int uiMaxSplineParameters = 4,
+		const unsigned int uiMinBitsToStoreMantissa = 1,
+		double maxValue = 0.0,
+		const double maxError = 0,
+		const unsigned long ulMaxMemoryCost = 100000 );
+
+	/**
+	 * This function combines the given set of points to Fib objects,
+	 * with the help of splies (polynoms with fixed number of parametes
+	 * uiMaxSplineParameters) .
+	 * Beware: You have to care that the created underobjects will be deleted
+	 *
+	 * uses @see nD1::cPolynom::evalueSplineIterativFast()
+	 * The method should give the same result as
+	 * createSplineBorderAreasForPoints() but faster.
+	 * It will iterativ increase the number of parameters for the splines
+	 * (from 1 to uiMaxNumberOfParameters) and will try to not use all of
+	 * the given range points to find the polynom.
+	 *
+	 * @param setMinimumArea the set with the datapoints to combine to
+	 * 	Fib objects with the help of area and function elements;
+	 * 	the created area should contain all of these points;
+	 * 	The given points should be positions in an matrix, positions in
+	 * 	the matrix but not given, will be considerd not to be in the area
+	 * 	to create.
+	 * @param setMaximumArea the set with the datapoints to combine to
+	 * 	Fib objects with the help of area and function elements;
+	 * 	the created area can contain these points;
+	 * 	this set should contain all points from setMinimumArea;
+	 * 	The given points should be positions in an matrix, positions in
+	 * 	the matrix but not given, will be considerd not to be in the area
+	 * 	to create.
+	 * @param pUnderobject a pointer to the underobject, which the created
+	 * 	Fib elements should contain and which should be evalued for the
+	 * 	point positions
+	 * @param pVariableX a pointer to the variable for the x position
+	 * @param pVariableY a pointer to the variable for the y position
+	 * @param uiMaxSplineParameters the number of parameters for the spline;
+	 * 	Don't choose this number to big, because the evaluation time will
+	 * 	grow exponentialy with this number. Even splines with 8
+	 * 	parameters will take some time.
+	 * @param pOutSetMissingPoints if not NULL, the points not in the
+	 * 	created area will be inserted/added into this set, when this
+	 * 	function returns
+	 * @param uiMinBitsToStoreMantissa the minimal number of bits to store
+	 * 	the mantissa of the function value parameters, when the parameter
+	 * 	is in the form: mantissa * 2^exponent ;
+	 * 	the method will try to reduce the bits, to store a parameter of the
+	 * 	returned vector, to the uiMinBitsToStoreMantissa value;
+	 * 	if uiMinBitsToStoreMantissa is 0, no optimization for the mantissa
+	 * 	bits will be done
+	 * @param maxValue the maximum possible value in all parameters
+	 * 	the evalued spline/function elements will allways have value
+	 * 	parameters vecFactors[i] with
+	 * 	-1 * maxValue <= vecFactors[i] <= maxValue for 0 <= i \< vecFactors.size();
+	 * 	if 0 (standard value) is given, the maximum possible value will
+	 * 	be evalued from the given data
+	 * @param maxError the maximal error for the border polynoms to find;
+	 * 	the error on the interpolated polynoms for the borders will be
+	 * 	equal or less than maxError
+	 * @param ulMaxMemoryCost a number for the maximum memory cost this
+	 * 	method is allowed to use; if 0 the maximum memory cost is unbounded
+	 * @return a Fib object with the created Fib underobjects, wher the
+	 * 	given variables for the given pUnderobject will go over all
+	 * 	point positions in the given set setPoints or NULL if non
+	 * 	such could be created;
+	 * 	some positions can be evalued twice;
+	 * 	the Fib underobjects, wich evalue the most points, are on the
+	 * 	front of the listobject (have a lower underobject number);
+	 * 	if NULL is returnd, you have to care that pUnderobject will be
+	 * 	deleted, else pUnderobject will be included in one
+	 * 	underobject of the created listobject and the other underobject will
+	 * 	contain copies of pUnderobject
+	 * 	Structur of the created Fib object:
+	 * 		area( fun( fun( fun( area( pUnderobject )))))
+	 * 	or if this previos given structur is not possible
+	 * 		list(
+	 * 		area( fun( fun( fun( area( pUnderobject )))))
+	 * 			...
+	 * 		area( fun( fun( fun( area( pUnderobject )))))
+	 * 		)
+	 * 	(some fun or areas can be missing, if they are not needed, eg. for lines)
+	 */
+	template <class tX>
+	cFibElement * createSplineItrFastBorderAreasForPoints(
+		const set< nD1::cDataPoint<tX, tX> > & setMinimumArea,
+		const set< nD1::cDataPoint<tX, tX> > & setMaximumArea,
+		cFibElement * pUnderobject,
+		cFibVariable * pVariableDimX,
+		cFibVariable * pVariableDimY,
+		const unsigned int uiMaxSplineParameters = 4,
+		set< nD1::cDataPoint<tX, tX> > * pOutSetMissingPoints = NULL,
+		const unsigned int uiMinBitsToStoreMantissa = 1,
+		double maxValue = 0.0,
+		const double maxError = 0,
+		const unsigned long ulMaxMemoryCost = 100000 );
+	
 	
 	/**
 	 * This function combines the given set of points to Fib objects,

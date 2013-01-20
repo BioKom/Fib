@@ -36,8 +36,8 @@ History:
 12.02.2011  Oesterholz  method evalueSpline() added
 27.03.2011  Oesterholz  method getLastFactorIndexNotNull() added
 29.12.2012  Oesterholz  FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING:
-	evalueSpline(): the glp library (extern package) linear solver will be
-	used to find a spline for a vector of range data points
+	evalueSplineIterativFast(): the glp library (extern package) linear
+	solver will be used to find a spline for a vector of range data points
 */
 
 #ifndef ___N_D_1_C_POLYNOM_H__
@@ -368,7 +368,7 @@ public:
 	 * 	one data point; the error on the interpolated spline for every data
 	 * 	point in vecData will be equal or less than maxErrorPerValue;
 	 * 	if maxErrorPerValue is 0 and maxError is not 0, maxErrorPerValue will
-	 * 	be set to maxError / vecInputData.size()
+	 * 	be set to maxError * 2 / vecInputData.size()
 	 * @param dWeightParameter a value for the weight of the parameters;
 	 * 	with this value greater 0 it will be searched for smaal parameter;
 	 * 	when searching for a solution the error is minimized and the

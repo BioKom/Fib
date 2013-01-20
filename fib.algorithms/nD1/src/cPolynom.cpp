@@ -38,8 +38,8 @@ History:
 09.04.2011  Oesterholz  method cHyperplaneBody replaced by cHyperplaneBodyFull
 	and cHyperplaneBodySimple
 29.12.2012  Oesterholz  FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING:
-	evalueSpline(): the glp library (extern package) linear solver will be
-	used to find a spline for a vector of range data points
+	evalueSplineIterativFast(): the glp library (extern package) linear
+	solver will be used to find a spline for a vector of range data points
 */
 
 
@@ -72,7 +72,7 @@ History:
 
 
 //for debugging
-//#define DEBUG_C_POLYNOM
+#define DEBUG_C_POLYNOM
 //#define DEBUG_C_POLYNOM_EVALUE
 
 //#define PRINT_INFOS
@@ -830,9 +830,6 @@ template<class tX, class tY> unsigned long
 		unsigned int uiNumberOfParameters,
 		const unsigned int uiMinBitsToStoreMantissa,
 		const tY maxValue, const unsigned long ulMaxMemoryCost ){
-//TODO weg
-//#define DEBUG_C_POLYNOM
-//#define DEBUG_PRINT_HYPERBODY
 
 #ifdef DEBUG_C_POLYNOM
 	cout<<"cPolynom<tX, tY>::evalueSpline( vecData, uiNumberOfParameters="<<
@@ -1002,7 +999,7 @@ template<class tX, class tY> unsigned long
  * all of the given range points to find the polynoms.
  *
  * @see evalue()
- * @see cPolynom::evalueSplineIterativFast()
+ * @see sSpline::evalueSplineIterativFast()
  * @param vecInputData the data which the returend spline should match
  * @param uiMaxNumberOfParameters the number of parameters for the spline;
  * 	Don't choose this number to big, because the evaluation time will
@@ -1018,7 +1015,7 @@ template<class tX, class tY> unsigned long
  * 	one data point; the error on the interpolated spline for every data
  * 	point in vecData will be equal or less than maxErrorPerValue;
  * 	if maxErrorPerValue is 0 and maxError is not 0, maxErrorPerValue will
- * 	be set to maxError / vecInputData.size()
+ * 	be set to maxError * 2 / vecInputData.size()
  * @param dWeightParameter a value for the weight of the parameters;
  * 	with this value greater 0 it will be searched for smaal parameter;
  * 	when searching for a solution the error is minimized and the

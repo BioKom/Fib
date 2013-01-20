@@ -328,7 +328,7 @@ cFibObjectFitnessBasic * cFibObjectFitnessBasicAlgorithm::evalueFitness(
 double cFibObjectFitnessBasicAlgorithm::evalueDistance(
 		const cFibElement * fibObject, const cFibElement * fibObjectArea ) const{
 	
-	DEBUG_OUT_L2(<<"cFibObjectFitnessBasicAlgorithm::evalueDistance( "<<fibObject<<", "<<fibObjectArea<<") started"<<endl);
+	DEBUG_OUT_L2(<<"cFibObjectFitnessBasicAlgorithm::evalueDistance( "<<fibObject<<", "<<fibObjectArea<<") started"<<endl<<flush);
 	
 	pthread_mutex_lock( &mutexOriginalIndividual );
 	
@@ -342,7 +342,7 @@ double cFibObjectFitnessBasicAlgorithm::evalueDistance(
 	if ( ! bOriginalEvalued ){
 		//evalue the dimensions of the original Fib object
 		if ( ! ( evalueOriginalDimensions() ) ){
-			DEBUG_OUT_EL1( <<"Error: The original Fib object dimensions couldn't be evalued."<<endl );
+			DEBUG_OUT_EL1( <<"Error: The original Fib object dimensions couldn't be evalued."<<endl<<flush );
 			pthread_mutex_unlock( &mutexOriginalIndividual );
 			return -1.0;
 		}
@@ -356,7 +356,7 @@ double cFibObjectFitnessBasicAlgorithm::evalueDistance(
 		const bool bObjectEvalued = ((cFibIndividual*)pOriginalIndividual)->
 			getFibObject()->evalueObjectSimple( *pEvaluedPositionsDataOriginal );
 		if ( ! bObjectEvalued ){
-			DEBUG_OUT_EL1( <<"Error: The original Fib object couldn't be evalued."<<endl );
+			DEBUG_OUT_EL1( <<"Error: The original Fib object couldn't be evalued."<<endl<<flush );
 			pthread_mutex_unlock( &mutexOriginalIndividual );
 			return -1.0;
 		}
@@ -368,7 +368,7 @@ double cFibObjectFitnessBasicAlgorithm::evalueDistance(
 	if ( (pdDirectionMinimum == NULL) || (pdDirectionMaximum == NULL) ||
 			(pdDirectionScaling == NULL) || (pdDirectionSize == NULL) || 
 			(pVecDomainDimension == NULL) ){
-		DEBUG_OUT_EL1( <<"Error: Dimension values missing."<<endl );
+		DEBUG_OUT_EL1( <<"Error: Dimension values missing."<<endl<<flush );
 		return -1.0;
 	}
 	
@@ -378,7 +378,7 @@ double cFibObjectFitnessBasicAlgorithm::evalueDistance(
 
 	const bool bObjectEvalued = fibObject->evalueObjectSimple( evaluedPositionData );
 	if ( ! bObjectEvalued ){
-		DEBUG_OUT_EL1( <<"Error: The given Fib object couldn't be evalued."<<endl );
+		DEBUG_OUT_EL1( <<"Error: The given Fib object couldn't be evalued."<<endl<<flush );
 		return -1.0;
 	}
 	
@@ -395,7 +395,7 @@ double cFibObjectFitnessBasicAlgorithm::evalueDistance(
 	//evalue the fibObject fibObjectArea
 	const bool bAreaObjectEvalued = fibObjectArea->evalueObjectSimple( evaluedPositionDataArea );
 	if ( ! bAreaObjectEvalued ){
-		DEBUG_OUT_EL1( <<"Error: The given Fib object for the area couldn't be evalued."<<endl );
+		DEBUG_OUT_EL1( <<"Error: The given Fib object for the area couldn't be evalued."<<endl<<flush );
 		return -1.0;
 	}
 	
@@ -421,7 +421,7 @@ double cFibObjectFitnessBasicAlgorithm::evalueDistance(
 	list< pair< cVectorPosition, list< cVectorProperty > > > &
 		liPointWithProperties ) const{
 	
-	DEBUG_OUT_L2(<<"cFibObjectFitnessBasicAlgorithm::evalueDistance( "<< &liPointWithProperties<<" ) started"<<endl);
+	DEBUG_OUT_L2(<<"cFibObjectFitnessBasicAlgorithm::evalueDistance( "<< &liPointWithProperties<<" ) started"<<endl<<flush);
 	
 	pthread_mutex_lock( &mutexOriginalIndividual );
 
@@ -434,7 +434,7 @@ double cFibObjectFitnessBasicAlgorithm::evalueDistance(
 	if ( ! bOriginalEvalued ){
 		//evalue the dimensions of the original Fib object
 		if ( ! ( evalueOriginalDimensions() ) ){
-			DEBUG_OUT_EL1( <<"Error: The original Fib object dimensions couldn't be evalued."<<endl );
+			DEBUG_OUT_EL1( <<"Error: The original Fib object dimensions couldn't be evalued."<<endl<<flush );
 			pthread_mutex_unlock( &mutexOriginalIndividual );
 			return -1.0;
 		}
@@ -448,7 +448,7 @@ double cFibObjectFitnessBasicAlgorithm::evalueDistance(
 		const bool bObjectEvalued = ((cFibIndividual*)pOriginalIndividual)->
 			getFibObject()->evalueObjectSimple( *pEvaluedPositionsDataOriginal );
 		if ( ! bObjectEvalued ){
-			DEBUG_OUT_EL1( <<"Error: The original Fib object couldn't be evalued."<<endl );
+			DEBUG_OUT_EL1( <<"Error: The original Fib object couldn't be evalued."<<endl<<flush );
 			pthread_mutex_unlock( &mutexOriginalIndividual );
 			return -1.0;
 		}
@@ -630,7 +630,7 @@ double cFibObjectFitnessBasicAlgorithm::evalueDistance(
 			ulPositionBetwean *= pdDirectionSize[ uiActualDimension ];
 		}
 		ulJustBackground += ulPositionBetwean;
-		DEBUG_OUT_EL4( <<"Background all is "<< ulPositionBetwean <<" ins="<< ulJustBackground <<" ."<<endl );
+		DEBUG_OUT_EL4( <<"Background all is "<< ulPositionBetwean <<" ins="<< ulJustBackground <<" ."<<endl<<flush );
 	}
 
 	/*for every point inside the dimension bounderies but not compared befor
@@ -667,7 +667,7 @@ double cFibObjectFitnessBasicAlgorithm::evalueDistanceInArea(
 	list< pair< cVectorPosition, list< cVectorProperty > > > &
 		liPointWithPropertiesOfArea ) const{
 	
-	DEBUG_OUT_L2(<<"cFibObjectFitnessBasicAlgorithm::evalueDistanceInArea( "<<&liPointWithProperties<<", "<<&liPointWithPropertiesOfArea<<") started"<<endl);
+	DEBUG_OUT_L2(<<"cFibObjectFitnessBasicAlgorithm::evalueDistanceInArea( "<<&liPointWithProperties<<", "<<&liPointWithPropertiesOfArea<<") started"<<endl<<flush);
 	
 	pthread_mutex_lock( &mutexOriginalIndividual );
 	
@@ -680,7 +680,7 @@ double cFibObjectFitnessBasicAlgorithm::evalueDistanceInArea(
 	if ( ! bOriginalEvalued ){
 		//evalue the dimensions of the original Fib object
 		if ( ! ( evalueOriginalDimensions() ) ){
-			DEBUG_OUT_EL1( <<"Error: The original Fib object dimensions couldn't be evalued."<<endl );
+			DEBUG_OUT_EL1( <<"Error: The original Fib object dimensions couldn't be evalued."<<endl<<flush );
 			pthread_mutex_unlock( &mutexOriginalIndividual );
 			return -1.0;
 		}
@@ -694,7 +694,7 @@ double cFibObjectFitnessBasicAlgorithm::evalueDistanceInArea(
 		const bool bObjectEvalued = ((cFibIndividual*)pOriginalIndividual)->
 			getFibObject()->evalueObjectSimple( *pEvaluedPositionsDataOriginal );
 		if ( ! bObjectEvalued ){
-			DEBUG_OUT_EL1( <<"Error: The original Fib object couldn't be evalued."<<endl );
+			DEBUG_OUT_EL1( <<"Error: The original Fib object couldn't be evalued."<<endl<<flush );
 			pthread_mutex_unlock( &mutexOriginalIndividual );
 			return -1.0;
 		}
@@ -704,7 +704,7 @@ double cFibObjectFitnessBasicAlgorithm::evalueDistanceInArea(
 	if ( (pdDirectionMinimum == NULL) || (pdDirectionMaximum == NULL) ||
 			(pdDirectionScaling == NULL) || (pdDirectionSize == NULL) || 
 			(pVecDomainDimension == NULL) ){
-		DEBUG_OUT_EL1( <<"Error: Dimension values missing."<<endl );
+		DEBUG_OUT_EL1( <<"Error: Dimension values missing."<<endl<<flush );
 		pthread_mutex_unlock( &mutexOriginalIndividual );
 		return -1.0;
 	}
