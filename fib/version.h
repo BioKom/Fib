@@ -42,6 +42,7 @@ History:
 29.01.2012  Oesterholz  FEATURE_EXT_SUBOBJECT_INPUT_VECTOR added
 09.03.2012  Oesterholz  new version numbers for Fib and Fib database
 22.10.2012  Oesterholz  DEBUG_EVALUE added
+16.01.2013  Oesterholz  FEATURE_FIB_ELEMENT_CHECKS_DATABASE_FOR_EXTERNAL_OBJECTS added
 */
 
 
@@ -54,9 +55,9 @@ History:
 * Version Information
 **************************************/
 
-//versions information for the Fib Multimedialanguage
-#define FIB_VERSION          5
-#define FIB_VERSION_NAME     V1.2.2
+//versions information for the Fib multimedia language
+#define FIB_VERSION          6
+#define FIB_VERSION_NAME     V1.2.3
 
 //versions information for the Fib database
 #define FIB_DB_VERSION      4
@@ -336,8 +337,19 @@ History:
 */
 //#define FEATURE_FIB_DB_USE_TREADS
 
-
-
+/**
+ * With this feature the Fib element class @see cFibElement
+ * will check the Fib database for external objects if no root element
+ * is aviable.
+ *
+ * @see cFibElement::getAccessibleRootObject
+ * created: 16.01.2013 Betti Oesterholz
+ * status:  running and tested(16.01.2013)
+ * (deprecated: not FEATURE_FIB_ELEMENT_CHECKS_DATABASE_FOR_EXTERNAL_OBJECTS)
+ *//*
+History:
+*/
+#define FEATURE_FIB_ELEMENT_CHECKS_DATABASE_FOR_EXTERNAL_OBJECTS
 
 
 

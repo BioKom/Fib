@@ -54,6 +54,9 @@ History:
 	now a domain for the number of subareas
 11.12.2011  Oesterholz  restoreXmlInternal(): restore next XML element till
 	Fib element was read or error occured
+16.01.2013  Oesterholz  FEATURE_FIB_ELEMENT_CHECKS_DATABASE_FOR_EXTERNAL_OBJECTS
+	implemented: if no root object exists to retrieve external objects
+	-> search the Fib database
 */
 
 
@@ -161,7 +164,7 @@ cFibElement::cFibElement( cFibElement * pInSuperiorElement, cFibElement * pInPre
 		the number this Fib element has in the order of all Fib elements*/
 		uINumberOfFibElement++;
 		
-		/*set the next root -element to the first found Fib element in the
+		/*set the next root element to the first found Fib element in the
 		previous Fib elements*/
 		if ( (pNextRootElement == NULL) && (actualFibElement->getType() == 'r') ){
 			pNextRootElement = (cRoot*)actualFibElement;
@@ -227,7 +230,7 @@ string cFibElement::getTypeName( char cType ){
 	switch ( cType ){
 		case 'u': return "unknown";
 		case 'p': return "point";
-		case 'l': return "list-element";
+		case 'l': return "listelement";
 		case 'y': return "property";
 		case 'c': return "comment";
 		case 'a': return "area";
@@ -235,7 +238,7 @@ string cFibElement::getTypeName( char cType ){
 		case 'i': return "if";
 		case 'o': return "extern object";
 		case 's': return "extern subobject";
-		case 'v': return "set-element";
+		case 'v': return "setelement";
 		case 'm': return "matrix element";
 		case 'r': return "root";
 	}
@@ -781,11 +784,11 @@ bool cFibElement::variablesAreDefined( const set<cFibVariable*> & setVariable ,
 /**
  * This method returns the number of the next connected object point
  * in the order of connected object points that conntains this Fib
- * -element.
+ * element.
  *
  * @see getNumberOfObjectPoints()
  * @return the number of the next connected object point for this Fib 
- * 	-element
+ * 	element
  */
 unsignedIntFib cFibElement::getNumberOfObjectPoint() const{
 	if ( pSuperiorElement != NULL ){
@@ -922,7 +925,7 @@ list<unsignedIntFib> cFibElement::getObjectPointsForElement(
 /**
  * This method deletes the whool given Fib object with all the Fib
  * elements it contains and is contained in. The memory for the Fib
- * -object is freed.
+ * object is freed.
  *
  * @param fibObject the Fib object to delete
  */
@@ -1004,11 +1007,11 @@ unsignedIntFib cFibElement::getNumberOfMovePoint() const{
 /**
  * This method returns the number of the next connected object point
  * in the order of connected object points that conntains this Fib
- * -element.
+ * element.
  *
  * @see getNumberOfObjectPoints()
  * @return the number of the next connected object point for this Fib 
- * 	-element
+ * 	element
  */
 unsignedIntFib cFibElement::getNumberOfObjectPoint() const{
 	if ( pSuperiorElement != NULL ){
@@ -1165,7 +1168,7 @@ list<unsignedIntFib> cFibElement::getObjectPointsForElement(
 /**
  * This method deletes the whool given Fib object with all the Fib
  * elements it contains and is contained in. The memory for the Fib
- * -object is freed.
+ * object is freed.
  *
  * @param fibObject the Fib object to delete
  */
@@ -1758,9 +1761,9 @@ cFibElement *cFibElement::restore( istream &stream, intFib *outStatus ){
  * 		- 1 loading warning, invalid data in stream, error could be corrected
  * 		- 2 loading warning, invalid data in stream, maybe the loaded
  * 			object is wrong
- * @param pNextRoot the next higher root -element for the to restore
- * 	Fib elements, or the last restored root -element;
- * 	if NULL the next Fib element restored will be an root -element
+ * @param pNextRoot the next higher root element for the to restore
+ * 	Fib elements, or the last restored root element;
+ * 	if NULL the next Fib element restored will be an root element
  * 	be restore)
  * @return the readed rootobject or the Nullpointer NULL, if reading
  * 	was not possible
@@ -1774,7 +1777,7 @@ cRoot * cFibElement::restoreRootInternal( cReadBits & iBitStream, intFib & outSt
 	}
 	cRoot * pRestoredRoot = NULL;
 	
-	//restore an root -element
+	//restore an root element
 	pRestoredRoot = new cRoot( iBitStream, outStatus, pNextRoot );
 	return pRestoredRoot;
 }
@@ -1803,8 +1806,8 @@ cRoot * cFibElement::restoreRootInternal( cReadBits & iBitStream, intFib & outSt
  * 	to restore Fib element, every variable should have it's number
  * 	(the number under which it is stored) as it's value
  * @param validDomains the domains valid for restoring the Fib elements
- * @param pNextRoot the next higher root -element for the to restore
- * 	Fib elements, or the last restored root -element
+ * @param pNextRoot the next higher root element for the to restore
+ * 	Fib elements, or the last restored root element
  * @return the readed Fib object or the Nullpointer NULL, if reading
  * 	was not possible
  */
@@ -1895,8 +1898,8 @@ cFibElement * cFibElement::restoreInternal( cReadBits & iBitStream, intFib & out
 			pRestoredFibObject = new cFunction( iBitStream, outStatus,
 				liDefinedVariables, validDomains, pNextRoot );
 		}break;
-		case 0x0C:{//read a if-element
-			DEBUG_OUT_L4(<<"reading if-element"<<endl);
+		case 0x0C:{//read a ifelement
+			DEBUG_OUT_L4(<<"reading ifelement"<<endl);
 			pRestoredFibObject = new cIf( iBitStream, outStatus,
 				liDefinedVariables, validDomains, pNextRoot );
 		}break;
@@ -1925,8 +1928,8 @@ cFibElement * cFibElement::restoreInternal( cReadBits & iBitStream, intFib & out
 			
 			if ( cTypeNextFibElement12Bit[ 1 ] == 0x00 ){
 				if ( cTypeNextFibElement12Bit[ 0 ] == 0x01 ){
-					//0x1F, 0x00: read an set-element
-					DEBUG_OUT_L4(<<"reading set-element"<<endl);
+					//0x1F, 0x00: read an setelement
+					DEBUG_OUT_L4(<<"reading setelement"<<endl);
 					
 					pRestoredFibObject = new cFibSet( iBitStream, outStatus,
 						liDefinedVariables, validDomains, pNextRoot );
@@ -2013,27 +2016,27 @@ const cRoot * cFibElement::getSuperiorRootElement() const{
 
 
 /**
- * This method returns the identifiers of all root -objects of this
+ * This method returns the identifiers of all root objects of this
  * object.
  *
- * @return the identifiers of all root -objects of this object
+ * @return the identifiers of all root objects of this object
  */
 list<longFib> cFibElement::getAllRootObjectIdentifiers() const{
-	//the root -element will implement the functionality for this method
+	//the root element will implement the functionality for this method
 	const cFibElement * pNextRootElement = getSuperiorRootElement();
 	if ( pNextRootElement != NULL ){
 		return pNextRootElement->getAllRootObjectIdentifiers();
-	}else{//no next root -element -> no root -object identifiers
+	}else{//no next root element -> no root object identifiers
 		return list<longFib>();
 	}
 }
 
 
 /**
- * This method returns the identifiers of all database -objects, in the
+ * This method returns the identifiers of all database objects, in the
  * actual database.
  *
- * @return the identifiers of all database -objects
+ * @return the identifiers of all database objects
  */
 list<longFib> cFibElement::getAllDatabaseObjectIdentifiers() const{
 
@@ -2043,55 +2046,76 @@ list<longFib> cFibElement::getAllDatabaseObjectIdentifiers() const{
 
 
 /**
- * This method returns the root -object for the given identifier.
- * If non such exists the Nullpoint NULL is returned.
+ * This method returns the root object for the given identifier.
+ * If non such exists the null pointer NULL is returned.
  *
- * @param lIdentifier the identifier of the root -object to return
- * @return the root -object for the given identifier or NULL if non
+ * @param lIdentifier the identifier of the root object to return
+ * @return the root object for the given identifier or NULL if non
  * 	such exists
  */
-cRoot *cFibElement::getRootObject( longFib lIdentifier ){
-	//the root -element will implement the functionality for this method
+cRoot * cFibElement::getRootObject( longFib lIdentifier ){
+	//the root element will implement the functionality for this method
 	cRoot * pNextRootElement = getSuperiorRootElement();
 	if ( pNextRootElement != NULL ){
 		return pNextRootElement->getRootObject( lIdentifier );
-	}else{//no next root -element -> no root -object for the identifiers
+	}else{
+#ifdef FEATURE_FIB_ELEMENT_CHECKS_DATABASE_FOR_EXTERNAL_OBJECTS
+		//no next root element -> just check Fib database
+		//search database root objects
+		return cFibDatabase::getInstance()->getFibObject( lIdentifier );
+#else //FEATURE_FIB_ELEMENT_CHECKS_DATABASE_FOR_EXTERNAL_OBJECTS
+		//no next root element -> no root object for the identifiers
 		return NULL;
+#endif //FEATURE_FIB_ELEMENT_CHECKS_DATABASE_FOR_EXTERNAL_OBJECTS
 	}
 }
 
 /**
  * This method returns the identifiers of all from this Fib element
- * accessible root -objects of this object.
+ * accessible root objects of this object.
  *
- * @return the identifiers of all accessible root -objects
+ * @return the identifiers of all accessible root objects
  */
 list<longFib> cFibElement::getAllAccessibleRootObjectIdentifiers() const{
-	//the root -element will implement the functionality for this method
+	//the root element will implement the functionality for this method
 	const cRoot * pNextRootElement = getSuperiorRootElement();
 	if ( pNextRootElement != NULL ){
 		return pNextRootElement->getAllAccessibleRootObjectIdentifiers();
-	}else{//no next root -element -> no accessible root -object identifiers
+	}else{
+#ifdef FEATURE_FIB_ELEMENT_CHECKS_DATABASE_FOR_EXTERNAL_OBJECTS
+		//no next root element -> just return iderntifiers from Fib database
+		//search database root objects
+		return cFibDatabase::getInstance()->getAllDatabaseObjectIdentifiers();
+#else //FEATURE_FIB_ELEMENT_CHECKS_DATABASE_FOR_EXTERNAL_OBJECTS
+		//no next root element -> no accessible root object identifiers
 		return list<longFib>();
+#endif //FEATURE_FIB_ELEMENT_CHECKS_DATABASE_FOR_EXTERNAL_OBJECTS
 	}
 }
 
 /**
  * This method returns the from this Fib element accessible root
- * -object for the given identifier. If non such exists the Nullpoint 
+ * object for the given identifier. If non such exists the Nullpoint 
  * NULL is returned.
  *
- * @param lIdentifier the identifier of the root -object to return
- * @return the accessible root -object for the given identifier or NULL
+ * @param lIdentifier the identifier of the root object to return
+ * @return the accessible root object for the given identifier or NULL
  * 	if non such exists
  */
 cRoot * cFibElement::getAccessibleRootObject( longFib lIdentifier ){
-	//the root -element will implement the functionality for this method
+	//the root element will implement the functionality for this method
 	cRoot * pNextRootElement = getSuperiorRootElement();
 	if ( pNextRootElement != NULL ){
 		return pNextRootElement->getAccessibleRootObject( lIdentifier );
-	}else{//no next root -element -> no accessible root -objects
+	}else{
+#ifdef FEATURE_FIB_ELEMENT_CHECKS_DATABASE_FOR_EXTERNAL_OBJECTS
+		//no next root element -> just check Fib database
+		//search database root objects
+		return cFibDatabase::getInstance()->getFibObject( lIdentifier );
+#else //FEATURE_FIB_ELEMENT_CHECKS_DATABASE_FOR_EXTERNAL_OBJECTS
+		//no next root element -> no accessible root objects
 		return NULL;
+#endif //FEATURE_FIB_ELEMENT_CHECKS_DATABASE_FOR_EXTERNAL_OBJECTS
 	}
 }
 
@@ -2101,11 +2125,11 @@ cRoot * cFibElement::getAccessibleRootObject( longFib lIdentifier ){
  * @return the domains that are valid for this Fib element
  */
 cDomains cFibElement::getValidDomains() const{
-	//the root -element will implement the functionality for this method
+	//the root element will implement the functionality for this method
 	const cRoot * pNextRootElement = getSuperiorRootElement();
 	if ( pNextRootElement != NULL ){
 		return pNextRootElement->getValidDomains();
-	}else{//no next root -element -> no domains
+	}else{//no next root element -> no domains
 		return cDomains();
 	}
 }
@@ -2117,11 +2141,11 @@ cDomains cFibElement::getValidDomains() const{
  * @return the value domains that are valid for this Fib element
  */
 cDomains cFibElement::getValidValueDomains() const{
-	//the root -element will implement the functionality for this method
+	//the root element will implement the functionality for this method
 	const cRoot * pNextRootElement = getSuperiorRootElement();
 	if ( pNextRootElement != NULL ){
 		return pNextRootElement->getValidValueDomains();
-	}else{//no next root -element -> no domains
+	}else{//no next root element -> no domains
 		return cDomains();
 	}
 }
@@ -2134,11 +2158,11 @@ cDomains cFibElement::getValidValueDomains() const{
  * @return the number of dimensions in
  */
 unsignedIntFib cFibElement::getNumberOfDimensions() const{
-	//the root -element will implement the functionality for this method
+	//the root element will implement the functionality for this method
 	const cRoot * pNextRootElement = getSuperiorRootElement();
 	if ( pNextRootElement != NULL ){
 		return pNextRootElement->getNumberOfDimensions();
-	}else{//no next root -element -> no dimensions
+	}else{//no next root element -> no dimensions
 		return (unsignedIntFib)(0);
 	}
 }
@@ -2153,11 +2177,11 @@ unsignedIntFib cFibElement::getNumberOfDimensions() const{
  * 	mapped
  */
 unsignedIntFib cFibElement::getDimensionMapping( unsignedIntFib iDimensionNumber ) const{
-	//the root -element will implement the functionality for this method
+	//the root element will implement the functionality for this method
 	const cRoot * pNextRootElement = getSuperiorRootElement();
 	if ( pNextRootElement != NULL ){
 		return pNextRootElement->getDimensionMapping( iDimensionNumber );
-	}else{//no next root -element -> no dimensions
+	}else{//no next root element -> no dimensions
 		return (unsignedIntFib)(0);
 	}
 }
@@ -2221,7 +2245,7 @@ unsignedIntFib cFibElement::getNumberOfObjectPointUp(
 /**
  * This method returns the number of the next connected object point
  * in the order of connected object points that conntains this Fib
- * -element.
+ * element.
  *
  * @param uINumberOfStartFibElement the number, in the order of all
  * 	Fib elements, of the Fib element for which the connected object
@@ -2229,7 +2253,7 @@ unsignedIntFib cFibElement::getNumberOfObjectPointUp(
  * @see getNumberOfObjectPoint
  * @see getNumberOfObjectPoints()
  * @return the number of the next connected object point for this Fib 
- * 	-element
+ * 	element
  */
 unsignedIntFib cFibElement::getNumberOfObjectPoint(
 		unsignedIntFib uINumberOfStartFibElement ) const{
@@ -2247,7 +2271,7 @@ unsignedIntFib cFibElement::getNumberOfObjectPoint(
 
 /**
  * This method checks if the given Fib object is equal to this fib
- * -object.
+ * object.
  * Variables can be others, but must be defined and used in equivalent
  * Fib elements.
  *
@@ -2266,7 +2290,7 @@ bool cFibElement::equal( const cFibElement & fibObject,
 	
 	if ( ( pSuperiorElement == NULL ) &&
 			( fibObject.pSuperiorElement == NULL ) ){
-		//external objects will be compared in the root-elements
+		//external objects will be compared in the rootelements
 		return equalInternal( fibObject,
 			mapEqualRootObjects, mapEqualDefinedVariables, false );
 	}
@@ -2277,7 +2301,7 @@ bool cFibElement::equal( const cFibElement & fibObject,
 
 /**
  * This method checks if the given Fib element is equal to this fib
- * -element.
+ * element.
  * The subobjects arn't compared, not even ther count is compared.
  * Used variables can be others.
  *
@@ -2342,10 +2366,10 @@ bool cFibElement::equalValuesSet( const cFibVariable * variableOwn,
  * @param mapEqualRootObjects the root objects of this object that wher
  * 	already checked as equal
  * 	map entries:
- * 		key: the root-element of this Fib object that was checked
- * 		value: the to the key correspondending root-element of the
+ * 		key: the rootelement of this Fib object that was checked
+ * 		value: the to the key correspondending rootelement of the
  * 			fibObject that was checked and which is equal to the key
- * 		root-element
+ * 		rootelement
  * 	(it is empty if bCheckExternalObjects == false)
  * @param mapEqualDefinedVariables the Fib elements that defines
  * 	variables and are equal;
@@ -2608,10 +2632,10 @@ void cFibElement::cutConnections( edDirection direction ){
 
 
 /**
- * This method moves a Fib limb -element (cFibLimb) on the specified
+ * This method moves a Fib limb element (cFibLimb) on the specified
  * position over uiHowfar Fib elements up.
  * Moving is stoped if an invalid Fib object would result (e.g. no Fib
- * -element can be moved over an Fib elements that defines a variable
+ * element can be moved over an Fib elements that defines a variable
  * the moved Fib element uses).
  * Moving an Fib element into an listelement will result in an
  * listelement with the moved element in everyone of it's underobjects.
@@ -2628,7 +2652,7 @@ void cFibElement::cutConnections( edDirection direction ){
  * @param bAbsolute if the elementPoint is an absolute value for the wool
  * 	Fib object
  * @return the number of Fib Elements over which the to move Fib
- * 	-element was moved
+ * 	element was moved
  */
 intFib cFibElement::moveLimbElementUp( const char cType, const unsignedIntFib
 		elementPoint, const unsignedIntFib uiHowfar, bool bAbsolute ){
