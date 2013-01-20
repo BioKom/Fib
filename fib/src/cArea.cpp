@@ -44,6 +44,8 @@ History:
 10.11.2011  Oesterholz  Bugfix: every subobject evalueObject() call needs
 	its own property vector list
 02.01.2012  Oesterholz  cTypeSubarea to cTypeArea
+06.01.2012  Oesterholz  DEBUG_RESTORE_XML: debugging information added for
+	restore from Xml
 */
 
 
@@ -167,9 +169,15 @@ cArea::cArea( const TiXmlElement * pXmlElement, intFib & outStatus,
 		outStatus = -1;
 		return;
 	}
+#ifdef DEBUG_RESTORE_XML
+	printf( "cArea::restoreXml() started\n" );
+#endif //DEBUG_RESTORE_XML
 	string szElementType( pXmlElement->Value() );
 	if ( szElementType != "area" ){
 		//wrong element type to restore
+#ifdef DEBUG_RESTORE_XML
+		printf( "cArea::restoreXml() done: wrong element type to restore\n" );
+#endif //DEBUG_RESTORE_XML
 		outStatus = -2;
 		return;
 	}
@@ -178,6 +186,9 @@ cArea::cArea( const TiXmlElement * pXmlElement, intFib & outStatus,
 	const char * szDefinedVariableNumber = pXmlElement->Attribute( "define_variable" );
 	
 	if ( szDefinedVariableNumber == NULL ){
+#ifdef DEBUG_RESTORE_XML
+		printf( "cArea::restoreXml(): no defined variable\n" );
+#endif //DEBUG_RESTORE_XML
 		outStatus = 2;
 	}else{
 		variableDefined.setIntegerValue( atol( szDefinedVariableNumber ) );
@@ -207,10 +218,16 @@ cArea::cArea( const TiXmlElement * pXmlElement, intFib & outStatus,
 					
 					if ( szVectorXmlType == NULL ){
 						outStatus = 2;
+#ifdef DEBUG_RESTORE_XML
+						printf( "cArea::restoreXml(): subarea could not be restored\n" );
+#endif //DEBUG_RESTORE_XML
 						continue;
 					}else if ( ( string( "subarea" ) != szVectorXmlType ) &&
 							string( "underarea" ) != szVectorXmlType ){//"underarea" is depricated
 						outStatus = 2;
+#ifdef DEBUG_RESTORE_XML
+						printf( "cArea::restoreXml(): no subarea element, but %s\n", szVectorXmlType );
+#endif //DEBUG_RESTORE_XML
 						continue;
 					}
 					//restore the areavector
@@ -236,6 +253,9 @@ cArea::cArea( const TiXmlElement * pXmlElement, intFib & outStatus,
 						}
 					}else{//to many underobjects -> no correct area element
 						outStatus = 2;
+#ifdef DEBUG_RESTORE_XML
+						printf( "cArea::restoreXml(): to many subobjects -> no correct area element\n" );
+#endif //DEBUG_RESTORE_XML
 						continue;
 					}
 				}
@@ -263,6 +283,9 @@ cArea::cArea( const TiXmlElement * pXmlElement, intFib & outStatus,
 	}
 	if ( pUnderObject == NULL ){
 		outStatus = -2;
+#ifdef DEBUG_RESTORE_XML
+		printf( "cArea::restoreXml(): no subobject -> no correct area element\n" );
+#endif //DEBUG_RESTORE_XML
 		return;
 	}
 }

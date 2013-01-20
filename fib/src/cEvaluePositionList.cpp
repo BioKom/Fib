@@ -101,7 +101,7 @@ bool cEvaluePositionList::evaluePosition( const cVectorPosition & vPosition,
 		}
 	}
 	for ( list<cVectorProperty>::iterator
-				itrProperty = paEvaluedData.second.begin();
+			itrProperty = paEvaluedData.second.begin();
 			itrProperty != paEvaluedData.second.end(); itrProperty++ ){
 		
 		const unsignedIntFib uiNumberOfElements = itrProperty->getNumberOfElements();

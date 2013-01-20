@@ -992,7 +992,7 @@ bool cExtObject::evalueObject( iEvaluePosition & evaluePosition,
 		
 		if ( pExternalRootObject == NULL ){
 #ifdef DEBUG_EVALUE
-			printf( "cExtObject::evalueObject() with identifier %li external root object is NULL \n ", lTmpIdentifier);
+			printf( "cExtObject::evalueObject() Error: with identifier %li external root object is NULL \n ", lTmpIdentifier);
 #endif //DEBUG_EVALUE
 			return false;
 		}
