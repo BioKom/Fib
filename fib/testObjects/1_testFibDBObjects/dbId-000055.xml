@@ -228,47 +228,57 @@
 						<variable>2</variable>
 					</output_variables>
 					<property>
-						<vector type="property.colorRGB">
-							<value>255</value>
-							<value>255</value>
-							<value>0</value>
+						<vector type="property.transparency">
+							<value>64</value>
 						</vector>
-						<point>
-							<vector type="position">
-								<variable>1</variable>
-								<variable>2</variable>
+						<property>
+							<vector type="property.colorRGB">
+								<value>255</value>
+								<value>255</value>
+								<value>0</value>
 							</vector>
-						</point>
+							<point>
+								<vector type="position">
+									<variable>1</variable>
+									<variable>2</variable>
+								</vector>
+							</point>
+						</property>
 					</property>
 				</subobject>
 			</obj>
 			
-			<obj identifier="-55">
-				<vector type="externObjectInput">
-					<value>100</value>
-					<value>20</value>
-					<value>7</value>
+			<property>
+				<vector type="property.transparency">
+					<value>64</value>
 				</vector>
-				<subobject>
-					<output_variables>
-						<variable>1</variable>
-						<variable>2</variable>
-					</output_variables>
-					<property>
-						<vector type="property.colorRGB">
-							<value>0</value>
-							<value>0</value>
-							<value>0</value>
-						</vector>
-						<point>
-							<vector type="position">
-								<variable>1</variable>
-								<variable>2</variable>
+				<obj identifier="-55">
+					<vector type="externObjectInput">
+						<value>100</value>
+						<value>20</value>
+						<value>7</value>
+					</vector>
+					<subobject>
+						<output_variables>
+							<variable>1</variable>
+							<variable>2</variable>
+						</output_variables>
+						<property>
+							<vector type="property.colorRGB">
+								<value>0</value>
+								<value>0</value>
+								<value>0</value>
 							</vector>
-						</point>
-					</property>
-				</subobject>
-			</obj>
+							<point>
+								<vector type="position">
+									<variable>1</variable>
+									<variable>2</variable>
+								</vector>
+							</point>
+						</property>
+					</subobject>
+				</obj>
+			</property>
 			
 			<obj identifier="-55">
 				<vector type="externObjectInput">

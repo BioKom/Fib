@@ -75,12 +75,11 @@
 				<!-- else draw circle -->
 				<area define_variable="4"><!-- for a -->
 					<vector type="subarea">
-						<value>0</value>
+						<value>1</value>
 						<variable>3</variable>
 					</vector>
 					<function define_variable="5">
-						<!-- b^2 = r^2 - a^2 -->
-						<subfunction>
+						<subfunction><!-- b^2 = r^2 - a^2 -->
 							<sub>
 								<exp>
 									<variable>3</variable>
@@ -93,8 +92,7 @@
 							</sub>
 						</subfunction>
 						<function define_variable="6">
-							<!-- b = ( r^2 - a^2 )^(1/2) -->
-							<subfunction>
+							<subfunction><!-- b = ( r^2 - a^2 )^(1/2) -->
 								<if>
 									<lo><!-- 0 < r^2 - a^2 -->
 										<value>0</value>
@@ -112,28 +110,31 @@
 							<list>
 								<!-- upper half of circle -->
 								<function define_variable="7">
-									<!-- x_i = x + a -->
-									<subfunction>
-										<add>
-											<variable>1</variable>
-											<variable>4</variable>
-										</add>
+									<subfunction><!-- x_i = x + a - 2 -->
+										<sub>
+											<add>
+												<variable>1</variable>
+												<variable>4</variable>
+											</add>
+											<value>2</value>
+										</sub>
 									</subfunction>
 									<function define_variable="8">
-										<!-- y_min = y - b -->
-										<subfunction>
+										<subfunction><!-- y_min = y - b -->
 											<sub>
 												<variable>2</variable>
 												<variable>6</variable>
 											</sub>
 										</subfunction>
 										<function define_variable="9">
-											<!-- y_max = y + b -->
-											<subfunction>
-												<add>
-													<variable>2</variable>
-													<variable>6</variable>
-												</add>
+											<subfunction><!-- y_max = y + b - 1 -->
+												<sub>
+													<add>
+														<variable>2</variable>
+														<variable>6</variable>
+													</add>
+													<value>1</value>
+												</sub>
 											</subfunction>
 											<area define_variable="10">
 												<vector type="subarea">
@@ -152,28 +153,31 @@
 								</function>
 								<!-- lower half of circle -->
 								<function define_variable="7">
-									<!-- x_i = x - a -->
-									<subfunction>
+									<subfunction><!-- x_i = x - a - 1 -->
 										<sub>
-											<variable>1</variable>
-											<variable>4</variable>
+											<sub>
+												<variable>1</variable>
+												<variable>4</variable>
+											</sub>
+											<value>1</value>
 										</sub>
 									</subfunction>
 									<function define_variable="8">
-										<!-- y_min = y - b -->
-										<subfunction>
+										<subfunction><!-- y_min = y - b -->
 											<sub>
 												<variable>2</variable>
 												<variable>6</variable>
 											</sub>
 										</subfunction>
 										<function define_variable="9">
-											<!-- y_max = y + b -->
-											<subfunction>
-												<add>
-													<variable>2</variable>
-													<variable>6</variable>
-												</add>
+											<subfunction><!-- y_max = y + b - 1 -->
+												<sub>
+													<add>
+														<variable>2</variable>
+														<variable>6</variable>
+													</add>
+													<value>1</value>
+												</sub>
 											</subfunction>
 											<area define_variable="10">
 												<vector type="subarea">
