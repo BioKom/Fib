@@ -221,7 +221,6 @@ public:
 		const list< cVectorProperty > & liProperties );
 
 
-#ifdef TEST
 	/**
 	 * This function prints the given list of positions with ther values.
 	 * It also prints the property sublists.
@@ -232,7 +231,6 @@ public:
 	static void printPositionsData( const list< pair< cVectorPosition,
 		list< cVectorProperty > > > & liEvaluedPositionData,
 		ostream & strOutput );
-#endif
 	
 };//class cEvaluePositionList
 

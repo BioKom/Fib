@@ -1,16 +1,16 @@
 /**
- * @file convertFibToFib
- * file name: convertFibToFib.cpp
+ * @file convertFibToFibPointList
+ * file name: convertFibToFibPointList.cpp
  * @author Betti Oesterholz
- * @date 18.06.2010
+ * @date 21.01.2013
  * @mail webmaster@BioKom.info
  *
  * System: C++
  *
- * This program is for converting Fib multimedia objects in one format
- * into a Fib object in an other format.
+ * This program is for converting Fib multimedia objects to a list of
+ * Fib points with ther properties.
  *
- * Copyright (C) @c GPL3 2010 Betti Oesterholz
+ * Copyright (C) @c GPL3 2013 Betti Oesterholz
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,36 +26,36 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * This program is for converting Fib multimedia objects in one format
- * into a Fib object in another format.
+ * This program is for converting Fib multimedia objects to a list of
+ * Fib points with ther properties.
+ * The output will be in Xml. The root element is data in this element
+ * the point data is stored after each other.
+ * The points and properties are stored in the order ther wher evalued.
+ * Every point is followed by its properties.
  *
  *
- * call: convertFibToFib FILE_MULTIMEDIADATA [FILE_OUTPUT]
+ * call: convertFibToFibPointList FILE_MULTIMEDIADATA [FILE_OUTPUT]
  *
  * parameters:
  * 	PATH_MULTIMEDIADATA
  * 		The path to the to load Fib multimedia data.
  * 	FILE_OUTPUT
  * 		The name of the file where the Fib multimedia data would be
- * 		stored to. If the file ending is ".xml" the data will be written
- * 		in the Fib Xml format. If no parameter FILE_OUTPUT is given
- * 		the Fib object will be stored in the Fib Xml format to the
- * 		standard output.
+ * 		stored to. If no parameter FILE_OUTPUT is given
+ * 		the Fib object data will be written to the standard output.
  *
  * examples:
- * 	> convertFibToFib inputFib.xml outputFib.fib
- * 	> convertFibToFib inputFib.fib outputFib.xml
+ * 	> convertFibToFibPointList inputFib.fib outputFib.xml
+ * 	> convertFibToFibPointList inputFib.xml
  */
 /*
 History:
-18.06.2010  Oesterholz  created
-23.08.2010  Oesterholz  output of call info added
-06.09.2011  Oesterholz  if TEST a restored pictur with warnings on loading
-	will be stored
+21.01.2013  Oesterholz  created
 */
 
 #include "version.h"
 #include "cFibElement.h"
+#include "cEvaluePositionList.h"
 
 #include <string>
 #include <iostream>
@@ -79,24 +79,22 @@ int main(int argc, char* argv[]){
 		//no input file -> exit
 		cout<<"No input file with the original multimedia data given."<<endl;
 		cout<<endl;
-		cout<<"This program is for converting Fib multimedia objects in one format"<<endl;
-		cout<<"into a Fib object in another format."<<endl;
+		cout<<"This program is for converting Fib multimedia objects to a list of"<<endl;
+		cout<<"Fib points with ther properties."<<endl;
 		cout<<endl;
-		cout<<" call: convertFibToFib FILE_MULTIMEDIADATA [FILE_OUTPUT]"<<endl;
+		cout<<" call: convertFibToFibPointList FILE_MULTIMEDIADATA [FILE_OUTPUT]"<<endl;
 		cout<<endl;
 		cout<<" parameters:"<<endl;
 		cout<<" 	PATH_MULTIMEDIADATA"<<endl;
 		cout<<" 		The path to the to load Fib multimedia data."<<endl;
 		cout<<" 	FILE_OUTPUT"<<endl;
 		cout<<" 		The name of the file where the Fib multimedia data would be"<<endl;
-		cout<<" 		stored to. If the file ending is \".xml\" the data will be written"<<endl;
-		cout<<" 		in the Fib Xml format. If no parameter FILE_OUTPUT is given"<<endl;
-		cout<<" 		the Fib object will be stored in the Fib Xml format to the"<<endl;
-		cout<<" 		standard output."<<endl;
+		cout<<" 		stored to. If no parameter FILE_OUTPUT is given"<<endl;
+		cout<<" 		the Fib object data will be written to the standard output."<<endl;
 		cout<<endl;
 		cout<<" examples:"<<endl;
-		cout<<" 	> convertFibToFib inputFib.xml outputFib.fib"<<endl;
-		cout<<" 	> convertFibToFib inputFib.fib outputFib.xml"<<endl;
+		cout<<" 	> convertFibToFibPointList inputFib.fib outputFib.xml"<<endl;
+		cout<<" 	> convertFibToFibPointList inputFib.xml"<<endl;
 		cout<<endl;
 		return 1;
 	}
@@ -159,60 +157,61 @@ int main(int argc, char* argv[]){
 	}
 	
 	if ( pRestoredFibObject ){
-		//output the multimediaobject
+		//evalue multimedia object
+		cEvaluePositionList evaluedPositionData;
+		
+		const bool bObjectEvalued = pRestoredFibObject->evalueObjectSimple(
+			evaluedPositionData );
+		
+		if ( ! bObjectEvalued ){
+			
+			cerr<<"Error: Loaded object could not be evalued."<<endl;
+			cFibElement::deleteObject( pRestoredFibObject );
+			return 2;
+		}
+		
+		//stream wher to store the evalued data to
+		ostream * pOutputStream = NULL;
 		
 		if ( pFileForStoringData == 0 ){
 			//store to standard output in Xml format
-			bool bStoreSuccesfull = pRestoredFibObject->storeXml( cout );
+			pOutputStream = &cout;
 			
-			if ( ! bStoreSuccesfull ){
-		
-				cerr<<"Error: Storing the data of the converted Fib object "<<
-					"in the Xml format to the standard output failed."<<endl;
-				return 4;
-			}
-		
-		}else if ( strcmp( & (pFileForStoringData[
-				strlen ( pFileForStoringData ) - 4 ]), ".xml") == 0 ){
-			//store to file in Xml format
-			ofstream outFile( pFileForStoringData );
-			
+			cout<<"Storing Fib object in the Xml format to the standard output . "<<endl;
+		}else{//store to file in Xml
+			pOutputStream = new ofstream( pFileForStoringData );
 			cout<<"Storing Fib object in the Xml format to the file "<< pFileForStoringData <<" . "<<endl;
+		}
+		//store point data
+		(*pOutputStream)<<"<data>"<<endl;
+		for ( list< pair< cVectorPosition, list< cVectorProperty > > >::const_iterator
+				itrPosition = evaluedPositionData.liEvaluedPositionData.begin();
+				itrPosition != evaluedPositionData.liEvaluedPositionData.end();
+				itrPosition++ ){
 			
-			const bool bStoreSuccesfull = pRestoredFibObject->storeXml( outFile );
+			itrPosition->first.storeXml( (*pOutputStream) );
 			
-			if ( ! bStoreSuccesfull ){
-		
-				cerr<<"Error: Storing the data of the converted Fib object "<<
-					"in the Xml format to the file "<< pFileForStoringData <<" failed."<<endl;
-				
-			}
-
-		}else{//store to file in compressed format
-			ofstream outFile( pFileForStoringData, ios_base::out | ios_base::binary );
-			
-			cout<<"Storing Fib object in the Xml format to the file "<< pFileForStoringData <<" . "<<endl;
-			
-			const bool bStoreSuccesfull = pRestoredFibObject->store( outFile );
-			
-			if ( ! bStoreSuccesfull ){
-		
-				cerr<<"Error: Storing the data of the converted Fib object "<<
-					"in the compressed Fib format to the file "<< pFileForStoringData <<" failed."<<endl;
+			for ( list< cVectorProperty >::const_iterator
+					itrProperty = itrPosition->second.begin();
+					itrProperty != itrPosition->second.end(); itrProperty++ ){
+						
+				itrProperty->storeXml( (*pOutputStream) );
 			}
 		}
+		(*pOutputStream)<<"</data>"<<endl;
 		
+		if ( pOutputStream != (&cout) ){
+			//data written to file -> destroy file stream
+			delete pOutputStream;
+		}
 		cFibElement::deleteObject( pRestoredFibObject );
 	}else{
-		cerr<<"Error: Could not convert the data into a Fib multimediaobject."<<endl;
+		cerr<<"Error: Could not convert the data."<<endl;
 		return 3;
 	}
 	
 	return 0;
 }
-
-
-
 
 
 

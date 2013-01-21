@@ -46,6 +46,7 @@
 # 14.07.2012   Oesterholz   glpk included for FEATURE_GLPK_USE_MUTEX_LINAR_PROBLEM_SOLVING
 # 14.10.2012   Oesterholz   library "-lpthread" included
 # 21.12.2012   Oesterholz   FreeImage needs libm
+# 21.01.2013   Oesterholz   convertFibToFibPointList added
 
 
 
@@ -202,7 +203,8 @@ OBJ_TEST_CONVERTER:=$(subst .cpp,.o,$(subst $(DIR_SRC),$(DIR_OBJ_TEST),$(SRC_CON
 ##########################################################################
 
 # the to create executebels
-EXE_FILES:=convertToFib convertFromFib convertFibToFib evalueDerivate
+EXE_FILES:=convertToFib convertFromFib convertFibToFib evalueDerivate\
+	convertFibToFibPointList
 
 SRC_EXE_FILES:=$(addprefix $(DIR_SRC), $(addsuffix .cpp, $(EXE_FILES) ) )
 

@@ -425,7 +425,6 @@ cFibElement * cEvaluePositionList::toFibObject( const cVectorPosition & vecPosit
 
 
 
-#ifdef TEST
 /**
  * This function prints the given list of positions with ther values.
  * It also prints the property sublists.
@@ -468,7 +467,6 @@ void cEvaluePositionList::printPositionsData(
 		strOutput<<endl;
 	}
 }
-#endif
 
 
 
