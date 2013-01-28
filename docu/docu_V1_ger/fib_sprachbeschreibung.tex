@@ -1359,7 +1359,14 @@ Beschreibung der Elemente:
 	preview::XXX & Unter den enthaltenen root-Objekten kann es einige geben, die nicht zur Kodierung des Multimediaobjekts dienen, sondern \textbf{Vorschauen} f"ur das Multimediaobjekt darstellen. Dabei kann es beliebig viele Vorschauunterobjekte geben. Um diese schnell erkennen zu k"onnen, enth"alt der optionale Teil einen ``preview''-Eintrag. Der Wert des Eintrags ist der $Identifier$ des root-Objekts, welche die Vorschau kodiert. Der zweite Teil des Schl"ussels (hier XXX) ist frei w"ahlbar und sollte auf die Art der Vorschau hindeuten. Die ``preview''-Eintr"age sollten im optionalen Teil ganz vorn stehen, um sie schneller abrufen zu k"onnen. & (preview::minipicture , ``1'')\\\hline
 	preview::\-minipicture & Das root-Objekt zum angegebenen Identifizierer ist ein Vorschaubild (ohne Gr"o"senangabe). & (preview::minipicture , ``17'')\\\hline
 	preview::\-minipictureX & Das root-Objekt zum angegebenen Identifizierer ist ein Vorschaubild X mal X Pixel Gr"o"se. & (preview::minipicture32 , ``5'')\\\hline
-
+	
+	isPointElement & Das Objekt gibt die Daten der Punkte "uber Punktelemente zur"uck. (Gegenst"uck ist der Schl"ussel ``isPointSubObject'' ) & (isPointElement , ``'') \\\hline
+	isPointSubObject & Das Objekt gibt die Daten der Punkte "uber ein Unterobjekt zur"uck. Der Wert ist die Nummer des Unterobjekts f"ur die Punktdaten. Ist der Wert leer, ist das erste Unterobjekt f"ur die Punkte zust"andig. (Gegenst"uck ist der Schl"ussel ``isPointElement'' ) & (isPointSubObject , ``'') \\\hline
+	isAntialiased & Das dargestellte Multimediaobjekt ist Antialiased bzw. verf"ugt "uber Kantengl"attung. (Gegenst"uck ist der Schl"ussel ``isNotAntialiased'' ) & (isAntialiased , ``'') \\\hline
+	isNotAntialiased & Das dargestellte Multimediaobjekt ist nicht Antialiased bzw. verf"ugt nicht "uber Kantengl"attung.  (Gegenst"uck ist der Schl"ussel ``isAntialiased'' ) & (isNotAntialiased , ``'') \\\hline
+	DbObject::XXX & Der Wert zum Schl"ussel ist der Identifizerer (eine Zahl) des Objekts, welches bis auf die Eigenschaft XXX identisch zum Objekt des root-Elements ist. M"ogliche Werte f"ur XXX sind beispielsweise ``isPointSubObject'' oder ``isAntialiased''. Besitzt also das aktuelle Objekt keine Kantengl"attung, so besitzt das Objekt mit dem Identifizerer des Wertes zu ``DbObject::isAntialiased'' Kantengl"attung, ist aber ansonsten identisch. & (DbObject::isAntialiased , ``-56'') \\\hline
+	
+	
 \caption{Schl"ussel f"ur den optionalen Teil}
 \label{TableKeysOptionalpart}
 \end{longtable}

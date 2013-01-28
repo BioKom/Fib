@@ -1335,6 +1335,13 @@ Description of the elements:
 	preview::\-minipicture & The root-object to the specified identifier is a preview image (no size specified). & (preview::minipicture , ``17'')\\\hline
 	preview::\-minipictureX & The root-object to the specified identifier is a thumbnail with X times X pixel size. & (preview::minipicture32 , ``5'')\\\hline
 
+	
+	isPointElement & The object returns the data of the points with point elements. (Counterpart is the key ``isPointSubObject'' ) & (isPointElement , ``'') \\\hline
+	isPointSubObject & The object returns the data of the points with a subobject (subobject elements). The value is the number of the subobject for the points data. If ther is no value given, the first subobject is for returning the points data. (Counterpart is the key ``isPointElement'' ) & (isPointSubObject , ``'') \\\hline
+	isAntialiased & The represented multimedia object is antialiased. (Counterpart is the key ``is\-Not\-Antialiased'' ) & (isAntialiased , ``'') \\\hline
+	isNotAntialiased & The represented multimedia object is not antialiased. (Counterpart is the key ``isAntialiased'' ) & (isNotAntialiased , ``'') \\\hline
+	DbObject::XXX & The value to the key is the identifier (a number) of the object, which is identical to this object except for the XXX property. Possible values for XXX are for example ``isPointSubObject'' or ``isAntialiased''. If the actual object has no antialiasing, the object with the identifier of the value for the ``DbObject::isAntialiased'' key has, but is otherwise identical. & (DbObject::isAntialiased , ``-56'') \\\hline
+
 \caption{Keys for the optional part}
 \label{TableKeysOptionalpart}
 \end{longtable}
