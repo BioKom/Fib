@@ -93,6 +93,7 @@ History:
 05.08.2011  Oesterholz  FEATURE_STORE_COMPRESSED_NO_DEFINED_VARIABLES implemented
 10.11.2011  Oesterholz  Bugfix: evalueObject() don't overwrite properties
 26.09.2012  Oesterholz  Warning removed: "(char)" for char arrays added
+28.01.2013  Oesterholz  COLOR_SW changed to COLOR_GRAYSCALE
 */
 
 #include "version.h"
@@ -4177,8 +4178,8 @@ int testEvalueObject( unsigned long &ulTestphase ){
 	cout<<"cPoint point1( &vecPositionE2 );"<<endl;
 	cPoint point1( &vecPositionE2 );
 	
-	cout<<"cVectorProperty vecPropertyColorSW( cTypeProperty::COLOR_SW );"<<endl;
-	cVectorProperty vecPropertyColorSW( cTypeProperty::COLOR_SW );
+	cout<<"cVectorProperty vecPropertyColorSW( cTypeProperty::COLOR_GRAYSCALE );"<<endl;
+	cVectorProperty vecPropertyColorSW( cTypeProperty::COLOR_GRAYSCALE );
 	
 	cout<<"cFunctionValue underFunction( 3 );"<<endl;
 	cFunctionValue underFunction( 3 );
@@ -4235,7 +4236,7 @@ int testEvalueObject( unsigned long &ulTestphase ){
 	list< pair< const cVectorPosition*, list<cVectorProperty> > > liPointsToEvalue;
 	cVectorPosition vecPositionE2V1( 2 );
 	vecPositionE2V1.setValue( 1, 3 );
-	cVectorProperty vecPropertyColorSWV1( cTypeProperty::COLOR_SW );
+	cVectorProperty vecPropertyColorSWV1( cTypeProperty::COLOR_GRAYSCALE );
 	vecPropertyColorSWV1.setValue( 1, 3 );
 	liPointsToEvalue.push_back( make_pair( &vecPositionE2V1, list<cVectorProperty>() ) );
 	liPointsToEvalue.back().second.push_back( vecPropertyColorSWV1 );
@@ -4442,7 +4443,7 @@ int testEvalueObject( unsigned long &ulTestphase ){
 	uiPointsToEvalue = 1;
 	
 	//generate to evalue data
-	cVectorProperty vecPropertyColorSWV5( cTypeProperty::COLOR_SW );
+	cVectorProperty vecPropertyColorSWV5( cTypeProperty::COLOR_GRAYSCALE );
 	vecPropertyColorSWV5.setValue( 1, 5 );
 	
 	liPointsToEvalue.clear();

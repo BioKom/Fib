@@ -38,6 +38,7 @@ History:
 17.12.2010  Oesterholz  isOverwritenTyp() method added
 18.12.2010  Oesterholz  isOverwriting() and static isEvalued() methods added
 12.02.2012  Oesterholz  restoreXml*() without restoring domain possible
+28.01.2013  Oesterholz  colorSW changed to colorGrascale
 */
 
 #ifndef ___C_TYPE_PROPERTY_H__
@@ -83,7 +84,7 @@ public:
 	static const unsignedIntFib NONE = 0;
 	
 	static const unsignedIntFib COLOR_RGB = 1;
-	static const unsignedIntFib COLOR_SW  = 2;
+	static const unsignedIntFib COLOR_GRAYSCALE = 2;
 	static const unsignedIntFib LAYER     = 100;
 	static const unsignedIntFib TRANSPARENCY    = 200;
 	static const unsignedIntFib SOUND     = 300;

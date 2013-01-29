@@ -76,6 +76,7 @@
 History:
 22.12.2010  Oesterholz  created
 09.10.2012  Oesterholz  Warning removed: "(char)" for char arrays added
+28.01.2013  Oesterholz  COLOR_SW changed to COLOR_GRAYSCALE
 */
 
 #include "version.h"
@@ -1008,8 +1009,8 @@ int testEvalueObject( unsigned long &ulTestphase ){
 	cout<<"cPoint point1( &vecPositionE2 );"<<endl;
 	cPoint point1( &vecPositionE2 );
 	
-	cout<<"cVectorProperty vecPropertyColorSW( cTypeProperty::COLOR_SW );"<<endl;
-	cVectorProperty vecPropertyColorSW( cTypeProperty::COLOR_SW );
+	cout<<"cVectorProperty vecPropertyColorSW( cTypeProperty::COLOR_GRAYSCALE );"<<endl;
+	cVectorProperty vecPropertyColorSW( cTypeProperty::COLOR_GRAYSCALE );
 	cout<<"cProperty property1( vecPropertyColorSW, &point1 );"<<endl;
 	cProperty property1( vecPropertyColorSW, &point1 );
 
@@ -1068,13 +1069,13 @@ int testEvalueObject( unsigned long &ulTestphase ){
 	list< pair< const cVectorPosition*, list<cVectorProperty> > > liPointsToEvalue;
 	cVectorPosition vecPositionE2V1( 2 );
 	vecPositionE2V1.setValue( 1, 1 );
-	cVectorProperty vecPropertyColorSWV1( cTypeProperty::COLOR_SW );
+	cVectorProperty vecPropertyColorSWV1( cTypeProperty::COLOR_GRAYSCALE );
 	vecPropertyColorSWV1.setValue( 1, 1 );
 	liPointsToEvalue.push_back( make_pair( &vecPositionE2V1, list<cVectorProperty>() ) );
 	liPointsToEvalue.back().second.push_back( vecPropertyColorSWV1 );
 	cVectorPosition vecPositionE2V2( 2 );
 	vecPositionE2V2.setValue( 1, 2 );
-	cVectorProperty vecPropertyColorSWV2( cTypeProperty::COLOR_SW );
+	cVectorProperty vecPropertyColorSWV2( cTypeProperty::COLOR_GRAYSCALE );
 	vecPropertyColorSWV2.setValue( 1, 2 );
 	liPointsToEvalue.push_back( make_pair( &vecPositionE2V2, list<cVectorProperty>() ) );
 	liPointsToEvalue.back().second.push_back( vecPropertyColorSWV2 );
@@ -1290,9 +1291,9 @@ int testEvalueObject( unsigned long &ulTestphase ){
 	uiPointsToEvalue = 4;
 	
 	//generate to evalue data
-	cVectorProperty vecPropertyColorSWV5( cTypeProperty::COLOR_SW );
+	cVectorProperty vecPropertyColorSWV5( cTypeProperty::COLOR_GRAYSCALE );
 	vecPropertyColorSWV5.setValue( 1, 5 );
-	cVectorProperty vecPropertyColorSWV4( cTypeProperty::COLOR_SW );
+	cVectorProperty vecPropertyColorSWV4( cTypeProperty::COLOR_GRAYSCALE );
 	vecPropertyColorSWV4.setValue( 1, 4 );
 
 	cVectorPosition vecPositionE2V3( 2 );
@@ -1471,13 +1472,13 @@ int testEvalueObject( unsigned long &ulTestphase ){
 	uiPointsToEvalue = 8;
 	
 	//generate to evalue data
-	cVectorProperty vecPropertyColorSWV7( cTypeProperty::COLOR_SW );
+	cVectorProperty vecPropertyColorSWV7( cTypeProperty::COLOR_GRAYSCALE );
 	vecPropertyColorSWV7.setValue( 1, 5 );
-	cVectorProperty vecPropertyColorSWV8( cTypeProperty::COLOR_SW );
+	cVectorProperty vecPropertyColorSWV8( cTypeProperty::COLOR_GRAYSCALE );
 	vecPropertyColorSWV8.setValue( 1, 5 );
-	cVectorProperty vecPropertyColorSWV9( cTypeProperty::COLOR_SW );
+	cVectorProperty vecPropertyColorSWV9( cTypeProperty::COLOR_GRAYSCALE );
 	vecPropertyColorSWV9.setValue( 1, 13 );
-	cVectorProperty vecPropertyColorSWV10( cTypeProperty::COLOR_SW );
+	cVectorProperty vecPropertyColorSWV10( cTypeProperty::COLOR_GRAYSCALE );
 	vecPropertyColorSWV10.setValue( 1, -1 );
 
 	cVectorPosition vecPositionE2V5( 2 );
@@ -1646,7 +1647,7 @@ int testEvalueObject( unsigned long &ulTestphase ){
 	uiPointsToEvalue = 11;
 	
 	//generate to evalue data
-	cVectorProperty vecPropertyColorSWE1( cTypeProperty::COLOR_SW );
+	cVectorProperty vecPropertyColorSWE1( cTypeProperty::COLOR_GRAYSCALE );
 
 	cVectorPosition vecPositionE2V9( 2 );
 	vecPositionE2V9.setValue( 1, 1.25 );
@@ -2539,8 +2540,8 @@ int testEqual( unsigned long &ulTestphase ){
 	cFibSet fibSetPoint2( 1, &point2 );
 
 	//other Fib element
-	cout<<"cVectorProperty vecPropertyColorSW( cTypeProperty::COLOR_SW );"<<endl;
-	cVectorProperty vecPropertyColorSW( cTypeProperty::COLOR_SW );
+	cout<<"cVectorProperty vecPropertyColorSW( cTypeProperty::COLOR_GRAYSCALE );"<<endl;
+	cVectorProperty vecPropertyColorSW( cTypeProperty::COLOR_GRAYSCALE );
 	cout<<"cProperty property1( vecPropertyColorSW );"<<endl;
 	cProperty property1( vecPropertyColorSW );
 

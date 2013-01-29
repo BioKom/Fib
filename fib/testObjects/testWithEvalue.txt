@@ -2,8 +2,8 @@ point
 listE3
 listE3listE3
 point3D
-colorSw
-colorSw2
+colorGrayscale
+colorGrayscale2
 colorRgb1
 colorRgbLayer
 colorRgbSw

@@ -63,6 +63,7 @@ History:
 30.03.2011  Oesterholz  storing to binary stream
 16.02.2012  Oesterholz  testDomainReference() implemented for cDomainReference
 17.09.2012  Oesterholz  Warning removed: "(char)" for char arrays added
+28.01.2013  Oesterholz  COLOR_SW changed to COLOR_GRAYSCALE
 */
 
 #include "version.h"
@@ -234,7 +235,7 @@ int testAddDomain_GetDomainForElement( unsigned long &ulTestphase ){
 	cTypeDimension testTypeDimensionD1( 1 );
 	cTypeDimension testTypeDimensionD3( 3 );
 	cTypeProperty testTypePropertyColorRGB( cTypeProperty::COLOR_RGB );
-	cTypeProperty testTypePropertyColorSW( cTypeProperty::COLOR_SW );
+	cTypeProperty testTypePropertyColorSW( cTypeProperty::COLOR_GRAYSCALE );
 
 	//create vector domain with one elements
 	vector<cDomainSingle*> vecDomains1( 1 );
@@ -629,8 +630,8 @@ int testSetStandardDomain( unsigned long &ulTestphase ){
 	cTypeDimension testTypeDimensionD1( 1 );
 	cout<<"cTypeProperty testTypePropertyColorRGB( cTypeProperty::COLOR_RGB ) "<<endl<<flush;
 	cTypeProperty testTypePropertyColorRGB( cTypeProperty::COLOR_RGB );
-	cout<<"cTypeProperty testTypePropertyColorSW( cTypeProperty::COLOR_SW ) "<<endl<<flush;
-	cTypeProperty testTypePropertyColorSW( cTypeProperty::COLOR_SW );
+	cout<<"cTypeProperty testTypePropertyColorSW( cTypeProperty::COLOR_GRAYSCALE ) "<<endl<<flush;
+	cTypeProperty testTypePropertyColorSW( cTypeProperty::COLOR_GRAYSCALE );
 
 	//create vector domain with one elements
 	vector<cDomainSingle*> vecDomains1( 1 );
@@ -749,8 +750,8 @@ int testDeleteDomain( unsigned long &ulTestphase ){
 	cTypeDimension testTypeDimensionD1( 1 );
 	cout<<"cTypeProperty testTypePropertyColorRGB( cTypeProperty::COLOR_RGB ) "<<endl<<flush;
 	cTypeProperty testTypePropertyColorRGB( cTypeProperty::COLOR_RGB );
-	cout<<"cTypeProperty testTypePropertyColorSW( cTypeProperty::COLOR_SW ) "<<endl<<flush;
-	cTypeProperty testTypePropertyColorSW( cTypeProperty::COLOR_SW );
+	cout<<"cTypeProperty testTypePropertyColorSW( cTypeProperty::COLOR_GRAYSCALE ) "<<endl<<flush;
+	cTypeProperty testTypePropertyColorSW( cTypeProperty::COLOR_GRAYSCALE );
 
 	//create vector domain with one elements
 	vector<cDomainSingle*> vecDomains1( 1 );
@@ -1060,8 +1061,8 @@ int testClone( unsigned long &ulTestphase ){
 	cTypeDimension testTypeDimensionD1( 1 );
 	cout<<"cTypeProperty testTypePropertyColorRGB( cTypeProperty::COLOR_RGB ) "<<endl<<flush;
 	cTypeProperty testTypePropertyColorRGB( cTypeProperty::COLOR_RGB );
-	cout<<"cTypeProperty testTypePropertyColorSW( cTypeProperty::COLOR_SW ) "<<endl<<flush;
-	cTypeProperty testTypePropertyColorSW( cTypeProperty::COLOR_SW );
+	cout<<"cTypeProperty testTypePropertyColorSW( cTypeProperty::COLOR_GRAYSCALE ) "<<endl<<flush;
+	cTypeProperty testTypePropertyColorSW( cTypeProperty::COLOR_GRAYSCALE );
 
 	//create vector domain with one elements
 	vector<cDomainSingle*> vecDomains1( 1 );
@@ -1334,8 +1335,8 @@ int testEqual( unsigned long &ulTestphase ){
 	cTypeDimension testTypeDimensionD3( 3 );
 	cout<<"cTypeProperty testTypePropertyColorRGB( cTypeProperty::COLOR_RGB );"<<endl;
 	cTypeProperty testTypePropertyColorRGB( cTypeProperty::COLOR_RGB );
-	cout<<"cTypeProperty testTypePropertyColorSW( cTypeProperty::COLOR_SW );"<<endl;
-	cTypeProperty testTypePropertyColorSW( cTypeProperty::COLOR_SW );
+	cout<<"cTypeProperty testTypePropertyColorSW( cTypeProperty::COLOR_GRAYSCALE );"<<endl;
+	cTypeProperty testTypePropertyColorSW( cTypeProperty::COLOR_GRAYSCALE );
 
 	//create vector domain with one elements
 	cout<<"vector<cDomainSingle*> vecDomains1( 1 );"<<endl;
@@ -1873,8 +1874,8 @@ int testAssignation( unsigned long &ulTestphase ){
 	cTypeDimension testTypeDimensionD3( 3 );
 	cout<<"cTypeProperty testTypePropertyColorRGB( cTypeProperty::COLOR_RGB );"<<endl;
 	cTypeProperty testTypePropertyColorRGB( cTypeProperty::COLOR_RGB );
-	cout<<"cTypeProperty testTypePropertyColorSW( cTypeProperty::COLOR_SW );"<<endl;
-	cTypeProperty testTypePropertyColorSW( cTypeProperty::COLOR_SW );
+	cout<<"cTypeProperty testTypePropertyColorSW( cTypeProperty::COLOR_GRAYSCALE );"<<endl;
+	cTypeProperty testTypePropertyColorSW( cTypeProperty::COLOR_GRAYSCALE );
 
 	//create vector domain with one elements
 	cout<<"vector<cDomainSingle*> vecDomains1( 1 );"<<endl;

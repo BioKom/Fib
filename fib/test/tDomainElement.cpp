@@ -50,6 +50,7 @@ History:
 13.05.2010  Oesterholz  the ordering of bits for the compressed storing corrected
 30.03.2011  Oesterholz  storing to binary stream
 17.09.2012  Oesterholz  Warning removed: "(char)" for char arrays added
+28.01.2013  Oesterholz  COLOR_SW changed to COLOR_GRAYSCALE
 */
 
 #include "version.h"
@@ -916,7 +917,7 @@ int testCostructorSetDomain( unsigned long &ulTestphase ){
 	ulTestphase++;
 	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing an simple domain element"<<endl;
 
-	cTypeProperty testTypeProperty( cTypeProperty::COLOR_SW );
+	cTypeProperty testTypeProperty( cTypeProperty::COLOR_GRAYSCALE );
 
 	//create vector domain with two elements
 	vector<cDomainSingle*> vecDomains1( 1 );

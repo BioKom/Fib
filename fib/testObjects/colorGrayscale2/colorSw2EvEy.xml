@@ -1,0 +1,64 @@
+<data>
+	<point>
+		<vector type="position">
+			<value number="1">1</value>
+			<value number="2">1</value>
+		</vector>
+	</point>
+	<property>
+		<vector type="property.colorGrayscale">
+			<value number="1">2</value>
+		</vector>
+		<list>
+			<point>
+				<vector type="position">
+					<value number="1">2</value>
+					<value number="2">2</value>
+				</vector>
+			</point>
+			<point>
+				<vector type="position">
+					<value number="1">3</value>
+					<value number="2">3</value>
+				</vector>
+			</point>
+		</list>
+	</property>
+	<property>
+		<vector type="property.colorGrayscale">
+			<value number="1">10</value>
+		</vector>
+		<property>
+			<vector type="property.colorGrayscale">
+				<value number="1">3</value>
+			</vector>
+			<list>
+				<point>
+					<vector type="position">
+						<value number="1">4</value>
+						<value number="2">4</value>
+					</vector>
+				</point>
+				<list>
+					<property>
+						<vector type="property.colorGrayscale">
+							<value number="1">4</value>
+						</vector>
+						<point>
+							<vector type="position">
+								<value number="1">5</value>
+								<value number="2">5</value>
+							</vector>
+						</point>
+					</property>
+					<point>
+						<vector type="position">
+							<value number="1">6</value>
+							<value number="2">6</value>
+						</vector>
+					</point>
+				</list>
+			</list>
+		</property>
+	</property>
+</data>

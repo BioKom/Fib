@@ -60,6 +60,7 @@ History:
 13.05.2010  Oesterholz  the ordering of bits for the compressed storing corrected
 04.04.2011  Oesterholz  storing to binary stream
 17.09.2012  Oesterholz  Warning removed: "(char)" for char arrays added
+28.01.2013  Oesterholz  COLOR_SW changed to COLOR_GRAYSCALE
 */
 
 //TODO check isCompatible() for more domains + comparrisson
@@ -1399,7 +1400,7 @@ int testPropertyColorRGB( unsigned long &ulTestphase ){
 	const list<cTypeProperty> liOverwirttenTyps = testTypeProperty.getOverwritenTyps();
 	list<cTypeProperty> liToGiveBackPropertyTypes;
 	liToGiveBackPropertyTypes.push_back( cTypeProperty( cTypeProperty::COLOR_RGB ) );
-	liToGiveBackPropertyTypes.push_back( cTypeProperty( cTypeProperty::COLOR_SW ) );
+	liToGiveBackPropertyTypes.push_back( cTypeProperty( cTypeProperty::COLOR_GRAYSCALE ) );
 	iReturn += comparePropertyTypeLists( liOverwirttenTyps, liToGiveBackPropertyTypes );
 	
 	//test isEvalued()
@@ -1470,7 +1471,7 @@ int testPropertyColorRGB( unsigned long &ulTestphase ){
 
 
 /**
- * This method tests the property colorSW=2 of the cTypeProperty class.
+ * This method tests the property colorGrayscale=2 of the cTypeProperty class.
  *
  * @param ulTestphase a reference to the number for the testphase
  * @return the number of erros occured in the test
@@ -1480,10 +1481,10 @@ int testPropertyColorSW( unsigned long &ulTestphase ){
 	int iReturn = 0;//returnvalue of the test; the number of occured Errors
 
 	ulTestphase++;
-	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing a property of type COLOR_SW=2"<<endl;
+	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing a property of type COLOR_GRAYSCALE=2"<<endl;
 	
-	unsignedIntFib uiPropertyNumber = cTypeProperty::COLOR_SW;
-	string szPropertyName = "colorSW";
+	unsignedIntFib uiPropertyNumber = cTypeProperty::COLOR_GRAYSCALE;
+	string szPropertyName = "colorGrayscale";
 	
 	cTypeProperty testTypeProperty( uiPropertyNumber );
 	
@@ -1686,7 +1687,7 @@ int testPropertyColorSW( unsigned long &ulTestphase ){
 	const list<cTypeProperty> liOverwirttenTyps = testTypeProperty.getOverwritenTyps();
 	list<cTypeProperty> liToGiveBackPropertyTypes;
 	liToGiveBackPropertyTypes.push_back( cTypeProperty( cTypeProperty::COLOR_RGB ) );
-	liToGiveBackPropertyTypes.push_back( cTypeProperty( cTypeProperty::COLOR_SW ) );
+	liToGiveBackPropertyTypes.push_back( cTypeProperty( cTypeProperty::COLOR_GRAYSCALE ) );
 	iReturn += comparePropertyTypeLists( liOverwirttenTyps, liToGiveBackPropertyTypes );
 	
 	//test isEvalued()

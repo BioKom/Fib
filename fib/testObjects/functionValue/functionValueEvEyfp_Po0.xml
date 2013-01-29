@@ -4,7 +4,7 @@
 			<value>1</value>
 		</subfunction>
 		<property>
-			<vector type="property.colorSW">
+			<vector type="property.colorGrayscale">
 				<variable number="1">1</variable>
 			</vector>
 			<point>

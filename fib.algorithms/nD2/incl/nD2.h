@@ -315,7 +315,7 @@ namespace nD2{
 		cFibVariable * pVariableDimY,
 		const unsigned int uiMaxSplineParameters = 4,
 		double maxValue = 0.0,
-		const double maxError = 0,
+		const double maxError = 0.0,
 		const double maxErrorPerValue = 100000 );
 
 	/**

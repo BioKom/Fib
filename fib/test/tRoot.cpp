@@ -103,6 +103,7 @@ History:
 07.11.2011  Oesterholz  ExternUnderObjects to ExternSubobjects
 30.11.2011  Oesterholz  cFibDatabase changes added
 02.02.2012  Oesterholz  FEATURE_EXT_SUBOBJECT_INPUT_VECTOR implemented
+28.01.2013  Oesterholz  COLOR_SW changed to COLOR_GRAYSCALE
 */
 
 #include "version.h"
@@ -1312,8 +1313,8 @@ int testDomains( unsigned long &ulTestphase ){
 	cTypeDimension testTypeDimensionD3( dimensionMapping );
 	cout<<"cTypeProperty testTypePropertyColorRGB( cTypeProperty::COLOR_RGB ) "<<endl<<flush;
 	cTypeProperty testTypePropertyColorRGB( cTypeProperty::COLOR_RGB );
-	cout<<"cTypeProperty testTypePropertyColorSW( cTypeProperty::COLOR_SW ) "<<endl<<flush;
-	cTypeProperty testTypePropertyColorSW( cTypeProperty::COLOR_SW );
+	cout<<"cTypeProperty testTypePropertyColorSW( cTypeProperty::COLOR_GRAYSCALE ) "<<endl<<flush;
+	cTypeProperty testTypePropertyColorSW( cTypeProperty::COLOR_GRAYSCALE );
 
 
 	//create vector domain with one elements

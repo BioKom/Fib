@@ -37,6 +37,7 @@ History:
 16.08.2011  Oesterholz  Bugfix (Speicherzugriffsfehler): in choos a
 	property which is often used by all points;
 	if mapWigthedCountsForProperty are all 0 no property was choosen
+28.01.2013  Oesterholz  COLOR_SW changed to COLOR_GRAYSCALE
 */
 
 
@@ -992,7 +993,7 @@ cFibElement * nConvertToFib::convert( const fipImage & multimediaObject ){
 	cTypeProperty typeProperty( cTypeProperty::COLOR_RGB );
 	bool bSWColor = false;
 	if ( multimediaObject.isGrayscale() ){
-		typeProperty = cTypeProperty( cTypeProperty::COLOR_SW );
+		typeProperty = cTypeProperty( cTypeProperty::COLOR_GRAYSCALE );
 		bSWColor = true;
 	}else{
 		typeProperty = cTypeProperty( cTypeProperty::COLOR_RGB );
@@ -1229,7 +1230,7 @@ cFibElement * nConvertToFib::convertOptimized( const fipImage & multimediaObject
 	cTypeProperty typeProperty( cTypeProperty::COLOR_RGB );
 	bool bSWColor = false;
 	if ( multimediaObject.isGrayscale() ){
-		typeProperty = cTypeProperty( cTypeProperty::COLOR_SW );
+		typeProperty = cTypeProperty( cTypeProperty::COLOR_GRAYSCALE );
 		bSWColor = true;
 	}else{
 		typeProperty = cTypeProperty( cTypeProperty::COLOR_RGB );
@@ -1997,7 +1998,7 @@ cFibElement * nConvertToFib::convertReduced( const fipImage & multimediaObject,
 	cTypeProperty typeProperty( cTypeProperty::COLOR_RGB );
 	bool bSWColor = false;
 	if ( multimediaObject.isGrayscale() ){
-		typeProperty = cTypeProperty( cTypeProperty::COLOR_SW );
+		typeProperty = cTypeProperty( cTypeProperty::COLOR_GRAYSCALE );
 		bSWColor = true;
 	}else{
 		typeProperty = cTypeProperty( cTypeProperty::COLOR_RGB );

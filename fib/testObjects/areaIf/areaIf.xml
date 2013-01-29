@@ -13,7 +13,7 @@ xsd:schemaLocation="http://www.biokom.info/fib.xsd">
 				<naturalNumber max="255" />
 			</vector>
 		</dim>
-		<property name="colorSW" >
+		<property name="colorGrayscale" >
 			<vector elements="1">
 				<naturalNumberB bit="8" />
 			</vector>
@@ -35,7 +35,7 @@ xsd:schemaLocation="http://www.biokom.info/fib.xsd">
 				<value number="2">3</value>
 			</vector>
 			<property>
-				<vector type="property.colorSW">
+				<vector type="property.colorGrayscale">
 					<variable number="1">1</variable>
 				</vector>
 				<if>

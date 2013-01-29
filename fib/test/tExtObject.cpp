@@ -90,6 +90,8 @@ History:
 10.11.2011  Oesterholz  Bugfix: evalueObject() don't overwrite properties
 24.01.2012  Oesterholz  input values changed to input vector
 09.10.2012  Oesterholz  Warning removed: "(char)" for char arrays added
+28.01.2013  Oesterholz  COLOR_SW changed to COLOR_GRAYSCALE;
+   FEATURE_FIB_ELEMENT_CHECKS_DATABASE_FOR_EXTERNAL_OBJECTS added
 */
 
 #include "version.h"
@@ -944,8 +946,8 @@ int testEvalueObject( unsigned long &ulTestphase ){
 	cout<<"cPoint point( &vecPositionE2 );"<<endl;
 	cPoint point( &vecPositionE2 );
 	
-	cout<<"cVectorProperty vecPropertyColorSW( cTypeProperty::COLOR_SW );"<<endl;
-	cVectorProperty vecPropertyColorSW( cTypeProperty::COLOR_SW );
+	cout<<"cVectorProperty vecPropertyColorSW( cTypeProperty::COLOR_GRAYSCALE );"<<endl;
+	cVectorProperty vecPropertyColorSW( cTypeProperty::COLOR_GRAYSCALE );
 	
 	cout<<"cProperty property( vecPropertyColorSW, &point );"<<endl;
 	cProperty property( vecPropertyColorSW, &point );
@@ -999,7 +1001,7 @@ int testEvalueObject( unsigned long &ulTestphase ){
 	list< pair< const cVectorPosition*, list<cVectorProperty> > > liPointsToEvalue;
 	cVectorPosition vecPositionE2V1( 2 );
 	vecPositionE2V1.setValue( 1, 1 );
-	cVectorProperty vecPropertyColorSWV1( cTypeProperty::COLOR_SW );
+	cVectorProperty vecPropertyColorSWV1( cTypeProperty::COLOR_GRAYSCALE );
 	vecPropertyColorSWV1.setValue( 1, 1 );
 	liPointsToEvalue.push_back( make_pair( &vecPositionE2V1, list<cVectorProperty>() ) );
 	liPointsToEvalue.back().second.push_back( vecPropertyColorSWV1 );
@@ -1514,8 +1516,8 @@ int testEvalueObject( unsigned long &ulTestphase ){
 	cout<<"cPoint point2( &vecPositionE2 );"<<endl;
 	cPoint point2( &vecPositionE2 );
 	
-	cout<<"cVectorProperty vecPropertyColorSW1( cTypeProperty::COLOR_SW );"<<endl;
-	cVectorProperty vecPropertyColorSW1( cTypeProperty::COLOR_SW );
+	cout<<"cVectorProperty vecPropertyColorSW1( cTypeProperty::COLOR_GRAYSCALE );"<<endl;
+	cVectorProperty vecPropertyColorSW1( cTypeProperty::COLOR_GRAYSCALE );
 	
 	cout<<"cProperty property2( vecPropertyColorSW1, &point2 );"<<endl;
 	cProperty property2( vecPropertyColorSW1, &point2 );
@@ -1588,7 +1590,7 @@ int testEvalueObject( unsigned long &ulTestphase ){
 	cVectorPosition vecPositionE2V1V2( 2 );
 	vecPositionE2V1V2.setValue( 1, 1 );
 	vecPositionE2V1V2.setValue( 2, 2 );
-	cVectorProperty vecPropertyColorSW1V3( cTypeProperty::COLOR_SW );
+	cVectorProperty vecPropertyColorSW1V3( cTypeProperty::COLOR_GRAYSCALE );
 	vecPropertyColorSW1V3.setValue( 1, 3 );
 	liPointsToEvalue.push_back( make_pair( &vecPositionE2V1V1, list<cVectorProperty>() ) );
 	liPointsToEvalue.back().second.push_back( vecPropertyColorSW1V3 );
@@ -2105,7 +2107,11 @@ int testEqual( unsigned long &ulTestphase ){
 	iReturn += testCompareTwoNotEqualObjects( *pActualObject, szActualObjectName, extObjId0InVal1u7u5, "extObjId0InVal1u7u5" );
 	iReturn += testCompareTwoNotEqualObjects( *pActualObject, szActualObjectName, extObjId0InVal1u7u4, "extObjId0InVal1u7u4" );
 	iReturn += testCompareTwoNotEqualObjects( *pActualObject, szActualObjectName, extObjId0InVal0, "extObjId0InVal0" );
+#ifdef FEATURE_FIB_ELEMENT_CHECKS_DATABASE_FOR_EXTERNAL_OBJECTS
+	iReturn += testCompareTwoEqualObjects( *pActualObject, szActualObjectName, extObjId0Sup, "extObjId0Sup" );
+#else //FEATURE_FIB_ELEMENT_CHECKS_DATABASE_FOR_EXTERNAL_OBJECTS
 	iReturn += testCompareTwoNotEqualObjects( *pActualObject, szActualObjectName, extObjId0Sup, "extObjId0Sup", true );
+#endif //FEATURE_FIB_ELEMENT_CHECKS_DATABASE_FOR_EXTERNAL_OBJECTS
 	iReturn += testCompareTwoNotEqualObjects( *pActualObject, szActualObjectName, extObjId0Sub1_1, "extObjId0Sub1_1" );
 	iReturn += testCompareTwoNotEqualObjects( *pActualObject, szActualObjectName, extObjId0Sub1_2, "extObjId0Sub1_2" );
 	iReturn += testCompareTwoNotEqualObjects( *pActualObject, szActualObjectName, extObjId0Sub1ov1_1, "extObjId0Sub1ov1_1" );
@@ -2132,7 +2138,11 @@ int testEqual( unsigned long &ulTestphase ){
 	iReturn += testCompareTwoNotEqualObjects( *pActualObject, szActualObjectName, extObjId0InVal1u7u5, "extObjId0InVal1u7u5" );
 	iReturn += testCompareTwoNotEqualObjects( *pActualObject, szActualObjectName, extObjId0InVal1u7u4, "extObjId0InVal1u7u4" );
 	iReturn += testCompareTwoNotEqualObjects( *pActualObject, szActualObjectName, extObjId0InVal0, "extObjId0InVal0" );
+#ifdef FEATURE_FIB_ELEMENT_CHECKS_DATABASE_FOR_EXTERNAL_OBJECTS
+	iReturn += testCompareTwoEqualObjects( *pActualObject, szActualObjectName, extObjId0Sup, "extObjId0Sup" );
+#else //FEATURE_FIB_ELEMENT_CHECKS_DATABASE_FOR_EXTERNAL_OBJECTS
 	iReturn += testCompareTwoNotEqualObjects( *pActualObject, szActualObjectName, extObjId0Sup, "extObjId0Sup", true );
+#endif //FEATURE_FIB_ELEMENT_CHECKS_DATABASE_FOR_EXTERNAL_OBJECTS
 	iReturn += testCompareTwoNotEqualObjects( *pActualObject, szActualObjectName, extObjId0Sub1_1, "extObjId0Sub1_1" );
 	iReturn += testCompareTwoNotEqualObjects( *pActualObject, szActualObjectName, extObjId0Sub1_2, "extObjId0Sub1_2" );
 	iReturn += testCompareTwoNotEqualObjects( *pActualObject, szActualObjectName, extObjId0Sub1ov1_1, "extObjId0Sub1ov1_1" );
@@ -2417,8 +2427,13 @@ int testEqual( unsigned long &ulTestphase ){
 	//compare with extObjId0Sup
 	pActualObject = &extObjId0Sup;
 	szActualObjectName = "extObjId0Sup";
+#ifdef FEATURE_FIB_ELEMENT_CHECKS_DATABASE_FOR_EXTERNAL_OBJECTS
+	iReturn += testCompareTwoEqualObjects( *pActualObject, szActualObjectName, extObjId0_1, "extObjId0_1" );
+	iReturn += testCompareTwoEqualObjects( *pActualObject, szActualObjectName, extObjId0_2, "extObjId0_2" );
+#else //FEATURE_FIB_ELEMENT_CHECKS_DATABASE_FOR_EXTERNAL_OBJECTS
 	iReturn += testCompareTwoNotEqualObjects( *pActualObject, szActualObjectName, extObjId0_1, "extObjId0_1", true );
 	iReturn += testCompareTwoNotEqualObjects( *pActualObject, szActualObjectName, extObjId0_2, "extObjId0_2", true );
+#endif //FEATURE_FIB_ELEMENT_CHECKS_DATABASE_FOR_EXTERNAL_OBJECTS
 	iReturn += testCompareTwoNotEqualObjects( *pActualObject, szActualObjectName, extObjId1_1, "extObjId1_1" );
 	iReturn += testCompareTwoNotEqualObjects( *pActualObject, szActualObjectName, extObjId32568_1, "extObjId32568_1" );
 	iReturn += testCompareTwoNotEqualObjects( *pActualObject, szActualObjectName, extObjIdm1_1, "extObjIdm1_1" );

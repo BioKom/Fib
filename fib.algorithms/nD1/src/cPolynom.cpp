@@ -72,7 +72,7 @@ History:
 
 
 //for debugging
-#define DEBUG_C_POLYNOM
+//#define DEBUG_C_POLYNOM
 //#define DEBUG_C_POLYNOM_EVALUE
 
 //#define PRINT_INFOS

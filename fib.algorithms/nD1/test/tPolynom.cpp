@@ -3356,13 +3356,6 @@ int testEvalueSplineIterativFast( unsigned long &ulTestphase, int & iWarnings ){
 		}
 	}
 
-/*TODO:
-evalueSplineIterativFast( const vector< cDataPointRange< tX, tY> > & vecData, unsigned int uiMaxNumberOfParameters, const unsigned int uiMinBitsToStoreMantissa, const tY maxValue, const tY maxError, const unsigned long ulMaxMemoryCost );
-
-for not standard ulMaxMemoryCost
-
-*/
-
 	return iReturn;
 }
 

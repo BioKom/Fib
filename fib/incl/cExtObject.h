@@ -431,8 +431,8 @@ public:
 	 * specified position. The replaced Fib-element will be the subobject
 	 * of the inserted Fib-element fibelement.
 	 *
-	 * @see getNumberOfelement()
-	 * @see getNumberOfelements()
+	 * @see getNumberOfElement()
+	 * @see getNumberOfElements()
 	 * @see getType()
 	 * @param cType the type of the Fib-element insted of which the given
 	 * 	Fib-element fibelement should be inserted
@@ -459,8 +459,8 @@ public:
 	 * list element will be inserted, with the old Fib-object and the
 	 * given Fib-object pFibObject as its subobjects.
 	 *
-	 * @see getNumberOfelement()
-	 * @see getNumberOfelements()
+	 * @see getNumberOfElement()
+	 * @see getNumberOfElements()
 	 * @see overwriteObjectWithObject()
 	 * @see getType()
 	 * @param cType the type of the Fib-element, on which position the 
@@ -484,8 +484,8 @@ public:
 	 * the given Fib-object fibObject. The Fib-object on specified
 	 * position will be replaced with the given Fib-object fibObject.
 	 *
-	 * @see getNumberOfelement()
-	 * @see getNumberOfelements()
+	 * @see getNumberOfElement()
+	 * @see getNumberOfElements()
 	 * @see insertObjectInElement()
 	 * @see getType()
 	 * @param cType the type of the Fib-element, on which position the 

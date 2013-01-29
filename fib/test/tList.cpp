@@ -87,6 +87,7 @@ History:
 04.04.2011  Oesterholz  storing to binary stream
 06.06.2011  Oesterholz  number atribute in XML-vector is now optional
 26.09.2012  Oesterholz  Warning removed: "(char)" for char arrays added
+28.01.2013  Oesterholz  COLOR_SW changed to COLOR_GRAYSCALE
 */
 
 #include "version.h"
@@ -1007,8 +1008,8 @@ int testEvalueObject( unsigned long &ulTestphase ){
 	cout<<"vecPropertyColorRgb1.setValue( 2, 3 );"<<endl;
 	vecPropertyColorRgb1.setValue( 2, 3 );
 	
-	cout<<"cVectorProperty vecPropertyColorSW( cTypeProperty::COLOR_SW );"<<endl;
-	cVectorProperty vecPropertyColorSW( cTypeProperty::COLOR_SW );
+	cout<<"cVectorProperty vecPropertyColorSW( cTypeProperty::COLOR_GRAYSCALE );"<<endl;
+	cVectorProperty vecPropertyColorSW( cTypeProperty::COLOR_GRAYSCALE );
 	cout<<"vecPropertyColorSW.setValue( 1, 14 );"<<endl;
 	vecPropertyColorSW.setValue( 1, 14 );
 	

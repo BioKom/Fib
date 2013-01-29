@@ -91,6 +91,7 @@ History:
 29.01.2011  Oesterholz  FEATURE_EXT_SUBOBJECT_INPUT_VECTOR implemented:
 	the input values are now a vector of values
 09.10.2012  Oesterholz  Warning removed: "(char)" for char arrays added
+28.01.2013  Oesterholz  COLOR_SW changed to COLOR_GRAYSCALE
 */
 
 #include "version.h"
@@ -966,8 +967,8 @@ int testEvalueObject( unsigned long &ulTestphase ){
 	cout<<"cVectorPosition vecPositionE4( 4 );"<<endl;
 	cVectorPosition vecPositionE4( 4 );
 
-	cout<<"cVectorProperty vecPropertyColorSW( cTypeProperty::COLOR_SW );"<<endl;
-	cVectorProperty vecPropertyColorSW( cTypeProperty::COLOR_SW );
+	cout<<"cVectorProperty vecPropertyColorSW( cTypeProperty::COLOR_GRAYSCALE );"<<endl;
+	cVectorProperty vecPropertyColorSW( cTypeProperty::COLOR_GRAYSCALE );
 	cout<<"vecPropertyColorSW.setValue( 1, 1 );"<<endl;
 	vecPropertyColorSW.setValue( 1, 1 );
 
@@ -1061,9 +1062,9 @@ int testEvalueObject( unsigned long &ulTestphase ){
 	list< pair< const cVectorPosition*, list<cVectorProperty> > > liPointsToEvalue;
 	cVectorPosition vecPositionE3V2( 3 );
 	vecPositionE3V2.setValue( 1, 2 );
-	cVectorProperty vecPropertyColorSWV1( cTypeProperty::COLOR_SW );
+	cVectorProperty vecPropertyColorSWV1( cTypeProperty::COLOR_GRAYSCALE );
 	vecPropertyColorSWV1.setValue( 1, 1 );
-	cVectorProperty vecPropertyColorSWV2( cTypeProperty::COLOR_SW );
+	cVectorProperty vecPropertyColorSWV2( cTypeProperty::COLOR_GRAYSCALE );
 	vecPropertyColorSWV2.setValue( 1, 2 );
 	liPointsToEvalue.push_back( make_pair( &vecPositionE3V2, list<cVectorProperty>() ) );
 	liPointsToEvalue.back().second.push_back( vecPropertyColorSWV1 );

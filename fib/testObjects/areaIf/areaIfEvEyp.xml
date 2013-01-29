@@ -1,6 +1,6 @@
 <data>
 	<property>
-		<vector type="property.colorSW">
+		<vector type="property.colorGrayscale">
 			<variable number="1">1</variable>
 		</vector>
 		<if>
@@ -25,7 +25,7 @@
 		</if>
 	</property>
 	<property>
-		<vector type="property.colorSW">
+		<vector type="property.colorGrayscale">
 			<variable number="1">1</variable>
 		</vector>
 		<if>
@@ -50,7 +50,7 @@
 		</if>
 	</property>
 	<property>
-		<vector type="property.colorSW">
+		<vector type="property.colorGrayscale">
 			<variable number="1">1</variable>
 		</vector>
 		<if>

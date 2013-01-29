@@ -73,6 +73,7 @@ History:
 29.04.2011  Oesterholz  sscanf() "%lld" for windows to "%I64d"
 06.06.2011  Oesterholz  number atribute in XML-vector is now optional
 17.09.2012  Oesterholz  Warning removed: "(char)" for char arrays added
+28.01.2013  Oesterholz  COLOR_SW changed to COLOR_GRAYSCALE
 */
 
 
@@ -279,7 +280,7 @@ int testCostructor( unsigned long &ulTestphase ){
 
 
 	ulTestphase++;
-	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing constructing cVectorProperty for colorSW"<<endl;
+	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing constructing cVectorProperty for colorGrayscale"<<endl;
 
 	cout<<"cTypeProperty typeProperty2( 2 );"<<endl;
 	cTypeProperty typeProperty2( 2 );
@@ -289,12 +290,12 @@ int testCostructor( unsigned long &ulTestphase ){
 
 
 	//check the getVectorType() methode from cVectorProperty
-	if ( vecProperty2.getVectorType() == "property.colorSW" ){
+	if ( vecProperty2.getVectorType() == "property.colorGrayscale" ){
 	
-		cout<<"The name of the propertyvector is correctly \"property.colorSW\" . "<<endl;
+		cout<<"The name of the propertyvector is correctly \"property.colorGrayscale\" . "<<endl;
 	}else{
 		cerr<<"Error: The name of the propertyvector is "<<
-			vecProperty2.getVectorType()<<" but should be \"property.colorSW\" ."<<endl;
+			vecProperty2.getVectorType()<<" but should be \"property.colorGrayscale\" ."<<endl;
 		iReturn++;
 	}
 	if ( vecProperty2.getPropertyType() == 2 ){
@@ -2311,8 +2312,8 @@ int testGetSetDefiningElement( unsigned long &ulTestphase ){
 	ulTestphase++;
 	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the get and setDefiningFibElement() methods when a domain is given and colorSw property"<<endl;
 
-	cout<<"cVectorProperty vecPropertyColorSwE2( cTypeProperty::COLOR_SW, 2, NULL );"<<endl;
-	cVectorProperty vecPropertyColorSwE2( cTypeProperty::COLOR_SW, 2, NULL );
+	cout<<"cVectorProperty vecPropertyColorSwE2( cTypeProperty::COLOR_GRAYSCALE, 2, NULL );"<<endl;
+	cVectorProperty vecPropertyColorSwE2( cTypeProperty::COLOR_GRAYSCALE, 2, NULL );
 	cout<<"vecPropertyColorSwE2.setValue( 1, 8 );"<<endl;
 	vecPropertyColorSwE2.setValue( 1, 8 );
 	cout<<"vecPropertyColorSwE2.setValue( 2, 14 );"<<endl;
@@ -2321,8 +2322,8 @@ int testGetSetDefiningElement( unsigned long &ulTestphase ){
 	cout<<"vecPropertyColorSwE2.setDefiningFibElement( &rootD3 );"<<endl;
 	vecPropertyColorSwE2.setDefiningFibElement( &rootD3 );
 
-	cout<<"cVectorProperty vecPropertyColorSw2E2( cTypeProperty::COLOR_SW, 2, NULL );"<<endl;
-	cVectorProperty vecPropertyColorSw2E2( cTypeProperty::COLOR_SW, 2, NULL );
+	cout<<"cVectorProperty vecPropertyColorSw2E2( cTypeProperty::COLOR_GRAYSCALE, 2, NULL );"<<endl;
+	cVectorProperty vecPropertyColorSw2E2( cTypeProperty::COLOR_GRAYSCALE, 2, NULL );
 	cout<<"vecPropertyColorSw2E2.setValue( 1, 8 );"<<endl;
 	vecPropertyColorSw2E2.setValue( 1, 8 );
 	cout<<"vecPropertyColorSw2E2.setValue( 2, 14 );"<<endl;
@@ -2336,8 +2337,8 @@ int testGetSetDefiningElement( unsigned long &ulTestphase ){
 		iReturn++;
 	}
 
-	cout<<"cTypeProperty testTypePropertyColorSw( cTypeProperty::COLOR_SW );"<<endl;
-	cTypeProperty testTypePropertyColorSw( cTypeProperty::COLOR_SW );
+	cout<<"cTypeProperty testTypePropertyColorSw( cTypeProperty::COLOR_GRAYSCALE );"<<endl;
+	cTypeProperty testTypePropertyColorSw( cTypeProperty::COLOR_GRAYSCALE );
 	
 	//create vector domain with two elements
 	cout<<"vector<cDomainSingle*> vecDomainsD1( 1 );"<<endl;
@@ -2362,8 +2363,8 @@ int testGetSetDefiningElement( unsigned long &ulTestphase ){
 	cout<<"vecPropertyColorSwE2.setDefiningFibElement( &rootD3 );"<<endl;
 	vecPropertyColorSwE2.setDefiningFibElement( &rootD3 );
 
-	cout<<"cVectorProperty vecPropertyColorSw1E1( cTypeProperty::COLOR_SW );"<<endl;
-	cVectorProperty vecPropertyColorSw1E1( cTypeProperty::COLOR_SW );
+	cout<<"cVectorProperty vecPropertyColorSw1E1( cTypeProperty::COLOR_GRAYSCALE );"<<endl;
+	cVectorProperty vecPropertyColorSw1E1( cTypeProperty::COLOR_GRAYSCALE );
 	cout<<"vecPropertyColorSw1E1.setValue( 1, 7 );"<<endl;
 	vecPropertyColorSw1E1.setValue( 1, 7 );
 
@@ -2550,8 +2551,8 @@ int testGetSetDefiningElement( unsigned long &ulTestphase ){
 	ulTestphase++;
 	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the get and setDefiningFibElement() methods when a domain is given and colorSw property but shouldn't be checked"<<endl;
 
-	cout<<"cVectorProperty vecPropertyColorSw4E2( cTypeProperty::COLOR_SW, 2, NULL );"<<endl;
-	cVectorProperty vecPropertyColorSw4E2( cTypeProperty::COLOR_SW, 2, NULL );
+	cout<<"cVectorProperty vecPropertyColorSw4E2( cTypeProperty::COLOR_GRAYSCALE, 2, NULL );"<<endl;
+	cVectorProperty vecPropertyColorSw4E2( cTypeProperty::COLOR_GRAYSCALE, 2, NULL );
 	cout<<"vecPropertyColorSw4E2.setValue( 1, 8 );"<<endl;
 	vecPropertyColorSw4E2.setValue( 1, 8 );
 	cout<<"vecPropertyColorSw4E2.setValue( 2, 14 );"<<endl;
@@ -5004,12 +5005,12 @@ int testCreateInstance( unsigned long &ulTestphase ){
 	cout<<endl<<"Testing the created instance:"<<flush<<endl;
 
 	//check the getVectorType() methode from cVectorProperty
-	if ( vectorInstanceColorSW->getVectorType() == "property.colorSW" ){
+	if ( vectorInstanceColorSW->getVectorType() == "property.colorGrayscale" ){
 	
-		cout<<"The name of the propertyvector is correctly \"property.colorSW\" . "<<endl;
+		cout<<"The name of the propertyvector is correctly \"property.colorGrayscale\" . "<<endl;
 	}else{
 		cerr<<"Error: The name of the propertyvector is "<<
-			vectorInstanceColorSW->getVectorType()<<" but should be \"property.colorSW\" ."<<endl;
+			vectorInstanceColorSW->getVectorType()<<" but should be \"property.colorGrayscale\" ."<<endl;
 		iReturn++;
 	}
 	
@@ -5527,10 +5528,10 @@ int testStoreXml( unsigned long &ulTestphase ){
 
 
 	ulTestphase++;
-	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the storeXml() method on an colorSW vector with values"<<endl;
+	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the storeXml() method on an colorGrayscale vector with values"<<endl;
 	
-	cout<<"cVectorProperty vecPropertyColorSw ( cTypeProperty::COLOR_SW , &rootD3 );"<<endl;
-	cVectorProperty vecPropertyColorSw( cTypeProperty::COLOR_SW, &rootD3 );
+	cout<<"cVectorProperty vecPropertyColorSw ( cTypeProperty::COLOR_GRAYSCALE , &rootD3 );"<<endl;
+	cVectorProperty vecPropertyColorSw( cTypeProperty::COLOR_GRAYSCALE, &rootD3 );
 
 	cout<<"vecPropertyColorSw.setValue( 1, -124 )"<<endl;
 	vecPropertyColorSw.setValue( 1, -124 );
@@ -5552,7 +5553,7 @@ int testStoreXml( unsigned long &ulTestphase ){
 		iReturn++;
 	}
 
-	iReturn += testXmlVector( pFileName, "property.colorSW",
+	iReturn += testXmlVector( pFileName, "property.colorGrayscale",
 		1, vecElementTypePosition, vecValuesPosition );
 
 
@@ -5577,8 +5578,8 @@ int testStore( unsigned long &ulTestphase ){
 	ulTestphase++;
 	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the store() method on an propertysvector with 0 elements"<<endl;
 
-	cout<<"cVectorProperty vecPropertyE0( cTypeProperty::COLOR_SW, 0, NULL );"<<endl;
-	cVectorProperty vecPropertyE0( cTypeProperty::COLOR_SW, 0, NULL );
+	cout<<"cVectorProperty vecPropertyE0( cTypeProperty::COLOR_GRAYSCALE, 0, NULL );"<<endl;
+	cVectorProperty vecPropertyE0( cTypeProperty::COLOR_GRAYSCALE, 0, NULL );
 
 	//test get compressed size
 	unsigned int uiCompressedSize = 0;

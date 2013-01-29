@@ -7,7 +7,7 @@
  *
  * System: C++
  *
- * This test is for testing evaluating  Fib-objects.
+ * This test is for testing evaluating  Fib objects.
  *
  * Copyright (C) @c GPL3 2010 Betti Oesterholz
  *
@@ -25,14 +25,14 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * This test is for testing evaluating  Fib-objects.
+ * This test is for testing evaluating  Fib objects.
  * The Fib-testobjects are loaded from the files in the subdirectories of the
  * folde pDirTestObjects. Ther are also stored the resultdata which evalue
  * calls should produce. With this data the evaluecalls are check on the
- * restoed Fib-object.
+ * restoed Fib object.
  * When loading partobjects with variables, ther variable storevalue
  * should be ther number (counting form 1) in the list of all variables in
- * the original Fib-object counted in the order which
+ * the original Fib object counted in the order which
  * getDefinedVariables() returns.
  *
  * Every testcase is stored in a seperate underfolder in the DIR_TESTDATA
@@ -41,27 +41,27 @@
  * listed. Every folder stands in "testWithEvalue.txt" in a seperate line.
  *
  * The data, in the testfiles in the testcasefolder [TESTCASE], is stored
- * in the Fib-xml -format. Files with the testdata (or rather all files
+ * in the Fib-xml  format. Files with the testdata (or rather all files
  * except the [TESTCASE].xml file) have as the root xml -element, an
  * xml -element with the name "data". In the "data" xml -element contains
  * the list with Fib-elements, which are evalued. Every listelement is an
- * evalued Fib-element (an positionsvector or an Fib-object) followed
+ * evalued Fib-element (an positionsvector or an Fib object) followed
  * by it's properties as propertyvectors.
  * Testfile in a testcasefolder [TESTCASE]:
- * 	- [TESTCASE].xml : file with the Fib-object which should be evalued
+ * 	- [TESTCASE].xml : file with the Fib object which should be evalued
  * 	  (e.g. "test.xml")
  * Optional testfiles (with the testdata) in a testcasefolder [TESTCASE]:
- * 	- [TESTCASE]EvP.xml : file with the evalued data of the whool Fib-object
+ * 	- [TESTCASE]EvP.xml : file with the evalued data of the whool Fib object
  * 	  (e.g. "testEvP.xml")
  * 	- [TESTCASE]EvP_Po[NUMBER].xml : file with the evalued data of the
- * 	  [NUMBER]'th underobject of the Fib-object
+ * 	  [NUMBER]'th underobject of the Fib object
  * 	  (e.g. "testEvP_Po1.xml" and "testEvP_Po3.xml")
  * 	- [TESTCASE]EvE[TYPS].xml : file with the evalued data of the whool
- * 	  Fib-object for the given [TYPS], the typs are given as a list of
+ * 	  Fib object for the given [TYPS], the typs are given as a list of
  * 	  the characters for the Fib-elementtyps (@see cFibElement::getType())
  * 	  (e.g. "testEvEy.xml" and "testEvEyl.xml" (="testEvEly.xml") )
  * 	- [TESTCASE]EvE[TYPS]_Po[NUMBER].xml : file with the evalued data of
- * 	  the [NUMBER]'th underobject of the Fib-object for the given [TYPS],
+ * 	  the [NUMBER]'th underobject of the Fib object for the given [TYPS],
  * 	  the typs are given as a list of the characters for the
  * 	  Fib-elementtyps (@see cFibElement::getType())
  * 	  (e.g. "testEvEy_Po1.xml" and "testEvEl_Po3.xml")
@@ -181,7 +181,7 @@ int main(int argc, char* argv[]){
 		pDirTestObjects = argv[1];
 	}
 	
-	cout<<endl<<"Running Test for Fib-object evalue methods"<<endl;
+	cout<<endl<<"Running Test for Fib object evalue methods"<<endl;
 	cout<<      "==========================================="<<endl;
 	
 	//load the testfolder list
@@ -201,7 +201,7 @@ int main(int argc, char* argv[]){
 		unsigned int uiErrorsInTestphase = 0;
 		const string szActualTestFolder = *itrTestFolder;
 		ulTestphase++;
-		cout<<endl<<"TESTPHASE "<<ulTestphase<<" : Testing the Fib-object in folder \""<< szActualTestFolder <<"\""<<endl;
+		cout<<endl<<"TESTPHASE "<<ulTestphase<<" : Testing the Fib object in folder \""<< szActualTestFolder <<"\""<<endl;
 		
 		//evalue the files in the testfolder
 		const string szActualTestPath = string( pDirTestObjects ) +
@@ -227,7 +227,7 @@ int main(int argc, char* argv[]){
 			
 			if ( (*itrTestFile) == (*itrTestFolder) + ".xml" ){
 				
-				cout<<"Fib-object to test on: "<< (*itrTestFile) << endl;
+				cout<<"Fib object to test on: "<< (*itrTestFile) << endl;
 				bFibObjectToTestOnExists = true;
 			}else if ( (*itrTestFile) == (*itrTestFolder) + "EvP.xml" ){
 				
@@ -281,7 +281,7 @@ int main(int argc, char* argv[]){
 			}
 		}
 		if ( ! bFibObjectToTestOnExists ){
-			cerr<<"Error: Ther is no file "<< (*itrTestFolder) <<" with the Fib-object to test on in the testfolder."<<endl;
+			cerr<<"Error: Ther is no file "<< (*itrTestFolder) <<" with the Fib object to test on in the testfolder."<<endl;
 			uiErrorsInTestphase++;
 			iReturn += uiErrorsInTestphase;
 			iFailedTestphases++;
@@ -289,7 +289,7 @@ int main(int argc, char* argv[]){
 			continue;//skip this testfolder
 		}
 		cout<<endl;
-		//load the Fib-object to check
+		//load the Fib object to check
 		const string szPathFibObjectToTest = szActualTestPath +
 			((*itrTestFolder) + ".xml");
 		ifstream inFile( szPathFibObjectToTest.c_str() );
@@ -298,10 +298,10 @@ int main(int argc, char* argv[]){
 		cFibElement * pFibObjectToTest = cFibElement::restoreXml( inFile , &outStatus );
 		
 		if ( (outStatus == 0) && (pFibObjectToTest != NULL) ){
-			cout<<"Restoring Fib-object in the Xml-format from the file "<<
-				szPathFibObjectToTest <<" successfull. "<<endl;
+			cout<<"Restoring Fib object in the Xml format from the file "<<
+				szPathFibObjectToTest <<" successfull."<<endl;
 		}else{
-			cerr<<"Error: Restoring Fib-object in the Xml-format from the file "<<
+			cerr<<"Error: Restoring Fib object in the Xml format from the file "<<
 				szPathFibObjectToTest <<" not successfull. (return status="<< outStatus <<")"<<endl;
 			uiErrorsInTestphase++;
 			iReturn += uiErrorsInTestphase;
@@ -323,7 +323,7 @@ int main(int argc, char* argv[]){
 		list< pair< cVectorPosition, list< cVectorProperty > > > liEvaluePointAllLoaded =
 			loadPositionData( (szActualTestPath + szEvaluePointAll).c_str() );
 		
-		//evalue the Fib-object
+		//evalue the Fib object
 		cEvaluePositionList evaluePositionList;
 		evaluePositionList.ulCountOfEvalueMethodCalled = 0;
 		evaluePositionList.lNumberOfTrueEvalueCalls = -1;
@@ -338,7 +338,7 @@ int main(int argc, char* argv[]){
 		//compare evalued data with the loaded data
 		uiErrorsInTestphase += comparePositionData( liEvaluePointAllLoaded, evaluePositionList.liEvaluedPositionData );
 		
-		//evalue the Fib-object
+		//evalue the Fib object
 		cout<<"Calling evalueObject() on wool object."<<endl;
 		list<cVectorProperty> liVecProperties;
 		evaluePositionList.clear();
@@ -361,7 +361,7 @@ int main(int argc, char* argv[]){
 		list< pair< cVectorPosition, list< cVectorProperty > > > liEvaluePointAllLoadedPlusRandom =
 			addPropertiesToAll( liEvaluePointAllLoaded, liRandomProperties );
 		
-		//evalue the Fib-object
+		//evalue the Fib object
 		cout<<"Calling evalueObject() on wool object with given random property vectores."<<endl;
 		list< cVectorProperty > liRandomPropertiesCopy = liRandomProperties;
 		evaluePositionList.clear();
@@ -391,7 +391,7 @@ int main(int argc, char* argv[]){
 			cEvaluePositionList evaluePositionListPart;
 			evaluePositionListPart.ulCountOfEvalueMethodCalled = 0;
 			evaluePositionListPart.lNumberOfTrueEvalueCalls = 100000;
-			//evalue the Fib-object
+			//evalue the Fib object
 			cout<<"Calling evalueObjectSimple() on the "<<
 				itrEvalueParameter->second <<"'th partobject."<<endl;
 			bObjectEvalued = pFibObjectToTestConst->evalueObjectSimple(
@@ -408,7 +408,7 @@ int main(int argc, char* argv[]){
 			evaluePositionListPart.clear();
 			evaluePositionListPart.ulCountOfEvalueMethodCalled = 0;
 			evaluePositionListPart.lNumberOfTrueEvalueCalls = 100000;
-			//evalue the Fib-object
+			//evalue the Fib object
 			cout<<"Calling evalueObject() on the "<<
 				itrEvalueParameter->second <<"'th partobject."<<endl;
 			bObjectEvalued = pFibObjectToTestConst->evalueObject( evaluePositionListPart,
@@ -431,7 +431,7 @@ int main(int argc, char* argv[]){
 			evaluePositionListPart.clear();
 			evaluePositionListPart.ulCountOfEvalueMethodCalled = 0;
 			evaluePositionListPart.lNumberOfTrueEvalueCalls = 100000;
-			//evalue the Fib-object
+			//evalue the Fib object
 			cout<<"Calling evalueObject() on the "<<
 				itrEvalueParameter->second <<"'th partobject with given random property vectores."<<endl;
 			liRandomPropertiesCopy = liRandomProperties;
@@ -448,7 +448,7 @@ int main(int argc, char* argv[]){
 		}
 	
 	//for evalueElement() on given elementtyps
-		//evalue the defined variables of the Fib-object
+		//evalue the defined variables of the Fib object
 		list<cFibVariable*> liDefinedVariables =
 			pFibObjectToTest->getDefinedVariables( ED_ALL );
 		
@@ -469,7 +469,7 @@ int main(int argc, char* argv[]){
 			cEvalueFibElementList evalueFibElementListPart( true );
 			evalueFibElementListPart.ulCountOfEvalueMethodCalled = 0;
 			evalueFibElementListPart.lNumberOfTrueEvalueCalls = 100000;
-			//evalue the Fib-object
+			//evalue the Fib object
 			cout<<"Calling evalueObjectSimple() on the "<<
 				itrEvalueParameter->second.first <<"'th partobject."<<endl;
 			bObjectEvalued = pFibObjectToTest->evalueObjectSimple( evalueFibElementListPart,
@@ -487,7 +487,7 @@ int main(int argc, char* argv[]){
 			evalueFibElementListPart.clear();
 			evalueFibElementListPart.ulCountOfEvalueMethodCalled = 0;
 			evalueFibElementListPart.lNumberOfTrueEvalueCalls = 100000;
-			//evalue the Fib-object
+			//evalue the Fib object
 			cout<<"Calling evalueObject() on the "<<
 				itrEvalueParameter->second.first <<"'th partobject."<<endl;
 			bObjectEvalued = pFibObjectToTest->evalueObject( evalueFibElementListPart,
@@ -511,7 +511,7 @@ int main(int argc, char* argv[]){
 			list< pair< cFibElement*, list< cVectorProperty > > > liEvalueElementPartLoadedPlusRandom =
 				addPropertiesToAll( liEvalueElementPartLoaded, liRandomProperties );
 			
-			//evalue the Fib-object
+			//evalue the Fib object
 			cout<<"Calling evalueObject() on the "<<
 				itrEvalueParameter->second.first <<"'th partobject with given random property vectores."<<endl;
 			liRandomPropertiesCopy = liRandomProperties;
@@ -545,7 +545,7 @@ int main(int argc, char* argv[]){
 			evaluePositionList.ulCountOfEvalueMethodCalled = 0;
 			evaluePositionList.lNumberOfTrueEvalueCalls = rand() % liEvaluePointAllLoaded.size();;
 			liEvaluePointAllResized.resize( evaluePositionList.lNumberOfTrueEvalueCalls );
-			//evalue the Fib-object
+			//evalue the Fib object
 			cout<<"Calling evalueObjectSimple() on wool object."<<endl;
 			bObjectEvalued = pFibObjectToTestConst->evalueObjectSimple( evaluePositionList );
 			if ( bObjectEvalued ){
@@ -558,7 +558,7 @@ int main(int argc, char* argv[]){
 			evaluePositionList.clear();
 			evaluePositionList.ulCountOfEvalueMethodCalled = 0;
 			evaluePositionList.lNumberOfTrueEvalueCalls = liEvaluePointAllResized.size();
-			//evalue the Fib-object
+			//evalue the Fib object
 			cout<<"Calling evalueObject() on wool object."<<endl;
 			bObjectEvalued = pFibObjectToTestConst->
 				evalueObject( evaluePositionList, 0, liVecProperties );
@@ -577,7 +577,7 @@ int main(int argc, char* argv[]){
 			evaluePositionList.clear();
 			evaluePositionList.ulCountOfEvalueMethodCalled = 0;
 			evaluePositionList.lNumberOfTrueEvalueCalls = liEvaluePointAllResized.size();
-			//evalue the Fib-object
+			//evalue the Fib object
 			cout<<"Calling evalueObject() on wool object with given random property vectores."<<endl;
 			liRandomPropertiesCopy = liRandomProperties;
 			bObjectEvalued = pFibObjectToTestConst->evalueObject(
@@ -610,7 +610,7 @@ int main(int argc, char* argv[]){
 			list< pair< cVectorPosition, list< cVectorProperty > > >
 				liEvaluePointPartResized = liEvaluePointPartLoaded;
 			liEvaluePointPartResized.resize( evaluePositionList.lNumberOfTrueEvalueCalls );
-			//evalue the Fib-object
+			//evalue the Fib object
 			cout<<"Calling evalueObjectSimple() on the "<<
 				itrEvalueParameter->second <<"'th partobject."<<endl;
 			bObjectEvalued = pFibObjectToTestConst->evalueObjectSimple(
@@ -625,7 +625,7 @@ int main(int argc, char* argv[]){
 			evaluePositionList.clear();
 			evaluePositionList.ulCountOfEvalueMethodCalled = 0;
 			evaluePositionList.lNumberOfTrueEvalueCalls = liEvaluePointPartResized.size();
-			//evalue the Fib-object
+			//evalue the Fib object
 			cout<<"Calling evalueObject() on the "<<
 				itrEvalueParameter->second <<"'th partobject."<<endl;
 			bObjectEvalued = pFibObjectToTestConst->evalueObject( evaluePositionList,
@@ -645,7 +645,7 @@ int main(int argc, char* argv[]){
 			evaluePositionList.clear();
 			evaluePositionList.ulCountOfEvalueMethodCalled = 0;
 			evaluePositionList.lNumberOfTrueEvalueCalls = liEvaluePointPartResized.size();
-			//evalue the Fib-object
+			//evalue the Fib object
 			cout<<"Calling evalueObject() on the "<<
 				itrEvalueParameter->second <<"'th partobject with given random property vectores."<<endl;
 			liRandomPropertiesCopy = liRandomProperties;
@@ -683,7 +683,7 @@ int main(int argc, char* argv[]){
 				liEvalueElementPartResized = liEvalueElementPartLoaded;
 			liEvalueElementPartResized.resize( evalueFibElementListPart.lNumberOfTrueEvalueCalls );
 			
-			//evalue the Fib-object
+			//evalue the Fib object
 			cout<<"Calling evalueObjectSimple() on the "<<
 				itrEvalueParameter->second.first <<"'th partobject."<<endl;
 			bObjectEvalued = pFibObjectToTest->evalueObjectSimple( evalueFibElementListPart,
@@ -695,7 +695,7 @@ int main(int argc, char* argv[]){
 			//compare evalued data with the loaded data
 			uiErrorsInTestphase += compareElementData( liEvalueElementPartResized, evalueFibElementListPart.liEvaluedElementData );
 			
-			//evalue the Fib-object
+			//evalue the Fib object
 			cout<<"Calling evalueObject() on the "<<
 				itrEvalueParameter->second.first <<"'th partobject."<<endl;
 			evalueFibElementListPart.clear();
@@ -716,7 +716,7 @@ int main(int argc, char* argv[]){
 			list< pair< cFibElement*, list< cVectorProperty > > > liEvalueElementPartResizedPlusRandom =
 				addPropertiesToAll( liEvalueElementPartResized, liRandomProperties );
 			
-			//evalue the Fib-object
+			//evalue the Fib object
 			cout<<"Calling evalueObject() on the "<<
 				itrEvalueParameter->second.first <<"'th partobject with given random property vectores."<<endl;
 			evalueFibElementListPart.clear();
@@ -759,7 +759,7 @@ int main(int argc, char* argv[]){
 			uiErrorsInTestphase++;
 		}
 		
-		//evalue the Fib-object
+		//evalue the Fib object
 		cout<<"Calling evalueObject() on the non existing "<<
 			uiAfterNumberOfObjectPoints <<"'th partobject."<<endl;
 		evaluePositionList.clear();
@@ -780,7 +780,7 @@ int main(int argc, char* argv[]){
 		
 		//test evalue evalueObject() on the given objectpoints with a given propertylists, with random properties
 		
-		//evalue the Fib-object
+		//evalue the Fib object
 		cout<<"Calling evalueObject() on the non existing "<<
 			uiAfterNumberOfObjectPoints <<"'th partobject with given random property vectores."<<endl;
 		evaluePositionList.clear();
@@ -820,7 +820,7 @@ int main(int argc, char* argv[]){
 			uiErrorsInTestphase++;
 		}
 		
-		//evalue the Fib-object
+		//evalue the Fib object
 		cout<<"Calling evalueObject() on the non existing "<<
 			uiAfterNumberOfObjectPoints <<"'th partobject."<<endl;
 		evalueFibElementList.clear();
@@ -842,7 +842,7 @@ int main(int argc, char* argv[]){
 		liVecProperties.clear();
 		
 		//test evalue evalueObject() on the given objectpoints with a given propertylists, with random properties
-		//evalue the Fib-object
+		//evalue the Fib object
 		cout<<"Calling evalueObject() on the non existing "<<
 			uiAfterNumberOfObjectPoints <<"'th partobject with given random property vectores."<<endl;
 		liRandomPropertiesCopy = liRandomProperties;
@@ -862,15 +862,15 @@ int main(int argc, char* argv[]){
 			uiErrorsInTestphase++;
 		}
 
-		//check if the Fib-object hasn't changed
+		//check if the Fib object hasn't changed
 		if ( pFibObjectToTestClone != NULL ){
 			if ( ! pFibObjectToTest->equal( *pFibObjectToTestClone ) ){
-				cerr<<"Error: The Fib-object has changed while storing ."<<endl;
+				cerr<<"Error: The Fib object has changed while storing ."<<endl;
 				uiErrorsInTestphase++;
 			}
 			cFibElement::deleteObject( pFibObjectToTestClone );
 		}else{
-			cerr<<"Error: No clone could be created from the Fib-object to test."<<endl;
+			cerr<<"Error: No clone could be created from the Fib object to test."<<endl;
 			uiErrorsInTestphase++;
 		}
 
@@ -1113,7 +1113,7 @@ unsigned int compareElementData( const list< pair< cFibElement*, list< cVectorPr
 
 /**
  * This method clears the data from the list with the evalued element data
- * liListToClear. It deletes all Fib-objects the list contain.
+ * liListToClear. It deletes all Fib objects the list contain.
  * After the function call the list will be empty.
  *
  * @param liListToClear a reference to the list to clear
@@ -1371,22 +1371,22 @@ list< pair< cVectorPosition, list< cVectorProperty > > > loadPositionData(
 
 
 /**
- * This function loads the data of Fib-objects with ther properties from
+ * This function loads the data of Fib objects with ther properties from
  * the given file.
- * Beware: Don't forget to delete the restored Fib-objects.
+ * Beware: Don't forget to delete the restored Fib objects.
  *
- * @param szFilename the path of the file, from which the Fib-objectdata
+ * @param szFilename the path of the file, from which the Fib objectdata
  * 	should be loaded from
  * @param liDefinedVariables a list with the pointers to the variables
- * 	defined for the to load Fib-objects
- * @return the loaded Fib-objectdata
+ * 	defined for the to load Fib objects
+ * @return the loaded Fib objectdata
  */
 list< pair< cFibElement*, list< cVectorProperty > > > loadElementData(
 		const char * szFilename, list<cFibVariable*> liDefinedVariables ){
 	
 	enumerateVariables( liDefinedVariables );
 	
-	/*every liLoadedData element is created by loading a Fib-object and
+	/*every liLoadedData element is created by loading a Fib object and
 	then propertyvectors till the next pointvector*/
 	list< pair< cFibElement*, list< cVectorProperty > > > liLoadedData;
 	
@@ -1421,7 +1421,7 @@ list< pair< cFibElement*, list< cVectorProperty > > > loadElementData(
 		string szElementName = pXmlElement->Value();
 
 		if ( szElementName != "vector" ){
-			//load Fib-object
+			//load Fib object
 			liLoadedData.push_back( make_pair(
 				cFibElement::restoreXml( pXmlElement, outStatus, liDefinedVariables ),
 				list< cVectorProperty >() ) );

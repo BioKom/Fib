@@ -86,6 +86,7 @@ History:
 02.05.2010  Oesterholz  comparisson of getValue() values with savety bounderies
 04.04.2011  Oesterholz  storing to binary stream
 09.11.2012  Oesterholz  cFunctionMod added
+09.11.2012  Oesterholz  Bugfix: exponent value check (if not a number set to 0)
 */
 
 #include "version.h"
@@ -458,7 +459,11 @@ doubleFib getActualFunctionValue( doubleFib dValue1, doubleFib dValue2 ){
 				//0^-x is like 1/0 not defined -> 0
 				return 0.0;
 			}
-			return pow( dValue1, dValue2 );//cFunctionExp
+			const doubleFib dResult = pow( dValue1, dValue2 );//cFunctionExp
+			if ( own_isinf( dResult ) || own_isnan( dResult ) ){
+				return 0;
+			}
+			return dResult;
 		}break;
 		case 6: return std::min( dValue1, dValue2 );//cFunctionMin
 		case 7: return std::max( dValue1, dValue2 );//cFunctionMax

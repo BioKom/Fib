@@ -13,7 +13,7 @@ xsd:schemaLocation="http://www.biokom.info/fib.xsd">
 					<naturalNumberB bit="8" />
 				</vector>
 			</dim>
-			<property name="colorSW" >
+			<property name="colorGrayscale" >
 				<vector elements="1">
 					<naturalNumberB bit="8" />
 				</vector>

@@ -40,6 +40,7 @@ History:
 12.02.2012  Oesterholz  restoreXml*() without restoring domain possible
 18.04.2012  Oesterholz  Bugfix: replace FirstChild()->ToElement() with
 	FirstChildElement()
+28.01.2013  Oesterholz  colorSW changed to colorGrascale
 */
 
 
@@ -165,7 +166,7 @@ bool cTypeProperty::isCompatible( const cDomain &domain ) const{
 		}//else domain compatible
 
 		switch ( (int)(uiPropertyType) ){
-			case COLOR_SW:
+			case COLOR_GRAYSCALE:
 			case TRANSPARENCY:
 			case LAYER:
 			case SOUND_BARRIER:
@@ -239,7 +240,7 @@ cDomain * cTypeProperty::getStandardDomain( ) const{
 			delete vecDomains[ 1 ];
 			delete vecDomains[ 2 ];
 		}break;
-		case COLOR_SW:
+		case COLOR_GRAYSCALE:
 		case TRANSPARENCY:{
 			//vector( 1, IntegerB(8) )
 			vector<cDomainSingle*> vecDomains( 1 );
@@ -416,8 +417,8 @@ string cTypeProperty::getNameOfProperty() const{
 			return "none";
 		case COLOR_RGB:
 			return "colorRGB";
-		case COLOR_SW:
-			return "colorSW";
+		case COLOR_GRAYSCALE:
+			return "colorGrayscale";
 		case LAYER:
 			return "layer";
 		case TRANSPARENCY:
@@ -467,8 +468,8 @@ unsignedIntFib cTypeProperty::getNumberForPropertyName( const string szPropertyN
 	if ( szPropertyName == "colorRGB" ){
 		return COLOR_RGB;
 	}
-	if ( szPropertyName == "colorSW" ){
-		return COLOR_SW;
+	if ( szPropertyName == "colorGrayscale" ){
+		return COLOR_GRAYSCALE;
 	}
 	if ( szPropertyName == "layer" ){
 		return LAYER;
@@ -539,7 +540,7 @@ vector<string> cTypeProperty::getUnit() const{
 			vecUnits.push_back( "green" );
 			vecUnits.push_back( "blue" );
 		break;
-		case COLOR_SW:
+		case COLOR_GRAYSCALE:
 			//vector( 1, IntegerB(8) )
 			vecUnits.push_back( "white" );
 		break;
@@ -626,10 +627,10 @@ list<cTypeProperty> cTypeProperty::getOverwritenTyps() const{
 
 	switch ( (int)(uiPropertyType) ){
 		case COLOR_RGB:
-		case COLOR_SW:
+		case COLOR_GRAYSCALE:
 			//overwrite colors
 			liPropertyTypes.push_back( cTypeProperty( COLOR_RGB ) );
-			liPropertyTypes.push_back( cTypeProperty( COLOR_SW ) );
+			liPropertyTypes.push_back( cTypeProperty( COLOR_GRAYSCALE ) );
 		break;
 		case TRANSPARENCY:
 			liPropertyTypes.push_back( cTypeProperty( TRANSPARENCY ) );
@@ -678,10 +679,10 @@ bool cTypeProperty::isOverwritenTyp( const cTypeProperty & typeToCheck ) const{
 
 	switch ( (int)(uiPropertyType) ){
 		case COLOR_RGB:
-		case COLOR_SW:
+		case COLOR_GRAYSCALE:
 			//overwrite colors
 			if ( ( typeToCheck.uiPropertyType == COLOR_RGB ) ||
-					( typeToCheck.uiPropertyType ==  COLOR_SW ) ){
+					( typeToCheck.uiPropertyType ==  COLOR_GRAYSCALE ) ){
 				return true;
 			}
 		break;
@@ -723,10 +724,10 @@ bool cTypeProperty::isOverwritenTyp( const unsignedIntFib & uiTypeToCheck ) cons
 
 	switch ( (int)(uiPropertyType) ){
 		case COLOR_RGB:
-		case COLOR_SW:
+		case COLOR_GRAYSCALE:
 			//overwrite colors
 			if ( ( uiTypeToCheck == COLOR_RGB ) ||
-					( uiTypeToCheck ==  COLOR_SW ) ){
+					( uiTypeToCheck ==  COLOR_GRAYSCALE ) ){
 				return true;
 			}
 		break;
@@ -776,7 +777,7 @@ bool cTypeProperty::isOverwriting() const{
 bool cTypeProperty::isOverwriting( const unsignedIntFib & uiTypeToCheck ){
 
 	if ( (uiTypeToCheck == COLOR_RGB) ||
-			(uiTypeToCheck == COLOR_SW) ||
+			(uiTypeToCheck == COLOR_GRAYSCALE) ||
 			(uiTypeToCheck == TRANSPARENCY) ||
 			(uiTypeToCheck == LAYER) ||
 			(uiTypeToCheck == SOUND_BARRIER) ||

@@ -8,7 +8,7 @@
 		<value number="2">1</value>
 		<value number="3">1</value>
 	</vector>
-	<vector type="property.colorSW">
+	<vector type="property.colorGrayscale">
 		<value number="1">1</value>
 	</vector>
 	<vector type="property.colorRGB">
@@ -30,7 +30,7 @@
 		<value number="2">3</value>
 		<value number="3">3</value>
 	</vector>
-	<vector type="property.colorSW">
+	<vector type="property.colorGrayscale">
 		<value number="1">2</value>
 	</vector>
 </data>

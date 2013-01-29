@@ -17,6 +17,7 @@ test:
   - nD2::createSplineItrFastBorderAreasForPoints( setMinimumArea, setMaximumArea, ... )
   - nAnalyse::nFibObject::nBits::evalueMaxFunctionValuesMantissaBits
   - nCluster all classes and functions
+  - nConvertToFib/nImage/nStructureData/nConvertToFib/test/tImageStructureConvertToTiles::testConvertForObject(): implement for error parameters
 
 testen fib::algorithms::nD1::cPolynomRange<tX, tY>:
   - tY getRangeSizeSum()

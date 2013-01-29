@@ -47,6 +47,9 @@ History:
 06.01.2013  Oesterholz  FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING:
 	evalueSplineIterativFast(): the glp library (extern package) linear
 	solver will be used to find a spline for a vector of range data points
+29.01.2013  Oesterholz  Bugfix for FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
+	upper and lower border corrected;
+	IGNORE_LESS_REMAINING_POINTS added
 */
 
 
@@ -93,6 +96,12 @@ History:
  * Errors will just be counted if ther are greater than this save boundery.
  */
 #define SAVE_BOUNDERY 0.0000000001
+
+/**
+ * If an area has less point dont convert it.
+ */
+#define IGNORE_LESS_REMAINING_POINTS 0
+
 
 using namespace std;
 using namespace fib::algorithms::nD2;
@@ -881,9 +890,11 @@ namespace nD2{
 			mapDeltas.insert( make_pair( minDelta, dataPointTmp ) );
 		}
 		//evalue the deltas for the upper border
-		for ( unsigned int uiActRange = 1; uiActRange < vecRangesUpper.size(); uiActRange++ ){
+		for ( unsigned int uiActRange = 1;
+				uiActRange < vecRangesUpper.size(); uiActRange++ ){
 			
-			tX minDelta = vecRangesUpper[ uiActRange ].minY - vecRangesUpper[ uiActRange - 1 ].maxY;
+			tX minDelta = vecRangesUpper[ uiActRange ].minY -
+				vecRangesUpper[ uiActRange - 1 ].maxY;
 			
 			typeDataPoint dataPointTmp( 0,0 );
 			if ( bChoosenDirection ){
@@ -1327,9 +1338,9 @@ template <class tX>
 		unsigned long uiPointsRemoved = 0;
 		for ( ; itrActualToConvertArea != setAreas.rend(); itrActualToConvertArea++ ){
 			
-			if ( itrActualToConvertArea->first <= 4 ){
-				DEBUG_OUT_L2(<<"just maximal "<<itrActualToConvertArea->first<<" points in remaining areas"<<endl<<flush);
-				//stop evaluation, because no area with more than 4 points exists
+			if ( itrActualToConvertArea->first <= IGNORE_LESS_REMAINING_POINTS ){
+				DEBUG_OUT_L2(<<"just maximal "<<itrActualToConvertArea->first<<" (<="<<IGNORE_LESS_REMAINING_POINTS<<") points in remaining areas"<<endl<<flush);
+				//stop evaluation, because no area with more than IGNORE_LESS_REMAINING_POINTS points exists
 				itrActualToConvertArea = setAreas.rend();
 				break;
 			}
@@ -1361,9 +1372,11 @@ template <class tX>
 			
 			//dismiss created areas which have (much) more points as in the maximal area
 			unsigned long ulAceptablePointsForArea = 8;
-			for ( unsigned int uiActRange = 0; uiActRange < vecRangesLower.size(); uiActRange++ ){
+			for ( unsigned int uiActRange = 0;
+					uiActRange < vecRangesLower.size(); uiActRange++ ){
 				
-				ulAceptablePointsForArea += vecRangesUpper[uiActRange].maxY - vecRangesLower[uiActRange].minY + 1;
+				ulAceptablePointsForArea += vecRangesUpper[uiActRange].maxY -
+					vecRangesLower[uiActRange].minY + 1;
 			}
 			if ( vecRangesLower.empty() || vecRangesUpper.empty() ){
 				DEBUG_OUT_EL2(<<"one range empty:"<<endl<<flush);
@@ -1412,7 +1425,7 @@ template <class tX>
 			for ( unsigned int uiActRange = 0; uiActRange < vecRangesLower.size(); uiActRange++ ){
 				cout<<"("<<vecRangesLower[uiActRange].x<<";["<<
 					polynomLower.evalue( vecRangesLower[uiActRange].x )<<" ... "<<
-					polynomUpper.evalue( vecRangesLower[uiActRange].x )<<"] ); ";
+					polynomUpper.evalue( vecRangesUpper[uiActRange].x )<<"] ); ";
 			}
 			cout<<endl<<"evalued ranges compared: "<<flush;
 			for ( unsigned int uiActRange = 0; (uiActRange < vecRangesLower.size()) &&
@@ -1422,7 +1435,7 @@ template <class tX>
 					polynomLower.evalue( vecRangesLower[uiActRange].x )<<"<"<<flush<<
 					vecRangesLower[uiActRange].maxY<<" ... "<<
 					vecRangesUpper[uiActRange].minY<<"<"<<flush<<
-					polynomUpper.evalue( vecRangesLower[uiActRange].x )<<"<"<<flush<<
+					polynomUpper.evalue( vecRangesUpper[uiActRange].x )<<"<"<<flush<<
 					vecRangesUpper[uiActRange].maxY<<"] ); "<<flush;
 			}
 			if ( vecRangesLower.size() !=  vecRangesUpper.size() ){
@@ -1468,7 +1481,7 @@ template <class tX>
 			DEBUG_OUT_L2(<<"evalued ulNumberOfPoints= "<<ulNumberOfPoints<<"  ulAceptablePointsForArea="<<ulAceptablePointsForArea<<" bObjectEvalued="<<(bObjectEvalued?"true":"false")<<endl<<flush);
 			
 			bool bAreaAdded = false;
-			if ( bObjectEvalued && ( 4 < ulNumberOfPoints ) &&
+			if ( bObjectEvalued && ( IGNORE_LESS_REMAINING_POINTS < ulNumberOfPoints ) &&
 					( ulNumberOfPoints <= ulAceptablePointsForArea ) ){
 				
 				//check how many points are in the area to find
@@ -1875,9 +1888,9 @@ template <class tX>
 		unsigned long uiPointsRemoved = 0;
 		for ( ; itrActualToConvertArea != setAreas.rend(); itrActualToConvertArea++ ){
 			
-			if ( itrActualToConvertArea->first <= 4 ){
-				DEBUG_OUT_L2(<<"just maximal "<<itrActualToConvertArea->first<<" points in remaining areas"<<endl<<flush);
-				//stop evaluation, because no area with more than 4 points exists
+			if ( itrActualToConvertArea->first <= IGNORE_LESS_REMAINING_POINTS ){
+				DEBUG_OUT_L2(<<"just maximal "<<itrActualToConvertArea->first<<" (<="<<IGNORE_LESS_REMAINING_POINTS<<") points in remaining areas"<<endl<<flush);
+				//stop evaluation, because no area with more than IGNORE_LESS_REMAINING_POINTS points exists
 				itrActualToConvertArea = setAreas.rend();
 				break;
 			}
@@ -1930,7 +1943,8 @@ template <class tX>
 			unsigned long ulAceptablePointsForArea = 8;
 			for ( unsigned int uiActRange = 0; uiActRange < vecRangesLower.size(); uiActRange++ ){
 				
-				ulAceptablePointsForArea += vecRangesUpper[uiActRange].maxY - vecRangesLower[uiActRange].minY + 1;
+				ulAceptablePointsForArea += vecRangesUpper[uiActRange].maxY -
+					vecRangesLower[uiActRange].minY + 1;
 				
 				//move the x component about the offset (subtract offset)
 				vecRangesUpper[ uiActRange ].x -= xOffset;
@@ -1991,7 +2005,7 @@ template <class tX>
 			for ( unsigned int uiActRange = 0; uiActRange < vecRangesLower.size(); uiActRange++ ){
 				cout<<"("<<vecRangesLower[uiActRange].x<<";["<<
 					polynomLower.evalue( vecRangesLower[uiActRange].x )<<" ... "<<
-					polynomUpper.evalue( vecRangesLower[uiActRange].x )<<"] ); ";
+					polynomUpper.evalue( vecRangesUpper[uiActRange].x )<<"] ); ";
 			}
 			cout<<endl<<"evalued ranges compared: "<<flush;
 			for ( unsigned int uiActRange = 0; (uiActRange < vecRangesLower.size()) &&
@@ -2001,7 +2015,7 @@ template <class tX>
 					polynomLower.evalue( vecRangesLower[uiActRange].x )<<"<"<<flush<<
 					vecRangesLower[uiActRange].maxY<<" ... "<<
 					vecRangesUpper[uiActRange].minY<<"<"<<flush<<
-					polynomUpper.evalue( vecRangesLower[uiActRange].x )<<"<"<<flush<<
+					polynomUpper.evalue( vecRangesUpper[uiActRange].x )<<"<"<<flush<<
 					vecRangesUpper[uiActRange].maxY<<"] ); "<<flush;
 			}
 			cout<<endl;
@@ -2075,7 +2089,7 @@ template <class tX>
 			DEBUG_OUT_L2(<<"evalued ulNumberOfPoints= "<<ulNumberOfPoints<<"  ulAceptablePointsForArea="<<ulAceptablePointsForArea<<" bObjectEvalued="<<(bObjectEvalued?"true":"false")<<endl<<flush);
 			
 			bool bAreaAdded = false;
-			if ( bObjectEvalued && ( 4 < ulNumberOfPoints ) &&
+			if ( bObjectEvalued && ( IGNORE_LESS_REMAINING_POINTS < ulNumberOfPoints ) &&
 					( ulNumberOfPoints <= ulAceptablePointsForArea ) ){
 				
 				//check how many points are in the area to find
@@ -2784,9 +2798,9 @@ template <class tX>
 		unsigned long uiPointsRemoved = 0;
 		for ( ; itrActualToConvertArea != setAreas.rend(); itrActualToConvertArea++ ){
 			
-			if ( itrActualToConvertArea->first <= 4 ){
-				DEBUG_OUT_L2(<<"just maximal "<<itrActualToConvertArea->first<<" points in remaining areas"<<endl<<flush);
-				//stop evaluation, because no area with more than 4 points exists
+			if ( itrActualToConvertArea->first <= IGNORE_LESS_REMAINING_POINTS ){
+				DEBUG_OUT_L2(<<"just maximal "<<itrActualToConvertArea->first<<" (<="<<IGNORE_LESS_REMAINING_POINTS<<") points in remaining areas"<<endl<<flush);
+				//stop evaluation, because no area with more than IGNORE_LESS_REMAINING_POINTS points exists
 				itrActualToConvertArea = setAreas.rend();
 				break;
 			}
@@ -2837,9 +2851,11 @@ template <class tX>
 			
 			//dismiss created areas which have (much) more points as in the maximal area
 			unsigned long ulAceptablePointsForArea = 8;
-			for ( unsigned int uiActRange = 0; uiActRange < vecRangesLower.size(); uiActRange++ ){
+			for ( unsigned int uiActRange = 0;
+					uiActRange < vecRangesLower.size(); uiActRange++ ){
 				
-				ulAceptablePointsForArea += vecRangesUpper[uiActRange].maxY - vecRangesLower[uiActRange].minY + 1;
+				ulAceptablePointsForArea += vecRangesUpper[uiActRange].maxY -
+					vecRangesLower[uiActRange].minY + 1;
 				
 				//move the x component about the offset (subtract offset)
 				vecRangesUpper[ uiActRange ].x -= xOffset;
@@ -2884,9 +2900,9 @@ template <class tX>
 				DEBUG_OUT_L2(<<"evaluing the spline for the upper border (evalueSplineIterativFast() ):"<<endl<<flush);
 
 #ifdef FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
-			const unsigned long uiPointsIncludedUpper = polynomUpper.evalueSplineIterativFast(
-				vecRangesLower, uiMaxSplineParameters,
-				maxValue, maxError, maxErrorPerValue );
+				const unsigned long uiPointsIncludedUpper = polynomUpper.evalueSplineIterativFast(
+					vecRangesUpper, uiMaxSplineParameters,
+					maxValue, maxError, maxErrorPerValue );
 #else //FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
 				const unsigned long uiPointsIncludedUpper = polynomUpper.evalueSplineIterativFast(
 					vecRangesUpper, uiMaxSplineParameters,
@@ -2901,19 +2917,23 @@ template <class tX>
 					uiPointsIncludedLower, uiPointsIncludedUpper ) - 1;
 #ifdef DEBUG_N_D2
 				cout<<"vecRangesUpper: ";
-				for ( unsigned int uiActRange = 0; uiActRange < vecRangesUpper.size(); uiActRange++ ){
+				for ( unsigned int uiActRange = 0;
+						uiActRange < vecRangesUpper.size(); uiActRange++ ){
 					cout<<"("<<vecRangesUpper[uiActRange].x<<";["<<
-						vecRangesUpper[uiActRange].minY<<" ... "<<vecRangesUpper[uiActRange].maxY<<"] ); ";
+						vecRangesUpper[uiActRange].minY<<" ... "<<
+						vecRangesUpper[uiActRange].maxY<<"] ); ";
 				}
-				cout<<endl<<"spline for upper border (for the "<<uiPointsIncludedUpper<<" first points): ";polynomUpper.print( cout );
+				cout<<endl<<"spline for upper border (for the "<<
+					uiPointsIncludedUpper<<" first points): ";polynomUpper.print( cout );
 #endif
 			}//else borders are equal -> don't need to evalue spline for upper border
 #ifdef DEBUG_N_D2
 			cout<<endl<<"evalued ranges: "<<flush;
-			for ( unsigned int uiActRange = 0; uiActRange < vecRangesLower.size(); uiActRange++ ){
+			for ( unsigned int uiActRange = 0;
+					uiActRange < vecRangesLower.size(); uiActRange++ ){
 				cout<<"("<<vecRangesLower[uiActRange].x<<";["<<
 					polynomLower.evalue( vecRangesLower[uiActRange].x )<<" ... "<<
-					polynomUpper.evalue( vecRangesLower[uiActRange].x )<<"] ); ";
+					polynomUpper.evalue( vecRangesUpper[uiActRange].x )<<"] ); ";
 			}
 			cout<<endl<<"evalued ranges compared: "<<flush;
 			for ( unsigned int uiActRange = 0; (uiActRange < vecRangesLower.size()) &&
@@ -2923,7 +2943,7 @@ template <class tX>
 					polynomLower.evalue( vecRangesLower[uiActRange].x )<<"<"<<flush<<
 					vecRangesLower[uiActRange].maxY<<" ... "<<
 					vecRangesUpper[uiActRange].minY<<"<"<<flush<<
-					polynomUpper.evalue( vecRangesLower[uiActRange].x )<<"<"<<flush<<
+					polynomUpper.evalue( vecRangesUpper[uiActRange].x )<<"<"<<flush<<
 					vecRangesUpper[uiActRange].maxY<<"] ); "<<flush;
 			}
 			cout<<endl;
@@ -2973,7 +2993,7 @@ template <class tX>
 			DEBUG_OUT_L2(<<"evalued ulNumberOfPoints= "<<ulNumberOfPoints<<"  ulAceptablePointsForArea="<<ulAceptablePointsForArea<<" bObjectEvalued="<<(bObjectEvalued?"true":"false")<<endl<<flush);
 			
 			bool bAreaAdded = false;
-			if ( bObjectEvalued && ( 4 < ulNumberOfPoints ) &&
+			if ( bObjectEvalued && ( IGNORE_LESS_REMAINING_POINTS < ulNumberOfPoints ) &&
 					( ulNumberOfPoints <= ulAceptablePointsForArea ) ){
 				
 				//check how many points are in the area to find
@@ -3709,9 +3729,9 @@ template <class tX>
 		unsigned long uiPointsRemoved = 0;
 		for ( ; itrActualToConvertArea != setAreas.rend(); itrActualToConvertArea++ ){
 			
-			if ( itrActualToConvertArea->first <= 4 ){
-				DEBUG_OUT_L2(<<"just maximal "<<itrActualToConvertArea->first<<" points in remaining areas"<<endl<<flush);
-				//stop evaluation, because no area with more than 4 points exists
+			if ( itrActualToConvertArea->first <= IGNORE_LESS_REMAINING_POINTS ){
+				DEBUG_OUT_L2(<<"just maximal "<<itrActualToConvertArea->first<<" (<="<<IGNORE_LESS_REMAINING_POINTS<<") points in remaining areas"<<endl<<flush);
+				//stop evaluation, because no area with more than IGNORE_LESS_REMAINING_POINTS points exists
 				itrActualToConvertArea = setAreas.rend();
 				break;
 			}
@@ -3745,12 +3765,14 @@ template <class tX>
 				DEBUG_OUT_EL2(<<"one range empty:"<<endl<<flush);
 #ifdef DEBUG_N_D2
 				cout<<"vecRangesLower: ";
-				for ( unsigned int uiActRange = 0; uiActRange < vecRangesLower.size(); uiActRange++ ){
+				for ( unsigned int uiActRange = 0;
+						uiActRange < vecRangesLower.size(); uiActRange++ ){
 					cout<<"("<<vecRangesLower[uiActRange].x<<";["<<
 						vecRangesLower[uiActRange].minY<<" ... "<<vecRangesLower[uiActRange].maxY<<"] ); ";
 				}
 				cout<<"vecRangesUpper: ";
-				for ( unsigned int uiActRange = 0; uiActRange < vecRangesUpper.size(); uiActRange++ ){
+				for ( unsigned int uiActRange = 0;
+						uiActRange < vecRangesUpper.size(); uiActRange++ ){
 					cout<<"("<<vecRangesUpper[uiActRange].x<<";["<<
 						vecRangesUpper[uiActRange].minY<<" ... "<<vecRangesUpper[uiActRange].maxY<<"] ); ";
 				}
@@ -3839,7 +3861,7 @@ template <class tX>
 			for ( unsigned int uiActRange = 0; uiActRange < vecRangesLower.size(); uiActRange++ ){
 				cout<<"("<<vecRangesLower[uiActRange].x<<";["<<
 					splineLower.evalue( vecRangesLower[uiActRange].x )<<" ... "<<
-					splineUpper.evalue( vecRangesLower[uiActRange].x )<<"] ); ";
+					splineUpper.evalue( vecRangesUpper[uiActRange].x )<<"] ); ";
 			}
 			cout<<endl<<"evalued ranges compared: "<<flush;
 			for ( unsigned int uiActRange = 0; (uiActRange < vecRangesLower.size()) &&
@@ -3849,7 +3871,7 @@ template <class tX>
 					splineLower.evalue( vecRangesLower[uiActRange].x )<<"<"<<flush<<
 					vecRangesLower[uiActRange].maxY<<" ... "<<
 					vecRangesUpper[uiActRange].minY<<"<"<<flush<<
-					splineUpper.evalue( vecRangesLower[uiActRange].x )<<"<"<<flush<<
+					splineUpper.evalue( vecRangesUpper[uiActRange].x )<<"<"<<flush<<
 					vecRangesUpper[uiActRange].maxY<<"] ); "<<flush;
 			}
 			cout<<endl;
@@ -3899,7 +3921,7 @@ template <class tX>
 			DEBUG_OUT_L2(<<"evalued ulNumberOfPoints= "<<ulNumberOfPoints<<"  ulAceptablePointsForArea="<<ulAceptablePointsForArea<<" bObjectEvalued="<<(bObjectEvalued?"true":"false")<<endl<<flush);
 			
 			bool bAreaAdded = false;
-			if ( bObjectEvalued && ( 4 < ulNumberOfPoints ) &&
+			if ( bObjectEvalued && ( IGNORE_LESS_REMAINING_POINTS < ulNumberOfPoints ) &&
 					( ulNumberOfPoints <= ulAceptablePointsForArea ) ){
 				
 				//check how many points are in the area to find

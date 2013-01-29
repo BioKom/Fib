@@ -46,6 +46,7 @@ History:
 27.09.2012  Oesterholz  FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING:
 	evalueSpline(): the glp library (extern package) linear solver will be
 	used to find a spline for a vector of range data points
+29.01.2013  Oesterholz  Bugfix for FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
 */
 
 
@@ -88,6 +89,7 @@ int main(int argc,char* argv[]){
 	cout<<endl<<"Running Test for the namespace nD2"<<endl;
 	cout<<      "=================================="<<endl;
 	
+	
 	//test createAreasForPoints()
 	iReturn += testFindSimpleSplineArea( ulTestphase, 0 );
 	iReturn += testFindComplexSplineArea( ulTestphase, 0 );
@@ -95,6 +97,7 @@ int main(int argc,char* argv[]){
 	//test createSplineItrFastBorderAreasForPoints()
 	iReturn += testFindSimpleSplineArea( ulTestphase, 1 );
 	iReturn += testFindComplexSplineArea( ulTestphase, 1 );
+	
 	//test createSplineItrFastBorderAreasForPoints( minArea, maxArea )
 	iReturn += testFindSimpleSplineArea( ulTestphase, 2 );
 	iReturn += testFindComplexSplineArea( ulTestphase, 2 );
@@ -347,7 +350,6 @@ int testFindSimpleSplineArea( unsigned long &ulTestphase, unsigned int uiFunctio
 		cPoint * pPoint = new cPoint( & vecPosition );
 		
 		//2. create ares with createSplineBorderAreasForPoints() for them
-		cout<<"pAreaElement = createSplineBorderAreasForPoints( setAreaPoints, pPoint, pVariableX, pVariableY );"<<endl;
 		cFibElement * pAreaElement = NULL;
 		
 		switch ( uiFunction ){
@@ -364,8 +366,13 @@ int testFindSimpleSplineArea( unsigned long &ulTestphase, unsigned int uiFunctio
 				pAreaElement = createSplineItrFastBorderAreasForPoints( setAreaPoints, setAreaPoints, pPoint, pVariableX, pVariableY );
 			break;
 			case 3:
-				cout<<"pAreaElement = createSplineItrFastBorderAreasForPoints( setAreaPoints, pPoint, pVariableX, pVariableY );"<<endl;
+#ifdef FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
+				cout<<"pAreaElement = createSplineItrFastBorderAreasForPoints( setAreaPoints, pPoint, pVariableX, pVariableY, 4, 1E+36 );"<<endl;
+				pAreaElement = createSplineItrFastBorderAreasForPoints( setAreaPoints, pPoint, pVariableX, pVariableY, 4, 1E+36 );
+#else //FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
+				cout<<"pAreaElement = createSplineItrFastBorderAreasForPoints( setAreaPoints, pPoint, pVariableX, pVariableY, 4, 1, 1E+36 );"<<endl;
 				pAreaElement = createSplineItrFastBorderAreasForPoints( setAreaPoints, pPoint, pVariableX, pVariableY, 4, 1, 1E+36 );
+#endif //FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
 			break;
 			case 4:
 				cout<<"pAreaElement = createNSplineBorderAreasForPoints( setAreaPoints, pPoint, pVariableX, pVariableY );"<<endl;
@@ -441,7 +448,7 @@ int testFindSimpleSplineArea( unsigned long &ulTestphase, unsigned int uiFunctio
 					itrPoint != setAreaPoints.end(); itrPoint++ ){
 				setCreatedAreaPointsNotOriginal.erase( *itrPoint );
 			}
-			cerr<<"Points created but not in the original: ";
+			cerr<<"Points created but not in the original:";
 			for ( set<  nD1::cDataPoint< longFib, longFib > >::const_iterator
 					itrPoint = setCreatedAreaPointsNotOriginal.begin();
 					itrPoint != setCreatedAreaPointsNotOriginal.end(); itrPoint++ ){
@@ -640,8 +647,13 @@ int testFindComplexSplineArea( unsigned long &ulTestphase, unsigned int uiFuncti
 				pAreaElement = createSplineItrFastBorderAreasForPoints( setAreaPoints, setAreaPoints, pPoint, pVariableX, pVariableY );
 			break;
 			case 3:
-				cout<<"pAreaElement = createSplineItrFastBorderAreasForPoints( setAreaPoints, pPoint, pVariableX, pVariableY );"<<endl;
+#ifdef FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
+				cout<<"pAreaElement = createSplineItrFastBorderAreasForPoints( setAreaPoints, pPoint, pVariableX, pVariableY, 4, 1E+36 );"<<endl;
+				pAreaElement = createSplineItrFastBorderAreasForPoints( setAreaPoints, pPoint, pVariableX, pVariableY, 4, 1E+36 );
+#else //FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
+				cout<<"pAreaElement = createSplineItrFastBorderAreasForPoints( setAreaPoints, pPoint, pVariableX, pVariableY, 4, 1, 1E+36 );"<<endl;
 				pAreaElement = createSplineItrFastBorderAreasForPoints( setAreaPoints, pPoint, pVariableX, pVariableY, 4, 1, 1E+36 );
+#endif //FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
 			break;
 			case 4:
 				cout<<"pAreaElement = createNSplineBorderAreasForPoints( setAreaPoints, pPoint, pVariableX, pVariableY );"<<endl;
@@ -652,8 +664,13 @@ int testFindComplexSplineArea( unsigned long &ulTestphase, unsigned int uiFuncti
 				pAreaElement = createSplineItrFastBorderAreasForPoints( setAreaPoints, setAreaPoints, pPoint, pVariableX, pVariableY );
 			break;
 			case 6:
-				cout<<"pAreaElement = createNSplineBorderAreasForPoints( setAreaPoints, pPoint, pVariableX, pVariableY );"<<endl;
+#ifdef FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
+				cout<<"pAreaElement = createNSplineBorderAreasForPoints( setAreaPoints, pPoint, pVariableX, pVariableY, 4, 1E+36 );"<<endl;
+				pAreaElement = createSplineItrFastBorderAreasForPoints( setAreaPoints, pPoint, pVariableX, pVariableY, 4, 1E+36 );
+#else //FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
+				cout<<"pAreaElement = createNSplineBorderAreasForPoints( setAreaPoints, pPoint, pVariableX, pVariableY, 4, 1, 1E+36 );"<<endl;
 				pAreaElement = createSplineItrFastBorderAreasForPoints( setAreaPoints, pPoint, pVariableX, pVariableY, 4, 1, 1E+36 );
+#endif //FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
 			break;
 			default:
 				cerr<<"Error: No approximations function choosen "<<endl;

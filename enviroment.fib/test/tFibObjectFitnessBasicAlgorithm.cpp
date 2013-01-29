@@ -61,6 +61,8 @@ History:
 21.04.2010  Oesterholz  evalueObject() methods changed: not a function but
 	an object is given to evalue the data
 21.01.2011  Oesterholz  deleting original Fib object when loaded incorrectly
+29.01.2013  Oesterholz  change: the copy constructor new clones the
+	original Fib object
 */
 
 #include "version.h"
@@ -171,54 +173,54 @@ int testCostructor( unsigned long &ulTestphase ){
 	//check the getClassName() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic1.getClassName() == "cFibObjectFitnessBasicAlgorithm" ){
 	
-		cout<<"The classname of the fitnessalgorithm is correctly \"cFibObjectFitnessBasicAlgorithm\" . "<<endl;
+		cout<<"The class name of the fitness algorithm is correctly \"cFibObjectFitnessBasicAlgorithm\" . "<<endl;
 	}else{
-		cerr<<"Error: The classname of the fitnessalgorithm "<<
+		cerr<<"Error: The class name of the fitness algorithm "<<
 			algorithmBasic1.getClassName() <<" but should be \"cFibObjectFitnessBasicAlgorithm\" ."<<endl;
 		iReturn++;
 	}
 	//check the getOriginalIndividual() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic1.getOriginalIndividual() == NULL ){
 	
-		cout<<"The Fib individual of the fitnessalgorithm is correctly NULL . "<<endl;
+		cout<<"The Fib individual of the fitness algorithm is correctly NULL . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib individual of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib individual of the fitness algorithm "<<
 			algorithmBasic1.getOriginalIndividual() <<" but should be NULL ."<<endl;
 		iReturn++;
 	}
 	//check the getOriginalFibObject() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic1.getOriginalFibObject() == NULL ){
 	
-		cout<<"The original Fib object of the fitnessalgorithm is correctly NULL . "<<endl;
+		cout<<"The original Fib object of the fitness algorithm is correctly NULL . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib object of the fitness algorithm "<<
 			algorithmBasic1.getOriginalFibObject() <<" but should be NULL ."<<endl;
 		iReturn++;
 	}
 	//check the getWeightDistanceToOriginal() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic1.getWeightDistanceToOriginal() == 1.0 ){
 	
-		cout<<"The weight for the distance to the original of the fitnessalgorithm is correctly 1.0 . "<<endl;
+		cout<<"The weight for the distance to the original of the fitness algorithm is correctly 1.0 . "<<endl;
 	}else{
-		cerr<<"Error: The weight for the distance to the original of the fitnessalgorithm "<<
+		cerr<<"Error: The weight for the distance to the original of the fitness algorithm "<<
 			algorithmBasic1.getWeightDistanceToOriginal() <<" but should be 1.0 ."<<endl;
 		iReturn++;
 	}
 	//check the getWeightSize() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic1.getWeightSize() == 1.0 ){
 	
-		cout<<"The weight for the size of the Fib object of the fitnessalgorithm is correctly 1.0 . "<<endl;
+		cout<<"The weight for the size of the Fib object of the fitness algorithm is correctly 1.0 . "<<endl;
 	}else{
-		cerr<<"Error: The weight for the size of the Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The weight for the size of the Fib object of the fitness algorithm "<<
 			algorithmBasic1.getWeightSize() <<" but should be 1.0 ."<<endl;
 		iReturn++;
 	}
 	//check the getWeightEvaluationTime() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic1.getWeightEvaluationTime() == 1.0 ){
 	
-		cout<<"The weight for the evaluation of the Fib object of the fitnessalgorithm is correctly 1.0 . "<<endl;
+		cout<<"The weight for the evaluation of the Fib object of the fitness algorithm is correctly 1.0 . "<<endl;
 	}else{
-		cerr<<"Error: The weight for the evaluation of the Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The weight for the evaluation of the Fib object of the fitness algorithm "<<
 			algorithmBasic1.getWeightEvaluationTime() <<" but should be 1.0 ."<<endl;
 		iReturn++;
 	}
@@ -227,8 +229,12 @@ int testCostructor( unsigned long &ulTestphase ){
 	ulTestphase++;
 	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing constructing cFibObjectFitnessBasicAlgorithm with a Fib point"<<endl;
 	
-	cout<<"cPoint * pPoint = new cPoint();"<<endl;
-	cPoint * pPoint = new cPoint();
+	cout<<"cVectorPosition vecPointPosition( 1 );"<<endl;
+	cVectorPosition vecPointPosition( 1 );
+	cout<<"vecPointPosition.setValue( 1, 1234 );"<<endl;
+	vecPointPosition.setValue( 1, 1234 );
+	cout<<"cPoint * pPoint = new cPoint( &vecPointPosition );"<<endl;
+	cPoint * pPoint = new cPoint( &vecPointPosition );
 	
 	cout<<"cFibObjectFitnessBasicAlgorithm algorithmBasic2( pPoint, 1.5, 2.0, 3.0 );"<<endl;
 	cFibObjectFitnessBasicAlgorithm algorithmBasic2( pPoint, 1.5, 2.0, 3.0 );
@@ -236,9 +242,9 @@ int testCostructor( unsigned long &ulTestphase ){
 	//check the getClassName() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic2.getClassName() == "cFibObjectFitnessBasicAlgorithm" ){
 	
-		cout<<"The classname of the fitnessalgorithm is correctly \"cFibObjectFitnessBasicAlgorithm\" . "<<endl;
+		cout<<"The class name of the fitness algorithm is correctly \"cFibObjectFitnessBasicAlgorithm\" . "<<endl;
 	}else{
-		cerr<<"Error: The classname of the fitnessalgorithm "<<
+		cerr<<"Error: The class name of the fitness algorithm "<<
 			algorithmBasic2.getClassName() <<" but should be \"cFibObjectFitnessBasicAlgorithm\" ."<<endl;
 		iReturn++;
 	}
@@ -246,49 +252,49 @@ int testCostructor( unsigned long &ulTestphase ){
 	if ( algorithmBasic2.getOriginalIndividual() != NULL ){
 		if ( algorithmBasic2.getOriginalIndividual()->getFibObject() == pPoint ){
 		
-			cout<<"The original Fib object of the fitnessalgorithm is correctly pPoint . "<<endl;
+			cout<<"The original Fib object of the fitness algorithm is correctly pPoint . "<<endl;
 		}else{
-			cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+			cerr<<"Error: The original Fib object of the fitness algorithm "<<
 				algorithmBasic2.getOriginalFibObject() <<" but should be pPoint ."<<endl;
 			iReturn++;
 		}
 	}else{
-		cerr<<"Error: The classname of the fitnessalgorithm NULL but should be pPoint="<< pPoint <<" ."<<endl;
+		cerr<<"Error: The class name of the fitness algorithm NULL but should be pPoint="<< pPoint <<" ."<<endl;
 		iReturn++;
 	}
 	//check the getOriginalFibObject() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic2.getOriginalFibObject() == pPoint ){
 	
-		cout<<"The original Fib object of the fitnessalgorithm is correctly pPoint . "<<endl;
+		cout<<"The original Fib object of the fitness algorithm is correctly pPoint . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib object of the fitness algorithm "<<
 			algorithmBasic2.getOriginalFibObject() <<" but should be pPoint ."<<endl;
 		iReturn++;
 	}
 	//check the getWeightDistanceToOriginal() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic2.getWeightDistanceToOriginal() == 1.5 ){
 	
-		cout<<"The weight for the distance to the original of the fitnessalgorithm is correctly 1.5 . "<<endl;
+		cout<<"The weight for the distance to the original of the fitness algorithm is correctly 1.5 . "<<endl;
 	}else{
-		cerr<<"Error: The weight for the distance to the original of the fitnessalgorithm "<<
+		cerr<<"Error: The weight for the distance to the original of the fitness algorithm "<<
 			algorithmBasic2.getWeightDistanceToOriginal() <<" but should be 1.5 ."<<endl;
 		iReturn++;
 	}
 	//check the getWeightSize() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic2.getWeightSize() == 2.0 ){
 	
-		cout<<"The weight for the size of the Fib object of the fitnessalgorithm is correctly 2.0 . "<<endl;
+		cout<<"The weight for the size of the Fib object of the fitness algorithm is correctly 2.0 . "<<endl;
 	}else{
-		cerr<<"Error: The weight for the size of the Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The weight for the size of the Fib object of the fitness algorithm "<<
 			algorithmBasic2.getWeightSize() <<" but should be 2.0 ."<<endl;
 		iReturn++;
 	}
 	//check the getWeightEvaluationTime() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic2.getWeightEvaluationTime() == 3.0 ){
 	
-		cout<<"The weight for the evaluation of the Fib object of the fitnessalgorithm is correctly 3.0 . "<<endl;
+		cout<<"The weight for the evaluation of the Fib object of the fitness algorithm is correctly 3.0 . "<<endl;
 	}else{
-		cerr<<"Error: The weight for the evaluation of the Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The weight for the evaluation of the Fib object of the fitness algorithm "<<
 			algorithmBasic2.getWeightEvaluationTime() <<" but should be 3.0 ."<<endl;
 		iReturn++;
 	}
@@ -303,54 +309,54 @@ int testCostructor( unsigned long &ulTestphase ){
 	//check the getClassName() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic3.getClassName() == "cFibObjectFitnessBasicAlgorithm" ){
 	
-		cout<<"The classname of the fitnessalgorithm is correctly \"cFibObjectFitnessBasicAlgorithm\" . "<<endl;
+		cout<<"The class name of the fitness algorithm is correctly \"cFibObjectFitnessBasicAlgorithm\" . "<<endl;
 	}else{
-		cerr<<"Error: The classname of the fitnessalgorithm "<<
+		cerr<<"Error: The class name of the fitness algorithm "<<
 			algorithmBasic3.getClassName() <<" but should be \"cFibObjectFitnessBasicAlgorithm\" ."<<endl;
 		iReturn++;
 	}
 	//check the getOriginalIndividual() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic3.getOriginalIndividual() == NULL ){
 	
-		cout<<"The Fib individual of the fitnessalgorithm is correctly NULL . "<<endl;
+		cout<<"The Fib individual of the fitness algorithm is correctly NULL . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib individual of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib individual of the fitness algorithm "<<
 			algorithmBasic3.getOriginalIndividual() <<" but should be NULL ."<<endl;
 		iReturn++;
 	}
 	//check the getOriginalFibObject() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic3.getOriginalFibObject() == NULL ){
 	
-		cout<<"The original Fib object of the fitnessalgorithm is correctly NULL . "<<endl;
+		cout<<"The original Fib object of the fitness algorithm is correctly NULL . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib object of the fitness algorithm "<<
 			algorithmBasic3.getOriginalFibObject() <<" but should be NULL ."<<endl;
 		iReturn++;
 	}
 	//check the getWeightDistanceToOriginal() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic3.getWeightDistanceToOriginal() == -1.5 ){
 	
-		cout<<"The weight for the distance to the original of the fitnessalgorithm is correctly -1.5 . "<<endl;
+		cout<<"The weight for the distance to the original of the fitness algorithm is correctly -1.5 . "<<endl;
 	}else{
-		cerr<<"Error: The weight for the distance to the original of the fitnessalgorithm "<<
+		cerr<<"Error: The weight for the distance to the original of the fitness algorithm "<<
 			algorithmBasic3.getWeightDistanceToOriginal() <<" but should be -1.5 ."<<endl;
 		iReturn++;
 	}
 	//check the getWeightSize() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic3.getWeightSize() == 20.0 ){
 	
-		cout<<"The weight for the size of the Fib object of the fitnessalgorithm is correctly 20.0 . "<<endl;
+		cout<<"The weight for the size of the Fib object of the fitness algorithm is correctly 20.0 . "<<endl;
 	}else{
-		cerr<<"Error: The weight for the size of the Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The weight for the size of the Fib object of the fitness algorithm "<<
 			algorithmBasic3.getWeightSize() <<" but should be 20.0 ."<<endl;
 		iReturn++;
 	}
 	//check the getWeightEvaluationTime() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic3.getWeightEvaluationTime() == -33.3 ){
 	
-		cout<<"The weight for the evaluation of the Fib object of the fitnessalgorithm is correctly -33.3 . "<<endl;
+		cout<<"The weight for the evaluation of the Fib object of the fitness algorithm is correctly -33.3 . "<<endl;
 	}else{
-		cerr<<"Error: The weight for the evaluation of the Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The weight for the evaluation of the Fib object of the fitness algorithm "<<
 			algorithmBasic3.getWeightEvaluationTime() <<" but should be -33.3 ."<<endl;
 		iReturn++;
 	}
@@ -359,7 +365,9 @@ int testCostructor( unsigned long &ulTestphase ){
 	ulTestphase++;
 	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing constructing cFibObjectFitnessBasicAlgorithm with an Fib individual"<<endl;
 	
-	cPoint * pPoint1 = new cPoint();
+	cout<<"vecPointPosition.setValue( 1, 4321 );"<<endl;
+	vecPointPosition.setValue( 1, 4321 );
+	cPoint * pPoint1 = new cPoint( & vecPointPosition );
 	
 	const cFibObjectFitnessBasic fitnessDummy( 1.0 , 5, 8 );
 	const list<cIndividualIdentifier> liParents;
@@ -375,9 +383,9 @@ int testCostructor( unsigned long &ulTestphase ){
 	//check the getClassName() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic4.getClassName() == "cFibObjectFitnessBasicAlgorithm" ){
 	
-		cout<<"The classname of the fitnessalgorithm is correctly \"cFibObjectFitnessBasicAlgorithm\" . "<<endl;
+		cout<<"The class name of the fitness algorithm is correctly \"cFibObjectFitnessBasicAlgorithm\" . "<<endl;
 	}else{
-		cerr<<"Error: The classname of the fitnessalgorithm "<<
+		cerr<<"Error: The class name of the fitness algorithm "<<
 			algorithmBasic4.getClassName() <<" but should be \"cFibObjectFitnessBasicAlgorithm\" ."<<endl;
 		iReturn++;
 	}
@@ -386,57 +394,57 @@ int testCostructor( unsigned long &ulTestphase ){
 		//check the getOriginalFibObject() methode from cFibObjectFitnessBasicAlgorithm
 		if ( algorithmBasic4.getOriginalIndividual() == pOriginalIndividual ){
 		
-			cout<<"The original Fib object of the fitnessalgorithm is correctly pOriginalIndividual . "<<endl;
+			cout<<"The original Fib object of the fitness algorithm is correctly pOriginalIndividual . "<<endl;
 		}else{
-			cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+			cerr<<"Error: The original Fib object of the fitness algorithm "<<
 				algorithmBasic4.getOriginalIndividual() <<" but should be pOriginalIndividual ."<<endl;
 			iReturn++;
 		}
 		if ( algorithmBasic4.getOriginalIndividual()->getFibObject() == pPoint1 ){
 		
-			cout<<"The original Fib object of the fitnessalgorithm is correctly pPoint1 . "<<endl;
+			cout<<"The original Fib object of the fitness algorithm is correctly pPoint1 . "<<endl;
 		}else{
-			cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+			cerr<<"Error: The original Fib object of the fitness algorithm "<<
 				algorithmBasic4.getOriginalFibObject() <<" but should be pPoint1 ."<<endl;
 			iReturn++;
 		}
 	}else{
-		cerr<<"Error: The classname of the fitnessalgorithm NULL but should be pPoint1="<< pPoint <<" ."<<endl;
+		cerr<<"Error: The class name of the fitness algorithm NULL but should be pPoint1="<< pPoint1 <<" ."<<endl;
 		iReturn++;
 	}
 	//check the getOriginalFibObject() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic4.getOriginalFibObject() == pPoint1 ){
 	
-		cout<<"The original Fib object of the fitnessalgorithm is correctly pPoint1 . "<<endl;
+		cout<<"The original Fib object of the fitness algorithm is correctly pPoint1 . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib object of the fitness algorithm "<<
 			algorithmBasic4.getOriginalFibObject() <<" but should be pPoint1 ."<<endl;
 		iReturn++;
 	}
 	//check the getWeightDistanceToOriginal() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic4.getWeightDistanceToOriginal() == 27.0 ){
 	
-		cout<<"The weight for the distance to the original of the fitnessalgorithm is correctly 27.0 . "<<endl;
+		cout<<"The weight for the distance to the original of the fitness algorithm is correctly 27.0 . "<<endl;
 	}else{
-		cerr<<"Error: The weight for the distance to the original of the fitnessalgorithm "<<
+		cerr<<"Error: The weight for the distance to the original of the fitness algorithm "<<
 			algorithmBasic4.getWeightDistanceToOriginal() <<" but should be 27.0 ."<<endl;
 		iReturn++;
 	}
 	//check the getWeightSize() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic4.getWeightSize() == -88.88 ){
 	
-		cout<<"The weight for the size of the Fib object of the fitnessalgorithm is correctly -88.88 . "<<endl;
+		cout<<"The weight for the size of the Fib object of the fitness algorithm is correctly -88.88 . "<<endl;
 	}else{
-		cerr<<"Error: The weight for the size of the Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The weight for the size of the Fib object of the fitness algorithm "<<
 			algorithmBasic4.getWeightSize() <<" but should be -88.88 ."<<endl;
 		iReturn++;
 	}
 	//check the getWeightEvaluationTime() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic4.getWeightEvaluationTime() == 10254.02 ){
 	
-		cout<<"The weight for the evaluation of the Fib object of the fitnessalgorithm is correctly 10254.02 . "<<endl;
+		cout<<"The weight for the evaluation of the Fib object of the fitness algorithm is correctly 10254.02 . "<<endl;
 	}else{
-		cerr<<"Error: The weight for the evaluation of the Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The weight for the evaluation of the Fib object of the fitness algorithm "<<
 			algorithmBasic4.getWeightEvaluationTime() <<" but should be 10254.02 ."<<endl;
 		iReturn++;
 	}
@@ -451,54 +459,54 @@ int testCostructor( unsigned long &ulTestphase ){
 	//check the getClassName() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic5.getClassName() == "cFibObjectFitnessBasicAlgorithm" ){
 	
-		cout<<"The classname of the fitnessalgorithm is correctly \"cFibObjectFitnessBasicAlgorithm\" . "<<endl;
+		cout<<"The class name of the fitness algorithm is correctly \"cFibObjectFitnessBasicAlgorithm\" . "<<endl;
 	}else{
-		cerr<<"Error: The classname of the fitnessalgorithm "<<
+		cerr<<"Error: The class name of the fitness algorithm "<<
 			algorithmBasic5.getClassName() <<" but should be \"cFibObjectFitnessBasicAlgorithm\" ."<<endl;
 		iReturn++;
 	}
 	//check the getOriginalIndividual() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic5.getOriginalIndividual() == NULL ){
 	
-		cout<<"The Fib individual of the fitnessalgorithm is correctly NULL . "<<endl;
+		cout<<"The Fib individual of the fitness algorithm is correctly NULL . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib individual of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib individual of the fitness algorithm "<<
 			algorithmBasic5.getOriginalIndividual() <<" but should be NULL ."<<endl;
 		iReturn++;
 	}
 	//check the getOriginalFibObject() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic5.getOriginalFibObject() == NULL ){
 	
-		cout<<"The original Fib object of the fitnessalgorithm is correctly NULL . "<<endl;
+		cout<<"The original Fib object of the fitness algorithm is correctly NULL . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib object of the fitness algorithm "<<
 			algorithmBasic5.getOriginalFibObject() <<" but should be NULL ."<<endl;
 		iReturn++;
 	}
 	//check the getWeightDistanceToOriginal() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic5.getWeightDistanceToOriginal() == 77.7 ){
 	
-		cout<<"The weight for the distance to the original of the fitnessalgorithm is correctly 77.7 . "<<endl;
+		cout<<"The weight for the distance to the original of the fitness algorithm is correctly 77.7 . "<<endl;
 	}else{
-		cerr<<"Error: The weight for the distance to the original of the fitnessalgorithm "<<
+		cerr<<"Error: The weight for the distance to the original of the fitness algorithm "<<
 			algorithmBasic5.getWeightDistanceToOriginal() <<" but should be 77.7 ."<<endl;
 		iReturn++;
 	}
 	//check the getWeightSize() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic5.getWeightSize() == -20.0 ){
 	
-		cout<<"The weight for the size of the Fib object of the fitnessalgorithm is correctly -20.0 . "<<endl;
+		cout<<"The weight for the size of the Fib object of the fitness algorithm is correctly -20.0 . "<<endl;
 	}else{
-		cerr<<"Error: The weight for the size of the Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The weight for the size of the Fib object of the fitness algorithm "<<
 			algorithmBasic5.getWeightSize() <<" but should be -20.0 ."<<endl;
 		iReturn++;
 	}
 	//check the getWeightEvaluationTime() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic5.getWeightEvaluationTime() == 9648.258 ){
 	
-		cout<<"The weight for the evaluation of the Fib object of the fitnessalgorithm is correctly 9648.258 . "<<endl;
+		cout<<"The weight for the evaluation of the Fib object of the fitness algorithm is correctly 9648.258 . "<<endl;
 	}else{
-		cerr<<"Error: The weight for the evaluation of the Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The weight for the evaluation of the Fib object of the fitness algorithm "<<
 			algorithmBasic5.getWeightEvaluationTime() <<" but should be 9648.258 ."<<endl;
 		iReturn++;
 	}
@@ -520,9 +528,9 @@ int testCostructor( unsigned long &ulTestphase ){
 	//check the getClassName() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic6.getClassName() == "cFibObjectFitnessBasicAlgorithm" ){
 	
-		cout<<"The classname of the fitnessalgorithm is correctly \"cFibObjectFitnessBasicAlgorithm\" . "<<endl;
+		cout<<"The class name of the fitness algorithm is correctly \"cFibObjectFitnessBasicAlgorithm\" . "<<endl;
 	}else{
-		cerr<<"Error: The classname of the fitnessalgorithm "<<
+		cerr<<"Error: The class name of the fitness algorithm "<<
 			algorithmBasic6.getClassName() <<" but should be \"cFibObjectFitnessBasicAlgorithm\" ."<<endl;
 		iReturn++;
 	}
@@ -530,64 +538,64 @@ int testCostructor( unsigned long &ulTestphase ){
 	if ( algorithmBasic6.getOriginalIndividual() != NULL ){
 		if ( algorithmBasic6.getOriginalIndividual() == pOriginalIndividual1 ){
 		
-			cout<<"The original Fib object of the fitnessalgorithm is correctly pOriginalIndividual1 . "<<endl;
+			cout<<"The original Fib object of the fitness algorithm is correctly pOriginalIndividual1 . "<<endl;
 		}else{
-			cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+			cerr<<"Error: The original Fib object of the fitness algorithm "<<
 				algorithmBasic6.getOriginalIndividual() <<" but should be pOriginalIndividual1 ."<<endl;
 			iReturn++;
 		}
 		if ( algorithmBasic6.getOriginalIndividual()->getFibObject() == pPoint2 ){
 		
-			cout<<"The original Fib object of the fitnessalgorithm is correctly pPoint2 . "<<endl;
+			cout<<"The original Fib object of the fitness algorithm is correctly pPoint2 . "<<endl;
 		}else{
-			cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+			cerr<<"Error: The original Fib object of the fitness algorithm "<<
 				algorithmBasic6.getOriginalFibObject() <<" but should be pPoint2 ."<<endl;
 			iReturn++;
 		}
 	}else{
-		cerr<<"Error: The classname of the fitnessalgorithm NULL but should be pPoint2="<< pPoint <<" ."<<endl;
+		cerr<<"Error: The class name of the fitness algorithm NULL but should be pPoint2="<< pPoint2 <<" ."<<endl;
 		iReturn++;
 	}
 	//check the getOriginalFibObject() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic6.getOriginalFibObject() == pPoint2 ){
 	
-		cout<<"The original Fib object of the fitnessalgorithm is correctly pPoint2 . "<<endl;
+		cout<<"The original Fib object of the fitness algorithm is correctly pPoint2 . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib object of the fitness algorithm "<<
 			algorithmBasic6.getOriginalFibObject() <<" but should be pPoint2 ."<<endl;
 		iReturn++;
 	}
 	//check the getWeightDistanceToOriginal() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic6.getWeightDistanceToOriginal() == 10254.02 ){
 	
-		cout<<"The weight for the distance to the original of the fitnessalgorithm is correctly 10254.02 . "<<endl;
+		cout<<"The weight for the distance to the original of the fitness algorithm is correctly 10254.02 . "<<endl;
 	}else{
-		cerr<<"Error: The weight for the distance to the original of the fitnessalgorithm "<<
+		cerr<<"Error: The weight for the distance to the original of the fitness algorithm "<<
 			algorithmBasic6.getWeightDistanceToOriginal() <<" but should be 10254.02 ."<<endl;
 		iReturn++;
 	}
 	//check the getWeightSize() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic6.getWeightSize() == -0.006 ){
 	
-		cout<<"The weight for the size of the Fib object of the fitnessalgorithm is correctly -0.006 . "<<endl;
+		cout<<"The weight for the size of the Fib object of the fitness algorithm is correctly -0.006 . "<<endl;
 	}else{
-		cerr<<"Error: The weight for the size of the Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The weight for the size of the Fib object of the fitness algorithm "<<
 			algorithmBasic6.getWeightSize() <<" but should be -0.006 ."<<endl;
 		iReturn++;
 	}
 	//check the getWeightEvaluationTime() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic6.getWeightEvaluationTime() == 0.002 ){
 	
-		cout<<"The weight for the evaluation of the Fib object of the fitnessalgorithm is correctly 0.002 . "<<endl;
+		cout<<"The weight for the evaluation of the Fib object of the fitness algorithm is correctly 0.002 . "<<endl;
 	}else{
-		cerr<<"Error: The weight for the evaluation of the Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The weight for the evaluation of the Fib object of the fitness algorithm "<<
 			algorithmBasic6.getWeightEvaluationTime() <<" but should be 0.002 ."<<endl;
 		iReturn++;
 	}
 
 
 	ulTestphase++;
-	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the copyconstructer"<<endl;
+	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the copy constructer"<<endl;
 
 	cout<<"cFibObjectFitnessBasicAlgorithm algorithmBasic1Copy( algorithmBasic1 );"<<endl;
 	cFibObjectFitnessBasicAlgorithm algorithmBasic1Copy( algorithmBasic1 );
@@ -595,54 +603,54 @@ int testCostructor( unsigned long &ulTestphase ){
 	//check the getClassName() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic1Copy.getClassName() == "cFibObjectFitnessBasicAlgorithm" ){
 	
-		cout<<"The classname of the fitnessalgorithm is correctly \"cFibObjectFitnessBasicAlgorithm\" . "<<endl;
+		cout<<"The class name of the fitness algorithm is correctly \"cFibObjectFitnessBasicAlgorithm\" . "<<endl;
 	}else{
-		cerr<<"Error: The classname of the fitnessalgorithm "<<
+		cerr<<"Error: The class name of the fitness algorithm "<<
 			algorithmBasic1Copy.getClassName() <<" but should be \"cFibObjectFitnessBasicAlgorithm\" ."<<endl;
 		iReturn++;
 	}
 	//check the getOriginalIndividual() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic1Copy.getOriginalIndividual() == NULL ){
 	
-		cout<<"The Fib individual of the fitnessalgorithm is correctly NULL . "<<endl;
+		cout<<"The Fib individual of the fitness algorithm is correctly NULL . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib individual of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib individual of the fitness algorithm "<<
 			algorithmBasic1Copy.getOriginalIndividual() <<" but should be NULL ."<<endl;
 		iReturn++;
 	}
 	//check the getOriginalFibObject() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic1Copy.getOriginalFibObject() == NULL ){
 	
-		cout<<"The original Fib object of the fitnessalgorithm is correctly NULL . "<<endl;
+		cout<<"The original Fib object of the fitness algorithm is correctly NULL . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib object of the fitness algorithm "<<
 			algorithmBasic1Copy.getOriginalFibObject() <<" but should be NULL ."<<endl;
 		iReturn++;
 	}
 	//check the getWeightDistanceToOriginal() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic1Copy.getWeightDistanceToOriginal() == 1.0 ){
 	
-		cout<<"The weight for the distance to the original of the fitnessalgorithm is correctly 1.0 . "<<endl;
+		cout<<"The weight for the distance to the original of the fitness algorithm is correctly 1.0 . "<<endl;
 	}else{
-		cerr<<"Error: The weight for the distance to the original of the fitnessalgorithm "<<
+		cerr<<"Error: The weight for the distance to the original of the fitness algorithm "<<
 			algorithmBasic1Copy.getWeightDistanceToOriginal() <<" but should be 1.0 ."<<endl;
 		iReturn++;
 	}
 	//check the getWeightSize() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic1Copy.getWeightSize() == 1.0 ){
 	
-		cout<<"The weight for the size of the Fib object of the fitnessalgorithm is correctly 1.0 . "<<endl;
+		cout<<"The weight for the size of the Fib object of the fitness algorithm is correctly 1.0 . "<<endl;
 	}else{
-		cerr<<"Error: The weight for the size of the Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The weight for the size of the Fib object of the fitness algorithm "<<
 			algorithmBasic1Copy.getWeightSize() <<" but should be 1.0 ."<<endl;
 		iReturn++;
 	}
 	//check the getWeightEvaluationTime() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic1Copy.getWeightEvaluationTime() == 1.0 ){
 	
-		cout<<"The weight for the evaluation of the Fib object of the fitnessalgorithm is correctly 1.0 . "<<endl;
+		cout<<"The weight for the evaluation of the Fib object of the fitness algorithm is correctly 1.0 . "<<endl;
 	}else{
-		cerr<<"Error: The weight for the evaluation of the Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The weight for the evaluation of the Fib object of the fitness algorithm "<<
 			algorithmBasic1Copy.getWeightEvaluationTime() <<" but should be 1.0 ."<<endl;
 		iReturn++;
 	}
@@ -654,59 +662,61 @@ int testCostructor( unsigned long &ulTestphase ){
 	//check the getClassName() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic2Copy.getClassName() == "cFibObjectFitnessBasicAlgorithm" ){
 	
-		cout<<"The classname of the fitnessalgorithm is correctly \"cFibObjectFitnessBasicAlgorithm\" . "<<endl;
+		cout<<"The class name of the fitness algorithm is correctly \"cFibObjectFitnessBasicAlgorithm\" . "<<endl;
 	}else{
-		cerr<<"Error: The classname of the fitnessalgorithm "<<
+		cerr<<"Error: The class name of the fitness algorithm "<<
 			algorithmBasic2Copy.getClassName() <<" but should be \"cFibObjectFitnessBasicAlgorithm\" ."<<endl;
 		iReturn++;
 	}
 	//check the getOriginalIndividual() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic2Copy.getOriginalIndividual() != NULL ){
-		if ( algorithmBasic2Copy.getOriginalIndividual()->getFibObject() == pPoint ){
+		if ( (algorithmBasic2Copy.getOriginalIndividual()->getFibObject())->equal( *pPoint ) ){
 		
-			cout<<"The original Fib object of the fitnessalgorithm is correctly pPoint . "<<endl;
+			cout<<"The original Fib object of the fitness algorithm is correctly pPoint . "<<endl;
 		}else{
-			cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
-				algorithmBasic2Copy.getOriginalFibObject() <<" but should be pPoint ."<<endl;
+			cerr<<"Error: The original Fib object of the fitness algorithm "<<
+				algorithmBasic2Copy.getOriginalFibObject() <<" but should be pPoint ("<<
+				pPoint<<") ."<<endl;
 			iReturn++;
 		}
 	}else{
-		cerr<<"Error: The classname of the fitnessalgorithm NULL but should be pPoint="<< pPoint <<" ."<<endl;
+		cerr<<"Error: The class name of the fitness algorithm NULL but should be pPoint="<< pPoint <<" ."<<endl;
 		iReturn++;
 	}
 	//check the getOriginalFibObject() methode from cFibObjectFitnessBasicAlgorithm
-	if ( algorithmBasic2Copy.getOriginalFibObject() == pPoint ){
+	if ( (algorithmBasic2Copy.getOriginalFibObject())->equal( *pPoint ) ){
 	
-		cout<<"The original Fib object of the fitnessalgorithm is correctly pPoint . "<<endl;
+		cout<<"The original Fib object of the fitness algorithm is correctly pPoint . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
-			algorithmBasic2Copy.getOriginalFibObject() <<" but should be pPoint ."<<endl;
+		cerr<<"Error: The original Fib object of the fitness algorithm "<<
+			algorithmBasic2Copy.getOriginalFibObject() <<" but should be pPoint ("<<
+				pPoint<<")."<<endl;
 		iReturn++;
 	}
 	//check the getWeightDistanceToOriginal() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic2Copy.getWeightDistanceToOriginal() == 1.5 ){
 	
-		cout<<"The weight for the distance to the original of the fitnessalgorithm is correctly 1.5 . "<<endl;
+		cout<<"The weight for the distance to the original of the fitness algorithm is correctly 1.5 . "<<endl;
 	}else{
-		cerr<<"Error: The weight for the distance to the original of the fitnessalgorithm "<<
+		cerr<<"Error: The weight for the distance to the original of the fitness algorithm "<<
 			algorithmBasic2Copy.getWeightDistanceToOriginal() <<" but should be 1.5 ."<<endl;
 		iReturn++;
 	}
 	//check the getWeightSize() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic2Copy.getWeightSize() == 2.0 ){
 	
-		cout<<"The weight for the size of the Fib object of the fitnessalgorithm is correctly 2.0 . "<<endl;
+		cout<<"The weight for the size of the Fib object of the fitness algorithm is correctly 2.0 . "<<endl;
 	}else{
-		cerr<<"Error: The weight for the size of the Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The weight for the size of the Fib object of the fitness algorithm "<<
 			algorithmBasic2Copy.getWeightSize() <<" but should be 2.0 ."<<endl;
 		iReturn++;
 	}
 	//check the getWeightEvaluationTime() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic2Copy.getWeightEvaluationTime() == 3.0 ){
 	
-		cout<<"The weight for the evaluation of the Fib object of the fitnessalgorithm is correctly 3.0 . "<<endl;
+		cout<<"The weight for the evaluation of the Fib object of the fitness algorithm is correctly 3.0 . "<<endl;
 	}else{
-		cerr<<"Error: The weight for the evaluation of the Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The weight for the evaluation of the Fib object of the fitness algorithm "<<
 			algorithmBasic2Copy.getWeightEvaluationTime() <<" but should be 3.0 ."<<endl;
 		iReturn++;
 	}
@@ -718,54 +728,54 @@ int testCostructor( unsigned long &ulTestphase ){
 	//check the getClassName() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic3Copy.getClassName() == "cFibObjectFitnessBasicAlgorithm" ){
 	
-		cout<<"The classname of the fitnessalgorithm is correctly \"cFibObjectFitnessBasicAlgorithm\" . "<<endl;
+		cout<<"The class name of the fitness algorithm is correctly \"cFibObjectFitnessBasicAlgorithm\" . "<<endl;
 	}else{
-		cerr<<"Error: The classname of the fitnessalgorithm "<<
+		cerr<<"Error: The class name of the fitness algorithm "<<
 			algorithmBasic3Copy.getClassName() <<" but should be \"cFibObjectFitnessBasicAlgorithm\" ."<<endl;
 		iReturn++;
 	}
 	//check the getOriginalIndividual() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic3Copy.getOriginalIndividual() == NULL ){
 	
-		cout<<"The Fib individual of the fitnessalgorithm is correctly NULL . "<<endl;
+		cout<<"The Fib individual of the fitness algorithm is correctly NULL . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib individual of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib individual of the fitness algorithm "<<
 			algorithmBasic3Copy.getOriginalIndividual() <<" but should be NULL ."<<endl;
 		iReturn++;
 	}
 	//check the getOriginalFibObject() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic3Copy.getOriginalFibObject() == NULL ){
 	
-		cout<<"The original Fib object of the fitnessalgorithm is correctly NULL . "<<endl;
+		cout<<"The original Fib object of the fitness algorithm is correctly NULL . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib object of the fitness algorithm "<<
 			algorithmBasic3Copy.getOriginalFibObject() <<" but should be NULL ."<<endl;
 		iReturn++;
 	}
 	//check the getWeightDistanceToOriginal() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic3Copy.getWeightDistanceToOriginal() == -1.5 ){
 	
-		cout<<"The weight for the distance to the original of the fitnessalgorithm is correctly -1.5 . "<<endl;
+		cout<<"The weight for the distance to the original of the fitness algorithm is correctly -1.5 . "<<endl;
 	}else{
-		cerr<<"Error: The weight for the distance to the original of the fitnessalgorithm "<<
+		cerr<<"Error: The weight for the distance to the original of the fitness algorithm "<<
 			algorithmBasic3Copy.getWeightDistanceToOriginal() <<" but should be -1.5 ."<<endl;
 		iReturn++;
 	}
 	//check the getWeightSize() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic3Copy.getWeightSize() == 20.0 ){
 	
-		cout<<"The weight for the size of the Fib object of the fitnessalgorithm is correctly 20.0 . "<<endl;
+		cout<<"The weight for the size of the Fib object of the fitness algorithm is correctly 20.0 . "<<endl;
 	}else{
-		cerr<<"Error: The weight for the size of the Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The weight for the size of the Fib object of the fitness algorithm "<<
 			algorithmBasic3Copy.getWeightSize() <<" but should be 20.0 ."<<endl;
 		iReturn++;
 	}
 	//check the getWeightEvaluationTime() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic3Copy.getWeightEvaluationTime() == -33.3 ){
 	
-		cout<<"The weight for the evaluation of the Fib object of the fitnessalgorithm is correctly -33.3 . "<<endl;
+		cout<<"The weight for the evaluation of the Fib object of the fitness algorithm is correctly -33.3 . "<<endl;
 	}else{
-		cerr<<"Error: The weight for the evaluation of the Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The weight for the evaluation of the Fib object of the fitness algorithm "<<
 			algorithmBasic3Copy.getWeightEvaluationTime() <<" but should be -33.3 ."<<endl;
 		iReturn++;
 	}
@@ -777,9 +787,9 @@ int testCostructor( unsigned long &ulTestphase ){
 	//check the getClassName() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic4Copy.getClassName() == "cFibObjectFitnessBasicAlgorithm" ){
 	
-		cout<<"The classname of the fitnessalgorithm is correctly \"cFibObjectFitnessBasicAlgorithm\" . "<<endl;
+		cout<<"The class name of the fitness algorithm is correctly \"cFibObjectFitnessBasicAlgorithm\" . "<<endl;
 	}else{
-		cerr<<"Error: The classname of the fitnessalgorithm "<<
+		cerr<<"Error: The class name of the fitness algorithm "<<
 			algorithmBasic4Copy.getClassName() <<" but should be \"cFibObjectFitnessBasicAlgorithm\" ."<<endl;
 		iReturn++;
 	}
@@ -788,57 +798,57 @@ int testCostructor( unsigned long &ulTestphase ){
 		//check the getOriginalFibObject() methode from cFibObjectFitnessBasicAlgorithm
 		if ( algorithmBasic4Copy.getOriginalIndividual() == pOriginalIndividual ){
 		
-			cout<<"The original Fib object of the fitnessalgorithm is correctly pOriginalIndividual . "<<endl;
+			cout<<"The original Fib object of the fitness algorithm is correctly pOriginalIndividual . "<<endl;
 		}else{
-			cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+			cerr<<"Error: The original Fib object of the fitness algorithm "<<
 				algorithmBasic4Copy.getOriginalIndividual() <<" but should be pOriginalIndividual ."<<endl;
 			iReturn++;
 		}
 		if ( algorithmBasic4Copy.getOriginalIndividual()->getFibObject() == pPoint1 ){
 		
-			cout<<"The original Fib object of the fitnessalgorithm is correctly pPoint1 . "<<endl;
+			cout<<"The original Fib object of the fitness algorithm is correctly pPoint1 . "<<endl;
 		}else{
-			cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+			cerr<<"Error: The original Fib object of the fitness algorithm "<<
 				algorithmBasic4Copy.getOriginalFibObject() <<" but should be pPoint1 ."<<endl;
 			iReturn++;
 		}
 	}else{
-		cerr<<"Error: The classname of the fitnessalgorithm NULL but should be pPoint="<< pPoint1 <<" ."<<endl;
+		cerr<<"Error: The class name of the fitness algorithm NULL but should be pPoint="<< pPoint1 <<" ."<<endl;
 		iReturn++;
 	}
 	//check the getOriginalFibObject() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic4Copy.getOriginalFibObject() == pPoint1 ){
 	
-		cout<<"The original Fib object of the fitnessalgorithm is correctly pPoint1 . "<<endl;
+		cout<<"The original Fib object of the fitness algorithm is correctly pPoint1 . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib object of the fitness algorithm "<<
 			algorithmBasic4Copy.getOriginalFibObject() <<" but should be pPoint1 ."<<endl;
 		iReturn++;
 	}
 	//check the getWeightDistanceToOriginal() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic4Copy.getWeightDistanceToOriginal() == 27.0 ){
 	
-		cout<<"The weight for the distance to the original of the fitnessalgorithm is correctly 27.0 . "<<endl;
+		cout<<"The weight for the distance to the original of the fitness algorithm is correctly 27.0 . "<<endl;
 	}else{
-		cerr<<"Error: The weight for the distance to the original of the fitnessalgorithm "<<
+		cerr<<"Error: The weight for the distance to the original of the fitness algorithm "<<
 			algorithmBasic4Copy.getWeightDistanceToOriginal() <<" but should be 27.0 ."<<endl;
 		iReturn++;
 	}
 	//check the getWeightSize() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic4Copy.getWeightSize() == -88.88 ){
 	
-		cout<<"The weight for the size of the Fib object of the fitnessalgorithm is correctly -88.88 . "<<endl;
+		cout<<"The weight for the size of the Fib object of the fitness algorithm is correctly -88.88 . "<<endl;
 	}else{
-		cerr<<"Error: The weight for the size of the Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The weight for the size of the Fib object of the fitness algorithm "<<
 			algorithmBasic4Copy.getWeightSize() <<" but should be -88.88 ."<<endl;
 		iReturn++;
 	}
 	//check the getWeightEvaluationTime() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic4Copy.getWeightEvaluationTime() == 10254.02 ){
 	
-		cout<<"The weight for the evaluation of the Fib object of the fitnessalgorithm is correctly 10254.02 . "<<endl;
+		cout<<"The weight for the evaluation of the Fib object of the fitness algorithm is correctly 10254.02 . "<<endl;
 	}else{
-		cerr<<"Error: The weight for the evaluation of the Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The weight for the evaluation of the Fib object of the fitness algorithm "<<
 			algorithmBasic4Copy.getWeightEvaluationTime() <<" but should be 10254.02 ."<<endl;
 		iReturn++;
 	}
@@ -850,54 +860,54 @@ int testCostructor( unsigned long &ulTestphase ){
 	//check the getClassName() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic5Copy.getClassName() == "cFibObjectFitnessBasicAlgorithm" ){
 	
-		cout<<"The classname of the fitnessalgorithm is correctly \"cFibObjectFitnessBasicAlgorithm\" . "<<endl;
+		cout<<"The class name of the fitness algorithm is correctly \"cFibObjectFitnessBasicAlgorithm\" . "<<endl;
 	}else{
-		cerr<<"Error: The classname of the fitnessalgorithm "<<
+		cerr<<"Error: The class name of the fitness algorithm "<<
 			algorithmBasic5Copy.getClassName() <<" but should be \"cFibObjectFitnessBasicAlgorithm\" ."<<endl;
 		iReturn++;
 	}
 	//check the getOriginalIndividual() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic5Copy.getOriginalIndividual() == NULL ){
 	
-		cout<<"The Fib individual of the fitnessalgorithm is correctly NULL . "<<endl;
+		cout<<"The Fib individual of the fitness algorithm is correctly NULL . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib individual of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib individual of the fitness algorithm "<<
 			algorithmBasic5Copy.getOriginalIndividual() <<" but should be NULL ."<<endl;
 		iReturn++;
 	}
 	//check the getOriginalFibObject() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic5Copy.getOriginalFibObject() == NULL ){
 	
-		cout<<"The original Fib object of the fitnessalgorithm is correctly NULL . "<<endl;
+		cout<<"The original Fib object of the fitness algorithm is correctly NULL . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib object of the fitness algorithm "<<
 			algorithmBasic5Copy.getOriginalFibObject() <<" but should be NULL ."<<endl;
 		iReturn++;
 	}
 	//check the getWeightDistanceToOriginal() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic5Copy.getWeightDistanceToOriginal() == 77.7 ){
 	
-		cout<<"The weight for the distance to the original of the fitnessalgorithm is correctly 77.7 . "<<endl;
+		cout<<"The weight for the distance to the original of the fitness algorithm is correctly 77.7 . "<<endl;
 	}else{
-		cerr<<"Error: The weight for the distance to the original of the fitnessalgorithm "<<
+		cerr<<"Error: The weight for the distance to the original of the fitness algorithm "<<
 			algorithmBasic5Copy.getWeightDistanceToOriginal() <<" but should be 77.7 ."<<endl;
 		iReturn++;
 	}
 	//check the getWeightSize() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic5Copy.getWeightSize() == -20.0 ){
 	
-		cout<<"The weight for the size of the Fib object of the fitnessalgorithm is correctly -20.0 . "<<endl;
+		cout<<"The weight for the size of the Fib object of the fitness algorithm is correctly -20.0 . "<<endl;
 	}else{
-		cerr<<"Error: The weight for the size of the Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The weight for the size of the Fib object of the fitness algorithm "<<
 			algorithmBasic5Copy.getWeightSize() <<" but should be -20.0 ."<<endl;
 		iReturn++;
 	}
 	//check the getWeightEvaluationTime() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic5Copy.getWeightEvaluationTime() == 9648.258 ){
 	
-		cout<<"The weight for the evaluation of the Fib object of the fitnessalgorithm is correctly 9648.258 . "<<endl;
+		cout<<"The weight for the evaluation of the Fib object of the fitness algorithm is correctly 9648.258 . "<<endl;
 	}else{
-		cerr<<"Error: The weight for the evaluation of the Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The weight for the evaluation of the Fib object of the fitness algorithm "<<
 			algorithmBasic5Copy.getWeightEvaluationTime() <<" but should be 9648.258 ."<<endl;
 		iReturn++;
 	}
@@ -909,9 +919,9 @@ int testCostructor( unsigned long &ulTestphase ){
 	//check the getClassName() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic6Copy.getClassName() == "cFibObjectFitnessBasicAlgorithm" ){
 	
-		cout<<"The classname of the fitnessalgorithm is correctly \"cFibObjectFitnessBasicAlgorithm\" . "<<endl;
+		cout<<"The class name of the fitness algorithm is correctly \"cFibObjectFitnessBasicAlgorithm\" . "<<endl;
 	}else{
-		cerr<<"Error: The classname of the fitnessalgorithm "<<
+		cerr<<"Error: The class name of the fitness algorithm "<<
 			algorithmBasic6Copy.getClassName() <<" but should be \"cFibObjectFitnessBasicAlgorithm\" ."<<endl;
 		iReturn++;
 	}
@@ -919,57 +929,57 @@ int testCostructor( unsigned long &ulTestphase ){
 	if ( algorithmBasic6Copy.getOriginalIndividual() != NULL ){
 		if ( algorithmBasic6Copy.getOriginalIndividual() == pOriginalIndividual1 ){
 		
-			cout<<"The original Fib object of the fitnessalgorithm is correctly pOriginalIndividual1 . "<<endl;
+			cout<<"The original Fib object of the fitness algorithm is correctly pOriginalIndividual1 . "<<endl;
 		}else{
-			cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+			cerr<<"Error: The original Fib object of the fitness algorithm "<<
 				algorithmBasic6Copy.getOriginalIndividual() <<" but should be pOriginalIndividual1 ."<<endl;
 			iReturn++;
 		}
 		if ( algorithmBasic6Copy.getOriginalIndividual()->getFibObject() == pPoint2 ){
 		
-			cout<<"The original Fib object of the fitnessalgorithm is correctly pPoint2 . "<<endl;
+			cout<<"The original Fib object of the fitness algorithm is correctly pPoint2 . "<<endl;
 		}else{
-			cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+			cerr<<"Error: The original Fib object of the fitness algorithm "<<
 				algorithmBasic6Copy.getOriginalFibObject() <<" but should be pPoint2 ."<<endl;
 			iReturn++;
 		}
 	}else{
-		cerr<<"Error: The classname of the fitnessalgorithm NULL but should be pPoint="<< pPoint <<" ."<<endl;
+		cerr<<"Error: The class name of the fitness algorithm NULL but should be pPoint="<< pPoint <<" ."<<endl;
 		iReturn++;
 	}
 	//check the getOriginalFibObject() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic6Copy.getOriginalFibObject() == pPoint2 ){
 	
-		cout<<"The original Fib object of the fitnessalgorithm is correctly pPoint2 . "<<endl;
+		cout<<"The original Fib object of the fitness algorithm is correctly pPoint2 . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib object of the fitness algorithm "<<
 			algorithmBasic6Copy.getOriginalFibObject() <<" but should be pPoint2 ."<<endl;
 		iReturn++;
 	}
 	//check the getWeightDistanceToOriginal() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic6Copy.getWeightDistanceToOriginal() == 10254.02 ){
 	
-		cout<<"The weight for the distance to the original of the fitnessalgorithm is correctly 10254.02 . "<<endl;
+		cout<<"The weight for the distance to the original of the fitness algorithm is correctly 10254.02 . "<<endl;
 	}else{
-		cerr<<"Error: The weight for the distance to the original of the fitnessalgorithm "<<
+		cerr<<"Error: The weight for the distance to the original of the fitness algorithm "<<
 			algorithmBasic6Copy.getWeightDistanceToOriginal() <<" but should be 10254.02 ."<<endl;
 		iReturn++;
 	}
 	//check the getWeightSize() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic6Copy.getWeightSize() == -0.006 ){
 	
-		cout<<"The weight for the size of the Fib object of the fitnessalgorithm is correctly -0.006 . "<<endl;
+		cout<<"The weight for the size of the Fib object of the fitness algorithm is correctly -0.006 . "<<endl;
 	}else{
-		cerr<<"Error: The weight for the size of the Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The weight for the size of the Fib object of the fitness algorithm "<<
 			algorithmBasic6Copy.getWeightSize() <<" but should be -0.006 ."<<endl;
 		iReturn++;
 	}
 	//check the getWeightEvaluationTime() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic6Copy.getWeightEvaluationTime() == 0.002 ){
 	
-		cout<<"The weight for the evaluation of the Fib object of the fitnessalgorithm is correctly 0.002 . "<<endl;
+		cout<<"The weight for the evaluation of the Fib object of the fitness algorithm is correctly 0.002 . "<<endl;
 	}else{
-		cerr<<"Error: The weight for the evaluation of the Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The weight for the evaluation of the Fib object of the fitness algorithm "<<
 			algorithmBasic6Copy.getWeightEvaluationTime() <<" but should be 0.002 ."<<endl;
 		iReturn++;
 	}
@@ -985,54 +995,54 @@ int testCostructor( unsigned long &ulTestphase ){
 	//check the getClassName() methode from cFibObjectFitnessBasicAlgorithm
 	if ( pAlgorithmBasic1Clone->getClassName() == "cFibObjectFitnessBasicAlgorithm" ){
 	
-		cout<<"The classname of the fitnessalgorithm is correctly \"cFibObjectFitnessBasicAlgorithm\" . "<<endl;
+		cout<<"The class name of the fitness algorithm is correctly \"cFibObjectFitnessBasicAlgorithm\" . "<<endl;
 	}else{
-		cerr<<"Error: The classname of the fitnessalgorithm "<<
+		cerr<<"Error: The class name of the fitness algorithm "<<
 			pAlgorithmBasic1Clone->getClassName() <<" but should be \"cFibObjectFitnessBasicAlgorithm\" ."<<endl;
 		iReturn++;
 	}
 	//check the getOriginalIndividual() methode from cFibObjectFitnessBasicAlgorithm
 	if ( pAlgorithmBasic1Clone->getOriginalIndividual() == NULL ){
 	
-		cout<<"The Fib individual of the fitnessalgorithm is correctly NULL . "<<endl;
+		cout<<"The Fib individual of the fitness algorithm is correctly NULL . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib individual of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib individual of the fitness algorithm "<<
 			pAlgorithmBasic1Clone->getOriginalIndividual() <<" but should be NULL ."<<endl;
 		iReturn++;
 	}
 	//check the getOriginalFibObject() methode from cFibObjectFitnessBasicAlgorithm
 	if ( pAlgorithmBasic1Clone->getOriginalFibObject() == NULL ){
 	
-		cout<<"The original Fib object of the fitnessalgorithm is correctly NULL . "<<endl;
+		cout<<"The original Fib object of the fitness algorithm is correctly NULL . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib object of the fitness algorithm "<<
 			pAlgorithmBasic1Clone->getOriginalFibObject() <<" but should be NULL ."<<endl;
 		iReturn++;
 	}
 	//check the getWeightDistanceToOriginal() methode from cFibObjectFitnessBasicAlgorithm
 	if ( pAlgorithmBasic1Clone->getWeightDistanceToOriginal() == 1.0 ){
 	
-		cout<<"The weight for the distance to the original of the fitnessalgorithm is correctly 1.0 . "<<endl;
+		cout<<"The weight for the distance to the original of the fitness algorithm is correctly 1.0 . "<<endl;
 	}else{
-		cerr<<"Error: The weight for the distance to the original of the fitnessalgorithm "<<
+		cerr<<"Error: The weight for the distance to the original of the fitness algorithm "<<
 			pAlgorithmBasic1Clone->getWeightDistanceToOriginal() <<" but should be 1.0 ."<<endl;
 		iReturn++;
 	}
 	//check the getWeightSize() methode from cFibObjectFitnessBasicAlgorithm
 	if ( pAlgorithmBasic1Clone->getWeightSize() == 1.0 ){
 	
-		cout<<"The weight for the size of the Fib object of the fitnessalgorithm is correctly 1.0 . "<<endl;
+		cout<<"The weight for the size of the Fib object of the fitness algorithm is correctly 1.0 . "<<endl;
 	}else{
-		cerr<<"Error: The weight for the size of the Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The weight for the size of the Fib object of the fitness algorithm "<<
 			pAlgorithmBasic1Clone->getWeightSize() <<" but should be 1.0 ."<<endl;
 		iReturn++;
 	}
 	//check the getWeightEvaluationTime() methode from cFibObjectFitnessBasicAlgorithm
 	if ( pAlgorithmBasic1Clone->getWeightEvaluationTime() == 1.0 ){
 	
-		cout<<"The weight for the evaluation of the Fib object of the fitnessalgorithm is correctly 1.0 . "<<endl;
+		cout<<"The weight for the evaluation of the Fib object of the fitness algorithm is correctly 1.0 . "<<endl;
 	}else{
-		cerr<<"Error: The weight for the evaluation of the Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The weight for the evaluation of the Fib object of the fitness algorithm "<<
 			pAlgorithmBasic1Clone->getWeightEvaluationTime() <<" but should be 1.0 ."<<endl;
 		iReturn++;
 	}
@@ -1044,59 +1054,59 @@ int testCostructor( unsigned long &ulTestphase ){
 	//check the getClassName() methode from cFibObjectFitnessBasicAlgorithm
 	if ( pAlgorithmBasic2Clone->getClassName() == "cFibObjectFitnessBasicAlgorithm" ){
 	
-		cout<<"The classname of the fitnessalgorithm is correctly \"cFibObjectFitnessBasicAlgorithm\" . "<<endl;
+		cout<<"The class name of the fitness algorithm is correctly \"cFibObjectFitnessBasicAlgorithm\" . "<<endl;
 	}else{
-		cerr<<"Error: The classname of the fitnessalgorithm "<<
+		cerr<<"Error: The class name of the fitness algorithm "<<
 			pAlgorithmBasic2Clone->getClassName() <<" but should be \"cFibObjectFitnessBasicAlgorithm\" ."<<endl;
 		iReturn++;
 	}
 	//check the getOriginalIndividual() methode from cFibObjectFitnessBasicAlgorithm
 	if ( pAlgorithmBasic2Clone->getOriginalIndividual() != NULL ){
-		if ( pAlgorithmBasic2Clone->getOriginalIndividual()->getFibObject() == pPoint ){
+		if ( (pAlgorithmBasic2Clone->getOriginalIndividual()->getFibObject())->equal( *pPoint ) ){
 		
-			cout<<"The original Fib object of the fitnessalgorithm is correctly pPoint . "<<endl;
+			cout<<"The original Fib object of the fitness algorithm is correctly pPoint . "<<endl;
 		}else{
-			cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+			cerr<<"Error: The original Fib object of the fitness algorithm "<<
 				pAlgorithmBasic2Clone->getOriginalFibObject() <<" but should be pPoint ."<<endl;
 			iReturn++;
 		}
 	}else{
-		cerr<<"Error: The classname of the fitnessalgorithm NULL but should be pPoint="<< pPoint <<" ."<<endl;
+		cerr<<"Error: The class name of the fitness algorithm NULL but should be pPoint="<< pPoint <<" ."<<endl;
 		iReturn++;
 	}
 	//check the getOriginalFibObject() methode from cFibObjectFitnessBasicAlgorithm
-	if ( pAlgorithmBasic2Clone->getOriginalFibObject() == pPoint ){
+	if ( (pAlgorithmBasic2Clone->getOriginalFibObject())->equal( *pPoint ) ){
 	
-		cout<<"The original Fib object of the fitnessalgorithm is correctly pPoint . "<<endl;
+		cout<<"The original Fib object of the fitness algorithm is correctly pPoint . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib object of the fitness algorithm "<<
 			pAlgorithmBasic2Clone->getOriginalFibObject() <<" but should be pPoint ."<<endl;
 		iReturn++;
 	}
 	//check the getWeightDistanceToOriginal() methode from cFibObjectFitnessBasicAlgorithm
 	if ( pAlgorithmBasic2Clone->getWeightDistanceToOriginal() == 1.5 ){
 	
-		cout<<"The weight for the distance to the original of the fitnessalgorithm is correctly 1.5 . "<<endl;
+		cout<<"The weight for the distance to the original of the fitness algorithm is correctly 1.5 . "<<endl;
 	}else{
-		cerr<<"Error: The weight for the distance to the original of the fitnessalgorithm "<<
+		cerr<<"Error: The weight for the distance to the original of the fitness algorithm "<<
 			pAlgorithmBasic2Clone->getWeightDistanceToOriginal() <<" but should be 1.5 ."<<endl;
 		iReturn++;
 	}
 	//check the getWeightSize() methode from cFibObjectFitnessBasicAlgorithm
 	if ( pAlgorithmBasic2Clone->getWeightSize() == 2.0 ){
 	
-		cout<<"The weight for the size of the Fib object of the fitnessalgorithm is correctly 2.0 . "<<endl;
+		cout<<"The weight for the size of the Fib object of the fitness algorithm is correctly 2.0 . "<<endl;
 	}else{
-		cerr<<"Error: The weight for the size of the Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The weight for the size of the Fib object of the fitness algorithm "<<
 			pAlgorithmBasic2Clone->getWeightSize() <<" but should be 2.0 ."<<endl;
 		iReturn++;
 	}
 	//check the getWeightEvaluationTime() methode from cFibObjectFitnessBasicAlgorithm
 	if ( pAlgorithmBasic2Clone->getWeightEvaluationTime() == 3.0 ){
 	
-		cout<<"The weight for the evaluation of the Fib object of the fitnessalgorithm is correctly 3.0 . "<<endl;
+		cout<<"The weight for the evaluation of the Fib object of the fitness algorithm is correctly 3.0 . "<<endl;
 	}else{
-		cerr<<"Error: The weight for the evaluation of the Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The weight for the evaluation of the Fib object of the fitness algorithm "<<
 			pAlgorithmBasic2Clone->getWeightEvaluationTime() <<" but should be 3.0 ."<<endl;
 		iReturn++;
 	}
@@ -1108,54 +1118,54 @@ int testCostructor( unsigned long &ulTestphase ){
 	//check the getClassName() methode from cFibObjectFitnessBasicAlgorithm
 	if ( pAlgorithmBasic3Clone->getClassName() == "cFibObjectFitnessBasicAlgorithm" ){
 	
-		cout<<"The classname of the fitnessalgorithm is correctly \"cFibObjectFitnessBasicAlgorithm\" . "<<endl;
+		cout<<"The class name of the fitness algorithm is correctly \"cFibObjectFitnessBasicAlgorithm\" . "<<endl;
 	}else{
-		cerr<<"Error: The classname of the fitnessalgorithm "<<
+		cerr<<"Error: The class name of the fitness algorithm "<<
 			pAlgorithmBasic3Clone->getClassName() <<" but should be \"cFibObjectFitnessBasicAlgorithm\" ."<<endl;
 		iReturn++;
 	}
 	//check the getOriginalIndividual() methode from cFibObjectFitnessBasicAlgorithm
 	if ( pAlgorithmBasic3Clone->getOriginalIndividual() == NULL ){
 	
-		cout<<"The Fib individual of the fitnessalgorithm is correctly NULL . "<<endl;
+		cout<<"The Fib individual of the fitness algorithm is correctly NULL . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib individual of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib individual of the fitness algorithm "<<
 			pAlgorithmBasic3Clone->getOriginalIndividual() <<" but should be NULL ."<<endl;
 		iReturn++;
 	}
 	//check the getOriginalFibObject() methode from cFibObjectFitnessBasicAlgorithm
 	if ( pAlgorithmBasic3Clone->getOriginalFibObject() == NULL ){
 	
-		cout<<"The original Fib object of the fitnessalgorithm is correctly NULL . "<<endl;
+		cout<<"The original Fib object of the fitness algorithm is correctly NULL . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib object of the fitness algorithm "<<
 			pAlgorithmBasic3Clone->getOriginalFibObject() <<" but should be NULL ."<<endl;
 		iReturn++;
 	}
 	//check the getWeightDistanceToOriginal() methode from cFibObjectFitnessBasicAlgorithm
 	if ( pAlgorithmBasic3Clone->getWeightDistanceToOriginal() == -1.5 ){
 	
-		cout<<"The weight for the distance to the original of the fitnessalgorithm is correctly -1.5 . "<<endl;
+		cout<<"The weight for the distance to the original of the fitness algorithm is correctly -1.5 . "<<endl;
 	}else{
-		cerr<<"Error: The weight for the distance to the original of the fitnessalgorithm "<<
+		cerr<<"Error: The weight for the distance to the original of the fitness algorithm "<<
 			pAlgorithmBasic3Clone->getWeightDistanceToOriginal() <<" but should be -1.5 ."<<endl;
 		iReturn++;
 	}
 	//check the getWeightSize() methode from cFibObjectFitnessBasicAlgorithm
 	if ( pAlgorithmBasic3Clone->getWeightSize() == 20.0 ){
 	
-		cout<<"The weight for the size of the Fib object of the fitnessalgorithm is correctly 20.0 . "<<endl;
+		cout<<"The weight for the size of the Fib object of the fitness algorithm is correctly 20.0 . "<<endl;
 	}else{
-		cerr<<"Error: The weight for the size of the Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The weight for the size of the Fib object of the fitness algorithm "<<
 			pAlgorithmBasic3Clone->getWeightSize() <<" but should be 20.0 ."<<endl;
 		iReturn++;
 	}
 	//check the getWeightEvaluationTime() methode from cFibObjectFitnessBasicAlgorithm
 	if ( pAlgorithmBasic3Clone->getWeightEvaluationTime() == -33.3 ){
 	
-		cout<<"The weight for the evaluation of the Fib object of the fitnessalgorithm is correctly -33.3 . "<<endl;
+		cout<<"The weight for the evaluation of the Fib object of the fitness algorithm is correctly -33.3 . "<<endl;
 	}else{
-		cerr<<"Error: The weight for the evaluation of the Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The weight for the evaluation of the Fib object of the fitness algorithm "<<
 			pAlgorithmBasic3Clone->getWeightEvaluationTime() <<" but should be -33.3 ."<<endl;
 		iReturn++;
 	}
@@ -1167,9 +1177,9 @@ int testCostructor( unsigned long &ulTestphase ){
 	//check the getClassName() methode from cFibObjectFitnessBasicAlgorithm
 	if ( pAlgorithmBasic4Clone->getClassName() == "cFibObjectFitnessBasicAlgorithm" ){
 	
-		cout<<"The classname of the fitnessalgorithm is correctly \"cFibObjectFitnessBasicAlgorithm\" . "<<endl;
+		cout<<"The class name of the fitness algorithm is correctly \"cFibObjectFitnessBasicAlgorithm\" . "<<endl;
 	}else{
-		cerr<<"Error: The classname of the fitnessalgorithm "<<
+		cerr<<"Error: The class name of the fitness algorithm "<<
 			pAlgorithmBasic4Clone->getClassName() <<" but should be \"cFibObjectFitnessBasicAlgorithm\" ."<<endl;
 		iReturn++;
 	}
@@ -1178,57 +1188,57 @@ int testCostructor( unsigned long &ulTestphase ){
 		//check the getOriginalFibObject() methode from cFibObjectFitnessBasicAlgorithm
 		if ( pAlgorithmBasic4Clone->getOriginalIndividual() == pOriginalIndividual ){
 		
-			cout<<"The original Fib object of the fitnessalgorithm is correctly pOriginalIndividual . "<<endl;
+			cout<<"The original Fib object of the fitness algorithm is correctly pOriginalIndividual . "<<endl;
 		}else{
-			cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+			cerr<<"Error: The original Fib object of the fitness algorithm "<<
 				pAlgorithmBasic4Clone->getOriginalIndividual() <<" but should be pOriginalIndividual ."<<endl;
 			iReturn++;
 		}
 		if ( pAlgorithmBasic4Clone->getOriginalIndividual()->getFibObject() == pPoint1 ){
 		
-			cout<<"The original Fib object of the fitnessalgorithm is correctly pPoint1 . "<<endl;
+			cout<<"The original Fib object of the fitness algorithm is correctly pPoint1 . "<<endl;
 		}else{
-			cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+			cerr<<"Error: The original Fib object of the fitness algorithm "<<
 				pAlgorithmBasic4Clone->getOriginalFibObject() <<" but should be pPoint1 ."<<endl;
 			iReturn++;
 		}
 	}else{
-		cerr<<"Error: The classname of the fitnessalgorithm NULL but should be pPoint="<< pPoint1 <<" ."<<endl;
+		cerr<<"Error: The class name of the fitness algorithm NULL but should be pPoint="<< pPoint1 <<" ."<<endl;
 		iReturn++;
 	}
 	//check the getOriginalFibObject() methode from cFibObjectFitnessBasicAlgorithm
 	if ( pAlgorithmBasic4Clone->getOriginalFibObject() == pPoint1 ){
 	
-		cout<<"The original Fib object of the fitnessalgorithm is correctly pPoint1 . "<<endl;
+		cout<<"The original Fib object of the fitness algorithm is correctly pPoint1 . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib object of the fitness algorithm "<<
 			pAlgorithmBasic4Clone->getOriginalFibObject() <<" but should be pPoint1 ."<<endl;
 		iReturn++;
 	}
 	//check the getWeightDistanceToOriginal() methode from cFibObjectFitnessBasicAlgorithm
 	if ( pAlgorithmBasic4Clone->getWeightDistanceToOriginal() == 27.0 ){
 	
-		cout<<"The weight for the distance to the original of the fitnessalgorithm is correctly 27.0 . "<<endl;
+		cout<<"The weight for the distance to the original of the fitness algorithm is correctly 27.0 . "<<endl;
 	}else{
-		cerr<<"Error: The weight for the distance to the original of the fitnessalgorithm "<<
+		cerr<<"Error: The weight for the distance to the original of the fitness algorithm "<<
 			pAlgorithmBasic4Clone->getWeightDistanceToOriginal() <<" but should be 27.0 ."<<endl;
 		iReturn++;
 	}
 	//check the getWeightSize() methode from cFibObjectFitnessBasicAlgorithm
 	if ( pAlgorithmBasic4Clone->getWeightSize() == -88.88 ){
 	
-		cout<<"The weight for the size of the Fib object of the fitnessalgorithm is correctly -88.88 . "<<endl;
+		cout<<"The weight for the size of the Fib object of the fitness algorithm is correctly -88.88 . "<<endl;
 	}else{
-		cerr<<"Error: The weight for the size of the Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The weight for the size of the Fib object of the fitness algorithm "<<
 			pAlgorithmBasic4Clone->getWeightSize() <<" but should be -88.88 ."<<endl;
 		iReturn++;
 	}
 	//check the getWeightEvaluationTime() methode from cFibObjectFitnessBasicAlgorithm
 	if ( pAlgorithmBasic4Clone->getWeightEvaluationTime() == 10254.02 ){
 	
-		cout<<"The weight for the evaluation of the Fib object of the fitnessalgorithm is correctly 10254.02 . "<<endl;
+		cout<<"The weight for the evaluation of the Fib object of the fitness algorithm is correctly 10254.02 . "<<endl;
 	}else{
-		cerr<<"Error: The weight for the evaluation of the Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The weight for the evaluation of the Fib object of the fitness algorithm "<<
 			pAlgorithmBasic4Clone->getWeightEvaluationTime() <<" but should be 10254.02 ."<<endl;
 		iReturn++;
 	}
@@ -1240,54 +1250,54 @@ int testCostructor( unsigned long &ulTestphase ){
 	//check the getClassName() methode from cFibObjectFitnessBasicAlgorithm
 	if ( pAlgorithmBasic5Clone->getClassName() == "cFibObjectFitnessBasicAlgorithm" ){
 	
-		cout<<"The classname of the fitnessalgorithm is correctly \"cFibObjectFitnessBasicAlgorithm\" . "<<endl;
+		cout<<"The class name of the fitness algorithm is correctly \"cFibObjectFitnessBasicAlgorithm\" . "<<endl;
 	}else{
-		cerr<<"Error: The classname of the fitnessalgorithm "<<
+		cerr<<"Error: The class name of the fitness algorithm "<<
 			pAlgorithmBasic5Clone->getClassName() <<" but should be \"cFibObjectFitnessBasicAlgorithm\" ."<<endl;
 		iReturn++;
 	}
 	//check the getOriginalIndividual() methode from cFibObjectFitnessBasicAlgorithm
 	if ( pAlgorithmBasic5Clone->getOriginalIndividual() == NULL ){
 	
-		cout<<"The Fib individual of the fitnessalgorithm is correctly NULL . "<<endl;
+		cout<<"The Fib individual of the fitness algorithm is correctly NULL . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib individual of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib individual of the fitness algorithm "<<
 			pAlgorithmBasic5Clone->getOriginalIndividual() <<" but should be NULL ."<<endl;
 		iReturn++;
 	}
 	//check the getOriginalFibObject() methode from cFibObjectFitnessBasicAlgorithm
 	if ( pAlgorithmBasic5Clone->getOriginalFibObject() == NULL ){
 	
-		cout<<"The original Fib object of the fitnessalgorithm is correctly NULL . "<<endl;
+		cout<<"The original Fib object of the fitness algorithm is correctly NULL . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib object of the fitness algorithm "<<
 			pAlgorithmBasic5Clone->getOriginalFibObject() <<" but should be NULL ."<<endl;
 		iReturn++;
 	}
 	//check the getWeightDistanceToOriginal() methode from cFibObjectFitnessBasicAlgorithm
 	if ( pAlgorithmBasic5Clone->getWeightDistanceToOriginal() == 77.7 ){
 	
-		cout<<"The weight for the distance to the original of the fitnessalgorithm is correctly 77.7 . "<<endl;
+		cout<<"The weight for the distance to the original of the fitness algorithm is correctly 77.7 . "<<endl;
 	}else{
-		cerr<<"Error: The weight for the distance to the original of the fitnessalgorithm "<<
+		cerr<<"Error: The weight for the distance to the original of the fitness algorithm "<<
 			pAlgorithmBasic5Clone->getWeightDistanceToOriginal() <<" but should be 77.7 ."<<endl;
 		iReturn++;
 	}
 	//check the getWeightSize() methode from cFibObjectFitnessBasicAlgorithm
 	if ( pAlgorithmBasic5Clone->getWeightSize() == -20.0 ){
 	
-		cout<<"The weight for the size of the Fib object of the fitnessalgorithm is correctly -20.0 . "<<endl;
+		cout<<"The weight for the size of the Fib object of the fitness algorithm is correctly -20.0 . "<<endl;
 	}else{
-		cerr<<"Error: The weight for the size of the Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The weight for the size of the Fib object of the fitness algorithm "<<
 			pAlgorithmBasic5Clone->getWeightSize() <<" but should be -20.0 ."<<endl;
 		iReturn++;
 	}
 	//check the getWeightEvaluationTime() methode from cFibObjectFitnessBasicAlgorithm
 	if ( pAlgorithmBasic5Clone->getWeightEvaluationTime() == 9648.258 ){
 	
-		cout<<"The weight for the evaluation of the Fib object of the fitnessalgorithm is correctly 9648.258 . "<<endl;
+		cout<<"The weight for the evaluation of the Fib object of the fitness algorithm is correctly 9648.258 . "<<endl;
 	}else{
-		cerr<<"Error: The weight for the evaluation of the Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The weight for the evaluation of the Fib object of the fitness algorithm "<<
 			pAlgorithmBasic5Clone->getWeightEvaluationTime() <<" but should be 9648.258 ."<<endl;
 		iReturn++;
 	}
@@ -1299,9 +1309,9 @@ int testCostructor( unsigned long &ulTestphase ){
 	//check the getClassName() methode from cFibObjectFitnessBasicAlgorithm
 	if ( pAlgorithmBasic6Clone->getClassName() == "cFibObjectFitnessBasicAlgorithm" ){
 	
-		cout<<"The classname of the fitnessalgorithm is correctly \"cFibObjectFitnessBasicAlgorithm\" . "<<endl;
+		cout<<"The class name of the fitness algorithm is correctly \"cFibObjectFitnessBasicAlgorithm\" . "<<endl;
 	}else{
-		cerr<<"Error: The classname of the fitnessalgorithm "<<
+		cerr<<"Error: The class name of the fitness algorithm "<<
 			pAlgorithmBasic6Clone->getClassName() <<" but should be \"cFibObjectFitnessBasicAlgorithm\" ."<<endl;
 		iReturn++;
 	}
@@ -1309,57 +1319,57 @@ int testCostructor( unsigned long &ulTestphase ){
 	if ( pAlgorithmBasic6Clone->getOriginalIndividual() != NULL ){
 		if ( pAlgorithmBasic6Clone->getOriginalIndividual() == pOriginalIndividual1 ){
 		
-			cout<<"The original Fib object of the fitnessalgorithm is correctly pOriginalIndividual1 . "<<endl;
+			cout<<"The original Fib object of the fitness algorithm is correctly pOriginalIndividual1 . "<<endl;
 		}else{
-			cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+			cerr<<"Error: The original Fib object of the fitness algorithm "<<
 				pAlgorithmBasic6Clone->getOriginalIndividual() <<" but should be pOriginalIndividual1 ."<<endl;
 			iReturn++;
 		}
 		if ( pAlgorithmBasic6Clone->getOriginalIndividual()->getFibObject() == pPoint2 ){
 		
-			cout<<"The original Fib object of the fitnessalgorithm is correctly pPoint2 . "<<endl;
+			cout<<"The original Fib object of the fitness algorithm is correctly pPoint2 . "<<endl;
 		}else{
-			cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+			cerr<<"Error: The original Fib object of the fitness algorithm "<<
 				pAlgorithmBasic6Clone->getOriginalFibObject() <<" but should be pPoint2 ."<<endl;
 			iReturn++;
 		}
 	}else{
-		cerr<<"Error: The classname of the fitnessalgorithm NULL but should be pPoint="<< pPoint <<" ."<<endl;
+		cerr<<"Error: The class name of the fitness algorithm NULL but should be pPoint="<< pPoint <<" ."<<endl;
 		iReturn++;
 	}
 	//check the getOriginalFibObject() methode from cFibObjectFitnessBasicAlgorithm
 	if ( pAlgorithmBasic6Clone->getOriginalFibObject() == pPoint2 ){
 	
-		cout<<"The original Fib object of the fitnessalgorithm is correctly pPoint2 . "<<endl;
+		cout<<"The original Fib object of the fitness algorithm is correctly pPoint2 . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib object of the fitness algorithm "<<
 			pAlgorithmBasic6Clone->getOriginalFibObject() <<" but should be pPoint2 ."<<endl;
 		iReturn++;
 	}
 	//check the getWeightDistanceToOriginal() methode from cFibObjectFitnessBasicAlgorithm
 	if ( pAlgorithmBasic6Clone->getWeightDistanceToOriginal() == 10254.02 ){
 	
-		cout<<"The weight for the distance to the original of the fitnessalgorithm is correctly 10254.02 . "<<endl;
+		cout<<"The weight for the distance to the original of the fitness algorithm is correctly 10254.02 . "<<endl;
 	}else{
-		cerr<<"Error: The weight for the distance to the original of the fitnessalgorithm "<<
+		cerr<<"Error: The weight for the distance to the original of the fitness algorithm "<<
 			pAlgorithmBasic6Clone->getWeightDistanceToOriginal() <<" but should be 10254.02 ."<<endl;
 		iReturn++;
 	}
 	//check the getWeightSize() methode from cFibObjectFitnessBasicAlgorithm
 	if ( pAlgorithmBasic6Clone->getWeightSize() == -0.006 ){
 	
-		cout<<"The weight for the size of the Fib object of the fitnessalgorithm is correctly -0.006 . "<<endl;
+		cout<<"The weight for the size of the Fib object of the fitness algorithm is correctly -0.006 . "<<endl;
 	}else{
-		cerr<<"Error: The weight for the size of the Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The weight for the size of the Fib object of the fitness algorithm "<<
 			pAlgorithmBasic6Clone->getWeightSize() <<" but should be -0.006 ."<<endl;
 		iReturn++;
 	}
 	//check the getWeightEvaluationTime() methode from cFibObjectFitnessBasicAlgorithm
 	if ( pAlgorithmBasic6Clone->getWeightEvaluationTime() == 0.002 ){
 	
-		cout<<"The weight for the evaluation of the Fib object of the fitnessalgorithm is correctly 0.002 . "<<endl;
+		cout<<"The weight for the evaluation of the Fib object of the fitness algorithm is correctly 0.002 . "<<endl;
 	}else{
-		cerr<<"Error: The weight for the evaluation of the Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The weight for the evaluation of the Fib object of the fitness algorithm "<<
 			pAlgorithmBasic6Clone->getWeightEvaluationTime() <<" but should be 0.002 ."<<endl;
 		iReturn++;
 	}
@@ -1413,27 +1423,27 @@ int testOriginal( unsigned long &ulTestphase ){
 	//check the getOriginalIndividual() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic1.getOriginalIndividual() == NULL ){
 	
-		cout<<"The Fib individual of the fitnessalgorithm is correctly NULL . "<<endl;
+		cout<<"The Fib individual of the fitness algorithm is correctly NULL . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib individual of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib individual of the fitness algorithm "<<
 			algorithmBasic1.getOriginalIndividual() <<" but should be NULL ."<<endl;
 		iReturn++;
 	}
 	//check the getOriginalFibObject() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic1.getOriginalFibObject() == NULL ){
 	
-		cout<<"The original Fib object of the fitnessalgorithm is correctly NULL . "<<endl;
+		cout<<"The original Fib object of the fitness algorithm is correctly NULL . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib object of the fitness algorithm "<<
 			algorithmBasic1.getOriginalFibObject() <<" but should be NULL ."<<endl;
 		iReturn++;
 	}
 	//check the getOriginalFibObject() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic1.getOriginalIndividualRoot() == NULL ){
 	
-		cout<<"The original Fib object roots of the fitnessalgorithm is correctly NULL . "<<endl;
+		cout<<"The original Fib object roots of the fitness algorithm is correctly NULL . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib object roots of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib object roots of the fitness algorithm "<<
 			algorithmBasic1.getOriginalIndividualRoot() <<" but should be NULL ."<<endl;
 		iReturn++;
 	}
@@ -1478,39 +1488,39 @@ int testOriginal( unsigned long &ulTestphase ){
 	if ( algorithmBasic1.getOriginalIndividual() != NULL ){
 		if ( algorithmBasic1.getOriginalIndividual() == &originalIndividual1 ){
 		
-			cout<<"The original Fib object of the fitnessalgorithm is correctly originalIndividual1 . "<<endl;
+			cout<<"The original Fib object of the fitness algorithm is correctly originalIndividual1 . "<<endl;
 		}else{
-			cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+			cerr<<"Error: The original Fib object of the fitness algorithm "<<
 				algorithmBasic1.getOriginalIndividual() <<" but should be originalIndividual1 ."<<endl;
 			iReturn++;
 		}
 		if ( algorithmBasic1.getOriginalIndividual()->getFibObject() == &point1 ){
 		
-			cout<<"The original Fib object of the fitnessalgorithm is correctly point1 . "<<endl;
+			cout<<"The original Fib object of the fitness algorithm is correctly point1 . "<<endl;
 		}else{
-			cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+			cerr<<"Error: The original Fib object of the fitness algorithm "<<
 				algorithmBasic1.getOriginalFibObject() <<" but should be point1 ."<<endl;
 			iReturn++;
 		}
 	}else{
-		cerr<<"Error: The classname of the fitnessalgorithm NULL but should be point1="<< &point1 <<" ."<<endl;
+		cerr<<"Error: The class name of the fitness algorithm NULL but should be point1="<< &point1 <<" ."<<endl;
 		iReturn++;
 	}
 	//check the getOriginalFibObject() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic1.getOriginalFibObject() == &point1 ){
 	
-		cout<<"The original Fib object of the fitnessalgorithm is correctly point1 . "<<endl;
+		cout<<"The original Fib object of the fitness algorithm is correctly point1 . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib object of the fitness algorithm "<<
 			algorithmBasic1.getOriginalFibObject() <<" but should be point1 ."<<endl;
 		iReturn++;
 	}
 	//check the getOriginalFibObject() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic1.getOriginalIndividualRoot() == NULL ){
 	
-		cout<<"The original Fib object roots of the fitnessalgorithm is correctly NULL . "<<endl;
+		cout<<"The original Fib object roots of the fitness algorithm is correctly NULL . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib object roots of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib object roots of the fitness algorithm "<<
 			algorithmBasic1.getOriginalIndividualRoot() <<" but should be NULL ."<<endl;
 		iReturn++;
 	}
@@ -1554,27 +1564,27 @@ int testOriginal( unsigned long &ulTestphase ){
 	//check the getOriginalIndividual() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic1.getOriginalIndividual() == NULL ){
 	
-		cout<<"The Fib individual of the fitnessalgorithm is correctly NULL . "<<endl;
+		cout<<"The Fib individual of the fitness algorithm is correctly NULL . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib individual of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib individual of the fitness algorithm "<<
 			algorithmBasic1.getOriginalIndividual() <<" but should be NULL ."<<endl;
 		iReturn++;
 	}
 	//check the getOriginalFibObject() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic1.getOriginalFibObject() == NULL ){
 	
-		cout<<"The original Fib object of the fitnessalgorithm is correctly NULL . "<<endl;
+		cout<<"The original Fib object of the fitness algorithm is correctly NULL . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib object of the fitness algorithm "<<
 			algorithmBasic1.getOriginalFibObject() <<" but should be NULL ."<<endl;
 		iReturn++;
 	}
 	//check the getOriginalFibObject() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic1.getOriginalIndividualRoot() == NULL ){
 	
-		cout<<"The original Fib object roots of the fitnessalgorithm is correctly NULL . "<<endl;
+		cout<<"The original Fib object roots of the fitness algorithm is correctly NULL . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib object roots of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib object roots of the fitness algorithm "<<
 			algorithmBasic1.getOriginalIndividualRoot() <<" but should be NULL ."<<endl;
 		iReturn++;
 	}
@@ -1605,39 +1615,39 @@ int testOriginal( unsigned long &ulTestphase ){
 	if ( algorithmBasic1.getOriginalIndividual() != NULL ){
 		if ( algorithmBasic1.getOriginalIndividual() == &originalIndividual1 ){
 		
-			cout<<"The original Fib object of the fitnessalgorithm is correctly originalIndividual1 . "<<endl;
+			cout<<"The original Fib object of the fitness algorithm is correctly originalIndividual1 . "<<endl;
 		}else{
-			cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+			cerr<<"Error: The original Fib object of the fitness algorithm "<<
 				algorithmBasic1.getOriginalIndividual() <<" but should be originalIndividual1 ."<<endl;
 			iReturn++;
 		}
 		if ( algorithmBasic1.getOriginalIndividual()->getFibObject() == &point1 ){
 		
-			cout<<"The original Fib object of the fitnessalgorithm is correctly point1 . "<<endl;
+			cout<<"The original Fib object of the fitness algorithm is correctly point1 . "<<endl;
 		}else{
-			cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+			cerr<<"Error: The original Fib object of the fitness algorithm "<<
 				algorithmBasic1.getOriginalFibObject() <<" but should be point1 ."<<endl;
 			iReturn++;
 		}
 	}else{
-		cerr<<"Error: The classname of the fitnessalgorithm NULL but should be point1="<< &point1 <<" ."<<endl;
+		cerr<<"Error: The class name of the fitness algorithm NULL but should be point1="<< &point1 <<" ."<<endl;
 		iReturn++;
 	}
 	//check the getOriginalFibObject() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic1.getOriginalFibObject() == &point1 ){
 	
-		cout<<"The original Fib object of the fitnessalgorithm is correctly point1 . "<<endl;
+		cout<<"The original Fib object of the fitness algorithm is correctly point1 . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib object of the fitness algorithm "<<
 			algorithmBasic1.getOriginalFibObject() <<" but should be point1 ."<<endl;
 		iReturn++;
 	}
 	//check the getOriginalFibObject() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic1.getOriginalIndividualRoot() == NULL ){
 	
-		cout<<"The original Fib object roots of the fitnessalgorithm is correctly NULL . "<<endl;
+		cout<<"The original Fib object roots of the fitness algorithm is correctly NULL . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib object roots of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib object roots of the fitness algorithm "<<
 			algorithmBasic1.getOriginalIndividualRoot() <<" but should be NULL ."<<endl;
 		iReturn++;
 	}
@@ -1681,27 +1691,27 @@ int testOriginal( unsigned long &ulTestphase ){
 	//check the getOriginalIndividual() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic1.getOriginalIndividual() == NULL ){
 	
-		cout<<"The Fib individual of the fitnessalgorithm is correctly NULL . "<<endl;
+		cout<<"The Fib individual of the fitness algorithm is correctly NULL . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib individual of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib individual of the fitness algorithm "<<
 			algorithmBasic1.getOriginalIndividual() <<" but should be NULL ."<<endl;
 		iReturn++;
 	}
 	//check the getOriginalFibObject() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic1.getOriginalFibObject() == NULL ){
 	
-		cout<<"The original Fib object of the fitnessalgorithm is correctly NULL . "<<endl;
+		cout<<"The original Fib object of the fitness algorithm is correctly NULL . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib object of the fitness algorithm "<<
 			algorithmBasic1.getOriginalFibObject() <<" but should be NULL ."<<endl;
 		iReturn++;
 	}
 	//check the getOriginalFibObject() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic1.getOriginalIndividualRoot() == NULL ){
 	
-		cout<<"The original Fib object roots of the fitnessalgorithm is correctly NULL . "<<endl;
+		cout<<"The original Fib object roots of the fitness algorithm is correctly NULL . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib object roots of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib object roots of the fitness algorithm "<<
 			algorithmBasic1.getOriginalIndividualRoot() <<" but should be NULL ."<<endl;
 		iReturn++;
 	}
@@ -1732,31 +1742,31 @@ int testOriginal( unsigned long &ulTestphase ){
 	if ( algorithmBasic1.getOriginalIndividual() != NULL ){
 		if ( algorithmBasic1.getOriginalIndividual()->getFibObject() == &point1 ){
 		
-			cout<<"The original Fib object of the fitnessalgorithm is correctly point1 . "<<endl;
+			cout<<"The original Fib object of the fitness algorithm is correctly point1 . "<<endl;
 		}else{
-			cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+			cerr<<"Error: The original Fib object of the fitness algorithm "<<
 				algorithmBasic1.getOriginalFibObject() <<" but should be point1 ."<<endl;
 			iReturn++;
 		}
 	}else{
-		cerr<<"Error: The classname of the fitnessalgorithm NULL but should be point1="<< &point1 <<" ."<<endl;
+		cerr<<"Error: The class name of the fitness algorithm NULL but should be point1="<< &point1 <<" ."<<endl;
 		iReturn++;
 	}
 	//check the getOriginalFibObject() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic1.getOriginalFibObject() == &point1 ){
 	
-		cout<<"The original Fib object of the fitnessalgorithm is correctly point1 . "<<endl;
+		cout<<"The original Fib object of the fitness algorithm is correctly point1 . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib object of the fitness algorithm "<<
 			algorithmBasic1.getOriginalFibObject() <<" but should be point1 ."<<endl;
 		iReturn++;
 	}
 	//check the getOriginalFibObject() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic1.getOriginalIndividualRoot() == NULL ){
 	
-		cout<<"The original Fib object roots of the fitnessalgorithm is correctly NULL . "<<endl;
+		cout<<"The original Fib object roots of the fitness algorithm is correctly NULL . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib object roots of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib object roots of the fitness algorithm "<<
 			algorithmBasic1.getOriginalIndividualRoot() <<" but should be NULL ."<<endl;
 		iReturn++;
 	}
@@ -1800,27 +1810,27 @@ int testOriginal( unsigned long &ulTestphase ){
 	//check the getOriginalIndividual() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic1.getOriginalIndividual() == NULL ){
 	
-		cout<<"The Fib individual of the fitnessalgorithm is correctly NULL . "<<endl;
+		cout<<"The Fib individual of the fitness algorithm is correctly NULL . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib individual of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib individual of the fitness algorithm "<<
 			algorithmBasic1.getOriginalIndividual() <<" but should be NULL ."<<endl;
 		iReturn++;
 	}
 	//check the getOriginalFibObject() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic1.getOriginalFibObject() == NULL ){
 	
-		cout<<"The original Fib object of the fitnessalgorithm is correctly NULL . "<<endl;
+		cout<<"The original Fib object of the fitness algorithm is correctly NULL . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib object of the fitness algorithm "<<
 			algorithmBasic1.getOriginalFibObject() <<" but should be NULL ."<<endl;
 		iReturn++;
 	}
 	//check the getOriginalFibObject() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic1.getOriginalIndividualRoot() == NULL ){
 	
-		cout<<"The original Fib object roots of the fitnessalgorithm is correctly NULL . "<<endl;
+		cout<<"The original Fib object roots of the fitness algorithm is correctly NULL . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib object roots of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib object roots of the fitness algorithm "<<
 			algorithmBasic1.getOriginalIndividualRoot() <<" but should be NULL ."<<endl;
 		iReturn++;
 	}
@@ -1879,30 +1889,30 @@ int testOriginal( unsigned long &ulTestphase ){
 	if ( algorithmBasic1.getOriginalIndividual() != NULL ){
 		if ( algorithmBasic1.getOriginalIndividual() == &originalIndividual2 ){
 		
-			cout<<"The original Fib object of the fitnessalgorithm is correctly originalIndividual2 . "<<endl;
+			cout<<"The original Fib object of the fitness algorithm is correctly originalIndividual2 . "<<endl;
 		}else{
-			cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+			cerr<<"Error: The original Fib object of the fitness algorithm "<<
 				algorithmBasic1.getOriginalIndividual() <<" but should be originalIndividual2 ."<<endl;
 			iReturn++;
 		}
 		if ( algorithmBasic1.getOriginalIndividual()->getFibObject() == &root1 ){
 		
-			cout<<"The original Fib object of the fitnessalgorithm is correctly root1 . "<<endl;
+			cout<<"The original Fib object of the fitness algorithm is correctly root1 . "<<endl;
 		}else{
-			cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+			cerr<<"Error: The original Fib object of the fitness algorithm "<<
 				algorithmBasic1.getOriginalFibObject() <<" but should be root1 ."<<endl;
 			iReturn++;
 		}
 	}else{
-		cerr<<"Error: The classname of the fitnessalgorithm NULL but should be root1="<< &root1 <<" ."<<endl;
+		cerr<<"Error: The class name of the fitness algorithm NULL but should be root1="<< &root1 <<" ."<<endl;
 		iReturn++;
 	}
 	//check the getOriginalFibObject() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic1.getOriginalFibObject() == &root1 ){
 	
-		cout<<"The original Fib object of the fitnessalgorithm is correctly root1 . "<<endl;
+		cout<<"The original Fib object of the fitness algorithm is correctly root1 . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib object of the fitness algorithm "<<
 			algorithmBasic1.getOriginalFibObject() <<" but should be root1 ."<<endl;
 		iReturn++;
 	}
@@ -1910,14 +1920,14 @@ int testOriginal( unsigned long &ulTestphase ){
 	if ( algorithmBasic1.getOriginalIndividualRoot() != NULL ){
 		if ( root1empty.equal( *(algorithmBasic1.getOriginalIndividualRoot() ) ) ){
 		
-			cout<<"The original Fib object roots of the fitnessalgorithm is correctly equal to root1empty . "<<endl;
+			cout<<"The original Fib object roots of the fitness algorithm is correctly equal to root1empty . "<<endl;
 		}else{
-			cerr<<"Error: The original Fib object roots of the fitnessalgorithm is "<<
+			cerr<<"Error: The original Fib object roots of the fitness algorithm is "<<
 				algorithmBasic1.getOriginalIndividualRoot() <<" and not equal to root1empty ."<<endl;
 			iReturn++;
 		}
 	}else{
-		cerr<<"Error: The original Fib object roots of the fitnessalgorithm is "<<
+		cerr<<"Error: The original Fib object roots of the fitness algorithm is "<<
 			algorithmBasic1.getOriginalIndividualRoot() <<" but should be equal to root1empty ."<<endl;
 		iReturn++;
 	}
@@ -1962,27 +1972,27 @@ int testOriginal( unsigned long &ulTestphase ){
 	//check the getOriginalIndividual() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic1.getOriginalIndividual() == NULL ){
 	
-		cout<<"The Fib individual of the fitnessalgorithm is correctly NULL . "<<endl;
+		cout<<"The Fib individual of the fitness algorithm is correctly NULL . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib individual of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib individual of the fitness algorithm "<<
 			algorithmBasic1.getOriginalIndividual() <<" but should be NULL ."<<endl;
 		iReturn++;
 	}
 	//check the getOriginalFibObject() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic1.getOriginalFibObject() == NULL ){
 	
-		cout<<"The original Fib object of the fitnessalgorithm is correctly NULL . "<<endl;
+		cout<<"The original Fib object of the fitness algorithm is correctly NULL . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib object of the fitness algorithm "<<
 			algorithmBasic1.getOriginalFibObject() <<" but should be NULL ."<<endl;
 		iReturn++;
 	}
 	//check the getOriginalFibObject() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic1.getOriginalIndividualRoot() == NULL ){
 	
-		cout<<"The original Fib object roots of the fitnessalgorithm is correctly NULL . "<<endl;
+		cout<<"The original Fib object roots of the fitness algorithm is correctly NULL . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib object roots of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib object roots of the fitness algorithm "<<
 			algorithmBasic1.getOriginalIndividualRoot() <<" but should be NULL ."<<endl;
 		iReturn++;
 	}
@@ -2014,30 +2024,30 @@ int testOriginal( unsigned long &ulTestphase ){
 	if ( algorithmBasic1.getOriginalIndividual() != NULL ){
 		if ( algorithmBasic1.getOriginalIndividual() == &originalIndividual2 ){
 		
-			cout<<"The original Fib object of the fitnessalgorithm is correctly originalIndividual2 . "<<endl;
+			cout<<"The original Fib object of the fitness algorithm is correctly originalIndividual2 . "<<endl;
 		}else{
-			cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+			cerr<<"Error: The original Fib object of the fitness algorithm "<<
 				algorithmBasic1.getOriginalIndividual() <<" but should be originalIndividual2 ."<<endl;
 			iReturn++;
 		}
 		if ( algorithmBasic1.getOriginalIndividual()->getFibObject() == &root1 ){
 		
-			cout<<"The original Fib object of the fitnessalgorithm is correctly root1 . "<<endl;
+			cout<<"The original Fib object of the fitness algorithm is correctly root1 . "<<endl;
 		}else{
-			cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+			cerr<<"Error: The original Fib object of the fitness algorithm "<<
 				algorithmBasic1.getOriginalFibObject() <<" but should be root1 ."<<endl;
 			iReturn++;
 		}
 	}else{
-		cerr<<"Error: The classname of the fitnessalgorithm NULL but should be root1="<< &root1 <<" ."<<endl;
+		cerr<<"Error: The class name of the fitness algorithm NULL but should be root1="<< &root1 <<" ."<<endl;
 		iReturn++;
 	}
 	//check the getOriginalFibObject() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic1.getOriginalFibObject() == &root1 ){
 	
-		cout<<"The original Fib object of the fitnessalgorithm is correctly root1 . "<<endl;
+		cout<<"The original Fib object of the fitness algorithm is correctly root1 . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib object of the fitness algorithm "<<
 			algorithmBasic1.getOriginalFibObject() <<" but should be root1 ."<<endl;
 		iReturn++;
 	}
@@ -2045,14 +2055,14 @@ int testOriginal( unsigned long &ulTestphase ){
 	if ( algorithmBasic1.getOriginalIndividualRoot() != NULL ){
 		if ( root1empty.equal( *(algorithmBasic1.getOriginalIndividualRoot() ) ) ){
 		
-			cout<<"The original Fib object roots of the fitnessalgorithm is correctly equal to root1empty . "<<endl;
+			cout<<"The original Fib object roots of the fitness algorithm is correctly equal to root1empty . "<<endl;
 		}else{
-			cerr<<"Error: The original Fib object roots of the fitnessalgorithm is "<<
+			cerr<<"Error: The original Fib object roots of the fitness algorithm is "<<
 				algorithmBasic1.getOriginalIndividualRoot() <<" and not equal to root1empty ."<<endl;
 			iReturn++;
 		}
 	}else{
-		cerr<<"Error: The original Fib object roots of the fitnessalgorithm is "<<
+		cerr<<"Error: The original Fib object roots of the fitness algorithm is "<<
 			algorithmBasic1.getOriginalIndividualRoot() <<" but should be equal to root1empty ."<<endl;
 		iReturn++;
 	}
@@ -2097,27 +2107,27 @@ int testOriginal( unsigned long &ulTestphase ){
 	//check the getOriginalIndividual() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic1.getOriginalIndividual() == NULL ){
 	
-		cout<<"The Fib individual of the fitnessalgorithm is correctly NULL . "<<endl;
+		cout<<"The Fib individual of the fitness algorithm is correctly NULL . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib individual of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib individual of the fitness algorithm "<<
 			algorithmBasic1.getOriginalIndividual() <<" but should be NULL ."<<endl;
 		iReturn++;
 	}
 	//check the getOriginalFibObject() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic1.getOriginalFibObject() == NULL ){
 	
-		cout<<"The original Fib object of the fitnessalgorithm is correctly NULL . "<<endl;
+		cout<<"The original Fib object of the fitness algorithm is correctly NULL . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib object of the fitness algorithm "<<
 			algorithmBasic1.getOriginalFibObject() <<" but should be NULL ."<<endl;
 		iReturn++;
 	}
 	//check the getOriginalFibObject() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic1.getOriginalIndividualRoot() == NULL ){
 	
-		cout<<"The original Fib object roots of the fitnessalgorithm is correctly NULL . "<<endl;
+		cout<<"The original Fib object roots of the fitness algorithm is correctly NULL . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib object roots of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib object roots of the fitness algorithm "<<
 			algorithmBasic1.getOriginalIndividualRoot() <<" but should be NULL ."<<endl;
 		iReturn++;
 	}
@@ -2149,22 +2159,22 @@ int testOriginal( unsigned long &ulTestphase ){
 	if ( algorithmBasic1.getOriginalIndividual() != NULL ){
 		if ( algorithmBasic1.getOriginalIndividual()->getFibObject() == &root1 ){
 		
-			cout<<"The original Fib object of the fitnessalgorithm is correctly root1 . "<<endl;
+			cout<<"The original Fib object of the fitness algorithm is correctly root1 . "<<endl;
 		}else{
-			cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+			cerr<<"Error: The original Fib object of the fitness algorithm "<<
 				algorithmBasic1.getOriginalFibObject() <<" but should be root1 ."<<endl;
 			iReturn++;
 		}
 	}else{
-		cerr<<"Error: The classname of the fitnessalgorithm NULL but should be root1="<< &root1 <<" ."<<endl;
+		cerr<<"Error: The class name of the fitness algorithm NULL but should be root1="<< &root1 <<" ."<<endl;
 		iReturn++;
 	}
 	//check the getOriginalFibObject() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic1.getOriginalFibObject() == &root1 ){
 	
-		cout<<"The original Fib object of the fitnessalgorithm is correctly root1 . "<<endl;
+		cout<<"The original Fib object of the fitness algorithm is correctly root1 . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib object of the fitness algorithm "<<
 			algorithmBasic1.getOriginalFibObject() <<" but should be root1 ."<<endl;
 		iReturn++;
 	}
@@ -2172,14 +2182,14 @@ int testOriginal( unsigned long &ulTestphase ){
 	if ( algorithmBasic1.getOriginalIndividualRoot() != NULL ){
 		if ( root1empty.equal( *(algorithmBasic1.getOriginalIndividualRoot() ) ) ){
 		
-			cout<<"The original Fib object roots of the fitnessalgorithm is correctly equal to root1empty . "<<endl;
+			cout<<"The original Fib object roots of the fitness algorithm is correctly equal to root1empty . "<<endl;
 		}else{
-			cerr<<"Error: The original Fib object roots of the fitnessalgorithm is "<<
+			cerr<<"Error: The original Fib object roots of the fitness algorithm is "<<
 				algorithmBasic1.getOriginalIndividualRoot() <<" and not equal to root1empty ."<<endl;
 			iReturn++;
 		}
 	}else{
-		cerr<<"Error: The original Fib object roots of the fitnessalgorithm is "<<
+		cerr<<"Error: The original Fib object roots of the fitness algorithm is "<<
 			algorithmBasic1.getOriginalIndividualRoot() <<" but should be equal to root1empty ."<<endl;
 		iReturn++;
 	}
@@ -2224,27 +2234,27 @@ int testOriginal( unsigned long &ulTestphase ){
 	//check the getOriginalIndividual() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic1.getOriginalIndividual() == NULL ){
 	
-		cout<<"The Fib individual of the fitnessalgorithm is correctly NULL . "<<endl;
+		cout<<"The Fib individual of the fitness algorithm is correctly NULL . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib individual of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib individual of the fitness algorithm "<<
 			algorithmBasic1.getOriginalIndividual() <<" but should be NULL ."<<endl;
 		iReturn++;
 	}
 	//check the getOriginalFibObject() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic1.getOriginalFibObject() == NULL ){
 	
-		cout<<"The original Fib object of the fitnessalgorithm is correctly NULL . "<<endl;
+		cout<<"The original Fib object of the fitness algorithm is correctly NULL . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib object of the fitness algorithm "<<
 			algorithmBasic1.getOriginalFibObject() <<" but should be NULL ."<<endl;
 		iReturn++;
 	}
 	//check the getOriginalFibObject() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic1.getOriginalIndividualRoot() == NULL ){
 	
-		cout<<"The original Fib object roots of the fitnessalgorithm is correctly NULL . "<<endl;
+		cout<<"The original Fib object roots of the fitness algorithm is correctly NULL . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib object roots of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib object roots of the fitness algorithm "<<
 			algorithmBasic1.getOriginalIndividualRoot() <<" but should be NULL ."<<endl;
 		iReturn++;
 	}
@@ -2442,30 +2452,30 @@ int testOriginal( unsigned long &ulTestphase ){
 	if ( algorithmBasic1.getOriginalIndividual() != NULL ){
 		if ( algorithmBasic1.getOriginalIndividual() == &originalIndividual3 ){
 		
-			cout<<"The original Fib object of the fitnessalgorithm is correctly originalIndividual3 . "<<endl;
+			cout<<"The original Fib object of the fitness algorithm is correctly originalIndividual3 . "<<endl;
 		}else{
-			cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+			cerr<<"Error: The original Fib object of the fitness algorithm "<<
 				algorithmBasic1.getOriginalIndividual() <<" but should be originalIndividual3 ."<<endl;
 			iReturn++;
 		}
 		if ( algorithmBasic1.getOriginalIndividual()->getFibObject() == &rootTree ){
 		
-			cout<<"The original Fib object of the fitnessalgorithm is correctly rootTree . "<<endl;
+			cout<<"The original Fib object of the fitness algorithm is correctly rootTree . "<<endl;
 		}else{
-			cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+			cerr<<"Error: The original Fib object of the fitness algorithm "<<
 				algorithmBasic1.getOriginalFibObject() <<" but should be rootTree ."<<endl;
 			iReturn++;
 		}
 	}else{
-		cerr<<"Error: The classname of the fitnessalgorithm NULL but should be rootTree="<< &rootTree <<" ."<<endl;
+		cerr<<"Error: The class name of the fitness algorithm NULL but should be rootTree="<< &rootTree <<" ."<<endl;
 		iReturn++;
 	}
 	//check the getOriginalFibObject() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic1.getOriginalFibObject() == &rootTree ){
 	
-		cout<<"The original Fib object of the fitnessalgorithm is correctly rootTree . "<<endl;
+		cout<<"The original Fib object of the fitness algorithm is correctly rootTree . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib object of the fitness algorithm "<<
 			algorithmBasic1.getOriginalFibObject() <<" but should be rootTree ."<<endl;
 		iReturn++;
 	}
@@ -2473,14 +2483,14 @@ int testOriginal( unsigned long &ulTestphase ){
 	if ( algorithmBasic1.getOriginalIndividualRoot() != NULL ){
 		if ( rootTreeEmpty.equal( *(algorithmBasic1.getOriginalIndividualRoot() ) ) ){
 		
-			cout<<"The original Fib object roots of the fitnessalgorithm is correctly equal to rootTreeEmpty . "<<endl;
+			cout<<"The original Fib object roots of the fitness algorithm is correctly equal to rootTreeEmpty . "<<endl;
 		}else{
-			cerr<<"Error: The original Fib object roots of the fitnessalgorithm is "<<
+			cerr<<"Error: The original Fib object roots of the fitness algorithm is "<<
 				algorithmBasic1.getOriginalIndividualRoot() <<" and not equal to rootTreeEmpty ."<<endl;
 			iReturn++;
 		}
 	}else{
-		cerr<<"Error: The original Fib object roots of the fitnessalgorithm is "<<
+		cerr<<"Error: The original Fib object roots of the fitness algorithm is "<<
 			algorithmBasic1.getOriginalIndividualRoot() <<" but should be equal to rootTreeEmpty ."<<endl;
 		iReturn++;
 	}
@@ -2525,27 +2535,27 @@ int testOriginal( unsigned long &ulTestphase ){
 	//check the getOriginalIndividual() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic1.getOriginalIndividual() == NULL ){
 	
-		cout<<"The Fib individual of the fitnessalgorithm is correctly NULL . "<<endl;
+		cout<<"The Fib individual of the fitness algorithm is correctly NULL . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib individual of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib individual of the fitness algorithm "<<
 			algorithmBasic1.getOriginalIndividual() <<" but should be NULL ."<<endl;
 		iReturn++;
 	}
 	//check the getOriginalFibObject() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic1.getOriginalFibObject() == NULL ){
 	
-		cout<<"The original Fib object of the fitnessalgorithm is correctly NULL . "<<endl;
+		cout<<"The original Fib object of the fitness algorithm is correctly NULL . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib object of the fitness algorithm "<<
 			algorithmBasic1.getOriginalFibObject() <<" but should be NULL ."<<endl;
 		iReturn++;
 	}
 	//check the getOriginalFibObject() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic1.getOriginalIndividualRoot() == NULL ){
 	
-		cout<<"The original Fib object roots of the fitnessalgorithm is correctly NULL . "<<endl;
+		cout<<"The original Fib object roots of the fitness algorithm is correctly NULL . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib object roots of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib object roots of the fitness algorithm "<<
 			algorithmBasic1.getOriginalIndividualRoot() <<" but should be NULL ."<<endl;
 		iReturn++;
 	}
@@ -2577,30 +2587,30 @@ int testOriginal( unsigned long &ulTestphase ){
 	if ( algorithmBasic1.getOriginalIndividual() != NULL ){
 		if ( algorithmBasic1.getOriginalIndividual() == &originalIndividual3 ){
 		
-			cout<<"The original Fib object of the fitnessalgorithm is correctly originalIndividual3 . "<<endl;
+			cout<<"The original Fib object of the fitness algorithm is correctly originalIndividual3 . "<<endl;
 		}else{
-			cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+			cerr<<"Error: The original Fib object of the fitness algorithm "<<
 				algorithmBasic1.getOriginalIndividual() <<" but should be originalIndividual3 ."<<endl;
 			iReturn++;
 		}
 		if ( algorithmBasic1.getOriginalIndividual()->getFibObject() == &rootTree ){
 		
-			cout<<"The original Fib object of the fitnessalgorithm is correctly rootTree . "<<endl;
+			cout<<"The original Fib object of the fitness algorithm is correctly rootTree . "<<endl;
 		}else{
-			cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+			cerr<<"Error: The original Fib object of the fitness algorithm "<<
 				algorithmBasic1.getOriginalFibObject() <<" but should be rootTree ."<<endl;
 			iReturn++;
 		}
 	}else{
-		cerr<<"Error: The classname of the fitnessalgorithm NULL but should be rootTree="<< &rootTree <<" ."<<endl;
+		cerr<<"Error: The class name of the fitness algorithm NULL but should be rootTree="<< &rootTree <<" ."<<endl;
 		iReturn++;
 	}
 	//check the getOriginalFibObject() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic1.getOriginalFibObject() == &rootTree ){
 	
-		cout<<"The original Fib object of the fitnessalgorithm is correctly rootTree . "<<endl;
+		cout<<"The original Fib object of the fitness algorithm is correctly rootTree . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib object of the fitness algorithm "<<
 			algorithmBasic1.getOriginalFibObject() <<" but should be rootTree ."<<endl;
 		iReturn++;
 	}
@@ -2608,14 +2618,14 @@ int testOriginal( unsigned long &ulTestphase ){
 	if ( algorithmBasic1.getOriginalIndividualRoot() != NULL ){
 		if ( rootTreeEmpty.equal( *(algorithmBasic1.getOriginalIndividualRoot() ) ) ){
 		
-			cout<<"The original Fib object roots of the fitnessalgorithm is correctly equal to rootTreeEmpty . "<<endl;
+			cout<<"The original Fib object roots of the fitness algorithm is correctly equal to rootTreeEmpty . "<<endl;
 		}else{
-			cerr<<"Error: The original Fib object roots of the fitnessalgorithm is "<<
+			cerr<<"Error: The original Fib object roots of the fitness algorithm is "<<
 				algorithmBasic1.getOriginalIndividualRoot() <<" and not equal to rootTreeEmpty ."<<endl;
 			iReturn++;
 		}
 	}else{
-		cerr<<"Error: The original Fib object roots of the fitnessalgorithm is "<<
+		cerr<<"Error: The original Fib object roots of the fitness algorithm is "<<
 			algorithmBasic1.getOriginalIndividualRoot() <<" but should be equal to rootTreeEmpty ."<<endl;
 		iReturn++;
 	}
@@ -2660,27 +2670,27 @@ int testOriginal( unsigned long &ulTestphase ){
 	//check the getOriginalIndividual() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic1.getOriginalIndividual() == NULL ){
 	
-		cout<<"The Fib individual of the fitnessalgorithm is correctly NULL . "<<endl;
+		cout<<"The Fib individual of the fitness algorithm is correctly NULL . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib individual of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib individual of the fitness algorithm "<<
 			algorithmBasic1.getOriginalIndividual() <<" but should be NULL ."<<endl;
 		iReturn++;
 	}
 	//check the getOriginalFibObject() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic1.getOriginalFibObject() == NULL ){
 	
-		cout<<"The original Fib object of the fitnessalgorithm is correctly NULL . "<<endl;
+		cout<<"The original Fib object of the fitness algorithm is correctly NULL . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib object of the fitness algorithm "<<
 			algorithmBasic1.getOriginalFibObject() <<" but should be NULL ."<<endl;
 		iReturn++;
 	}
 	//check the getOriginalFibObject() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic1.getOriginalIndividualRoot() == NULL ){
 	
-		cout<<"The original Fib object roots of the fitnessalgorithm is correctly NULL . "<<endl;
+		cout<<"The original Fib object roots of the fitness algorithm is correctly NULL . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib object roots of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib object roots of the fitness algorithm "<<
 			algorithmBasic1.getOriginalIndividualRoot() <<" but should be NULL ."<<endl;
 		iReturn++;
 	}
@@ -2711,22 +2721,22 @@ int testOriginal( unsigned long &ulTestphase ){
 	if ( algorithmBasic1.getOriginalIndividual() != NULL ){
 		if ( algorithmBasic1.getOriginalIndividual()->getFibObject() == &rootTree ){
 		
-			cout<<"The original Fib object of the fitnessalgorithm is correctly rootTree . "<<endl;
+			cout<<"The original Fib object of the fitness algorithm is correctly rootTree . "<<endl;
 		}else{
-			cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+			cerr<<"Error: The original Fib object of the fitness algorithm "<<
 				algorithmBasic1.getOriginalFibObject() <<" but should be rootTree ."<<endl;
 			iReturn++;
 		}
 	}else{
-		cerr<<"Error: The classname of the fitnessalgorithm NULL but should be rootTree="<< &rootTree <<" ."<<endl;
+		cerr<<"Error: The class name of the fitness algorithm NULL but should be rootTree="<< &rootTree <<" ."<<endl;
 		iReturn++;
 	}
 	//check the getOriginalFibObject() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic1.getOriginalFibObject() == &rootTree ){
 	
-		cout<<"The original Fib object of the fitnessalgorithm is correctly rootTree . "<<endl;
+		cout<<"The original Fib object of the fitness algorithm is correctly rootTree . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib object of the fitness algorithm "<<
 			algorithmBasic1.getOriginalFibObject() <<" but should be rootTree ."<<endl;
 		iReturn++;
 	}
@@ -2734,14 +2744,14 @@ int testOriginal( unsigned long &ulTestphase ){
 	if ( algorithmBasic1.getOriginalIndividualRoot() != NULL ){
 		if ( rootTreeEmpty.equal( *(algorithmBasic1.getOriginalIndividualRoot() ) ) ){
 		
-			cout<<"The original Fib object roots of the fitnessalgorithm is correctly equal to rootTreeEmpty . "<<endl;
+			cout<<"The original Fib object roots of the fitness algorithm is correctly equal to rootTreeEmpty . "<<endl;
 		}else{
-			cerr<<"Error: The original Fib object roots of the fitnessalgorithm is "<<
+			cerr<<"Error: The original Fib object roots of the fitness algorithm is "<<
 				algorithmBasic1.getOriginalIndividualRoot() <<" and not equal to rootTreeEmpty ."<<endl;
 			iReturn++;
 		}
 	}else{
-		cerr<<"Error: The original Fib object roots of the fitnessalgorithm is "<<
+		cerr<<"Error: The original Fib object roots of the fitness algorithm is "<<
 			algorithmBasic1.getOriginalIndividualRoot() <<" but should be equal to rootTreeEmpty ."<<endl;
 		iReturn++;
 	}
@@ -2786,27 +2796,27 @@ int testOriginal( unsigned long &ulTestphase ){
 	//check the getOriginalIndividual() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic1.getOriginalIndividual() == NULL ){
 	
-		cout<<"The Fib individual of the fitnessalgorithm is correctly NULL . "<<endl;
+		cout<<"The Fib individual of the fitness algorithm is correctly NULL . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib individual of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib individual of the fitness algorithm "<<
 			algorithmBasic1.getOriginalIndividual() <<" but should be NULL ."<<endl;
 		iReturn++;
 	}
 	//check the getOriginalFibObject() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic1.getOriginalFibObject() == NULL ){
 	
-		cout<<"The original Fib object of the fitnessalgorithm is correctly NULL . "<<endl;
+		cout<<"The original Fib object of the fitness algorithm is correctly NULL . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib object of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib object of the fitness algorithm "<<
 			algorithmBasic1.getOriginalFibObject() <<" but should be NULL ."<<endl;
 		iReturn++;
 	}
 	//check the getOriginalFibObject() methode from cFibObjectFitnessBasicAlgorithm
 	if ( algorithmBasic1.getOriginalIndividualRoot() == NULL ){
 	
-		cout<<"The original Fib object roots of the fitnessalgorithm is correctly NULL . "<<endl;
+		cout<<"The original Fib object roots of the fitness algorithm is correctly NULL . "<<endl;
 	}else{
-		cerr<<"Error: The original Fib object roots of the fitnessalgorithm "<<
+		cerr<<"Error: The original Fib object roots of the fitness algorithm "<<
 			algorithmBasic1.getOriginalIndividualRoot() <<" but should be NULL ."<<endl;
 		iReturn++;
 	}
@@ -3144,7 +3154,7 @@ int testEvalue( unsigned long &ulTestphase ){
 					continue;
 				}
 				if ( pFibObjectFitness->getClassName() != "cFibObjectFitnessBasic" ){
-					cerr<<"Error: The classname of the returned fitness is "<<
+					cerr<<"Error: The class name of the returned fitness is "<<
 						pFibObjectFitness->getClassName() <<", but should be \"cFibObjectFitnessBasic\" ."<<endl;
 					iReturn++;
 				}

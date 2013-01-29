@@ -78,6 +78,7 @@
 History:
 07.01.2012  Oesterholz  created
 09.10.2012  Oesterholz  Warning removed: "(char)" for char arrays added
+28.01.2013  Oesterholz  COLOR_SW changed to COLOR_GRAYSCALE
 */
 
 #include "version.h"
@@ -3324,8 +3325,8 @@ int testEqual( unsigned long &ulTestphase ){
 	cFibMatrix fibMatrixPoint2( 1, 1, &point2 );
 
 	//other Fib element
-	cout<<"cVectorProperty vecPropertyColorSW( cTypeProperty::COLOR_SW );"<<endl;
-	cVectorProperty vecPropertyColorSW( cTypeProperty::COLOR_SW );
+	cout<<"cVectorProperty vecPropertyColorSW( cTypeProperty::COLOR_GRAYSCALE );"<<endl;
+	cVectorProperty vecPropertyColorSW( cTypeProperty::COLOR_GRAYSCALE );
 	cout<<"cProperty property1( vecPropertyColorSW );"<<endl;
 	cProperty property1( vecPropertyColorSW );
 	

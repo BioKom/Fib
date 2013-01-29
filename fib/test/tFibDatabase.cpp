@@ -57,6 +57,7 @@
 History:
 28.11.2011  Oesterholz  created
 24.01.2012  Oesterholz  cExtObject: input values changed to input vector
+28.01.2013  Oesterholz  COLOR_SW changed to COLOR_GRAYSCALE
 */
 
 #include "version.h"
@@ -1075,8 +1076,8 @@ int testEvalue( unsigned long &ulTestphase ){
 	ulTestphase++;
 	cout<<endl<<"TESTPHASE "<<ulTestphase<<" : Testing database evaluation"<<endl;
 	
-	cout<<"cVectorProperty vecPropertyColorSW( cTypeProperty::COLOR_SW );"<<endl;
-	cVectorProperty vecPropertyColorSW( cTypeProperty::COLOR_SW );
+	cout<<"cVectorProperty vecPropertyColorSW( cTypeProperty::COLOR_GRAYSCALE );"<<endl;
+	cVectorProperty vecPropertyColorSW( cTypeProperty::COLOR_GRAYSCALE );
 	cout<<"vecPropertyColorSW.setValue( 1, 1 );"<<endl;
 	vecPropertyColorSW.setValue( 1, 1 );
 	
@@ -1135,7 +1136,7 @@ int testEvalue( unsigned long &ulTestphase ){
 	cVectorPosition vecPositionE2V1( 2 );
 	vecPositionE2V1.setValue( 1, 1 );
 	vecPositionE2V1.setValue( 2, 2 );
-	cVectorProperty vecPropertyColorSWV1( cTypeProperty::COLOR_SW );
+	cVectorProperty vecPropertyColorSWV1( cTypeProperty::COLOR_GRAYSCALE );
 	vecPropertyColorSWV1.setValue( 1, 1 );
 	liPointsToEvalue.push_back( make_pair( &vecPositionE2V1, list<cVectorProperty>() ) );
 	liPointsToEvalue.back().second.push_back( vecPropertyColorSWV1 );

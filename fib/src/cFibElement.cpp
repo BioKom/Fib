@@ -238,7 +238,7 @@ string cFibElement::getTypeName( char cType ){
 		case 'i': return "if";
 		case 'o': return "extern object";
 		case 's': return "extern subobject";
-		case 'v': return "setelement";
+		case 'v': return "set-element";
 		case 'm': return "matrix element";
 		case 'r': return "root";
 	}
@@ -1928,8 +1928,8 @@ cFibElement * cFibElement::restoreInternal( cReadBits & iBitStream, intFib & out
 			
 			if ( cTypeNextFibElement12Bit[ 1 ] == 0x00 ){
 				if ( cTypeNextFibElement12Bit[ 0 ] == 0x01 ){
-					//0x1F, 0x00: read an setelement
-					DEBUG_OUT_L4(<<"reading setelement"<<endl);
+					//0x1F, 0x00: read an set-element
+					DEBUG_OUT_L4(<<"reading set-element"<<endl);
 					
 					pRestoredFibObject = new cFibSet( iBitStream, outStatus,
 						liDefinedVariables, validDomains, pNextRoot );

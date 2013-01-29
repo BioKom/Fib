@@ -32,6 +32,7 @@
 /*
 History:
 14.04.2012  Oesterholz  created
+28.01.2013  Oesterholz  COLOR_SW changed to COLOR_GRAYSCALE
 */
 
 
@@ -88,7 +89,7 @@ cDomains cFreeImageData::getPropertyDomains() const{
 	cTypeProperty typeProperty( cTypeProperty::COLOR_RGB );
 	const bool bSWColor = pFipImageDataObject->isGrayscale();
 	if ( bSWColor ){
-		typeProperty = cTypeProperty( cTypeProperty::COLOR_SW );
+		typeProperty = cTypeProperty( cTypeProperty::COLOR_GRAYSCALE );
 	}
 	RGBQUAD * pColorPalette = pFipImageDataObject->getPalette();
 	unsigned int uiBitsPerColor = 0;
@@ -255,7 +256,7 @@ bool cFreeImageData::setPoint( const cVectorPosition & vPosition,
 			pColorValue->rgbBlue = fColorB * fLastAlpha +
 				((float)(pColorValue->rgbBlue)) * fAlphaMatrix * ( 1.0 - fLastAlpha );
 			
-		}else if ( uiPropertytype == cTypeProperty::COLOR_SW ){
+		}else if ( uiPropertytype == cTypeProperty::COLOR_GRAYSCALE ){
 			//RGB color:
 			//color_new = color_actual * alpha_last + color_matrix * alpha_matrix * ( 1 - alpha_last )
 			if ( bNoAlpha ){
@@ -371,7 +372,7 @@ list<cVectorProperty> cFreeImageData::getPointProperties(
 	if ( bSWColor ){
 		//grayscale color
 		liVecProperties.push_back( cVectorProperty(
-			cTypeProperty( cTypeProperty::COLOR_SW ) ) );
+			cTypeProperty( cTypeProperty::COLOR_GRAYSCALE ) ) );
 		liVecProperties.back().setValue( 1, pColorValue->rgbRed );
 	}else{//RGB color
 		liVecProperties.push_back( cVectorProperty(

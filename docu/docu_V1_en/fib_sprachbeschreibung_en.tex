@@ -156,7 +156,7 @@ $Obj = pr( (value_1, ..., value_n)_{name}, Obj_1 )$
 	\multicolumn{5}{|c|}{\textbf{Color}}\\
 	\multicolumn{5}{|c|}{(all colors overwrite current set colors of the actual Fib object)}\\\hline
 	colorRGB & 1 & 3 & color as red, green and blue fraction values & pr( $(255, 16, 0)_{colorRGB}$, Obj )\\\hline
-	colorSW & 2 & 1 & luma fraction & pr( $(25)_{colorSW}$, Obj )\\\hline
+	colorGrayscale & 2 & 1 & luma fraction & pr( $(25)_{colorGrayscale}$, Obj )\\\hline
 
 	\multicolumn{5}{|c|}{\textbf{More properties}}\\\hline
 	layer & 100 & 1 & layer for the points (lower layers are covered by higher layers) & pr( $(2)_{layer}$, Obj )\\\hline
@@ -221,7 +221,7 @@ If for a position a needed property dosn't exists, the zero vector from the vali
 Examples:
 \begin{itemize}
  \item $pr( (255, 0, 0)_{colorRGB}, p((10;20)) )$; a red point on position (10,20)
- \item $pr( (x)_{colorSW}, p((10;x)) )$; $x$ is a variable, which will be set higher in the branch, this variable influenced the position and also color / brightness of the point
+ \item $pr( (x)_{colorGrayscale}, p((10;x)) )$; $x$ is a variable, which will be set higher in the branch, this variable influenced the position and also color / brightness of the point
  \item $pr( ( 0, 0, 255)_{colorRGB}, p(()) )$; the whole background is blue
 \end{itemize}
 
@@ -237,7 +237,7 @@ The same procedure is used for the other color values of the ''colorRGB`` proper
 Elements of properties, which are fractions:
 \begin{itemize}
  \item ''colorRGB``: all vector elements; 0.0 is the lower boundery when displayed and corresponds to ''no color``
- \item ''colorSW``: all vector elements; 0.0 is the lower boundery when displayed and corresponds to ''black``
+ \item ''colorGrayscale``: all vector elements; 0.0 is the lower boundery when displayed and corresponds to ''black``
  \item ''transparency``: all vector elements; 0.0 is the lower boundery when displayed and corresponds to ''not transparent``, 1 corresponds to ''total transparent``
  \item ''soundReflected``: all vector elements; 0.0 is the lower boundery when displayed and corresponds to ''no reflection``
  \item ''soundDamping``: all vector elements; 0.0 is the lower boundery when displayed and corresponds to ''no damping``
@@ -909,7 +909,7 @@ Examples:
 \begin{itemize}
  \item $dp( x , dim.1, min, Obj_1 )$: The variable $x$ is set to the minimum value of the domain for the first dimension.
  \item $dp( x , property( colorRGB).2, max, Obj_1 )$: The variable $x$ is set to the maximum value of the domain for the color green (second vector element) of the RGB colors.
- \item $dp( x , property( colorSW).1, size, Obj_1 )$: The variable $x$ is set to the size of the domain for SW colors. The $1$ for the first vector element must be specified, because the domain for SW color is a vector, even if it contains only one element.
+ \item $dp( x , property( colorGrayscale ).1, size, Obj_1 )$: The variable $x$ is set to the size of the domain for SW colors. The $1$ for the first vector element must be specified, because the domain for SW color is a vector, even if it contains only one element.
  \item $dp( x , matrix.3.2, null, Obj_1 )$: The variable $x$ is set to the zero value of the second subdomain of the third subdomain of the matrix domain.
 \end{itemize}
 
@@ -1154,7 +1154,7 @@ In the following notation the scale factor is indicated by the notation, that th
 	property( Name ) & domain of the properties for the given $Name$; see table \ref{tablePropertyNamen} on page \pageref{tablePropertyNamen} for the possible names ($Name$) & dependent of the type ($Name$) of the property \\\hline
 	property( whatever ) & The properties of the points dosn't matter. Whatever properties are assigned to a point with this property, they are correct. & $vector( 0 )$\\\hline
 	property( colorRGB) & domain for RGB-colors & $vector( 3,$ $ integerB(8), integerB(8),$ $ integerB(8) )$\\\hline
-	property( colorSW ) & domain for monocrome colors & $vector( 1,$ $integerB(8) )$\\\hline
+	property( colorGrayscale ) & domain for monocrome colors & $vector( 1,$ $integerB(8) )$\\\hline
 	property( layer ) & number of possible layers & $vector( 1,$ $integerB(4) )$\\\hline
 	property( transparency ) & transparency of the points & $vector( 1,$ $integerB(8) )$\\\hline
 	property( persistent ) & This property is only useful for a period of time. Points in space with this property only lose their other properties, if they are overwritten by a respective property of the same type. This of however is only the case, as long as the particular point has the property $persistent$. This property is for example useful, if in a movie objects should be visible as long as they are not overwritten by other objects. In this case, the entire background can get the property $persisted$. If an object is defined and displayed at a time, it will be there in the future as long as it won't get overwritten. (The possible values are $1$ for persistent and $0$ for non persistent.) &  $vector( 1,$ $ integerB(1) )$\\\hline
@@ -1433,7 +1433,7 @@ In the following examples, comments are introduced with ``//''. These are not pa
 Examples:\\
 Correct Fib objects (It is assumed that the associated root-element is correct and fits.):
 \begin{eqnarray*}
-Obj &=& pr( (3)_{colorSW}, p((1;5)))\\
+Obj &=& pr( (3)_{colorGrayscale}, p((1;5)))\\
 Obj &=& list( for(y,[(4;2)], pr( (3, 42, 125)_{colorRGB} , p((7;y))), \\
 && fun(x,add( mult(4, exp( 3, -2)), 2 ), pr( (205, x ,x)_{colorRGB}, p((3;x)) ) )\\
 \end{eqnarray*}

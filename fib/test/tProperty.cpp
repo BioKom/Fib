@@ -72,6 +72,7 @@ History:
 10.11.2011  Oesterholz  new feature FEATURE_EVALUE_ALL_PROPERTIES_IN_C_PROPERTY implemented;
 	Bugfix: evalueObject() don't overwrite properties
 26.09.2012  Oesterholz  Warning removed: "(char)" for char arrays added
+28.01.2013  Oesterholz  COLOR_SW changed to COLOR_GRAYSCALE
 */
 
 #include "version.h"
@@ -1252,8 +1253,8 @@ int testEvalueObject( unsigned long &ulTestphase ){
 	cout<<"liVecProperties.push_back( vecPropertyColorRgb1 );"<<endl;
 	liVecProperties.push_back( vecPropertyColorRgb1 );
 
-	cout<<"cVectorProperty vecPropertyColorSW( cTypeProperty::COLOR_SW );"<<endl;
-	cVectorProperty vecPropertyColorSW( cTypeProperty::COLOR_SW );
+	cout<<"cVectorProperty vecPropertyColorSW( cTypeProperty::COLOR_GRAYSCALE );"<<endl;
+	cVectorProperty vecPropertyColorSW( cTypeProperty::COLOR_GRAYSCALE );
 	cout<<"vecPropertyColorSW.setValue( 1, 14 );"<<endl;
 	vecPropertyColorSW.setValue( 1, 14 );
 	
@@ -1611,8 +1612,8 @@ int testEvalueObject( unsigned long &ulTestphase ){
 		iReturn++;
 	}
 	
-	cout<<"cVectorProperty vecPropertyColorSw2( cTypeProperty::COLOR_SW );"<<endl;
-	cVectorProperty vecPropertyColorSw2( cTypeProperty::COLOR_SW );
+	cout<<"cVectorProperty vecPropertyColorSw2( cTypeProperty::COLOR_GRAYSCALE );"<<endl;
+	cVectorProperty vecPropertyColorSw2( cTypeProperty::COLOR_GRAYSCALE );
 	cout<<"vecPropertyColorSw2.setValue( 1, 21 );"<<endl;
 	vecPropertyColorSw2.setValue( 1, 21 );
 	
@@ -2088,18 +2089,18 @@ int testEqual( unsigned long &ulTestphase ){
 	cout<<endl<<"Creating propertyobjects objects to compare: "<<endl<<endl;
 
 	//property with colorSw Propertyvector
-	cout<<"cVectorProperty vecPropertyColorSW1( cTypeProperty::COLOR_SW );"<<endl;
-	cVectorProperty vecPropertyColorSW1( cTypeProperty::COLOR_SW );
+	cout<<"cVectorProperty vecPropertyColorSW1( cTypeProperty::COLOR_GRAYSCALE );"<<endl;
+	cVectorProperty vecPropertyColorSW1( cTypeProperty::COLOR_GRAYSCALE );
 	cout<<"cProperty propertyColorSw1( vecPropertyColorSW1 );"<<endl;
 	cProperty propertyColorSw1( vecPropertyColorSW1 );
 
-	cout<<"cVectorProperty vecPropertyColorSW2( cTypeProperty::COLOR_SW );"<<endl;
-	cVectorProperty vecPropertyColorSW2( cTypeProperty::COLOR_SW );
+	cout<<"cVectorProperty vecPropertyColorSW2( cTypeProperty::COLOR_GRAYSCALE );"<<endl;
+	cVectorProperty vecPropertyColorSW2( cTypeProperty::COLOR_GRAYSCALE );
 	cout<<"cProperty propertyColorSw2( vecPropertyColorSW2 );"<<endl;
 	cProperty propertyColorSw2( vecPropertyColorSW2 );
 
-	cout<<"cVectorProperty vecPropertyColorSW3Ch( cTypeProperty::COLOR_SW );"<<endl;
-	cVectorProperty vecPropertyColorSW3Ch( cTypeProperty::COLOR_SW );
+	cout<<"cVectorProperty vecPropertyColorSW3Ch( cTypeProperty::COLOR_GRAYSCALE );"<<endl;
+	cVectorProperty vecPropertyColorSW3Ch( cTypeProperty::COLOR_GRAYSCALE );
 	cout<<"vecPropertyColorSW3Ch.setValue( 1, 4);"<<endl;
 	vecPropertyColorSW3Ch.setValue( 1, 4);
 	cout<<"cProperty propertyColorSw3Ch( vecPropertyColorSW3Ch );"<<endl;
@@ -2173,8 +2174,8 @@ int testEqual( unsigned long &ulTestphase ){
 	cout<<"cRoot root1;"<<flush<<endl;
 	cRoot root1;
 	
-	cout<<"cTypeProperty testTypePropertyColorSw( cTypeProperty::COLOR_SW );"<<endl;
-	cTypeProperty testTypePropertyColorSw( cTypeProperty::COLOR_SW );
+	cout<<"cTypeProperty testTypePropertyColorSw( cTypeProperty::COLOR_GRAYSCALE );"<<endl;
+	cTypeProperty testTypePropertyColorSw( cTypeProperty::COLOR_GRAYSCALE );
 	
 	//create vector domain with two elements
 	cout<<"vector<cDomainSingle*> vecDomainsE1( 1 );"<<endl;
@@ -2772,8 +2773,8 @@ int testCopy( unsigned long &ulTestphase ){
 	ulTestphase++;
 	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing copying a empty cProperty"<<endl;
 
-	cout<<"cVectorProperty vecPropertyColorSW1( cTypeProperty::COLOR_SW );"<<endl;
-	cVectorProperty vecPropertyColorSW1( cTypeProperty::COLOR_SW );
+	cout<<"cVectorProperty vecPropertyColorSW1( cTypeProperty::COLOR_GRAYSCALE );"<<endl;
+	cVectorProperty vecPropertyColorSW1( cTypeProperty::COLOR_GRAYSCALE );
 	cout<<"cProperty propertyEmpty( vecPropertyColorSW1 );"<<endl;
 	cProperty propertyEmpty( vecPropertyColorSW1 );
 
@@ -3255,8 +3256,8 @@ int testStoreXml( unsigned long &ulTestphase ){
 	ulTestphase++;
 	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the storeXml() method on an property for colorSw"<<endl;
 
-	cout<<"cVectorProperty vecPropertyColorSW1( cTypeProperty::COLOR_SW );"<<endl;
-	cVectorProperty vecPropertyColorSW1( cTypeProperty::COLOR_SW );
+	cout<<"cVectorProperty vecPropertyColorSW1( cTypeProperty::COLOR_GRAYSCALE );"<<endl;
+	cVectorProperty vecPropertyColorSW1( cTypeProperty::COLOR_GRAYSCALE );
 	cout<<"cProperty propertyColorSw1( vecPropertyColorSW1 );"<<endl;
 	cProperty propertyColorSw1( vecPropertyColorSW1 );
 	
@@ -3280,7 +3281,7 @@ int testStoreXml( unsigned long &ulTestphase ){
 	vector<char> vecElementTypePosition( 5, 'w' );
 	vector<double> vecValuesPosition( 5, 0.0 );
 	
-	iReturn += testXmlProperty( szXmlPropertyFileName, "property.colorSW", true,
+	iReturn += testXmlProperty( szXmlPropertyFileName, "property.colorGrayscale", true,
 		1, vecElementTypePosition, vecValuesPosition );
 
 
@@ -3352,8 +3353,8 @@ int testStore( unsigned long &ulTestphase ){
 	cout<<"cRoot rootColorSw;"<<flush<<endl;
 	cRoot rootColorSw;
 	
-	cout<<"cTypeProperty testTypePropertyColorSw( cTypeProperty::COLOR_SW );"<<endl;
-	cTypeProperty testTypePropertyColorSw( cTypeProperty::COLOR_SW );
+	cout<<"cTypeProperty testTypePropertyColorSw( cTypeProperty::COLOR_GRAYSCALE );"<<endl;
+	cTypeProperty testTypePropertyColorSw( cTypeProperty::COLOR_GRAYSCALE );
 	
 	//create vector domain with two elements
 	cout<<"vector<cDomainSingle*> vecDomainsE1( 1 );"<<endl;
@@ -3368,8 +3369,8 @@ int testStore( unsigned long &ulTestphase ){
 	rootColorSw.getDomains()->addDomain( testTypePropertyColorSw, &vectorDomainE1 );
 
 
-	cout<<"cVectorProperty vecPropertyColorSW1( cTypeProperty::COLOR_SW );"<<endl;
-	cVectorProperty vecPropertyColorSW1( cTypeProperty::COLOR_SW );
+	cout<<"cVectorProperty vecPropertyColorSW1( cTypeProperty::COLOR_GRAYSCALE );"<<endl;
+	cVectorProperty vecPropertyColorSW1( cTypeProperty::COLOR_GRAYSCALE );
 #ifdef FEATURE_SIMPLE_CONSTRUCTOR
 	cout<<"cProperty propertyColorSw1( vecPropertyColorSW1, &point1, &rootColorSw );"<<endl;
 	cProperty propertyColorSw1( vecPropertyColorSW1, &point1, &rootColorSw );
@@ -3632,8 +3633,8 @@ int testProperty( unsigned long &ulTestphase ){
 	cout<<"cRoot rootColorSw;"<<flush<<endl;
 	cRoot rootColorSw;
 	
-	cout<<"cTypeProperty testTypePropertyColorSw( cTypeProperty::COLOR_SW );"<<endl;
-	cTypeProperty testTypePropertyColorSw( cTypeProperty::COLOR_SW );
+	cout<<"cTypeProperty testTypePropertyColorSw( cTypeProperty::COLOR_GRAYSCALE );"<<endl;
+	cTypeProperty testTypePropertyColorSw( cTypeProperty::COLOR_GRAYSCALE );
 	
 	//create vector domain with two elements
 	cout<<"vector<cDomainSingle*> vecDomainsE1( 1 );"<<endl;
@@ -3648,8 +3649,8 @@ int testProperty( unsigned long &ulTestphase ){
 	rootColorSw.getDomains()->addDomain( testTypePropertyColorSw, &vectorDomainE1 );
 
 
-	cout<<"cVectorProperty vecPropertyColorSW1( cTypeProperty::COLOR_SW );"<<endl;
-	cVectorProperty vecPropertyColorSW1( cTypeProperty::COLOR_SW );
+	cout<<"cVectorProperty vecPropertyColorSW1( cTypeProperty::COLOR_GRAYSCALE );"<<endl;
+	cVectorProperty vecPropertyColorSW1( cTypeProperty::COLOR_GRAYSCALE );
 	cout<<"vecPropertyColorSW1.setValue( 1, 2 );"<<endl;
 	vecPropertyColorSW1.setValue( 1, 2 );
 	
@@ -3661,7 +3662,7 @@ int testProperty( unsigned long &ulTestphase ){
 	cProperty propertyColorSw1( vecPropertyColorSW1, &rootColorSw, &rootColorSw, NULL );
 #endif //FEATURE_SIMPLE_CONSTRUCTOR
 	
-	cVectorProperty vecPropertyColorSW2( cTypeProperty::COLOR_SW );
+	cVectorProperty vecPropertyColorSW2( cTypeProperty::COLOR_GRAYSCALE );
 	vecPropertyColorSW2.setValue( 1, 1 );
 
 	//test getProperty()

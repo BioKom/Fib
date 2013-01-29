@@ -41,6 +41,7 @@ History:
 22.03.2012  Oesterholz  possibility to decode image with transparency
 	implemented ( with the help of cEvalueSimpleRGBA255 )
 23.10.2012  Oesterholz  changes to store intermediate result
+28.01.2013  Oesterholz  COLOR_SW changed to COLOR_GRAYSCALE
 */
 
 //TODO for testing
@@ -518,7 +519,7 @@ fipImage * nConvertFromFib::convertToFipImage( const cFibElement & fibMultimedia
 	unsigned long ulMaxOutputValues = 0;
 	
 	cTypeProperty typePropertyColorRgb( cTypeProperty::COLOR_RGB );
-	cTypeProperty typePropertyColorSw( cTypeProperty::COLOR_SW );
+	cTypeProperty typePropertyColorSw( cTypeProperty::COLOR_GRAYSCALE );
 	cDomain * pDomainColor = fibMultimediaObject.
 		getValidDomains().getDomainForElement( typePropertyColorRgb );
 	if ( pDomainColor != NULL ){
@@ -670,7 +671,7 @@ fipImage * nConvertFromFib::convertToFipImage( const cFibElement & fibMultimedia
 			cDomainVectorBasis * pVecDomainColorSW = (cDomainVectorBasis*)pDomainSw;
 			
 			if ( pVecDomainColorSW->getNumberOfElements() != 1 ){
-				DEBUG_OUT_EL1( <<"Error: No 1 elements in the colorSW domain in Fib object."<<endl; );
+				DEBUG_OUT_EL1( <<"Error: No 1 elements in the colorGrayscale domain in Fib object."<<endl; );
 				if ( pOutStatus ){
 					*pOutStatus = -1;
 				}
@@ -800,7 +801,7 @@ fipImage * nConvertFromFib::convertToFipImage( const cFibElement & fibMultimedia
 						(doubleFib)(ulCountBlueValues) * (doubleFib)(ulMaxOutputValues));
 					
 					bColorProperty= true;
-				}else if ( itrProperty->getPropertyType() == cTypeProperty::COLOR_SW ){
+				}else if ( itrProperty->getPropertyType() == cTypeProperty::COLOR_GRAYSCALE ){
 					//set color values
 					colorValue->rgbRed   = (unsigned long)((itrProperty->getValue( 1 ) - dMinGrayValue) /
 						(doubleFib)(ulCountGrayValues) * (doubleFib)(ulMaxOutputValues));
@@ -895,7 +896,7 @@ fipImage * nConvertFromFib::convertToFipImage( const cFibElement & fibMultimedia
 					"; "<< (int)(colorValue->rgbBlue) <<" )"<<endl;
 #endif
 
-			}else if ( itrProperty->getPropertyType() == cTypeProperty::COLOR_SW ){
+			}else if ( itrProperty->getPropertyType() == cTypeProperty::COLOR_GRAYSCALE ){
 				//evalue the pixel position
 				unsigned int uiX;
 				if ( bDimensionXY ){
