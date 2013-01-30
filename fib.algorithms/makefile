@@ -45,6 +45,7 @@
 # 21.11.2011   Oesterholz   library "-lm" included
 # 11.09.2012   Oesterholz   standard libaries to the end
 # 14.07.2011   Oesterholz   glpk included for FEATURE_GLPK_USE_MUTEX_LINAR_PROBLEM_SOLVING
+# 30.01.2012   Oesterholz   Bugfix: in goal test: glpk need to be befor binarys
 
 
 ##########################################################################
@@ -222,8 +223,8 @@ OBJ_TINYXML:=$(addprefix $(DIR_TINYXML), tinyxml.o tinyxmlparser.o tinyxmlerror.
 all: create_dirs dependencies.dep $(DIR_LIB)libfib_algorithms.a\
 	$(DIR_FIB_LIB)libfib.a $(DIR_GLPK_LIBS)libglpk.a
 
-test: create_dirs dependencies.dep $(DIR_LIB)libfib_algorithms_test.a $(TEST_BIN)\
-	$(DIR_GLPK_LIBS)libglpk.a
+test: create_dirs dependencies.dep $(DIR_LIB)libfib_algorithms_test.a\
+	$(DIR_GLPK_LIBS)libglpk.a $(TEST_BIN)
 test: CFLAG:=$(CFLAG_TEST)
 
 
