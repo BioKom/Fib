@@ -238,6 +238,9 @@ extract_code_folder(){
 	if [ -e ${1}readme.txt ]; then
 		cp -f ${1}readme.txt ${FOLDER_EXTRACT}${1}readme.txt;
 	fi;
+	if [ -e ${1}liesmich.txt ]; then
+		cp -f ${1}liesmich.txt ${FOLDER_EXTRACT}${1}liesmich.txt;
+	fi;
 	copy_folder_with_filetype "${1}${DIR_SORCE}" ".cpp" "${FOLDER_EXTRACT}${1}${DIR_SORCE}"
 	
 	copy_folder_with_filetype "${1}${DIR_INCLUDE}" ".h" "${FOLDER_EXTRACT}${1}${DIR_INCLUDE}"
