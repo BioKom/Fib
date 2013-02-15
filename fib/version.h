@@ -60,8 +60,8 @@ History:
 #define FIB_VERSION_NAME     V1.2.3
 
 //versions information for the Fib database
-#define FIB_DB_VERSION      4
-#define FIB_DB_VERSION_NAME V1.1.2
+#define FIB_DB_VERSION      5
+#define FIB_DB_VERSION_NAME V1.1.3
 
 
 /*****************************************
@@ -323,7 +323,6 @@ History:
 #define FEATURE_FIB_VECTOR_STORE_JUST_DOMAIN
 
 
-
 /**
  * With this feature the Fib database @see cFibDatabase will be build for
  * treads. Loading will be done in a seperate tread.
@@ -334,8 +333,9 @@ History:
  * status:  implemented (17.10.2011)
  *//*
 History:
-*/
+*///TODO
 //#define FEATURE_FIB_DB_USE_TREADS
+
 
 /**
  * With this feature the Fib element class @see cFibElement

@@ -1,0 +1,3486 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fib_object
+			  xmlns:xsd="http://www.w3.org/2001/XMLSchema-instance"
+			  xmlns="http://www.fib-development.org/"
+			  xsd:schemaLocation="http://www.fib-development.org/fib.xsd">
+	<root>
+		<multimedia_info fib_version="3" db_version="3"/>
+		<optionalpart>
+			<pair key="name" value="circle border part antialiased"/>
+			<pair key="description" value="This object represents a antialiased circle border part with the middle point (x, y), radius r, given border line width and from start angle s clockwise till end angle e ."/>
+			<pair key="inVar1::description" value="position of the center point in dimension 1 (x)"/>
+			<pair key="inVar2::description" value="position of the center point in dimension 2 (y)"/>
+			<pair key="inVar3::description" value="size of the radius r"/>
+			<pair key="inVar4::description" value="width of the border line (the border goes from radius r to (r - w); standard value is 1)"/>
+			<pair key="inVar5::description" value="angle s in radian betwean (clockwise, in positiy dimension 2 direction) the 1 dimension achsis (x) for the circle center and circle part begin"/>
+			<pair key="inVar6::description" value="angle e in radian betwean (clockwise, in positiy dimension 2 direction) the 1 dimension achsis (x) for the circle center and circle part end"/>
+			
+			<pair key="subObj1::description" value="The points of the circle. The subobject is called for every point on the circle border."/>
+			<pair key="subObj1::outVar1::description" value="the position of the circle point in dimension 1 (x)"/>
+			<pair key="subObj1::outVar2::description" value="the position of the circle point in dimension 2 (y)"/>
+			<pair key="subObj1::outVar3::description" value="the antialising factor (1 is full transparent and 0 full opaque)"/>
+			
+			<pair key="author" value="Betti Oesterholz"/>
+			<pair key="author::email" value="Oesterholz@Fib-Development.org"/>
+			<pair key="copyright" value="LGPL3"/>
+			
+			<pair key="isPointSubObject" value=""/>
+			<pair key="isAntialiased" value=""/>
+			<pair key="DbObject::isNotAntialiased" value="-513"/>
+		</optionalpart>
+		<input_variables>
+			<variable number="1" default="0"/>
+			<variable number="2" default="0"/>
+			<variable number="3" default="1"/>
+			<variable number="4" default="1"/>
+			<variable number="5" default="0"/>
+			<variable number="6" default="6.2831853"/>
+		</input_variables>
+		<domains>
+			<inVar number="1">
+				<domainReference subdomain="1">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="2">
+				<domainReference subdomain="2">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="5">
+				<naturalNumber scalingfactor="0.00000001" max="632000000"/>
+			</inVar>
+			<inVar number="6">
+				<naturalNumber scalingfactor="0.00000001" max="632000000"/>
+			</inVar>
+			<externSubobject number="1">
+				<vector elements="3">
+					<!-- actually any numbers are possible;
+						the next lines are just a space holder -->
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+				</vector>
+			</externSubobject>
+			
+			<externObject>
+				<vector elements="4">
+					<integer min="1" max="4" /><!--Identifier-->
+					<integer min="4" max="6" /><!--number input values-->
+					<naturalNumber max="1" /><!--number subobjects-->
+					<naturalNumber max="2" /><!--number output values-->
+				</vector>
+			</externObject>
+			<externObjectInput identifier="1">
+				<vector elements="4">
+					<domainReference>
+						<inVar number="1"/>
+					</domainReference>
+					<domainReference>
+						<inVar number="2"/>
+					</domainReference>
+					<domainReference>
+						<inVar number="3"/>
+					</domainReference>
+					<domainReference>
+						<inVar number="4"/>
+					</domainReference>
+				</vector>
+			</externObjectInput>
+			<externObjectInput identifier="2">
+				<vector elements="4">
+					<domainReference>
+						<inVar number="1"/>
+					</domainReference>
+					<domainReference>
+						<inVar number="2"/>
+					</domainReference>
+					<domainReference>
+						<inVar number="3"/>
+					</domainReference>
+					<domainReference>
+						<inVar number="4"/>
+					</domainReference>
+				</vector>
+			</externObjectInput>
+			<externObjectInput identifier="3">
+				<vector elements="6">
+					<domainReference>
+						<inVar number="1"/>
+					</domainReference>
+					<domainReference>
+						<inVar number="2"/>
+					</domainReference>
+					<domainReference>
+						<inVar number="3"/>
+					</domainReference>
+					<domainReference>
+						<inVar number="4"/>
+					</domainReference>
+					<domainReference>
+						<inVar number="5"/>
+					</domainReference>
+					<domainReference>
+						<inVar number="6"/>
+					</domainReference>
+				</vector>
+			</externObjectInput>
+			<externObjectInput identifier="4">
+				<vector elements="6">
+					<domainReference>
+						<inVar number="1"/>
+					</domainReference>
+					<domainReference>
+						<inVar number="2"/>
+					</domainReference>
+					<domainReference>
+						<inVar number="3"/>
+					</domainReference>
+					<domainReference>
+						<inVar number="4"/>
+					</domainReference>
+					<domainReference>
+						<inVar number="5"/>
+					</domainReference>
+					<domainReference>
+						<inVar number="6"/>
+					</domainReference>
+				</vector>
+			</externObjectInput>
+			<area>
+				<vector elements="2">
+					<naturalNumber max="1" />
+					<vector elements="2">
+						<naturalNumber max="0" />
+						<naturalNumber max="0" />
+					</vector>
+				</vector>
+			</area>
+			<subfunction>
+				<naturalNumber max="4"/>
+			</subfunction>
+		</domains>
+		<database_identifiers>
+			<identifier>-469</identifier>
+		</database_identifiers>
+		<main_fib_object>
+			<!-- - divide circle into 4 parts: upper left, upper rigth, lower left and lower rigth
+				- normalize angles ( angle mod (2 PI) )
+				- if start s angle is equal end e angle -> do nothing
+				For each part:
+					- if no angle (start s or end e) in part:
+						- check if drawing the entire part -> draw it
+							- if start angle s is before (anti clockwise) the end angle e
+						- check if not drawing the part -> do nothing
+							- if end angle e is before (anti clockwise) the start angle s
+					(- else)
+					- part start angle s' = max( start angle s, start angle of circle part )
+					- part end angle e' = min( end angle e, end angle of circle part )
+					- if part start angle s' is before (anti clockwise) part end angle e' (s' < e')
+						- draw part from circle part start angle s' to part end angle e'
+					- if part end angle e' is before (anti clockwise) part start angle s' ( e' < s' )
+						- draw two parts: from circle part start angle to part end angle e' and
+						from part start angle s' to circle part end
+				Needed subobjects:
+					- draw circle part
+					- draw for circle part from angle to angle (both angles in circle part)
+						- evalue horizontal start point and end point of circle part
+						- for every vertical line in circle part evalue start and end point
+						(on circle border between angle lines (lines from circle center with angle) )
+				-->
+			<!-- check input parameters -->
+			<if>
+				<condition>
+					<or>
+						<lo><!-- if radius is negativ -> do nothing -->
+							<variable>3</variable>
+							<value>0</value>
+						</lo>
+						<lo><!-- if border width w is lower 1 -> do nothing -->
+							<variable>4</variable>
+							<value>1</value>
+						</lo>
+					</or>
+				</condition>
+				<point/><!-- do nothing -->
+				<!-- else draw circle -->
+				<!-- normalize angles betwean 0 and 2 PI-->
+				<!-- evalue PI/2 -->
+				<function define_variable="7"><!-- PI/2 = arcsin 1 -->
+					<subfunction>
+						<arcsin><value>1</value></arcsin>
+					</subfunction>
+					<function define_variable="8"><!-- 2PI = PI/2 * 4 -->
+						<subfunction>
+							<mult>
+								<variable>7</variable>
+								<value>4</value>
+							</mult>
+						</subfunction>
+						
+						<function define_variable="9"><!-- alpha' = s % 2 PI   -->
+							<subfunction>
+								<mod>
+									<variable>5</variable>
+									<variable>8</variable>
+								</mod>
+							</subfunction>
+							<function define_variable="10"><!-- ensure that the angle is positiv-->
+								<subfunction>
+									<if><!-- if ( alpha' < 0 ) then alpha = (alpha' + 2PI); else alpha = alpha' -->
+										<lo>
+											<variable>9</variable>
+											<value>0</value>
+										</lo>
+										<add>
+											<variable>9</variable>
+											<variable>8</variable>
+										</add>
+										<variable>9</variable>
+									</if>
+								</subfunction>
+								<function define_variable="11"><!-- betha' = s % 2 PI   -->
+									<subfunction>
+										<mod>
+											<variable>6</variable>
+											<variable>8</variable>
+										</mod>
+									</subfunction>
+									<function define_variable="12"><!-- ensure that the angle alpha is positiv-->
+										<subfunction>
+											<if><!-- if ( betha' < 0 ) then betha = (betha' + 2PI); else betha = betha' -->
+												<lo>
+													<variable>11</variable>
+													<value>0</value>
+												</lo>
+												<add>
+													<variable>11</variable>
+													<variable>8</variable>
+												</add>
+												<variable>11</variable>
+											</if>
+										</subfunction>
+										<if><!-- if start s angle is equal end e angle -> do nothing -->
+											<condition>
+												<not>
+													<or>
+														<lo>
+															<variable>10</variable>
+															<variable>12</variable>
+														</lo>
+														<gr>
+															<variable>10</variable>
+															<variable>12</variable>
+														</gr>
+													</or>
+												</not>
+											</condition>
+											<point/><!-- do nothing -->
+											<!-- else different start and end angle-->
+											<list>
+												<!-- for the four circle quadrants -->
+												<!-- upper right circle border -->
+												<if>
+													<condition>
+														<lo><!-- alpha < PI/2 -->
+															<variable>10</variable>
+															<variable>7</variable>
+														</lo>
+													</condition>
+													<!-- if alpha is in part -->
+													<function define_variable="13"><!-- convert alpha for external objects: PI/2 - alpha -->
+														<subfunction>
+															<sub>
+																<variable>7</variable>
+																<variable>10</variable>
+															</sub>
+														</subfunction>
+														<if>
+															<condition>
+																<lo><!-- betha < PI/2 -->
+																	<variable>12</variable>
+																	<variable>7</variable>
+																</lo>
+															</condition>
+															<!-- if alpha and betha is in part -->
+															<function define_variable="14"><!-- convert betha for external objects: PI/2 - betha -->
+																<subfunction>
+																	<sub>
+																		<variable>7</variable>
+																		<variable>12</variable>
+																	</sub>
+																</subfunction>
+																<if>
+																	<condition>
+																		<lo><!-- alpha < betha -->
+																			<variable>10</variable>
+																			<variable>12</variable>
+																		</lo>
+																	</condition>
+																	<!-- alpha befor betha -> draw circle part from alpha to betha -->
+																	<obj identifier="4"><!-- draw upper right part of circle border -->
+																		<vector type="externObjectInput">
+																			<variable>1</variable>
+																			<variable>2</variable>
+																			<variable>3</variable>
+																			<variable>4</variable>
+																			<variable>14</variable>
+																			<variable>13</variable>
+																		</vector>
+																		<subobject>
+																			<output_variables>
+																				<variable>15</variable>
+																				<variable>16</variable>
+																				<variable>17</variable>
+																			</output_variables>
+																			<subobject number="1">
+																				<vector type="externSubobject">
+																					<variable>15</variable>
+																					<variable>16</variable>
+																					<variable>17</variable>
+																				</vector>
+																			</subobject>
+																		</subobject>
+																	</obj>
+																	<!-- else betha befor alpha -> draw two circle parts from angle 0 to alpha and from angle betha to PI/2 -->
+																	<list>
+																		<obj identifier="4"><!-- draw upper right part of circle border from angle 0 to alpha -->
+																			<vector type="externObjectInput">
+																				<variable>1</variable>
+																				<variable>2</variable>
+																				<variable>3</variable>
+																				<variable>4</variable>
+																				<value>0</value>
+																				<variable>13</variable>
+																			</vector>
+																			<subobject>
+																				<output_variables>
+																					<variable>15</variable>
+																					<variable>16</variable>
+																					<variable>17</variable>
+																				</output_variables>
+																				<subobject number="1">
+																					<vector type="externSubobject">
+																						<variable>15</variable>
+																						<variable>16</variable>
+																						<variable>17</variable>
+																					</vector>
+																				</subobject>
+																			</subobject>
+																		</obj>
+																		<obj identifier="4"><!-- draw upper right part from angle betha to PI/2 -->
+																			<vector type="externObjectInput">
+																				<variable>1</variable>
+																				<variable>2</variable>
+																				<variable>3</variable>
+																				<variable>4</variable>
+																				<variable>14</variable>
+																				<variable>7</variable>
+																			</vector>
+																			<subobject>
+																				<output_variables>
+																					<variable>15</variable>
+																					<variable>16</variable>
+																					<variable>17</variable>
+																				</output_variables>
+																				<subobject number="1">
+																					<vector type="externSubobject">
+																						<variable>15</variable>
+																						<variable>16</variable>
+																						<variable>17</variable>
+																					</vector>
+																				</subobject>
+																			</subobject>
+																		</obj>
+																	</list>
+																</if>
+															</function>
+															<!-- else just alpha is in part -->
+															<obj identifier="4"><!-- draw upper right part of circle border from 0 to alpha -->
+																<vector type="externObjectInput">
+																	<variable>1</variable>
+																	<variable>2</variable>
+																	<variable>3</variable>
+																	<variable>4</variable>
+																	<value>0</value>
+																	<variable>13</variable>
+																</vector>
+																<subobject>
+																	<output_variables>
+																		<variable>14</variable>
+																		<variable>15</variable>
+																		<variable>16</variable>
+																	</output_variables>
+																	<subobject number="1">
+																		<vector type="externSubobject">
+																			<variable>14</variable>
+																			<variable>15</variable>
+																			<variable>16</variable>
+																		</vector>
+																	</subobject>
+																</subobject>
+															</obj>
+														</if>
+													</function>
+													<!-- else alpha not in part -->
+													<if>
+														<condition>
+															<lo><!-- betha < PI/2 -->
+																<variable>12</variable>
+																<variable>7</variable>
+															</lo>
+														</condition>
+														<!-- if betha is in part -->
+														<function define_variable="14"><!-- convert betha for external objects: PI/2 - betha -->
+															<subfunction>
+																<sub>
+																	<variable>7</variable>
+																	<variable>12</variable>
+																</sub>
+															</subfunction>
+															<obj identifier="4"><!-- draw upper right part from angle 0 to betha -->
+																<vector type="externObjectInput">
+																	<variable>1</variable>
+																	<variable>2</variable>
+																	<variable>3</variable>
+																	<variable>4</variable>
+																	<variable>14</variable>
+																	<variable>7</variable>
+																</vector>
+																<subobject>
+																	<output_variables>
+																		<variable>15</variable>
+																		<variable>16</variable>
+																		<variable>17</variable>
+																	</output_variables>
+																	<subobject number="1">
+																		<vector type="externSubobject">
+																			<variable>15</variable>
+																			<variable>16</variable>
+																			<variable>17</variable>
+																		</vector>
+																	</subobject>
+																</subobject>
+															</obj>
+														</function>
+														<!-- else no angle in part draw wool part or nothing -->
+														<if>
+															<condition>
+																<lo><!-- betha < alpha -->
+																	<variable>12</variable>
+																	<variable>10</variable>
+																</lo>
+																<!-- (beware: other circle parts are more complicated) -->
+															</condition>
+															<!-- betha < alpha -> draw wool part -->
+															<obj identifier="2"><!-- draw lower rigth part of circle border -->
+																<vector type="externObjectInput">
+																	<variable>1</variable>
+																	<variable>2</variable>
+																	<variable>3</variable>
+																	<variable>4</variable>
+																</vector>
+																<subobject>
+																	<output_variables>
+																		<variable>13</variable>
+																		<variable>14</variable>
+																		<variable>15</variable>
+																	</output_variables>
+																	<subobject number="1">
+																		<vector type="externSubobject">
+																			<variable>13</variable>
+																			<variable>14</variable>
+																			<variable>15</variable>
+																		</vector>
+																	</subobject>
+																</subobject>
+															</obj>
+															<!-- else alpha < betha -> draw nothing -->
+															<point/>
+														</if>
+													</if>
+												</if>
+												<function define_variable="13"><!-- evalue -r -->
+													<subfunction>
+														<sub>
+															<value>0</value>
+															<variable>3</variable>
+														</sub>
+													</subfunction>
+													<function define_variable="14"><!-- PI = PI/2 * 2 -->
+														<subfunction>
+															<mult>
+																<variable>7</variable>
+																<value>2</value>
+															</mult>
+														</subfunction>
+														<function define_variable="15"><!-- alpha_2 = alpha - PI -->
+															<subfunction>
+																<sub>
+																	<variable>10</variable>
+																	<variable>14</variable>
+																</sub>
+															</subfunction>
+															<function define_variable="16"><!-- betha_2 = betha - PI -->
+																<subfunction>
+																	<sub>
+																		<variable>12</variable>
+																		<variable>14</variable>
+																	</sub>
+																</subfunction>
+																
+																<list>
+																<!-- lower right circle border -->
+																	<if>
+																		<condition>
+																			<and><!-- PI/2 < alpha < PI -->
+																				<lo>
+																					<variable>7</variable>
+																					<variable>10</variable>
+																				</lo>
+																				<lo>
+																					<variable>10</variable>
+																					<variable>14</variable>
+																				</lo>
+																			</and>
+																		</condition>
+																		<!-- if alpha is in part -->
+																		<function define_variable="17"><!-- convert alpha for external objects: PI/2 - alpha -->
+																			<subfunction>
+																				<sub>
+																					<variable>7</variable>
+																					<variable>10</variable>
+																				</sub>
+																			</subfunction>
+																			<if>
+																				<condition>
+																					<and><!-- PI/2 < betha < PI -->
+																						<lo>
+																							<variable>7</variable>
+																							<variable>12</variable>
+																						</lo>
+																						<lo>
+																							<variable>12</variable>
+																							<variable>14</variable>
+																						</lo>
+																					</and>
+																				</condition>
+																				<!-- if alpha and betha is in part -->
+																				<function define_variable="18"><!-- convert betha for external objects: PI/2 - betha -->
+																					<subfunction>
+																						<sub>
+																							<variable>7</variable>
+																							<variable>12</variable>
+																						</sub>
+																					</subfunction>
+																					<if>
+																						<condition>
+																							<lo><!-- alpha < betha -->
+																								<variable>10</variable>
+																								<variable>12</variable>
+																							</lo>
+																						</condition>
+																						<!-- alpha befor betha -> draw circle part from alpha to betha -->
+																						<obj identifier="4"><!-- draw lower right part of circle border -->
+																							<vector type="externObjectInput">
+																								<variable>1</variable>
+																								<variable>2</variable>
+																								<variable>13</variable>
+																								<variable>4</variable>
+																								<variable>17</variable>
+																								<variable>18</variable>
+																							</vector>
+																							<subobject>
+																								<output_variables>
+																									<variable>19</variable>
+																									<variable>20</variable>
+																									<variable>21</variable>
+																								</output_variables>
+																								<subobject number="1">
+																									<vector type="externSubobject">
+																										<variable>19</variable>
+																										<variable>20</variable>
+																										<variable>21</variable>
+																									</vector>
+																								</subobject>
+																							</subobject>
+																						</obj>
+																						<!-- else betha befor alpha -> draw two circle parts from angle 0 to betha and from angle alpha to -PI/2-->
+																						<list>
+																							<obj identifier="4"><!-- draw lower right part from angle 0 to betha -->
+																								<vector type="externObjectInput">
+																									<variable>1</variable>
+																									<variable>2</variable>
+																									<variable>13</variable>
+																									<variable>4</variable>
+																									<value>0</value>
+																									<variable>18</variable>
+																								</vector>
+																								<subobject>
+																									<output_variables>
+																										<variable>19</variable>
+																										<variable>20</variable>
+																										<variable>21</variable>
+																									</output_variables>
+																									<subobject number="1">
+																										<vector type="externSubobject">
+																											<variable>19</variable>
+																											<variable>20</variable>
+																											<variable>21</variable>
+																										</vector>
+																									</subobject>
+																								</subobject>
+																							</obj>
+																							<function define_variable="19"><!-- -PI/2 -->
+																								<subfunction>
+																									<sub>
+																										<value>0</value>
+																										<variable>7</variable>
+																									</sub>
+																								</subfunction>
+																								<obj identifier="4"><!-- draw lower right part of circle border from angle alpha to -PI/2 -->
+																									<vector type="externObjectInput">
+																										<variable>1</variable>
+																										<variable>2</variable>
+																										<variable>13</variable>
+																										<variable>4</variable>
+																										<variable>17</variable>
+																										<variable>19</variable>
+																									</vector>
+																									<subobject>
+																										<output_variables>
+																											<variable>20</variable>
+																											<variable>21</variable>
+																											<variable>22</variable>
+																										</output_variables>
+																										<subobject number="1">
+																											<vector type="externSubobject">
+																												<variable>20</variable>
+																												<variable>21</variable>
+																												<variable>22</variable>
+																											</vector>
+																										</subobject>
+																									</subobject>
+																								</obj>
+																							</function>
+																						</list>
+																					</if>
+																				</function>
+																				<!-- else just alpha is in part -->
+																				<function define_variable="18"><!-- -PI/2 -->
+																					<subfunction>
+																						<sub>
+																							<value>0</value>
+																							<variable>7</variable>
+																						</sub>
+																					</subfunction>
+																					<obj identifier="4"><!-- draw lower right part of circle border from alpha to -PI/2 -->
+																						<vector type="externObjectInput">
+																							<variable>1</variable>
+																							<variable>2</variable>
+																							<variable>13</variable>
+																							<variable>4</variable>
+																							<variable>17</variable>
+																							<variable>18</variable>
+																						</vector>
+																						<subobject>
+																							<output_variables>
+																								<variable>19</variable>
+																								<variable>20</variable>
+																								<variable>21</variable>
+																							</output_variables>
+																							<subobject number="1">
+																								<vector type="externSubobject">
+																									<variable>19</variable>
+																									<variable>20</variable>
+																									<variable>21</variable>
+																								</vector>
+																							</subobject>
+																						</subobject>
+																					</obj>
+																				</function>
+																			</if>
+																		</function>
+																		<!-- else alpha not in part -->
+																		<if>
+																			<condition>
+																				<and><!-- PI/2 < betha < PI -->
+																					<lo>
+																						<variable>7</variable>
+																						<variable>12</variable>
+																					</lo>
+																					<lo>
+																						<variable>12</variable>
+																						<variable>14</variable>
+																					</lo>
+																				</and>
+																			</condition>
+																			<!-- if betha is in part -->
+																			<function define_variable="17"><!-- convert betha for external objects: PI/2 - betha -->
+																				<subfunction>
+																					<sub>
+																						<variable>7</variable>
+																						<variable>12</variable>
+																					</sub>
+																				</subfunction>
+																				<obj identifier="4"><!-- draw lower right part from angle 0 to betha -->
+																					<vector type="externObjectInput">
+																						<variable>1</variable>
+																						<variable>2</variable>
+																						<variable>13</variable>
+																						<variable>4</variable>
+																						<value>0</value>
+																						<variable>17</variable>
+																					</vector>
+																					<subobject>
+																						<output_variables>
+																							<variable>18</variable>
+																							<variable>19</variable>
+																							<variable>20</variable>
+																						</output_variables>
+																						<subobject number="1">
+																							<vector type="externSubobject">
+																								<variable>18</variable>
+																								<variable>19</variable>
+																								<variable>20</variable>
+																							</vector>
+																						</subobject>
+																					</subobject>
+																				</obj>
+																			</function>
+																			<!-- else no angle in part draw wool part or nothing -->
+																			<if>
+																				<condition>
+																					<!-- if ( 0 =< alpha, betha =< PI/2 ) or ( PI =< alpha, betha =< 2PI) then
+																							if ( betha < alpha ) then draw wool part; else draw nothing
+																							else if ( 0 =< alpha =< PI/2 ) and ( PI =< betha =< 2PI) then draw wool part; else draw nothing
+																						( don't need to check for (0 =< betha, alpha) or (betha, alpha =< 2PI), because angles are normalized )-->
+																					<or>
+																						<and><!-- if ( 0 =< alpha, betha =< PI/2 ) or ( PI =< alpha, betha =< 2PI) then
+																								if ( betha < alpha ) then draw wool part; else draw nothing -->
+																							<or>
+																								<and><!-- ( 0 =< alpha, betha =< PI/2 ) -->
+																									<not><!-- alpha =< PI/2-->
+																										<gr>
+																											<variable>10</variable><!-- alpha -->
+																											<variable>7</variable><!-- PI/2 -->
+																										</gr>
+																									</not>
+																									<not><!-- betha =< PI/2-->
+																										<gr>
+																											<variable>12</variable><!-- betha -->
+																											<variable>7</variable><!-- PI/2 -->
+																										</gr>
+																									</not>
+																								</and>
+																								<and><!-- PI =< alpha, betha =< 2PI -->
+																									<not><!-- PI =< alpha-->
+																										<lo>
+																											<variable>10</variable><!-- alpha -->
+																											<variable>14</variable><!-- PI -->
+																										</lo>
+																									</not>
+																									<not><!-- PI =< betha-->
+																										<lo>
+																											<variable>12</variable><!-- betha -->
+																											<variable>14</variable><!-- PI -->
+																										</lo>
+																									</not>
+																								</and>
+																							</or>
+																							<lo><!-- betha < alpha -->
+																								<variable>12</variable>
+																								<variable>10</variable>
+																							</lo>
+																						</and>
+																						<!-- else if ( 0 =< alpha =< PI/2 ) and ( PI =< betha =< 2PI) then draw wool part; else draw nothing -->
+																						<and><!-- ( 0 =< alpha =< PI/2 ) -->
+																							<not><!-- alpha =< PI/2-->
+																								<gr>
+																									<variable>10</variable><!-- alpha -->
+																									<variable>7</variable><!-- PI/2 -->
+																								</gr>
+																							</not>
+																							<not><!-- PI =< betha-->
+																								<gr>
+																									<variable>14</variable><!-- PI -->
+																									<variable>12</variable><!-- betha -->
+																								</gr>
+																							</not>
+																						</and>
+																					</or>
+																				</condition>
+																				<!-- draw wool part -->
+																				<obj identifier="2"><!-- draw lower rigth part of circle border -->
+																					<vector type="externObjectInput">
+																						<variable>1</variable>
+																						<variable>2</variable>
+																						<variable>13</variable>
+																						<variable>4</variable>
+																					</vector>
+																					<subobject>
+																						<output_variables>
+																							<variable>17</variable>
+																							<variable>18</variable>
+																							<variable>19</variable>
+																						</output_variables>
+																						<subobject number="1">
+																							<vector type="externSubobject">
+																								<variable>17</variable>
+																								<variable>18</variable>
+																								<variable>19</variable>
+																							</vector>
+																						</subobject>
+																					</subobject>
+																				</obj>
+																				<!-- else draw nothing -->
+																				<point/>
+																			</if>
+																		</if>
+																	</if>
+																<!-- lower left circle border -->
+																	<if>
+																		<condition>
+																			<and><!-- PI < alpha < 2/3 PI -->
+																				<lo>
+																					<variable>14</variable>
+																					<variable>10</variable>
+																				</lo>
+																				<lo><!-- alpha_2 < PI/2 -->
+																					<variable>15</variable><!-- alpha_2 -->
+																					<variable>7</variable>
+																				</lo>
+																			</and>
+																		</condition>
+																		<!-- if alpha is in part -->
+																		<function define_variable="17"><!-- convert alpha for external objects: alpha_2 - PI/2 -->
+																			<subfunction>
+																				<sub>
+																					<variable>15</variable>
+																					<variable>7</variable>
+																				</sub>
+																			</subfunction>
+																			<if>
+																				<condition>
+																					<and><!-- PI < betha < 2/3 PI -->
+																						<lo>
+																							<variable>14</variable>
+																							<variable>12</variable>
+																						</lo>
+																						<lo><!-- betha_2 < PI/2 -->
+																							<variable>16</variable><!-- betha_2 -->
+																							<variable>7</variable>
+																						</lo>
+																					</and>
+																				</condition>
+																				<!-- if alpha and betha is in part -->
+																				<function define_variable="18"><!-- convert betha for external objects: betha_2 - PI/2 -->
+																					<subfunction>
+																						<sub>
+																							<variable>16</variable>
+																							<variable>7</variable>
+																						</sub>
+																					</subfunction>
+																					<if>
+																						<condition>
+																							<lo><!-- alpha < betha -->
+																								<variable>10</variable>
+																								<variable>12</variable>
+																							</lo>
+																						</condition>
+																						<!-- alpha befor betha -> draw circle part from alpha to betha -->
+																						<obj identifier="3"><!-- draw lower left part of circle border -->
+																							<vector type="externObjectInput">
+																								<variable>1</variable>
+																								<variable>2</variable>
+																								<variable>13</variable>
+																								<variable>4</variable>
+																								<variable>18</variable>
+																								<variable>17</variable>
+																							</vector>
+																							<subobject>
+																								<output_variables>
+																									<variable>19</variable>
+																									<variable>20</variable>
+																									<variable>21</variable>
+																								</output_variables>
+																								<subobject number="1">
+																									<vector type="externSubobject">
+																										<variable>19</variable>
+																										<variable>20</variable>
+																										<variable>21</variable>
+																									</vector>
+																								</subobject>
+																							</subobject>
+																						</obj>
+																						<!-- else betha befor alpha -> draw two circle parts from angle -PI/2 to betha and from angle alpha to 0 -->
+																						<list>
+																							<function define_variable="19"><!-- -PI/2 -->
+																								<subfunction>
+																									<sub>
+																										<value>0</value>
+																										<variable>7</variable>
+																									</sub>
+																								</subfunction>
+																								<obj identifier="3"><!-- draw lower left part from angle -PI/2 to betha -->
+																									<vector type="externObjectInput">
+																										<variable>1</variable>
+																										<variable>2</variable>
+																										<variable>13</variable>
+																										<variable>4</variable>
+																										<variable>18</variable>
+																										<variable>19</variable>
+																									</vector>
+																									<subobject>
+																										<output_variables>
+																											<variable>20</variable>
+																											<variable>21</variable>
+																											<variable>22</variable>
+																										</output_variables>
+																										<subobject number="1">
+																											<vector type="externSubobject">
+																											<variable>20</variable>
+																											<variable>21</variable>
+																											<variable>22</variable>
+																										</vector>
+																									</subobject>
+																								</subobject>
+																								</obj>
+																							</function>
+																							<obj identifier="3"><!-- draw lower left part of circle border from angle alpha to 0 -->
+																								<vector type="externObjectInput">
+																									<variable>1</variable>
+																									<variable>2</variable>
+																									<variable>13</variable>
+																									<variable>4</variable>
+																									<value>0</value>
+																									<variable>17</variable>
+																								</vector>
+																								<subobject>
+																									<output_variables>
+																										<variable>19</variable>
+																										<variable>20</variable>
+																										<variable>21</variable>
+																									</output_variables>
+																									<subobject number="1">
+																										<vector type="externSubobject">
+																											<variable>19</variable>
+																											<variable>20</variable>
+																											<variable>21</variable>
+																										</vector>
+																									</subobject>
+																								</subobject>
+																							</obj>
+																						</list>
+																					</if>
+																				</function>
+																				<!-- else just alpha is in part -->
+																				<obj identifier="3"><!-- draw lower left part of circle border from alpha_2 to 0 -->
+																					<vector type="externObjectInput">
+																						<variable>1</variable>
+																						<variable>2</variable>
+																						<variable>13</variable>
+																						<variable>4</variable>
+																						<value>0</value>
+																						<variable>17</variable>
+																					</vector>
+																					<subobject>
+																						<output_variables>
+																							<variable>18</variable>
+																							<variable>19</variable>
+																							<variable>20</variable>
+																						</output_variables>
+																						<subobject number="1">
+																							<vector type="externSubobject">
+																								<variable>18</variable>
+																								<variable>19</variable>
+																								<variable>20</variable>
+																							</vector>
+																						</subobject>
+																					</subobject>
+																				</obj>
+																			</if>
+																		</function>
+																		<!-- else alpha not in part -->
+																		<if>
+																			<condition>
+																				<and><!-- PI < betha < 2/3 PI -->
+																					<lo>
+																						<variable>14</variable>
+																						<variable>12</variable>
+																					</lo>
+																					<lo><!-- betha_2 < PI/2 -->
+																						<variable>16</variable><!-- betha_2 -->
+																						<variable>7</variable>
+																					</lo>
+																				</and>
+																			</condition>
+																			<!-- if betha is in part -->
+																			<function define_variable="17"><!-- -PI/2 -->
+																				<subfunction>
+																					<sub>
+																						<value>0</value>
+																						<variable>7</variable>
+																					</sub>
+																				</subfunction>
+																				<function define_variable="18"><!-- convert betha for external objects: betha_2 - PI/2 -->
+																					<subfunction>
+																						<sub>
+																							<variable>16</variable>
+																							<variable>7</variable>
+																						</sub>
+																					</subfunction>
+																					<obj identifier="3"><!-- draw lower left part from angle -PI/2 to betha -->
+																						<vector type="externObjectInput">
+																							<variable>1</variable>
+																							<variable>2</variable>
+																							<variable>13</variable>
+																							<variable>4</variable>
+																							<variable>18</variable>
+																							<variable>17</variable>
+																						</vector>
+																						<subobject>
+																							<output_variables>
+																								<variable>19</variable>
+																								<variable>20</variable>
+																								<variable>21</variable>
+																							</output_variables>
+																							<subobject number="1">
+																								<vector type="externSubobject">
+																									<variable>19</variable>
+																									<variable>20</variable>
+																									<variable>21</variable>
+																								</vector>
+																							</subobject>
+																						</subobject>
+																					</obj>
+																				</function>
+																			</function>
+																			<!-- else no angle in part draw wool part or nothing -->
+																			<if>
+																				<condition>
+																					<!-- if ( 0 =< alpha, betha =< PI ) or ( 2/3 PI =< alpha, betha =< 2PI) then
+																							if ( betha < alpha ) then draw wool part; else draw nothing
+																							else if ( 0 =< alpha =< PI ) and ( 2/3 PI =< betha =< 2PI) then draw wool part; else draw nothing
+																						( don't need to check for (0 =< betha, alpha) or (betha, alpha =< 2PI), because angles are normalized )-->
+																					<or>
+																						<and><!-- if ( 0 =< alpha, betha =< PI ) or ( 2/3 PI =< alpha, betha =< 2PI) then
+																								if ( betha < alpha ) then draw wool part; else draw nothing -->
+																							<or>
+																								<and><!-- ( 0 =< alpha, betha =< PI ) -->
+																									<not><!-- alpha =< PI-->
+																										<gr>
+																											<variable>10</variable><!-- alpha -->
+																											<variable>14</variable><!-- PI -->
+																										</gr>
+																									</not>
+																									<not><!-- betha =< PI-->
+																										<gr>
+																											<variable>12</variable><!-- betha -->
+																											<variable>14</variable><!-- PI -->
+																										</gr>
+																									</not>
+																								</and>
+																								<and><!-- 2/3 PI =< alpha, betha =< 2PI -->
+																									<not><!-- 2/3 PI =< alpha-->
+																										<lo>
+																											<variable>15</variable><!-- alpha_2 -->
+																											<variable>7</variable><!-- PI/2 -->
+																										</lo>
+																									</not>
+																									<not><!-- 2/3 PI =< betha-->
+																										<lo>
+																											<variable>16</variable><!-- betha_2 -->
+																											<variable>7</variable><!-- PI/2 -->
+																										</lo>
+																									</not>
+																								</and>
+																							</or>
+																							<lo><!-- betha < alpha -->
+																								<variable>12</variable>
+																								<variable>10</variable>
+																							</lo>
+																						</and>
+																						<!-- else if ( 0 =< alpha =< PI ) and ( 2/3 PI =< betha =< 2PI) then draw wool part; else draw nothing -->
+																						<and><!-- ( 0 =< alpha =< PI ) -->
+																							<not><!-- alpha =< PI/2-->
+																								<gr>
+																									<variable>10</variable><!-- alpha -->
+																									<variable>14</variable><!-- PI -->
+																								</gr>
+																							</not>
+																							<not><!-- 2/3 PI =< betha-->
+																								<gr>
+																									<variable>7</variable><!-- PI/2 -->
+																									<variable>16</variable><!-- betha_2 -->
+																								</gr>
+																							</not>
+																						</and>
+																					</or>
+																				</condition>
+																				<!-- draw wool part -->
+																				<obj identifier="1"><!-- draw lower rigth part of circle border -->
+																					<vector type="externObjectInput">
+																						<variable>1</variable>
+																						<variable>2</variable>
+																						<variable>13</variable>
+																						<variable>4</variable>
+																					</vector>
+																					<subobject>
+																						<output_variables>
+																							<variable>17</variable>
+																							<variable>18</variable>
+																							<variable>19</variable>
+																						</output_variables>
+																						<subobject number="1">
+																							<vector type="externSubobject">
+																								<variable>17</variable>
+																								<variable>18</variable>
+																								<variable>19</variable>
+																							</vector>
+																						</subobject>
+																					</subobject>
+																				</obj>
+																				<!-- else draw nothing -->
+																				<point/>
+																			</if>
+																		</if>
+																	</if>
+																<!-- upper left circle border -->
+																	<if>
+																		<condition><!-- 2/3 PI < alpha < 2 PI -->
+																			<lo><!-- PI/2 < alpha_2 -->
+																				<variable>7</variable>
+																				<variable>15</variable><!-- alpha_2 -->
+																			</lo>
+																		</condition>
+																		<!-- if alpha is in part -->
+																		<function define_variable="17"><!-- convert alpha for external objects: alpha_2 - PI/2 -->
+																			<subfunction>
+																				<sub>
+																					<variable>15</variable>
+																					<variable>7</variable>
+																				</sub>
+																			</subfunction>
+																			<if>
+																				<condition><!-- 2/3 PI < betha < 2 PI -->
+																					<lo><!-- PI/2 < betha_2 -->
+																						<variable>7</variable>
+																						<variable>16</variable><!-- betha_2 -->
+																					</lo>
+																				</condition>
+																				<!-- if alpha and betha is in part -->
+																				<function define_variable="18"><!-- convert betha for external objects: betha_2 - PI/2 -->
+																					<subfunction>
+																						<sub>
+																							<variable>16</variable>
+																							<variable>7</variable>
+																						</sub>
+																					</subfunction>
+																					<if>
+																						<condition>
+																							<lo><!-- alpha < betha -->
+																								<variable>10</variable>
+																								<variable>12</variable>
+																							</lo>
+																						</condition>
+																						<!-- alpha befor betha -> draw circle part from alpha to betha -->
+																						<obj identifier="3"><!-- draw upper left part of circle border -->
+																							<vector type="externObjectInput">
+																								<variable>1</variable>
+																								<variable>2</variable>
+																								<variable>3</variable>
+																								<variable>4</variable>
+																								<variable>17</variable>
+																								<variable>18</variable>
+																							</vector>
+																							<subobject>
+																								<output_variables>
+																									<variable>19</variable>
+																									<variable>20</variable>
+																									<variable>21</variable>
+																								</output_variables>
+																								<subobject number="1">
+																									<vector type="externSubobject">
+																										<variable>19</variable>
+																										<variable>20</variable>
+																										<variable>21</variable>
+																									</vector>
+																								</subobject>
+																							</subobject>
+																						</obj>
+																						<!-- else betha befor alpha -> draw two circle parts from angle 0 to betha and from angle alpha to PI/2 -->
+																						<list>
+																							<obj identifier="3"><!-- draw upper left part from angle 0 to betha -->
+																								<vector type="externObjectInput">
+																									<variable>1</variable>
+																									<variable>2</variable>
+																									<variable>3</variable>
+																									<variable>4</variable>
+																									<value>0</value>
+																									<variable>18</variable>
+																								</vector>
+																								<subobject>
+																									<output_variables>
+																										<variable>19</variable>
+																										<variable>20</variable>
+																										<variable>21</variable>
+																									</output_variables>
+																									<subobject number="1">
+																										<vector type="externSubobject">
+																											<variable>19</variable>
+																											<variable>20</variable>
+																											<variable>21</variable>
+																										</vector>
+																									</subobject>
+																								</subobject>
+																							</obj>
+																							<obj identifier="3"><!-- draw upper left part of circle border from angle alpha to PI/2 -->
+																								<vector type="externObjectInput">
+																									<variable>1</variable>
+																									<variable>2</variable>
+																									<variable>3</variable>
+																									<variable>4</variable>
+																									<variable>17</variable>
+																									<variable>7</variable>
+																								</vector>
+																								<subobject>
+																									<output_variables>
+																										<variable>19</variable>
+																										<variable>20</variable>
+																										<variable>21</variable>
+																									</output_variables>
+																									<subobject number="1">
+																										<vector type="externSubobject">
+																											<variable>19</variable>
+																											<variable>20</variable>
+																											<variable>21</variable>
+																										</vector>
+																									</subobject>
+																								</subobject>
+																							</obj>
+																						</list>
+																					</if>
+																				</function>
+																				<!-- else just alpha is in part -->
+																				<obj identifier="3"><!-- draw upper left part of circle border from alpha_2 to PI/2 -->
+																					<vector type="externObjectInput">
+																						<variable>1</variable>
+																						<variable>2</variable>
+																						<variable>3</variable>
+																						<variable>4</variable>
+																						<variable>17</variable>
+																						<variable>7</variable>
+																					</vector>
+																					<subobject>
+																						<output_variables>
+																							<variable>18</variable>
+																							<variable>19</variable>
+																							<variable>20</variable>
+																						</output_variables>
+																						<subobject number="1">
+																							<vector type="externSubobject">
+																								<variable>18</variable>
+																								<variable>19</variable>
+																								<variable>20</variable>
+																							</vector>
+																						</subobject>
+																					</subobject>
+																				</obj>
+																			</if>
+																		</function>
+																		<!-- else alpha not in part -->
+																		<if>
+																			<condition><!-- 2/3 PI < betha < 2 PI -->
+																				<lo><!-- PI/2 < betha_2 -->
+																					<variable>7</variable>
+																					<variable>16</variable><!-- betha_2 -->
+																				</lo>
+																			</condition>
+																			<!-- if betha is in part -->
+																			<function define_variable="17"><!-- convert betha for external objects: betha_2 - PI/2 -->
+																				<subfunction>
+																					<sub>
+																						<variable>16</variable>
+																						<variable>7</variable>
+																					</sub>
+																				</subfunction>
+																				<obj identifier="3"><!-- draw upper left part from angle 0 to betha_2 -->
+																					<vector type="externObjectInput">
+																						<variable>1</variable>
+																						<variable>2</variable>
+																						<variable>3</variable>
+																						<variable>4</variable>
+																						<value>0</value>
+																						<variable>17</variable>
+																					</vector>
+																					<subobject>
+																						<output_variables>
+																							<variable>18</variable>
+																							<variable>19</variable>
+																							<variable>20</variable>
+																						</output_variables>
+																						<subobject number="1">
+																							<vector type="externSubobject">
+																								<variable>18</variable>
+																								<variable>19</variable>
+																								<variable>20</variable>
+																							</vector>
+																						</subobject>
+																					</subobject>
+																				</obj>
+																			</function>
+																			<!-- else no angle in part draw wool part or nothing -->
+																			<if>
+																				<condition>
+																					<lo><!-- betha < alpha -->
+																						<variable>12</variable>
+																						<variable>10</variable>
+																					</lo>
+																				</condition>
+																				<!-- draw wool part -->
+																				<obj identifier="1"><!-- draw upper rigth part of circle border -->
+																					<vector type="externObjectInput">
+																						<variable>1</variable>
+																						<variable>2</variable>
+																						<variable>3</variable>
+																						<variable>4</variable>
+																					</vector>
+																					<subobject>
+																						<output_variables>
+																							<variable>17</variable>
+																							<variable>18</variable>
+																							<variable>19</variable>
+																						</output_variables>
+																						<subobject number="1">
+																							<vector type="externSubobject">
+																								<variable>17</variable>
+																								<variable>18</variable>
+																								<variable>19</variable>
+																							</vector>
+																						</subobject>
+																					</subobject>
+																				</obj>
+																				<!-- else draw nothing -->
+																				<point/>
+																			</if>
+																		</if>
+																	</if>
+																	
+																</list>
+															</function>
+														</function>
+													</function>
+												</function>
+											</list>
+										</if>
+									</function>
+								</function>
+							</function>
+						</function>
+					</function>
+				</function>
+			</if>
+		</main_fib_object>
+		
+		<sub_roots>
+			
+			<sub_root identifier="1">
+				<root>
+					<optionalpart>
+						<pair key="description" value="This object represents a upper or lower left circle line part."/>
+						<pair key="inVar1::description" value="position of the center point of the circle in dimension 1 (x)"/>
+						<pair key="inVar2::description" value="position of the center point of the circle in dimension 2 (y)"/>
+						<pair key="inVar3::description" value="size of the radius r; if positiv the upper half will be drawn else the lower half will be drawn"/>
+						<pair key="inVar4::description" value="width of the border line (the border goes from radius r to (r - w); standard value is 1)"/>
+						
+						<pair key="subObj1::description" value="The points of the circle. The subobject is called for every point on the circle border."/>
+						<pair key="subObj1::outVar1::description" value="the position of the circle point in dimension 1 (x)"/>
+						<pair key="subObj1::outVar2::description" value="the position of the circle point in dimension 2 (y)"/>
+					</optionalpart>
+					<input_variables>
+						<variable number="1" default="0"/>
+						<variable number="2" default="0"/>
+						<variable number="3" default="0"/>
+						<variable number="4" default="1"/>
+					</input_variables>
+					<domains>
+						<inVar number="1">
+							<domainReference subdomain="1">
+								<dim count="2">
+									<dimension number="1" direction="anywhere"/>
+									<dimension number="2" direction="anywhere"/>
+								</dim>
+							</domainReference>
+						</inVar>
+						<inVar number="2">
+							<domainReference subdomain="2">
+								<dim count="2">
+									<dimension number="1" direction="anywhere"/>
+									<dimension number="2" direction="anywhere"/>
+								</dim>
+							</domainReference>
+						</inVar>
+						<externSubobject number="1">
+							<vector elements="3">
+								<!-- actually any numbers are possible;
+									the next lines are just a space holder -->
+								<naturalNumberB bit="0" />
+								<naturalNumberB bit="0" />
+								<naturalNumberB bit="0" />
+							</vector>
+						</externSubobject>
+						
+						<externObject>
+							<vector elements="4">
+								<integer min="-469" max="-469" /><!--Identifier-->
+								<integer min="6" max="6" /><!--number input values-->
+								<naturalNumber max="1" /><!--number subobjects-->
+								<naturalNumber max="3" /><!--number output values-->
+							</vector>
+						</externObject>
+						<externObjectInput identifier="-469">
+							<vector elements="6">
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+							</vector>
+						</externObjectInput>
+						<subfunction>
+							<integer scalingfactor="0.5" min="-2" max="4"/>
+						</subfunction>
+					</domains>
+					<main_fib_object>
+						<function define_variable="5"><!-- evalue inner circle radius ri -->
+							<subfunction> <!-- if border width w is bigger than the radius r -> set inner circle radius ri to 0 -->
+								<if>
+									<lo><!-- if radius is positiv -->
+										<value>0</value>
+										<variable>3</variable>
+									</lo>
+									<!-- if radius is positiv -->
+									<if>
+										<lo><!-- if radius is smaaler than line width -->
+											<variable>3</variable>
+											<variable>4</variable>
+										</lo>
+										<!-- set border width to radius r -->
+										<value>0</value>
+										<!-- else use given border width w and evalue ri = r - w -->
+										<sub>
+											<variable>3</variable>
+											<variable>4</variable>
+										</sub>
+									</if>
+									<!-- else if radius is negativ -->
+									<if>
+										<lo><!-- if absolut radius is lower width -->
+											<abs>
+												<variable>3</variable>
+											</abs>
+											<variable>4</variable>
+										</lo>
+										<!-- set border width to radius r -->
+										<value>0</value>
+										<!-- else use given border width w and evalue ri = r + w  (r and ri is negativ)-->
+										<add>
+											<variable>3</variable>
+											<variable>4</variable>
+										</add>
+									</if>
+								</if>
+							</subfunction>
+							<function define_variable="6"><!-- evalue start point of circle border in dimension 2 y_s -->
+								<subfunction> <!-- if radius is positiv -> set start point to 0 else to -1 -->
+									<if>
+										<lo><!-- if radius is positiv -->
+											<value>0</value>
+											<variable>3</variable>
+										</lo>
+										<value>0</value>
+										<!-- else set start point to -1 -->
+										<value>-1</value>
+									</if>
+								</subfunction>
+								
+								<area define_variable="7"><!-- for a = y_s ... r -->
+									<vector type="subarea">
+										<variable>6</variable>
+										<variable>3</variable>
+									</vector>
+									<function define_variable="8">
+										<subfunction><!-- b^2 = r^2 - a^2 -->
+											<sub>
+												<exp>
+													<variable>3</variable>
+													<value>2</value>
+												</exp>
+												<exp>
+													<variable>7</variable>
+													<value>2</value>
+												</exp>
+											</sub>
+										</subfunction>
+										<function define_variable="9"><!-- b = ( r^2 - a^2 )^(1/2) -->
+											<subfunction>
+												<exp>
+													<variable>8</variable>
+													<value>0.5</value>
+												</exp>
+											</subfunction>
+											<function define_variable="10">
+												<subfunction><!-- bi^2 = ri^2 - a^2 -->
+													<sub>
+														<exp>
+															<variable>5</variable>
+															<value>2</value>
+														</exp>
+														<exp>
+															<variable>7</variable>
+															<value>2</value>
+														</exp>
+													</sub>
+												</subfunction>
+												<function define_variable="11">
+													<subfunction><!-- evalue inner border bi -->
+														<if>
+															<lo><!-- a < ri -->
+																<abs>
+																	<variable>7</variable>
+																</abs>
+																<abs>
+																	<variable>5</variable>
+																</abs>
+															</lo>
+															<!-- bi = ( ri^2 - a^2 )^(1/2) -->
+															<exp>
+																<variable>10</variable>
+																<value>0.5</value>
+															</exp>
+															<!-- else no inner border set bi to 0 -->
+															<value>0</value>
+														</if>
+													</subfunction>
+													<function define_variable="12">
+														<subfunction><!-- y_r = y + a -->
+															<add>
+																<variable>2</variable>
+																<variable>7</variable>
+															</add>
+														</subfunction>
+														
+														<!-- left half -->
+														<function define_variable="13">
+															<subfunction><!-- x_min = x - b -->
+																<sub>
+																	<variable>1</variable>
+																	<variable>9</variable>
+																</sub>
+															</subfunction>
+															<function define_variable="14">
+																<!-- x_max = x - ( r^2 - (a + 1)^2 )^(1/2) = x - (b^2 - 2a - 1)^(1/2) -->
+																<subfunction>
+																	<sub>
+																		<variable>1</variable>
+																		<exp>
+																			<sub>
+																				<sub>
+																					<variable>8</variable>
+																					<mult>
+																						<value>2</value>
+																						<variable>7</variable>
+																					</mult>
+																				</sub>
+																				<value>1</value>
+																			</sub>
+																			<value>0.5</value>
+																		</exp>
+																	</sub>
+																</subfunction>
+																
+																<function define_variable="15">
+																	<subfunction><!-- xi_min = x - bi -->
+																		<sub>
+																			<variable>1</variable>
+																			<variable>11</variable>
+																		</sub>
+																	</subfunction>
+																	<function define_variable="16">
+																		<subfunction><!-- xi_max = x - ( ri^2 - (a + 1)^2 )^(1/2) = x - (bi^2 - 2a - 1)^(1/2) -->
+																			<if>
+																				<lo><!-- a + 1 < ri -->
+																					<abs>
+																						<add>
+																							<variable>7</variable>
+																							<value>1</value>
+																						</add>
+																					</abs>
+																					<abs>
+																						<variable>5</variable>
+																					</abs>
+																				</lo>
+																				<sub>
+																					<variable>1</variable>
+																					<exp>
+																						<sub>
+																							<sub>
+																								<variable>10</variable>
+																								<mult>
+																									<value>2</value>
+																									<variable>7</variable>
+																								</mult>
+																							</sub>
+																							<value>1</value>
+																						</sub>
+																						<value>0.5</value>
+																					</exp>
+																				</sub>
+																				<!-- else x -->
+																				<variable>1</variable>
+																			</if>
+																		</subfunction>
+																		
+																		<!-- evalue parameters of border tangents -->
+																		<function define_variable="17">
+																			<subfunction><!-- evalue slope outer border: a_1 = (x_max - x_min) -->
+																				<sub>
+																					<variable>14</variable>
+																					<variable>13</variable>
+																				</sub>
+																			</subfunction>
+																			<function define_variable="18">
+																				<!-- evalue zero point outer border: a_0 = x_min - y_r * a_1 -->
+																				<subfunction>
+																					<sub>
+																						<variable>13</variable>
+																						<mult>
+																							<variable>12</variable>
+																							<variable>17</variable>
+																						</mult>
+																					</sub>
+																				</subfunction>
+																				<function define_variable="19">
+																					<subfunction><!-- evalue slope outer border: b_1 = (xi_max - xi_min) -->
+																						<sub>
+																							<variable>16</variable>
+																							<variable>15</variable>
+																						</sub>
+																					</subfunction>
+																					<function define_variable="20">
+																						<!-- evalue zero point inner border: b_0 = xi_min - y_r * b_1 -->
+																						<subfunction>
+																							<sub>
+																								<variable>15</variable>
+																								<mult>
+																									<variable>12</variable>
+																									<variable>19</variable>
+																								</mult>
+																							</sub>
+																						</subfunction>
+																						
+																						<obj identifier="-469">
+																							<vector type="externObjectInput">
+																								<variable>12</variable>
+																								<variable>12</variable>
+																								<variable>18</variable>
+																								<variable>17</variable>
+																								<variable>20</variable>
+																								<variable>19</variable>
+																							</vector>
+																							<subobject>
+																								<output_variables>
+																									<variable>21</variable>
+																									<variable>22</variable>
+																									<variable>23</variable>
+																								</output_variables>
+																								<subobject number="1">
+																									<vector type="externSubobject">
+																										<variable>22</variable>
+																										<variable>21</variable>
+																										<variable>23</variable>
+																									</vector>
+																								</subobject>
+																							</subobject>
+																						</obj>
+																						
+																					</function>
+																				</function>
+																			</function>
+																		</function>
+																	</function>
+																</function>
+															</function>
+														</function>
+													</function>
+												</function>
+											</function>
+										</function>
+									</function>
+								</area>
+							</function>
+						</function>
+					</main_fib_object>
+				</root>
+			</sub_root>
+		
+			<sub_root identifier="2">
+				<root>
+					<optionalpart>
+						<pair key="description" value="This object represents a upper or lower rigth circle line part."/>
+						<pair key="inVar1::description" value="position of the center point of the circle in dimension 1 (x)"/>
+						<pair key="inVar2::description" value="position of the center point of the circle in dimension 2 (y)"/>
+						<pair key="inVar3::description" value="size of the radius r; if positiv the upper half will be drawn else the lower half will be drawn"/>
+						<pair key="inVar4::description" value="width of the border line (the border goes from radius r to (r - w); standard value is 1)"/>
+						
+						<pair key="subObj1::description" value="The points of the circle. The subobject is called for every point on the circle border."/>
+						<pair key="subObj1::outVar1::description" value="the position of the circle point in dimension 1 (x)"/>
+						<pair key="subObj1::outVar2::description" value="the position of the circle point in dimension 2 (y)"/>
+					</optionalpart>
+					<input_variables>
+						<variable number="1" default="0"/>
+						<variable number="2" default="0"/>
+						<variable number="3" default="0"/>
+						<variable number="4" default="1"/>
+					</input_variables>
+					<domains>
+						<inVar number="1">
+							<domainReference subdomain="1">
+								<dim count="2">
+									<dimension number="1" direction="anywhere"/>
+									<dimension number="2" direction="anywhere"/>
+								</dim>
+							</domainReference>
+						</inVar>
+						<inVar number="2">
+							<domainReference subdomain="2">
+								<dim count="2">
+									<dimension number="1" direction="anywhere"/>
+									<dimension number="2" direction="anywhere"/>
+								</dim>
+							</domainReference>
+						</inVar>
+						<externSubobject number="1">
+							<vector elements="3">
+								<!-- actually any numbers are possible;
+									the next lines are just a space holder -->
+								<naturalNumberB bit="0" />
+								<naturalNumberB bit="0" />
+								<naturalNumberB bit="0" />
+							</vector>
+						</externSubobject>
+						
+						<externObject>
+							<vector elements="4">
+								<integer min="-469" max="-469" /><!--Identifier-->
+								<integer min="6" max="6" /><!--number input values-->
+								<naturalNumber max="1" /><!--number subobjects-->
+								<naturalNumber max="3" /><!--number output values-->
+							</vector>
+						</externObject>
+						<externObjectInput identifier="-469">
+							<vector elements="6">
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+							</vector>
+						</externObjectInput>
+						<subfunction>
+							<integer scalingfactor="0.5" min="-2" max="4"/>
+						</subfunction>
+					</domains>
+					<main_fib_object>
+						<function define_variable="5"><!-- evalue inner circle radius ri -->
+							<subfunction> <!-- if border width w is bigger than the radius r -> set inner circle radius ri to 0 -->
+								<if>
+									<lo><!-- if radius is positiv -->
+										<value>0</value>
+										<variable>3</variable>
+									</lo>
+									<!-- if radius is positiv -->
+									<if>
+										<lo><!-- if radius is smaaler than line width -->
+											<variable>3</variable>
+											<variable>4</variable>
+										</lo>
+										<!-- set border width to radius r -->
+										<value>0</value>
+										<!-- else use given border width w and evalue ri = r - w -->
+										<sub>
+											<variable>3</variable>
+											<variable>4</variable>
+										</sub>
+									</if>
+									<!-- else if radius is negativ -->
+									<if>
+										<lo><!-- if absolut radius is lower width -->
+											<abs>
+												<variable>3</variable>
+											</abs>
+											<variable>4</variable>
+										</lo>
+										<!-- set border width to radius r -->
+										<value>0</value>
+										<!-- else use given border width w and evalue ri = r + w  (r and ri is negativ)-->
+										<add>
+											<variable>3</variable>
+											<variable>4</variable>
+										</add>
+									</if>
+								</if>
+							</subfunction>
+							<function define_variable="6"><!-- evalue start point of circle border in dimension 2 y_s -->
+								<subfunction> <!-- if radius is positiv -> set start point to 0 else to -1 -->
+									<if>
+										<lo><!-- if radius is positiv -->
+											<value>0</value>
+											<variable>3</variable>
+										</lo>
+										<value>0</value>
+										<!-- else set start point to -1 -->
+										<value>-1</value>
+									</if>
+								</subfunction>
+								
+								<area define_variable="7"><!-- for a = y_s ... r -->
+									<vector type="subarea">
+										<variable>6</variable>
+										<variable>3</variable>
+									</vector>
+									<function define_variable="8">
+										<subfunction><!-- b^2 = r^2 - a^2 -->
+											<sub>
+												<exp>
+													<variable>3</variable>
+													<value>2</value>
+												</exp>
+												<exp>
+													<variable>7</variable>
+													<value>2</value>
+												</exp>
+											</sub>
+										</subfunction>
+										<function define_variable="9"><!-- b = ( r^2 - a^2 )^(1/2) -->
+											<subfunction>
+												<exp>
+													<variable>8</variable>
+													<value>0.5</value>
+												</exp>
+											</subfunction>
+											<function define_variable="10">
+												<subfunction><!-- bi^2 = ri^2 - a^2 -->
+													<sub>
+														<exp>
+															<variable>5</variable>
+															<value>2</value>
+														</exp>
+														<exp>
+															<variable>7</variable>
+															<value>2</value>
+														</exp>
+													</sub>
+												</subfunction>
+												<function define_variable="11">
+													<subfunction><!-- evalue inner border bi -->
+														<if>
+															<lo><!-- a < ri -->
+																<abs>
+																	<variable>7</variable>
+																</abs>
+																<abs>
+																	<variable>5</variable>
+																</abs>
+															</lo>
+															<!-- bi = ( ri^2 - a^2 )^(1/2) -->
+															<exp>
+																<variable>10</variable>
+																<value>0.5</value>
+															</exp>
+															<!-- else no inner border set bi to 0 -->
+															<value>0</value>
+														</if>
+													</subfunction>
+													<function define_variable="12">
+														<subfunction><!-- y_r = y + a -->
+															<add>
+																<variable>2</variable>
+																<variable>7</variable>
+															</add>
+														</subfunction>
+														
+														<!-- left half -->
+														<function define_variable="13">
+															<subfunction><!-- x_min = x + b -->
+																<add>
+																	<variable>1</variable>
+																	<variable>9</variable>
+																</add>
+															</subfunction>
+															<function define_variable="14">
+																<!-- x_max = x + ( r^2 - (a + 1)^2 )^(1/2) = x + (b^2 - 2a - 1)^(1/2) -->
+																<subfunction>
+																	<add>
+																		<variable>1</variable>
+																		<exp>
+																			<sub>
+																				<sub>
+																					<variable>8</variable>
+																					<mult>
+																						<value>2</value>
+																						<variable>7</variable>
+																					</mult>
+																				</sub>
+																				<value>1</value>
+																			</sub>
+																			<value>0.5</value>
+																		</exp>
+																	</add>
+																</subfunction>
+																
+																<function define_variable="15">
+																	<subfunction><!-- xi_min = x + bi -->
+																		<add>
+																			<variable>1</variable>
+																			<variable>11</variable>
+																		</add>
+																	</subfunction>
+																	<function define_variable="16">
+																		<subfunction><!-- xi_max = x + ( ri^2 - (a + 1)^2 )^(1/2) = x + (bi^2 - 2a - 1)^(1/2) -->
+																			<if>
+																				<lo><!-- a + 1 < ri -->
+																					<abs>
+																						<add>
+																							<variable>7</variable>
+																							<value>1</value>
+																						</add>
+																					</abs>
+																					<abs>
+																						<variable>5</variable>
+																					</abs>
+																				</lo>
+																				<add>
+																					<variable>1</variable>
+																					<exp>
+																						<sub>
+																							<sub>
+																								<variable>10</variable>
+																								<mult>
+																									<value>2</value>
+																									<variable>7</variable>
+																								</mult>
+																							</sub>
+																							<value>1</value>
+																						</sub>
+																						<value>0.5</value>
+																					</exp>
+																				</add>
+																				<!-- else x -->
+																				<variable>1</variable>
+																			</if>
+																		</subfunction>
+																		
+																		<!-- evalue parameters of border tangents -->
+																		<function define_variable="17">
+																			<subfunction><!-- evalue slope outer border: a_1 = (x_max - x_min) -->
+																				<sub>
+																					<variable>14</variable>
+																					<variable>13</variable>
+																				</sub>
+																			</subfunction>
+																			<function define_variable="18">
+																				<!-- evalue zero point outer border: a_0 = x_min - y_r * a_1 -->
+																				<subfunction>
+																					<sub>
+																						<variable>13</variable>
+																						<mult>
+																							<variable>12</variable>
+																							<variable>17</variable>
+																						</mult>
+																					</sub>
+																				</subfunction>
+																				<function define_variable="19">
+																					<subfunction><!-- evalue slope outer border: b_1 = (xi_max - xi_min) -->
+																						<sub>
+																							<variable>16</variable>
+																							<variable>15</variable>
+																						</sub>
+																					</subfunction>
+																					<function define_variable="20">
+																						<subfunction><!-- evalue zero point inner border: b_0 = xi_min - y_r * b_1 -->
+																							<sub>
+																								<variable>15</variable>
+																								<mult>
+																									<variable>12</variable>
+																									<variable>19</variable>
+																								</mult>
+																							</sub>
+																						</subfunction>
+																						
+																						<obj identifier="-469">
+																							<vector type="externObjectInput">
+																								<variable>12</variable>
+																								<variable>12</variable>
+																								<variable>20</variable>
+																								<variable>19</variable>
+																								<variable>18</variable>
+																								<variable>17</variable>
+																							</vector>
+																							<subobject>
+																								<output_variables>
+																									<variable>21</variable>
+																									<variable>22</variable>
+																									<variable>23</variable>
+																								</output_variables>
+																								<subobject number="1">
+																									<vector type="externSubobject">
+																										<variable>22</variable>
+																										<variable>21</variable>
+																										<variable>23</variable>
+																									</vector>
+																								</subobject>
+																							</subobject>
+																						</obj>
+																						
+																					</function>
+																				</function>
+																			</function>
+																		</function>
+																	</function>
+																</function>
+															</function>
+														</function>
+													</function>
+												</function>
+											</function>
+										</function>
+									</function>
+								</area>
+							</function>
+						</function>
+					</main_fib_object>
+				</root>
+			</sub_root>
+		
+		
+			<sub_root identifier="3">
+				<root>
+					<optionalpart>
+						<pair key="description" value="This object represents a upper or lower left circle line part slice."/>
+						<pair key="inVar1::description" value="position of the center point of the circle in dimension 1 (x)"/>
+						<pair key="inVar2::description" value="position of the center point of the circle in dimension 2 (y)"/>
+						<pair key="inVar3::description" value="size of the radius r; if positiv the upper half will be drawn else the lower half will be drawn"/>
+						<pair key="inVar4::description" value="width of the border line (the border goes from radius r to (r - w); standard value is 1)"/>
+						<pair key="inVar5::description" value="the angle alpha (from the x axis) of the first border (not 0 and betwean -PI/2 and PI/2)"/>
+						<pair key="inVar6::description" value="the angle betha (from the x axis) of the second border (not 0 and betwean -PI/2 and PI/2; it have to be more rigth ( greater first dimension values ) than the first border)"/>
+						
+						<pair key="subObj1::description" value="The points of the circle. The subobject is called for every point on the circle border."/>
+						<pair key="subObj1::outVar1::description" value="the position of the circle point in dimension 1 (x)"/>
+						<pair key="subObj1::outVar2::description" value="the position of the circle point in dimension 2 (y)"/>
+					</optionalpart>
+					<input_variables>
+						<variable number="1" default="0"/>
+						<variable number="2" default="0"/>
+						<variable number="3" default="0"/>
+						<variable number="4" default="1"/>
+						<variable number="5" default="0"/>
+						<variable number="6" default="0"/>
+					</input_variables>
+					<domains>
+						<inVar number="1">
+							<domainReference subdomain="1">
+								<dim count="2">
+									<dimension number="1" direction="anywhere"/>
+									<dimension number="2" direction="anywhere"/>
+								</dim>
+							</domainReference>
+						</inVar>
+						<inVar number="2">
+							<domainReference subdomain="2">
+								<dim count="2">
+									<dimension number="1" direction="anywhere"/>
+									<dimension number="2" direction="anywhere"/>
+								</dim>
+							</domainReference>
+						</inVar>
+						<externSubobject number="1">
+							<vector elements="3">
+								<!-- actually any numbers are possible;
+									the next lines are just a space holder -->
+								<naturalNumberB bit="0" />
+								<naturalNumberB bit="0" />
+								<naturalNumberB bit="0" />
+							</vector>
+						</externSubobject>
+						
+						<externObject>
+							<vector elements="4">
+								<integer min="-469" max="-469" /><!--Identifier-->
+								<integer min="6" max="6" /><!--number input values-->
+								<naturalNumber max="1" /><!--number subobjects-->
+								<naturalNumber max="3" /><!--number output values-->
+							</vector>
+						</externObject>
+						<externObjectInput identifier="-469">
+							<vector elements="6">
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+							</vector>
+						</externObjectInput>
+						<subfunction>
+							<integer scalingfactor="0.25" min="-4" max="8"/>
+						</subfunction>
+					</domains>
+					<main_fib_object>
+						<function define_variable="7"><!-- evalue PI/2 = arcsin 1 -->
+							<subfunction>
+								<arcsin><value>1</value></arcsin>
+							</subfunction>
+							<function define_variable="8">
+								<subfunction><!-- abs( r ) -->
+									<abs><variable>3</variable></abs>
+								</subfunction>
+								<function define_variable="9"><!-- evalue inner circle radius ri -->
+									<subfunction> <!-- if border width w is bigger than the radius r -> set inner circle radius ri to 0 -->
+										<if>
+											<lo><!-- if radius is smaaler than line width -->
+												<variable>8</variable>
+												<variable>4</variable>
+											</lo>
+											<!-- set border width to radius r -->
+											<value>0</value>
+											<!-- else use given border width w and evalue ri = r - w -->
+											<sub>
+												<variable>8</variable>
+												<variable>4</variable>
+											</sub>
+										</if>
+									</subfunction>
+									
+									<function define_variable="10"><!-- evalue intersection first border line and circle (radius r) -->
+										<subfunction> <!-- y_1 = ri * sin( alpha )  -->
+											<mult>
+												<variable>9</variable>
+												<sin>
+													<variable>5</variable>
+												</sin>
+											</mult>
+										</subfunction>
+										<function define_variable="11"><!-- evalue intersection first border line and inner circle (radius ri) -->
+											<subfunction> <!-- y_2 = r * sin( alpha )  -->
+												<mult>
+													<variable>8</variable>
+													<sin>
+														<variable>5</variable>
+													</sin>
+												</mult>
+											</subfunction>
+											<function define_variable="12"><!-- evalue intersection second border line and circle (radius r) -->
+												<subfunction> <!-- y_3 = ri * sin( betha )  -->
+													<mult>
+														<variable>9</variable>
+														<sin>
+															<variable>6</variable>
+														</sin>
+													</mult>
+												</subfunction>
+												<function define_variable="13"><!-- evalue intersection second border line and inner circle (radius ri) -->
+													<subfunction> <!-- y_4 = y_s = r * sin( betha ) -->
+														<mult>
+															<variable>8</variable>
+															<sin>
+																<variable>6</variable>
+															</sin>
+														</mult>
+													</subfunction>
+												
+													<if>
+														<condition>
+															<lo><!-- if radius is positiv -->
+																<value>0</value>
+																<variable>3</variable>
+															</lo>
+														</condition>
+														<function define_variable="14"><!-- the slope s_1 of the first border (in y direction, x more per 1 y), s_1 = -1 / tan alpha -->
+															<subfunction><!-- s_1 = -1 / tan( alpha ) = -cos( alpha ) / sin( alpha ) = 0 - sin( PI/2 - alpha ) / sin( alpha ) -->
+																<sub>
+																	<value>0</value>
+																	<div>
+																		<sin> <sub>
+																				<variable>7</variable>
+																				<variable>5</variable>
+																			</sub> </sin>
+																		<sin><variable>5</variable></sin>
+																	</div>
+																</sub>
+															</subfunction>
+															<function define_variable="15"><!-- evalue zero point of first border -->
+																<subfunction><!-- z_1 = x - y * s_1  -->
+																	<sub>
+																		<variable>1</variable>
+																		<mult>
+																			<variable>2</variable>
+																			<variable>14</variable>
+																		</mult>
+																	</sub>
+																</subfunction>
+																<function define_variable="16"><!-- the slope s_2 of the second border (in x direction, y more per 1 x), s_2 = -1 / tan betha -->
+																	<subfunction><!-- s_2 = -1 / tan( betha ) = -cos( betha ) / sin( betha ) = 0 - sin( PI/2 - betha ) / sin( betha ) -->
+																		<sub>
+																			<value>0</value>
+																			<div>
+																				<sin> <sub>
+																						<variable>7</variable>
+																						<variable>6</variable>
+																					</sub> </sin>
+																				<sin><variable>6</variable></sin>
+																			</div>
+																		</sub>
+																	</subfunction>
+																	<function define_variable="17"><!-- evalue zero point of second border -->
+																		<subfunction><!-- z_2 = x - y * s_2  -->
+																			<sub>
+																				<variable>1</variable>
+																				<mult>
+																					<variable>2</variable>
+																					<variable>16</variable>
+																				</mult>
+																			</sub>
+																		</subfunction>
+																		<list>
+																			<!-- if existing draw part betwean first border and inner circle -->
+																			<function define_variable="18">
+																				<subfunction> <!-- min( y_2, y_3 ) - 1 -->
+																					<sub>
+																						<min>
+																							<variable>11</variable>
+																							<variable>12</variable>
+																						</min>
+																						<value>1</value>
+																					</sub>
+																				</subfunction>
+																				<if>
+																					<condition>
+																						<lo><!-- if y_1 < (min( y_2, y_3 ) - 1) -->
+																							<variable>10</variable>
+																							<variable>18</variable>
+																						</lo>
+																					</condition>
+																					<!-- draw part form y_1 to (min( y_2, y_3 ) - 1) -->
+																					<area define_variable="19"><!-- for a = y_1 ... (min( y_2, y_3 ) - 1) -->
+																						<vector type="subarea">
+																							<variable>10</variable>
+																							<variable>18</variable>
+																						</vector>
+																						
+																						<!-- evalue slope of inner circle border -->
+																						<function define_variable="20">
+																							<subfunction><!-- bi^2 = ri^2 - a^2 -->
+																								<sub>
+																									<exp>
+																										<variable>9</variable>
+																										<value>2</value>
+																									</exp>
+																									<exp>
+																										<variable>19</variable>
+																										<value>2</value>
+																									</exp>
+																								</sub>
+																							</subfunction>
+																							<function define_variable="21">
+																								<subfunction><!-- evalue inner border bi -->
+																									<if>
+																										<lo><!-- a < ri -->
+																											<variable>19</variable>
+																											<variable>9</variable>
+																										</lo>
+																										<!-- bi = ( ri^2 - a^2 )^(1/2) -->
+																										<exp>
+																											<variable>20</variable>
+																											<value>0.5</value>
+																										</exp>
+																										<!-- else no inner border set bi to 0 -->
+																										<value>0</value>
+																									</if>
+																								</subfunction>
+																								<function define_variable="22">
+																									<subfunction><!-- y_r = y + a -->
+																										<add>
+																											<variable>2</variable>
+																											<variable>19</variable>
+																										</add>
+																									</subfunction>
+																									<function define_variable="23">
+																										<subfunction><!-- xi_min = x - bi -->
+																											<sub>
+																												<variable>1</variable>
+																												<variable>21</variable>
+																											</sub>
+																										</subfunction>
+																										<function define_variable="24">
+																											<subfunction><!-- xi_max = x - ( ri^2 - (a + 1)^2 )^(1/2) = x - (bi^2 - 2a - 1)^(1/2) -->
+																												<if>
+																													<lo><!-- a + 1 < ri -->
+																														<abs>
+																															<add>
+																																<variable>19</variable>
+																																<value>1</value>
+																															</add>
+																														</abs>
+																														<abs>
+																															<variable>9</variable>
+																														</abs>
+																													</lo>
+																													<sub>
+																														<variable>1</variable>
+																														<exp>
+																															<sub>
+																																<sub>
+																																	<variable>20</variable>
+																																	<mult>
+																																		<value>2</value>
+																																		<variable>19</variable>
+																																	</mult>
+																																</sub>
+																																<value>1</value>
+																															</sub>
+																															<value>0.5</value>
+																														</exp>
+																													</sub>
+																													<!-- else x -->
+																													<variable>0</variable>
+																												</if>
+																											</subfunction>
+																											<function define_variable="25">
+																												<subfunction><!-- evalue slope outer border: b_1 = (xi_max - xi_min) -->
+																													<sub>
+																														<variable>24</variable>
+																														<variable>23</variable>
+																													</sub>
+																												</subfunction>
+																												<function define_variable="26">
+																													<subfunction><!-- evalue zero point inner border: b_0 = xi_min - y_r * b_1 -->
+																														<sub>
+																															<variable>23</variable>
+																															<mult>
+																																<variable>22</variable>
+																																<variable>25</variable>
+																															</mult>
+																														</sub>
+																													</subfunction>
+																													
+																													<obj identifier="-469">
+																														<vector type="externObjectInput">
+																															<variable>22</variable>
+																															<variable>22</variable>
+																															<variable>15</variable>
+																															<variable>14</variable>
+																															<variable>26</variable>
+																															<variable>25</variable>
+																														</vector>
+																														<subobject>
+																															<output_variables>
+																																<variable>27</variable>
+																																<variable>28</variable>
+																																<variable>29</variable>
+																															</output_variables>
+																															<subobject number="1">
+																																<vector type="externSubobject">
+																																	<variable>28</variable>
+																																	<variable>27</variable>
+																																	<variable>29</variable>
+																																</vector>
+																															</subobject>
+																														</subobject>
+																													</obj>
+																												</function>
+																											</function>
+																										</function>
+																									</function>
+																								</function>
+																							</function>
+																						</function>
+																					</area>
+																					<!-- else do nothing -->
+																					<point/>
+																				</if>
+																			</function>
+																			
+																			<!-- TODO debugging -->
+																			
+																			<if>
+																				<condition>
+																					<lo><!-- if y_2 < y_3 -->
+																						<variable>11</variable>
+																						<variable>12</variable>
+																					</lo>
+																				</condition>
+																				<!-- if existing draw part betwean inner circle and outer circle -->
+																				<function define_variable="18">
+																					<subfunction><!-- y_3' = y_3 - 1 -->
+																						<sub>
+																							<variable>12</variable>
+																							<value>1</value>
+																						</sub>
+																					</subfunction>
+																					<area define_variable="19"><!-- for a = y_2 ... y_3' -->
+																						<vector type="subarea">
+																							<variable>11</variable>
+																							<variable>18</variable>
+																						</vector>
+																						<function define_variable="20">
+																							<subfunction><!-- b^2 = r^2 - a^2 -->
+																								<sub>
+																									<exp>
+																										<variable>3</variable>
+																										<value>2</value>
+																									</exp>
+																									<exp>
+																										<variable>19</variable>
+																										<value>2</value>
+																									</exp>
+																								</sub>
+																							</subfunction>
+																							<function define_variable="21"><!-- b = ( r^2 - a^2 )^(1/2) -->
+																								<subfunction>
+																									<exp>
+																										<variable>20</variable>
+																										<value>0.5</value>
+																									</exp>
+																								</subfunction>
+																								<function define_variable="22">
+																									<subfunction><!-- bi^2 = ri^2 - a^2 -->
+																										<sub>
+																											<exp>
+																												<variable>9</variable>
+																												<value>2</value>
+																											</exp>
+																											<exp>
+																												<variable>19</variable>
+																												<value>2</value>
+																											</exp>
+																										</sub>
+																									</subfunction>
+																									<function define_variable="23">
+																										<subfunction><!-- evalue inner border bi -->
+																											<if>
+																												<lo><!-- a < ri -->
+																													<abs>
+																														<variable>19</variable>
+																													</abs>
+																													<abs>
+																														<variable>9</variable>
+																													</abs>
+																												</lo>
+																												<!-- bi = ( ri^2 - a^2 )^(1/2) -->
+																												<exp>
+																													<variable>22</variable>
+																													<value>0.5</value>
+																												</exp>
+																												<!-- else no inner border set bi to 0 -->
+																												<value>0</value>
+																											</if>
+																										</subfunction>
+																										<function define_variable="24">
+																											<subfunction><!-- y_r = y + a -->
+																												<add>
+																													<variable>2</variable>
+																													<variable>19</variable>
+																												</add>
+																											</subfunction>
+																											
+																											<!-- left half -->
+																											<function define_variable="25">
+																												<subfunction><!-- x_min = x - b -->
+																													<sub>
+																														<variable>1</variable>
+																														<variable>21</variable>
+																													</sub>
+																												</subfunction>
+																												<function define_variable="26">
+																													<!-- x_max = x - ( r^2 - (a + 1)^2 )^(1/2) = x - (b^2 - 2a - 1)^(1/2) -->
+																													<subfunction>
+																														<sub>
+																															<variable>1</variable>
+																															<exp>
+																																<sub>
+																																	<sub>
+																																		<variable>20</variable>
+																																		<mult>
+																																			<value>2</value>
+																																			<variable>19</variable>
+																																		</mult>
+																																	</sub>
+																																	<value>1</value>
+																																</sub>
+																																<value>0.5</value>
+																															</exp>
+																														</sub>
+																													</subfunction>
+																												
+																													<function define_variable="27">
+																														<subfunction><!-- xi_min = x - bi -->
+																															<sub>
+																																<variable>1</variable>
+																																<variable>23</variable>
+																															</sub>
+																														</subfunction>
+																														<function define_variable="28">
+																															<subfunction><!-- xi_max = x - ( ri^2 - (a + 1)^2 )^(1/2) = x - (bi^2 - 2a - 1)^(1/2) -->
+																																<if>
+																																	<lo><!-- a + 1 < ri -->
+																																		<abs>
+																																			<add>
+																																				<variable>19</variable>
+																																				<value>1</value>
+																																			</add>
+																																		</abs>
+																																		<abs>
+																																			<variable>9</variable>
+																																		</abs>
+																																	</lo>
+																																	<sub>
+																																		<variable>1</variable>
+																																		<exp>
+																																			<sub>
+																																				<sub>
+																																					<variable>22</variable>
+																																					<mult>
+																																						<value>2</value>
+																																						<variable>19</variable>
+																																					</mult>
+																																				</sub>
+																																				<value>1</value>
+																																			</sub>
+																																			<value>0.5</value>
+																																		</exp>
+																																	</sub>
+																																	<!-- else x -->
+																																	<variable>1</variable>
+																																</if>
+																															</subfunction>
+																															
+																															<!-- evalue parameters of border tangents -->
+																															<function define_variable="29">
+																																<subfunction><!-- evalue slope outer border: a_1 = (x_max - x_min) -->
+																																	<sub>
+																																		<variable>26</variable>
+																																		<variable>25</variable>
+																																	</sub>
+																																</subfunction>
+																																<function define_variable="30">
+																																	<subfunction><!-- evalue zero point outer border: a_0 = x_min - y_r * a_1 -->
+																																		<sub>
+																																			<variable>25</variable>
+																																			<mult>
+																																				<variable>24</variable>
+																																				<variable>29</variable>
+																																			</mult>
+																																		</sub>
+																																	</subfunction>
+																																	<function define_variable="31">
+																																		<subfunction><!-- evalue slope outer border: b_1 = (xi_max - xi_min) -->
+																																			<sub>
+																																				<variable>28</variable>
+																																				<variable>27</variable>
+																																			</sub>
+																																		</subfunction>
+																																		<function define_variable="32">
+																																			<subfunction><!-- evalue zero point inner border: b_0 = xi_min - y_r * b_1 -->
+																																				<sub>
+																																					<variable>27</variable>
+																																					<mult>
+																																						<variable>24</variable>
+																																						<variable>31</variable>
+																																					</mult>
+																																				</sub>
+																																			</subfunction>
+																																			
+																																			<obj identifier="-469">
+																																				<vector type="externObjectInput">
+																																					<variable>24</variable>
+																																					<variable>24</variable>
+																																					<variable>30</variable>
+																																					<variable>29</variable>
+																																					<variable>32</variable>
+																																					<variable>31</variable>
+																																				</vector>
+																																				<subobject>
+																																					<output_variables>
+																																						<variable>33</variable>
+																																						<variable>34</variable>
+																																						<variable>35</variable>
+																																					</output_variables>
+																																					<subobject number="1">
+																																						<vector type="externSubobject">
+																																							<variable>34</variable>
+																																							<variable>33</variable>
+																																							<variable>35</variable>
+																																						</vector>
+																																					</subobject>
+																																				</subobject>
+																																			</obj>
+																																		</function>
+																																	</function>
+																																</function>
+																															</function>
+																														</function>
+																													</function>
+																												</function>
+																											</function>
+																										</function>
+																									</function>
+																								</function>
+																							</function>
+																						</function>
+																					</area>
+																				</function>
+																				<!-- else if y_3 <= y_2 draw part betwean first border and second border -->
+																				<function define_variable="18">
+																					<subfunction><!-- y_r = y + y_2 - 1 -->
+																						<sub>
+																							<add>
+																								<variable>2</variable>
+																								<variable>11</variable>
+																							</add>
+																							<value>1</value>
+																						</sub>
+																					</subfunction>
+																					<function define_variable="19">
+																						<subfunction><!-- y_r = y + y_3 -->
+																							<add>
+																								<variable>2</variable>
+																								<variable>12</variable>
+																							</add>
+																						</subfunction>
+																						<obj identifier="-469">
+																							<vector type="externObjectInput">
+																								<variable>18</variable>
+																								<variable>19</variable>
+																								<variable>15</variable>
+																								<variable>14</variable>
+																								<variable>17</variable>
+																								<variable>16</variable>
+																							</vector>
+																							<subobject>
+																								<output_variables>
+																									<variable>20</variable>
+																									<variable>21</variable>
+																									<variable>22</variable>
+																								</output_variables>
+																								<subobject number="1">
+																									<vector type="externSubobject">
+																										<variable>21</variable>
+																										<variable>20</variable>
+																										<variable>22</variable>
+																									</vector>
+																								</subobject>
+																							</subobject>
+																						</obj>
+																					</function>
+																				</function>
+																			</if>
+																			<!-- if existing draw part betwean second border and outer circle -->
+																			<function define_variable="18">
+																				<subfunction> <!-- max( y_2, y_3 ) -->
+																					<max>
+																						<variable>11</variable>
+																						<variable>12</variable>
+																					</max>
+																				</subfunction>
+																				<if>
+																					<condition>
+																						<lo><!-- if max( y_2, y_3 ) < y_4 -->
+																							<variable>18</variable>
+																							<variable>13</variable>
+																						</lo>
+																					</condition>
+																					<!-- draw part form max( y_2, y_3 ) to y_4 -->
+																					<area define_variable="19"><!-- for a = max( y_2, y_3 ) ... y_4 -->
+																						<vector type="subarea">
+																							<variable>18</variable>
+																							<variable>13</variable>
+																						</vector>
+																						
+																						<!-- evalue slope of outer circle border -->
+																						<function define_variable="20">
+																							<subfunction><!-- b^2 = r^2 - a^2 -->
+																								<sub>
+																									<exp>
+																										<variable>3</variable>
+																										<value>2</value>
+																									</exp>
+																									<exp>
+																										<variable>19</variable>
+																										<value>2</value>
+																									</exp>
+																								</sub>
+																							</subfunction>
+																							<function define_variable="21">
+																								<subfunction><!-- evalue outer border b -->
+																									<exp><!-- b = ( r^2 - a^2 )^(1/2) -->
+																										<variable>20</variable>
+																										<value>0.5</value>
+																									</exp>
+																								</subfunction>
+																								<function define_variable="22">
+																									<subfunction><!-- y_r = y + a -->
+																										<add>
+																											<variable>2</variable>
+																											<variable>19</variable>
+																										</add>
+																									</subfunction>
+																									<function define_variable="23">
+																										<subfunction><!-- x_min = x - b -->
+																											<sub>
+																												<variable>1</variable>
+																												<variable>21</variable>
+																											</sub>
+																										</subfunction>
+																										<function define_variable="24">
+																											<subfunction><!-- x_max = x - ( r^2 - (a + 1)^2 )^(1/2) = x - (b^2 - 2a - 1)^(1/2) -->
+																												<if>
+																													<lo><!-- a + 1 < r -->
+																														<abs>
+																															<add>
+																																<variable>19</variable>
+																																<value>1</value>
+																															</add>
+																														</abs>
+																														<abs>
+																															<variable>3</variable>
+																														</abs>
+																													</lo>
+																													<sub>
+																														<variable>1</variable>
+																														<exp>
+																															<sub>
+																																<sub>
+																																	<variable>20</variable>
+																																	<mult>
+																																		<value>2</value>
+																																		<variable>19</variable>
+																																	</mult>
+																																</sub>
+																																<value>1</value>
+																															</sub>
+																															<value>0.5</value>
+																														</exp>
+																													</sub>
+																													<!-- else x -->
+																													<variable>1</variable>
+																												</if>
+																											</subfunction>
+																											<function define_variable="25">
+																												<subfunction><!-- evalue slope outer border: a_1 = (x_max - x_min) -->
+																													<sub>
+																														<variable>24</variable>
+																														<variable>23</variable>
+																													</sub>
+																												</subfunction>
+																												<function define_variable="26">
+																													<subfunction><!-- evalue zero point inner border: a_0 = x_min - y_r * a_1 -->
+																														<sub>
+																															<variable>23</variable>
+																															<mult>
+																																<variable>22</variable>
+																																<variable>25</variable>
+																															</mult>
+																														</sub>
+																													</subfunction>
+																													
+																													<obj identifier="-469">
+																														<vector type="externObjectInput">
+																															<variable>22</variable>
+																															<variable>22</variable>
+																															<variable>26</variable>
+																															<variable>25</variable>
+																															<variable>17</variable>
+																															<variable>16</variable>
+																														</vector>
+																														<subobject>
+																															<output_variables>
+																																<variable>27</variable>
+																																<variable>28</variable>
+																																<variable>29</variable>
+																															</output_variables>
+																															<subobject number="1">
+																																<vector type="externSubobject">
+																																	<variable>28</variable>
+																																	<variable>27</variable>
+																																	<variable>29</variable>
+																																</vector>
+																															</subobject>
+																														</subobject>
+																													</obj>
+																												</function>
+																											</function>
+																										</function>
+																									</function>
+																								</function>
+																							</function>
+																						</function>
+																					</area>
+																					<!-- else do nothing -->
+																					<point/>
+																				</if>
+																			</function>
+																			
+																		</list>
+																	</function>
+																</function>
+															</function>
+														</function>
+														
+													<!--  TODO else if radius is negativ -->
+														<point/>
+													</if>
+												</function>
+											</function>
+										</function>
+									</function>
+								</function>
+							</function>
+						</function>
+					</main_fib_object>
+				</root>
+			</sub_root>
+		
+			<sub_root identifier="4">
+				<root>
+					<optionalpart>
+						<pair key="description" value="This object represents a upper or lower right circle line part slice."/>
+						<pair key="inVar1::description" value="position of the center point of the circle in dimension 1 (x)"/>
+						<pair key="inVar2::description" value="position of the center point of the circle in dimension 2 (y)"/>
+						<pair key="inVar3::description" value="size of the radius r; if positiv the upper half will be drawn else the lower half will be drawn"/>
+						<pair key="inVar4::description" value="width of the border line (the border goes from radius r to (r - w); standard value is 1)"/>
+						<pair key="inVar5::description" value="the angle alpha (from the x axis) of the first border (not 0 and betwean -PI/2 and PI/2)"/>
+						<pair key="inVar6::description" value="the angle betha (from the x axis) of the second border (not 0 and betwean -PI/2 and PI/2; it have to be more left ( smaller first dimension values ) than the first border)"/>
+						
+						<pair key="subObj1::description" value="The points of the circle. The subobject is called for every point on the circle border."/>
+						<pair key="subObj1::outVar1::description" value="the position of the circle point in dimension 1 (x)"/>
+						<pair key="subObj1::outVar2::description" value="the position of the circle point in dimension 2 (y)"/>
+					</optionalpart>
+					<input_variables>
+						<variable number="1" default="0"/>
+						<variable number="2" default="0"/>
+						<variable number="3" default="0"/>
+						<variable number="4" default="1"/>
+						<variable number="5" default="0"/>
+						<variable number="6" default="0"/>
+					</input_variables>
+					<domains>
+						<inVar number="1">
+							<domainReference subdomain="1">
+								<dim count="2">
+									<dimension number="1" direction="anywhere"/>
+									<dimension number="2" direction="anywhere"/>
+								</dim>
+							</domainReference>
+						</inVar>
+						<inVar number="2">
+							<domainReference subdomain="2">
+								<dim count="2">
+									<dimension number="1" direction="anywhere"/>
+									<dimension number="2" direction="anywhere"/>
+								</dim>
+							</domainReference>
+						</inVar>
+						<externSubobject number="1">
+							<vector elements="3">
+								<!-- actually any numbers are possible;
+									the next lines are just a space holder -->
+								<naturalNumberB bit="0" />
+								<naturalNumberB bit="0" />
+								<naturalNumberB bit="0" />
+							</vector>
+						</externSubobject>
+						
+						<externObject>
+							<vector elements="4">
+								<integer min="-469" max="-469" /><!--Identifier-->
+								<integer min="6" max="6" /><!--number input values-->
+								<naturalNumber max="1" /><!--number subobjects-->
+								<naturalNumber max="3" /><!--number output values-->
+							</vector>
+						</externObject>
+						<externObjectInput identifier="-469">
+							<vector elements="6">
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+							</vector>
+						</externObjectInput>
+						<subfunction>
+							<integer scalingfactor="0.25" min="-4" max="8"/>
+						</subfunction>
+					</domains>
+					<main_fib_object>
+						<function define_variable="7"><!-- evalue PI/2 = arcsin 1 -->
+							<subfunction>
+								<arcsin><value>1</value></arcsin>
+							</subfunction>
+							<function define_variable="8">
+								<subfunction><!-- abs( r ) -->
+									<abs><variable>3</variable></abs>
+								</subfunction>
+								<function define_variable="9"><!-- the slope s_1 of the first border (in y direction, x more per 1 y), s_1 = 1 / tan alpha -->
+									<subfunction><!-- s_1 = 1 / tan( alpha ) = cos( alpha ) / sin( alpha ) = sin( PI/2 - alpha ) / sin( alpha ) -->
+										<div>
+											<sin> <sub>
+												<variable>7</variable>
+												<variable>5</variable>
+											</sub> </sin>
+											<sin><variable>5</variable></sin>
+										</div>
+									</subfunction>
+									<function define_variable="10"><!-- the slope s_2 of the second border (in x direction, y more per 1 x), s_2 = 1 / tan betha -->
+										<subfunction><!-- s_2 = 1 / tan( betha ) = cos( betha ) / sin( betha ) = sin( PI/2 - betha ) / sin( betha ) -->
+											<div>
+												<sin> <sub>
+													<variable>7</variable>
+													<variable>6</variable>
+												</sub> </sin>
+												<sin><variable>6</variable></sin>
+											</div>
+										</subfunction>
+										<function define_variable="11"><!-- evalue inner circle radius ri -->
+											<subfunction> <!-- if border width w is bigger than the radius r -> set inner circle radius ri to 0 -->
+												<if>
+													<lo><!-- if radius is smaaler than line width -->
+														<variable>8</variable>
+														<variable>4</variable>
+													</lo>
+													<!-- set border width to radius r -->
+													<value>0</value>
+													<!-- else use given border width w and evalue ri = r - w -->
+													<sub>
+														<variable>8</variable>
+														<variable>4</variable>
+													</sub>
+												</if>
+											</subfunction>
+											<if>
+												<condition>
+													<lo><!-- if radius is positiv -->
+														<value>0</value>
+														<variable>3</variable>
+													</lo>
+												</condition>
+												<!-- if radius is positiv -->
+												<function define_variable="12"><!-- evalue start point y_s of circle border in dimension 2 -->
+													<subfunction> <!-- set start point to minimal 0 -->
+														<max>
+															<value>0</value>
+															<!-- start point inner circle: yi_s = ri * sin( alpha ) -->
+															<mult>
+																<variable>11</variable>
+																<sin>
+																	<variable>5</variable>
+																</sin>
+															</mult>
+														</max>
+													</subfunction>
+													<function define_variable="13"><!-- evalue end point y_e of circle border in dimension 2 -->
+														<subfunction><!-- end point of circle: y_e = abs( r ) * sin( betha ) -->
+															<mult>
+																<variable>8</variable>
+																<sin>
+																	<variable>6</variable>
+																</sin>
+															</mult>
+														</subfunction>
+														<area define_variable="14"><!-- for a = yi_s ... y_e -->
+															<vector type="subarea">
+																<variable>12</variable>
+																<variable>13</variable>
+															</vector>
+															<function define_variable="15">
+																<!-- b^2 = r^2 - a^2 -->
+																<subfunction>
+																	<sub>
+																		<exp>
+																			<variable>3</variable>
+																			<value>2</value>
+																		</exp>
+																		<exp>
+																			<variable>14</variable>
+																			<value>2</value>
+																		</exp>
+																	</sub>
+																</subfunction>
+																<function define_variable="16"><!-- b = ( r^2 - a^2 )^(1/2) -->
+																	<subfunction>
+																		<exp>
+																			<variable>15</variable>
+																			<value>0.5</value>
+																		</exp>
+																	</subfunction>
+																	<function define_variable="17">
+																		<subfunction><!-- evalue inner border bi -->
+																			<if>
+																				<lo><!-- a < ri -->
+																					<abs>
+																						<variable>14</variable>
+																					</abs>
+																					<abs>
+																						<variable>11</variable>
+																					</abs>
+																				</lo>
+																				<!-- bi = ( ri^2 - a^2 )^(1/2) -->
+																				<exp>
+																					<sub>
+																						<exp>
+																							<variable>11</variable>
+																							<value>2</value>
+																						</exp>
+																						<exp>
+																							<variable>14</variable>
+																							<value>2</value>
+																						</exp>
+																					</sub>
+																					<value>0.5</value>
+																				</exp>
+																				<!-- else no inner border set bi to 0 -->
+																				<value>0</value>
+																			</if>
+																		</subfunction>
+																		<function define_variable="18"><!-- y_r = y + a -->
+																			<subfunction>
+																				<add>
+																					<variable>2</variable>
+																					<variable>14</variable>
+																				</add>
+																			</subfunction>
+																			<!-- left half -->
+																			<!-- note: cut parts of the x_min to xi_min line which are outside the sector -->
+																			
+																			<function define_variable="19">
+																				<!-- if ( alpha != 0 ) then s_1 * a ; else abs( r ); //so a / b will be used for a_1 -->
+																				<subfunction>
+																					<if>
+																						<or>
+																							<lo><variable>5</variable><value>0</value></lo>
+																							<lo><value>0</value><variable>5</variable></lo>
+																						</or>
+																						<mult>
+																							<variable>9</variable>
+																							<variable>14</variable>
+																						</mult>
+																						<!-- else abs( r ) -->
+																						<variable>8</variable>
+																					</if>
+																				</subfunction>
+																				<function define_variable="20">
+																					<subfunction><!-- x_min = min( x + b, x + s_1 * a ) -->
+																						<min>
+																							<add>
+																								<variable>1</variable>
+																								<variable>16</variable>
+																							</add>
+																							<add>
+																								<variable>1</variable>
+																								<variable>19</variable>
+																							</add>
+																						</min>
+																					</subfunction>
+																					
+																					<function define_variable="21">
+																						<!-- if ( betha != 0 ) then s_2 * a; else -1; //so a / bi will be used for b_1 -->
+																						<subfunction>
+																							<if>
+																								<or>
+																									<lo><variable>6</variable><value>0</value></lo>
+																									<lo><value>0</value><variable>6</variable></lo>
+																								</or>
+																								<mult>
+																									<variable>10</variable>
+																									<variable>14</variable>
+																								</mult>
+																								<!-- else -1 -->
+																								<value>-1</value>
+																							</if>
+																						</subfunction>
+																						<function define_variable="22">
+																							<subfunction><!-- xi_min = max( x + bi, x + s_2 * a ) -->
+																								<max>
+																									<add>
+																										<variable>1</variable>
+																										<variable>17</variable>
+																									</add>
+																									<add>
+																										<variable>1</variable>
+																										<variable>21</variable>
+																									</add>
+																								</max>
+																							</subfunction>
+																							
+																							<function define_variable="23">
+																								<subfunction><!-- evalue slope a_1 = if ( b < s_1 * a ) then a / b; else s_1; -->
+																									<if>
+																										<lo>
+																											<variable>16</variable><!-- b -->
+																											<variable>19</variable><!-- s_1 * a -->
+																										</lo>
+																										<!-- a / b -->
+																										<div>
+																											<variable>14</variable>
+																											<variable>16</variable>
+																										</div>
+																										<!-- else s_1 -->
+																										<variable>9</variable>
+																									</if>
+																								</subfunction>
+																								<function define_variable="24">
+																									<subfunction><!-- evalue slope b_1 = if ( bi < s_2 * a ) then s_2; else a / bi; -->
+																										<if>
+																											<lo>
+																												<variable>17</variable><!-- bi -->
+																												<variable>21</variable><!-- s_2 * a -->
+																											</lo>
+																											<!-- s_2 -->
+																											<variable>10</variable>
+																											<!-- else a / bi -->
+																											<div>
+																												<variable>14</variable>
+																												<variable>17</variable>
+																											</div>
+																										</if>
+																									</subfunction>
+																									<function define_variable="25">
+																										<subfunction><!-- a_0 = x_min - y_r * a_1 -->
+																											<sub>
+																												<variable>20</variable>
+																												<mult>
+																													<variable>18</variable>
+																													<variable>23</variable>
+																												</mult>
+																											</sub>
+																										</subfunction>
+																										<function define_variable="26">
+																											<subfunction><!-- b_0 = xi_min - ( y_r + 1) * b_1 -->
+																												<sub>
+																													<variable>22</variable>
+																													<mult>
+																														<add>
+																															<variable>18</variable>
+																															<value>1</value>
+																														</add>
+																														<variable>24</variable>
+																													</mult>
+																												</sub>
+																											</subfunction>
+																											<obj identifier="-469">
+																												<vector type="externObjectInput">
+																													<variable>18</variable>
+																													<variable>18</variable>
+																													<variable>26</variable>
+																													<variable>24</variable>
+																													<variable>25</variable>
+																													<variable>23</variable>
+																												</vector>
+																												<subobject>
+																													<output_variables>
+																														<variable>27</variable>
+																														<variable>28</variable>
+																														<variable>30</variable>
+																													</output_variables>
+																													<subobject number="1">
+																														<vector type="externSubobject">
+																															<variable>28</variable>
+																															<variable>27</variable>
+																															<variable>30</variable>
+																														</vector>
+																													</subobject>
+																												</subobject>
+																											</obj>
+																										</function>
+																									</function>
+																								</function>
+																							</function>
+																						</function>
+																					</function>
+																				</function>
+																			</function>
+																		</function>
+																	</function>
+																</function>
+															</function>
+														</area>
+													</function>
+												</function>
+												<!-- if radius is nagativ -->
+												<function define_variable="12"><!-- evalue start point y_s of circle border in dimension 2 -->
+													<subfunction> <!-- if radius r is positiv -> set start point to maximal -1 -->
+														<min>
+															<value>-1</value><!-- set start point to -1 -->
+															<!-- start point inner circle: yi_s = ri * sin( alpha ) -->
+															<mult>
+																<variable>11</variable>
+																<sin>
+																	<variable>5</variable>
+																</sin>
+															</mult>
+														</min>
+													</subfunction>
+													<function define_variable="13"><!-- evalue end point y_e of circle border in dimension 2 -->
+														<subfunction><!-- end point of circle: y_e = abs( r ) * sin( betha ) -->
+															<mult>
+																<variable>8</variable>
+																<sin>
+																	<variable>6</variable>
+																</sin>
+															</mult>
+														</subfunction>
+														<area define_variable="14"><!-- for a = yi_s ... y_e -->
+															<vector type="subarea">
+																<variable>12</variable>
+																<variable>13</variable>
+															</vector>
+															<function define_variable="15">
+																<!-- b^2 = r^2 - a^2 -->
+																<subfunction>
+																	<sub>
+																		<exp>
+																			<variable>3</variable>
+																			<value>2</value>
+																		</exp>
+																		<exp>
+																			<variable>14</variable>
+																			<value>2</value>
+																		</exp>
+																	</sub>
+																</subfunction>
+																<function define_variable="16"><!-- b = ( r^2 - a^2 )^(1/2) -->
+																	<subfunction>
+																		<exp>
+																			<variable>15</variable>
+																			<value>0.5</value>
+																		</exp>
+																	</subfunction>
+																	<function define_variable="17">
+																		<subfunction><!-- evalue inner border bi -->
+																			<if>
+																				<lo><!-- a < ri -->
+																					<abs>
+																						<variable>14</variable>
+																					</abs>
+																					<abs>
+																						<variable>11</variable>
+																					</abs>
+																				</lo>
+																				<!-- bi = ( ri^2 - a^2 )^(1/2) -->
+																				<exp>
+																					<sub>
+																						<exp>
+																							<variable>11</variable>
+																							<value>2</value>
+																						</exp>
+																						<exp>
+																							<variable>14</variable>
+																							<value>2</value>
+																						</exp>
+																					</sub>
+																					<value>0.5</value>
+																				</exp>
+																				<!-- else no inner border set bi to 0 -->
+																				<value>0</value>
+																			</if>
+																		</subfunction>
+																		<function define_variable="18"><!-- y_r = y + a -->
+																			<subfunction>
+																				<add>
+																					<variable>2</variable>
+																					<variable>14</variable>
+																				</add>
+																			</subfunction>
+																			<!-- left half -->
+																			<!-- note: cut parts of the x_min to xi_min line which are outside the sector -->
+																			
+																			<function define_variable="19">
+																				<!-- if ( alpha != 0 ) then s_1 * a ; else abs( r ); //so a / b will be used for a_1 -->
+																				<subfunction>
+																					<if>
+																						<or>
+																							<lo><variable>5</variable><value>0</value></lo>
+																							<lo><value>0</value><variable>5</variable></lo>
+																						</or>
+																						<mult>
+																							<variable>9</variable>
+																							<variable>14</variable>
+																						</mult>
+																						<!-- else abs( r ) -->
+																						<variable>8</variable>
+																					</if>
+																				</subfunction>
+																				<function define_variable="20">
+																					<subfunction><!-- x_min = min( x + b, x + s_1 * a ) -->
+																						<min>
+																							<add>
+																								<variable>1</variable>
+																								<variable>16</variable>
+																							</add>
+																							<add>
+																								<variable>1</variable>
+																								<variable>19</variable>
+																							</add>
+																						</min>
+																					</subfunction>
+																					
+																					<function define_variable="21">
+																						<!-- if ( betha != 0 ) then s_2 * a; else -1; //so a / bi will be used for b_1 -->
+																						<subfunction>
+																							<if>
+																								<or>
+																									<lo><variable>6</variable><value>0</value></lo>
+																									<lo><value>0</value><variable>6</variable></lo>
+																								</or>
+																								<mult>
+																									<variable>10</variable>
+																									<variable>14</variable>
+																								</mult>
+																								<!-- else -1 -->
+																								<value>-1</value>
+																							</if>
+																						</subfunction>
+																						<function define_variable="22">
+																							<subfunction><!-- xi_min = max( x + bi, x + s_2 * a ) -->
+																								<max>
+																									<add>
+																										<variable>1</variable>
+																										<variable>17</variable>
+																									</add>
+																									<add>
+																										<variable>1</variable>
+																										<variable>21</variable>
+																									</add>
+																								</max>
+																							</subfunction>
+																							
+																							<function define_variable="23">
+																								<subfunction><!-- evalue slope a_1 = if ( b < s_1 * a ) then -a / b; else -s_1; -->
+																									<sub>
+																										<value>0</value>
+																										<if>
+																											<lo>
+																												<variable>16</variable><!-- b -->
+																												<variable>19</variable><!-- s_1 * a -->
+																											</lo>
+																											<!-- -a / b -->
+																											<div>
+																												<variable>14</variable>
+																												<variable>16</variable>
+																											</div>
+																											<!-- else -s_1 -->
+																											<variable>9</variable>
+																										</if>
+																									</sub>
+																								</subfunction>
+																								<function define_variable="24">
+																									<subfunction><!-- evalue slope b_1 = if ( bi < s_2 * a ) then -s_2; else -a / bi; -->
+																										<sub>
+																											<value>0</value>
+																											<if>
+																												<lo>
+																													<variable>17</variable><!-- bi -->
+																													<variable>21</variable><!-- s_2 * a -->
+																												</lo>
+																												<!-- -s_2 -->
+																												<variable>10</variable>
+																												<!-- else -a / bi -->
+																												<div>
+																													<variable>14</variable>
+																													<variable>17</variable>
+																												</div>
+																											</if>
+																										</sub>
+																									</subfunction>
+																									<function define_variable="25">
+																										<subfunction><!-- a_0 = x_min - y_r * a_1 -->
+																											<sub>
+																												<variable>20</variable>
+																												<mult>
+																													<variable>18</variable>
+																													<variable>23</variable>
+																												</mult>
+																											</sub>
+																										</subfunction>
+																										<function define_variable="26">
+																											<subfunction><!-- b_0 = xi_min - y_r * b_1 -->
+																												<sub>
+																													<variable>22</variable>
+																													<mult>
+																														<variable>18</variable>
+																														<variable>24</variable>
+																													</mult>
+																												</sub>
+																											</subfunction>
+																											<obj identifier="-469">
+																												<vector type="externObjectInput">
+																													<variable>18</variable>
+																													<variable>18</variable>
+																													<variable>26</variable>
+																													<variable>24</variable>
+																													<variable>25</variable>
+																													<variable>23</variable>
+																												</vector>
+																												<subobject>
+																													<output_variables>
+																														<variable>27</variable>
+																														<variable>28</variable>
+																														<variable>30</variable>
+																													</output_variables>
+																													<subobject number="1">
+																														<vector type="externSubobject">
+																															<variable>28</variable>
+																															<variable>27</variable>
+																															<variable>30</variable>
+																														</vector>
+																													</subobject>
+																												</subobject>
+																											</obj>
+																										</function>
+																									</function>
+																								</function>
+																							</function>
+																						</function>
+																					</function>
+																				</function>
+																			</function>
+																		</function>
+																	</function>
+																</function>
+															</function>
+														</area>
+													</function>
+												</function>
+											</if>
+										</function>
+									</function>
+								</function>
+							</function>
+						</function>
+					</main_fib_object>
+				</root>
+			</sub_root>
+			
+		</sub_roots>
+	</root>
+</fib_object>

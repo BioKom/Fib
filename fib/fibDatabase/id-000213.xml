@@ -1,0 +1,460 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fib_object
+			  xmlns:xsd="http://www.w3.org/2001/XMLSchema-instance"
+			  xmlns="http://www.fib-development.org/"
+			  xsd:schemaLocation="http://www.fib-development.org/fib.xsd">
+	<root>
+		<multimedia_info fib_version="3" db_version="5"/>
+		<optionalpart>
+			<pair key="name" value="horizontal line"/>
+			<pair key="description" value="This object represents a vertical one pixel line. In the first dimension it has the position y_1 (or flour( y_1 ) ). In the second dimension the line (of one pixel width) is filled between the points extremal( f_1( y_1 - 1 ), f_2( y_1 + 1 ), x_1 ) and extremal( f_3( y_1 - 1 ), f_4( y_1 + 1 ), x_4 ) (extremal makes the line size maximal). The coordinate value y_1 and y_4 should be in the same pixle line ( flour( y_1 ) lower equal y_4 lower equal ceil( y_1 ) ). The first line (f_1( x ) = a_0 + a_1 * x) goes betwean the first two points ( x_1, y_1 ) and ( x_2, y_2 ).  The second line (f_2( x ) = b_0 + b_1 * x) goes betwean the two points ( x_1, y_1 ) and ( x_3, y_3 ). The third line (f_3( x ) = c_0 + c_1 * x) goes betwean two points ( x_4, y_4 ) and ( x_5, y_5 ). The 4. line (f_4( x ) = d_0 + d_1 * x) goes betwean two points ( x_4, y_4 ) and ( x_6, y_6 ). The point ( x_1, y_1 ) is the start point of the first two lines. The point ( x_4, y_4 ) is the start point of the 3. and 4. line."/>
+			<pair key="inVar1::description" value="position of the first point in dimension 1 (y_1)"/>
+			<pair key="inVar2::description" value="position of the first point in dimension 2 (x_1)"/>
+			<pair key="inVar3::description" value="position of the second point in dimension 1 (y_2)"/>
+			<pair key="inVar4::description" value="position of the second point in dimension 2 (x_2)"/>
+			<pair key="inVar5::description" value="position of the 3. point in dimension 1 (y_3)"/>
+			<pair key="inVar6::description" value="position of the 3. point in dimension 2 (x_3)"/>
+			<pair key="inVar7::description" value="position of the 4. point in dimension 1 (y_4)"/>
+			<pair key="inVar8::description" value="position of the 4. point in dimension 2 (x_4)"/>
+			<pair key="inVar9::description" value="position of the 5. point in dimension 1 (y_5)"/>
+			<pair key="inVar10::description" value="position of the 5. point in dimension 2 (x_5)"/>
+			<pair key="inVar11::description" value="position of the 6. point in dimension 1 (y_6)"/>
+			<pair key="inVar12::description" value="position of the 6. point in dimension 2 (x_6)"/>
+			
+			<pair key="author" value="Betti Oesterholz"/>
+			<pair key="author::email" value="Oesterholz@Fib-Development.org"/>
+			<pair key="copyright" value="LGPL3"/>
+			
+			<pair key="isPointElement" value=""/>
+			<pair key="DbObject::isPointSubObject" value="-218"/>
+			<pair key="isNotAntialiased" value=""/>
+		</optionalpart>
+		<input_variables>
+			<variable number="1" default="0"/>
+			<variable number="2" default="0"/>
+			<variable number="3" default="0"/>
+			<variable number="4" default="0"/>
+			<variable number="5" default="0"/>
+			<variable number="6" default="0"/>
+			<variable number="7" default="0"/>
+			<variable number="8" default="0"/>
+			<variable number="9" default="0"/>
+			<variable number="10" default="0"/>
+			<variable number="11" default="0"/>
+			<variable number="12" default="0"/>
+		</input_variables>
+		<domains>
+			<inVar number="1">
+				<domainReference subdomain="1">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="2">
+				<domainReference subdomain="2">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="3">
+				<domainReference subdomain="1">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="4">
+				<domainReference subdomain="2">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="5">
+				<domainReference subdomain="1">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="6">
+				<domainReference subdomain="2">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="7">
+				<domainReference subdomain="1">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="8">
+				<domainReference subdomain="2">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="9">
+				<domainReference subdomain="1">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="10">
+				<domainReference subdomain="2">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="11">
+				<domainReference subdomain="1">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="12">
+				<domainReference subdomain="2">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<subfunction>
+				<integer scalingfactor="0.5" min="1" max="2" />
+			</subfunction>
+		</domains>
+		<main_fib_object>
+			<function define_variable="13">
+				<subfunction><!-- evalue flour( y_1 ) -->
+					<round>
+						<sub>
+							<variable>2</variable>
+							<value>0.5</value>
+						</sub>
+					</round>
+				</subfunction>
+				<!-- evalue y_1 - 1 and y_1 + 1 -->
+				<function define_variable="14">
+					<subfunction><!-- evalue y_1 - 1 -->
+						<sub>
+							<variable>2</variable>
+							<value>1</value>
+						</sub>
+					</subfunction>
+					<function define_variable="15">
+						<subfunction><!-- evalue y_1 + 1 -->
+							<add>
+								<variable>2</variable>
+								<value>1</value>
+							</add>
+						</subfunction>
+						
+						<function define_variable="16">
+							<subfunction><!-- evalue a_3 =  ( x_5 - x_4 ) / ( y_5 - y_4 ) -->
+								<div>
+									<sub>
+										<variable>9</variable>
+										<variable>7</variable>
+									</sub>
+									<sub>
+										<variable>10</variable>
+										<variable>8</variable>
+									</sub>
+								</div>
+							</subfunction>
+							<function define_variable="17">
+								<subfunction><!-- evalue f_3( y_1 - 1 ) =  x_4 + ( y_1 - 1 - y_4 ) * a_3 = x_4 + ( (y_1 - 1) - y_4 ) * ( x_5 - x_4 ) / ( y_5 - y_4 ) -->
+									<add>
+										<variable>7</variable>
+										<mult>
+											<sub>
+												<variable>14</variable>
+												<variable>8</variable>
+											</sub>
+											<variable>16</variable>
+										</mult>
+									</add>
+								</subfunction>
+								<function define_variable="18">
+									<subfunction><!-- evalue f_1( y_1 - 1 ) =  x_2 + ( y_1 - 1 - y_2 ) * ( x_1 - x_2 ) / ( y_1 - y_2 )
+															if ( y_1 == y_2 ) -> ( y_1 - y_2 ) == 0 -> f_1( y_1 - 1 ) =  x_2 -->
+										<add>
+											<variable>3</variable>
+											<mult>
+												<sub>
+													<variable>14</variable>
+													<variable>4</variable>
+												</sub>
+												<div>
+													<sub>
+														<variable>1</variable>
+														<variable>3</variable>
+													</sub>
+													<sub>
+														<variable>2</variable>
+														<variable>4</variable>
+													</sub>
+												</div>
+											</mult>
+										</add>
+									</subfunction>
+									<function define_variable="19">
+										<subfunction><!-- evalue f_2( y_1 + 1 ) =  x_3 + ( y_1 + 1 - y_3 ) * ( x_1 - x_3 ) / ( y_1 - y_3 ) -->
+											<add>
+												<variable>5</variable>
+												<mult>
+													<sub>
+														<variable>15</variable>
+														<variable>6</variable>
+													</sub>
+													<div>
+														<sub>
+															<variable>1</variable>
+															<variable>5</variable>
+														</sub>
+														<sub>
+															<variable>2</variable>
+															<variable>6</variable>
+														</sub>
+													</div>
+												</mult>
+											</add>
+										</subfunction>
+										<!-- evalue values betwan line end points -->
+										<function define_variable="20"><!-- evalue f_1( y_1 - 1 )' inside [ x_1 ... x_2 ]  -->
+											<subfunction><!-- evalue f_1( y_1 - 1 )' =  if ( x_1 < x_2 ) then
+												max( x_1, min( x_2, f_1( y_1 - 1 ) ) ) else min( x_1, max( x_2, f_1( y_1 - 1 ) ) ) -->
+												<if>
+													<lo>
+														<variable>1</variable>
+														<variable>3</variable>
+													</lo>
+													<max>
+														<variable>1</variable>
+														<min>
+															<variable>3</variable>
+															<variable>18</variable>
+														</min>
+													</max>
+													<!-- else -->
+													<min>
+														<variable>1</variable>
+														<max>
+															<variable>3</variable>
+															<variable>18</variable>
+														</max>
+													</min>
+												</if>
+											</subfunction>
+											<function define_variable="21"><!-- evalue f_2( y_1 + 1 )' inside [ x_1 ... x_3 ]  -->
+												<subfunction><!-- evalue f_2( y_1 + 1 )' =  if ( x_1 < x_3 ) then
+													max( x_1, min( x_3, f_2( y_1 + 1 ) ) ) else min( x_1, max( x_3, f_2( y_1 + 1 ) ) ) -->
+													<if>
+														<lo>
+															<variable>1</variable>
+															<variable>5</variable>
+														</lo>
+														<max>
+															<variable>1</variable>
+															<min>
+																<variable>5</variable>
+																<variable>19</variable>
+															</min>
+														</max>
+														<!-- else -->
+														<min>
+															<variable>1</variable>
+															<max>
+																<variable>5</variable>
+																<variable>19</variable>
+															</max>
+														</min>
+													</if>
+												</subfunction>
+												<function define_variable="22"><!-- evalue f_3( y_1 - 1 )' inside [ x_4 ... x_5 ]  -->
+													<subfunction><!-- evalue f_3( y_1 - 1 )' =  if ( x_4 < x_5 ) then
+														max( x_4, min( x_5, f_3( y_1 - 1 ) ) ) else min( x_4, max( x_5, f_3( y_1 - 1 ) ) ) -->
+														<if>
+															<lo>
+																<variable>7</variable>
+																<variable>9</variable>
+															</lo>
+															<max>
+																<variable>7</variable>
+																<min>
+																	<variable>9</variable>
+																	<variable>17</variable>
+																</min>
+															</max>
+															<!-- else -->
+															<min>
+																<variable>7</variable>
+																<max>
+																	<variable>9</variable>
+																	<variable>17</variable>
+																</max>
+															</min>
+														</if>
+													</subfunction>
+													<function define_variable="23">
+														<subfunction><!-- evalue f_4( y_1 + 1 ) =  x_6 + ( y_1 + 1 - y_6 ) * ( x_6 - x_4 ) / ( y_6 - y_4 ) -->
+															<add>
+																<variable>11</variable>
+																<mult>
+																	<sub>
+																		<variable>15</variable>
+																		<variable>12</variable>
+																	</sub>
+																	<div>
+																		<sub>
+																			<variable>11</variable>
+																			<variable>7</variable>
+																		</sub>
+																		<sub>
+																			<variable>12</variable>
+																			<variable>8</variable>
+																		</sub>
+																	</div>
+																</mult>
+															</add>
+														</subfunction>
+														<function define_variable="24"><!-- evalue f_4( y_1 + 1 )' inside [ x_4 ... x_6 ]  -->
+															<subfunction><!-- evalue f_4( y_1 + 1 )' =  if ( x_4 < x_6 ) then
+																max( x_4, min( x_6, f_4( y_1 + 1 ) ) ) else min( x_4, max( x_6, f_4( y_1 + 1 ) ) ) -->
+																<if>
+																	<lo>
+																		<variable>7</variable>
+																		<variable>11</variable>
+																	</lo>
+																	<max>
+																		<variable>7</variable>
+																		<min>
+																			<variable>11</variable>
+																			<variable>23</variable>
+																		</min>
+																	</max>
+																	<!-- else -->
+																	<min>
+																		<variable>7</variable>
+																		<max>
+																			<variable>11</variable>
+																			<variable>23</variable>
+																		</max>
+																	</min>
+																</if>
+															</subfunction>
+															
+															<if><!-- check which line is above which -->
+																<condition><!-- if ( x_4 < x_1 ) -->
+																	<lo>
+																		<variable>7</variable>
+																		<variable>1</variable>
+																	</lo>
+																</condition>
+																<!-- line f_3 and f_4 below other lines -->
+																<function define_variable="25"><!-- evalue line start point (bottom most point) -->
+																	<subfunction><!-- x_min = min( x_4, f_3( y_1 - 1 )', f_4( y_1 + 1 )' ) -->
+																		<min>
+																			<variable>7</variable>
+																			<min>
+																				<variable>22</variable>
+																				<variable>24</variable>
+																			</min>
+																		</min>
+																	</subfunction>
+																	<function define_variable="26"><!-- evalue line end point (top most point) -->
+																		<subfunction><!-- x_max = max( x_1, f_1( y_1 - 1 )', f_2( y_1 + 1 )' ) -->
+																			<max>
+																				<variable>1</variable>
+																				<max>
+																					<variable>20</variable>
+																					<variable>21</variable>
+																				</max>
+																			</max>
+																		</subfunction>
+																		<area define_variable="27">
+																			<vector type="subarea">
+																				<variable>25</variable>
+																				<variable>26</variable>
+																			</vector>
+																			<point>
+																				<vector type="position">
+																					<variable>27</variable>
+																					<variable>13</variable>
+																				</vector>
+																			</point>
+																		</area>
+																	</function>
+																</function>
+																<!-- else line f_3 above other lines -->
+																<function define_variable="25"><!-- evalue line start point (bottom most point) -->
+																	<subfunction><!-- x_min = min( x_1, f_1( y_1 - 1 )', f_2( y_1 + 1 )' ) -->
+																		<min>
+																			<variable>1</variable>
+																			<min>
+																				<variable>20</variable>
+																				<variable>21</variable>
+																			</min>
+																		</min>
+																	</subfunction>
+																	<function define_variable="26"><!-- evalue line end point (top most point) -->
+																		<subfunction><!-- x_max = max( x_4, f_3( y_1 - 1 )', f_4( y_1 + 1 )' ) -->
+																			<max>
+																				<variable>7</variable>
+																				<max>
+																					<variable>22</variable>
+																					<variable>24</variable>
+																				</max>
+																			</max>
+																		</subfunction>
+																		<area define_variable="27">
+																			<vector type="subarea">
+																				<variable>25</variable>
+																				<variable>26</variable>
+																			</vector>
+																			<point>
+																				<vector type="position">
+																					<variable>27</variable>
+																					<variable>13</variable>
+																				</vector>
+																			</point>
+																		</area>
+																	</function>
+																</function>
+															</if>
+														</function>
+													</function>
+												</function>
+											</function>
+										</function>
+									</function>
+								</function>
+							</function>
+						</function>
+					</function>
+				</function>
+			</function>
+		</main_fib_object>
+	</root>
+</fib_object>

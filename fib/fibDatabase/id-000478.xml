@@ -18,13 +18,19 @@
 			<pair key="inVar8::description" value="position of the 4. point in dimension 2 (y_4)"/>
 			<pair key="inVar9::description" value="the start point x_s"/>
 			<pair key="inVar10::description" value="the end point x_e"/>
+			
 			<pair key="subObj1::description" value="The points of the quadrangle (box). The subobject is called for every point on the quadrangle (box)."/>
 			<pair key="subObj1::outVar1::description" value="the position of the quadrangle point in dimension 1 (x)"/>
 			<pair key="subObj1::outVar2::description" value="the position of the quadrangle point in dimension 2 (y)"/>
 			<pair key="subObj1::outVar3::description" value="the antialising factor (1 is full transparent and 0 full opaque)"/>
+			
 			<pair key="author" value="Betti Oesterholz"/>
 			<pair key="author::email" value="Oesterholz@Fib-Development.org"/>
 			<pair key="copyright" value="LGPL3"/>
+			
+			<pair key="isPointSubObject" value=""/>
+			<pair key="isAntialiased" value=""/>
+			<pair key="DbObject::isNotAntialiased" value="-428"/>
 		</optionalpart>
 		<input_variables>
 			<variable number="1" default="0"/>

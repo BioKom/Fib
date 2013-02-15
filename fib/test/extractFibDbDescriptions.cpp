@@ -178,8 +178,9 @@ int main(int argc, char* argv[]){
 
 	/*the type for the output format:
 	 * 	-n: normal
+	 * 	-m: wiki Markdown
 	 */
-	char cFormat = 'n';
+	char cFormat = 'm';
 	
 	if ( argc >= 2 ){
 		//one parameter given; read parameter for the output format

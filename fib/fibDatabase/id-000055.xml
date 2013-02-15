@@ -19,6 +19,11 @@
 			<pair key="author" value="Betti Oesterholz"/>
 			<pair key="author::email" value="Oesterholz@Fib-Development.org"/>
 			<pair key="copyright" value="LGPL3"/>
+			
+			<pair key="isPointSubObject" value=""/>
+			<pair key="DbObject::isPointElement" value="-50"/>
+			<pair key="isNotAntialiased" value=""/>
+			<pair key="DbObject::isAntialiased" value="-56"/>
 		</optionalpart>
 		<input_variables>
 			<variable number="1" default="0"/>

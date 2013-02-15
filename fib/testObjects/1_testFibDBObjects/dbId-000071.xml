@@ -54,142 +54,150 @@
 			</property>
 			
 			<property>
-				<vector type="property.colorRGB">
-					<value>0</value>
-					<value>255</value>
-					<value>0</value>
+				<vector type="property.transparency">
+					<value>64</value>
 				</vector>
 				<list>
-					<point>
-						<vector type="position">
-							<value>2</value>
-							<value>2</value>
+					
+					<property>
+						<vector type="property.colorRGB">
+							<value>0</value>
+							<value>255</value>
+							<value>0</value>
 						</vector>
-					</point>
-					<point>
-						<vector type="position">
-							<value>4</value>
-							<value>2</value>
+						<list>
+							<point>
+								<vector type="position">
+									<value>2</value>
+									<value>2</value>
+								</vector>
+							</point>
+							<point>
+								<vector type="position">
+									<value>4</value>
+									<value>2</value>
+								</vector>
+							</point>
+							<point>
+								<vector type="position">
+									<value>2</value>
+									<value>4</value>
+								</vector>
+							</point>
+						</list>
+					</property>
+					
+					<property>
+						<vector type="property.colorRGB">
+							<value>0</value>
+							<value>0</value>
+							<value>255</value>
 						</vector>
-					</point>
-					<point>
-						<vector type="position">
-							<value>2</value>
-							<value>4</value>
+						<obj identifier="-71">
+							<vector type="externObjectInput">
+								<value>10</value>
+								<value>10</value>
+								<value>30</value>
+								<value>20</value>
+								<value>0</value>
+								<value>0</value>
+							</vector>
+						</obj>
+					</property>
+					
+					<property>
+						<vector type="property.colorRGB">
+							<value>0</value>
+							<value>255</value>
+							<value>0</value>
 						</vector>
-					</point>
+						<obj identifier="-71">
+							<vector type="externObjectInput">
+								<value>10</value>
+								<value>40</value>
+								<value>60</value>
+								<value>0</value>
+								<value>0.5</value>
+								<value>0</value>
+							</vector>
+						</obj>
+					</property>
+					
+					<property>
+						<vector type="property.colorRGB">
+							<value>0</value>
+							<value>255</value>
+							<value>0</value>
+						</vector>
+						<obj identifier="-71">
+							<vector type="externObjectInput">
+								<value>10</value>
+								<value>70</value>
+								<value>90</value>
+								<value>50</value>
+								<value>-0.5</value>
+								<value>0.0</value>
+							</vector>
+						</obj>
+					</property>
+					
+					<property>
+						<vector type="property.colorRGB">
+							<value>0</value>
+							<value>255</value>
+							<value>255</value>
+						</vector>
+						<obj identifier="-71">
+							<vector type="externObjectInput">
+								<value>10</value>
+								<value>120</value>
+								<value>100</value>
+								<value>-290</value>
+								<value>3</value>
+								<value>0.0</value>
+							</vector>
+						</obj>
+					</property>
+					
+					<property>
+						<vector type="property.colorRGB">
+							<value>255</value>
+							<value>255</value>
+							<value>255</value>
+						</vector>
+						<obj identifier="-71">
+							<vector type="externObjectInput">
+								<value>40</value>
+								<value>10</value>
+								<value>30</value>
+								<value>50</value>
+								<value>-3</value>
+								<value>0.1</value>
+							</vector>
+						</obj>
+					</property>
+					
+					<property>
+						<vector type="property.colorRGB">
+							<value>0</value>
+							<value>0</value>
+							<value>0</value>
+						</vector>
+						<obj identifier="-71">
+							<vector type="externObjectInput">
+								<value>40</value>
+								<value>40</value>
+								<value>60</value>
+								<value>160</value>
+								<value>-5</value>
+								<value>0.05</value>
+							</vector>
+						</obj>
+					</property>
+			
+			
 				</list>
 			</property>
-			
-			<property>
-				<vector type="property.colorRGB">
-					<value>0</value>
-					<value>0</value>
-					<value>255</value>
-				</vector>
-				<obj identifier="-71">
-					<vector type="externObjectInput">
-						<value>10</value>
-						<value>10</value>
-						<value>30</value>
-						<value>20</value>
-						<value>0</value>
-						<value>0</value>
-					</vector>
-				</obj>
-			</property>
-			
-			<property>
-				<vector type="property.colorRGB">
-					<value>0</value>
-					<value>255</value>
-					<value>0</value>
-				</vector>
-				<obj identifier="-71">
-					<vector type="externObjectInput">
-						<value>10</value>
-						<value>40</value>
-						<value>60</value>
-						<value>0</value>
-						<value>0.5</value>
-						<value>0</value>
-					</vector>
-				</obj>
-			</property>
-			
-			<property>
-				<vector type="property.colorRGB">
-					<value>0</value>
-					<value>255</value>
-					<value>0</value>
-				</vector>
-				<obj identifier="-71">
-					<vector type="externObjectInput">
-						<value>10</value>
-						<value>70</value>
-						<value>90</value>
-						<value>50</value>
-						<value>-0.5</value>
-						<value>0.0</value>
-					</vector>
-				</obj>
-			</property>
-			
-			<property>
-				<vector type="property.colorRGB">
-					<value>0</value>
-					<value>255</value>
-					<value>255</value>
-				</vector>
-				<obj identifier="-71">
-					<vector type="externObjectInput">
-						<value>10</value>
-						<value>120</value>
-						<value>100</value>
-						<value>-290</value>
-						<value>3</value>
-						<value>0.0</value>
-					</vector>
-				</obj>
-			</property>
-			
-			<property>
-				<vector type="property.colorRGB">
-					<value>255</value>
-					<value>255</value>
-					<value>255</value>
-				</vector>
-				<obj identifier="-71">
-					<vector type="externObjectInput">
-						<value>40</value>
-						<value>10</value>
-						<value>30</value>
-						<value>50</value>
-						<value>-3</value>
-						<value>0.1</value>
-					</vector>
-				</obj>
-			</property>
-			
-			<property>
-				<vector type="property.colorRGB">
-					<value>0</value>
-					<value>0</value>
-					<value>0</value>
-				</vector>
-				<obj identifier="-71">
-					<vector type="externObjectInput">
-						<value>40</value>
-						<value>40</value>
-						<value>60</value>
-						<value>160</value>
-						<value>-5</value>
-						<value>0.05</value>
-					</vector>
-				</obj>
-			</property>
-			
-			
 		</list>
 	</main_fib_object>
 </root>

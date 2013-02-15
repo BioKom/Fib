@@ -16,12 +16,19 @@
 			<pair key="inVar6::description" value="position of the 3. point p_3 in dimension 2 (y_3)"/>
 			<pair key="inVar7::description" value="position of the 4. point p_4 in dimension 1 (x_4)"/>
 			<pair key="inVar8::description" value="position of the 4. point p_4 in dimension 2 (y_4)"/>
+			
 			<pair key="subObj1::description" value="The points of the quadrangle. The subobject is called for every point on the quadrangle."/>
 			<pair key="subObj1::outVar1::description" value="the position of the quadrangle point in dimension 1 (x)"/>
 			<pair key="subObj1::outVar2::description" value="the position of the quadrangle point in dimension 2 (y)"/>
+			
 			<pair key="author" value="Betti Oesterholz"/>
 			<pair key="author::email" value="Oesterholz@Fib-Development.org"/>
 			<pair key="copyright" value="LGPL3"/>
+			
+			<pair key="isPointSubObject" value=""/>
+			<pair key="DbObject::isPointElement" value="-41"/>
+			<pair key="isNotAntialiased" value=""/>
+			<pair key="DbObject::isAntialiased" value="-47"/>
 		</optionalpart>
 		<input_variables>
 			<variable number="1" default="0"/>
@@ -108,14 +115,16 @@
 			</externSubobject>
 			<externObject>
 				<vector elements="4">
-					<integer min="-950" max="1" /><!--Identifier-->
-					<integer min="6" max="8" /><!--number input values-->
+					<integer min="-950" max="3" /><!--Identifier-->
+					<integer min="6" max="10" /><!--number input values-->
 					<naturalNumber max="1" /><!--number subobjects-->
 					<naturalNumber max="3" /><!--number output values-->
 				</vector>
 			</externObject>
 			<externObjectInput identifier="1">
-				<vector elements="8">
+				<vector elements="10">
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
 					<naturalNumber max="0" />
 					<naturalNumber max="0" />
 					<naturalNumber max="0" />
@@ -126,8 +135,10 @@
 					<naturalNumber max="0" />
 				</vector>
 			</externObjectInput>
-			<externObjectInput identifier="-35">
-				<vector elements="6">
+			<externObjectInput identifier="3">
+				<vector elements="8">
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
 					<naturalNumber max="0" />
 					<naturalNumber max="0" />
 					<naturalNumber max="0" />
@@ -148,11 +159,14 @@
 					<naturalNumber max="0" />
 				</vector>
 			</externObjectInput>
+			<subfunction>
+				<naturalNumber max="0" />
+			</subfunction>
 		</domains>
 		<database_identifiers>
-			<identifier>-35</identifier>
-			<identifier>-425</identifier>
+			<identifier>-215</identifier>
 			<identifier>-427</identifier>
+			<identifier>-429</identifier>
 			<identifier>-950</identifier>
 			<identifier>-951</identifier>
 		</database_identifiers>
@@ -175,60 +189,43 @@
 						<variable>10</variable>
 						<variable>11</variable>
 					</output_variables>
-					<if><!-- if the lines betwean (p_1 and p_2) and (p_3 and p_4) intersect then draw two trangles ( p_1, p_4, p_i ) and (p_2, p_3, p_i ) (p_i is the intersection point)-->
+					<if><!-- if the lines betwean (p_1 and p_2) and (p_3 and p_4)
+							intersect then draw quadrangle ( p_1, p_4, p_i ) and
+							(p_2, p_3, p_i ) (p_i is the intersection point) -->
 						<condition>
 							<lo>
 								<value>0</value>
 								<variable>11</variable>
 							</lo>
 						</condition>
-						<!-- draw two trangles ( p_1, p_4, p_i ) and (p_2, p_3, p_i ) (p_i is the intersection point) -->
-						<list>
-							<obj identifier="-35">
-								<vector type="externObjectInput">
-									<variable>1</variable>
-									<variable>2</variable>
-									<variable>7</variable>
-									<variable>8</variable>
-									<variable>9</variable>
-									<variable>10</variable>
-								</vector>
-								<subobject>
-									<output_variables>
+						<!-- draw quadrangle ( p_1, p_4, p_i ) and (p_2, p_3, p_i )
+							  (p_i is the intersection point) -->
+						<obj identifier="1">
+							<vector type="externObjectInput">
+								<variable>1</variable>
+								<variable>2</variable>
+								<variable>7</variable>
+								<variable>8</variable>
+								<variable>9</variable>
+								<variable>10</variable>
+								<variable>3</variable>
+								<variable>4</variable>
+								<variable>5</variable>
+								<variable>6</variable>
+							</vector>
+							<subobject>
+								<output_variables>
+									<variable>12</variable>
+									<variable>13</variable>
+								</output_variables>
+								<subobject number="1">
+									<vector type="externSubobject">
 										<variable>12</variable>
 										<variable>13</variable>
-									</output_variables>
-									<subobject number="1">
-										<vector type="externSubobject">
-											<variable>12</variable>
-											<variable>13</variable>
-										</vector>
-									</subobject>
+									</vector>
 								</subobject>
-							</obj>
-							<obj identifier="-35">
-								<vector type="externObjectInput">
-									<variable>3</variable>
-									<variable>4</variable>
-									<variable>5</variable>
-									<variable>6</variable>
-									<variable>9</variable>
-									<variable>10</variable>
-								</vector>
-								<subobject>
-									<output_variables>
-										<variable>12</variable>
-										<variable>13</variable>
-									</output_variables>
-									<subobject number="1">
-										<vector type="externSubobject">
-											<variable>12</variable>
-											<variable>13</variable>
-										</vector>
-									</subobject>
-								</subobject>
-							</obj>
-						</list>
+							</subobject>
+						</obj>
 						<!-- else check if the lines betwean (p_1 and p_4) and (p_2 and p_3) intersect -->
 						<obj identifier="-950">
 							<vector type="externObjectInput">
@@ -247,69 +244,52 @@
 									<variable>13</variable>
 									<variable>14</variable>
 								</output_variables>
-								<if><!-- if the lines betwean (p_1 and p_4) and (p_2 and p_3) intersect then draw two trangles ( p_1, p_2, p_i ) and (p_3, p_4, p_i ) (p_i is the intersection point)-->
+								<if><!-- if the lines betwean (p_1 and p_4) and
+										(p_2 and p_3) intersect then draw quadrangle
+										( p_1, p_2, p_i ) and (p_3, p_4, p_i ) (p_i is the intersection point) -->
 									<condition>
 										<lo>
 											<value>0</value>
 											<variable>14</variable>
 										</lo>
 									</condition>
-									<!-- draw two trangles ( p_1, p_2, p_i ) and (p_3, p_4, p_i ) (p_i is the intersection point) -->
-									<list>
-										<obj identifier="-35">
-											<vector type="externObjectInput">
-												<variable>1</variable>
-												<variable>2</variable>
-												<variable>3</variable>
-												<variable>4</variable>
-												<variable>12</variable>
-												<variable>13</variable>
-											</vector>
-											<subobject>
-												<output_variables>
+									<!-- draw quadrangle ( p_1, p_2, p_i ) and
+										  (p_3, p_4, p_i ) (p_i is the intersection point) -->
+									<obj identifier="1">
+										<vector type="externObjectInput">
+											<variable>1</variable>
+											<variable>2</variable>
+											<variable>3</variable>
+											<variable>4</variable>
+											<variable>12</variable>
+											<variable>13</variable>
+											<variable>7</variable>
+											<variable>8</variable>
+											<variable>5</variable>
+											<variable>6</variable>
+										</vector>
+										<subobject>
+											<output_variables>
+												<variable>15</variable>
+												<variable>16</variable>
+											</output_variables>
+											<subobject number="1">
+												<vector type="externSubobject">
 													<variable>15</variable>
 													<variable>16</variable>
-												</output_variables>
-												<subobject number="1">
-													<vector type="externSubobject">
-														<variable>15</variable>
-														<variable>16</variable>
-													</vector>
-												</subobject>
+												</vector>
 											</subobject>
-										</obj>
-										<obj identifier="-35">
-											<vector type="externObjectInput">
-												<variable>5</variable>
-												<variable>6</variable>
-												<variable>7</variable>
-												<variable>8</variable>
-												<variable>12</variable>
-												<variable>13</variable>
-											</vector>
-											<subobject>
-												<output_variables>
-													<variable>15</variable>
-													<variable>16</variable>
-												</output_variables>
-												<subobject number="1">
-													<vector type="externSubobject">
-														<variable>15</variable>
-														<variable>16</variable>
-													</vector>
-												</subobject>
-											</subobject>
-										</obj>
-									</list>
+										</subobject>
+									</obj>
 									
-									<!-- else draw boxes with object of id -425 and id -427 -->
+									<!-- else draw boxes with object of id -429 and id -427 -->
 									<!-- sort points and call subobject with sorted points;
 										The point with the lowest x component is the first
 										point. Its neighbour point with the lowest x component
 										is the second point. The other neighbour of the first
-										point is the third point.-->
-									<if><!-- if x_1 is lowest (= x_1 =< x_2 and x_1 =< x_3 and x_1 =< x_4
-										not( x_2 < x_1 or x_3 < x_1 or x_4 < x_1) ) -->
+										point is the third point. -->
+									<if><!--if x_1 is lowest (= x_1 =< x_2 and x_1 =< x_3 and x_1 =< x_4
+										not( x_2 < x_1 or x_3 < x_1 or x_4 < x_1) )-->
 										<condition>
 											<not>
 												<or>
@@ -337,7 +317,7 @@
 													<variable>7</variable>
 												</lo>
 											</condition>
-											<obj identifier="1">
+											<obj identifier="3">
 												<vector type="externObjectInput">
 													<variable>1</variable>
 													<variable>2</variable>
@@ -350,19 +330,19 @@
 												</vector>
 												<subobject>
 													<output_variables>
-														<variable>18</variable>
-														<variable>19</variable>
+														<variable>15</variable>
+														<variable>16</variable>
 													</output_variables>
 													<subobject number="1">
 														<vector type="externSubobject">
-															<variable>18</variable>
-															<variable>19</variable>
+															<variable>15</variable>
+															<variable>16</variable>
 														</vector>
 													</subobject>
 												</subobject>
 											</obj>
 											<!-- else x_4 =< x_2 -->
-											<obj identifier="1">
+											<obj identifier="3">
 												<vector type="externObjectInput">
 													<variable>1</variable>
 													<variable>2</variable>
@@ -375,13 +355,13 @@
 												</vector>
 												<subobject>
 													<output_variables>
-														<variable>18</variable>
-														<variable>19</variable>
+														<variable>15</variable>
+														<variable>16</variable>
 													</output_variables>
 													<subobject number="1">
 														<vector type="externSubobject">
-															<variable>18</variable>
-															<variable>19</variable>
+															<variable>15</variable>
+															<variable>16</variable>
 														</vector>
 													</subobject>
 												</subobject>
@@ -410,7 +390,7 @@
 														<variable>5</variable>
 													</lo>
 												</condition>
-												<obj identifier="1">
+												<obj identifier="3">
 													<vector type="externObjectInput">
 														<variable>3</variable>
 														<variable>4</variable>
@@ -423,19 +403,19 @@
 													</vector>
 													<subobject>
 														<output_variables>
-															<variable>18</variable>
-															<variable>19</variable>
+															<variable>15</variable>
+															<variable>16</variable>
 														</output_variables>
 														<subobject number="1">
 															<vector type="externSubobject">
-																<variable>18</variable>
-																<variable>19</variable>
+																<variable>15</variable>
+																<variable>16</variable>
 															</vector>
 														</subobject>
 													</subobject>
 												</obj>
 												<!-- else x_3 =< x_1 -->
-												<obj identifier="1">
+												<obj identifier="3">
 													<vector type="externObjectInput">
 														<variable>3</variable>
 														<variable>4</variable>
@@ -448,13 +428,13 @@
 													</vector>
 													<subobject>
 														<output_variables>
-															<variable>18</variable>
-															<variable>19</variable>
+															<variable>15</variable>
+															<variable>16</variable>
 														</output_variables>
 														<subobject number="1">
 															<vector type="externSubobject">
-																<variable>18</variable>
-																<variable>19</variable>
+																<variable>15</variable>
+																<variable>16</variable>
 															</vector>
 														</subobject>
 													</subobject>
@@ -478,7 +458,7 @@
 															<variable>7</variable>
 														</lo>
 													</condition>
-													<obj identifier="1">
+													<obj identifier="3">
 														<vector type="externObjectInput">
 															<variable>5</variable>
 															<variable>6</variable>
@@ -491,19 +471,19 @@
 														</vector>
 														<subobject>
 															<output_variables>
-																<variable>18</variable>
-																<variable>19</variable>
+																<variable>15</variable>
+																<variable>16</variable>
 															</output_variables>
 															<subobject number="1">
 																<vector type="externSubobject">
-																	<variable>18</variable>
-																	<variable>19</variable>
+																	<variable>15</variable>
+																	<variable>16</variable>
 																</vector>
 															</subobject>
 														</subobject>
 													</obj>
 													<!-- else x_4 =< x_2 -->
-													<obj identifier="1">
+													<obj identifier="3">
 														<vector type="externObjectInput">
 															<variable>5</variable>
 															<variable>6</variable>
@@ -516,13 +496,13 @@
 														</vector>
 														<subobject>
 															<output_variables>
-																<variable>18</variable>
-																<variable>19</variable>
+																<variable>15</variable>
+																<variable>16</variable>
 															</output_variables>
 															<subobject number="1">
 																<vector type="externSubobject">
-																	<variable>18</variable>
-																	<variable>19</variable>
+																	<variable>15</variable>
+																	<variable>16</variable>
 																</vector>
 															</subobject>
 														</subobject>
@@ -536,7 +516,7 @@
 															<variable>5</variable>
 														</lo>
 													</condition>
-													<obj identifier="1">
+													<obj identifier="3">
 														<vector type="externObjectInput">
 															<variable>7</variable>
 															<variable>8</variable>
@@ -549,19 +529,19 @@
 														</vector>
 														<subobject>
 															<output_variables>
-																<variable>18</variable>
-																<variable>19</variable>
+																<variable>15</variable>
+																<variable>16</variable>
 															</output_variables>
 															<subobject number="1">
 																<vector type="externSubobject">
-																	<variable>18</variable>
-																	<variable>19</variable>
+																	<variable>15</variable>
+																	<variable>16</variable>
 																</vector>
 															</subobject>
 														</subobject>
 													</obj>
 													<!-- else x_3 =< x_1 -->
-													<obj identifier="1">
+													<obj identifier="3">
 														<vector type="externObjectInput">
 															<variable>7</variable>
 															<variable>8</variable>
@@ -574,13 +554,13 @@
 														</vector>
 														<subobject>
 															<output_variables>
-																<variable>18</variable>
-																<variable>19</variable>
+																<variable>15</variable>
+																<variable>16</variable>
 															</output_variables>
 															<subobject number="1">
 																<vector type="externSubobject">
-																	<variable>18</variable>
-																	<variable>19</variable>
+																	<variable>15</variable>
+																	<variable>16</variable>
 																</vector>
 															</subobject>
 														</subobject>
@@ -588,8 +568,8 @@
 												</if>
 											</if>
 										</if>
-									</if><!-- end else draw boxes with object of id -425 -->
-
+									</if><!-- end else draw boxes with object of id -42? -->
+									
 								</if>
 							</subobject>
 						</obj>
@@ -597,8 +577,396 @@
 				</subobject>
 			</obj>
 		</main_fib_object>
+		
 		<sub_roots>
+			
 			<sub_root identifier="1">
+				<root>
+					<optionalpart>
+						<pair key="name" value="quadrangle"/>
+						<pair key="description" value="This object represents a filled quadrangle (box) with a intersection. The quadrangle has the given four corner points ( x_1, y_1 ), ( x_2, y_2 ), ( x_4, y_4 ) and ( x_5, y_5 ) as its border points. Where ( x_i, y_i ) is the neighbour point of ( x_{i+1}, y_{i+1} ). The point p_3 (x_3, y_3) is the intersection point. The intersection is located on the line betwean ( x_1, y_1 ) ( x_4, y_4 ) and the line betwean ( x_2, y_2 ) ( x_5, y_5 ) . The lines betwean ( x_1, y_1 ), ( x_2, y_2 ) and ( x_4, y_4 ), ( x_5, y_5 ) are intersection free. This object is a help object of the main Fib object. The points of the quadrangle are given back as variables of the subobject."/>
+						<pair key="inVar1::description" value="position of the first point p_1 in dimension 1 (x_1)"/>
+						<pair key="inVar2::description" value="position of the first point p_1 in dimension 2 (y_1)"/>
+						<pair key="inVar3::description" value="position of the second point p_2 in dimension 1 (x_2)"/>
+						<pair key="inVar4::description" value="position of the second point p_2 in dimension 2 (y_2)"/>
+						<pair key="inVar5::description" value="position of the intersection (3.) point p_3 in dimension 1 (x_3)"/>
+						<pair key="inVar6::description" value="position of the intersection (3.) point p_3 in dimension 2 (y_3)"/>
+						<pair key="inVar7::description" value="position of the 4. point p_4 in dimension 1 (x_4)"/>
+						<pair key="inVar8::description" value="position of the 4. point p_4 in dimension 2 (y_4)"/>
+						<pair key="inVar9::description" value="position of the 5. point p_5 in dimension 1 (x_5)"/>
+						<pair key="inVar10::description" value="position of the 5. point p_5 in dimension 2 (y_5)"/>
+						
+						<pair key="subObj1::description" value="The points of the quadrangle. The subobject is called for every point on the quadrangle."/>
+						<pair key="subObj1::outVar1::description" value="the position of the quadrangle point in dimension 1 (x)"/>
+						<pair key="subObj1::outVar2::description" value="the position of the quadrangle point in dimension 2 (y)"/>
+					</optionalpart>
+					<input_variables>
+						<variable number="1" default="0"/>
+						<variable number="2" default="0"/>
+						<variable number="3" default="0"/>
+						<variable number="4" default="0"/>
+						<variable number="5" default="0"/>
+						<variable number="6" default="0"/>
+						<variable number="7" default="0"/>
+						<variable number="8" default="0"/>
+						<variable number="9" default="0"/>
+						<variable number="10" default="0"/>
+					</input_variables>
+					<domains>
+						<inVar number="1">
+							<domainReference subdomain="1">
+								<dim count="2">
+									<dimension number="1" direction="anywhere"/>
+									<dimension number="2" direction="anywhere"/>
+								</dim>
+							</domainReference>
+						</inVar>
+						<inVar number="2">
+							<domainReference subdomain="2">
+								<dim count="2">
+									<dimension number="1" direction="anywhere"/>
+									<dimension number="2" direction="anywhere"/>
+								</dim>
+							</domainReference>
+						</inVar>
+						<inVar number="3">
+							<domainReference subdomain="1">
+								<dim count="2">
+									<dimension number="1" direction="anywhere"/>
+									<dimension number="2" direction="anywhere"/>
+								</dim>
+							</domainReference>
+						</inVar>
+						<inVar number="4">
+							<domainReference subdomain="2">
+								<dim count="2">
+									<dimension number="1" direction="anywhere"/>
+									<dimension number="2" direction="anywhere"/>
+								</dim>
+							</domainReference>
+						</inVar>
+						<inVar number="5">
+							<domainReference subdomain="1">
+								<dim count="2">
+									<dimension number="1" direction="anywhere"/>
+									<dimension number="2" direction="anywhere"/>
+								</dim>
+							</domainReference>
+						</inVar>
+						<inVar number="6">
+							<domainReference subdomain="2">
+								<dim count="2">
+									<dimension number="1" direction="anywhere"/>
+									<dimension number="2" direction="anywhere"/>
+								</dim>
+							</domainReference>
+						</inVar>
+						<inVar number="7">
+							<domainReference subdomain="1">
+								<dim count="2">
+									<dimension number="1" direction="anywhere"/>
+									<dimension number="2" direction="anywhere"/>
+								</dim>
+							</domainReference>
+						</inVar>
+						<inVar number="8">
+							<domainReference subdomain="2">
+								<dim count="2">
+									<dimension number="1" direction="anywhere"/>
+									<dimension number="2" direction="anywhere"/>
+								</dim>
+							</domainReference>
+						</inVar>
+						<inVar number="9">
+							<domainReference subdomain="1">
+								<dim count="2">
+									<dimension number="1" direction="anywhere"/>
+									<dimension number="2" direction="anywhere"/>
+								</dim>
+							</domainReference>
+						</inVar>
+						<inVar number="10">
+							<domainReference subdomain="2">
+								<dim count="2">
+									<dimension number="1" direction="anywhere"/>
+									<dimension number="2" direction="anywhere"/>
+								</dim>
+							</domainReference>
+						</inVar>
+						<externSubobject number="1">
+							<vector elements="2">
+								<!--actually any numbers are possible;
+									the next lines are just a space holder-->
+								<naturalNumberB bit="0" />
+								<naturalNumberB bit="0" />
+							</vector>
+						</externSubobject>
+						
+						<externObject>
+							<vector elements="4">
+								<integer min="4" max="5" /><!--Identifier-->
+								<integer min="10" max="10" /><!--number input values-->
+								<naturalNumber max="1" /><!--number subobjects-->
+								<naturalNumber max="2" /><!--number output values-->
+							</vector>
+						</externObject>
+						<!-- external object for both points of each triangle
+							  are on one side of the intersection point -->
+						<externObjectInput identifier="4">
+							<vector elements="10">
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+							</vector>
+						</externObjectInput>
+						<!-- external object for in each triangle one point left
+							  and one point right of the intersection point -->
+						<externObjectInput identifier="5">
+							<vector elements="10">
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+							</vector>
+						</externObjectInput>
+					</domains>
+					<main_fib_object>
+						<!-- sort the points for the external object -->
+						<if><!-- if x_1 < x_2 -->
+							<condition>
+								<lo>
+									<variable>1</variable>
+									<variable>3</variable>
+								</lo>
+							</condition>
+							<if><!-- if x_2 < x_3 -->
+								<condition>
+									<lo>
+										<variable>3</variable>
+										<variable>5</variable>
+									</lo>
+								</condition>
+								<!-- x_1 < x_2 < x_3 -> x_3 =< x_4 and x_3 =< x_5
+									-> both points of each triangle are on one side
+										of the intersection point -->
+								<obj identifier="4">
+									<vector type="externObjectInput">
+										<variable>1</variable>
+										<variable>2</variable>
+										<variable>3</variable>
+										<variable>4</variable>
+										<variable>5</variable>
+										<variable>6</variable>
+										<variable>9</variable>
+										<variable>10</variable>
+										<variable>7</variable>
+										<variable>8</variable>
+									</vector>
+									<subobject>
+										<output_variables>
+											<variable>11</variable>
+											<variable>12</variable>
+										</output_variables>
+										<subobject number="1">
+											<vector type="externSubobject">
+												<variable>11</variable>
+												<variable>12</variable>
+											</vector>
+										</subobject>
+									</subobject>
+								</obj>
+								<!-- else x_3 =< x_2 -->
+								<if><!-- if x_3 < x_1  -->
+									<condition>
+										<lo>
+											<variable>5</variable>
+											<variable>1</variable>
+										</lo>
+									</condition>
+									<!-- x_3 < x_1 =< x_2
+										-> both points of each triangle are on one side
+											of the intersection point -->
+									<obj identifier="4">
+										<vector type="externObjectInput">
+											<variable>9</variable>
+											<variable>10</variable>
+											<variable>7</variable>
+											<variable>8</variable>
+											<variable>5</variable>
+											<variable>6</variable>
+											<variable>1</variable>
+											<variable>2</variable>
+											<variable>3</variable>
+											<variable>4</variable>
+										</vector>
+										<subobject>
+											<output_variables>
+												<variable>11</variable>
+												<variable>12</variable>
+											</output_variables>
+											<subobject number="1">
+												<vector type="externSubobject">
+													<variable>11</variable>
+													<variable>12</variable>
+												</vector>
+											</subobject>
+										</subobject>
+									</obj>
+									<!-- else x_1 =< x_3 =< x_2 -> for each triangle one point
+									left and one point right of the intersection point -->
+									<obj identifier="5">
+										<vector type="externObjectInput">
+											<variable>1</variable>
+											<variable>2</variable>
+											<variable>3</variable>
+											<variable>4</variable>
+											<variable>5</variable>
+											<variable>6</variable>
+											<variable>9</variable>
+											<variable>10</variable>
+											<variable>7</variable>
+											<variable>8</variable>
+										</vector>
+										<subobject>
+											<output_variables>
+												<variable>11</variable>
+												<variable>12</variable>
+											</output_variables>
+											<subobject number="1">
+												<vector type="externSubobject">
+													<variable>11</variable>
+													<variable>12</variable>
+												</vector>
+											</subobject>
+										</subobject>
+									</obj>
+								</if>
+							</if>
+							<!-- else x_2 =< x_1 -->
+							<if><!-- if x_3 < x_2  -->
+								<condition>
+									<lo>
+										<variable>5</variable>
+										<variable>3</variable>
+									</lo>
+								</condition>
+								<!-- x_3 < x_2 =< x_1 -> x_4 =< x_3 and x_5 =< x_3
+									-> both points of each triangle are on one side
+										of the intersection point -->
+								<obj identifier="4">
+									<vector type="externObjectInput">
+										<variable>7</variable>
+										<variable>8</variable>
+										<variable>9</variable>
+										<variable>10</variable>
+										<variable>5</variable>
+										<variable>6</variable>
+										<variable>3</variable>
+										<variable>4</variable>
+										<variable>1</variable>
+										<variable>2</variable>
+									</vector>
+									<subobject>
+										<output_variables>
+											<variable>11</variable>
+											<variable>12</variable>
+										</output_variables>
+										<subobject number="1">
+											<vector type="externSubobject">
+												<variable>11</variable>
+												<variable>12</variable>
+											</vector>
+										</subobject>
+									</subobject>
+								</obj>
+								<!-- else x_2 =< x_3 -->
+								<if><!-- if x_1 < x_3  -->
+									<condition>
+										<lo>
+											<variable>1</variable>
+											<variable>5</variable>
+										</lo>
+									</condition>
+									<!-- x_2 =< x_1 < x_3
+										-> both points of each triangle are on one side
+											of the intersection point -->
+									<obj identifier="4">
+										<vector type="externObjectInput">
+											<variable>3</variable>
+											<variable>4</variable>
+											<variable>1</variable>
+											<variable>2</variable>
+											<variable>5</variable>
+											<variable>6</variable>
+											<variable>7</variable>
+											<variable>8</variable>
+											<variable>9</variable>
+											<variable>10</variable>
+										</vector>
+										<subobject>
+											<output_variables>
+												<variable>11</variable>
+												<variable>12</variable>
+											</output_variables>
+											<subobject number="1">
+												<vector type="externSubobject">
+													<variable>11</variable>
+													<variable>12</variable>
+												</vector>
+											</subobject>
+										</subobject>
+									</obj>
+									<!-- else x_2 =< x_3 =< x_1 -> for each triangle one point
+									left and one point right of the intersection point -->
+									<obj identifier="5">
+										<vector type="externObjectInput">
+											<variable>7</variable>
+											<variable>8</variable>
+											<variable>9</variable>
+											<variable>10</variable>
+											<variable>5</variable>
+											<variable>6</variable>
+											<variable>3</variable>
+											<variable>4</variable>
+											<variable>1</variable>
+											<variable>2</variable>
+										</vector>
+										<subobject>
+											<output_variables>
+												<variable>11</variable>
+												<variable>12</variable>
+											</output_variables>
+											<subobject number="1">
+												<vector type="externSubobject">
+													<variable>11</variable>
+													<variable>12</variable>
+												</vector>
+											</subobject>
+										</subobject>
+									</obj>
+								</if>
+							</if>
+						</if>
+					</main_fib_object>
+				</root>
+			</sub_root>
+			
+			
+			
+			<sub_root identifier="3">
 				<root>
 					<optionalpart>
 						<pair key="description" value="This object represents a filled quadrangle (box). The quadrangle has the given four corner points ( x_1, y_1 ), ( x_2, y_2 ), ( x_3, y_3 ) and ( x_4, y_4 ) as its border points. Where x_1 \lo x_i, x_2 \lo x_3 and ( x_2, y_2 ), ( x_3, y_3 ) are the neighbours of ( x_1, y_1 ). The points of the quadrangle are given back as variables of the subobject."/>
@@ -610,8 +978,10 @@
 						<pair key="inVar6::description" value="position of the 3. point p_3 in dimension 2 (y_3)"/>
 						<pair key="inVar7::description" value="position of the 4. point p_4 in dimension 1 (x_4)"/>
 						<pair key="inVar8::description" value="position of the 4. point p_4 in dimension 2 (y_4)"/>
-						<pair key="subObj1::outVar1::description" value="the position of the line point in dimension 1 (x)"/>
-						<pair key="subObj1::outVar2::description" value="the position of the line point in dimension 2 (y)"/>
+						
+						<pair key="subObj1::description" value="The points of the quadrangle. The subobject is called for every point on the quadrangle."/>
+						<pair key="subObj1::outVar1::description" value="the position of the quadrangle point in dimension 1 (x)"/>
+						<pair key="subObj1::outVar2::description" value="the position of the quadrangle point in dimension 2 (y)"/>
 					</optionalpart>
 					<input_variables>
 						<variable number="1" default="0"/>
@@ -696,16 +1066,19 @@
 								<naturalNumberB bit="0" />
 							</vector>
 						</externSubobject>
+						
 						<externObject>
 							<vector elements="4">
-								<integer min="-951" max="-425" /><!--Identifier-->
+								<integer min="-951" max="-215" /><!--Identifier-->
 								<integer min="8" max="10" /><!--number input values-->
 								<naturalNumber max="1" /><!--number subobjects-->
 								<naturalNumber max="2" /><!--number output values-->
 							</vector>
 						</externObject>
-						<externObjectInput identifier="-425">
-							<vector elements="8">
+						<externObjectInput identifier="-215">
+							<vector elements="10">
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
 								<naturalNumber max="0" />
 								<naturalNumber max="0" />
 								<naturalNumber max="0" />
@@ -730,6 +1103,20 @@
 								<naturalNumber max="0" />
 							</vector>
 						</externObjectInput>
+						<externObjectInput identifier="-429">
+							<vector elements="10">
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<integer min="0" max="1" />
+								<integer min="-1" max="0" />
+							</vector>
+						</externObjectInput>
 						<externObjectInput identifier="-951">
 							<vector elements="8">
 								<naturalNumber max="0" />
@@ -742,19 +1129,22 @@
 								<naturalNumber max="0" />
 							</vector>
 						</externObjectInput>
+						<subfunction>
+							<integer scalingfactor="0.5" min="1" max="2" />
+						</subfunction>
 					</domains>
 					<main_fib_object>
 						<!-- fill areas betwean lines:
-							- (p_1, p_2) and (p_1, p_3) if (x_4 < x_2) and
+							- (p_1, p_2) and (p_1, p_3) (if (x_4 < x_2) and)
 									if ( p_4 is betwean points (p_1, p_2, p_3) ) then till min( x_2, x_4 )
-							- if (x_4 < x_2) then (p_1, p_2) and (p_2, p_4) ->
+							- if (x_4 < x_2) then (p_1, p_2) and (p_4, p_2) ->
 									if ( p_3 is betwean points (p_1, p_2, p_4) ) then till max( x_3, x_4 )
-							- if (x_4 < x_3) then (p_1, p_3) and (p_3, p_4)
+							- if (x_4 < x_3) then (p_1, p_3) and (p_4, p_3)
 									if ( p_2 is betwean points (p_1, p_3, p_4) ) then till max( x_2, x_4 )
-							- if (x_3 < x_4) then (p_2, p_4) and (p_4, p_3)
-								- else if (x_4 <= x_3) then (p_2, p_4) and (p_4, p_3) if y_4 is not betwean points p_1, p_2 and p_3
+							- if (x_3 < x_4) then (p_2, p_4) and (p_3, p_4)
+								- else if (x_4 <= x_3) then (p_2, p_4) and (p_4, p_3) if p_4 is not betwean points p_1, p_2 and p_3
 							- if ( x_2 < x_4 ) then (p_1, p_3) and (p_2, p_4)
-						( not for this object x_1 <= x_2 <= x_3 and x_1 <= x_4)
+						( not for this object x_1 <= x_2 <= x_3 and x_1 <= x_4 )
 						-->
 						<list>
 							<!-- (p_1, p_2) and (p_1, p_3) if (x_4 < x_2) and
@@ -795,7 +1185,7 @@
 														<variable>7</variable>
 													</min>
 												</subfunction>
-												<obj identifier="-427"><!-- (p_1, p_2) and (p_1, p_3) till min( x_2, x_4 )  -->
+												<obj identifier="-427"><!-- (p_1, p_2) and (p_1, p_3) till min( x_2, x_4 ) -->
 													<vector type="externObjectInput">
 														<variable>1</variable>
 														<variable>2</variable>
@@ -823,7 +1213,7 @@
 												</obj>
 											</function>
 											<!-- else fill area betwean (p_1, p_2) and (p_1, p_3) -->
-											<obj identifier="-425"><!-- (p_1, p_2) and (p_1, p_4) -->
+											<obj identifier="-429"><!-- (p_1, p_2) and (p_1, p_3) -->
 												<vector type="externObjectInput">
 													<variable>1</variable>
 													<variable>2</variable>
@@ -833,6 +1223,8 @@
 													<variable>2</variable>
 													<variable>5</variable>
 													<variable>6</variable>
+													<value>0</value>
+													<value>-1</value>
 												</vector>
 												<subobject>
 													<output_variables>
@@ -851,33 +1243,64 @@
 									</subobject>
 								</obj>
 								<!-- else fill area betwean (p_1, p_2) and (p_1, p_3) -->
-								<obj identifier="-425"><!-- (p_1, p_2) and (p_1, p_4) -->
-									<vector type="externObjectInput">
-										<variable>1</variable>
-										<variable>2</variable>
-										<variable>3</variable>
-										<variable>4</variable>
-										<variable>1</variable>
-										<variable>2</variable>
-										<variable>5</variable>
-										<variable>6</variable>
-									</vector>
-									<subobject>
-										<output_variables>
-											<variable>9</variable>
-											<variable>10</variable>
-										</output_variables>
-										<subobject number="1">
-											<vector type="externSubobject">
+								<list>
+									<obj identifier="-429"><!-- (p_1, p_2) and (p_1, p_3) -->
+										<vector type="externObjectInput">
+											<variable>1</variable>
+											<variable>2</variable>
+											<variable>3</variable>
+											<variable>4</variable>
+											<variable>1</variable>
+											<variable>2</variable>
+											<variable>5</variable>
+											<variable>6</variable>
+											<value>0</value>
+											<value>-1</value>
+										</vector>
+										<subobject>
+											<output_variables>
 												<variable>9</variable>
 												<variable>10</variable>
-											</vector>
+											</output_variables>
+											<subobject number="1">
+												<vector type="externSubobject">
+													<variable>9</variable>
+													<variable>10</variable>
+												</vector>
+											</subobject>
 										</subobject>
-									</subobject>
-								</obj>
+									</obj>
+									<!-- draw end line -->
+									<obj identifier="-215">
+										<vector type="externObjectInput">
+											<variable>3</variable>
+											<variable>4</variable>
+											<variable>1</variable>
+											<variable>2</variable>
+											<variable>7</variable>
+											<variable>8</variable>
+											<variable>1</variable>
+											<variable>2</variable>
+											<variable>5</variable>
+											<variable>6</variable>
+										</vector>
+										<subobject>
+											<output_variables>
+												<variable>9</variable>
+												<variable>10</variable>
+											</output_variables>
+											<subobject number="1">
+												<vector type="externSubobject">
+													<variable>9</variable>
+													<variable>10</variable>
+												</vector>
+											</subobject>
+										</subobject>
+									</obj>
+								</list>
 							</if>
-							<!-- if (x_4 < x_2) then (p_1, p_2) and (p_2, p_4) ->
-									if ( p_3 is betwean points (p_1, p_2, p_4) ) then till max( x_3, x_4 ) -->
+							<!-- if (x_4 < x_2) then (p_1, p_2) and (p_2, p_4)
+								-> if ( p_3 is betwean points (p_1, p_2, p_4) ) then till max( x_3, x_4 ) -->
 							<if>
 								<condition>
 									<lo>
@@ -907,14 +1330,17 @@
 													<variable>9</variable>
 												</lo>
 											</condition>
-											<function define_variable="10"><!-- evalue max( x_3, x_4 ) -->
+											<function define_variable="10"><!-- evalue max( x_3, x_4 ) + 1 -->
 												<subfunction>
-													<max>
-														<variable>5</variable>
-														<variable>7</variable>
-													</max>
+													<add>
+														<max>
+															<variable>5</variable>
+															<variable>7</variable>
+														</max>
+														<value>1</value>
+													</add>
 												</subfunction>
-												<obj identifier="-427"><!-- (p_1, p_2) and (p_2, p_4) till max( x_3, x_4 )  -->
+												<obj identifier="-427"><!-- (p_1, p_2) and (p_2, p_4) from max( x_3, x_4 ) + 1 till x_2  -->
 													<vector type="externObjectInput">
 														<variable>1</variable>
 														<variable>2</variable>
@@ -965,7 +1391,7 @@
 																<variable>10</variable>
 															</lo>
 														</condition>
-														<obj identifier="-425"><!-- (p_1, p_2) and (p_2, p_4) -->
+														<obj identifier="-429"><!-- (p_1, p_2) and (p_2, p_4) -->
 															<vector type="externObjectInput">
 																<variable>1</variable>
 																<variable>2</variable>
@@ -975,6 +1401,8 @@
 																<variable>4</variable>
 																<variable>7</variable>
 																<variable>8</variable>
+																<value>1</value><!-- min area +1 -->
+																<value>0</value>
 															</vector>
 															<subobject>
 																<output_variables>
@@ -997,7 +1425,7 @@
 										</if>
 									</subobject>
 								</obj>
-								<!-- else do nothing -->
+								<!-- else (x_2 < x_4) do nothing (no common area betwean (p_1, p_2) and (p_2, p_4) ) -->
 								<point/>
 							</if>
 							<!-- if (x_4 < x_3) then (p_1, p_3) and (p_3, p_4)
@@ -1033,12 +1461,22 @@
 											</condition>
 											<function define_variable="10"><!-- evalue max( x_2, x_4 ) -->
 												<subfunction>
-													<max>
-														<variable>3</variable>
-														<variable>7</variable>
-													</max>
+													<add>
+														<max>
+															<variable>3</variable>
+															<variable>7</variable>
+														</max>
+														<if>
+															<lo>
+																<variable>3</variable>
+																<variable>7</variable>
+															</lo>
+															<value>1</value>
+															<value>0</value>
+														</if>
+													</add>
 												</subfunction>
-												<obj identifier="-427"><!-- (p_1, p_3) and (p_3, p_4) till max( x_2, x_4 )  -->
+												<obj identifier="-427"><!-- (p_1, p_3) and (p_3, p_4) from max( x_2, x_4 ) till x_3 -->
 													<vector type="externObjectInput">
 														<variable>1</variable>
 														<variable>2</variable>
@@ -1066,7 +1504,7 @@
 												</obj>
 											</function>
 											<!-- else fill area betwean (p_1, p_3) and (p_3, p_4) -->
-											<obj identifier="-425"><!-- (p_1, p_3) and (p_3, p_4) -->
+											<obj identifier="-429"><!-- (p_1, p_3) and (p_3, p_4) -->
 												<vector type="externObjectInput">
 													<variable>1</variable>
 													<variable>2</variable>
@@ -1076,16 +1514,18 @@
 													<variable>6</variable>
 													<variable>7</variable>
 													<variable>8</variable>
+													<value>1</value><!-- min area +1 -->
+													<value>0</value>
 												</vector>
 												<subobject>
 													<output_variables>
+														<variable>10</variable>
 														<variable>11</variable>
-														<variable>12</variable>
 													</output_variables>
 													<subobject number="1">
 														<vector type="externSubobject">
+															<variable>10</variable>
 															<variable>11</variable>
-															<variable>12</variable>
 														</vector>
 													</subobject>
 												</subobject>
@@ -1105,32 +1545,78 @@
 										<variable>7</variable>
 									</lo>
 								</condition>
-								<obj identifier="-425"><!-- (p_2, p_4) and (p_4, p_3) -->
-									<vector type="externObjectInput">
-										<variable>3</variable>
-										<variable>4</variable>
-										<variable>7</variable>
-										<variable>8</variable>
-										<variable>7</variable>
-										<variable>8</variable>
-										<variable>5</variable>
-										<variable>6</variable>
-									</vector>
-									<subobject>
-										<output_variables>
-											<variable>9</variable>
-											<variable>10</variable>
-										</output_variables>
-										<subobject number="1">
-											<vector type="externSubobject">
+								<list>
+									<obj identifier="-429"><!-- (p_2, p_4) and (p_4, p_3) -->
+										<vector type="externObjectInput">
+											<variable>3</variable>
+											<variable>4</variable>
+											<variable>7</variable>
+											<variable>8</variable>
+											<variable>7</variable>
+											<variable>8</variable>
+											<variable>5</variable>
+											<variable>6</variable>
+											<value>1</value><!-- min area +1 -->
+											<value>0</value>
+										</vector>
+										<subobject>
+											<output_variables>
 												<variable>9</variable>
 												<variable>10</variable>
-											</vector>
+											</output_variables>
+											<subobject number="1">
+												<vector type="externSubobject">
+													<variable>9</variable>
+													<variable>10</variable>
+												</vector>
+											</subobject>
 										</subobject>
-									</subobject>
-								</obj>
+									</obj>
+									<!-- if int( 2 ) != int( 3 ) or if ( ceil( x_2 ) < x_3  ) ) -> draw endline -->
+									<if>
+										<condition>
+											<lo>
+												<round>
+													<add>
+														<variable>3</variable>
+														<value>0.5</value>
+													</add>
+												</round>
+												<variable>5</variable>
+											</lo>
+										</condition>
+										<obj identifier="-215">
+											<vector type="externObjectInput">
+												<variable>5</variable>
+												<variable>6</variable>
+												<variable>1</variable>
+												<variable>2</variable>
+												<variable>7</variable>
+												<variable>8</variable>
+												<variable>3</variable>
+												<variable>4</variable>
+												<variable>7</variable>
+												<variable>8</variable>
+											</vector>
+											<subobject>
+												<output_variables>
+													<variable>9</variable>
+													<variable>10</variable>
+												</output_variables>
+												<subobject number="1">
+													<vector type="externSubobject">
+														<variable>9</variable>
+														<variable>10</variable>
+													</vector>
+												</subobject>
+											</subobject>
+										</obj>
+										<!-- else do nothing -->
+										<point/>
+									</if>
+								</list>
 								<!-- else if (x_4 <= x_3) then (p_2, p_4) and (p_4, p_3) if y_4 is not betwean points p_1, p_2 and p_3 -->
-								<obj identifier="-951"><!-- check if y_4 is not betwean points p_1, p_2 and p_3 -->
+								<obj identifier="-951"><!-- check if p_4 is not betwean points p_1, p_2 and p_3 -->
 									<vector type="externObjectInput">
 										<variable>7</variable>
 										<variable>8</variable>
@@ -1145,15 +1631,15 @@
 										<output_variables>
 											<variable>9</variable>
 										</output_variables>
-										<if><!-- if p_2 is betwean points (p_1, p_3, p_4) -->
+										<if><!-- if p_4 is not betwean points (p_1, p_3, p_4) -->
 											<condition>
 												<lo>
 													<variable>9</variable>
 													<value>1</value>
 												</lo>
 											</condition>
-											<!-- else fill area betwean (p_2, p_4) and (p_4, p_3) -->
-											<obj identifier="-425"><!-- (p_2, p_4) and (p_4, p_3) -->
+											<!-- fill area betwean (p_2, p_4) and (p_4, p_3) -->
+											<obj identifier="-429"><!-- (p_2, p_4) and (p_4, p_3) -->
 												<vector type="externObjectInput">
 													<variable>3</variable>
 													<variable>4</variable>
@@ -1163,6 +1649,8 @@
 													<variable>8</variable>
 													<variable>5</variable>
 													<variable>6</variable>
+													<value>0</value>
+													<value>-1</value><!-- max area -1 -->
 												</vector>
 												<subobject>
 													<output_variables>
@@ -1183,38 +1671,94 @@
 									</subobject>
 								</obj>
 							</if>
-							<!-- if ( x_2 < x_4 ) then (p_1, p_3) and (p_2, p_4) -->
+							<!-- if ( ( x_2 < x_4 ) and ( ceil( x_2 ) < x_3  ) ) then (p_1, p_3) and (p_2, p_4) -->
 							<if>
 								<condition>
-									<lo>
-										<variable>3</variable>
-										<variable>7</variable>
-									</lo>
+									<and>
+										<lo>
+											<variable>3</variable>
+											<variable>7</variable>
+										</lo>
+										<lo>
+											<round>
+												<add>
+													<variable>3</variable>
+													<value>0.5</value>
+												</add>
+											</round>
+											<variable>5</variable>
+										</lo>
+									</and>
 								</condition>
-								<obj identifier="-425"><!-- (p_1, p_3) and (p_2, p_4) -->
-									<vector type="externObjectInput">
-										<variable>1</variable>
-										<variable>2</variable>
-										<variable>5</variable>
-										<variable>6</variable>
-										<variable>3</variable>
-										<variable>4</variable>
-										<variable>7</variable>
-										<variable>8</variable>
-									</vector>
-									<subobject>
-										<output_variables>
-											<variable>9</variable>
-											<variable>10</variable>
-										</output_variables>
-										<subobject number="1">
-											<vector type="externSubobject">
+								<list>
+									<obj identifier="-429"><!-- (p_1, p_3) and (p_2, p_4) -->
+										<vector type="externObjectInput">
+											<variable>1</variable>
+											<variable>2</variable>
+											<variable>5</variable>
+											<variable>6</variable>
+											<variable>3</variable>
+											<variable>4</variable>
+											<variable>7</variable>
+											<variable>8</variable>
+											<value>1</value><!-- min area +1 -->
+											<value>-1</value><!-- max area -1 -->
+										</vector>
+										<subobject>
+											<output_variables>
 												<variable>9</variable>
 												<variable>10</variable>
-											</vector>
+											</output_variables>
+											<subobject number="1">
+												<vector type="externSubobject">
+													<variable>9</variable>
+													<variable>10</variable>
+												</vector>
+											</subobject>
 										</subobject>
-									</subobject>
-								</obj>
+									</obj>
+									<if><!-- if point 4 is lower than point 3 -> draw end line -->
+										<condition><!-- x_4 < flour( x_3 ) -->
+											<lo>
+												<variable>7</variable>
+												<round>
+													<sub>
+														<variable>5</variable>
+														<value>0.5</value>
+													</sub>
+												</round>
+											</lo>
+										</condition>
+										<!-- draw end line -->
+										<obj identifier="-215">
+											<vector type="externObjectInput">
+												<variable>7</variable>
+												<variable>8</variable>
+												<variable>3</variable>
+												<variable>4</variable>
+												<variable>5</variable>
+												<variable>6</variable>
+												<variable>1</variable>
+												<variable>2</variable>
+												<variable>5</variable>
+												<variable>6</variable>
+											</vector>
+											<subobject>
+												<output_variables>
+													<variable>9</variable>
+													<variable>10</variable>
+												</output_variables>
+												<subobject number="1">
+													<vector type="externSubobject">
+														<variable>9</variable>
+														<variable>10</variable>
+													</vector>
+												</subobject>
+											</subobject>
+										</obj>
+										<point/>
+									</if>
+								</list>
 								<!-- else do nothing -->
 								<point/>
 							</if>
@@ -1222,6 +1766,993 @@
 					</main_fib_object>
 				</root>
 			</sub_root>
+			
+			
+			<sub_root identifier="4">
+				<root>
+					<optionalpart>
+						<pair key="name" value="quadrangle with intersection"/>
+						<pair key="description" value="This object represents a filled quadrangle (box) with intersection. The quadrangle has the given four corner points ( x_1, y_1 ), ( x_2, y_2 ), ( x_4, y_4 ) and ( x_5, y_5 ) as its border points. Where ( x_i, y_i ) is the neighbour point of ( x_{i+1}, y_{i+1} ). The point p_3 (x_3, y_3) is the intersection point. The intersection is located on the line betwean ( x_1, y_1 ) ( x_5, y_5 ) and the line betwean ( x_2, y_2 ) ( x_4, y_4 ) . The lines betwean ( x_1, y_1 ), ( x_2, y_2 ) and ( x_4, y_4 ), ( x_5, y_5 ) are intersection free. Also x_1 and x_2 is lower x_3 is lower x_4 and x_5 . So both not intersection points of each triangle are on one side of the intersection point. This object is a help object of the subroot object 1 . The points of the quadrangle are given back as variables of the subobject."/>
+						<pair key="inVar1::description" value="position of the first point p_1 in dimension 1 (x_1)"/>
+						<pair key="inVar2::description" value="position of the first point p_1 in dimension 2 (y_1)"/>
+						<pair key="inVar3::description" value="position of the second point p_2 in dimension 1 (x_2)"/>
+						<pair key="inVar4::description" value="position of the second point p_2 in dimension 2 (y_2)"/>
+						<pair key="inVar5::description" value="position of the intersection (3.) point p_3 in dimension 1 (x_3)"/>
+						<pair key="inVar6::description" value="position of the intersection (3.) point p_3 in dimension 2 (y_3)"/>
+						<pair key="inVar7::description" value="position of the 4. point p_4 in dimension 1 (x_4)"/>
+						<pair key="inVar8::description" value="position of the 4. point p_4 in dimension 2 (y_4)"/>
+						<pair key="inVar9::description" value="position of the 5. point p_5 in dimension 1 (x_5)"/>
+						<pair key="inVar10::description" value="position of the 5. point p_5 in dimension 2 (y_5)"/>
+						
+						<pair key="subObj1::description" value="The points of the quadrangle. The subobject is called for every point on the quadrangle."/>
+						<pair key="subObj1::outVar1::description" value="the position of the quadrangle point in dimension 1 (x)"/>
+						<pair key="subObj1::outVar2::description" value="the position of the quadrangle point in dimension 2 (y)"/>
+					</optionalpart>
+					<input_variables>
+						<variable number="1" default="0"/>
+						<variable number="2" default="0"/>
+						<variable number="3" default="0"/>
+						<variable number="4" default="0"/>
+						<variable number="5" default="0"/>
+						<variable number="6" default="0"/>
+						<variable number="7" default="0"/>
+						<variable number="8" default="0"/>
+						<variable number="9" default="0"/>
+						<variable number="10" default="0"/>
+					</input_variables>
+					<domains>
+						<inVar number="1">
+							<domainReference subdomain="1">
+								<dim count="2">
+									<dimension number="1" direction="anywhere"/>
+									<dimension number="2" direction="anywhere"/>
+								</dim>
+							</domainReference>
+						</inVar>
+						<inVar number="2">
+							<domainReference subdomain="2">
+								<dim count="2">
+									<dimension number="1" direction="anywhere"/>
+									<dimension number="2" direction="anywhere"/>
+								</dim>
+							</domainReference>
+						</inVar>
+						<inVar number="3">
+							<domainReference subdomain="1">
+								<dim count="2">
+									<dimension number="1" direction="anywhere"/>
+									<dimension number="2" direction="anywhere"/>
+								</dim>
+							</domainReference>
+						</inVar>
+						<inVar number="4">
+							<domainReference subdomain="2">
+								<dim count="2">
+									<dimension number="1" direction="anywhere"/>
+									<dimension number="2" direction="anywhere"/>
+								</dim>
+							</domainReference>
+						</inVar>
+						<inVar number="5">
+							<domainReference subdomain="1">
+								<dim count="2">
+									<dimension number="1" direction="anywhere"/>
+									<dimension number="2" direction="anywhere"/>
+								</dim>
+							</domainReference>
+						</inVar>
+						<inVar number="6">
+							<domainReference subdomain="2">
+								<dim count="2">
+									<dimension number="1" direction="anywhere"/>
+									<dimension number="2" direction="anywhere"/>
+								</dim>
+							</domainReference>
+						</inVar>
+						<inVar number="7">
+							<domainReference subdomain="1">
+								<dim count="2">
+									<dimension number="1" direction="anywhere"/>
+									<dimension number="2" direction="anywhere"/>
+								</dim>
+							</domainReference>
+						</inVar>
+						<inVar number="8">
+							<domainReference subdomain="2">
+								<dim count="2">
+									<dimension number="1" direction="anywhere"/>
+									<dimension number="2" direction="anywhere"/>
+								</dim>
+							</domainReference>
+						</inVar>
+						<inVar number="9">
+							<domainReference subdomain="1">
+								<dim count="2">
+									<dimension number="1" direction="anywhere"/>
+									<dimension number="2" direction="anywhere"/>
+								</dim>
+							</domainReference>
+						</inVar>
+						<inVar number="10">
+							<domainReference subdomain="2">
+								<dim count="2">
+									<dimension number="1" direction="anywhere"/>
+									<dimension number="2" direction="anywhere"/>
+								</dim>
+							</domainReference>
+						</inVar>
+						<externSubobject number="1">
+							<vector elements="2">
+								<!--actually any numbers are possible;
+									the next lines are just a space holder-->
+								<naturalNumberB bit="0" />
+								<naturalNumberB bit="0" />
+							</vector>
+						</externSubobject>
+						
+						<externObject>
+							<vector elements="4">
+								<integer min="-429" max="-215" /><!--Identifier-->
+								<integer min="10" max="10" /><!--number input values-->
+								<naturalNumber max="1" /><!--number subobjects-->
+								<naturalNumber max="2" /><!--number output values-->
+							</vector>
+						</externObject>
+						<externObjectInput identifier="-215">
+							<vector elements="10">
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+							</vector>
+						</externObjectInput>
+						<externObjectInput identifier="-429">
+							<vector elements="10">
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<integer min="0" max="1" />
+								<integer min="-1" max="0" />
+							</vector>
+						</externObjectInput>
+					</domains>
+					<main_fib_object>
+						<!-- (sort not intersection points so p_1' =< p_2' and p_4' =< p_5')
+							- draw quadrangle betwean (p_1', p_3) and (p_1', p_2') (max -1)
+							- draw middle line from p_2' to line (p_1', p_3)
+							- draw quadrangle betwean (p_1, p_3) and (p_2, p_3) (min +1)
+							- draw quadrangle betwean (p_3, p_4) and (p_3, p_5) (min +1, max -1)
+							- draw middle line from p_4' to line (p_3, p_5')
+							- draw quadrangle betwean (p_3, p_5') and (p_4', p_5') (min +1)
+							-->
+						<list>
+							<if><!-- if x_1 < x_2  -->
+								<condition>
+									<lo>
+										<variable>1</variable>
+										<variable>3</variable>
+									</lo>
+								</condition>
+								<list>
+									<!-- draw quadrangle betwean (p_1, p_3) and (p_1, p_2) (max -1) -->
+									<obj identifier="-429">
+										<vector type="externObjectInput">
+											<variable>1</variable>
+											<variable>2</variable>
+											<variable>5</variable>
+											<variable>6</variable>
+											<variable>1</variable>
+											<variable>2</variable>
+											<variable>3</variable>
+											<variable>4</variable>
+											<value>0</value>
+											<value>-1</value><!-- max area -1 -->
+										</vector>
+										<subobject>
+											<output_variables>
+												<variable>11</variable>
+												<variable>12</variable>
+											</output_variables>
+											<subobject number="1">
+												<vector type="externSubobject">
+													<variable>11</variable>
+													<variable>12</variable>
+												</vector>
+											</subobject>
+										</subobject>
+									</obj>
+									<!-- draw middle line from p_2 to line (p_1, p_3) -->
+									<obj identifier="-215">
+										<vector type="externObjectInput">
+											<variable>3</variable>
+											<variable>4</variable>
+											<variable>1</variable>
+											<variable>2</variable>
+											<variable>5</variable>
+											<variable>6</variable>
+											<variable>1</variable>
+											<variable>2</variable>
+											<variable>5</variable>
+											<variable>6</variable>
+										</vector>
+										<subobject>
+											<output_variables>
+												<variable>11</variable>
+												<variable>12</variable>
+											</output_variables>
+											<subobject number="1">
+												<vector type="externSubobject">
+													<variable>11</variable>
+													<variable>12</variable>
+												</vector>
+											</subobject>
+										</subobject>
+									</obj>
+								</list>
+								<!-- else x_2 =< x_1 -->
+								<list>
+									<!-- draw quadrangle betwean (p_2, p_3) and (p_2, p_1) (max -1) -->
+									<obj identifier="-429">
+										<vector type="externObjectInput">
+											<variable>3</variable>
+											<variable>4</variable>
+											<variable>5</variable>
+											<variable>6</variable>
+											<variable>3</variable>
+											<variable>4</variable>
+											<variable>1</variable>
+											<variable>2</variable>
+											<value>0</value>
+											<value>-1</value><!-- max area -1 -->
+										</vector>
+										<subobject>
+											<output_variables>
+												<variable>11</variable>
+												<variable>12</variable>
+											</output_variables>
+											<subobject number="1">
+												<vector type="externSubobject">
+													<variable>11</variable>
+													<variable>12</variable>
+												</vector>
+											</subobject>
+										</subobject>
+									</obj>
+									<!-- draw middle line from p_1 to line (p_2, p_3) -->
+									<obj identifier="-215">
+										<vector type="externObjectInput">
+											<variable>1</variable>
+											<variable>2</variable>
+											<variable>3</variable>
+											<variable>4</variable>
+											<variable>5</variable>
+											<variable>6</variable>
+											<variable>3</variable>
+											<variable>4</variable>
+											<variable>5</variable>
+											<variable>6</variable>
+										</vector>
+										<subobject>
+											<output_variables>
+												<variable>11</variable>
+												<variable>12</variable>
+											</output_variables>
+											<subobject number="1">
+												<vector type="externSubobject">
+													<variable>11</variable>
+													<variable>12</variable>
+												</vector>
+											</subobject>
+										</subobject>
+									</obj>
+								</list>
+							</if>
+							<!-- draw quadrangle betwean (p_1, p_3) and (p_2, p_3) (min +1) -->
+							<obj identifier="-429">
+								<vector type="externObjectInput">
+									<variable>1</variable>
+									<variable>2</variable>
+									<variable>5</variable>
+									<variable>6</variable>
+									<variable>3</variable>
+									<variable>4</variable>
+									<variable>5</variable>
+									<variable>6</variable>
+									<value>1</value>
+									<value>0</value>
+								</vector>
+								<subobject>
+									<output_variables>
+										<variable>11</variable>
+										<variable>12</variable>
+									</output_variables>
+									<subobject number="1">
+										<vector type="externSubobject">
+											<variable>11</variable>
+											<variable>12</variable>
+										</vector>
+									</subobject>
+								</subobject>
+							</obj>
+							<!-- draw quadrangle betwean (p_3, p_4) and (p_3, p_5) (min +1, max -1) -->
+							<obj identifier="-429">
+								<vector type="externObjectInput">
+									<variable>5</variable>
+									<variable>6</variable>
+									<variable>7</variable>
+									<variable>8</variable>
+									<variable>5</variable>
+									<variable>6</variable>
+									<variable>9</variable>
+									<variable>10</variable>
+									<value>1</value>
+									<value>-1</value>
+								</vector>
+								<subobject>
+									<output_variables>
+										<variable>11</variable>
+										<variable>12</variable>
+									</output_variables>
+									<subobject number="1">
+										<vector type="externSubobject">
+											<variable>11</variable>
+											<variable>12</variable>
+										</vector>
+									</subobject>
+								</subobject>
+							</obj>
+							<!-- draw other triangle of quadrangle -->
+							<if><!-- if x_4 < x_5  -->
+								<condition>
+									<lo>
+										<variable>7</variable>
+										<variable>9</variable>
+									</lo>
+								</condition>
+								<list>
+									<!-- draw middle line from p_4 to line (p_3, p_5) -->
+									<obj identifier="-215">
+										<vector type="externObjectInput">
+											<variable>7</variable>
+											<variable>8</variable>
+											<variable>5</variable>
+											<variable>6</variable>
+											<variable>9</variable>
+											<variable>10</variable>
+											<variable>5</variable>
+											<variable>6</variable>
+											<variable>9</variable>
+											<variable>10</variable>
+										</vector>
+										<subobject>
+											<output_variables>
+												<variable>11</variable>
+												<variable>12</variable>
+											</output_variables>
+											<subobject number="1">
+												<vector type="externSubobject">
+													<variable>11</variable>
+													<variable>12</variable>
+												</vector>
+											</subobject>
+										</subobject>
+									</obj>
+									<!-- draw quadrangle betwean (p_3, p_5) and (p_4, p_5) (min +1) -->
+									<obj identifier="-429">
+										<vector type="externObjectInput">
+											<variable>5</variable>
+											<variable>6</variable>
+											<variable>9</variable>
+											<variable>10</variable>
+											<variable>7</variable>
+											<variable>8</variable>
+											<variable>9</variable>
+											<variable>10</variable>
+											<value>1</value>
+											<value>0</value>
+										</vector>
+										<subobject>
+											<output_variables>
+												<variable>11</variable>
+												<variable>12</variable>
+											</output_variables>
+											<subobject number="1">
+												<vector type="externSubobject">
+													<variable>11</variable>
+													<variable>12</variable>
+												</vector>
+											</subobject>
+										</subobject>
+									</obj>
+								</list>
+								<!-- else x_5 =< x_4  -->
+								<list>
+									<!-- draw middle line from p_5 to line (p_3, p_4) -->
+									<obj identifier="-215">
+										<vector type="externObjectInput">
+											<variable>9</variable>
+											<variable>10</variable>
+											<variable>5</variable>
+											<variable>6</variable>
+											<variable>7</variable>
+											<variable>8</variable>
+											<variable>5</variable>
+											<variable>6</variable>
+											<variable>7</variable>
+											<variable>8</variable>
+										</vector>
+										<subobject>
+											<output_variables>
+												<variable>11</variable>
+												<variable>12</variable>
+											</output_variables>
+											<subobject number="1">
+												<vector type="externSubobject">
+													<variable>11</variable>
+													<variable>12</variable>
+												</vector>
+											</subobject>
+										</subobject>
+									</obj>
+									<!-- draw quadrangle betwean (p_3, p_4) and (p_5, p_4) (min +1) -->
+									<obj identifier="-429">
+										<vector type="externObjectInput">
+											<variable>5</variable>
+											<variable>6</variable>
+											<variable>7</variable>
+											<variable>8</variable>
+											<variable>9</variable>
+											<variable>10</variable>
+											<variable>7</variable>
+											<variable>8</variable>
+											<value>1</value>
+											<value>0</value>
+										</vector>
+										<subobject>
+											<output_variables>
+												<variable>11</variable>
+												<variable>12</variable>
+											</output_variables>
+											<subobject number="1">
+												<vector type="externSubobject">
+													<variable>11</variable>
+													<variable>12</variable>
+												</vector>
+											</subobject>
+										</subobject>
+									</obj>
+								</list>
+							</if>
+						</list>
+					</main_fib_object>
+				</root>
+			</sub_root>
+			
+			
+			<sub_root identifier="5">
+				<root>
+					<optionalpart>
+						<pair key="name" value="quadrangle with intersection"/>
+						<pair key="description" value="This object represents a filled quadrangle (box) with intersection. The quadrangle has the given four corner points ( x_1, y_1 ), ( x_2, y_2 ), ( x_4, y_4 ) and ( x_5, y_5 ) as its border points. Where ( x_i, y_i ) is the neighbour point of ( x_{i+1}, y_{i+1} ). The point p_3 (x_3, y_3) is the intersection point. The intersection is located on the line betwean ( x_1, y_1 ) ( x_5, y_5 ) and the line betwean ( x_2, y_2 ) ( x_4, y_4 ) . The lines betwean ( x_1, y_1 ), ( x_2, y_2 ) and ( x_4, y_4 ), ( x_5, y_5 ) are intersection free. Also x_1 is lower equal x_2, lower x_4 lower equal x_5, x_1 is lower equal x_3, x_3 is lower equal x_5, x_3 is lower equal x_2 and x_4 is lower equal x_3 . So of the both not intersection points of each triangle, each is on one different side of the intersection point. This object is a help object of the subroot object 1 . The points of the quadrangle are given back as variables of the subobject."/>
+						<pair key="inVar1::description" value="position of the first point p_1 in dimension 1 (x_1)"/>
+						<pair key="inVar2::description" value="position of the first point p_1 in dimension 2 (y_1)"/>
+						<pair key="inVar3::description" value="position of the second point p_2 in dimension 1 (x_2)"/>
+						<pair key="inVar4::description" value="position of the second point p_2 in dimension 2 (y_2)"/>
+						<pair key="inVar5::description" value="position of the intersection (3.) point p_3 in dimension 1 (x_3)"/>
+						<pair key="inVar6::description" value="position of the intersection (3.) point p_3 in dimension 2 (y_3)"/>
+						<pair key="inVar7::description" value="position of the 4. point p_4 in dimension 1 (x_4)"/>
+						<pair key="inVar8::description" value="position of the 4. point p_4 in dimension 2 (y_4)"/>
+						<pair key="inVar9::description" value="position of the 5. point p_5 in dimension 1 (x_5)"/>
+						<pair key="inVar10::description" value="position of the 5. point p_5 in dimension 2 (y_5)"/>
+						
+						<pair key="subObj1::description" value="The points of the quadrangle. The subobject is called for every point on the quadrangle."/>
+						<pair key="subObj1::outVar1::description" value="the position of the quadrangle point in dimension 1 (x)"/>
+						<pair key="subObj1::outVar2::description" value="the position of the quadrangle point in dimension 2 (y)"/>
+					</optionalpart>
+					<input_variables>
+						<variable number="1" default="0"/>
+						<variable number="2" default="0"/>
+						<variable number="3" default="0"/>
+						<variable number="4" default="0"/>
+						<variable number="5" default="0"/>
+						<variable number="6" default="0"/>
+						<variable number="7" default="0"/>
+						<variable number="8" default="0"/>
+						<variable number="9" default="0"/>
+						<variable number="10" default="0"/>
+					</input_variables>
+					<domains>
+						<inVar number="1">
+							<domainReference subdomain="1">
+								<dim count="2">
+									<dimension number="1" direction="anywhere"/>
+									<dimension number="2" direction="anywhere"/>
+								</dim>
+							</domainReference>
+						</inVar>
+						<inVar number="2">
+							<domainReference subdomain="2">
+								<dim count="2">
+									<dimension number="1" direction="anywhere"/>
+									<dimension number="2" direction="anywhere"/>
+								</dim>
+							</domainReference>
+						</inVar>
+						<inVar number="3">
+							<domainReference subdomain="1">
+								<dim count="2">
+									<dimension number="1" direction="anywhere"/>
+									<dimension number="2" direction="anywhere"/>
+								</dim>
+							</domainReference>
+						</inVar>
+						<inVar number="4">
+							<domainReference subdomain="2">
+								<dim count="2">
+									<dimension number="1" direction="anywhere"/>
+									<dimension number="2" direction="anywhere"/>
+								</dim>
+							</domainReference>
+						</inVar>
+						<inVar number="5">
+							<domainReference subdomain="1">
+								<dim count="2">
+									<dimension number="1" direction="anywhere"/>
+									<dimension number="2" direction="anywhere"/>
+								</dim>
+							</domainReference>
+						</inVar>
+						<inVar number="6">
+							<domainReference subdomain="2">
+								<dim count="2">
+									<dimension number="1" direction="anywhere"/>
+									<dimension number="2" direction="anywhere"/>
+								</dim>
+							</domainReference>
+						</inVar>
+						<inVar number="7">
+							<domainReference subdomain="1">
+								<dim count="2">
+									<dimension number="1" direction="anywhere"/>
+									<dimension number="2" direction="anywhere"/>
+								</dim>
+							</domainReference>
+						</inVar>
+						<inVar number="8">
+							<domainReference subdomain="2">
+								<dim count="2">
+									<dimension number="1" direction="anywhere"/>
+									<dimension number="2" direction="anywhere"/>
+								</dim>
+							</domainReference>
+						</inVar>
+						<inVar number="9">
+							<domainReference subdomain="1">
+								<dim count="2">
+									<dimension number="1" direction="anywhere"/>
+									<dimension number="2" direction="anywhere"/>
+								</dim>
+							</domainReference>
+						</inVar>
+						<inVar number="10">
+							<domainReference subdomain="2">
+								<dim count="2">
+									<dimension number="1" direction="anywhere"/>
+									<dimension number="2" direction="anywhere"/>
+								</dim>
+							</domainReference>
+						</inVar>
+						<externSubobject number="1">
+							<vector elements="2">
+								<!--actually any numbers are possible;
+									the next lines are just a space holder-->
+								<naturalNumberB bit="0" />
+								<naturalNumberB bit="0" />
+							</vector>
+						</externSubobject>
+						
+						<externObject>
+							<vector elements="4">
+								<integer min="-427" max="-427" /><!--Identifier-->
+								<integer min="10" max="10" /><!--number input values-->
+								<naturalNumber max="1" /><!--number subobjects-->
+								<naturalNumber max="2" /><!--number output values-->
+							</vector>
+						</externObject>
+						<externObjectInput identifier="-427">
+							<vector elements="10">
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+								<naturalNumber max="0" />
+							</vector>
+						</externObjectInput>
+						<subfunction>
+							<integer min="1" max="1" />
+						</subfunction>
+					</domains>
+					<main_fib_object>
+						<!--
+							- sort points x_1, x_2 and x_4, x_5 , the sorted points are x_1', x_2' and x_4', x_5'
+							- evalue minimal absolut slope (=delta) for lines through intersection point p_3
+								- delta is the distance from the intersection point in which the both
+									trangles touche to the first point, wher the trangles (pixles) not touch
+							- evalue xs_3 = x_3 - delta and xe_3 = x_3 + delta
+							- draw quadrangle betwean (p_1', p_3) and (p_1', p_2') from x_1 till (xs_3 - 1)
+							- draw quadrangle betwean (p_4', p_3) and (p_4', p_5') from x_4 till (xs_3 - 1)
+							- draw quadrangle betwean (p_1', p_2') and (p_4', p_5') from xs_3 till xe_3
+							- draw quadrangle betwean (p_3, p_2') and (p_1', p_2') from (xe_3 + 1) till x_2'
+							- draw quadrangle betwean (p_3, p_5') and (p_4', p_5') from (xe_3 + 1) till x_5'
+							-->
+						<function define_variable="11">
+							<subfunction><!-- evalue minimal absolut slope (=delta) for lines through intersection point p_3 -->
+								<min><!-- delta = min( abs( (x_1 - x_5) / (y_1 - y_5) ), abs( (x_2 - x_4) / (y_2 - y_4) ) ) / 2 -->
+									<abs>
+										<div>
+											<sub>
+												<variable>1</variable>
+												<variable>9</variable>
+											</sub>
+											<sub>
+												<variable>2</variable>
+												<variable>10</variable>
+											</sub>
+										</div>
+									</abs>
+									<abs>
+										<div>
+											<sub>
+												<variable>3</variable>
+												<variable>7</variable>
+											</sub>
+											<sub>
+												<variable>4</variable>
+												<variable>8</variable>
+											</sub>
+										</div>
+									</abs>
+								</min>
+							</subfunction>
+							<function define_variable="12">
+								<subfunction><!-- evalue xs_3 = x_3 - delta -->
+									<sub>
+										<variable>5</variable>
+										<variable>11</variable>
+									</sub>
+								</subfunction>
+								<function define_variable="13">
+									<subfunction><!-- evalue xs_3 - 1 -->
+										<sub>
+											<variable>12</variable>
+											<value>1</value>
+										</sub>
+									</subfunction>
+									
+									<function define_variable="14">
+										<subfunction><!-- evalue xe_3 = x_3 + delta -->
+											<add>
+												<variable>5</variable>
+												<variable>11</variable>
+											</add>
+										</subfunction>
+										<function define_variable="15">
+											<subfunction><!-- evalue xe_3 + 1 -->
+												<add>
+													<variable>14</variable>
+													<value>1</value>
+												</add>
+											</subfunction>
+											
+											<if><!-- if x_1 < x_2 -> x_4 < x_5 -->
+												<condition>
+													<lo>
+														<variable>1</variable>
+														<variable>3</variable>
+													</lo>
+												</condition>
+												<list>
+													<!-- draw quadrangle betwean (p_1, p_3) and (p_1, p_2) from x_1 till (xs_3 - 1) -->
+													<obj identifier="-427">
+														<vector type="externObjectInput">
+															<variable>1</variable>
+															<variable>2</variable>
+															<variable>5</variable>
+															<variable>6</variable>
+															<variable>1</variable>
+															<variable>2</variable>
+															<variable>3</variable>
+															<variable>4</variable>
+															<variable>1</variable>
+															<variable>13</variable>
+														</vector>
+														<subobject>
+															<output_variables>
+																<variable>16</variable>
+																<variable>17</variable>
+															</output_variables>
+															<subobject number="1">
+																<vector type="externSubobject">
+																	<variable>16</variable>
+																	<variable>17</variable>
+																</vector>
+															</subobject>
+														</subobject>
+													</obj>
+													<!-- draw quadrangle betwean (p_3, p_2) and (p_1, p_2) from (xe_3 + 1) till x_2 -->
+													<obj identifier="-427">
+														<vector type="externObjectInput">
+															<variable>5</variable>
+															<variable>6</variable>
+															<variable>3</variable>
+															<variable>4</variable>
+															<variable>1</variable>
+															<variable>2</variable>
+															<variable>3</variable>
+															<variable>4</variable>
+															<variable>15</variable>
+															<variable>3</variable>
+														</vector>
+														<subobject>
+															<output_variables>
+																<variable>16</variable>
+																<variable>17</variable>
+															</output_variables>
+															<subobject number="1">
+																<vector type="externSubobject">
+																	<variable>16</variable>
+																	<variable>17</variable>
+																</vector>
+															</subobject>
+														</subobject>
+													</obj>
+													<!-- draw quadrangle betwean (p_1, p_2) and (p_4, p_5) from xs_3 till xe_3 -->
+													<obj identifier="-427">
+														<vector type="externObjectInput">
+															<variable>1</variable>
+															<variable>2</variable>
+															<variable>3</variable>
+															<variable>4</variable>
+															<variable>7</variable>
+															<variable>8</variable>
+															<variable>9</variable>
+															<variable>10</variable>
+															<variable>12</variable>
+															<variable>14</variable>
+														</vector>
+														<subobject>
+															<output_variables>
+																<variable>16</variable>
+																<variable>17</variable>
+															</output_variables>
+															<subobject number="1">
+																<vector type="externSubobject">
+																	<variable>16</variable>
+																	<variable>17</variable>
+																</vector>
+															</subobject>
+														</subobject>
+													</obj>
+													<!-- draw quadrangle betwean (p_4, p_3) and (p_4, p_5) from x_4 till (xs_3 - 1) -->
+													<obj identifier="-427">
+														<vector type="externObjectInput">
+															<variable>7</variable>
+															<variable>8</variable>
+															<variable>5</variable>
+															<variable>6</variable>
+															<variable>7</variable>
+															<variable>8</variable>
+															<variable>9</variable>
+															<variable>10</variable>
+															<variable>7</variable>
+															<variable>13</variable>
+														</vector>
+														<subobject>
+															<output_variables>
+																<variable>16</variable>
+																<variable>17</variable>
+															</output_variables>
+															<subobject number="1">
+																<vector type="externSubobject">
+																	<variable>16</variable>
+																	<variable>17</variable>
+																</vector>
+															</subobject>
+														</subobject>
+													</obj>
+													<!-- draw quadrangle betwean (p_3, p_5) and (p_4, p_5) from (xe_3 + 1) till x_5 -->
+													<obj identifier="-427">
+														<vector type="externObjectInput">
+															<variable>5</variable>
+															<variable>6</variable>
+															<variable>9</variable>
+															<variable>10</variable>
+															<variable>7</variable>
+															<variable>8</variable>
+															<variable>9</variable>
+															<variable>10</variable>
+															<variable>15</variable>
+															<variable>9</variable>
+														</vector>
+														<subobject>
+															<output_variables>
+																<variable>16</variable>
+																<variable>17</variable>
+															</output_variables>
+															<subobject number="1">
+																<vector type="externSubobject">
+																	<variable>16</variable>
+																	<variable>17</variable>
+																</vector>
+															</subobject>
+														</subobject>
+													</obj>
+												</list>
+												<!-- else x_2 =< x_1 -> x_5 < x_4 -->
+												<list>
+													<!-- draw quadrangle betwean (p_2, p_3) and (p_2, p_1) from x_2 till (xs_3 - 1) -->
+													<obj identifier="-427">
+														<vector type="externObjectInput">
+															<variable>3</variable>
+															<variable>4</variable>
+															<variable>5</variable>
+															<variable>6</variable>
+															<variable>3</variable>
+															<variable>4</variable>
+															<variable>1</variable>
+															<variable>2</variable>
+															<variable>3</variable>
+															<variable>13</variable>
+														</vector>
+														<subobject>
+															<output_variables>
+																<variable>16</variable>
+																<variable>17</variable>
+															</output_variables>
+															<subobject number="1">
+																<vector type="externSubobject">
+																	<variable>16</variable>
+																	<variable>17</variable>
+																</vector>
+															</subobject>
+														</subobject>
+													</obj>
+													<!-- draw quadrangle betwean (p_3, p_1) and (p_2, p_1) from (xe_3 + 1) till x_1 -->
+													<obj identifier="-427">
+														<vector type="externObjectInput">
+															<variable>5</variable>
+															<variable>6</variable>
+															<variable>1</variable>
+															<variable>2</variable>
+															<variable>3</variable>
+															<variable>4</variable>
+															<variable>1</variable>
+															<variable>2</variable>
+															<variable>15</variable>
+															<variable>1</variable>
+														</vector>
+														<subobject>
+															<output_variables>
+																<variable>16</variable>
+																<variable>17</variable>
+															</output_variables>
+															<subobject number="1">
+																<vector type="externSubobject">
+																	<variable>16</variable>
+																	<variable>17</variable>
+																</vector>
+															</subobject>
+														</subobject>
+													</obj>
+													<!-- draw quadrangle betwean (p_2, p_1) and (p_5, p_4) from xs_3 till xe_3 -->
+													<obj identifier="-427">
+														<vector type="externObjectInput">
+															<variable>3</variable>
+															<variable>4</variable>
+															<variable>1</variable>
+															<variable>2</variable>
+															<variable>9</variable>
+															<variable>10</variable>
+															<variable>7</variable>
+															<variable>8</variable>
+															<variable>12</variable>
+															<variable>14</variable>
+														</vector>
+														<subobject>
+															<output_variables>
+																<variable>16</variable>
+																<variable>17</variable>
+															</output_variables>
+															<subobject number="1">
+																<vector type="externSubobject">
+																	<variable>16</variable>
+																	<variable>17</variable>
+																</vector>
+															</subobject>
+														</subobject>
+													</obj>
+													<!-- draw quadrangle betwean (p_5, p_3) and (p_5, p_4) from x_5 till (xs_3 - 1) -->
+													<obj identifier="-427">
+														<vector type="externObjectInput">
+															<variable>9</variable>
+															<variable>10</variable>
+															<variable>5</variable>
+															<variable>6</variable>
+															<variable>9</variable>
+															<variable>10</variable>
+															<variable>7</variable>
+															<variable>8</variable>
+															<variable>9</variable>
+															<variable>13</variable>
+														</vector>
+														<subobject>
+															<output_variables>
+																<variable>16</variable>
+																<variable>17</variable>
+															</output_variables>
+															<subobject number="1">
+																<vector type="externSubobject">
+																	<variable>16</variable>
+																	<variable>17</variable>
+																</vector>
+															</subobject>
+														</subobject>
+													</obj>
+													<!-- draw quadrangle betwean (p_3, p_4) and (p_5, p_4) from (xe_3 + 1) till x_4 -->
+													<obj identifier="-427">
+														<vector type="externObjectInput">
+															<variable>5</variable>
+															<variable>6</variable>
+															<variable>7</variable>
+															<variable>8</variable>
+															<variable>9</variable>
+															<variable>10</variable>
+															<variable>7</variable>
+															<variable>8</variable>
+															<variable>15</variable>
+															<variable>7</variable>
+														</vector>
+														<subobject>
+															<output_variables>
+																<variable>16</variable>
+																<variable>17</variable>
+															</output_variables>
+															<subobject number="1">
+																<vector type="externSubobject">
+																	<variable>16</variable>
+																	<variable>17</variable>
+																</vector>
+															</subobject>
+														</subobject>
+													</obj>
+												</list>
+											</if>
+										</function>
+									</function>
+								</function>
+							</function>
+						</function>
+					</main_fib_object>
+				</root>
+			</sub_root>
+			
+			
 		</sub_roots>
 	</root>
 </fib_object>

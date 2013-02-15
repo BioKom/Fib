@@ -10,13 +10,15 @@ database object -200, -250:
 
 	
 database objects to create: (x = dim 1 ?=? horizontal; y = dim 2 ?=? vertikal)
-	order pr 2: -5100
+	order pr 1: quadrangles (41, 46)?
+	order pr 2: -563, -5100
 	order 2: -42, -43, -48, -49, -510, -560, -200, -250, -350; -351; -500; -501; -511;
 	- id -5000 and id -5005 replace lines with lines with rounded edges
 	- Line:
-	-- id -200 line in two dimensions from an start point (x_1, y_1) to an end point (x_2, y_2) with a given width with rounded ends
-	--- use id -510
-	-- id -250 line antialised in two dimensions from an start point (x_1, y_1) to an end point (x_2, y_2) with a given width with rounded ends
+	-- id -211 horizontal one pixle line in two dimensions see 210
+	-- id -215 + id -216 like -210 and -211 with point subobject
+	-- id -212 like -210 with two point on line
+	
 	
 	- Dreiecke mit einer oder zwei Seiten antialised
 	-- id -350 triangle with one sides antialised
@@ -100,28 +102,31 @@ database objects to create: (x = dim 1 ?=? horizontal; y = dim 2 ?=? vertikal)
 	---- center point top of head x and y (+ ears: for hair)
 	-- (id -5101 till id -5109 simpler smily face than -5100)
 	
-	- more copyrights:
-	-- GNU lesser
-	-- open document
-	-- open domain
-	-- Creative Commons
-	--- Attribution (by): Licensees may copy, distribute, display and perform the work and make derivative works based on it only if they give the author or licensor the credits in the manner specified by these.
-	--- Non-commercial: Noncommercial (nc) 	Licensees may copy, distribute, display, and perform the work and make derivative works based on it only for noncommercial purposes.
-	--- Non-derivative: No Derivative Works (nd) 	Licensees may copy, distribute, display and perform only verbatim copies of the work, not derivative works based on it.
-	--- Share-alike: Share-alike (sa) 	Licensees may distribute derivative works only under a license identical to the license that governs the original work. (See also copyleft.)
-	-- ...
-	
-test database create OK again (for change in: -410,-411,-415,-416, -50, -55, -56 ):
-	- adapt after the pattern of (changes in) -415 and -416: -465, -466, -467, -468 
-	dbId-000021.xml  dbId-000041.xml  dbId-000056.xml  dbId-000080.xml  dbId-000428.xml  dbId-000475.xml  dbId-000480.xml
-	dbId-000026.xml  dbId-000046.xml  dbId-000070.xml  dbId-000081.xml  dbId-000465.xml  dbId-000476.xml  dbId-000481.xml
-	dbId-000027.xml  dbId-000047.xml  dbId-000071.xml  dbId-000422.xml  dbId-000466.xml  dbId-000477.xml  dbId-000482.xml
-	dbId-000035.xml  dbId-000050.xml  dbId-000075.xml  dbId-000423.xml  dbId-000467.xml  dbId-000478.xml
-	dbId-000036.xml  dbId-000055.xml  dbId-000076.xml  dbId-000427.xml  dbId-000468.xml  dbId-000479.xml
+	- more copyrights (EASY):
+	* id -10: public domain
+	* id -12: LGNU
+	* id -13: GNU Free Documentation License
+	* id -14: ...
+	* Creative Commons
+		* id -15: Attribution (by): Licensees may copy, distribute, display and perform the work and make derivative works based on it only if they give the author or licensor the credits in the manner specified by these.
+		* id -16: Non-commercial: Noncommercial (nc) 	Licensees may copy, distribute, display, and perform the work and make derivative works based on it only for noncommercial purposes.
+		* id -17: Non-derivative: No Derivative Works (nd) 	Licensees may copy, distribute, display and perform only verbatim copies of the work, not derivative works based on it.
+		* id -18: Share-alike: Share-alike (sa) 	Licensees may distribute derivative works only under a license identical to the license that governs the original work. (See also copyleft.)
+	* from id -2000 till id -2100 more License
 
-test for database objects (prio 7):
-	- 410, 411, 415, 416; 420; 421; 425; 426; 30
+
+test database create OK again (for change in: -410,-411,-415,-416, -50, -55, -56 (EASY)):
+	- adapt after the pattern of (changes in) -415 and -416: -465, -466, -467, -468
+	dbId-000021.xml  dbId-000041.xml  dbId-000056.xml  dbId-000080.xml  dbId-000475.xml  dbId-000480.xml
+	dbId-000026.xml  dbId-000046.xml  dbId-000070.xml  dbId-000081.xml  dbId-000465.xml  dbId-000476.xml  dbId-000481.xml
+	dbId-000027.xml  dbId-000047.xml  dbId-000071.xml  dbId-000466.xml  dbId-000477.xml  dbId-000482.xml
+	dbId-000035.xml  dbId-000050.xml  dbId-000075.xml  dbId-000467.xml  dbId-000478.xml
+	dbId-000036.xml  dbId-000055.xml  dbId-000076.xml  dbId-000468.xml  dbId-000479.xml
+
+test for database objects (prio 7 (EASY)):
+	- -210, -211, -212, -213, -215, -216, -217, -218, -952
 	- ???
+	- testing objects with transparency (double points)
 
 
 cDomainReference test:

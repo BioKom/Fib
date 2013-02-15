@@ -54,213 +54,221 @@
 			</property>
 			
 			<property>
-				<vector type="property.colorRGB">
-					<value>0</value>
-					<value>255</value>
-					<value>0</value>
+				<vector type="property.transparency">
+					<value>64</value>
 				</vector>
 				<list>
-					<point>
-						<vector type="position">
-							<value>2</value>
-							<value>2</value>
+					
+					<property>
+						<vector type="property.colorRGB">
+							<value>0</value>
+							<value>255</value>
+							<value>0</value>
 						</vector>
-					</point>
-					<point>
-						<vector type="position">
-							<value>4</value>
-							<value>2</value>
+						<list>
+							<point>
+								<vector type="position">
+									<value>2</value>
+									<value>2</value>
+								</vector>
+							</point>
+							<point>
+								<vector type="position">
+									<value>4</value>
+									<value>2</value>
+								</vector>
+							</point>
+							<point>
+								<vector type="position">
+									<value>2</value>
+									<value>4</value>
+								</vector>
+							</point>
+						</list>
+					</property>
+					
+					<obj identifier="-75">
+						<vector type="externObjectInput">
+							<value>10</value>
+							<value>10</value>
+							<value>30</value>
+							<value>20</value>
+							<value>0</value>
+							<value>0</value>
 						</vector>
-					</point>
-					<point>
-						<vector type="position">
-							<value>2</value>
-							<value>4</value>
+						<subobject>
+							<output_variables>
+								<variable>1</variable>
+								<variable>2</variable>
+							</output_variables>
+							<property>
+								<vector type="property.colorRGB">
+									<value>0</value>
+									<value>0</value>
+									<value>255</value>
+								</vector>
+								<point>
+									<vector type="position">
+										<variable>1</variable>
+										<variable>2</variable>
+									</vector>
+								</point>
+							</property>
+						</subobject>
+					</obj>
+					
+					<obj identifier="-75">
+						<vector type="externObjectInput">
+							<value>40</value>
+							<value>10</value>
+							<value>60</value>
+							<value>0</value>
+							<value>0.5</value>
+							<value>0</value>
 						</vector>
-					</point>
+						<subobject>
+							<output_variables>
+								<variable>1</variable>
+								<variable>2</variable>
+							</output_variables>
+							<property>
+								<vector type="property.colorRGB">
+									<value>0</value>
+									<value>255</value>
+									<value>0</value>
+								</vector>
+								<point>
+									<vector type="position">
+										<variable>1</variable>
+										<variable>2</variable>
+									</vector>
+								</point>
+							</property>
+						</subobject>
+					</obj>
+					
+					<obj identifier="-75">
+						<vector type="externObjectInput">
+							<value>70</value>
+							<value>10</value>
+							<value>90</value>
+							<value>50</value>
+							<value>-0.5</value>
+							<value>0.0</value>
+						</vector>
+						<subobject>
+							<output_variables>
+								<variable>1</variable>
+								<variable>2</variable>
+							</output_variables>
+							<property>
+								<vector type="property.colorRGB">
+									<value>0</value>
+									<value>255</value>
+									<value>0</value>
+								</vector>
+								<point>
+									<vector type="position">
+										<variable>1</variable>
+										<variable>2</variable>
+									</vector>
+								</point>
+							</property>
+						</subobject>
+					</obj>
+					
+					<obj identifier="-75">
+						<vector type="externObjectInput">
+							<value>120</value>
+							<value>10</value>
+							<value>100</value>
+							<value>-290</value>
+							<value>3</value>
+							<value>0.0</value>
+						</vector>
+						<subobject>
+							<output_variables>
+								<variable>1</variable>
+								<variable>2</variable>
+							</output_variables>
+							<property>
+								<vector type="property.colorRGB">
+									<value>0</value>
+									<value>255</value>
+									<value>255</value>
+								</vector>
+								<point>
+									<vector type="position">
+										<variable>1</variable>
+										<variable>2</variable>
+									</vector>
+								</point>
+							</property>
+						</subobject>
+					</obj>
+					
+					<obj identifier="-75">
+						<vector type="externObjectInput">
+							<value>10</value>
+							<value>40</value>
+							<value>30</value>
+							<value>50</value>
+							<value>-3</value>
+							<value>0.1</value>
+						</vector>
+						<subobject>
+							<output_variables>
+								<variable>1</variable>
+								<variable>2</variable>
+							</output_variables>
+							<property>
+								<vector type="property.colorRGB">
+									<value>255</value>
+									<value>255</value>
+									<value>255</value>
+								</vector>
+								<point>
+									<vector type="position">
+										<variable>1</variable>
+										<variable>2</variable>
+									</vector>
+								</point>
+							</property>
+						</subobject>
+					</obj>
+					
+					<obj identifier="-75">
+						<vector type="externObjectInput">
+							<value>40</value>
+							<value>40</value>
+							<value>60</value>
+							<value>160</value>
+							<value>-5</value>
+							<value>0.05</value>
+						</vector>
+						<subobject>
+							<output_variables>
+								<variable>1</variable>
+								<variable>2</variable>
+							</output_variables>
+							<property>
+								<vector type="property.colorRGB">
+									<value>0</value>
+									<value>0</value>
+									<value>0</value>
+								</vector>
+								<point>
+									<vector type="position">
+										<variable>1</variable>
+										<variable>2</variable>
+									</vector>
+								</point>
+							</property>
+						</subobject>
+					</obj>
+			
 				</list>
 			</property>
-			
-			<obj identifier="-75">
-				<vector type="externObjectInput">
-					<value>10</value>
-					<value>10</value>
-					<value>30</value>
-					<value>20</value>
-					<value>0</value>
-					<value>0</value>
-				</vector>
-				<subobject>
-					<output_variables>
-						<variable>1</variable>
-						<variable>2</variable>
-					</output_variables>
-					<property>
-						<vector type="property.colorRGB">
-							<value>0</value>
-							<value>0</value>
-							<value>255</value>
-						</vector>
-						<point>
-							<vector type="position">
-								<variable>1</variable>
-								<variable>2</variable>
-							</vector>
-						</point>
-					</property>
-				</subobject>
-			</obj>
-			
-			<obj identifier="-75">
-				<vector type="externObjectInput">
-					<value>40</value>
-					<value>10</value>
-					<value>60</value>
-					<value>0</value>
-					<value>0.5</value>
-					<value>0</value>
-				</vector>
-				<subobject>
-					<output_variables>
-						<variable>1</variable>
-						<variable>2</variable>
-					</output_variables>
-					<property>
-						<vector type="property.colorRGB">
-							<value>0</value>
-							<value>255</value>
-							<value>0</value>
-						</vector>
-						<point>
-							<vector type="position">
-								<variable>1</variable>
-								<variable>2</variable>
-							</vector>
-						</point>
-					</property>
-				</subobject>
-			</obj>
-			
-			<obj identifier="-75">
-				<vector type="externObjectInput">
-					<value>70</value>
-					<value>10</value>
-					<value>90</value>
-					<value>50</value>
-					<value>-0.5</value>
-					<value>0.0</value>
-				</vector>
-				<subobject>
-					<output_variables>
-						<variable>1</variable>
-						<variable>2</variable>
-					</output_variables>
-					<property>
-						<vector type="property.colorRGB">
-							<value>0</value>
-							<value>255</value>
-							<value>0</value>
-						</vector>
-						<point>
-							<vector type="position">
-								<variable>1</variable>
-								<variable>2</variable>
-							</vector>
-						</point>
-					</property>
-				</subobject>
-			</obj>
-			
-			<obj identifier="-75">
-				<vector type="externObjectInput">
-					<value>120</value>
-					<value>10</value>
-					<value>100</value>
-					<value>-290</value>
-					<value>3</value>
-					<value>0.0</value>
-				</vector>
-				<subobject>
-					<output_variables>
-						<variable>1</variable>
-						<variable>2</variable>
-					</output_variables>
-					<property>
-						<vector type="property.colorRGB">
-							<value>0</value>
-							<value>255</value>
-							<value>255</value>
-						</vector>
-						<point>
-							<vector type="position">
-								<variable>1</variable>
-								<variable>2</variable>
-							</vector>
-						</point>
-					</property>
-				</subobject>
-			</obj>
-			
-			<obj identifier="-75">
-				<vector type="externObjectInput">
-					<value>10</value>
-					<value>40</value>
-					<value>30</value>
-					<value>50</value>
-					<value>-3</value>
-					<value>0.1</value>
-				</vector>
-				<subobject>
-					<output_variables>
-						<variable>1</variable>
-						<variable>2</variable>
-					</output_variables>
-					<property>
-						<vector type="property.colorRGB">
-							<value>255</value>
-							<value>255</value>
-							<value>255</value>
-						</vector>
-						<point>
-							<vector type="position">
-								<variable>1</variable>
-								<variable>2</variable>
-							</vector>
-						</point>
-					</property>
-				</subobject>
-			</obj>
-			
-			<obj identifier="-75">
-				<vector type="externObjectInput">
-					<value>40</value>
-					<value>40</value>
-					<value>60</value>
-					<value>160</value>
-					<value>-5</value>
-					<value>0.05</value>
-				</vector>
-				<subobject>
-					<output_variables>
-						<variable>1</variable>
-						<variable>2</variable>
-					</output_variables>
-					<property>
-						<vector type="property.colorRGB">
-							<value>0</value>
-							<value>0</value>
-							<value>0</value>
-						</vector>
-						<point>
-							<vector type="position">
-								<variable>1</variable>
-								<variable>2</variable>
-							</vector>
-						</point>
-					</property>
-				</subobject>
-			</obj>
-			
 			
 		</list>
 	</main_fib_object>

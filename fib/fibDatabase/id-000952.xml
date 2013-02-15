@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fib_object
+			  xmlns:xsd="http://www.w3.org/2001/XMLSchema-instance"
+			  xmlns="http://www.fib-development.org/"
+			  xsd:schemaLocation="http://www.fib-development.org/fib.xsd">
+	<root>
+		<multimedia_info fib_version="3" db_version="2"/>
+		<optionalpart>
+			<pair key="name" value="evalue intersection of lines trougth points"/>
+			<pair key="description" value="This object evalues the intersection of two lines going through two points each. The line f_1 goes through the point p_1=(x_1, y_1) and p_2=(x_2, y_2). The line f_2 goes through the point p_3=(x_3, y_3) and p_4=(x_4, y_4)."/>
+			<pair key="inVar1::description" value="position of the first point p_1 in dimension 1 (x_1) for line f_1"/>
+			<pair key="inVar2::description" value="position of the first point p_1 in dimension 2 (y_1) for line f_1"/>
+			<pair key="inVar3::description" value="position of the second point p_2 in dimension 1 (x_2) for line f_1"/>
+			<pair key="inVar4::description" value="position of the second point p_2 in dimension 2 (y_2) for line f_1"/>
+			<pair key="inVar5::description" value="position of the 3. point p_3 in dimension 1 (x_3) for line f_2"/>
+			<pair key="inVar6::description" value="position of the 3. point p_3 in dimension 2 (y_3) for line f_2"/>
+			<pair key="inVar7::description" value="position of the 4. point p_4 in dimension 1 (x_4) for line f_2"/>
+			<pair key="inVar8::description" value="position of the 4. point p_4 in dimension 2 (y_4) for line f_2"/>
+			<pair key="subObj1::description" value="if and wher the lines intersect"/>
+			
+			<pair key="subObj1::outVar1::description" value="the position of the intersection point in dimension 1 (x) if existing or 0"/>
+			<pair key="subObj1::outVar2::description" value="the position of the intersection point in dimension 2 (y) if existing or 0"/>
+			<pair key="subObj1::outVar3::description" value="0 if no intersection point exists, else 1"/>
+			
+			<pair key="author" value="Betti Oesterholz"/>
+			<pair key="author::email" value="Oesterholz@Fib-Development.org"/>
+			<pair key="copyright" value="LGPL3"/>
+		</optionalpart>
+		<input_variables>
+			<variable number="1" default="0"/>
+			<variable number="2" default="0"/>
+			<variable number="3" default="0"/>
+			<variable number="4" default="0"/>
+			<variable number="5" default="0"/>
+			<variable number="6" default="0"/>
+			<variable number="7" default="0"/>
+			<variable number="8" default="0"/>
+		</input_variables>
+		<domains>
+			<inVar number="1">
+				<domainReference subdomain="1">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="2">
+				<domainReference subdomain="2">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="3">
+				<domainReference subdomain="1">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="4">
+				<domainReference subdomain="2">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="5">
+				<domainReference subdomain="1">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="6">
+				<domainReference subdomain="2">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="7">
+				<domainReference subdomain="1">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="8">
+				<domainReference subdomain="2">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<externSubobject number="1">
+				<vector elements="3">
+					<!--actually any number is possible;
+						the next line is just a space holder-->
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="1" />
+				</vector>
+			</externSubobject>
+			<externObject>
+				<vector elements="4">
+					<integer min="-95" max="-95" /><!--Identifier-->
+					<integer min="4" max="4" /><!--number input values-->
+					<naturalNumber max="1" /><!--number subobjects-->
+					<naturalNumber max="3" /><!--number output values-->
+				</vector>
+			</externObject>
+			<externObjectInput identifier="-95">
+				<vector elements="4">
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+				</vector>
+			</externObjectInput>
+			<subfunction>
+				<naturalNumberB bit="12" />
+			</subfunction>
+		</domains>
+		<database_identifiers>
+			<identifier>-95</identifier>
+		</database_identifiers>
+		<main_fib_object>
+			<!-- else evalue intersection (if possible) -->
+			<if><!-- if x_1 == x_2 then evalue f_2( x_1 ) for intersection -->
+				<condition>
+					<eqInt>
+						<mult>
+							<variable>1</variable>
+							<value>2048</value>
+						</mult>
+						<mult>
+							<variable>3</variable>
+							<value>2048</value>
+						</mult>
+					</eqInt>
+				</condition>
+				<if><!-- if x_3 == x_4 ( and x_1 == x_2 ) then x_1 == x_2 == x_3 == x_4 -->
+					<condition>
+						<eqInt>
+							<mult>
+								<variable>5</variable>
+								<value>2048</value>
+							</mult>
+							<mult>
+								<variable>7</variable>
+								<value>2048</value>
+							</mult>
+						</eqInt>
+					</condition>
+					<!-- lines identical -> no intersection point -->
+					<subobject number="1">
+						<vector type="externSubobject">
+							<value>0</value>
+							<value>0</value>
+							<value>0</value>
+						</vector>
+					</subobject>
+					<!-- end case x_1 == x_2 == x_3 == x_4 , but still x_1 == x_2 -->
+					<!-- else evalue f_2( x_1 ) for intersection-->
+					<function define_variable="9"><!-- b_1 slope of the line f_2 -->
+						<subfunction><!-- b_1 = (y_4 - y_3) / (x_4 - x_3) -->
+							<div>
+								<sub>
+									<variable>8</variable>
+									<variable>6</variable>
+								</sub>
+								<sub>
+									<variable>7</variable>
+									<variable>5</variable>
+								</sub>
+							</div>
+						</subfunction>
+						<function define_variable="10">
+							<subfunction><!-- f_2( x_1 ) = ( y_3 - b_1 * x_3 ) + b_1 * x_1 = y_3 + b_1 * ( x_1 - x_3 ) -->
+								<add>
+									<variable>6</variable>
+									<mult>
+										<variable>9</variable>
+										<sub>
+											<variable>1</variable>
+											<variable>5</variable>
+										</sub>
+									</mult>
+								</add>
+							</subfunction>
+							<subobject number="1"><!-- intersection point = (x_1, f_2( x_1 ) ) -->
+								<vector type="externSubobject">
+									<variable>1</variable>
+									<variable>10</variable>
+									<value>1</value>
+								</vector>
+							</subobject>
+						</function>
+					</function>
+				</if><!-- end if x_1 == x_2 == x_3 == x_4 -->
+				<!-- else x_1 != x_2 -->
+				<function define_variable="9">
+					<!-- a_1 slope of the line f_1 -->
+					<subfunction>
+						<!-- a_1 = (y_2 - y_1) / (x_2 - x_1) -->
+						<div>
+							<sub>
+								<variable>4</variable>
+								<variable>2</variable>
+							</sub>
+							<sub>
+								<variable>3</variable>
+								<variable>1</variable>
+							</sub>
+						</div>
+					</subfunction>
+					<function define_variable="10">
+						<!-- a_0 = y_1 - a_1 * x_1 -->
+						<subfunction>
+							<sub>
+								<variable>2</variable>
+								<mult>
+									<variable>9</variable>
+									<variable>1</variable>
+								</mult>
+							</sub>
+						</subfunction>
+						<if><!-- if x_3 == x_4 then evalue f_1( x_3 ) for intersection -->
+							<condition>
+								<eqInt>
+									<mult>
+										<variable>5</variable>
+										<value>2048</value>
+									</mult>
+									<mult>
+										<variable>7</variable>
+										<value>2048</value>
+									</mult>
+								</eqInt>
+							</condition>
+							<function define_variable="11">
+								<!-- f_1( x_3 ) = a_0 + a_1 * x_3 -->
+								<subfunction>
+									<add>
+										<variable>10</variable>
+										<mult>
+											<variable>9</variable>
+											<variable>5</variable>
+										</mult>
+									</add>
+								</subfunction>
+								<subobject number="1"><!-- intersection point = ( x_3, f_1( x_3 ) ) -->
+									<vector type="externSubobject">
+										<variable>5</variable>
+										<variable>11</variable>
+										<value>1</value>
+									</vector>
+								</subobject>
+							</function>
+							<!-- else evalue line parameters a_0, a_1, b_0 and b_1
+								( f_1( x ) = a_0 + a_1 * x ; f_2( x ) = b_0 + b_1 * x )
+								and evalue intersection of lines with database object id -95 -->
+							<function define_variable="11">
+								<!-- b_1 slope of the line f_1 -->
+								<subfunction>
+									<!-- b_1 = (y_4 - y_3) / (x_4 - x_3) -->
+									<div>
+										<sub>
+											<variable>8</variable>
+											<variable>6</variable>
+										</sub>
+										<sub>
+											<variable>7</variable>
+											<variable>5</variable>
+										</sub>
+									</div>
+								</subfunction>
+								<!-- if the slope is the same (a_1 == b_1) -> no intersection point -->
+								<if><!-- if intersection point not betwean the line points is not possible -->
+									<condition>
+										<not>
+											<or>
+												<lo>
+													<variable>9</variable>
+													<variable>11</variable>
+												</lo>
+												<gr>
+													<variable>9</variable>
+													<variable>11</variable>
+												</gr>
+											</or>
+										</not>
+									</condition>
+									<!-- the slope is the same (a_1 == b_1) -->
+									<subobject number="1">
+										<vector type="externSubobject">
+											<value>0</value>
+											<value>0</value>
+											<value>0</value>
+										</vector>
+									</subobject>
+									<!-- else (a_1 != b_1) evalue intersection -->
+									<function define_variable="12">
+										<!-- b_0 = y_3 - b_1 * x_3 -->
+										<subfunction>
+											<sub>
+												<variable>6</variable>
+												<mult>
+													<variable>11</variable>
+													<variable>5</variable>
+												</mult>
+											</sub>
+										</subfunction>
+										<obj identifier="-95">
+											<vector type="externObjectInput">
+												<variable>10</variable>
+												<variable>9</variable>
+												<variable>12</variable>
+												<variable>11</variable>
+											</vector>
+											<subobject>
+												<output_variables>
+													<variable>13</variable>
+													<variable>14</variable>
+													<variable>15</variable>
+												</output_variables>
+												<!-- else return intersection -->
+												<subobject number="1">
+													<vector type="externSubobject">
+														<variable>13</variable>
+														<variable>14</variable>
+														<variable>15</variable>
+													</vector>
+												</subobject>
+											</subobject>
+										</obj>
+									</function>
+								</if>
+							</function>
+						</if>
+					</function>
+				</function>
+			</if>
+		</main_fib_object>
+	</root>
+</fib_object>

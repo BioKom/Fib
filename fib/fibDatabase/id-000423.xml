@@ -18,9 +18,14 @@
 			<pair key="inVar8::description" value="position of the 4. point in dimension 2 (y_4)"/>
 			<pair key="inVar9::description" value="the start point y_s"/>
 			<pair key="inVar10::description" value="the end point y_e"/>
+			
 			<pair key="author" value="Betti Oesterholz"/>
 			<pair key="author::email" value="Oesterholz@Fib-Development.org"/>
 			<pair key="copyright" value="LGPL3"/>
+			
+			<pair key="isPointElement" value=""/>
+			<pair key="DbObject::isPointSubObject" value="-428"/>
+			<pair key="isNotAntialiased" value=""/>
 		</optionalpart>
 		<input_variables>
 			<variable number="1" default="0"/>
@@ -149,8 +154,8 @@
 					</lo>
 				</condition>
 				<point/>
-			<!--else y_s <= y_e evalue parameters of the two lines-->
-				<if><!--if y_1 == y_2 then connect points 1 and 2 (draw line
+			<!-- else y_s <= y_e evalue parameters of the two lines -->
+				<if><!-- if y_1 == y_2 then connect points 1 and 2 (draw line
 					from x_1 to x_2) and connect to second line f_2 -->
 					<condition>
 						<eqInt>
@@ -164,22 +169,149 @@
 							</mult>
 						</eqInt>
 					</condition>
-					<list>
-						<!--draw line from x_1 to x_2-->
-						<area define_variable="11">
-							<vector type="subarea">
-								<variable>1</variable>
-								<variable>3</variable>
-							</vector>
-							<point>
-								<vector type="position">
-									<variable>11</variable>
+					<if><!-- if y_3 == y_4 then connect points 3 and 4 (draw line
+						from x_3 to x_4) and points 1 and 4 (draw line from x_1 to x_4) -->
+						<condition>
+							<eqInt>
+								<mult>
+									<variable>6</variable>
+									<value>1024</value>
+								</mult>
+								<mult>
+									<variable>8</variable>
+									<value>1024</value>
+								</mult>
+							</eqInt>
+						</condition>
+						<!-- y_1 == y_2 == y_3 == y_4 -> evalue min and max -->
+						<function define_variable="11">
+							<subfunction><!-- y_min = min( min( x_1, x_2 ), min( x_1, x_2 ) ) -->
+								<min>
+									<min>
+										<variable>1</variable>
+										<variable>3</variable>
+									</min>
+									<min>
+										<variable>5</variable>
+										<variable>7</variable>
+									</min>
+								</min>
+							</subfunction>
+							<function define_variable="12">
+								<subfunction><!-- y_max = max( max( x_1, x_2 ), max( x_1, x_2 ) ) -->
+									<max>
+										<max>
+											<variable>1</variable>
+											<variable>3</variable>
+										</max>
+										<max>
+											<variable>5</variable>
+											<variable>7</variable>
+										</max>
+									</max>
+								</subfunction>
+								<area define_variable="13">
+									<vector type="subarea">
+										<variable>11</variable>
+										<variable>12</variable>
+									</vector>
+									<point>
+										<vector type="position">
+											<variable>13</variable>
+											<variable>2</variable>
+										</vector>
+									</point>
+								</area>
+							</function>
+						</function>
+						<!-- else y_1 == y_2 and y_3 != y_4 -> evalue min and max -->
+						<function define_variable="11">
+							<subfunction><!-- y_min = min( min( x_1, x_2 ), x_3 + (y_1 - y_3) * ( x_4 - x_3 ) / (y_4 - y_3) ) -->
+								<min>
+									<min>
+										<variable>1</variable>
+										<variable>3</variable>
+									</min>
+									<add>
+										<variable>5</variable>
+										<mult>
+											<sub>
+												<variable>2</variable>
+												<variable>6</variable>
+											</sub>
+											<div>
+												<sub>
+													<variable>7</variable>
+													<variable>5</variable>
+												</sub>
+												<sub>
+													<variable>8</variable>
+													<variable>6</variable>
+												</sub>
+											</div>
+										</mult>
+									</add>
+								</min>
+							</subfunction>
+							<function define_variable="12">
+								<subfunction><!-- y_max = max( max( x_1, x_2 ), max( x_1, x_2 ) ) -->
+									<max>
+										<max>
+											<variable>1</variable>
+											<variable>3</variable>
+										</max>
+										<add>
+											<variable>5</variable>
+											<mult>
+												<sub>
+													<variable>2</variable>
+													<variable>6</variable>
+												</sub>
+												<div>
+													<sub>
+														<variable>7</variable>
+														<variable>5</variable>
+													</sub>
+													<sub>
+														<variable>8</variable>
+														<variable>6</variable>
+													</sub>
+												</div>
+											</mult>
+										</add>
+									</max>
+								</subfunction>
+								<area define_variable="13">
+									<vector type="subarea">
+										<variable>11</variable>
+										<variable>12</variable>
+									</vector>
+									<point>
+										<vector type="position">
+											<variable>13</variable>
+											<variable>2</variable>
+										</vector>
+									</point>
+								</area>
+							</function>
+						</function>
+					</if>
+				<!-- else y_1 != y_2 -> evalue parameters for line f_1 -->
+					<function define_variable="11"><!--a_1 slope of the line f_1-->
+						<subfunction><!-- a_1 = (x_2 - x_1) / (y_2 - y_1) -->
+							<div>
+								<sub>
+									<variable>3</variable>
+									<variable>1</variable>
+								</sub>
+								<sub>
+									<variable>4</variable>
 									<variable>2</variable>
-								</vector>
-							</point>
-						</area>
-						<if><!--if y_3 == y_4 then connect points 3 and 4 (draw line
-							from x_3 to x_4) and points 1 and 4 (draw line from x_1 to x_4)-->
+								</sub>
+							</div>
+						</subfunction>
+						<if><!-- if y_3 == y_4 then connect points 3 and 4 (draw line
+							from x_3 to x_4) and connect to first line f_1 -->
 							<condition>
 								<eqInt>
 									<mult>
@@ -192,147 +324,91 @@
 									</mult>
 								</eqInt>
 							</condition>
-							<!--connect points 3 and 4 (draw line from x_3 to x_4 and points 1 and 4 (draw line from x_1 to x_4-->
-							<list>
-								<area define_variable="11">
-									<vector type="subarea">
-										<variable>5</variable>
-										<variable>7</variable>
-									</vector>
-									<point>
-										<vector type="position">
-											<variable>11</variable>
-											<variable>6</variable>
-										</vector>
-									</point>
-								</area>
-								<area define_variable="11">
-									<vector type="subarea">
-										<variable>1</variable>
-										<variable>7</variable>
-									</vector>
-									<point>
-										<vector type="position">
-											<variable>11</variable>
-											<variable>2</variable>
-										</vector>
-									</point>
-								</area>
-							</list>
-							<!--else y_1 == y_2 and y_3 != y_4 -> evalue parameters for line f_2 -->
-							<function define_variable="11">
-								<!--b_1 slope of the line f_1-->
-								<subfunction>
-									<!--b_1 = (x_4 - x_3) / (y_4 - y_3) -->
-									<div>
-										<sub>
+							<!-- else y_1 != y_2 and y_3 == y_4 -> evalue min and max -->
+							<function define_variable="12">
+								<subfunction><!-- y_min = min( min( x_3, x_4 ), x_1 + (y_3 - y_1) * ( x_2 - x_1 ) / (y_2 - y_1) ) -->
+									<min>
+										<min>
+											<variable>5</variable>
 											<variable>7</variable>
-											<variable>5</variable>
-										</sub>
-										<sub>
-											<variable>8</variable>
-											<variable>6</variable>
-										</sub>
-									</div>
-								</subfunction>
-								<function define_variable="12">
-									<!--b_0 = x_3 - b_1 * y_3-->
-									<subfunction>
-										<sub>
-											<variable>5</variable>
-											<mult>
-												<variable>11</variable>
-												<variable>6</variable>
-											</mult>
-										</sub>
-									</subfunction>
-									<!-- draw line from f_1=x_1 to f_2 -->
-									<obj identifier="-411">
-										<vector type="externObjectInput">
-											<variable>9</variable>
-											<variable>10</variable>
+										</min>
+										<add>
 											<variable>1</variable>
-											<value>0</value>
-											<variable>12</variable>
-											<variable>11</variable>
-										</vector>
-									</obj>
-								</function>
-							</function>
-						</if>
-					</list>
-				<!--else y_1 != y_2 -> evalue parameters for line f_1 -->
-					<function define_variable="11">
-						<!--a_1 slope of the line f_1-->
-						<subfunction>
-							<!--a_1 = (x_2 - x_1) / (y_2 - y_1) -->
-							<div>
-								<sub>
-									<variable>3</variable>
-									<variable>1</variable>
-								</sub>
-								<sub>
-									<variable>4</variable>
-									<variable>2</variable>
-								</sub>
-							</div>
-						</subfunction>
-						<function define_variable="12">
-							<!--a_0 = x_1 - a_1 * y_1-->
-							<subfunction>
-								<sub>
-									<variable>1</variable>
-									<mult>
-										<variable>11</variable>
-										<variable>2</variable>
-									</mult>
-								</sub>
-							</subfunction>
-							<if><!--if y_3 == y_4 then connect points 3 and 4 (draw line
-								from x_3 to x_4) and connect to first line f_1 -->
-								<condition>
-									<eqInt>
-										<mult>
-											<variable>6</variable>
-											<value>1024</value>
-										</mult>
-										<mult>
-											<variable>8</variable>
-											<value>1024</value>
-										</mult>
-									</eqInt>
-								</condition>
-								<list><!--connect points 3 and 4 (draw line from x_3 to x_4)-->
-									<area define_variable="13">
+											<mult>
+												<sub>
+													<variable>6</variable>
+													<variable>2</variable>
+												</sub>
+												<div>
+													<sub>
+														<variable>3</variable>
+														<variable>1</variable>
+													</sub>
+													<sub>
+														<variable>4</variable>
+														<variable>2</variable>
+													</sub>
+												</div>
+											</mult>
+										</add>
+									</min>
+								</subfunction>
+								<function define_variable="13">
+									<subfunction><!-- y_max = max( max( x_3, x_4 ), x_1 + (y_3 - y_1) * ( x_2 - x_1 ) / (y_2 - y_1) ) -->
+										<max>
+											<max>
+												<variable>5</variable>
+												<variable>7</variable>
+											</max>
+											<add>
+												<variable>1</variable>
+												<mult>
+													<sub>
+														<variable>6</variable>
+														<variable>2</variable>
+													</sub>
+													<div>
+														<sub>
+															<variable>3</variable>
+															<variable>1</variable>
+														</sub>
+														<sub>
+															<variable>4</variable>
+															<variable>2</variable>
+														</sub>
+													</div>
+												</mult>
+											</add>
+										</max>
+									</subfunction>
+									<area define_variable="14">
 										<vector type="subarea">
-											<variable>5</variable>
-											<variable>7</variable>
+											<variable>12</variable>
+											<variable>13</variable>
 										</vector>
 										<point>
 											<vector type="position">
-												<variable>13</variable>
+												<variable>14</variable>
 												<variable>6</variable>
 											</vector>
 										</point>
 									</area>
-									<!-- draw line from f_2=x_3 to f_1 -->
-									<obj identifier="-411">
-										<vector type="externObjectInput">
-											<variable>9</variable>
-											<variable>10</variable>
-											<variable>12</variable>
+								</function>
+							</function>
+						<!-- else y_1 != y_2 and y_3 != y_4 -> evalue parameters for line f_2 -->
+							<function define_variable="12">
+								<subfunction><!-- a_0 = x_1 - a_1 * y_1 -->
+									<sub>
+										<variable>1</variable>
+										<mult>
 											<variable>11</variable>
-											<variable>5</variable>
-											<value>0</value>
-										</vector>
-									</obj>
-								</list>
-							<!--else y_1 != y_2 and y_3 != y_4 -> evalue parameters for line f_2 -->
-								<function define_variable="13">
-									<!--b_1 slope of the line f_1-->
+											<variable>2</variable>
+										</mult>
+									</sub>
+								</subfunction>
+								<function define_variable="13"><!-- b_1 slope of the line f_1-->
 									<subfunction>
-										<!--b_1 = (x_4 - x_3) / (y_4 - y_3) -->
-										<div>
+										<div><!-- b_1 = (x_4 - x_3) / (y_4 - y_3) -->
 											<sub>
 												<variable>7</variable>
 												<variable>5</variable>
@@ -344,8 +420,7 @@
 										</div>
 									</subfunction>
 									<function define_variable="14">
-										<!--b_0 = x_3 - b_1 * y_3-->
-										<subfunction>
+										<subfunction><!-- b_0 = x_3 - b_1 * y_3 -->
 											<sub>
 												<variable>5</variable>
 												<mult>
@@ -354,7 +429,7 @@
 												</mult>
 											</sub>
 										</subfunction>
-										<!-- draw line from f_1=y_1 to f_2 -->
+										<!-- draw line from f_1 to f_2 -->
 										<obj identifier="-411">
 											<vector type="externObjectInput">
 												<variable>9</variable>
@@ -367,8 +442,8 @@
 										</obj>
 									</function>
 								</function>
-							</if>
-						</function>
+							</function>
+						</if>
 					</function>
 				</if>
 			</if>
