@@ -43,6 +43,7 @@ History:
 09.03.2012  Oesterholz  new version numbers for Fib and Fib database
 22.10.2012  Oesterholz  DEBUG_EVALUE added
 16.01.2013  Oesterholz  FEATURE_FIB_ELEMENT_CHECKS_DATABASE_FOR_EXTERNAL_OBJECTS added
+17.02.2013  Oesterholz  FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE added
 */
 
 
@@ -352,6 +353,18 @@ History:
 #define FEATURE_FIB_ELEMENT_CHECKS_DATABASE_FOR_EXTERNAL_OBJECTS
 
 
+/**
+ * With this feature the Fib vector class @see cFibVector
+ * will use a variable to get the size of the underlying vectors.
+ *
+ * @see cFibVector::getNumberOfElements
+ * created: 17.02.2013 Betti Oesterholz
+ * status:  running and tested(17.02.2013)
+ * (deprecated: not FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE)
+ *//*
+History:
+*/
+#define FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 
 
 

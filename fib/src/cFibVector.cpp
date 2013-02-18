@@ -46,7 +46,10 @@ History:
 	parameters for domains added
 18.04.2012  Oesterholz  Bugfix: replace FirstChild()->ToElement() with
 	FirstChildElement()
+18.04.2012  Oesterholz  speed up for lowerVector() with retrieving size once
+17.02.2013  Oesterholz FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE implemented
 */
+
 
 #include "cFibVector.h"
 #include "cDomain.h"
@@ -77,8 +80,11 @@ cFibVector::cFibVector( unsignedIntFib iNumberOfVectorElements,
 		liVectorType( iNumberOfVectorElements, VALUE ),
 		liVectorValues( iNumberOfVectorElements, 0.0 ),
 		liVectorVariable( iNumberOfVectorElements, NULL ),
+#ifdef FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
+		uiNumberOfElements( iNumberOfVectorElements ),
+#endif //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 		pDefiningFibElement( definingFibElement ){
-	DEBUG_OUT_L3(<<this<<"->cFibVector("<< &iNumberOfVectorElements <<", "<<definingFibElement <<") parameterconstructor"<<endl);
+	DEBUG_OUT_L3(<<this<<"->cFibVector( iNumberOfVectorElements="<< iNumberOfVectorElements <<", "<<definingFibElement <<") parameter constructor"<<endl);
 }
 
 /**
@@ -90,9 +96,17 @@ cFibVector::cFibVector( unsignedIntFib iNumberOfVectorElements,
  */
 cFibVector::cFibVector( const cFibVector & vector,
 	cFibElement *definingFibElement ):
+#ifdef FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
+		liVectorType( vector.uiNumberOfElements, VALUE ),
+		liVectorValues( vector.uiNumberOfElements, 0.0 ),
+		liVectorVariable( vector.uiNumberOfElements, NULL ),
+		uiNumberOfElements( vector.uiNumberOfElements )
+#else //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 		liVectorType( vector.getNumberOfElements(), VALUE ),
 		liVectorValues( vector.getNumberOfElements(), 0.0 ),
-		liVectorVariable( vector.getNumberOfElements(), NULL ){
+		liVectorVariable( vector.getNumberOfElements(), NULL )
+#endif //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
+		{
 	
 	DEBUG_OUT_L3(<<this<<"->cFibVector("<< &vector<<", "<<definingFibElement <<") copyconstructor"<<endl);
 	
@@ -104,8 +118,13 @@ cFibVector::cFibVector( const cFibVector & vector,
 		pDefiningFibElement = vector.pDefiningFibElement;
 	}
 	
+#ifdef FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
+	for ( unsigned int uiActualElement = 1;
+			uiActualElement <= uiNumberOfElements; uiActualElement++ ){
+#else //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 	for ( unsigned int uiActualElement = 1;
 			(uiActualElement <= vector.getNumberOfElements()); uiActualElement++ ){
+#endif //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 		
 		if ( vector.isVariable( uiActualElement ) ){
 			setVariable( uiActualElement,
@@ -138,6 +157,9 @@ cFibVector::cFibVector( const TiXmlElement * pXmlElementVector, intFib &outStatu
 		list<cFibVariable*> & liDefinedVariables ):
 		liVectorType( 0, VALUE ), liVectorValues( 0, 0.0 ),
 		liVectorVariable( 0, (cFibVariable*)NULL ),
+#ifdef FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
+		uiNumberOfElements( 0 ),
+#endif //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 		pDefiningFibElement( (cFibElement*)NULL ){
 	
 	DEBUG_OUT_L3(<<this<<"->cFibVector() rostore xml"<<endl);
@@ -177,12 +199,22 @@ cFibVector::cFibVector( const TiXmlElement * pXmlElementVector, intFib &outStatu
 			}
 			iNumberOfElement = iNumberOfElementLoaded;
 		}
+#ifdef FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
+		if ( uiNumberOfElements < (unsigned int)iNumberOfElement ){
+			//resize the vector so it has a place for the new element
+			liVectorType.resize( iNumberOfElement, VALUE );
+			liVectorValues.resize( iNumberOfElement, 0.0 );
+			liVectorVariable.resize( iNumberOfElement, NULL );
+			uiNumberOfElements = iNumberOfElement;
+		}
+#else //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 		if ( liVectorType.size() < (unsigned int)iNumberOfElement ){
 			//resize the vector so it has a place for the new element
 			liVectorType.resize( iNumberOfElement, VALUE );
 			liVectorValues.resize( iNumberOfElement, 0.0 );
 			liVectorVariable.resize( iNumberOfElement, NULL );
 		}
+#endif //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 		
 		if ( szElementName == "value" ){
 			const char * pcValue = pXmlElement->GetText();
@@ -317,8 +349,13 @@ cFibVector::cFibVector( cReadBits & iBitStream, intFib & outStatus,
 	}
 	cDomainIntegerBasis * pDomainVariable = (cDomainIntegerBasis*)pInDomainVariable;
 
+#ifdef FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
+	uiNumberOfElements = (uiInNumberOfElements == 0)?
+		pVectorDomain->getNumberOfElements() : uiInNumberOfElements;
+#else //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 	const unsignedIntFib uiNumberOfElements = (uiInNumberOfElements == 0)?
 		pVectorDomain->getNumberOfElements() : uiInNumberOfElements;
+#endif //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 	
 	//resize the vector so it has a place for the new element
 	liVectorType.resize( uiNumberOfElements, VALUE );
@@ -392,8 +429,13 @@ cFibVector::~cFibVector(){
 	//unregister the defining element on the variables
 	DEBUG_OUT_L3(<<this<<"->~cFibVector()"<<endl);
 
+#ifdef FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
+	for ( unsigned int uiActualElement = 0;
+			uiActualElement < uiNumberOfElements; uiActualElement++ ){
+#else //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 	for ( unsigned int uiActualElement = 0;
 			uiActualElement < getNumberOfElements(); uiActualElement++ ){
+#endif //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 		
 		if ( (liVectorType[ uiActualElement ] == VARIABLE) &&
 				(liVectorVariable[ uiActualElement ] != NULL) ){
@@ -413,9 +455,14 @@ cFibVector::~cFibVector(){
  * @return the number of elements the vector contains
  */
 unsignedIntFib cFibVector::getNumberOfElements() const{
-	DEBUG_OUT_L3(<<this<<"->cFibVector::getNumberOfElements()="<<liVectorType.size()<<" (#variable="<<liVectorVariable.size()<<" #value="<<liVectorValues.size()<<")"<<endl);
 	
+#ifdef FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
+	DEBUG_OUT_L3(<<this<<"->cFibVector::getNumberOfElements()="<<uiNumberOfElements<<" (#typs="<<liVectorType.size()<<" #variable="<<liVectorVariable.size()<<" #value="<<liVectorValues.size()<<")"<<endl);
+	return uiNumberOfElements;
+#else //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
+	DEBUG_OUT_L3(<<this<<"->cFibVector::getNumberOfElements()="<<liVectorType.size()<<" (#variable="<<liVectorVariable.size()<<" #value="<<liVectorValues.size()<<")"<<endl);
 	return (unsignedIntFib)( liVectorType.size() );
+#endif //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 }
 
 
@@ -431,7 +478,11 @@ unsignedIntFib cFibVector::getNumberOfElements() const{
 bool cFibVector::isVariable( unsignedIntFib iNumberElement ) const{
 
 	DEBUG_OUT_L3(<<this<<"->cFibVector::isVariable("<<iNumberElement<<")"<<endl);
+#ifdef FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
+	if ( ( iNumberElement < 1 ) || ( uiNumberOfElements < iNumberElement ) ){
+#else //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 	if ( (iNumberElement < 1) || (getNumberOfElements() < iNumberElement) ){
+#endif //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 		//non such element
 		return false;
 	}
@@ -456,8 +507,13 @@ bool cFibVector::isUsedVariable( const cFibVariable * pVariable ) const{
 		//no variable -> can't be used
 		return false;
 	}
+#ifdef FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
+	for ( unsigned int uiActualElement = 0;
+			uiActualElement < uiNumberOfElements; uiActualElement++ ){
+#else //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 	for ( unsigned int uiActualElement = 0;
 			uiActualElement < getNumberOfElements(); uiActualElement++ ){
+#endif //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 		
 		if ( ( liVectorType[ uiActualElement ] == VARIABLE ) &&
 				( liVectorVariable[ uiActualElement ] != NULL ) &&
@@ -480,8 +536,13 @@ set<cFibVariable*> cFibVector::getUsedVariables(){
 	
 	set<cFibVariable*> setUsedVariables;
 	
+#ifdef FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
+	for ( unsigned int uiActualElement = 0;
+			uiActualElement < uiNumberOfElements; uiActualElement++ ){
+#else //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 	for ( unsigned int uiActualElement = 0;
 			uiActualElement < getNumberOfElements(); uiActualElement++ ){
+#endif //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 		
 		if ( ( liVectorType[ uiActualElement ] == VARIABLE ) &&
 				( liVectorVariable[ uiActualElement ] != NULL ) ){
@@ -517,8 +578,13 @@ bool cFibVector::replaceVariable( cFibVariable *variableOld,
 		return false;
 	}
 	bool bVariableSet = true;
+#ifdef FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
+	for ( unsigned int uiActualElement = 1;
+			uiActualElement <= uiNumberOfElements; uiActualElement++ ){
+#else //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 	for ( unsigned int uiActualElement = 1;
 			uiActualElement <= getNumberOfElements(); uiActualElement++ ){
+#endif //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 		
 		if ( ( isVariable( uiActualElement ) ) &&
 				( getVariable( uiActualElement ) == variableOld ) ){
@@ -544,7 +610,11 @@ doubleFib cFibVector::getValue( unsignedIntFib iNumberElement ) const{
 	
 	DEBUG_OUT_L3(<<this<<"->cFibVector::getValue("<<iNumberElement<<")"<<endl);
 	
+#ifdef FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
+	if ( ( iNumberElement < 1 ) || ( uiNumberOfElements < iNumberElement ) ){
+#else //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 	if ( (iNumberElement < 1) || (getNumberOfElements() < iNumberElement) ){
+#endif //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 		//non such element
 		return (doubleFib)( 0.0 );
 	}
@@ -600,7 +670,11 @@ bool cFibVector::setValue( unsignedIntFib iNumberElement, doubleFib dValue ){
 
 	DEBUG_OUT_L3(<<this<<"->cFibVector::setValue( "<< iNumberElement <<", "<<dValue<<" )"<<endl);
 	
+#ifdef FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
+	if ( ( iNumberElement < 1 ) || ( uiNumberOfElements < iNumberElement ) ){
+#else //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 	if ( (iNumberElement < 1) || (getNumberOfElements() < iNumberElement) ){
+#endif //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 		//non such element
 		return false;
 	}
@@ -658,7 +732,11 @@ cFibVariable * cFibVector::getVariable( unsignedIntFib iNumberElement ){
 
 	DEBUG_OUT_L3(<<this<<"->cFibVector::getVariable("<<iNumberElement<<")"<<endl);
 	
+#ifdef FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
+	if ( ( iNumberElement < 1 ) || ( uiNumberOfElements < iNumberElement ) ){
+#else //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 	if ( (iNumberElement < 1) || (getNumberOfElements() < iNumberElement) ){
+#endif //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 		//non such element
 		return NULL;
 	}
@@ -685,7 +763,11 @@ bool cFibVector::setVariable( unsignedIntFib iNumberElement,
 
 	DEBUG_OUT_L3(<<this<<"->cFibVector::setVariable( "<< iNumberElement <<", "<<pVariable<<" )"<<endl);
 	
+#ifdef FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
+	if ( ( iNumberElement < 1 ) || ( uiNumberOfElements < iNumberElement ) ){
+#else //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 	if ( (iNumberElement < 1) || (getNumberOfElements() < iNumberElement) ){
+#endif //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 		//non such element
 		return false;
 	}
@@ -811,7 +893,11 @@ cDomain * cFibVector::getDomain( unsignedIntFib iNumberElement ) const{
 
 	DEBUG_OUT_L3(<<this<<"->cFibVector::getDomain("<<iNumberElement<<")"<<endl);
 	
-	if ( ( iNumberElement < 1 ) || ( getNumberOfElements() < iNumberElement) ){
+#ifdef FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
+	if ( ( iNumberElement < 1 ) || ( uiNumberOfElements < iNumberElement ) ){
+#else //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
+	if ( (iNumberElement < 1) || (getNumberOfElements() < iNumberElement) ){
+#endif //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 		//not enough elements in the vector
 		return NULL;
 	}
@@ -926,7 +1012,9 @@ void cFibVector::setDefiningFibElement( cFibElement * pFibElement,
 				domain->getNumberOfElements();
 			
 			//unregister this vector from all variables
+#ifndef FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 			const unsigned int uiNumberOfElements = liVectorVariable.size();
+#endif //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 			for ( unsigned int uiActualElement = 0;
 					uiActualElement < uiNumberOfElements; uiActualElement++ ){
 				
@@ -935,6 +1023,9 @@ void cFibVector::setDefiningFibElement( cFibElement * pFibElement,
 					liVectorVariable[ uiActualElement ]->unregisterUsingElement( this );
 				}
 			}
+#ifdef FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
+			uiNumberOfElements = uiNumberOfVectorElements;
+#endif //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 			liVectorType = vector<eVectorType>( uiNumberOfVectorElements, VALUE );
 			liVectorValues = vector<doubleFib>( uiNumberOfVectorElements, 0 );
 			liVectorVariable = vector<cFibVariable*>( uiNumberOfVectorElements, NULL );
@@ -1127,8 +1218,11 @@ bool cFibVector::store( ostream & stream, char & cRestBits,
 	
 	bool bReturnValue = true;
 	//write the bits for the elements
-#ifdef FEATURE_FIB_VECTOR_STORE_JUST_DOMAIN
+#ifndef FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 	const unsigned int uiNumberOfElements = getNumberOfElements();
+#endif //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
+	
+#ifdef FEATURE_FIB_VECTOR_STORE_JUST_DOMAIN
 	for ( unsigned int uiActualElement = 1;
 			uiActualElement <= uiNumberOfElements; uiActualElement++ ){
 		
@@ -1166,7 +1260,6 @@ bool cFibVector::store( ostream & stream, char & cRestBits,
 		}//no such domain element -> don't store anything
 	}
 #else //FEATURE_FIB_VECTOR_STORE_JUST_DOMAIN
-	const unsigned int uiNumberOfElements = getNumberOfElements();
 	for ( unsigned int uiActualElement = 1;
 			uiActualElement <= uiNumberOfElements; uiActualElement++ ){
 		
@@ -1226,8 +1319,14 @@ bool cFibVector::storeXml( ostream &stream ) const{
 	
 	stream<<"<vector type=\""<< getVectorType() <<"\">"<<endl;
 	//store the vector elements
+#ifdef FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
+	for ( unsigned int uiActualElement = 0;
+			uiActualElement < uiNumberOfElements; uiActualElement++ ){
+#else //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 	for ( unsigned int uiActualElement = 0;
 			uiActualElement < getNumberOfElements(); uiActualElement++ ){
+#endif //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
+
 #ifdef FEATURE_STORE_VECTOR_ELEMENT_NUMBER
 		if ( liVectorType[uiActualElement] == VALUE ){
 			//store a value
@@ -1387,13 +1486,22 @@ bool cFibVector::equalInternal( const cFibVector &vector,
 		//the vector typs are not equal
 		return false;
 	}
+#ifdef FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
+	if ( uiNumberOfElements != vector.uiNumberOfElements ){
+#else //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 	if ( getNumberOfElements() != vector.getNumberOfElements() ){
+#endif //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 		//non such element
 		return false;
 	}
 	
+#ifdef FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
+	for ( unsigned int uiActualElement = 0;
+			uiActualElement < uiNumberOfElements; uiActualElement++ ){
+#else //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 	for ( unsigned int uiActualElement = 0;
 			uiActualElement < getNumberOfElements(); uiActualElement++ ){
+#endif //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 		
 		if ( liVectorType[ uiActualElement ] != vector.liVectorType[ uiActualElement ] ){
 			return false;
@@ -1446,13 +1554,22 @@ bool cFibVector::operator==( const cFibVector &vector ) const{
 		//the vectortyps are not equal
 		return false;
 	}
-	if ( (getNumberOfElements() != vector.getNumberOfElements()) ){
+#ifdef FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
+	if ( uiNumberOfElements != vector.uiNumberOfElements ){
+#else //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
+	if ( getNumberOfElements() != vector.getNumberOfElements() ){
+#endif //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 		//non such element
 		return false;
 	}
 	
+#ifdef FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
+	for ( unsigned int uiActualElement = 0;
+			uiActualElement < uiNumberOfElements; uiActualElement++ ){
+#else //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 	for ( unsigned int uiActualElement = 0;
 			uiActualElement < getNumberOfElements(); uiActualElement++ ){
+#endif //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 		
 		if ( liVectorType[uiActualElement] != vector.liVectorType[uiActualElement] ){
 			return false;
@@ -1501,7 +1618,9 @@ bool cFibVector::operator!=( const cFibVector &vector ) const{
 cFibVector & cFibVector::operator=( const cFibVector &inVector ){
 	DEBUG_OUT_L3(<<this<<"->cFibVector::operator=( "<<&inVector<<" )"<<endl);
 	
+#ifndef FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 	unsigned int uiNumberOfElements = getNumberOfElements();
+#endif //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 	for ( unsigned int uiActualElement = 0;
 			uiActualElement < uiNumberOfElements; uiActualElement++ ){
 		
@@ -1510,12 +1629,24 @@ cFibVector & cFibVector::operator=( const cFibVector &inVector ){
 			liVectorVariable[ uiActualElement ]->unregisterUsingElement( this );
 		}
 	}
+#ifdef FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
+	uiNumberOfElements = inVector.getNumberOfElements();
+	liVectorType     = vector<eVectorType>( uiNumberOfElements, VALUE );
+	liVectorValues   = vector<doubleFib>( uiNumberOfElements, 0 );
+	liVectorVariable = vector<cFibVariable*>( uiNumberOfElements, NULL );
+#else //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 	liVectorType     = vector<eVectorType>( inVector.getNumberOfElements(), VALUE );
 	liVectorValues   = vector<doubleFib>( inVector.getNumberOfElements(), 0 );
 	liVectorVariable = vector<cFibVariable*>( inVector.getNumberOfElements(), NULL );
+#endif //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 	
+#ifdef FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
+	for ( unsigned int uiActualElement = 1;
+			uiActualElement <= uiNumberOfElements; uiActualElement++ ){
+#else //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 	for ( unsigned int uiActualElement = 1;
 			uiActualElement <= getNumberOfElements(); uiActualElement++ ){
+#endif //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 		
 		if ( inVector.isVariable( uiActualElement ) ){
 			setVariable( uiActualElement,
@@ -1554,14 +1685,21 @@ bool cFibVector::operator<( const cFibVector & vector ) const{
 bool cFibVector::lowerVector( const cFibVector & vector1,
 	const cFibVector & vector2 ){
 	
-	if ( vector1.getNumberOfElements() < vector2.getNumberOfElements() ){
-		return true;
-	}
-	if ( vector2.getNumberOfElements() < vector1.getNumberOfElements() ){
+#ifdef FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
+	const unsignedIntFib & uiCountOfVectorElements  = vector1.uiNumberOfElements;
+	const unsignedIntFib & uiCountOfVector2Elements = vector2.uiNumberOfElements;
+#else //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
+	const unsignedIntFib uiCountOfVectorElements  = vector1.getNumberOfElements();
+	const unsignedIntFib uiCountOfVector2Elements = vector2.getNumberOfElements();
+#endif //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
+	if ( uiCountOfVectorElements != uiCountOfVector2Elements ){
+		
+		if ( uiCountOfVectorElements < uiCountOfVector2Elements ){
+			return true;
+		}//else if ( uiCountOfVector2Elements < uiCountOfVectorElements ){
 		return false;
+		
 	}//else (vector1.getNumberOfElements() == vector2.getNumberOfElements())
-	
-	const unsignedIntFib uiCountOfVectorElements = vector1.getNumberOfElements();
 	for ( unsignedIntFib uiActualElement = 1;
 			uiActualElement <= uiCountOfVectorElements; uiActualElement++ ){
 		
@@ -1605,8 +1743,13 @@ bool cFibVector::deleteVariable( cFibVariable * pVariable ){
 		//no variable to delete
 		return false;
 	}
+#ifdef FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
+	for ( unsigned int uiActualElement = 0;
+			uiActualElement < uiNumberOfElements; uiActualElement++ ){
+#else //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 	for ( unsigned int uiActualElement = 0;
 			uiActualElement < getNumberOfElements(); uiActualElement++ ){
+#endif //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 		
 		if ( (liVectorType[ uiActualElement ] == VARIABLE) &&
 				(liVectorVariable[ uiActualElement ] != NULL) &&

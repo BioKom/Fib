@@ -1300,15 +1300,15 @@ list< pair< cFibElement*, list< cVectorProperty > > > addPropertiesToAll(
  * This function loads the data of positions with ther properties from
  * the given file.
  *
- * @param szFilename the path of the file, from which the positionsdata
+ * @param szFilename the path of the file, from which the positions data
  * 	should be loaded from
- * @return the loaded positionsdata
+ * @return the loaded positions data
  */
 list< pair< cVectorPosition, list< cVectorProperty > > > loadPositionData(
 		const char * szFilename ){
 	
-	/*every liLoadedData element is created by loading a pointvector and
-	then propertyvectors till the next pointvector*/
+	/*every liLoadedData element is created by loading a point vector and
+	then property vectors till the next point vector*/
 	list< pair< cVectorPosition, list< cVectorProperty > > > liLoadedData;
 	
 	TiXmlDocument xmlDocData( szFilename );
@@ -1340,11 +1340,11 @@ list< pair< cVectorPosition, list< cVectorProperty > > > loadPositionData(
 	intFib outStatus = 0;
 	
 	for( ; pXmlElement; pXmlElement = pXmlElement->NextSiblingElement() ){
-		/*load the vectorlists for liLoadedData*/
+		//load the vector lists for liLoadedData
 		string szElementName = pXmlElement->Value();
 
 		if ( szElementName != "vector" ){
-			cerr<<"Error: The name of the datalistelement is "<< szElementName <<" and not \"vector\"."<<endl;
+			cerr<<"Error: The name of the data list element is "<< szElementName <<" and not \"vector\"."<<endl;
 		}
 		const char * szVectorXmlType = pXmlElement->Attribute( "type" );
 		
@@ -1355,7 +1355,7 @@ list< pair< cVectorPosition, list< cVectorProperty > > > loadPositionData(
 			liLoadedData.push_back( make_pair(
 				cVectorPosition( pXmlElement, outStatus, liDefinedVariables ),
 				list< cVectorProperty >() ) );
-		}else{//propertyvector
+		}else{//property vector
 			
 			liLoadedData.back().second.push_back(
 				cVectorProperty( pXmlElement, outStatus, liDefinedVariables ) );

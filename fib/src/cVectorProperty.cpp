@@ -38,6 +38,7 @@ History:
 	distanceOfPropertyToNull() added
 17.12.2010  Oesterholz  isOverwritenVector() method added
 18.12.2010  Oesterholz  isOverwriting() and isEvalued() methods added
+17.02.2013  Oesterholz FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE implemented
 */
 
 #include "cVectorProperty.h"
@@ -64,7 +65,7 @@ cVectorProperty::cVectorProperty( unsignedIntFib uiInPropertyType,
 		cFibElement *pDefiningPropertyElement ):
 		uiPropertyType( uiInPropertyType ){
 	
-	DEBUG_OUT_L3(<<this<<"->cVectorProperty("<<uiInPropertyType<<", "<<pDefiningPropertyElement<<") constructor"<<endl);
+	DEBUG_OUT_L3(<<this<<"->cVectorProperty( uiInPropertyType="<<uiInPropertyType<<", "<<pDefiningPropertyElement<<") constructor"<<endl);
 	
 	pDefiningFibElement = pDefiningPropertyElement;
 
@@ -96,6 +97,9 @@ cVectorProperty::cVectorProperty( unsignedIntFib uiInPropertyType,
 	}
 	
 	//init the vector elements
+#ifdef FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
+	uiNumberOfElements = iNumberOfVectorElements;
+#endif //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 	liVectorType.resize( iNumberOfVectorElements, VALUE );
 	liVectorValues.resize( iNumberOfVectorElements, 0 );
 	liVectorVariable.resize( iNumberOfVectorElements, NULL );
@@ -161,6 +165,9 @@ cVectorProperty::cVectorProperty( const cTypeProperty & typeProperty ):
 		//set the correct number of vectorelements
 		unsigned int uiNumberOfVectorElements = pDomain->getNumberOfElements();
 		
+#ifdef FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
+		uiNumberOfElements = uiNumberOfVectorElements ,
+#endif //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 		liVectorType = vector<eVectorType>( uiNumberOfVectorElements, VALUE );
 		liVectorValues = vector<doubleFib>( uiNumberOfVectorElements, 0 );
 		liVectorVariable = vector<cFibVariable*>( uiNumberOfVectorElements, NULL );

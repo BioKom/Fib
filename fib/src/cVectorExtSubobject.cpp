@@ -32,6 +32,7 @@
 /*
 History:
 29.01.2012  Oesterholz  created
+17.02.2013  Oesterholz FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE implemented
 */
 
 
@@ -78,6 +79,9 @@ cVectorExtSubobject::cVectorExtSubobject( cExtSubobject & definingExtSubobject )
 	}
 	
 	//init the vector elements
+#ifdef FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
+	uiNumberOfElements = uiNumberOfVectorElements;
+#endif //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 	liVectorType.resize( uiNumberOfVectorElements, VALUE );
 	liVectorValues.resize( uiNumberOfVectorElements, 0 );
 	liVectorVariable.resize( uiNumberOfVectorElements, NULL );
@@ -376,7 +380,9 @@ void cVectorExtSubobject::setDefiningFibElement( cFibElement * pFibElement,
 			unsigned int uiNumberOfVectorElements = pDomain->getNumberOfElements();
 			
 			//unregister this vector from all to much variables
+#ifndef FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 			const unsigned int uiNumberOfElements = liVectorVariable.size();
+#endif //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 			for ( unsigned int uiActualElement = uiNumberOfVectorElements;
 					uiActualElement < uiNumberOfElements; uiActualElement++ ){
 				
@@ -385,6 +391,9 @@ void cVectorExtSubobject::setDefiningFibElement( cFibElement * pFibElement,
 					liVectorVariable[ uiActualElement ]->unregisterUsingElement( this );
 				}
 			}
+#ifdef FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
+			uiNumberOfElements = uiNumberOfVectorElements;
+#endif //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 			liVectorType = vector<eVectorType>( uiNumberOfVectorElements, VALUE );
 			liVectorValues = vector<doubleFib>( uiNumberOfVectorElements, 0 );
 			liVectorVariable = vector<cFibVariable*>( uiNumberOfVectorElements, NULL );
@@ -417,7 +426,9 @@ void cVectorExtSubobject::setDefiningFibElement( cFibElement * pFibElement,
 void cVectorExtSubobject::resize( unsigned int uiNumberOfVectorElements ){
 
 	//unregister this vector from all variables that will be lost
+#ifndef FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 	const unsigned int uiNumberOfElements = liVectorVariable.size();
+#endif //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 	for ( unsigned int uiActualElement = uiNumberOfVectorElements;
 			uiActualElement < uiNumberOfElements; uiActualElement++ ){
 		
@@ -426,6 +437,9 @@ void cVectorExtSubobject::resize( unsigned int uiNumberOfVectorElements ){
 			liVectorVariable[ uiActualElement ]->unregisterUsingElement( this );
 		}
 	}
+#ifdef FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
+	uiNumberOfElements = uiNumberOfVectorElements;
+#endif //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 	liVectorType.resize( uiNumberOfVectorElements, VALUE );
 	liVectorValues.resize( uiNumberOfVectorElements, 0 );
 	liVectorVariable.resize( uiNumberOfVectorElements, NULL );
