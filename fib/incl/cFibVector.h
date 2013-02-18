@@ -41,6 +41,7 @@ History:
 11.12.2011  Oesterholz  getCompressedSize() and store() method with
 	parameters for domains added
 02.01.2011  Oesterholz  cFibMatrix added
+17.02.2013  Oesterholz FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE implemented
 */
 
 #ifndef ___C_FIB_VECTOR_H__
@@ -95,6 +96,7 @@ protected:
 		VALUE,
 		VARIABLE
 	};
+	
 	/**
 	 * the vector with the type of the vectorelements
 	 */
@@ -109,6 +111,16 @@ protected:
 	 * the vector with the variables of the vectorelements
 	 */
 	vector<cFibVariable*> liVectorVariable;
+	
+#ifdef FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
+	/**
+	 * The number of elements in the vector.
+	 * @see liVectorType
+	 * @see liVectorValues
+	 * @see liVectorVariable
+	 */
+	unsignedIntFib uiNumberOfElements;
+#endif //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 	
 	/**
 	 * the Fib-element which defines/ uses the vector

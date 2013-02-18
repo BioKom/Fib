@@ -32,6 +32,7 @@
 /*
 History:
 06.12.2011  Oesterholz  created
+17.02.2013  Oesterholz FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE implemented
 */
 
 
@@ -449,7 +450,9 @@ void cVectorFibMatrix::setDefiningFibElement( cFibElement * pFibElement,
 			}
 			
 			//unregister this vector from all variables
+#ifndef FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 			const unsigned int uiNumberOfElements = liVectorVariable.size();
+#endif //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 			for ( unsigned int uiActualElement = 0;
 					uiActualElement < uiNumberOfElements; uiActualElement++ ){
 				
@@ -458,6 +461,9 @@ void cVectorFibMatrix::setDefiningFibElement( cFibElement * pFibElement,
 					liVectorVariable[ uiActualElement ]->unregisterUsingElement( this );
 				}
 			}
+#ifdef FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
+			uiNumberOfElements = uiNumberOfVectorElements;
+#endif //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 			liVectorType = vector<eVectorType>( uiNumberOfVectorElements, VALUE );
 			liVectorValues = vector<doubleFib>( uiNumberOfVectorElements, 0 );
 			liVectorVariable = vector<cFibVariable*>( uiNumberOfVectorElements, NULL );
