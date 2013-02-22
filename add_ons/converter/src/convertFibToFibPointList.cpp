@@ -34,7 +34,7 @@
  * Every point is followed by its properties.
  *
  *
- * call: convertFibToFibPointList FILE_MULTIMEDIADATA [FILE_OUTPUT]
+ * call: convertFibToFibPointList [PARAMETER] FILE_MULTIMEDIADATA [FILE_OUTPUT]
  *
  * parameters:
  * 	PATH_MULTIMEDIADATA
@@ -43,14 +43,29 @@
  * 		The name of the file where the Fib multimedia data would be
  * 		stored to. If no parameter FILE_OUTPUT is given
  * 		the Fib object data will be written to the standard output.
+ * 	PARAMETER
+ * 		Parameters for evalung the point list.
+ * 	Possible parameters are:
+ * 		-remove_duplicates or -rd
+ * 			duplicate points will be removed;
+ * 			if ther are two equal points in the evalued point list the
+ * 			first will be removed with all its properties
+ * 		-sort_position_data or -s
+ * 			the evalued point list will be sorted;
+ * 			duplicate points will be removed and the properties of duplicate
+ * 			points merged
+ *
  *
  * examples:
  * 	> convertFibToFibPointList inputFib.fib outputFib.xml
  * 	> convertFibToFibPointList inputFib.xml
+ * 	> convertFibToFibPointList -rd inputFib.xml
  */
 /*
 History:
 21.01.2013  Oesterholz  created
+22.02.2013  Oesterholz  options to remove duplicates and to sort the points
+	implemented (see bRemoveDuplicates and bSortPositionsData)
 */
 
 #include "version.h"
@@ -91,20 +106,66 @@ int main(int argc, char* argv[]){
 		cout<<" 		The name of the file where the Fib multimedia data would be"<<endl;
 		cout<<" 		stored to. If no parameter FILE_OUTPUT is given"<<endl;
 		cout<<" 		the Fib object data will be written to the standard output."<<endl;
-		cout<<endl;
+		cout<<" 	PARAMETER"<<endl;
+		cout<<" 		Parameters for evalung the point list."<<endl;
+		cout<<" 	Possible parameters are:"<<endl;
+		cout<<" 		-remove_duplicates or -rd"<<endl;
+		cout<<" 			duplicate points will be removed;"<<endl;
+		cout<<" 			if ther are two equal points in the evalued point list the"<<endl;
+		cout<<" 			first will be removed with all its properties"<<endl;
+		cout<<" 		-sort_position_data or -s"<<endl;
+		cout<<" 			the evalued point list will be sorted;"<<endl;
+		cout<<" 			duplicate points will be removed and the properties of duplicate"<<endl;
+		cout<<" 			points merged"<<endl;
+		cout<<""<<endl;
 		cout<<" examples:"<<endl;
 		cout<<" 	> convertFibToFibPointList inputFib.fib outputFib.xml"<<endl;
 		cout<<" 	> convertFibToFibPointList inputFib.xml"<<endl;
+		cout<<" 	> convertFibToFibPointList -rd inputFib.xml"<<endl;
 		cout<<endl;
 		return 1;
 	}
-	pFileWithOriginalData = argv[1];
+	/* if true duplicate points will be removed;
+	 * if ther are two equal points in the evalued point list the first will
+	 * be removed with all its properties*/
+	bool bRemoveDuplicates  = false;
+	/* if true the evalued point list will be sorted;
+	 * duplicate points will be removed and the properties of duplicate
+	 * points merged
+	 * @see cEvaluePositionList::sortPositionsData()
+	 */
+	bool bSortPositionsData = false;
 	
-	if ( argc >= 3 ){
-		//two parameter given; get parameter file name wher to store the Fib object to
-		pFileForStoringData = argv[2];
+	//read parameter
+	for ( int iActualParameter = 1; iActualParameter < argc;
+			iActualParameter++ ){
+		
+		if ( ( strncmp( argv[ iActualParameter ], "-rd", 3 ) == 0 ) ||
+				( strncmp( argv[ iActualParameter ], "-remove_duplicates", 15 ) == 0 ) ){
+			bRemoveDuplicates = true;
+			cout<<"Duplicate points will be removed."<<endl;
+			
+		}else if ( ( strncmp( argv[ iActualParameter ], "-s", 3 ) == 0 ) ||
+				( strncmp( argv[ iActualParameter ], "-sort_position_data", 13 ) == 0 ) ){
+			bSortPositionsData = true;
+			cout<<"The evalued point list will be sorted."<<endl;
+			
+		}else if ( argv[ iActualParameter ][ 0 ] == '-' ){
+			cerr<<"Unknown parameter: "<<argv[ iActualParameter ]<<endl;
+			
+		}else if ( pFileWithOriginalData == NULL ){
+			//read original data file
+			pFileWithOriginalData = argv[ iActualParameter ];
+			cout<<"Name of Fib object file to convert: "<<pFileWithOriginalData<<endl;
+		}else if ( pFileForStoringData == NULL ){
+			//get parameter filename where to store the Fib object to
+			pFileForStoringData = argv[ iActualParameter ];
+			cout<<"Name of converted output Fib point file file: "<<pFileForStoringData<<endl;
+		}else{
+			cerr<<"Unknown parameter: "<<argv[ iActualParameter ]<<endl;
+		}
 	}
-
+	
 	//load the multimedia data
 	cFibElement * pRestoredFibObject = NULL;
 	
@@ -168,6 +229,44 @@ int main(int argc, char* argv[]){
 			cerr<<"Error: Loaded object could not be evalued."<<endl;
 			cFibElement::deleteObject( pRestoredFibObject );
 			return 2;
+		}
+		
+		if ( bRemoveDuplicates ){
+			//remove double points
+			/* compare every point with every point after it, if a duplicate
+			 * point was found -> remove first point and check next point*/
+			list< pair< cVectorPosition, list< cVectorProperty > > > &
+				liEvaluedPositionData = evaluedPositionData.liEvaluedPositionData;
+			for ( list< pair< cVectorPosition, list< cVectorProperty > > >::iterator
+					itrActualPoint = liEvaluedPositionData.begin();
+					itrActualPoint != liEvaluedPositionData.end(); ){
+				
+				list< pair< cVectorPosition, list< cVectorProperty > > >::iterator
+					itrCompareToPoint = itrActualPoint;
+					itrCompareToPoint++;
+				for (  ; itrCompareToPoint != liEvaluedPositionData.end();
+						itrCompareToPoint++ ){
+					
+					if ( itrActualPoint->first.equal( itrCompareToPoint->first ) ){
+						//equal point found -> remove first point
+						itrActualPoint = liEvaluedPositionData.erase( itrActualPoint );
+						break;
+					}
+				}
+				if ( itrActualPoint == liEvaluedPositionData.end() ){
+					//all points checked
+					break;
+				}
+				if ( itrCompareToPoint == liEvaluedPositionData.end() ){
+					//no equal point found -> check next point
+					itrActualPoint++;
+				}
+			}
+		}//end if remove duplicate points
+		
+		if ( bSortPositionsData ){
+			//sort the position data, but don't delete empty points
+			evaluedPositionData.sortPositionsData( false );
 		}
 		
 		//stream wher to store the evalued data to

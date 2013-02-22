@@ -243,6 +243,7 @@ int main(int argc, char* argv[]){
 		cout<<"multimedia formats into Fib objects."<<endl;
 		cout<<endl;
 		cout<<" call: convertToFib [PARAMETER] FILE_MULTIMEDIADATA [FILE_OUTPUT]"<<endl;
+		cout<<" or call for help: convertToFib -h[elp]"<<endl;
 		cout<<endl;
 		cout<<" parameters:"<<endl;
 		cout<<" 	PARAMETER"<<endl;
@@ -800,7 +801,7 @@ void printDetailedHelp(){
 	cout<<"multimedia formats into Fib objects."<<endl;
 	cout<<endl;
 	cout<<"call: convertToFib [PARAMETER] FILE_MULTIMEDIADATA [FILE_OUTPUT]"<<endl;
-	cout<<"or call: convertToFib h[elp]"<<endl;
+	cout<<"or call: convertToFib -h[elp]"<<endl;
 	cout<<"	for help"<<endl;
 	cout<<""<<endl;
 	cout<<"parameters:"<<endl;
