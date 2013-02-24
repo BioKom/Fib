@@ -38,6 +38,7 @@
 History:
 18.03.2012  Oesterholz  created
 10.04.2012  Oesterholz  methods of interface iImageData added
+19.02.2013  Oesterholz  clone method and copy constructor added
 */
 
 #ifndef ___C_EVALUE_SIMPLE_RGBA_255__
@@ -115,10 +116,22 @@ public:
 	cEvalueSimpleRGBA255( const unsigned int uiInMaxX, const unsigned int uiInMaxY );
 
 	/**
+	 * copy constructor
+	 *
+	 * @param evalueSimpleRGBA255 the evalueSimpleRGBA255 to copy
+	 */
+	cEvalueSimpleRGBA255( const cEvalueSimpleRGBA255 & evalueSimpleRGBA255 );
+
+	/**
 	 * desstructor
 	 */
 	~cEvalueSimpleRGBA255();
 
+	/**
+	 * This method clones this object.
+	 */
+	virtual cEvalueSimpleRGBA255 * clone();
+	
 	/**
 	 * The method with wich the evalued points with ther properties are
 	 * inserted. Everytime a point (to evalue) is reached in the
