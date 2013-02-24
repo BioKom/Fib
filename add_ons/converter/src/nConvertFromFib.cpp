@@ -64,6 +64,7 @@ History:
 #include "cDomainVectorBasis.h"
 #include "cEvaluePositionListMemLimit.h"
 #include "cEvalueSimpleRGBA255.h"
+#include "cEvalueSimpleRGBA255Scaled.h"
 
 
 #include <ctime>
@@ -158,7 +159,7 @@ public:
  * @class cEvalueSimpleRGBA255Sec This class limits the evaluation time
  * of the class @see cEvalueSimpleRGBA255.
  */
-class cEvalueSimpleRGBA255Sec: public cEvalueSimpleRGBA255{
+class cEvalueSimpleRGBA255Sec: public virtual cEvalueSimpleRGBA255{
 public:
 	
 	/**
@@ -261,8 +262,20 @@ public:
 			//max time reached
 			return false;
 		}
-		
 #ifdef FEATURE_CONVERT_FROM_FIB_INTERVALL_TO_SAVE_CURRENT_PICTURE
+		checkIntervallToSaveCurrentPicture();
+#endif //FEATURE_CONVERT_FROM_FIB_INTERVALL_TO_SAVE_CURRENT_PICTURE
+		
+		return bPointEvalued;
+	}
+	
+	
+#ifdef FEATURE_CONVERT_FROM_FIB_INTERVALL_TO_SAVE_CURRENT_PICTURE
+	/**
+	 * This method stores the current picture, if it should be stored.
+	 */
+	void checkIntervallToSaveCurrentPicture(){
+		
 		if ( ( 0 <= lSecoundsBetweanIntermediateResultSaves ) &&
 				( tmNextIntermediateResultTime <= time( NULL ) ) ){
 			//save actual (intermediate result) picture
@@ -285,10 +298,8 @@ public:
 			tmNextIntermediateResultTime = time( NULL ) +
 				lSecoundsBetweanIntermediateResultSaves;
 		}
-#endif //FEATURE_CONVERT_FROM_FIB_INTERVALL_TO_SAVE_CURRENT_PICTURE
-		
-		return bPointEvalued;
 	}
+#endif //FEATURE_CONVERT_FROM_FIB_INTERVALL_TO_SAVE_CURRENT_PICTURE
 	
 	/**
 	 * This method converts the data of this class to the @see fipImage
@@ -348,6 +359,106 @@ public:
 
 
 /**
+ * @class cEvalueSimpleRGBA255ScaledSec This class limits the evaluation time
+ * of the class @see cEvalueSimpleRGBA255.
+ */
+class cEvalueSimpleRGBA255ScaledSec: public virtual cEvalueSimpleRGBA255Scaled,
+		public virtual cEvalueSimpleRGBA255Sec{
+public:
+	
+	/**
+	 * standard constructor
+	 *
+	 * @param uiInMaxX the maximum value for the first (x) dimension @see uiMaxX
+	 * @param uiInMaxY the maximum value for the second (y) dimension @see uiMaxY
+	 * @param dInScalingFactorAlpha the scaling factor for the color alpha
+	 * 	@see cEvalueSimpleRGBA255Scaled::dScalingFactorAlpha
+	 * @param dInScalingFactorRed the scaling factor for the color red
+	 * 	@see cEvalueSimpleRGBA255Scaled::dScalingFactorRed
+	 * @param dInScalingFactorGreen the scaling factor for the color green
+	 * 	@see cEvalueSimpleRGBA255Scaled::dScalingFactorGreen
+	 * @param dInScalingFactorBlue the scaling factor for the color blue
+	 * 	@see cEvalueSimpleRGBA255Scaled::dScalingFactorBlue
+	 * @param ulInMaxEvaluationTimeInSec the maximal time for evaluation in
+	 * 	seconds, till the creation of this object (if 0 time is unlimeted)
+	 * 	@see ulMaxEvaluationTimeInSec
+	 * @param pInPathForFileToStoreIntermediateResultImage the path wher to
+	 * 	store the intermediate result picture, if NULL non is stored
+	 * @param ulInSecoundsBetweanIntermediateResultSaves every which
+	 * 	seconds to store the intermediate result picture
+	 */
+	cEvalueSimpleRGBA255ScaledSec( const unsigned int uiInMaxX,
+			const unsigned int uiInMaxY,
+			const doubleFib dInScalingFactorAlpha = 1.0,
+			const doubleFib dInScalingFactorRed = 1.0,
+			const doubleFib dInScalingFactorGreen = 1.0,
+			const doubleFib dInScalingFactorBlue = 1.0,
+			unsigned long ulInMaxEvaluationTimeInSec = 0,
+			const char * pInPathForFileToStoreIntermediateResultImage = NULL,
+			unsigned long ulInSecoundsBetweanIntermediateResultSaves = 10 ):
+			cEvalueSimpleRGBA255( uiInMaxX, uiInMaxY ),
+			cEvalueSimpleRGBA255Scaled( uiInMaxX, uiInMaxY,
+				dInScalingFactorAlpha, dInScalingFactorRed,
+				dInScalingFactorGreen, dInScalingFactorBlue ),
+			cEvalueSimpleRGBA255Sec( uiInMaxX, uiInMaxY,
+				ulInMaxEvaluationTimeInSec,
+				pInPathForFileToStoreIntermediateResultImage,
+				ulInSecoundsBetweanIntermediateResultSaves ){
+		//nothing to do
+	}
+
+	
+	/**
+	 * The method with wich the evalued points with ther properties are
+	 * inserted. Everytime a point (to evalue) is reached in the
+	 * evaluation, this method is called with the position and the
+	 * properties of the point and stores the data into @see pImageData
+	 * This method will just evalue two dimensional points and properties
+	 * for RGB and transparency.
+	 * Points first dimension can have values from 0 ( including ) to the
+	 * maximum value for the first (x) dimension.
+	 * 	( 0 =< vPosition.getValue( 1 ) < uiMaxX ) @see uiMaxX
+	 * Points second dimension ( vPosition.getValue( 2 ) ) can have values
+	 * from 0 ( including ) to the maximum value for the second (y) dimension.
+	 * 	( 0 =< vPosition.getValue( 2 ) < uiMaxY ) @see uiMaxY
+	 * Background points (with 0 elements) are also possible.
+	 * All other points will be discarded.
+	 * Property (color RGB or transparency) element values should have a
+	 * values from 0 to 255 (both including), else they will be rounded
+	 * into the area.
+	 *
+	 * @see cEvalueSimpleRGBA255Scaled::evaluePosition()
+	 * @see pImageData
+	 * @param vPosition the position of the point, which is evalued
+	 * @param vProperties a list of the properties of the point
+	 */
+	virtual bool evaluePosition( const cVectorPosition & vPosition,
+		const list<cVectorProperty> & vProperties ){
+		
+		const bool bPointEvalued = cEvalueSimpleRGBA255Scaled::
+			evaluePosition( vPosition, vProperties );
+		
+		if ( ( lMaxEvaluationTimeInSec != 0 ) &&
+				( lMaxEvaluationTimeInSec < ( time( NULL ) - tmStartTime ) ) ){
+			//max time reached
+			return false;
+		}
+#ifdef FEATURE_CONVERT_FROM_FIB_INTERVALL_TO_SAVE_CURRENT_PICTURE
+		checkIntervallToSaveCurrentPicture();
+#endif //FEATURE_CONVERT_FROM_FIB_INTERVALL_TO_SAVE_CURRENT_PICTURE
+		
+		return bPointEvalued;
+	}
+	
+};//end class cEvalueSimpleRGBA255ScaledSec
+
+
+
+
+
+
+
+/**
  * This function converts the given multimediaobject into a Fib object.
  *
  * @param multimediaObject the Fib multimedaobject to convert into fib
@@ -364,6 +475,7 @@ public:
  * 	current evalued picture data will be saved to the file every
  * 	FEATURE_CONVERT_FROM_FIB_INTERVALL_TO_SAVE_CURRENT_PICTURE seconds
  * 	@see cEvalueSimpleRGBA255Sec
+ * 	@see cEvalueSimpleRGBA255ScaledSec
  * @return the created FreeImagePlus object (please delete it after usage)
  * 	or NULL, if non could be created
  */
@@ -396,7 +508,7 @@ fipImage * nConvertFromFib::convertToFipImage( const cFibElement & fibMultimedia
 			( dimensionMapping2 == cTypeDimension::DIRECTION_HORIZONTAL ) ){
 		bDimensionXY = false;
 	}else{
-		DEBUG_OUT_EL1( <<"Error: Wrong Dimensionmappings ("<< dimensionMapping1 <<"; "<< dimensionMapping2 <<")."<<endl; );
+		DEBUG_OUT_EL1( <<"Error: Wrong Dimension mappings ("<< dimensionMapping1 <<"; "<< dimensionMapping2 <<")."<<endl; );
 		if ( pOutStatus ){
 			*pOutStatus = -1;
 		}
@@ -416,7 +528,7 @@ fipImage * nConvertFromFib::convertToFipImage( const cFibElement & fibMultimedia
 	cDomainVectorBasis * pVecDomainDimension = (cDomainVectorBasis*)pDomainDimension;
 	
 	if ( pVecDomainDimension->getNumberOfElements() != 2 ){
-		DEBUG_OUT_EL1( <<"Error: No 2 dimensional dimensiondomain in Fib object."<<endl; );
+		DEBUG_OUT_EL1( <<"Error: No 2 dimensional dimension domain in Fib object."<<endl; );
 		if ( pOutStatus ){
 			*pOutStatus = -1;
 		}
@@ -660,8 +772,50 @@ fipImage * nConvertFromFib::convertToFipImage( const cFibElement & fibMultimedia
 			}
 			DEBUG_OUT_L1( <<"nConvertFromFib::convert() ended correctly (valueSimpleRGBA255Sec.convertToFipImage())"<<endl );
 			return evalueSimpleRGBA255Sec.convertToFipImage();
+		}else if ( bDimensionXY && ( // no transparency or transparency starts at 0
+				( ! bTransparencyUsed ) || ( dMinTransparencyValue == 0.0 )
+				) && ( ( dMinRedValue == 0.0 ) && //check color red
+					( dMinBlueValue == 0.0 ) && //check color blue
+					( dMinGreenValue == 0.0 )//check color green
+				) && (//check dimensions
+					( ( dDirection1Scaling == 1.0 ) && ( dDirection1Minimum == 0.0 ) &&
+						( dDirection1Maximum < 32000.0 ) ) &&
+					( ( dDirection2Scaling == 1.0 ) && ( dDirection2Minimum == 0.0 ) &&
+						( dDirection2Maximum < 32000.0 ) )
+				) ){
+			/* transparency + color RGB with elements 0 ... 255 +
+			 * + size in both directions from 0 and natural numbers
+			 * object for cEvalueSimpleRGBA255ScaledSec*/
+			DEBUG_OUT_L1( <<"Using cEvalueSimpleRGBA255ScaledSec to evalue image data"<<endl );
+			DEBUG_OUT_L1( <<"Scaling factors transparency="<<(255.0 / dMaxTransparencyValue)<<" red="<<(255.0 / dMaxRedValue)<<" green="<<(255.0 / dMaxGreenValue)<<" blue="<<(255.0 / dMaxBlueValue)<<endl );
+			
+			cEvalueSimpleRGBA255ScaledSec evalueSimpleRGBA255Sec( ulWidth, ulHeight,
+				255.0 / dMaxTransparencyValue, 255.0 / dMaxRedValue,
+				255.0 / dMaxGreenValue, 255.0 / dMaxBlueValue,
+				ulMaxEvaluationTimeInSec
+#ifdef FEATURE_CONVERT_FROM_FIB_INTERVALL_TO_SAVE_CURRENT_PICTURE
+				,pPathForFileToStoreImage, FEATURE_CONVERT_FROM_FIB_INTERVALL_TO_SAVE_CURRENT_PICTURE
+#endif //FEATURE_CONVERT_FROM_FIB_INTERVALL_TO_SAVE_CURRENT_PICTURE
+				);
+			const bool bObjectEvalued = fibMultimediaObject.evalueObjectSimple(
+				evalueSimpleRGBA255Sec );
+			
+			if ( ! bObjectEvalued ){
+				if ( (ulMaxEvaluationTimeInSec != 0 ) &&
+						( evalueSimpleRGBA255Sec.lMaxEvaluationTimeInSec <
+							( time( NULL ) - (evalueSimpleRGBA255Sec.tmStartTime ) ) ) ){
+					DEBUG_OUT_EL1( <<"Warning: Max time reached object not evalued fully."<<endl );
+					if ( pOutStatus ){
+						*pOutStatus = 1;
+					}
+				}else{
+					DEBUG_OUT_EL1( <<"Error: The given Fib object couldn't be evalued."<<endl );
+					return NULL;
+				}
+			}
+			DEBUG_OUT_L1( <<"nConvertFromFib::convert() ended correctly (valueSimpleRGBA255Sec.convertToFipImage())"<<endl );
+			return evalueSimpleRGBA255Sec.convertToFipImage();
 		}
-		
 	}else{
 		cDomain * pDomainSw = fibMultimediaObject.
 			getValidDomains().getDomainForElement( typePropertyColorSw );

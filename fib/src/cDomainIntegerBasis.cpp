@@ -35,6 +35,7 @@ History:
 16.05.2010  Oesterholz  getCompressedSizeForScalingFactor() added
 30.04.2011  Oesterholz  scanf long for 64 bit and windows
 21.08.2011  Oesterholz  createGoodDomain() returns also cDomainNaturalNumber
+23.02.2013  Oesterholz  setXmlScaling() expanded for single double value
 */
 
 
@@ -325,13 +326,20 @@ doubleFib cDomainIntegerBasis::setXmlScaling( const char * szXmlScalingFactor ){
 	//the format is: "lMantissa * 2^( lExponent )
 	long long lMantissa = 0;
 	long long lExponent = 0;
+	const unsigned int uiReadedItems =
 #ifdef WINDOWS
-	sscanf( szXmlScalingFactor, "%I64d * 2^(%I64d", & lMantissa, & lExponent );
+		sscanf( szXmlScalingFactor, "%I64d * 2^(%I64d", & lMantissa, & lExponent );
 #else //WINDOWS
-	sscanf( szXmlScalingFactor, "%lld * 2^(%lld", & lMantissa, & lExponent );
+		sscanf( szXmlScalingFactor, "%lld * 2^(%lld", & lMantissa, & lExponent );
 #endif //WINDOWS
 	
-	dScalingFactor = ((doubleFib)lMantissa) * pow( 2.0, (doubleFib)lExponent );
+	if ( uiReadedItems == 2 ){
+		//mantissa and exponent readed
+		dScalingFactor = ((doubleFib)lMantissa) * pow( 2.0, (doubleFib)lExponent );
+	}else{
+		//try to read double directly
+		sscanf( szXmlScalingFactor, "%lf", & dScalingFactor );
+	}
 	
 	return dScalingFactor;
 }

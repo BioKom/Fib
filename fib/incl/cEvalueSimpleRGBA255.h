@@ -38,6 +38,7 @@
 History:
 18.03.2012  Oesterholz  created
 10.04.2012  Oesterholz  methods of interface iImageData added
+23.02.2013  Oesterholz  destructore is now virtual (change for cEvalueSimpleRGBA255Scaled)
 */
 
 #ifndef ___C_EVALUE_SIMPLE_RGBA_255__
@@ -117,7 +118,7 @@ public:
 	/**
 	 * desstructor
 	 */
-	~cEvalueSimpleRGBA255();
+	virtual ~cEvalueSimpleRGBA255();
 
 	/**
 	 * The method with wich the evalued points with ther properties are
@@ -183,7 +184,7 @@ public:
 	virtual cDomains getPositionDomain() const;
 	
 	/**
-	 * With this method the properties for a points are set.
+	 * With this method the properties for a point are set.
 	 *
 	 * @param vPosition the position of the point to set
 	 * @param vProperties a list of the properties of the point
@@ -193,7 +194,7 @@ public:
 		const list<cVectorProperty> & vProperties );
 	
 	/**
-	 * With this method the properties for given points are returned.
+	 * With this method the properties for given point are returned.
 	 *
 	 * @param vPosition the position of the point, for which the properties
 	 * 	should be returned
