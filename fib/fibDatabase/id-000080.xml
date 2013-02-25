@@ -97,90 +97,118 @@
 		</database_identifiers>
 		<main_fib_object>
 			<!-- for ever x point use databas object with id -467;
-				approximate the line f( x ) with a line g( x ) of degree 1:
-					g( x ) = f( x ) - x / f'( x ) + f'( x ) * x
+				evalue the line f( x ) till f( x + 1 )
 			-->
-			<area define_variable="7">
-				<vector type="subarea">
-					<variable>1</variable>
-					<variable>3</variable>
-				</vector>
+			<function define_variable="7">
+				<subfunction><!-- x_min = min( x_s, x_e ) -->
+					<min>
+						<variable>1</variable>
+						<variable>3</variable>
+					</min>
+				</subfunction>
 				<function define_variable="8">
-					<!-- slope = f'( x ) = a_1 + 2 * a_2 * x -->
-					<subfunction>
-						<add>
-							<variable>5</variable>
-							<mult>
-								<value>2</value>
-								<mult>
-									<variable>6</variable>
-									<variable>7</variable>
-								</mult>
-							</mult>
-						</add>
+					<subfunction><!-- x_max = max( x_s, x_e ) - 1 -->
+						<sub>
+							<max>
+								<variable>1</variable>
+								<variable>3</variable>
+							</max>
+							<value>1</value>
+						</sub>
 					</subfunction>
-					<function define_variable="9"><!-- f( x ) - x / f'( x ) -->
-						<subfunction>
-							<sub>
-								<!-- f( x ) = a_0 + a_1 * x + a_2 * x^2 -->
-								<add>
-									<variable>4</variable>
+					<if><!-- if x_max < x_min -> do nothing -->
+						<condition>
+							<lo>
+								<variable>8</variable>
+								<variable>7</variable>
+							</lo>
+						</condition>
+						<point/>
+						<!-- else print tile -->
+						<area define_variable="9">
+							<vector type="subarea">
+								<variable>7</variable>
+								<variable>8</variable>
+							</vector>
+							<function define_variable="10">
+								<subfunction><!-- x_2 = x + 1 -->
 									<add>
-										<mult>
-											<variable>5</variable>
-											<variable>7</variable>
-										</mult>
-										<mult>
-											<variable>6</variable>
-											<exp>
-												<variable>7</variable>
-												<value>2</value>
-											</exp>
-										</mult>
+										<variable>9</variable>
+										<value>1</value>
 									</add>
-								</add>
-								<mult><!-- x * f'( x ) -->
-									<variable>7</variable>
-									<variable>8</variable>
-								</mult>
-							</sub>
-						</subfunction>
-						<function define_variable="10">
-							<!-- x_2 = x + 1 -->
-							<subfunction>
-								<add>
-									<variable>7</variable>
-									<value>1</value>
-								</add>
-							</subfunction>
-							<obj identifier="-467">
-								<vector type="externObjectInput">
-									<variable>7</variable>
-									<variable>10</variable>
-									<variable>9</variable>
-									<variable>8</variable><!-- slope f'( x ) of f( x ) -->
-									<variable>2</variable>
-									<value>0</value>
-								</vector>
-								<subobject>
-									<output_variables>
-										<variable>11</variable>
-										<variable>12</variable>
-										<variable>13</variable>
-									</output_variables>
-									<subobject number="1">
-										<vector type="externSubobject">
-											<variable>11</variable>
-											<variable>12</variable>
-											<variable>13</variable>
-										</vector>
-									</subobject>
-								</subobject>
-							</obj>
-						</function>
-					</function>
+								</subfunction>
+								<function define_variable="11"><!-- slope s of line betwean f( x ) and f( x + 1 ) -->
+									<subfunction><!-- s = a_1 + a_2 + 2 * a_2 * x -->
+										<add>
+											<add>
+												<variable>5</variable>
+												<variable>6</variable>
+											</add>
+											<mult>
+												<value>2</value>
+												<mult>
+													<variable>6</variable>
+													<variable>9</variable>
+												</mult>
+											</mult>
+										</add>
+									</subfunction>
+									<function define_variable="12"><!-- base b of line betwean f( x ) and f( x + 1 ) -->
+										<subfunction><!--  f( x ) - s * x -->
+											<sub>
+												<add><!-- f( x ) = a_0 + a_1 * x + a_2 * x^2 -->
+													<variable>4</variable>
+													<add>
+														<mult>
+															<variable>5</variable>
+															<variable>9</variable>
+														</mult>
+														<mult>
+															<variable>6</variable>
+															<exp>
+																<variable>9</variable>
+																<value>2</value>
+															</exp>
+														</mult>
+													</add>
+												</add>
+												<mult><!-- x * s -->
+													<variable>9</variable>
+													<variable>11</variable>
+												</mult>
+											</sub>
+										</subfunction>
+										<obj identifier="-467">
+											<vector type="externObjectInput">
+												<variable>9</variable>
+												<variable>10</variable>
+												<variable>12</variable><!-- base of line betwean f( x ) and f( x + 1 ) -->
+												<variable>11</variable><!-- slope of line betwean f( x ) and f( x + 1 ) -->
+												<variable>2</variable>
+												<value>0</value>
+											</vector>
+											<subobject>
+												<output_variables>
+													<variable>13</variable>
+													<variable>14</variable>
+													<variable>15</variable>
+												</output_variables>
+												<subobject number="1">
+													<vector type="externSubobject">
+														<variable>13</variable>
+														<variable>14</variable>
+														<variable>15</variable>
+													</vector>
+												</subobject>
+											</subobject>
+										</obj>
+									</function>
+								</function>
+							</function>
+						</area>
+					</if>
 				</function>
-			</area>
+			</function>
 		</main_fib_object>
 	</root>
 </fib_object>
