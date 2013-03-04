@@ -31,6 +31,7 @@
 History:
 14.03.2011  Oesterholz  created
 23.05.2011  Oesterholz  cIf and conditions added
+15.02.2013  Oesterholz  evalueFunctionValues() implemented
 */
 
 
@@ -69,7 +70,7 @@ using namespace fib::algorithms::nAnalyse::nFibObject;
 
 /**
  * This function returns the minimal number of bits needed to store the
- * mantissa values, of all underfunction values in the given fib-object.
+ * mantissa values, of all subfunction values in the given fib-object.
  *
  * @param pFibObject the fib object to analyse
  * @return  a pair with:
@@ -98,7 +99,7 @@ pair< unsigned int, unsigned long > nBits::evalueMaxFunctionValuesMantissaBits(
 			/*if the fib -element is an functionelement
 			-> search for all values*/
 			
-			//the list with the underfunctions, wich whern't searched
+			//the list with the subfunctions, wich whern't searched
 			list<const cUnderFunction *> liOpenUnderFunctions;
 			list<const cCondition *> liOpenSubConditions;
 			if ( pActualFibElement->getType() == 'f' ){
@@ -116,13 +117,13 @@ pair< unsigned int, unsigned long > nBits::evalueMaxFunctionValuesMantissaBits(
 					( ! liOpenSubConditions.empty() ) ){
 				
 				while ( ! liOpenUnderFunctions.empty() ){
-					//search every underfunction
+					//search every subfunction
 					const cUnderFunction * pUnderFunction =
 						liOpenUnderFunctions.front();
 					liOpenUnderFunctions.pop_front();
 					
 					if ( pUnderFunction->getNumberOfUnderFunctions() == 0 ){
-						//this is a variable or value underfunction
+						//this is a variable or value subfunction
 						if ( pUnderFunction->getType() == cUnderFunction::FUNCTION_VALUE ){
 							//evalue the minimal number of bits for the mantissa
 							const doubleFib dValue = pUnderFunction->getValue();
@@ -138,17 +139,17 @@ pair< unsigned int, unsigned long > nBits::evalueMaxFunctionValuesMantissaBits(
 								uiMinBitsForMantissas = iSizeMantissa;
 							}
 							ulNumberOfValues++;
-						}//else ignore variable underfunctions
+						}//else ignore variable subfunctions
 						
 					}else if ( pUnderFunction->getNumberOfUnderFunctions() == 1 ){
-						/*this is a one value underfunction
-						-> add the one underfunctions into the to search through underfunctions*/
+						/*this is a one value subfunction
+						-> add the one subfunctions into the to search through subfunctions*/
 						liOpenUnderFunctions.push_back(
 							((cFunctionOneValue*)pUnderFunction)->getUnderFunction() );
 						
 					}else if ( pUnderFunction->getNumberOfUnderFunctions() == 2 ){
-						/*this is a two value underfunction
-						-> add the two underfunctions into the to search through underfunctions*/
+						/*this is a two value subfunction
+						-> add the two subfunctions into the to search through subfunctions*/
 					
 						liOpenUnderFunctions.push_back(
 							((cFunctionTwoValue*)pUnderFunction)->getFirstUnderFunction() );
@@ -162,7 +163,7 @@ pair< unsigned int, unsigned long > nBits::evalueMaxFunctionValuesMantissaBits(
 								((cFunctionIf*)pUnderFunction)->getCondition() );
 						}
 					}
-				}//end while open underfunctions exists
+				}//end while open subfunctions exists
 				while ( ! liOpenSubConditions.empty() ){
 					//search every subcondition
 					const cCondition * pSubCondition =
@@ -184,8 +185,8 @@ pair< unsigned int, unsigned long > nBits::evalueMaxFunctionValuesMantissaBits(
 							((cConditionTwoValue*)pSubCondition)->getSecondSubCondition() );
 						
 					}else if ( pSubCondition->getNumberOfUnderFunctions() == 2 ){
-						/*this is a comparison condition with two underfunctions
-						-> add the two underfunctions into the to search through underfunctions*/
+						/*this is a comparison condition with two subfunctions
+						-> add the two subfunctions into the to search through subfunctions*/
 					
 						liOpenUnderFunctions.push_back(
 							((cConditionComparison*)pSubCondition)->getFirstSubFunction() );
@@ -199,6 +200,127 @@ pair< unsigned int, unsigned long > nBits::evalueMaxFunctionValuesMantissaBits(
 	}//end for all fib-elements
 
 	return make_pair( uiMinBitsForMantissas, ulNumberOfValues );
+}
+
+
+
+/**
+ * This function returns all subfunction values in the given fib-object.
+ *
+ * @param pFibObject the fib object to analyse
+ * @return a list with all subfunction values in ther order
+ */
+list< doubleFib > nBits::evalueFunctionValues( const cFibElement * pFibObject ){
+	
+	if ( pFibObject == NULL ){
+		//no values
+		return list< doubleFib >();
+	}
+	//the list with the subfunction values
+	list< doubleFib > liValuesInValueSubfunctions;
+	
+	//for every fib element in the fib object
+	unsigned long ulFibElementsToCheck = pFibObject->getNumberOfElements();
+	for ( const cFibElement * pActualFibElement = pFibObject;
+			(pActualFibElement != NULL) && ( ulFibElementsToCheck != 0 );
+			pActualFibElement = pActualFibElement->getNextFibElement(),
+			ulFibElementsToCheck-- ){
+
+		if ( ( pActualFibElement->getType() == 'f' ) ||
+				( pActualFibElement->getType() == 'i' ) ){
+			/*if the fib -element is an functionelement
+			-> search for all values*/
+			
+			//the list with the subfunctions, wich whern't searched
+			list<const cUnderFunction *> liOpenUnderFunctions;
+			list<const cCondition *> liOpenSubConditions;
+			if ( pActualFibElement->getType() == 'f' ){
+			
+				const cUnderFunction * pUnderFunction =
+					((cFunction*)pActualFibElement)->getUnderFunction();
+				liOpenUnderFunctions.push_back( pUnderFunction );
+			}else{// pActualFibElement->getType() == 'i' )
+				const cCondition * pCondition =
+					((cIf*)pActualFibElement)->getCondition();
+				liOpenSubConditions.push_back( pCondition );
+			}
+			
+			while ( ( ! liOpenUnderFunctions.empty() ) ||
+					( ! liOpenSubConditions.empty() ) ){
+				
+				while ( ! liOpenUnderFunctions.empty() ){
+					//search every subfunction
+					const cUnderFunction * pUnderFunction =
+						liOpenUnderFunctions.front();
+					liOpenUnderFunctions.pop_front();
+					
+					if ( pUnderFunction->getNumberOfUnderFunctions() == 0 ){
+						//this is a variable or value subfunction
+						if ( pUnderFunction->getType() == cUnderFunction::FUNCTION_VALUE ){
+							//evalue the minimal number of bits for the mantissa
+							liValuesInValueSubfunctions.push_back(
+								pUnderFunction->getValue() );
+						}//else ignore variable subfunctions
+						
+					}else if ( pUnderFunction->getNumberOfUnderFunctions() == 1 ){
+						/*this is a one value subfunction
+						-> add the one subfunctions into the to search through subfunctions*/
+						liOpenUnderFunctions.push_back(
+							((cFunctionOneValue*)pUnderFunction)->getUnderFunction() );
+						
+					}else if ( pUnderFunction->getNumberOfUnderFunctions() == 2 ){
+						/*this is a two value subfunction
+						-> add the two subfunctions into the to search through subfunctions*/
+					
+						liOpenUnderFunctions.push_back(
+							((cFunctionTwoValue*)pUnderFunction)->getFirstUnderFunction() );
+						liOpenUnderFunctions.push_back(
+							((cFunctionTwoValue*)pUnderFunction)->getSecondUnderFunction() );
+						
+						//check special cases
+						if ( pUnderFunction->getType() == cUnderFunction::FUNCTION_IF ){
+							//if subfunction add condition
+							liOpenSubConditions.push_back(
+								((cFunctionIf*)pUnderFunction)->getCondition() );
+						}
+					}
+				}//end while open subfunctions exists
+				while ( ! liOpenSubConditions.empty() ){
+					//search every subcondition
+					const cCondition * pSubCondition =
+						liOpenSubConditions.front();
+					liOpenSubConditions.pop_front();
+					
+					if ( pSubCondition->getNumberOfConditions() == 1 ){
+						/*this is a one value subcondition
+						-> add the one subcondition into the to search through subconditions*/
+						liOpenSubConditions.push_back(
+							((cConditionNot*)pSubCondition)->getSubCondition() );
+						
+					}else if ( pSubCondition->getNumberOfConditions() == 2 ){
+						/*this is a two value subcondition
+						-> add the two subconditions into the to search through subconditions*/
+						liOpenSubConditions.push_back(
+							((cConditionTwoValue*)pSubCondition)->getFirstSubCondition() );
+						liOpenSubConditions.push_back(
+							((cConditionTwoValue*)pSubCondition)->getSecondSubCondition() );
+						
+					}else if ( pSubCondition->getNumberOfUnderFunctions() == 2 ){
+						/*this is a comparison condition with two subfunctions
+						-> add the two subfunctions into the to search through subfunctions*/
+					
+						liOpenUnderFunctions.push_back(
+							((cConditionComparison*)pSubCondition)->getFirstSubFunction() );
+						liOpenUnderFunctions.push_back(
+							((cConditionComparison*)pSubCondition)->getSecondSubFunction() );
+					}
+				}//end while open subconditions exists
+				
+			}//end while open subelements exists
+		}//end if function or if-element
+	}//end for all fib-elements
+
+	return liValuesInValueSubfunctions;
 }
 
 

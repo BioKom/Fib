@@ -30,6 +30,7 @@
 /*
 History:
 14.03.2011  Oesterholz  created
+15.02.2013  Oesterholz  evalueFunctionValues() implemented
 */
 
 #ifndef ___N_ANALYSE__N_FIB_OBJECT__N_BITS_H__
@@ -60,7 +61,7 @@ namespace nBits{
 
 	/**
 	 * This function returns the minimal number of bits needed to store the
-	 * mantissa values, of all underfunction values in the given fib-object.
+	 * mantissa values, of all subfunction values in the given fib-object.
 	 *
 	 * @param pFibObject the fib object to analyse
 	 * @return a pair with:
@@ -69,6 +70,15 @@ namespace nBits{
 	 */
 	pair< unsigned int, unsigned long > evalueMaxFunctionValuesMantissaBits(
 		const cFibElement * pFibObject );
+
+	
+	/**
+	 * This function returns all subfunction values in the given fib-object.
+	 *
+	 * @param pFibObject the fib object to analyse
+	 * @return a list with all subfunction values in ther order
+	 */
+	list< doubleFib > evalueFunctionValues( const cFibElement * pFibObject );
 
 
 };//end namespace nBits
