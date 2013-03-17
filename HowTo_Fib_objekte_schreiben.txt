@@ -11,7 +11,7 @@ machen. Dazu gehoert Beispielsweise ein Editor der fuer XML ausgelegt ist
 Linux Quanta). Mit Befehlen wie z.B. "xmllint" unter Linux kann die
 erzeugte XML Datei auf einfache XML Fehler ueberprüft werden.
 
-Leider gibt es noch keine XSD Datei für Fib.
+Leider gibt es noch keine XSD Datei fuer Fib.
 
 
 Fib-Objekte zu Bilder konvertieren
@@ -23,6 +23,10 @@ uebersetzen.
 Mehr dazu in der "add_ons/converter/bin/liesmich.txt" Datei.
 Wie das Programm erzeugt werden kann finden Sie in "liesmich.txt"
 (im aktuelle Verzeichnis).
+
+Wenn die Konverter mit den aktivierten DEBUG_RESTORE_XML und DEBUG_EVALUE
+Schaltern erzeugt wurden (siehe "fib/version.h"), werden beim Konvertieren
+ein paar Informationen ausgegeben, die bei der Fehlersuche helfen koennen.
 
 
 Beispiele fuer korrekte Fib-Objekte
@@ -39,7 +43,7 @@ korrekten Fib-XML-Objekten auf.
 Fib Datenbank
 -------------
 
-Eine Weitere Quelle für korrekte Fib-Objekte ist die Fib Datenbank.
+Eine Weitere Quelle fuer korrekte Fib-Objekte ist die Fib Datenbank.
 
 Die in Ihr enthaltenden Fib-Objekte koennen ueber deren Identifizierer
 auch in anderen Fib-Objekten mittels des exteren Objekts Elements

@@ -1,0 +1,53 @@
+
+HowTo: Write "manually" Fib objects
+===================================
+
+Here are a few tips for all who want to write Fib objects "by hand" in XML
+with an text editor the first time.
+
+With a few tools, you can make the writing of XML easier
+
+This  includes an editor that is designed for XML (e. g. Windows Notepad++
+from http://notepad-plus-plus.org/ or Linux Quanta). With commands such
+as can "xmllint" under Linux, you can check the created XML file for simple
+XML errors.
+
+Unfortunately, there is no XSD file for Fib at the moment.
+
+
+Convert Fib objects to images
+-----------------------------
+
+With the program "convertFromFib" in the folder "add_ons/converter/bin/"
+Fib objects can be converted into the image they represent.
+More info about it in the "add_ons/converter/bin/readme.txt" file.
+To see how these program can be generated, see "readme.txt" (in the current
+directory).
+
+If you have created (make) the converters with the switches
+DEBUG_RESTORE_XML and DEBUG_EVALUE enabled (see "fib/version.h"), the
+converter will give you some hints for debugging your Fib objects.
+
+
+Examples for correct Fib objects
+--------------------------------
+
+A good source for the "copy & past" creating of Fib objects or examples of
+correct Fib objects can be found in the  subdirectory of "fib/testObjects/".
+The file "fib/testObjects/testWithEvalue.txt" lists the directories and
+file names (+ ".xml" in the same directory) of correct Fib XML objects.
+
+
+Fib database
+------------
+
+A other source of correct Fib objects is the Fib database.
+
+The in the Fib database contained Fib objects can be used in other objects,
+with the help of there identifier and the Fib exteral object element (obj).
+With the help of the database objects, you can create easiely complex
+multimedia objects.
+
+
+
+
