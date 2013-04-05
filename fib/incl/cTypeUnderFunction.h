@@ -33,6 +33,7 @@
 History:
 22.04.2010  Oesterholz  created
 12.02.2012  Oesterholz  restoreXml*() without restoring domain possible
+05.04.2013  Oesterholz  Standard constructor added
 */
 
 #ifndef ___C_TYPE_UNDER_FUNCTION_H__
@@ -49,6 +50,11 @@ class cTypeUnderFunction: public cTypeElement{
 	
 public:
 
+	/**
+	 * Standard constructor for the subarea type.
+	 */
+	cTypeUnderFunction();
+	
 	/**
 	 * This Function returns for the type of the element an number.
 	 * The values, which are returned, mean:

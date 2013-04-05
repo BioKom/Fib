@@ -1,0 +1,29 @@
+#ignore the following patterns:
+#
+# no linux directory files
+*.directory
+# file to describe the next git commit
+git_commit.txt
+# ignore object files
+*.o
+# ignore created test (case) files
+*testcase*
+# ignore created binary files
+*/bin*
+# ignore output files
+*out.txt
+# ignore dependencie files
+*.dep
+# ignore temporary files
+*~
+# ignore extracted other packages
+*other_packages/glpk/*
+*other_packages/glpk/stamp-h1*
+*other_packages/zlib/example*
+*other_packages/zlib/example64*
+*other_packages/zlib/libz.a
+*other_packages/zlib/minigzip*
+*other_packages/zlib/minigzip64*
+*other_packages/zlib/zlib.pc
+*other_packages/zlib/zlib_config.flg
+*tinyxml/xmltest*

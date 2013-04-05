@@ -41,11 +41,11 @@ file names (+ ".xml" in the same directory) of correct Fib XML objects.
 Fib database
 ------------
 
-A other source of correct Fib objects is the Fib database.
+An other source of correct Fib objects is the Fib database.
 
 The in the Fib database contained Fib objects can be used in other objects,
-with the help of there identifier and the Fib exteral object element (obj).
-With the help of the database objects, you can create easiely complex
+with the help of there identifier and the Fib external object element (obj).
+With the help of the database objects, you can create easily complex
 multimedia objects.
 
 

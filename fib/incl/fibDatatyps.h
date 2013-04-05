@@ -40,6 +40,7 @@ History:
 	subFromFirst() added
 13.10.2011  Oesterholz  functions getListElement() added
 13.10.2011  Oesterholz  min() function replaced
+05.04.2013  Oesterholz  the pow() function for integers added
 */
 
 
@@ -202,6 +203,16 @@ namespace fib{
 	 * @return the positive value for the given number dValue
 	 */
 	double absF( const double & dValue );
+	
+	/**
+	 * This function evalues the power function of integer values.
+	 * Returns base raised to the power exponent.
+	 *
+	 * @param lBase the base for the power function
+	 * @param lExponent the exponent for the power function
+	 * @return the value lBase^lExponent
+	 */
+	double pow( const longFib lBase, const longFib lExponent );
 	
 	/**
 	 * This functions checks if the given double number is equal 0.

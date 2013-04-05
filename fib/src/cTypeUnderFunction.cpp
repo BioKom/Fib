@@ -48,6 +48,12 @@ History:
 
 using namespace fib;
 
+/**
+ * Standard constructor for the subarea type.
+ */
+cTypeUnderFunction::cTypeUnderFunction(){
+	//nothing to do
+}
 
 
 /**

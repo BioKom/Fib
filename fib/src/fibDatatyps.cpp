@@ -299,6 +299,20 @@ double fib::absF( const double & dValue ){
 
 
 /**
+ * This function evalues the power function of integer values.
+ * Returns base raised to the power exponent.
+ *
+ * @param lBase the base for the power function
+ * @param lExponent the exponent for the power function
+ * @return the value lBase^lExponent
+ */
+double fib::pow( const longFib lBase, const longFib lExponent ){
+	
+	return pow( (double(lBase)), (double(lExponent)) );
+}
+
+
+/**
  * This functions checks if the given double number is equal 0.
  * Really small differences will be ignored.
  *
