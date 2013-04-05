@@ -103,9 +103,6 @@ database objects to create: (x = dim 1 ?=? horizontal; y = dim 2 ?=? vertikal)
 	-- (id -5101 till id -5109 simpler smily face than -5100)
 	
 	- more copyrights (EASY):
-	* id -10: public domain
-	* id -12: LGNU
-	* id -13: GNU Free Documentation License
 	* id -14: ...
 	* Creative Commons
 		* id -15: Attribution (by): Licensees may copy, distribute, display and perform the work and make derivative works based on it only if they give the author or licensor the credits in the manner specified by these.
