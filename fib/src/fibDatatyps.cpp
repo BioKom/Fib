@@ -31,9 +31,12 @@
 History:
 24.09.2009  Oesterholz  created
 16.01.2011  Oesterholz  functions isEqualNull() added
+08.04.2013  Oesterholz  the pow() function for integers added
 */
 
 #include "fibDatatyps.h"
+
+#include <cmath>
 
 using namespace fib;
 
@@ -308,7 +311,7 @@ double fib::absF( const double & dValue ){
  */
 double fib::pow( const longFib lBase, const longFib lExponent ){
 	
-	return pow( (double(lBase)), (double(lExponent)) );
+	return std::pow( (double(lBase)), (double(lExponent)) );
 }
 
 
