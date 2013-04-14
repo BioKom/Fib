@@ -38,6 +38,7 @@ History:
 17.05.2010  Oesterholz  created
 14.09.2011  Oesterholz  storeUnscaledValue(): store in two's complement system
 01.12.2011  Oesterholz  method isInBoundaries() added
+14.04.2013  Oesterholz  replacing pow with integer pow version
 */
 
 
@@ -60,8 +61,8 @@ using namespace fib;
 cDomainIntegerBit::cDomainIntegerBit( unsignedIntFib iBits ):
 		cDomainIntegerBasis( (doubleFib)( 1.0 ) ),
 		domainNaturalNumberBit( iBits ),
-		lMaxNumber( pow( 2, iBits - 1 ) - 1),
-		lMinNumber( pow( 2, iBits - 1 ) * -1 ),
+		lMaxNumber( powInt( 2, iBits - 1 ) - 1),
+		lMinNumber( powInt( 2, iBits - 1 ) * -1 ),
 		lNumberOfValues( lMaxNumber - lMinNumber + 1 ){
 	
 	if ( iBits == 0 ){
@@ -87,8 +88,8 @@ cDomainIntegerBit::cDomainIntegerBit( unsignedIntFib iBits,
 		doubleFib dScalingFactor ):
 		cDomainIntegerBasis( dScalingFactor ),
 		domainNaturalNumberBit( iBits ),
-		lMaxNumber( pow( 2, iBits - 1 ) - 1),
-		lMinNumber( pow( 2, iBits - 1 ) * -1 ),
+		lMaxNumber( powInt( 2, iBits - 1 ) - 1),
+		lMinNumber( powInt( 2, iBits - 1 ) * -1 ),
 		lNumberOfValues( lMaxNumber - lMinNumber + 1 ){
 
 	if ( iBits == 0 ){
@@ -441,8 +442,8 @@ intFib cDomainIntegerBit::restoreXml( const TiXmlElement * pXmlElement ){
 	
 	domainNaturalNumberBit = cDomainNaturalNumberBit( iBits );
 	if ( iBits != 0 ){
-		lMaxNumber = pow( 2, iBits - 1 ) - 1;
-		lMinNumber = pow( 2, iBits - 1 ) * -1;
+		lMaxNumber = powInt( 2, iBits - 1 ) - 1;
+		lMinNumber = powInt( 2, iBits - 1 ) * -1;
 		lNumberOfValues = lMaxNumber - lMinNumber + 1;
 	}else{//( iBits == 0 ){
 		lMaxNumber = 0;
@@ -551,8 +552,8 @@ intFib cDomainIntegerBit::restore( cReadBits & iBitStream ){
 	domainNaturalNumberBit = cDomainNaturalNumberBit( iBits );
 	
 	if ( iBits != 0 ){
-		lMaxNumber = pow( 2, iBits - 1 ) - 1;
-		lMinNumber = pow( 2, iBits - 1 ) * -1;
+		lMaxNumber = powInt( 2, iBits - 1 ) - 1;
+		lMinNumber = powInt( 2, iBits - 1 ) * -1;
 		lNumberOfValues = lMaxNumber - lMinNumber + 1;
 	}else{//( iBits == 0 ){
 		lMaxNumber = 0;
