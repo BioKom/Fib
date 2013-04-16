@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fib_object
+			  xmlns:xsd="http://www.w3.org/2001/XMLSchema-instance"
+			  xmlns="http://www.fib-development.org/"
+			  xsd:schemaLocation="http://www.fib-development.org/fib.xsd">
+	<root>
+		<multimedia_info fib_version="6" db_version="5"/>
+		<optionalpart>
+			<pair key="name" value="evalue angle"/>
+			<pair key="description" value="This object evalues the angle of a line betwean start point and the end point to the y axis."/>
+			<pair key="inVar1::name" value="x_s"/>
+			<pair key="inVar1::description" value="the position in the first (x) direction / dimension of the start point x_s"/>
+			<pair key="inVar2::name" value="y_s"/>
+			<pair key="inVar2::description" value="the position in the second (y) direction / dimension of the start point y_s"/>
+			<pair key="inVar3::name" value="x_e"/>
+			<pair key="inVar3::description" value="the position in the first (x) direction / dimension of the end point x_e"/>
+			<pair key="inVar4::name" value="y_e"/>
+			<pair key="inVar4::description" value="the position in the second (y) direction / dimension of the end point y_e"/>
+			
+			<pair key="subObj1::description" value="the angle and distance for the points"/>
+			<pair key="subObj1::outVar1::name" value="angle"/>
+			<pair key="subObj1::outVar1::description" value="the clockwise angle alpha (in radian) betwean the y dimension axis (angle 0 is up from the start point) and the line betwean the start and end point"/>
+			<pair key="subObj1::outVar2::name" value="distance"/>
+			<pair key="subObj1::outVar2::description" value="the distance (in points) betwean the start and end point l"/>
+			
+			<pair key="author" value="Betti Oesterholz"/>
+			<pair key="author::email" value="Oesterholz@Fib-Development.org"/>
+			<pair key="copyright" value="LGPL3 (see Fib database object with identifier -12)"/>
+		</optionalpart>
+		<input_variables>
+			<variable number="1" default="0"/>
+			<variable number="2" default="0"/>
+			<variable number="3" default="0"/>
+			<variable number="4" default="0"/>
+		</input_variables>
+		<domains>
+			<inVar number="1">
+				<domainReference subdomain="1">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="2">
+				<domainReference subdomain="2">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="3">
+				<domainReference subdomain="1">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="4">
+				<domainReference subdomain="2">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			
+			<externSubobject number="1">
+				<vector elements="2">
+					<!--actually any number is possible;
+						the next line is just a space holder-->
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+				</vector>
+			</externSubobject>
+			<subfunction>
+				<naturalNumber scalingfactor="0.00000000001" max="62831853072"/>
+			</subfunction>
+		</domains>
+		<main_fib_object>
+			<function define_variable="5">
+				<subfunction><!-- x = x_e - x_s -->
+					<sub>
+						<variable>3</variable>
+						<variable>1</variable>
+					</sub>
+				</subfunction>
+				<function define_variable="6">
+					<subfunction><!-- y = y_e - y_s -->
+						<sub>
+							<variable>4</variable>
+							<variable>2</variable>
+						</sub>
+					</subfunction>
+					<function define_variable="7">
+						<subfunction><!-- evalue distance of points -->
+							<exp><!-- l = ( x^2 + y^2 )^(0.5) -->
+								<add>
+									<mult>
+										<variable>5</variable>
+										<variable>5</variable>
+									</mult>
+									<mult>
+										<variable>6</variable>
+										<variable>6</variable>
+									</mult>
+								</add>
+								<value>0.5</value>
+							</exp>
+						</subfunction>
+						<function define_variable="8">
+							<subfunction><!-- alpha' = arcsin( y / l ) -->
+								<arcsin>
+									<div>
+										<variable>5</variable>
+										<variable>7</variable>
+									</div>
+								</arcsin>
+							</subfunction>
+							
+							<if><!-- y < 0 -->
+								<condition>
+									<lo>
+										<variable>6</variable>
+										<value>0</value>
+									</lo>
+								</condition>
+								<function define_variable="9">
+									<subfunction><!-- alpha = PI - alpha' -->
+										<sub>
+											<value>3.1415926536</value>
+											<variable>8</variable>
+										</sub>
+									</subfunction>
+									<subobject number="1">
+										<vector type="externSubobject">
+											<variable>9</variable>
+											<variable>7</variable>
+										</vector>
+									</subobject>
+								</function>
+								
+								<if><!-- x < 0 -->
+									<condition>
+										<lo>
+											<variable>5</variable>
+											<value>0</value>
+										</lo>
+									</condition>
+									
+									<!-- x < 0 and 0 <= y -->
+									<function define_variable="9">
+										<subfunction><!-- alpha = 2 * PI + alpha' -->
+											<add>
+												<value>6.2831853072</value>
+												<variable>8</variable>
+											</add>
+										</subfunction>
+										<subobject number="1">
+											<vector type="externSubobject">
+												<variable>9</variable>
+												<variable>7</variable>
+											</vector>
+										</subobject>
+									</function>
+									<!-- else 0 <= x and 0 <= y -->
+									<subobject number="1">
+										<vector type="externSubobject">
+											<variable>8</variable>
+											<variable>7</variable>
+										</vector>
+									</subobject>
+								</if>
+								
+							</if>
+						</function>
+					</function>
+				</function>
+			</function>
+		</main_fib_object>
+	</root>
+</fib_object>
