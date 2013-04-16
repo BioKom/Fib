@@ -141,6 +141,20 @@
 	</vector>
 	<vector type="position">
 		<value>16</value>
+		<value>17</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>0</value>
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>16</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>16</value>
 		<value>18</value>
 	</vector>
 	<vector type="property.colorRGB">
@@ -154,49 +168,7 @@
 		<value>0</value>
 	</vector>
 	<vector type="position">
-		<value>16</value>
-		<value>17</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>16</value>
-		<value>255</value>
-		<value>0</value>
-	</vector>
-	<vector type="position">
-		<value>15</value>
-		<value>17</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>16</value>
-		<value>255</value>
-		<value>0</value>
-	</vector>
-	<vector type="position">
-		<value>17</value>
-		<value>17</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>16</value>
-		<value>255</value>
-		<value>0</value>
-	</vector>
-	<vector type="position">
-		<value>17</value>
+		<value>18</value>
 		<value>18</value>
 	</vector>
 	<vector type="property.colorRGB">
@@ -210,77 +182,7 @@
 		<value>0</value>
 	</vector>
 	<vector type="position">
-		<value>17</value>
-		<value>19</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>16</value>
-		<value>255</value>
-		<value>0</value>
-	</vector>
-	<vector type="position">
-		<value>21</value>
-		<value>19</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>16</value>
-		<value>255</value>
-		<value>0</value>
-	</vector>
-	<vector type="position">
-		<value>21</value>
 		<value>18</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>16</value>
-		<value>255</value>
-		<value>0</value>
-	</vector>
-	<vector type="position">
-		<value>20</value>
-		<value>19</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>16</value>
-		<value>255</value>
-		<value>0</value>
-	</vector>
-	<vector type="position">
-		<value>20</value>
-		<value>18</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>16</value>
-		<value>255</value>
-		<value>0</value>
-	</vector>
-	<vector type="position">
-		<value>19</value>
 		<value>17</value>
 	</vector>
 	<vector type="property.colorRGB">
@@ -309,7 +211,7 @@
 	</vector>
 	<vector type="position">
 		<value>19</value>
-		<value>19</value>
+		<value>17</value>
 	</vector>
 	<vector type="property.colorRGB">
 		<value>255</value>
@@ -322,21 +224,7 @@
 		<value>0</value>
 	</vector>
 	<vector type="position">
-		<value>18</value>
-		<value>19</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>16</value>
-		<value>255</value>
-		<value>0</value>
-	</vector>
-	<vector type="position">
-		<value>18</value>
+		<value>17</value>
 		<value>18</value>
 	</vector>
 	<vector type="property.colorRGB">
@@ -350,7 +238,7 @@
 		<value>0</value>
 	</vector>
 	<vector type="position">
-		<value>18</value>
+		<value>17</value>
 		<value>17</value>
 	</vector>
 	<vector type="property.colorRGB">
@@ -715,7 +603,7 @@
 	</vector>
 	<vector type="position">
 		<value>11</value>
-		<value>19</value>
+		<value>18</value>
 	</vector>
 	<vector type="property.colorRGB">
 		<value>255</value>
@@ -729,119 +617,7 @@
 	</vector>
 	<vector type="position">
 		<value>11</value>
-		<value>18</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>16</value>
-		<value>255</value>
-		<value>0</value>
-	</vector>
-	<vector type="position">
-		<value>10</value>
 		<value>19</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>16</value>
-		<value>255</value>
-		<value>0</value>
-	</vector>
-	<vector type="position">
-		<value>12</value>
-		<value>17</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>16</value>
-		<value>255</value>
-		<value>0</value>
-	</vector>
-	<vector type="position">
-		<value>12</value>
-		<value>18</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>16</value>
-		<value>255</value>
-		<value>0</value>
-	</vector>
-	<vector type="position">
-		<value>12</value>
-		<value>19</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>16</value>
-		<value>255</value>
-		<value>0</value>
-	</vector>
-	<vector type="position">
-		<value>17</value>
-		<value>17</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>16</value>
-		<value>255</value>
-		<value>0</value>
-	</vector>
-	<vector type="position">
-		<value>16</value>
-		<value>18</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>16</value>
-		<value>255</value>
-		<value>0</value>
-	</vector>
-	<vector type="position">
-		<value>16</value>
-		<value>17</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>16</value>
-		<value>255</value>
-		<value>0</value>
-	</vector>
-	<vector type="position">
-		<value>15</value>
-		<value>17</value>
 	</vector>
 	<vector type="property.colorRGB">
 		<value>255</value>
@@ -882,48 +658,6 @@
 		<value>0</value>
 	</vector>
 	<vector type="position">
-		<value>14</value>
-		<value>19</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>16</value>
-		<value>255</value>
-		<value>0</value>
-	</vector>
-	<vector type="position">
-		<value>14</value>
-		<value>18</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>16</value>
-		<value>255</value>
-		<value>0</value>
-	</vector>
-	<vector type="position">
-		<value>14</value>
-		<value>17</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>255</value>
-		<value>0</value>
-		<value>0</value>
-	</vector>
-	<vector type="property.colorRGB">
-		<value>16</value>
-		<value>255</value>
-		<value>0</value>
-	</vector>
-	<vector type="position">
 		<value>13</value>
 		<value>19</value>
 	</vector>
@@ -952,8 +686,50 @@
 		<value>0</value>
 	</vector>
 	<vector type="position">
-		<value>13</value>
-		<value>17</value>
+		<value>14</value>
+		<value>19</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>0</value>
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>16</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>14</value>
+		<value>18</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>0</value>
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>16</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>12</value>
+		<value>19</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>0</value>
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>16</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>12</value>
+		<value>18</value>
 	</vector>
 	<vector type="property.colorRGB">
 		<value>255</value>
