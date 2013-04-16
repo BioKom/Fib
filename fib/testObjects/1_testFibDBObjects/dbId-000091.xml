@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fib_object
+			xmlns:xsd="http://www.w3.org/2001/XMLSchema-instance"
+			xmlns="http://www.biokom.info/"
+			xsd:schemaLocation="http://www.biokom.info/fib.xsd">
+<root>
+	<multimedia_info fib_version="6" db_version="5"/>
+	<optionalpart>
+		<pair key="description" value="This object is for testing database object with id -91 ."/>
+		<pair key="call" value="../../../add_ons/converter/bin/convertFromFib dbId-000091.xml dbId-000091.png"/>
+	</optionalpart>
+	<domains>
+		<dim count="2">
+			<dimension number="1" direction="horizontal"/>
+			<dimension number="2" direction="vertical"/>
+			<vector elements="2">
+				<integer min="0" max="640"/>
+				<integer min="0" max="640"/>
+			</vector>
+		</dim>
+		<property name="colorRGB" >
+			<vector elements="3">
+				<naturalNumberB bit="8" />
+				<naturalNumberB bit="8" />
+				<naturalNumberB bit="8" />
+			</vector>
+		</property>
+		<property name="transparency" >
+			<vector elements="1">
+				<naturalNumberB bit="8" />
+			</vector>
+		</property>
+		<subfunction>
+			<naturalNumber max="255" />
+		</subfunction>
+		<externObject>
+			<vector elements="4">
+				<integer min="-10000" max="10000" />
+				<naturalNumber max="16" />
+				<naturalNumber max="8" />
+				<naturalNumber max="8" />
+			</vector>
+		</externObject>
+	</domains>
+	<main_fib_object>
+		<list>
+			<property>
+				<vector type="property.colorRGB">
+					<value>255</value>
+					<value>0</value>
+					<value>0</value>
+				</vector>
+				<background/>
+			</property>
+			<property>
+				<vector type="property.colorRGB">
+					<value>0</value>
+					<value>255</value>
+					<value>0</value>
+				</vector>
+				<list>
+					<point/>
+					
+					<property>
+						<vector type="property.colorRGB">
+							<value>0</value>
+							<value>255</value>
+							<value>0</value>
+						</vector>
+						<area define_variable="1">
+							<vector type="subarea">
+								<value>-1</value>
+								<value>10</value>
+							</vector>
+							<area define_variable="2">
+								<vector type="subarea">
+									<value>0</value>
+									<value>10</value>
+								</vector>
+								<function define_variable="3">
+									<subfunction><!-- evalue angle -->
+										<add>
+											<variable>1</variable>
+											<div>
+												<variable>2</variable>
+												<value>10</value>
+											</div>
+										</add>
+									</subfunction>
+									
+									<function define_variable="4">
+										<subfunction><!-- evalue length -->
+											<add>
+												<add>
+													<variable>1</variable>
+													<value>4</value>
+												</add>
+												<mult>
+													<variable>2</variable>
+													<value>4</value>
+												</mult>
+											</add>
+										</subfunction>
+										
+										<function define_variable="5">
+											<subfunction><!-- evalue start point x -->
+												<add>
+													<value>80</value>
+													<mult>
+														<variable>1</variable>
+														<value>50</value>
+													</mult>
+												</add>
+											</subfunction>
+											<function define_variable="6">
+												<subfunction><!-- evalue start point y -->
+													<add>
+														<value>40</value>
+														<mult>
+															<variable>2</variable>
+															<value>40</value>
+														</mult>
+													</add>
+												</subfunction>
+												
+												<obj identifier="-91">
+													<vector type="externObjectInput">
+														<variable>5</variable>
+														<variable>6</variable>
+														<variable>3</variable>
+														<variable>4</variable>
+													</vector>
+													<subobject>
+														<output_variables>
+															<variable>7</variable>
+															<variable>8</variable>
+														</output_variables>
+														
+														<obj identifier="-20"><!-- draw line -->
+															<vector type="externObjectInput">
+																<variable>5</variable>
+																<variable>6</variable>
+																<variable>7</variable>
+																<variable>8</variable>
+															</vector>
+														</obj>
+														
+													</subobject>
+												</obj>
+											</function>
+										</function>
+									</function>
+								</function>
+							</area>
+						</area>
+					</property>
+					
+					
+				</list>
+			</property>
+		</list>
+	</main_fib_object>
+</root>
+</fib_object>
