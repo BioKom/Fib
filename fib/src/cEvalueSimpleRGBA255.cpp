@@ -39,6 +39,7 @@ History:
 18.03.2012  Oesterholz  created
 10.04.2012  Oesterholz  methods of interface iImageData added
 19.12.2012  Oesterholz  alpha handling corrected
+19.02.2013  Oesterholz  clone method and copy constructor added
 */
 
 #include "cEvalueSimpleRGBA255.h"
@@ -71,11 +72,39 @@ cEvalueSimpleRGBA255::cEvalueSimpleRGBA255( const unsigned int uiInMaxX,
 
 
 /**
+ * copy constructor
+ *
+ * @param evalueSimpleRGBA255 the evalueSimpleRGBA255 to copy
+ */
+cEvalueSimpleRGBA255::cEvalueSimpleRGBA255(
+		const cEvalueSimpleRGBA255 & evalueSimpleRGBA255 ):
+			uiMaxX( evalueSimpleRGBA255.uiMaxX ),
+			uiMaxY( evalueSimpleRGBA255.uiMaxY ),
+			bBackgroundColorExists( evalueSimpleRGBA255.bBackgroundColorExists ){
+	
+	//copy image data
+	pImageData = (unsigned char*)malloc( uiMaxX * uiMaxY * 4 );
+	memcpy( pImageData, evalueSimpleRGBA255.pImageData, uiMaxX * uiMaxY * 4 );
+	
+	memcpy( pBackgroundColor, evalueSimpleRGBA255.pBackgroundColor, 4 );
+}
+
+
+/**
  * destructor
  */
 cEvalueSimpleRGBA255::~cEvalueSimpleRGBA255(){
 	
 	free( pImageData );
+}
+
+
+/**
+ * This method clones this object.
+ */
+cEvalueSimpleRGBA255 * cEvalueSimpleRGBA255::clone(){
+	
+	return new cEvalueSimpleRGBA255( *this );
 }
 
 

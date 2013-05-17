@@ -1,0 +1,4046 @@
+<data>
+	<vector type="position">
+		<value>7</value>
+		<value>13</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>1</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>7</value>
+		<value>12</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>1</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>7</value>
+		<value>11</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>522739242462647 * 2^(-49)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>7</value>
+		<value>10</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>884635641090633 * 2^(-50)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>7</value>
+		<value>9</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>180948199313993 * 2^(-48)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>7</value>
+		<value>8</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0.5</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>7</value>
+		<value>7</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>100526777396663 * 2^(-48)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>7</value>
+		<value>6</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>241264265751991 * 2^(-50)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>7</value>
+		<value>5</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>160842843834661 * 2^(-51)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>8</value>
+		<value>20</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>1</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>8</value>
+		<value>19</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>1</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>8</value>
+		<value>18</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>522739242462647 * 2^(-49)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>8</value>
+		<value>17</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>110579455136329 * 2^(-47)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>8</value>
+		<value>16</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>180948199313993 * 2^(-48)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>8</value>
+		<value>15</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0.5</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>8</value>
+		<value>14</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>100526777396663 * 2^(-48)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>8</value>
+		<value>13</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>30158033218999 * 2^(-47)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>8</value>
+		<value>12</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>40210710958665 * 2^(-49)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>8</value>
+		<value>5</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>8</value>
+		<value>6</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>8</value>
+		<value>11</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>8</value>
+		<value>10</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>8</value>
+		<value>9</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>8</value>
+		<value>8</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>8</value>
+		<value>7</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>18</value>
+		<value>18</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>1</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>18</value>
+		<value>17</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>1</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>18</value>
+		<value>16</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>134873426340523 * 2^(-47)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>18</value>
+		<value>15</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>7 * 2^(-3)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>18</value>
+		<value>14</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>111417178281301 * 2^(-47)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>18</value>
+		<value>13</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>99689054251691 * 2^(-47)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>18</value>
+		<value>12</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>5 * 2^(-3)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>18</value>
+		<value>11</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>76232806192469 * 2^(-47)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>18</value>
+		<value>10</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>64504682162859 * 2^(-47)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>18</value>
+		<value>9</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>3 * 2^(-3)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>18</value>
+		<value>8</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>41048434103637 * 2^(-47)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>18</value>
+		<value>7</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>29320310074027 * 2^(-47)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>18</value>
+		<value>6</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>1 * 2^(-3)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>18</value>
+		<value>5</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>23456248059221 * 2^(-49)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>9</value>
+		<value>20</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>1</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>9</value>
+		<value>19</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>1</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>9</value>
+		<value>18</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>31274997412295 * 2^(-48)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>9</value>
+		<value>5</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>9</value>
+		<value>6</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>9</value>
+		<value>17</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>9</value>
+		<value>16</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>9</value>
+		<value>15</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>9</value>
+		<value>14</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>9</value>
+		<value>13</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>9</value>
+		<value>12</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>9</value>
+		<value>11</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>9</value>
+		<value>10</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>9</value>
+		<value>9</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>9</value>
+		<value>8</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>9</value>
+		<value>7</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>10</value>
+		<value>19</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>1</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>10</value>
+		<value>18</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>93824992236885 * 2^(-48)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>10</value>
+		<value>5</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>10</value>
+		<value>6</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>10</value>
+		<value>17</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>10</value>
+		<value>16</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>10</value>
+		<value>15</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>10</value>
+		<value>14</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>10</value>
+		<value>13</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>10</value>
+		<value>12</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>10</value>
+		<value>11</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>10</value>
+		<value>10</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>10</value>
+		<value>9</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>10</value>
+		<value>8</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>10</value>
+		<value>7</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>11</value>
+		<value>19</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>1</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>11</value>
+		<value>18</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>39093746765369 * 2^(-46)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>11</value>
+		<value>5</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>11</value>
+		<value>6</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>11</value>
+		<value>17</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>11</value>
+		<value>16</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>11</value>
+		<value>15</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>11</value>
+		<value>14</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>11</value>
+		<value>13</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>11</value>
+		<value>12</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>11</value>
+		<value>11</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>11</value>
+		<value>10</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>11</value>
+		<value>9</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>11</value>
+		<value>8</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>11</value>
+		<value>7</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>12</value>
+		<value>19</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>1</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>12</value>
+		<value>18</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>109462490943033 * 2^(-47)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>12</value>
+		<value>5</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>12</value>
+		<value>6</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>12</value>
+		<value>17</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>12</value>
+		<value>16</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>12</value>
+		<value>15</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>12</value>
+		<value>14</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>12</value>
+		<value>13</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>12</value>
+		<value>12</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>12</value>
+		<value>11</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>12</value>
+		<value>10</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>12</value>
+		<value>9</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>12</value>
+		<value>8</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>12</value>
+		<value>7</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>13</value>
+		<value>19</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>1</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>13</value>
+		<value>18</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>1094624909430329 * 2^(-50)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>13</value>
+		<value>17</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>31274997412295 * 2^(-50)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>13</value>
+		<value>5</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>13</value>
+		<value>6</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>13</value>
+		<value>16</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>13</value>
+		<value>15</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>13</value>
+		<value>14</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>13</value>
+		<value>13</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>13</value>
+		<value>12</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>13</value>
+		<value>11</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>13</value>
+		<value>10</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>13</value>
+		<value>9</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>13</value>
+		<value>8</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>13</value>
+		<value>7</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>14</value>
+		<value>18</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>1</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>14</value>
+		<value>17</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>31274997412295 * 2^(-47)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>14</value>
+		<value>5</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>14</value>
+		<value>6</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>14</value>
+		<value>16</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>14</value>
+		<value>15</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>14</value>
+		<value>14</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>14</value>
+		<value>13</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>14</value>
+		<value>12</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>14</value>
+		<value>11</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>14</value>
+		<value>10</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>14</value>
+		<value>9</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>14</value>
+		<value>8</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>14</value>
+		<value>7</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>15</value>
+		<value>18</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>1</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>15</value>
+		<value>17</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>125099989649181 * 2^(-48)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>15</value>
+		<value>5</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>15</value>
+		<value>6</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>15</value>
+		<value>16</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>15</value>
+		<value>15</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>15</value>
+		<value>14</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>15</value>
+		<value>13</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>15</value>
+		<value>12</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>15</value>
+		<value>11</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>15</value>
+		<value>10</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>15</value>
+		<value>9</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>15</value>
+		<value>8</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>15</value>
+		<value>7</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>16</value>
+		<value>18</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>1</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>16</value>
+		<value>17</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>187649984473771 * 2^(-48)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>16</value>
+		<value>5</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>16</value>
+		<value>6</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>16</value>
+		<value>16</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>16</value>
+		<value>15</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>16</value>
+		<value>14</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>16</value>
+		<value>13</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>16</value>
+		<value>12</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>16</value>
+		<value>11</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>16</value>
+		<value>10</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>16</value>
+		<value>9</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>16</value>
+		<value>8</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>16</value>
+		<value>7</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>17</value>
+		<value>18</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>1</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>17</value>
+		<value>17</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>250199979298361 * 2^(-48)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>17</value>
+		<value>5</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>17</value>
+		<value>6</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>17</value>
+		<value>16</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>17</value>
+		<value>15</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>17</value>
+		<value>14</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>17</value>
+		<value>13</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>17</value>
+		<value>12</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>17</value>
+		<value>11</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>17</value>
+		<value>10</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>17</value>
+		<value>9</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>17</value>
+		<value>8</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>17</value>
+		<value>7</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>39</value>
+		<value>20</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>1</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>39</value>
+		<value>21</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>1</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>38</value>
+		<value>21</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>5065337597857 * 2^(-45)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>25</value>
+		<value>21</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>40522700782857 * 2^(-48)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>26</value>
+		<value>21</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>37</value>
+		<value>21</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>36</value>
+		<value>21</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>35</value>
+		<value>21</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>34</value>
+		<value>21</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>33</value>
+		<value>21</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>32</value>
+		<value>21</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>31</value>
+		<value>21</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>30</value>
+		<value>21</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>29</value>
+		<value>21</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>28</value>
+		<value>21</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>27</value>
+		<value>21</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>38</value>
+		<value>20</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>5071882136023 * 2^(-44)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>25</value>
+		<value>20</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>81150114176367 * 2^(-48)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>26</value>
+		<value>20</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>37</value>
+		<value>20</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>36</value>
+		<value>20</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>35</value>
+		<value>20</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>34</value>
+		<value>20</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>33</value>
+		<value>20</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>32</value>
+		<value>20</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>31</value>
+		<value>20</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>30</value>
+		<value>20</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>29</value>
+		<value>20</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>28</value>
+		<value>20</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>27</value>
+		<value>20</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>38</value>
+		<value>22</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>31023275857503 * 2^(-46)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>25</value>
+		<value>22</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>62046551715007 * 2^(-47)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>26</value>
+		<value>22</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>37</value>
+		<value>22</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>36</value>
+		<value>22</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>35</value>
+		<value>22</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>34</value>
+		<value>22</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>33</value>
+		<value>22</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>32</value>
+		<value>22</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>31</value>
+		<value>22</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>30</value>
+		<value>22</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>29</value>
+		<value>22</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>28</value>
+		<value>22</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>27</value>
+		<value>22</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>38</value>
+		<value>18</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>969477370547 * 2^(-41)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>25</value>
+		<value>18</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>62046551715007 * 2^(-47)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>38</value>
+		<value>19</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>26001590960255 * 2^(-45)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>25</value>
+		<value>19</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>26001590960255 * 2^(-45)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>26</value>
+		<value>19</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>37</value>
+		<value>19</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>36</value>
+		<value>19</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>35</value>
+		<value>19</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>34</value>
+		<value>19</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>33</value>
+		<value>19</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>32</value>
+		<value>19</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>31</value>
+		<value>19</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>30</value>
+		<value>19</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>29</value>
+		<value>19</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>28</value>
+		<value>19</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>27</value>
+		<value>19</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>38</value>
+		<value>23</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>1000886671735617 * 2^(-50)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>37</value>
+		<value>23</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>213016315193049 * 2^(-53)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>25</value>
+		<value>23</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>8007093373884915 * 2^(-53)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>26</value>
+		<value>23</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>1704130521544317 * 2^(-56)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>27</value>
+		<value>23</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>36</value>
+		<value>23</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>35</value>
+		<value>23</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>34</value>
+		<value>23</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>33</value>
+		<value>23</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>32</value>
+		<value>23</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>31</value>
+		<value>23</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>30</value>
+		<value>23</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>29</value>
+		<value>23</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>28</value>
+		<value>23</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>38</value>
+		<value>17</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>1000886671735617 * 2^(-50)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>25</value>
+		<value>17</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>8007093373884915 * 2^(-53)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>37</value>
+		<value>18</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>27229688921327 * 2^(-46)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>26</value>
+		<value>18</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>27229688921327 * 2^(-46)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>27</value>
+		<value>18</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>36</value>
+		<value>18</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>35</value>
+		<value>18</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>34</value>
+		<value>18</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>33</value>
+		<value>18</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>32</value>
+		<value>18</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>31</value>
+		<value>18</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>30</value>
+		<value>18</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>29</value>
+		<value>18</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>28</value>
+		<value>18</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>37</value>
+		<value>24</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>42474057857173 * 2^(-46)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>26</value>
+		<value>24</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>42474057857173 * 2^(-46)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>27</value>
+		<value>24</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>36</value>
+		<value>24</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>35</value>
+		<value>24</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>34</value>
+		<value>24</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>33</value>
+		<value>24</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>32</value>
+		<value>24</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>31</value>
+		<value>24</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>30</value>
+		<value>24</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>29</value>
+		<value>24</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>28</value>
+		<value>24</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>37</value>
+		<value>25</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>8992140543680307 * 2^(-53)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>26</value>
+		<value>25</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>8992140543680307 * 2^(-53)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>37</value>
+		<value>16</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>42474057857173 * 2^(-46)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>26</value>
+		<value>16</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>42474057857173 * 2^(-46)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>27</value>
+		<value>16</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>36</value>
+		<value>16</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>37</value>
+		<value>17</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>8992140543680311 * 2^(-53)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>36</value>
+		<value>17</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>2716347394002717 * 2^(-53)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>26</value>
+		<value>17</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>2248035135920077 * 2^(-51)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>27</value>
+		<value>17</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>5432694788005383 * 2^(-54)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>28</value>
+		<value>17</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>35</value>
+		<value>17</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>34</value>
+		<value>17</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>33</value>
+		<value>17</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>32</value>
+		<value>17</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>31</value>
+		<value>17</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>30</value>
+		<value>17</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>29</value>
+		<value>17</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>36</value>
+		<value>25</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>5441087460229301 * 2^(-53)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>35</value>
+		<value>25</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>65291564110239 * 2^(-53)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>27</value>
+		<value>25</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>2720543730114629 * 2^(-52)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>28</value>
+		<value>25</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>8357320206109897 * 2^(-60)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>29</value>
+		<value>25</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>34</value>
+		<value>25</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>33</value>
+		<value>25</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>32</value>
+		<value>25</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>31</value>
+		<value>25</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>30</value>
+		<value>25</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>36</value>
+		<value>15</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>2720543730114647 * 2^(-52)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>35</value>
+		<value>15</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>32645782055119 * 2^(-52)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>27</value>
+		<value>15</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>2720543730114633 * 2^(-52)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>28</value>
+		<value>15</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>8357320206110021 * 2^(-60)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>29</value>
+		<value>15</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>34</value>
+		<value>15</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>35</value>
+		<value>16</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>5602809582584257 * 2^(-53)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>34</value>
+		<value>16</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>89304431052719 * 2^(-53)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>28</value>
+		<value>16</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>5602809582584257 * 2^(-53)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>29</value>
+		<value>16</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>2857741793686993 * 2^(-58)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>30</value>
+		<value>16</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>33</value>
+		<value>16</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>32</value>
+		<value>16</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>31</value>
+		<value>16</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>35</value>
+		<value>26</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>8014810014859705 * 2^(-53)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>34</value>
+		<value>26</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>5904753294283 * 2^(-44)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>33</value>
+		<value>26</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>4638673604283 * 2^(-52)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>28</value>
+		<value>26</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>8014810014859705 * 2^(-53)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>29</value>
+		<value>26</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>5904753294283 * 2^(-44)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>30</value>
+		<value>26</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>2375000885392991 * 2^(-61)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>31</value>
+		<value>26</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>32</value>
+		<value>26</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>33</value>
+		<value>27</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>6608502467323695 * 2^(-53)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>32</value>
+		<value>27</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>706652827034585 * 2^(-52)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>30</value>
+		<value>27</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>6608502467323695 * 2^(-53)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>31</value>
+		<value>27</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>706652827034585 * 2^(-52)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>35</value>
+		<value>14</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>8014810014859695 * 2^(-53)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>34</value>
+		<value>14</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>94476052708527 * 2^(-48)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>33</value>
+		<value>14</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>4638673604283 * 2^(-52)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>28</value>
+		<value>14</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>2003702503714925 * 2^(-51)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>29</value>
+		<value>14</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>188952105417055 * 2^(-49)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>30</value>
+		<value>14</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>2375000885393111 * 2^(-61)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>31</value>
+		<value>14</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>32</value>
+		<value>14</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>0</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>33</value>
+		<value>15</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>3304251233661835 * 2^(-52)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>32</value>
+		<value>15</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>706652827034575 * 2^(-52)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>30</value>
+		<value>15</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>6608502467323695 * 2^(-53)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+	<vector type="position">
+		<value>31</value>
+		<value>15</value>
+	</vector>
+	<vector type="property.transparency">
+		<value>706652827034585 * 2^(-52)</value>
+	</vector>
+	<vector type="property.colorRGB">
+		<value>255</value>
+		<value>255</value>
+		<value>0</value>
+	</vector>
+</data>

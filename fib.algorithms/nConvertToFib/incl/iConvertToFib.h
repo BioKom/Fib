@@ -19,7 +19,7 @@
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Lesser General Public License for more details.
+ * GNU General Public License for more details.
  *
  * This header specifies a class to store the data for a search on image data.
  * If you want to convert an image to Fib structures, you have to search
@@ -43,7 +43,7 @@ History:
 
 #include "version.h"
 
-#include "cFibElement.h"
+#include "cRoot.h"
 
 
 
@@ -61,9 +61,11 @@ public:
 	 * This method is for converting data to a Fib object.
 	 *
 	 * @return a Fib-object which represents the data of this object
-	 * 	Beware: You have to delete the returned Fib-object after usage.
+	 * 	Beware: You have to delete the returned Fib object after usage.
+	 * 		Also the given root element will contain no domains, you have to
+	 * 		create them if needed (eg. with cRoot::generateNeededDomains() ).
 	 */
-	virtual cFibElement * convertToFib() const = 0;
+	virtual cRoot * convertToFib() const = 0;
 	
 	
 };//interface iConvertToFib

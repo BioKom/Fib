@@ -19,7 +19,7 @@
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Lesser General Public License for more details.
+ * GNU General Public License for more details.
  *
  * This header specifies a class to store the data for a search on image data.
  * If you want to convert an image to Fib structures, you have to search
@@ -29,7 +29,7 @@
  * can use this class.
  *
  * All positions vectors (cVectorPosition) elements should be positiv
- * integers from 0 to ulWidth or ulHeight respectively.
+ * integers from 0 to ulBorderX or ulBorderY respectively.
  *
  */
 /*
@@ -44,13 +44,12 @@ History:
 #include "version.h"
 
 #include "iImageData.h"
-#include "cImageStructure.h"
 #include "cVectorPosition.h"
 
 #include <set>
 
 
-using namespace std::set;
+using namespace std;
 
 
 namespace fib{
@@ -60,6 +59,11 @@ namespace algorithms{
 namespace nConvertToFib{
 
 namespace nImage{
+
+namespace nStructureData{
+
+//cyclic dependencies
+class cImageStructure;
 
 
 class cImageSearchData{
@@ -73,12 +77,12 @@ protected:
 	/**
 	 * The width of the image to search.
 	 */
-	unsigned long ulWidth;
+	unsigned long ulBorderX;
 	
 	/**
 	 * The height of the image to search.
 	 */
-	unsigned long ulHeight;
+	unsigned long ulBorderY;
 	
 	/**
 	 * The matrix with the data, which points of the image wher found (converted).
@@ -86,8 +90,8 @@ protected:
 	 *
 	 * The pointer will point to an one dimensional array. You have to evalue
 	 * the single entries by hand (with:
-	 * 	*((pImageData + ((y * ulWidth + x) / 8)) ) & ( 0x01 << (y * ulWidth + x) % 8 ) )
-	 * 		( x in dim 1 or ulWidth, y in dim 2 or ulHeight )
+	 * 	*((pImageData + ((y * ulBorderX + x) / 8)) ) & ( 0x01 << (y * ulBorderX + x) % 8 ) )
+	 * 		( x in dim 1 or ulBorderX, y in dim 2 or ulBorderY )
 	 */
 	unsigned char * pImageDataFound;
 	
@@ -98,8 +102,8 @@ protected:
 	 *
 	 * The pointer will point to an one dimensional array. You have to evalue
 	 * the single entries by hand (with:
-	 * 	*((pImageDataOverlapped + ((y * ulWidth + x) / 8)) ) & ( 0x01 << (y * ulWidth + x) % 8 ) )
-	 * 		( x in dim 1 or ulWidth, y in dim 2 or ulHeight )
+	 * 	*((pImageDataOverlapped + ((y * ulBorderX + x) / 8)) ) & ( 0x01 << (y * ulBorderX + x) % 8 ) )
+	 * 		( x in dim 1 or ulBorderX, y in dim 2 or ulBorderY )
 	 */
 	unsigned char * pImageDataOverlapped;
 	
@@ -111,8 +115,8 @@ public:
 	/**
 	 * parameter constructor
 	 *
-	 * @param ulInWidth the width of the image to search @see ulWidth
-	 * @param ulInHeight the height of the image to search @see ulHeight
+	 * @param ulInWidth the width of the image to search @see ulBorderX
+	 * @param ulInHeight the height of the image to search @see ulBorderY
 	 */
 	cImageSearchData( const unsigned long ulInWidth, const unsigned long ulInHeight );
 
@@ -133,13 +137,13 @@ public:
 	
 	/**
 	 * @return the width of the image to search
-	 * @see ulWidth
+	 * @see ulBorderX
 	 */
 	unsigned long getWidth() const;
 	
 	/**
 	 * @return the height of the image to search
-	 * @see ulHeight
+	 * @see ulBorderY
 	 */
 	unsigned long getHeight() const;
 	
@@ -159,12 +163,32 @@ public:
 	bool isFound( const cVectorPosition& position ) const;
 	
 	/**
+	 * @see pImageDataFound
+	 * @param lX the x / first dimension position of the point, for which to
+	 * 	check, if it was found
+	 * @param lY the y / second dimension position of the point, for which to
+	 * 	check, if it was found
+	 * @return true if the point on the position was found, else false
+	 */
+	bool isFound( const unsigned long lX, const unsigned long lY ) const;
+	
+	/**
 	 * @see pImageDataOverlapped
 	 * @param position the position of the point, for which to check, if it
 	 * 	is overlapped
 	 * @return true if the point on the position is overlapped, else false
 	 */
 	bool isOverlapped( const cVectorPosition& position ) const;
+	
+	/**
+	 * @see pImageDataOverlapped
+	 * @param lX the x / first dimension position of the point, for which to
+	 * 	check, if it is overlapped
+	  * @param lY the y / second dimension position of the point, for which to
+	* 	check, if it is overlapped
+	 * @return true if the point on the position is overlapped, else false
+	 */
+	bool isOverlapped( const unsigned long lX, const unsigned long lY ) const;
 	
 	
 	/**
@@ -274,10 +298,9 @@ public:
 	 * 	(/not) found points
 	 * @param bFound if true the points will be registered as found, else
 	 * 	the points will be registered as not found
-	 * @return true if the points wher (/not) registered as found,
-	 * 	else false and no data changed
+	 * @return the number of points, which wher (/not) registered as found
 	 */
-	bool registerFound( const set<cVectorPosition> & setFoundPoints,
+	unsigned long registerFound( const set<cVectorPosition> & setFoundPoints,
 		const bool bFound=true );
 	
 	/**
@@ -288,14 +311,13 @@ public:
 	 * @see isFound()
 	 * @see getFoundNeighbours()
 	 * @see cImageStructure
-	 * @param imageStrFoundPoints the cImageStructure with the points to
+	 * @param pImageStrFoundPoints the cImageStructure with the points to
 	 * 	register (/set) as (/not) found points
 	 * @param bFound if true the points will be registered as found, else
 	 * 	the points will be registered as not found
-	 * @return true if the points wher (/not) registered as found,
-	 * 	else false and no data changed
+	 * @return the number of points, which wher (/not) registered as found
 	 */
-	bool registerFound( const cImageStructure * imageStrFoundPoints,
+	unsigned long registerFound( const cImageStructure * pImageStrFoundPoints,
 		const bool bFound=true );
 	
 	/**
@@ -323,10 +345,9 @@ public:
 	 * 	(/not) overlapped points
 	 * @param bOverlapped if true the points will be registered as overlapped,
 	 * 	else the points will be registered as not overlapped
-	 * @return true if the points wher (/not) registered as overlapped,
-	 * 	else false and no data changed
+	 * @return the number of points, which wher (/not) registered as overlapped
 	 */
-	bool registerOverlapped( const set<cVectorPosition> & setOverlappedPoints,
+	unsigned long registerOverlapped( const set<cVectorPosition> & setOverlappedPoints,
 		const bool bOverlapped=true );
 	
 	/**
@@ -337,14 +358,13 @@ public:
 	 * @see isOverlapped()
 	 * @see getOverlappedNeighbours()
 	 * @see cImageStructure
-	 * @param imageStrOverlappedPoints the cImageStructure with the points to
+	 * @param pImageStrOverlappedPoints the cImageStructure with the points to
 	 * 	register (/set) as (/not) overlapped points
 	 * @param bOverlapped if true the points will be registered as overlapped,
 	 * 	else the points will be registered as not overlapped
-	 * @return true if the points wher (/not) registered as overlapped,
-	 * 	else false and no data changed
+	 * @return the number of points, which wher (/not) registered as overlapped
 	 */
-	bool registerOverlapped( const cImageStructure * imageStrOverlappedPoints,
+	unsigned long registerOverlapped( const cImageStructure * pImageStrOverlappedPoints,
 		const bool bOverlapped=true );
 	
 	
@@ -359,6 +379,7 @@ public:
 };//class cImageSearchData
 
 
+};//end namespace nStructureData
 };//end namespace nImage
 };//end namespace nConvertToFib
 };//end namespace algorithms
