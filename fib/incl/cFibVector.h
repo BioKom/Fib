@@ -41,7 +41,8 @@ History:
 11.12.2011  Oesterholz  getCompressedSize() and store() method with
 	parameters for domains added
 02.01.2011  Oesterholz  cFibMatrix added
-17.02.2013  Oesterholz FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE implemented
+17.02.2013  Oesterholz  FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE implemented
+16.03.2013  Oesterholz  clone() method added
 */
 
 #ifndef ___C_FIB_VECTOR_H__
@@ -219,6 +220,13 @@ public:
 	 * The destructor of the vector.
 	 */
 	virtual ~cFibVector();
+
+	/**
+	 * This method clones this object.
+	 *
+	 * @return a pointer to the clone of this object
+	 */
+	virtual cFibVector * clone() const = 0;
 
 	/**
 	 * Returns the number of elements the vector contains.

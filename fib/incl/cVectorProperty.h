@@ -38,6 +38,7 @@ History:
 	distanceOfPropertyToNull() added
 17.12.2010  Oesterholz  isOverwritenVector() method added
 18.12.2010  Oesterholz  isOverwriting() and isEvalued() methods added
+16.03.2013  Oesterholz  clone() method added
 */
 
 #ifndef ___C_VECTOR_PROPERTY_H__
@@ -152,6 +153,13 @@ public:
 	 */
 	cVectorProperty( const cTypeProperty & typeProperty );
 
+
+	/**
+	 * This method clones this object.
+	 *
+	 * @return a pointer to the clone of this object
+	 */
+	virtual cVectorProperty * clone() const;
 
 //TODO change cFibElement to cProperty
 	/**

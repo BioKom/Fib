@@ -38,8 +38,8 @@ History:
 */
 
 
-#ifndef ___C_IMAGE_SEARCH_DATA_H__
-#define ___C_IMAGE_SEARCH_DATA_H__
+#ifndef ___FIB__ALGORITHMS__N_CONVERT_TO_FIB__N_IMAGE__N_STRUCTURE_DATA__C_IMAGE_SEARCH_DATA_H__
+#define ___FIB__ALGORITHMS__N_CONVERT_TO_FIB__N_IMAGE__N_STRUCTURE_DATA__C_IMAGE_SEARCH_DATA_H__
 
 #include "version.h"
 
@@ -108,10 +108,8 @@ protected:
 	unsigned char * pImageDataOverlapped;
 	
 	
-
 public:
 	
-
 	/**
 	 * parameter constructor
 	 *
@@ -128,12 +126,34 @@ public:
 	 */
 	cImageSearchData( const iImageData * pInImageData );
 	
+	/**
+	 * copy constructor
+	 *
+	 * @param pInImageData pointer to the image search data to copy
+	 */
+	cImageSearchData( const cImageSearchData & imageSearchData );
+	
 	
 	/**
 	 * destructor
 	 */
 	~cImageSearchData();
 	
+	
+	/**
+	 * This method clones this object.
+	 *
+	 * @return a pointer to the clone of this object
+	 */
+	cImageSearchData * clone() const;
+	
+	/**
+	 * Assigns the data of the given search structure to this class.
+	 *
+	 * @param imageSearchData the image search data which data to copy to this
+	 * @return *this object
+	 */
+	cImageSearchData & operator=( const cImageSearchData & imageSearchData );
 	
 	/**
 	 * @return the width of the image to search
@@ -146,6 +166,22 @@ public:
 	 * @see ulBorderY
 	 */
 	unsigned long getHeight() const;
+	
+	/**
+	 * This method checks if the given position is in the image search data.
+	 *
+	 * @param position the position to check
+	 * @return true if the position is in the search data, else false
+	 */
+	bool isIn( const cVectorPosition & position ) const;
+	
+	/**
+	 * This method checks if the given position is in the image search data.
+	 *
+	 * @param position the position to check
+	 * @return true if the position is in the search data, else false
+	 */
+	bool isIn( const  pair< unsigned int, unsigned int> & position ) const;
 	
 	/**
 	 * @return a pointer to the image data, of the image for the search
@@ -190,6 +226,34 @@ public:
 	 */
 	bool isOverlapped( const unsigned long lX, const unsigned long lY ) const;
 	
+	/**
+	 * @see pImageDataFound
+	 * @see pImageDataOverlapped
+	 * @param position the position of the point, for which to check, if it
+	 * 	is found or overlapped
+	 * @return true if the point on the position is found or overlapped, else false
+	 */
+	bool isFoundOrOverlapped( const cVectorPosition& position ) const;
+	
+	/**
+	 * @see pImageDataFound
+	 * @see pImageDataOverlapped
+	 * @param lX the x / first dimension position of the point, for which to
+	 * 	check, if it is found or overlapped
+	 * @param lY the y / second dimension position of the point, for which to
+	 * 	check, if it is found or overlapped
+	 * @return true if the point on the position is found or overlapped, else false
+	 */
+	bool isFoundOrOverlapped( const unsigned long lX, const unsigned long lY ) const;
+	
+	/**
+	 * @see pImageDataFound
+	 * @see pImageDataOverlapped
+	 * @param position the position of the point, for which to check, if it
+	 * 	is found or overlapped
+	 * @return true if the point on the position is found or overlapped, else false
+	 */
+	bool isFoundOrOverlapped( const pair< unsigned int, unsigned int> & position ) const;
 	
 	/**
 	 * @see isFound()
@@ -225,8 +289,8 @@ public:
 	
 	
 	/**
-	 * @see registerFound()
 	 * @see getFoundNeighbours()
+	 * @see getOverlappedNeighbours()
 	 * @param position the position of the point, for which to return the
 	 * 	neighbour points
 	 * @return a set of the neighbour points of the given point
@@ -272,6 +336,34 @@ public:
 	 * @see pImageDataOverlapped
 	 */
 	set<cVectorPosition> getNotOverlappedNeighbours( const cVectorPosition& position ) const;
+	
+	/**
+	 * @see isFound()
+	 * @see registerFound()
+	 * @see isOverlapped()
+	 * @see registerOverlapped()
+	 * @param position the position of the point, for which to return the
+	 * 	not found and not overlapped neighbour points
+	 * @return a set of the not found and not overlapped neighbour points of
+	 * 	the given point
+	 * @see pImageDataFound
+	 */
+	set<cVectorPosition> getNotFoundNotOverlappedNeighbours(
+		const cVectorPosition& position ) const;
+	
+	/**
+	 * @see isFound()
+	 * @see registerFound()
+	 * @see isOverlapped()
+	 * @see registerOverlapped()
+	 * @param position the position of the point, for which to return if it
+	 * 	has not found and not overlapped neighbour points
+	 * @return true if the given point has not found and not overlapped
+	 * 	neighbour points
+	 * @see pImageDataFound
+	 */
+	bool hasNotFoundNotOverlappedNeighbours(
+		const cVectorPosition& position ) const;
 	
 	
 	/**
@@ -370,10 +462,216 @@ public:
 	
 	/**
 	 * Converts all found points to overlapped points.
+	 * The points marked as found won't change.
 	 * If you start a new layer, wich is below the layers of the found points,
 	 * call this method.
 	 */
 	void foundToOverlapped();
+	
+	/**
+	 * Set all points to not found.
+	 */
+	void clearFound();
+	
+	/**
+	 * Set all points to not overlapped.
+	 */
+	void clearOverlapped();
+	
+	
+//methods for points given as unsigned int pairs:
+	
+	/**
+	 * @see pImageDataFound
+	 * @param position the position of the point, for which to check, if it
+	 * 	was found
+	 * @return true if the point on the position was found, else false
+	 */
+	bool isFound( const pair< unsigned int, unsigned int> & position ) const;
+	
+	/**
+	 * @see pImageDataOverlapped
+	 * @param position the position of the point, for which to check, if it
+	 * 	is overlapped
+	 * @return true if the point on the position is overlapped, else false
+	 */
+	bool isOverlapped( const pair< unsigned int, unsigned int> & position ) const;
+	
+	/**
+	 * @see isFound()
+	 * @see registerFound()
+	 * @return a set of all found points in the image
+	 * @see pImageDataFound
+	 */
+	set< pair< unsigned int, unsigned int> > getFoundPointsAsPair() const;
+	
+	/**
+	 * @see isFound()
+	 * @see registerFound()
+	 * @return a set of all not found points in the image
+	 * @see pImageDataFound
+	 */
+	set< pair< unsigned int, unsigned int> > getNotFoundPointsAsPair() const;
+	
+	/**
+	 * @see isOverlapped()
+	 * @see registerOverlapped()
+	 * @return a set of all overlapped points in the image
+	 * @see pImageDataOverlapped
+	 */
+	set< pair< unsigned int, unsigned int> > getOverlappedPointsAsPair() const;
+	
+	/**
+	 * @see isOverlapped()
+	 * @see registerOverlapped()
+	 * @return a set of all not overlapped points in the image
+	 * @see pImageDataOverlapped
+	 */
+	set< pair< unsigned int, unsigned int> > getNotOverlappedPointsAsPair() const;
+	
+	
+	/**
+	 * @see getFoundNeighbours()
+	 * @see getOverlappedNeighbours()
+	 * @param position the position of the point, for which to return the
+	 * 	neighbour points
+	 * @return a set of the neighbour points of the given point
+	 */
+	set< pair< unsigned int, unsigned int> > getNeighbours(
+		const pair< unsigned int, unsigned int> & position ) const;
+	
+	/**
+	 * @see isFound()
+	 * @see registerFound()
+	 * @param position the position of the point, for which to return the
+	 * 	found neighbour points
+	 * @return a set of the found neighbour points of the given point
+	 * @see pImageDataFound
+	 */
+	set< pair< unsigned int, unsigned int> > getFoundNeighbours(
+		const pair< unsigned int, unsigned int>  & position ) const;
+	
+	/**
+	 * @see isFound()
+	 * @see registerFound()
+	 * @param position the position of the point, for which to return the
+	 * 	not found neighbour points
+	 * @return a set of the not found neighbour points of the given point
+	 * @see pImageDataFound
+	 */
+	set< pair< unsigned int, unsigned int> > getNotFoundNeighbours(
+		const pair< unsigned int, unsigned int> & position ) const;
+	
+	/**
+	 * @see isOverlapped()
+	 * @see registerOverlapped()
+	 * @param position the position of the point, for which to return the
+	 * 	overlapped neighbour points
+	 * @return a set of the overlapped neighbour points of the given point
+	 * @see pImageDataOverlapped
+	 */
+	set< pair< unsigned int, unsigned int> > getOverlappedNeighbours(
+		const pair< unsigned int, unsigned int> & position ) const;
+	
+	/**
+	 * @see isOverlapped()
+	 * @see registerOverlapped()
+	 * @param position the position of the point, for which to return the
+	 * 	not overlapped neighbour points
+	 * @return a set of the not overlapped neighbour points of the given point
+	 * @see pImageDataOverlapped
+	 */
+	set< pair< unsigned int, unsigned int> > getNotOverlappedNeighbours(
+		const pair< unsigned int, unsigned int> & position ) const;
+	
+	/**
+	 * @see isFound()
+	 * @see registerFound()
+	 * @see isOverlapped()
+	 * @see registerOverlapped()
+	 * @param position the position of the point, for which to return the
+	 * 	not found and not overlapped neighbour points
+	 * @return a set of the not found and not overlapped neighbour points of
+	 * 	the given point
+	 * @see pImageDataFound
+	 */
+	set< pair< unsigned int, unsigned int> > getNotFoundNotOverlappedNeighbours(
+		const pair< unsigned int, unsigned int> & position ) const;
+	
+	/**
+	 * @see isFound()
+	 * @see registerFound()
+	 * @see isOverlapped()
+	 * @see registerOverlapped()
+	 * @param position the position of the point, for which to return if it
+	 * 	has not found and not overlapped neighbour points
+	 * @return true if the given point has not found and not overlapped
+	 * 	neighbour points
+	 * @see pImageDataFound
+	 */
+	bool hasNotFoundNotOverlappedNeighbours(
+		const pair< unsigned int, unsigned int> & position ) const;
+	
+	/**
+	 * This method registers the given point as found or not found point.
+	 *
+	 * @see pImageDataFound
+	 * @see isFound()
+	 * @see getFoundNeighbours()
+	 * @param foundPoint the point to register (/set) as (/not) found point
+	 * @param bFound if true the point will be registered as found, else
+	 * 	the point will be registered as not found
+	 * @return true if the point wher (/not) registered as found, else false
+	 */
+	bool registerFound( const pair< unsigned int, unsigned int> & foundPoint,
+		const bool bFound=true );
+
+	/**
+	 * This method registers the given points as found or not found points.
+	 *
+	 * @see pImageDataFound
+	 * @see isFound()
+	 * @see getFoundNeighbours()
+	 * @param setFoundPoints a set with the points to register (/set) as
+	 * 	(/not) found points
+	 * @param bFound if true the points will be registered as found, else
+	 * 	the points will be registered as not found
+	 * @return the number of points, which wher (/not) registered as found
+	 */
+	unsigned long registerFound(
+		const set< pair< unsigned int, unsigned int> > & setFoundPoints,
+		const bool bFound=true );
+	
+	/**
+	 * This method registers the given point as overlapped or not overlapped
+	 * point.
+	 *
+	 * @see pImageDataOverlapped
+	 * @see isOverlapped()
+	 * @see getOverlappedNeighbours()
+	 * @param overlappedPoint the point to register (/set) as (/not) overlapped point
+	 * @param bOverlapped if true the point will be registered as overlapped,
+	 * 	else the point will be registered as not overlapped
+	 * @return true if the point wher (/not) registered as overlapped, else false
+	 */
+	bool registerOverlapped( const pair< unsigned int, unsigned int> & overlappedPoint,
+		const bool bOverlapped=true );
+
+	/**
+	 * This method registers the given points as overlapped or not overlapped points.
+	 *
+	 * @see pImageDataOverlapped
+	 * @see isOverlapped()
+	 * @see getOverlappedNeighbours()
+	 * @param setOverlappedPoints a set with the points to register (/set) as
+	 * 	(/not) overlapped points
+	 * @param bOverlapped if true the points will be registered as overlapped,
+	 * 	else the points will be registered as not overlapped
+	 * @return the number of points, which wher (/not) registered as overlapped
+	 */
+	unsigned long registerOverlapped(
+		const set< pair< unsigned int, unsigned int> > & setOverlappedPoints,
+		const bool bOverlapped=true );
 	
 	
 };//class cImageSearchData
@@ -386,4 +684,4 @@ public:
 };//end namespace fib
 
 
-#endif //___C_IMAGE_SEARCH_DATA_H__
+#endif //___FIB__ALGORITHMS__N_CONVERT_TO_FIB__N_IMAGE__N_STRUCTURE_DATA__C_IMAGE_SEARCH_DATA_H__

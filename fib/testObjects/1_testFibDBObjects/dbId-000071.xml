@@ -195,6 +195,23 @@
 						</obj>
 					</property>
 			
+					<property>
+						<vector type="property.colorRGB">
+							<value>0</value>
+							<value>150</value>
+							<value>0</value>
+						</vector>
+						<obj identifier="-71">
+							<vector type="externObjectInput">
+								<value>50</value>
+								<value>40</value>
+								<value>60</value>
+								<value>50</value>
+								<value>0</value>
+								<value>0</value>
+							</vector>
+						</obj>
+					</property>
 			
 				</list>
 			</property>

@@ -76,6 +76,71 @@
  * 		The number of iterators for the random tests (test with given
  * 		parameters for convertToTiles()).
  * 		Just works with the DIR_TESTDATA parameter given.
+ *
+ *
+ *
+ * What's tested of class cImageSearchData:
+ * 	- cImageStructure();
+ * 	- cImageStructure( const cImageStructure & structureToCopy );
+ * 	- cImageStructure( const TiXmlElement * pXmlElement, intFib & outStatus );
+ * 	- virtual ~cImageStructure();
+ * 	- virtual cImageStructure *clone() const;
+ * 	- virtual string getName() const;
+ * 	- set<cVectorPosition> getStructurePoints() const;
+ * 	- const set<cVectorPosition> & getStructurePointsConst() const;
+ * 	- set<cVectorPosition> getStructureBorderPoints() const;
+ * 	- const set<cVectorPosition> & getStructureBorderPointsConst() const;
+ * 	- set<cVectorPosition> getStructureNeighbourPoints() const;
+ * 	- const set<cVectorPosition> & getStructureNeighbourPointsConst() const;
+ * 	- void setStructurePoints( const set<cVectorPosition> & setInStructurePoints );
+ * 	- void setStructureBorderPoints( const set<cVectorPosition> & setInStructureBorderPoints );
+ * 	- void setStructureNeighbourPoints( const set<cVectorPosition> & setInStructureNeighbourPoints );
+ * 	- void addStructurePoints( const set<cVectorPosition> & setInStructurePoints );
+ * 	- void addStructureBorderPoints( const set<cVectorPosition> & setInStructureBorderPoints );
+ * 	- void addStructureNeighbourPoints( const set<cVectorPosition> & setInStructureNeighbourPoints );
+ * 	- void addStructurePoint( const cVectorPosition & pointInStructurePoint );
+ * 	- void addStructureBorderPoint( const cVectorPosition & pointInStructureBorderPoint );
+ * 	- void addStructureNeighbourPoint( const cVectorPosition & pointInStructureNeighbourPoint );
+ * 	- void deleteStructurePoints( const set<cVectorPosition> & setInStructurePoints );
+ * 	- void deleteStructureBorderPoints( const set<cVectorPosition> & setInStructureBorderPoints );
+ * 	- void deleteStructureNeighbourPoints( const set<cVectorPosition> & setInStructureNeighbourPoints );
+ * 	- void deleteStructurePoint( const cVectorPosition & pointInStructurePoint );
+ * 	- void deleteStructureBorderPoint( const cVectorPosition & pointInStructureBorderPoint );
+ * 	- void deleteStructureNeighbourPoint( const cVectorPosition & pointInStructureNeighbourPoint );
+ * 	- bool isAntialised() const;
+ * 	- void setAntialised( const bool bInIsAntialised = true );
+ * 	- virtual cRoot * convertToFib() const;
+ * 	- virtual cRoot * convertToFib( const cImageSearchData * pImageSearchData, const double maxValue = 65536.0, const unsigned long ulMaxErrorPerPoint = 0.0 ) const;
+ * 	- virtual bool storeXml( ostream & ostream ) const;
+ * 	- static cImageStructure *restoreXml( istream &stream, intFib * pOutStatus=NULL );
+ * 	- static cImageStructure * restoreXmlNode( const TiXmlNode * pXmlNode, intFib & outStatus );
+ * 	- virtual intFib restoreXml( istream &stream );
+ * 	- virtual intFib restoreXml( const TiXmlElement * pXmlElement );
+ * 	- void setStructurePoints( const set< pair< unsigned int, unsigned int> > & setInStructurePoints );
+ * 	- void setStructureBorderPoints( const set< pair< unsigned int, unsigned int> > & setInStructureBorderPoints );
+ * 	- void setStructureNeighbourPoints( const set< pair< unsigned int, unsigned int> > & setInStructureNeighbourPoints );
+ * 	- void addStructurePoints( const set< pair< unsigned int, unsigned int> > & setInStructurePoints );
+ * 	- void addStructureBorderPoints( const set< pair< unsigned int, unsigned int> > & setInStructureBorderPoints );
+ * 	- void addStructureNeighbourPoints( const set< pair< unsigned int, unsigned int> > & setInStructureNeighbourPoints );
+ * 	- void addStructurePoint( const pair< unsigned int, unsigned int> & pointInStructurePoint );
+ * 	- void addStructureBorderPoint( const pair< unsigned int, unsigned int> & pointInStructureBorderPoint );
+ * 	- void addStructureNeighbourPoint( const pair< unsigned int, unsigned int> & pointInStructureNeighbourPoint );
+ * 	- void deleteStructurePoints( const set< pair< unsigned int, unsigned int> > & setInStructurePoints );
+ * 	- void deleteStructureBorderPoints( const set< pair< unsigned int, unsigned int> > & setInStructureBorderPoints );
+ * 	- void deleteStructureNeighbourPoints( const set< pair< unsigned int, unsigned int> > & setInStructureNeighbourPoints );
+ * 	- void deleteStructurePoint( const pair< unsigned int, unsigned int> & pointInStructurePoint );
+ * 	- void deleteStructureBorderPoint( const pair< unsigned int, unsigned int> & pointInStructureBorderPoint );
+ * 	- void deleteStructureNeighbourPoint( const pair< unsigned int, unsigned int> & pointInStructureNeighbourPoint );
+ * 	- set< pair< unsigned int, unsigned int> > getStructurePointsPair() const;
+ * 	- set< pair< unsigned int, unsigned int> > getStructureBorderPointsPair() const;
+ * 	- set< pair< unsigned int, unsigned int> > getStructureNeighbourPointsPair() const;
+ * 	- bool isStructurePoint( const cVectorPosition & pointInStructurePoint ) const;
+ * 	- bool isStructureBorderPoint( const cVectorPosition & pointInStructureBorderPoint ) const;
+ * 	- bool isStructureNeighbourPoint( const cVectorPosition & pointInStructureNeighbourPoint ) const;
+ * 	- bool isStructurePoint( const pair< unsigned int, unsigned int> & pointInStructurePoint ) const;
+ * 	- bool isStructureBorderPoint( const pair< unsigned int, unsigned int> & pointInStructureBorderPoint ) const;
+ * 	- bool isStructureNeighbourPoint( const pair< unsigned int, unsigned int> & pointInStructureNeighbourPoint ) const;
+ * 	-(TODO) void generateStructureNeighbourPoint( const cImageSearchData * pImageSearchData = NULL, const bool bAddOverlapped = true );
  */
 /*
 History:
@@ -84,8 +149,6 @@ History:
 
 //TODO check
 
-
-//TODO test equal
 
 #include "version.h"
 #include "fibDatatyps.h"
@@ -139,6 +202,8 @@ History:
 	#define DIR_OUTPUT "test_output/"
 #endif
 
+
+
 //if true the stored file will be overwritten from the next stored file
 bool bOverwriteFiles = false;
 
@@ -147,6 +212,7 @@ using namespace fib::algorithms::nConvertToFib::nImage::nStructureData;
 using namespace fib;
 using namespace std;
 
+#define MAX_POINT_COORDINATE_VALE 1024
 
 const char * pDirTestObjects = DIR_TESTOBJECTS_NIMAGE;
 unsigned long MAX_ITERATION = 256;
@@ -235,7 +301,7 @@ int main(int argc, char* argv[]){
 	
 	if ( 2 < argc ){
 		//two parameters given; read parameter iterators
-		MAX_ITERATION = atol( argv[1] );
+		MAX_ITERATION = atol( argv[2] );
 		if ( MAX_ITERATION < 1 ){
 			MAX_ITERATION = 1;
 		}
@@ -264,20 +330,20 @@ int main(int argc, char* argv[]){
 		cout<<      "=============================================="<<endl;
 		
 		//test the cImageStructure methods
-		//TODO comment in
-		iReturn += testImageStructurePoints( ulTestphase );
+		unsigned int iReturnTestCase = testImageStructurePoints( ulTestphase );
 		
 		
 		//test the iConvertImageStructureToFib::convertToFib()
-		iReturn += testConvertToFib( ulTestphase );
+		iReturnTestCase += testConvertToFib( ulTestphase );
 		
-		if ( iReturn == 0 ){
+		if ( iReturnTestCase == 0 ){
 		
 			cout<<endl<<endl<<"Test for "<<getActualClassName()<<
 				" successfull: no errors occoured"<<endl;
 		}else{
 			cerr<<endl<<endl<<"Test for "<<getActualClassName()<<" failed: "<<
-				iReturn<<" errors occoured"<<endl;
+				iReturnTestCase<<" errors occoured"<<endl;
+			iReturn += iReturnTestCase;
 		}
 	}
 	
@@ -397,6 +463,7 @@ const char * getActualClassTestCaseFile(){
 }
 
 
+
 /**
  * @return generates a random point
  */
@@ -404,10 +471,20 @@ cVectorPosition generateRandomPoint(){
 	
 	cVectorPosition position( 2 );
 	
-	position.setValue( 1, rand() % 1024 );
-	position.setValue( 2, rand() % 1024 );
+	position.setValue( 1, rand() % MAX_POINT_COORDINATE_VALE );
+	position.setValue( 2, rand() % MAX_POINT_COORDINATE_VALE );
 	
 	return position;
+}
+
+/**
+ * @return generates a random point
+ */
+pair< unsigned int, unsigned int > generateRandomPointPair(){
+	
+	
+	return pair< unsigned int, unsigned int >(
+		rand() % MAX_POINT_COORDINATE_VALE, rand() % MAX_POINT_COORDINATE_VALE );
 }
 
 
@@ -428,62 +505,507 @@ void printPoints( ostream & streamToPrintTo, set<cVectorPosition> setPoints ){
 
 
 /**
+ * This method prints the given points to the given stream.
+ *
+ * @param streamToPrintTo the points to print the points to
+ * @param setPoints the points to print
+ */
+void printPoints( ostream & streamToPrintTo,
+		set< pair< unsigned int, unsigned int > > setPoints ){
+	
+	for ( set< pair< unsigned int, unsigned int > >::iterator
+			itrPoint = setPoints.begin();
+			itrPoint != setPoints.end(); itrPoint++ ){
+		
+		streamToPrintTo<<" ("<<itrPoint->first<<", "<<itrPoint->second<<");";
+	}
+	streamToPrintTo<<endl;
+}
+
+/**
  * This function compares the two given points sets.
  *
- * @param correctPoints the correct points to compare
- * @param wrongPoints the wrong points to compare
+ * @param setCorrectPoints the correct points to compare
+ * @param setReturnedPoints the wrong points to compare
  */
-void comparePoints( set<cVectorPosition> setCorrectPoints,
-		set<cVectorPosition> setWrongPoints ){
+unsigned int comparePoints( set<cVectorPosition> setCorrectPoints,
+		set<cVectorPosition> setReturnedPoints ){
 	
 	set<cVectorPosition> setToMuchCorrectPoints = setCorrectPoints;
-	set<cVectorPosition> setToMuchWrongPoints = setWrongPoints;
+	set<cVectorPosition> setToMuchReturnedPoints = setReturnedPoints;
 	set<cVectorPosition> setMissingCorrectPoints;
-	set<cVectorPosition> setMissingWrongPoints;
+	set<cVectorPosition> setMissingReturnedPoints;
 	
 	for ( set<cVectorPosition>::iterator
 			itrCorrectPoint = setCorrectPoints.begin();
 			itrCorrectPoint != setCorrectPoints.end(); itrCorrectPoint++ ){
 		
 		const unsigned int uiPointsErased =
-			setToMuchWrongPoints.erase( *itrCorrectPoint );
+			setToMuchReturnedPoints.erase( *itrCorrectPoint );
 		if ( uiPointsErased == 0 ){
 			//point not in wrong points
-			setMissingWrongPoints.insert( *itrCorrectPoint );
+			setMissingReturnedPoints.insert( *itrCorrectPoint );
 		}
 	}
 	for ( set<cVectorPosition>::iterator
-			itrWrongPoint = setWrongPoints.begin();
-			itrWrongPoint != setWrongPoints.end(); itrWrongPoint++ ){
+			itrReturnedPoint = setReturnedPoints.begin();
+			itrReturnedPoint != setReturnedPoints.end(); itrReturnedPoint++ ){
 		
 		const unsigned int uiPointsErased =
-			setToMuchCorrectPoints.erase( *itrWrongPoint );
+			setToMuchCorrectPoints.erase( *itrReturnedPoint );
 		if ( uiPointsErased == 0 ){
 			//point not in wrong points
-			setMissingCorrectPoints.insert( *itrWrongPoint );
+			setMissingCorrectPoints.insert( *itrReturnedPoint );
 		}
 	}
+	unsigned int uiError = 0;
 	if ( ! setToMuchCorrectPoints.empty() ){
 		cerr<<endl<<"Error: To much correct points."<<endl;
 		printPoints( cerr, setToMuchCorrectPoints );
+		uiError++;
 	}
 	if ( ! setMissingCorrectPoints.empty() ){
 		cerr<<endl<<"Error: Missing correct points."<<endl;
 		printPoints( cerr, setMissingCorrectPoints );
+		uiError++;
 	}
-	if ( ! setToMuchWrongPoints.empty() ){
-		cerr<<endl<<"Error: To much wrong points."<<endl;
-		printPoints( cerr, setToMuchWrongPoints );
+	if ( ! setToMuchReturnedPoints.empty() ){
+		cerr<<endl<<"Error: To much returned points."<<endl;
+		printPoints( cerr, setToMuchReturnedPoints );
+		uiError++;
 	}
-	if ( ! setMissingWrongPoints.empty() ){
-		cerr<<endl<<"Error: Missing wrong points."<<endl;
-		printPoints( cerr, setMissingWrongPoints );
+	if ( ! setMissingReturnedPoints.empty() ){
+		cerr<<endl<<"Error: Missing returned points."<<endl;
+		printPoints( cerr, setMissingReturnedPoints );
+		uiError++;
 	}
+	return uiError;
+}
+
+
+/**
+ * This function compares the two given points sets.
+ *
+ * @param setCorrectPoints the correct points to compare
+ * @param setReturnedPoints the returned points to compare
+ */
+unsigned int comparePoints( set< pair< unsigned int, unsigned int > > setCorrectPoints,
+		set< pair< unsigned int, unsigned int > > setReturnedPoints ){
 	
+	set< pair< unsigned int, unsigned int > > setToMuchCorrectPoints = setCorrectPoints;
+	set< pair< unsigned int, unsigned int > > setToMuchReturnedPoints = setReturnedPoints;
+	set< pair< unsigned int, unsigned int > > setMissingCorrectPoints;
+	set< pair< unsigned int, unsigned int > > setMissingReturnedPoints;
+	
+	for ( set< pair< unsigned int, unsigned int > >::iterator
+			itrCorrectPoint = setCorrectPoints.begin();
+			itrCorrectPoint != setCorrectPoints.end(); itrCorrectPoint++ ){
+		
+		const unsigned int uiPointsErased =
+			setToMuchReturnedPoints.erase( *itrCorrectPoint );
+		if ( uiPointsErased == 0 ){
+			//point not in returned points
+			setMissingReturnedPoints.insert( *itrCorrectPoint );
+		}
+	}
+	for ( set< pair< unsigned int, unsigned int > >::iterator
+			itrReturnedPoint = setReturnedPoints.begin();
+			itrReturnedPoint != setReturnedPoints.end(); itrReturnedPoint++ ){
+		
+		const unsigned int uiPointsErased =
+			setToMuchCorrectPoints.erase( *itrReturnedPoint );
+		if ( uiPointsErased == 0 ){
+			//point not in returned points
+			setMissingCorrectPoints.insert( *itrReturnedPoint );
+		}
+	}
+	unsigned int uiError = 0;
+	if ( ! setToMuchCorrectPoints.empty() ){
+		cerr<<endl<<"Error: To much correct points."<<endl;
+		printPoints( cerr, setToMuchCorrectPoints );
+		uiError++;
+	}
+	if ( ! setMissingCorrectPoints.empty() ){
+		cerr<<endl<<"Error: Missing correct points."<<endl;
+		printPoints( cerr, setMissingCorrectPoints );
+		uiError++;
+	}
+	if ( ! setToMuchReturnedPoints.empty() ){
+		cerr<<endl<<"Error: To much returned points."<<endl;
+		printPoints( cerr, setToMuchReturnedPoints );
+		uiError++;
+	}
+	if ( ! setMissingReturnedPoints.empty() ){
+		cerr<<endl<<"Error: Missing returned points."<<endl;
+		printPoints( cerr, setMissingReturnedPoints );
+		uiError++;
+	}
+	return uiError;
 }
 
 
 
+/**
+ * @param vecPoint the point to convert
+ * @return the point as a pair of integer values
+ */
+pair< unsigned int, unsigned int > toPair(
+		const cVectorPosition & vecPoint ){
+	
+	return pair< unsigned int, unsigned int >(
+		roundToLongFib( vecPoint.getValue( 1 ) ),
+		roundToLongFib( vecPoint.getValue( 2 ) ) );
+}
+
+
+/**
+ * @param setPoints the set of points to convert
+ * @return the point as a pair of integer values
+ */
+set< pair< unsigned int, unsigned int > > toPair(
+		const set< cVectorPosition > & setPoints ){
+	
+	set< pair< unsigned int, unsigned int > > setPointPairs;
+	
+	for ( set< cVectorPosition >::const_iterator
+			itrPoint = setPoints.begin(); itrPoint != setPoints.end(); itrPoint++ ){
+		
+		setPointPairs.insert( pair< unsigned int, unsigned int >(
+			roundToLongFib( itrPoint->getValue( 1 ) ),
+			roundToLongFib( itrPoint->getValue( 2 ) ) ) );
+	}
+	return setPointPairs;
+}
+
+
+
+/**
+ * @param vecPoint the point to convert
+ * @return the point as a Fib vector
+ */
+cVectorPosition toVector(
+		const pair< unsigned int, unsigned int > & vecPoint ){
+	
+	cVectorPosition vecPosition( 2 );
+	vecPosition.setValue( 1, vecPoint.first );
+	vecPosition.setValue( 2, vecPoint.second );
+	
+	return vecPosition;
+}
+
+
+/**
+ * @param setPoints the set of points to convert
+ * @return the set of points as Fib vectors
+ */
+set< cVectorPosition > toVector(
+		const set< pair< unsigned int, unsigned int > > & setPoints ){
+	
+	set< cVectorPosition > setPointVectors;
+	
+	cVectorPosition vecPosition( 2 );
+	for ( set< pair< unsigned int, unsigned int > >::const_iterator
+			itrPoint = setPoints.begin(); itrPoint != setPoints.end(); itrPoint++ ){
+		
+		vecPosition.setValue( 1, itrPoint->first );
+		vecPosition.setValue( 2, itrPoint->second );
+	
+		setPointVectors.insert( vecPosition );
+	}
+	return setPointVectors;
+}
+
+
+/**
+ * This function checks the members of the structure.
+ *
+ * What's tested of class cImageSearchData:
+ * 	- virtual string getName() const;
+ * 	- set<cVectorPosition> getStructurePoints() const;
+ * 	- const set<cVectorPosition> & getStructurePointsConst() const;
+ * 	- set<cVectorPosition> getStructureBorderPoints() const;
+ * 	- const set<cVectorPosition> & getStructureBorderPointsConst() const;
+ * 	- set<cVectorPosition> getStructureNeighbourPoints() const;
+ * 	- const set<cVectorPosition> & getStructureNeighbourPointsConst() const;
+ * 	- bool isAntialised() const;
+ * 	- set< pair< unsigned int, unsigned int> > getStructurePointsPair() const;
+ * 	- set< pair< unsigned int, unsigned int> > getStructureBorderPointsPair() const;
+ * 	- set< pair< unsigned int, unsigned int> > getStructureNeighbourPointsPair() const;
+ * 	- bool isStructurePoint( const cVectorPosition & pointInStructurePoint ) const;
+ * 	- bool isStructureBorderPoint( const cVectorPosition & pointInStructureBorderPoint ) const;
+ * 	- bool isStructureNeighbourPoint( const cVectorPosition & pointInStructureNeighbourPoint ) const;
+ * 	- bool isStructurePoint( const pair< unsigned int, unsigned int> & pointInStructurePoint ) const;
+ * 	- bool isStructureBorderPoint( const pair< unsigned int, unsigned int> & pointInStructureBorderPoint ) const;
+ * 	- bool isStructureNeighbourPoint( const pair< unsigned int, unsigned int> & pointInStructureNeighbourPoint ) const;
+ *
+ *
+ * @param pImageStructure a pointer to the structure to check
+ * @param bIsAntialised if the structure should be antialised
+ * @param structurePoints the points the structure should contain
+ * @param structureBorderPoints the border points the structure should contain
+ * @param structureNeighbourPoints the neighbour points the structure
+ * 	should contain
+ * @return the number of errors occured in the test
+ */
+unsigned int checkStructureValues(
+		const cImageStructure * pImageStructure,
+		bool bIsAntialised,
+		const set<cVectorPosition> & structurePoints,
+		const set<cVectorPosition> & structureBorderPoints,
+		const set<cVectorPosition> & structureNeighbourPoints ){
+	
+	unsigned int iReturn = 0;
+	
+	//test the members of the class
+	if ( getActualClassName() != pImageStructure->getName() ){
+		cerr<<"Error: The image structure class name is \""<<
+			pImageStructure->getName()<<"\", but should be \""<<
+			getActualClassName()<<"\"."<<endl;
+		iReturn++;
+	}
+	if ( pImageStructure->isAntialised() != bIsAntialised ){
+		cerr<<"Error: The image structure "<<getActualClassName()<<
+			" is "<<(pImageStructure->isAntialised()?"":"not ")<<
+			"antialised, but should"<<(bIsAntialised?"":"n't")<<" be."<<endl;
+		bIsAntialised = pImageStructure->isAntialised();
+		iReturn++;
+	}
+	
+	//check the area points
+	set<cVectorPosition> structorPointsRet =
+		pImageStructure->getStructurePoints();
+	if ( structurePoints == structorPointsRet ){
+		cout<<"The image structure points are correct."<<endl;
+	}else{
+		cerr<<"Error: The image structure points are not correct."<<endl;
+		comparePoints( structurePoints, structorPointsRet );
+		iReturn++;
+	}
+	
+	const set<cVectorPosition> & structorPointsRetConst =
+		pImageStructure->getStructurePointsConst();
+	if ( structurePoints == structorPointsRetConst ){
+		cout<<"The const image structure points are correct."<<endl;
+	}else{
+		cerr<<"Error: The const image structure points are not correct."<<endl;
+		comparePoints( structurePoints, structorPointsRetConst );
+		iReturn++;
+	}
+	//check the area borders points
+	set<cVectorPosition> structorBorderPointsRet =
+		pImageStructure->getStructureBorderPoints();
+	if ( structureBorderPoints == structorBorderPointsRet ){
+		cout<<"The image structure border points are correct."<<endl;
+	}else{
+		cerr<<"Error: The image structure border points are not correct."<<endl;
+		comparePoints( structureBorderPoints, structorBorderPointsRet );
+		iReturn++;
+	}
+	
+	const set<cVectorPosition> & structorBorderPointsRetConst =
+		pImageStructure->getStructureBorderPointsConst();
+	if ( structureBorderPoints == structorBorderPointsRetConst ){
+		cout<<"The image structure const border points are correct."<<endl;
+	}else{
+		cerr<<"Error: The image structure const border points are not correct."<<endl;
+		comparePoints( structureBorderPoints, structorBorderPointsRetConst );
+		iReturn++;
+	}
+	//check the area neighbour points
+	set<cVectorPosition> structureNeighbourPointsRet =
+		pImageStructure->getStructureNeighbourPoints();
+	if ( structureNeighbourPoints == structureNeighbourPointsRet ){
+		cout<<"The image structure neighbour points are correct."<<endl;
+	}else{
+		cerr<<"Error: The image structure neighbour points are not correct."<<endl;
+		comparePoints( structureNeighbourPoints, structureNeighbourPointsRet );
+		iReturn++;
+	}
+	
+	const set<cVectorPosition> & structureNeighbourPointsRetConst =
+		pImageStructure->getStructureNeighbourPointsConst();
+	if ( structureNeighbourPoints == structureNeighbourPointsRetConst ){
+		cout<<"The image structure const neighbour points are correct."<<endl;
+	}else{
+		cerr<<"Error: The image structure const neighbour points are not correct."<<endl;
+		comparePoints( structureNeighbourPoints, structureNeighbourPointsRetConst );
+		iReturn++;
+	}
+	
+	
+//check methods for poirs
+	
+	//check the area points
+	set< pair< unsigned int, unsigned int > > structorPointsPairRet =
+		pImageStructure->getStructurePointsPair();
+	if ( toPair( structurePoints ) == structorPointsPairRet ){
+		cout<<"The image structure pair points are correct."<<endl;
+	}else{
+		cerr<<"Error: The image structure pair points are not correct."<<endl;
+		comparePoints( toPair( structurePoints ), structorPointsPairRet );
+		iReturn++;
+	}
+	//check the area borders points
+	set< pair< unsigned int, unsigned int > > structureBorderPointsPairRet =
+		pImageStructure->getStructureBorderPointsPair();
+	if ( toPair( structureBorderPoints ) == structureBorderPointsPairRet ){
+		cout<<"The image structure pair border points are correct."<<endl;
+	}else{
+		cerr<<"Error: The image structure pair border points are not correct."<<endl;
+		comparePoints( toPair( structureBorderPoints ), structureBorderPointsPairRet );
+		iReturn++;
+	}
+	//check the area neighbour points
+	set< pair< unsigned int, unsigned int > > structureNeighbourPointsPairRet =
+		pImageStructure->getStructureNeighbourPointsPair();
+	if ( toPair( structureNeighbourPoints ) == structureNeighbourPointsPairRet ){
+		cout<<"The image structure pair neighbour points are correct."<<endl;
+	}else{
+		cerr<<"Error: The image structure pair neighbour points are not correct."<<endl;
+		comparePoints( toPair( structureNeighbourPoints ), structureNeighbourPointsPairRet );
+		iReturn++;
+	}
+	
+	
+//check isStructure*()
+	//check isStructurePoint()
+	for ( set<cVectorPosition>::const_iterator itrPoint = structurePoints.begin();
+			itrPoint != structurePoints.end(); itrPoint++ ){
+		
+		if ( ! pImageStructure->isStructurePoint( *itrPoint ) ){
+			cerr<<"Error: The point ("<<itrPoint->getValue( 1 )<<", "<<
+				itrPoint->getValue( 2 )<<") is given back as not in the image "<<
+				"structure, but it should be."<<endl;
+			iReturn++;
+		}
+		const pair< unsigned int, unsigned int > paPoint = toPair( *itrPoint );
+		if ( ! pImageStructure->isStructurePoint( paPoint ) ){
+			cerr<<"Error: The pair point ("<<paPoint.first<<", "<<
+				paPoint.second<<") is given back as not in the image "<<
+				"structure, but it should be."<<endl;
+			iReturn++;
+		}
+	}
+	//check isStructureBorderPoint()
+	for ( set<cVectorPosition>::const_iterator
+			itrPoint = structureBorderPoints.begin();
+			itrPoint != structureBorderPoints.end(); itrPoint++ ){
+		
+		if ( ! pImageStructure->isStructureBorderPoint( *itrPoint ) ){
+			cerr<<"Error: The border point ("<<itrPoint->getValue( 1 )<<", "<<
+				itrPoint->getValue( 2 )<<") is given back as not in the image "<<
+				"structure, but it should be."<<endl;
+			iReturn++;
+		}
+		const pair< unsigned int, unsigned int > paPoint = toPair( *itrPoint );
+		if ( ! pImageStructure->isStructureBorderPoint( paPoint ) ){
+			cerr<<"Error: The border pair point ("<<paPoint.first<<", "<<
+				paPoint.second<<") is given back as not in the image "<<
+				"structure, but it should be."<<endl;
+			iReturn++;
+		}
+	}
+	//check isStructureNeighbourPoint()
+	for ( set<cVectorPosition>::const_iterator
+			itrPoint = structureNeighbourPoints.begin();
+			itrPoint != structureNeighbourPoints.end(); itrPoint++ ){
+		
+		if ( ! pImageStructure->isStructureNeighbourPoint( *itrPoint ) ){
+			cerr<<"Error: The neighbour point ("<<itrPoint->getValue( 1 )<<", "<<
+				itrPoint->getValue( 2 )<<") is given back as not in the image "<<
+				"structure, but it should be."<<endl;
+			iReturn++;
+		}
+		const pair< unsigned int, unsigned int > paPoint = toPair( *itrPoint );
+		if ( ! pImageStructure->isStructureNeighbourPoint( paPoint ) ){
+			cerr<<"Error: The neighbour pair point ("<<paPoint.first<<", "<<
+				paPoint.second<<") is given back as not in the image "<<
+				"structure, but it should be."<<endl;
+			iReturn++;
+		}
+	}
+	
+	/* check for random generated point not in:
+	* 	- bool isStructurePoint( const cVectorPosition & pointInStructurePoint ) const;
+	* 	- bool isStructureBorderPoint( const cVectorPosition & pointInStructureBorderPoint ) const;
+	* 	- bool isStructureNeighbourPoint( const cVectorPosition & pointInStructureNeighbourPoint ) const;
+	* 	- bool isStructurePoint( const pair< unsigned int, unsigned int> & pointInStructurePoint ) const;
+	* 	- bool isStructureBorderPoint( const pair< unsigned int, unsigned int> & pointInStructureBorderPoint ) const;
+	* 	- bool isStructureNeighbourPoint( const pair< unsigned int, unsigned int> & pointInStructureNeighbourPoint ) const;
+	*/
+	unsigned int uiIterationsNotInCheck = 64 + structurePoints.size() +
+		structureBorderPoints.size() + structureNeighbourPoints.size();
+	for ( unsigned int iteration = 0; iteration < uiIterationsNotInCheck;
+			iteration++ ){
+		
+		//gnerate random point
+		const cVectorPosition vecGeneratedPoint = generateRandomPoint();
+		
+		if ( structurePoints.find( vecGeneratedPoint ) == structurePoints.end() ){
+			//point not in structure points
+			if ( pImageStructure->isStructurePoint( vecGeneratedPoint ) ){
+				cerr<<"Error: The point ("<<vecGeneratedPoint.getValue( 1 )<<", "<<
+					vecGeneratedPoint.getValue( 2 )<<") is given back as in the image "<<
+					"structure, but it should not be."<<endl;
+				iReturn++;
+			}
+		}
+		if ( structureBorderPoints.find( vecGeneratedPoint ) == structureBorderPoints.end() ){
+			//point not in structure border points
+			if ( pImageStructure->isStructureBorderPoint( vecGeneratedPoint ) ){
+				cerr<<"Error: The border point ("<<vecGeneratedPoint.getValue( 1 )<<", "<<
+					vecGeneratedPoint.getValue( 2 )<<") is given back as in the image "<<
+					"structure, but it should not be."<<endl;
+				iReturn++;
+			}
+		}
+		if ( structureNeighbourPoints.find( vecGeneratedPoint ) == structureNeighbourPoints.end() ){
+			//point not in structure neighbour points
+			if ( pImageStructure->isStructureNeighbourPoint( vecGeneratedPoint ) ){
+				cerr<<"Error: The neighbour point ("<<vecGeneratedPoint.getValue( 1 )<<", "<<
+					vecGeneratedPoint.getValue( 2 )<<") is given back as in the image "<<
+					"structure, but it should not be."<<endl;
+				iReturn++;
+			}
+		}
+		
+		const pair< unsigned int, unsigned int > vecGeneratedPointPair =
+			toPair( vecGeneratedPoint );
+		if ( structorPointsPairRet.find( vecGeneratedPointPair ) ==
+				structorPointsPairRet.end() ){
+			//point not in structure points
+			if ( pImageStructure->isStructurePoint( vecGeneratedPointPair ) ){
+				cerr<<"Error: The pair point ("<<vecGeneratedPointPair.first<<", "<<
+					vecGeneratedPointPair.second<<") is given back as in the image "<<
+					"structure, but it should not be."<<endl;
+				iReturn++;
+			}
+		}
+		if ( structureBorderPointsPairRet.find( vecGeneratedPointPair ) ==
+				structureBorderPointsPairRet.end() ){
+			//point not in structure border points
+			if ( pImageStructure->isStructureBorderPoint( vecGeneratedPointPair ) ){
+				cerr<<"Error: The border pair point ("<<vecGeneratedPointPair.first<<", "<<
+					vecGeneratedPointPair.second<<") is given back as in the image "<<
+					"structure, but it should not be."<<endl;
+				iReturn++;
+			}
+		}
+		if ( structureNeighbourPointsPairRet.find( vecGeneratedPointPair ) ==
+				structureNeighbourPointsPairRet.end() ){
+			//point not in structure neighbour points
+			if ( pImageStructure->isStructureNeighbourPoint( vecGeneratedPointPair ) ){
+				cerr<<"Error: The neighbour pair point ("<<vecGeneratedPointPair.first<<", "<<
+					vecGeneratedPointPair.second<<") is given back as in the image "<<
+					"structure, but it should not be."<<endl;
+				iReturn++;
+			}
+		}
+		
+	}
+	
+	return iReturn;
+}
 
 
 
@@ -491,6 +1013,69 @@ void comparePoints( set<cVectorPosition> setCorrectPoints,
 
 /**
  * This function tests the cImageStructure methods.
+ *
+ * What's tested of class cImageSearchData:
+ * 	- cImageStructure();
+ * 	- cImageStructure( const cImageStructure & structureToCopy );
+ * 	- cImageStructure( const TiXmlElement * pXmlElement, intFib & outStatus );
+ * 	- virtual ~cImageStructure();
+ * 	- virtual cImageStructure *clone() const;
+ * 	- virtual string getName() const;
+ * 	- set<cVectorPosition> getStructurePoints() const;
+ * 	- const set<cVectorPosition> & getStructurePointsConst() const;
+ * 	- set<cVectorPosition> getStructureBorderPoints() const;
+ * 	- const set<cVectorPosition> & getStructureBorderPointsConst() const;
+ * 	- set<cVectorPosition> getStructureNeighbourPoints() const;
+ * 	- const set<cVectorPosition> & getStructureNeighbourPointsConst() const;
+ * 	- void setStructurePoints( const set<cVectorPosition> & setInStructurePoints );
+ * 	- void setStructureBorderPoints( const set<cVectorPosition> & setInStructureBorderPoints );
+ * 	- void setStructureNeighbourPoints( const set<cVectorPosition> & setInStructureNeighbourPoints );
+ * 	- void addStructurePoints( const set<cVectorPosition> & setInStructurePoints );
+ * 	- void addStructureBorderPoints( const set<cVectorPosition> & setInStructureBorderPoints );
+ * 	- void addStructureNeighbourPoints( const set<cVectorPosition> & setInStructureNeighbourPoints );
+ * 	- void addStructurePoint( const cVectorPosition & pointInStructurePoint );
+ * 	- void addStructureBorderPoint( const cVectorPosition & pointInStructureBorderPoint );
+ * 	- void addStructureNeighbourPoint( const cVectorPosition & pointInStructureNeighbourPoint );
+ * 	- void deleteStructurePoints( const set<cVectorPosition> & setInStructurePoints );
+ * 	- void deleteStructureBorderPoints( const set<cVectorPosition> & setInStructureBorderPoints );
+ * 	- void deleteStructureNeighbourPoints( const set<cVectorPosition> & setInStructureNeighbourPoints );
+ * 	- void deleteStructurePoint( const cVectorPosition & pointInStructurePoint );
+ * 	- void deleteStructureBorderPoint( const cVectorPosition & pointInStructureBorderPoint );
+ * 	- void deleteStructureNeighbourPoint( const cVectorPosition & pointInStructureNeighbourPoint );
+ * 	- bool isAntialised() const;
+ * 	- void setAntialised( const bool bInIsAntialised = true );
+ * 	- virtual cRoot * convertToFib() const;
+ * 	- virtual cRoot * convertToFib( const cImageSearchData * pImageSearchData, const double maxValue = 65536.0, const unsigned long ulMaxErrorPerPoint = 0.0 ) const;
+ * 	- virtual bool storeXml( ostream & ostream ) const;
+ * 	- static cImageStructure *restoreXml( istream &stream, intFib * pOutStatus=NULL );
+ * 	- static cImageStructure * restoreXmlNode( const TiXmlNode * pXmlNode, intFib & outStatus );
+ * 	- virtual intFib restoreXml( istream &stream );
+ * 	- virtual intFib restoreXml( const TiXmlElement * pXmlElement );
+ * 	- void setStructurePoints( const set< pair< unsigned int, unsigned int> > & setInStructurePoints );
+ * 	- void setStructureBorderPoints( const set< pair< unsigned int, unsigned int> > & setInStructureBorderPoints );
+ * 	- void setStructureNeighbourPoints( const set< pair< unsigned int, unsigned int> > & setInStructureNeighbourPoints );
+ * 	- void addStructurePoints( const set< pair< unsigned int, unsigned int> > & setInStructurePoints );
+ * 	- void addStructureBorderPoints( const set< pair< unsigned int, unsigned int> > & setInStructureBorderPoints );
+ * 	- void addStructureNeighbourPoints( const set< pair< unsigned int, unsigned int> > & setInStructureNeighbourPoints );
+ * 	- void addStructurePoint( const pair< unsigned int, unsigned int> & pointInStructurePoint );
+ * 	- void addStructureBorderPoint( const pair< unsigned int, unsigned int> & pointInStructureBorderPoint );
+ * 	- void addStructureNeighbourPoint( const pair< unsigned int, unsigned int> & pointInStructureNeighbourPoint );
+ * 	- void deleteStructurePoints( const set< pair< unsigned int, unsigned int> > & setInStructurePoints );
+ * 	- void deleteStructureBorderPoints( const set< pair< unsigned int, unsigned int> > & setInStructureBorderPoints );
+ * 	- void deleteStructureNeighbourPoints( const set< pair< unsigned int, unsigned int> > & setInStructureNeighbourPoints );
+ * 	- void deleteStructurePoint( const pair< unsigned int, unsigned int> & pointInStructurePoint );
+ * 	- void deleteStructureBorderPoint( const pair< unsigned int, unsigned int> & pointInStructureBorderPoint );
+ * 	- void deleteStructureNeighbourPoint( const pair< unsigned int, unsigned int> & pointInStructureNeighbourPoint );
+ * 	- set< pair< unsigned int, unsigned int> > getStructurePointsPair() const;
+ * 	- set< pair< unsigned int, unsigned int> > getStructureBorderPointsPair() const;
+ * 	- set< pair< unsigned int, unsigned int> > getStructureNeighbourPointsPair() const;
+ * 	- bool isStructurePoint( const cVectorPosition & pointInStructurePoint ) const;
+ * 	- bool isStructureBorderPoint( const cVectorPosition & pointInStructureBorderPoint ) const;
+ * 	- bool isStructureNeighbourPoint( const cVectorPosition & pointInStructureNeighbourPoint ) const;
+ * 	- bool isStructurePoint( const pair< unsigned int, unsigned int> & pointInStructurePoint ) const;
+ * 	- bool isStructureBorderPoint( const pair< unsigned int, unsigned int> & pointInStructureBorderPoint ) const;
+ * 	- bool isStructureNeighbourPoint( const pair< unsigned int, unsigned int> & pointInStructureNeighbourPoint ) const;
+ *
  *
  * @param ulTestphase a reference to the number for the test phase
  * @return the number of errors occured in the test
@@ -519,80 +1104,16 @@ int testImageStructurePoints( unsigned long &ulTestphase ){
 		iReturn++;
 	}
 	
-	if ( ! pImageStructure->isAntialised() ){
-		cout<<"The image structure is correctly not antialised."<<endl;
-	}else{
-		cerr<<"Error: The image structure is antialised, but shouldn't be."<<endl;
-		iReturn++;
-	}
-	{
-		set<cVectorPosition> structorPointsRet =
-			pImageStructure->getStructurePoints();
-		if ( structurePoints == structorPointsRet ){
-			cout<<"The image structure points are correct."<<endl;
-		}else{
-			cerr<<"Error: The image structure points are not correct."<<endl;
-			comparePoints( structurePoints, structorPointsRet );
-			iReturn++;
-		}
-		
-		const set<cVectorPosition> & structorPointsRetConst =
-			pImageStructureConst->getStructurePointsConst();
-		if ( structurePoints == structorPointsRetConst ){
-			cout<<"The const image structure points are correct."<<endl;
-		}else{
-			cerr<<"Error: The const image structure points are not correct."<<endl;
-			comparePoints( structurePoints, structorPointsRetConst );
-			iReturn++;
-		}
-		
-		set<cVectorPosition> structorBorderPointsRet =
-			pImageStructure->getStructureBorderPoints();
-		if ( structureBorderPoints == structorBorderPointsRet ){
-			cout<<"The image structure border points are correct."<<endl;
-		}else{
-			cerr<<"Error: The image structure border points are not correct."<<endl;
-			comparePoints( structureBorderPoints, structorBorderPointsRet );
-			iReturn++;
-		}
-		
-		const set<cVectorPosition> & structorBorderPointsRetConst =
-			pImageStructureConst->getStructureBorderPointsConst();
-		if ( structureBorderPoints == structorBorderPointsRetConst ){
-			cout<<"The image structure const border points are correct."<<endl;
-		}else{
-			cerr<<"Error: The image structure const border points are not correct."<<endl;
-			comparePoints( structureBorderPoints, structorBorderPointsRetConst );
-			iReturn++;
-		}
-		
-		set<cVectorPosition> structureNeighbourPointsRet =
-			pImageStructure->getStructureNeighbourPoints();
-		if ( structureNeighbourPoints == structureNeighbourPointsRet ){
-			cout<<"The image structure neighbour points are correct."<<endl;
-		}else{
-			cerr<<"Error: The image structure neighbour points are not correct."<<endl;
-			comparePoints( structureNeighbourPoints, structureNeighbourPointsRet );
-			iReturn++;
-		}
-		
-		const set<cVectorPosition> & structureNeighbourPointsRetConst =
-			pImageStructureConst->getStructureNeighbourPointsConst();
-		if ( structureNeighbourPoints == structureNeighbourPointsRetConst ){
-			cout<<"The image structure const neighbour points are correct."<<endl;
-		}else{
-			cerr<<"Error: The image structure const neighbour points are not correct."<<endl;
-			comparePoints( structureNeighbourPoints, structureNeighbourPointsRetConst );
-			iReturn++;
-		}
-		
-	}
+	//check structure members and get methods
+	iReturn += checkStructureValues( pImageStructureConst,
+			bIsAntialised, structurePoints,
+			structureBorderPoints, structureNeighbourPoints );
 	
 	for ( unsigned int uiActualIteration = 0;
 			uiActualIteration < MAX_ITERATION; uiActualIteration++ ){
 		cout<<endl;
 		//call random change method
-		const unsigned int uiChangeMethod = rand() % 19;
+		const unsigned int uiChangeMethod = rand() % 28;
 		switch ( uiChangeMethod ){
 			case 0:{
 				const unsigned int uiSetAntialised = rand() % 3;
@@ -625,7 +1146,7 @@ int testImageStructurePoints( unsigned long &ulTestphase ){
 				for ( unsigned int uiActualPoint = 0;
 						uiActualPoint < uiNumberOfPointsToSet; uiActualPoint++ ){
 					
-					cVectorPosition vecGeneratedPoint = generateRandomPoint();
+					const cVectorPosition vecGeneratedPoint = generateRandomPoint();
 					vecGeneratedPoint.storeXml( cout );
 				
 					setPointsToSet.insert( vecGeneratedPoint );
@@ -654,19 +1175,56 @@ int testImageStructurePoints( unsigned long &ulTestphase ){
 			case 6:{
 				//generate points to set
 				const unsigned int uiNumberOfPointsToSet = rand() % 64;
+				cout<<"setting pair points (setPointsToSet):"<<endl;
+				set< pair< unsigned int, unsigned int> > setPointsToSet;
+				for ( unsigned int uiActualPoint = 0;
+						uiActualPoint < uiNumberOfPointsToSet; uiActualPoint++ ){
+					
+					const pair< unsigned int, unsigned int> vecGeneratedPoint =
+						generateRandomPointPair();
+					cout<<" ("<<vecGeneratedPoint.first<<", "<<vecGeneratedPoint.second<<" );";
+				
+					setPointsToSet.insert( vecGeneratedPoint );
+				}
+				cout<<endl;
+				
+				switch ( uiChangeMethod ){
+					case 4:
+						cout<<"pImageStructure->setStructurePoints( setPointsToSet );"<<endl;
+						pImageStructure->setStructurePoints( setPointsToSet );
+						structurePoints = toVector( setPointsToSet );
+					break;
+					case 5:
+						cout<<"pImageStructure->setStructureBorderPoints( setPointsToSet );"<<endl;
+						pImageStructure->setStructureBorderPoints( setPointsToSet );
+						structureBorderPoints = toVector( setPointsToSet );
+					break;
+					case 6:
+						cout<<"pImageStructure->setStructureNeighbourPoints( setPointsToSet );"<<endl;
+						pImageStructure->setStructureNeighbourPoints( setPointsToSet );
+						structureNeighbourPoints = toVector( setPointsToSet );
+					break;
+				}
+			}break;
+
+			case 7:
+			case 8:
+			case 9:{
+				//generate points to set
+				const unsigned int uiNumberOfPointsToSet = rand() % 64;
 				cout<<"adding points ( setPointsToAdd ):"<<endl;
 				set<cVectorPosition> setPointsToAdd;
 				for ( unsigned int uiActualPoint = 0;
 						uiActualPoint < uiNumberOfPointsToSet; uiActualPoint++ ){
 					
-					cVectorPosition vecGeneratedPoint = generateRandomPoint();
+					const cVectorPosition vecGeneratedPoint = generateRandomPoint();
 					vecGeneratedPoint.storeXml( cout );
 				
 					setPointsToAdd.insert( vecGeneratedPoint );
 				}
 				
 				switch ( uiChangeMethod ){
-					case 4:
+					case 7:
 						cout<<"pImageStructure->addStructurePoints( setPointsToAdd );"<<endl;
 						pImageStructure->addStructurePoints( setPointsToAdd );
 						
@@ -677,7 +1235,7 @@ int testImageStructurePoints( unsigned long &ulTestphase ){
 							structurePoints.insert( *itrPointToAdd );
 						}
 					break;
-					case 5:
+					case 8:
 						cout<<"pImageStructure->addStructureBorderPoints( setPointsToAdd );"<<endl;
 						pImageStructure->addStructureBorderPoints( setPointsToAdd );
 						
@@ -688,7 +1246,7 @@ int testImageStructurePoints( unsigned long &ulTestphase ){
 							structureBorderPoints.insert( *itrPointToAdd );
 						}
 					break;
-					case 6:
+					case 9:
 						cout<<"pImageStructure->addStructureNeighbourPoints( setPointsToAdd );"<<endl;
 						pImageStructure->addStructureNeighbourPoints( setPointsToAdd );
 						
@@ -701,29 +1259,85 @@ int testImageStructurePoints( unsigned long &ulTestphase ){
 					break;
 				}
 			}break;
-			case 7:
-			case 8:
-			case 9:{
+			
+			case 10:
+			case 11:
+			case 12:{
+				//generate points to set
+				const unsigned int uiNumberOfPointsToSet = rand() % 64;
+				cout<<"adding pair points ( setPointsToAdd ):"<<endl;
+				set< pair< unsigned int, unsigned int> > setPointsToAdd;
+				for ( unsigned int uiActualPoint = 0;
+						uiActualPoint < uiNumberOfPointsToSet; uiActualPoint++ ){
+					
+					const pair< unsigned int, unsigned int> vecGeneratedPoint =
+						generateRandomPointPair();
+					cout<<" ("<<vecGeneratedPoint.first<<", "<<vecGeneratedPoint.second<<" );";
+				
+					setPointsToAdd.insert( vecGeneratedPoint );
+				}
+				cout<<endl;
+				
+				switch ( uiChangeMethod ){
+					case 10:
+						cout<<"pImageStructure->addStructurePoints( setPointsToAdd );"<<endl;
+						pImageStructure->addStructurePoints( setPointsToAdd );
+						
+						for ( set< pair< unsigned int, unsigned int> >::iterator
+								itrPointToAdd = setPointsToAdd.begin();
+								itrPointToAdd != setPointsToAdd.end(); itrPointToAdd++ ){
+							
+							structurePoints.insert( toVector( *itrPointToAdd ) );
+						}
+					break;
+					case 11:
+						cout<<"pImageStructure->addStructureBorderPoints( setPointsToAdd );"<<endl;
+						pImageStructure->addStructureBorderPoints( setPointsToAdd );
+						
+						for ( set< pair< unsigned int, unsigned int> >::iterator
+								itrPointToAdd = setPointsToAdd.begin();
+								itrPointToAdd != setPointsToAdd.end(); itrPointToAdd++ ){
+							
+							structureBorderPoints.insert( toVector( *itrPointToAdd ) );
+						}
+					break;
+					case 12:
+						cout<<"pImageStructure->addStructureNeighbourPoints( setPointsToAdd );"<<endl;
+						pImageStructure->addStructureNeighbourPoints( setPointsToAdd );
+						
+						for ( set< pair< unsigned int, unsigned int> >::iterator
+								itrPointToAdd = setPointsToAdd.begin();
+								itrPointToAdd != setPointsToAdd.end(); itrPointToAdd++ ){
+							
+							structureNeighbourPoints.insert( toVector( *itrPointToAdd ) );
+						}
+					break;
+				}
+			}break;
+			
+			case 13:
+			case 14:
+			case 15:{
 				//generate points to set
 				cout<<"adding point ( vecGeneratedPoint ):"<<endl;
 				
-				cVectorPosition vecGeneratedPoint = generateRandomPoint();
+				const cVectorPosition vecGeneratedPoint = generateRandomPoint();
 				vecGeneratedPoint.storeXml( cout );
 				
 				switch ( uiChangeMethod ){
-					case 7:
+					case 13:
 						cout<<"pImageStructure->addStructurePoint( vecGeneratedPoint );"<<endl;
 						pImageStructure->addStructurePoint( vecGeneratedPoint );
 						
 						structurePoints.insert( vecGeneratedPoint );
 					break;
-					case 8:
+					case 14:
 						cout<<"pImageStructure->addStructureBorderPoint( vecGeneratedPoint );"<<endl;
 						pImageStructure->addStructureBorderPoint( vecGeneratedPoint );
 						
 						structureBorderPoints.insert( vecGeneratedPoint );
 					break;
-					case 9:
+					case 15:
 						cout<<"pImageStructure->addStructureNeighbourPoint( vecGeneratedPoint );"<<endl;
 						pImageStructure->addStructureNeighbourPoint( vecGeneratedPoint );
 						
@@ -731,7 +1345,39 @@ int testImageStructurePoints( unsigned long &ulTestphase ){
 					break;
 				}
 			}break;
-			case 10:{
+			case 16:
+			case 17:
+			case 18:{
+				//generate points to set
+				
+				const pair< unsigned int, unsigned int> vecGeneratedPoint =
+					generateRandomPointPair();
+				cout<<"adding pair point ( vecGeneratedPoint=("<<vecGeneratedPoint.first<<
+					", "<<vecGeneratedPoint.second<<" ):"<<endl;
+				
+				switch ( uiChangeMethod ){
+					case 16:
+						cout<<"pImageStructure->addStructurePoint( vecGeneratedPoint );"<<endl;
+						pImageStructure->addStructurePoint( vecGeneratedPoint );
+						
+						structurePoints.insert( toVector( vecGeneratedPoint ) );
+					break;
+					case 17:
+						cout<<"pImageStructure->addStructureBorderPoint( vecGeneratedPoint );"<<endl;
+						pImageStructure->addStructureBorderPoint( vecGeneratedPoint );
+						
+						structureBorderPoints.insert( toVector( vecGeneratedPoint ) );
+					break;
+					case 18:
+						cout<<"pImageStructure->addStructureNeighbourPoint( vecGeneratedPoint );"<<endl;
+						pImageStructure->addStructureNeighbourPoint( vecGeneratedPoint );
+						
+						structureNeighbourPoints.insert( toVector( vecGeneratedPoint ) );
+					break;
+				}
+			}break;
+			
+			case 19:{
 				//choose points to delete
 				set<cVectorPosition> setPointsToDelete;
 				const unsigned int uiNumberOfPointsToDelete =
@@ -769,11 +1415,16 @@ int testImageStructurePoints( unsigned long &ulTestphase ){
 						structurePoints.erase( vecGeneratedPoint );
 					}
 				}
-				cout<<"pImageStructure->deleteStructurePoints( setPointsToDelete );"<<endl;
-				pImageStructure->deleteStructurePoints( setPointsToDelete );
+				if ( rand() % 2 ){
+					cout<<"pImageStructure->deleteStructurePoints( setPointsToDelete );"<<endl;
+					pImageStructure->deleteStructurePoints( setPointsToDelete );
+				}else{
+					cout<<"pImageStructure->deleteStructurePoints( toPair( setPointsToDelete) );"<<endl;
+					pImageStructure->deleteStructurePoints( toPair( setPointsToDelete ) );
+				}
 				
 			}break;
-			case 11:{
+			case 20:{
 				//choose points to delete
 				set<cVectorPosition> setPointsToDelete;
 				const unsigned int uiNumberOfPointsToDelete =
@@ -811,11 +1462,16 @@ int testImageStructurePoints( unsigned long &ulTestphase ){
 						structureBorderPoints.erase( vecGeneratedPoint );
 					}
 				}
-				cout<<"pImageStructure->deleteStructureBorderPoints( setPointsToDelete );"<<endl;
-				pImageStructure->deleteStructureBorderPoints( setPointsToDelete );
+				if ( rand() % 2 ){
+					cout<<"pImageStructure->deleteStructureBorderPoints( setPointsToDelete );"<<endl;
+					pImageStructure->deleteStructureBorderPoints( setPointsToDelete );
+				}else{
+					cout<<"pImageStructure->deleteStructureBorderPoints( toPair( setPointsToDelete) );"<<endl;
+					pImageStructure->deleteStructureBorderPoints( toPair( setPointsToDelete ) );
+				}
 				
 			}break;
-			case 12:{
+			case 21:{
 				//choose points to delete
 				set<cVectorPosition> setPointsToDelete;
 				const unsigned int uiNumberOfPointsToDelete =
@@ -853,12 +1509,17 @@ int testImageStructurePoints( unsigned long &ulTestphase ){
 						structureNeighbourPoints.erase( vecGeneratedPoint );
 					}
 				}
-				cout<<"pImageStructure->deleteStructureNeighbourPoints( setPointsToDelete );"<<endl;
-				pImageStructure->deleteStructureNeighbourPoints( setPointsToDelete );
+				if ( rand() % 2 ){
+					cout<<"pImageStructure->deleteStructureNeighbourPoints( setPointsToDelete );"<<endl;
+					pImageStructure->deleteStructureNeighbourPoints( setPointsToDelete );
+				}else{
+					cout<<"pImageStructure->deleteStructureNeighbourPoints( toPair( setPointsToDelete) );"<<endl;
+					pImageStructure->deleteStructureNeighbourPoints( toPair( setPointsToDelete ) );
+				}
 				
 			}break;
 			
-			case 13:{
+			case 22:{
 				//choose points to delete
 				cVectorPosition vecPointToDelete;
 				
@@ -889,11 +1550,16 @@ int testImageStructurePoints( unsigned long &ulTestphase ){
 					structurePoints.erase( vecPointToDelete );
 				}
 				
-				cout<<"pImageStructure->deleteStructurePoint( vecPointToDelete );"<<endl;
-				pImageStructure->deleteStructurePoint( vecPointToDelete );
+				if ( rand() % 2 ){
+					cout<<"pImageStructure->deleteStructurePoint( vecPointToDelete );"<<endl;
+					pImageStructure->deleteStructurePoint( vecPointToDelete );
+				}else{
+					cout<<"pImageStructure->deleteStructurePoint( toPair( vecPointToDelete) );"<<endl;
+					pImageStructure->deleteStructurePoint( toPair( vecPointToDelete ) );
+				}
 				
 			}break;
-			case 14:{
+			case 23:{
 				//choose points to delete
 				cVectorPosition vecPointToDelete;
 				
@@ -924,11 +1590,16 @@ int testImageStructurePoints( unsigned long &ulTestphase ){
 					structureBorderPoints.erase( vecPointToDelete );
 				}
 				
-				cout<<"pImageStructure->deleteStructureBorderPoint( vecPointToDelete );"<<endl;
-				pImageStructure->deleteStructureBorderPoint( vecPointToDelete );
+				if ( rand() % 2 ){
+					cout<<"pImageStructure->deleteStructureBorderPoint( vecPointToDelete );"<<endl;
+					pImageStructure->deleteStructureBorderPoint( vecPointToDelete );
+				}else{
+					cout<<"pImageStructure->deleteStructureBorderPoint( toPair( vecPointToDelete) );"<<endl;
+					pImageStructure->deleteStructureBorderPoint( toPair( vecPointToDelete ) );
+				}
 				
 			}break;
-			case 15:{
+			case 24:{
 				//choose points to delete
 				cVectorPosition vecPointToDelete;
 				
@@ -959,11 +1630,16 @@ int testImageStructurePoints( unsigned long &ulTestphase ){
 					structureNeighbourPoints.erase( vecPointToDelete );
 				}
 				
-				cout<<"pImageStructure->deleteStructureNeighbourPoint( vecPointToDelete );"<<endl;
-				pImageStructure->deleteStructureNeighbourPoint( vecPointToDelete );
+				if ( rand() % 2 ){
+					cout<<"pImageStructure->deleteStructureNeighbourPoint( vecPointToDelete );"<<endl;
+					pImageStructure->deleteStructureNeighbourPoint( vecPointToDelete );
+				}else{
+					cout<<"pImageStructure->deleteStructureNeighbourPoint( toPair( vecPointToDelete) );"<<endl;
+					pImageStructure->deleteStructureNeighbourPoint( toPair( vecPointToDelete ) );
+				}
 				
 			}break;
-			case 16:{//use copy constructor
+			case 25:{//use copy constructor
 				cout<<"c"<<getActualClassName()<<"( *pImageStructure );"<<endl;
 				cImageStructure * pImageStructureCopy = copyImageStructure(
 					pImageStructure );
@@ -972,7 +1648,7 @@ int testImageStructurePoints( unsigned long &ulTestphase ){
 				pImageStructure = pImageStructureCopy;
 				pImageStructureConst = pImageStructure;
 			}break;
-			case 17:{//use clone
+			case 26:{//use clone
 				cout<<"pImageStructure->clone();"<<endl;
 				cImageStructure * pImageStructureCopy =
 					pImageStructure->clone();
@@ -981,7 +1657,7 @@ int testImageStructurePoints( unsigned long &ulTestphase ){
 				pImageStructure = pImageStructureCopy;
 				pImageStructureConst = pImageStructure;
 			}break;
-			case 18:{//test store and restore
+			case 27:{//test store and restore
 				
 				//create file name wher to store
 				static unsigned int uiXmlFileIteration = 0;
@@ -1027,83 +1703,10 @@ int testImageStructurePoints( unsigned long &ulTestphase ){
 			}break;
 			
 		}
-		
-		
-		//test the members of the class
-		if ( getActualClassName() != pImageStructure->getName() ){
-			cerr<<"Error: The image structure class name is \""<<
-				pImageStructure->getName()<<"\", but should be \""<<
-				getActualClassName()<<"\"."<<endl;
-			iReturn++;
-		}
-		if ( pImageStructure->isAntialised() != bIsAntialised ){
-			cerr<<"Error: The image structure "<<getActualClassName()<<
-				" is "<<(pImageStructure->isAntialised()?"":"not ")<<
-				"antialised, but should"<<(bIsAntialised?"":"n't")<<" be."<<endl;
-			bIsAntialised = pImageStructure->isAntialised();
-			iReturn++;
-		}
-		
-		//check the area points
-		set<cVectorPosition> structorPointsRet =
-			pImageStructure->getStructurePoints();
-		if ( structurePoints == structorPointsRet ){
-			cout<<"The image structure points are correct."<<endl;
-		}else{
-			cerr<<"Error: The image structure points are not correct."<<endl;
-			comparePoints( structurePoints, structorPointsRet );
-			iReturn++;
-		}
-		
-		const set<cVectorPosition> & structorPointsRetConst =
-			pImageStructureConst->getStructurePointsConst();
-		if ( structurePoints == structorPointsRetConst ){
-			cout<<"The const image structure points are correct."<<endl;
-		}else{
-			cerr<<"Error: The const image structure points are not correct."<<endl;
-			comparePoints( structurePoints, structorPointsRetConst );
-			iReturn++;
-		}
-		//check the area borders points
-		set<cVectorPosition> structorBorderPointsRet =
-			pImageStructure->getStructureBorderPoints();
-		if ( structureBorderPoints == structorBorderPointsRet ){
-			cout<<"The image structure border points are correct."<<endl;
-		}else{
-			cerr<<"Error: The image structure border points are not correct."<<endl;
-			comparePoints( structureBorderPoints, structorBorderPointsRet );
-			iReturn++;
-		}
-		
-		const set<cVectorPosition> & structorBorderPointsRetConst =
-			pImageStructureConst->getStructureBorderPointsConst();
-		if ( structureBorderPoints == structorBorderPointsRetConst ){
-			cout<<"The image structure const border points are correct."<<endl;
-		}else{
-			cerr<<"Error: The image structure const border points are not correct."<<endl;
-			comparePoints( structureBorderPoints, structorBorderPointsRetConst );
-			iReturn++;
-		}
-		//check the area neighbour points
-		set<cVectorPosition> structureNeighbourPointsRet =
-			pImageStructure->getStructureNeighbourPoints();
-		if ( structureNeighbourPoints == structureNeighbourPointsRet ){
-			cout<<"The image structure neighbour points are correct."<<endl;
-		}else{
-			cerr<<"Error: The image structure neighbour points are not correct."<<endl;
-			comparePoints( structureNeighbourPoints, structureNeighbourPointsRet );
-			iReturn++;
-		}
-		
-		const set<cVectorPosition> & structureNeighbourPointsRetConst =
-			pImageStructureConst->getStructureNeighbourPointsConst();
-		if ( structureNeighbourPoints == structureNeighbourPointsRetConst ){
-			cout<<"The image structure const neighbour points are correct."<<endl;
-		}else{
-			cerr<<"Error: The image structure const neighbour points are not correct."<<endl;
-			comparePoints( structureNeighbourPoints, structureNeighbourPointsRetConst );
-			iReturn++;
-		}
+		//check structure members and get methods
+		iReturn += checkStructureValues( pImageStructureConst,
+				bIsAntialised, structurePoints,
+				structureBorderPoints, structureNeighbourPoints );
 		
 	}//end iterate random test
 	delete pImageStructure;
@@ -1582,54 +2185,62 @@ unsigned int testConvertForObject( const string szActualImageStructureData,
 			
 			//compare the properties
 			list< cVectorProperty >::const_iterator
-				itrProperty1 = itrActualPoint->second.begin();
+				itrPropertyEvalued = itrActualPoint->second.begin();
 			list< cVectorProperty >::const_iterator
-				itrProperty2 = itrLoadedPoint->second.begin();
+				itrPropertyLoaded = itrLoadedPoint->second.begin();
 			/* normaly just one point should exists, if more exists
 			 * (transparency) the order is important*/
 			unsigned int uiNumberOfProperty = 1;
-			for ( ; (itrProperty1 != itrActualPoint->second.end() ) &&
-					(itrProperty2 != itrLoadedPoint->second.end() );
-					itrProperty1++, itrProperty2++, uiNumberOfProperty++ ){
+			while ( (itrPropertyEvalued != itrActualPoint->second.end() ) &&
+					(itrPropertyLoaded != itrLoadedPoint->second.end() ) ){
 				
 				bool bErrorOccured = false;
 			
-				if ( itrProperty1->getPropertyType() == cTypeProperty::TRANSPARENCY ){
+				if ( itrPropertyLoaded->getPropertyType() == cTypeProperty::TRANSPARENCY ){
 					/*the transparency property for the antialising do not have
 					 to match perfect*/
-					if ( itrProperty2->getPropertyType() != cTypeProperty::TRANSPARENCY ){
+					if ( itrPropertyEvalued->getPropertyType() != cTypeProperty::TRANSPARENCY ){
 						//error not both transparency properties
+						if ( itrPropertyLoaded->getValue( 1 ) < 0.01 ){
+							//take point as not transparent -> not needed for evalued point
+							itrPropertyLoaded++;
+							continue;
+						}
 						bErrorOccured = true;
-					}else if ( ( itrProperty1->getNumberOfElements() != 1 ) ||
-							( itrProperty2->getNumberOfElements() != 1 ) ){
+					}else if ( ( itrPropertyEvalued->getNumberOfElements() != 1 ) ||
+							( itrPropertyLoaded->getNumberOfElements() != 1 ) ){
 						//error not correct transparency properties
 						bErrorOccured = true;
-					}else if ( itrProperty1->getValue( 1 ) <
-								( ( itrProperty2->getValue( 1 ) - 0.2 ) ) &&
-							( ( itrProperty2->getValue( 1 ) + 0.2 ) <
-								itrProperty1->getValue( 1 ) ) ){
+					}else if ( itrPropertyEvalued->getValue( 1 ) <
+								( ( itrPropertyLoaded->getValue( 1 ) - 0.2 ) ) &&
+							( ( itrPropertyLoaded->getValue( 1 ) + 0.2 ) <
+								itrPropertyEvalued->getValue( 1 ) ) ){
 						/* if ( valueCorrect - 0.2 =< valueEvalued =< valueCorrect + 0.2 ) ->
 						 * a 0.2 = 20 per cent margin of error for evalued value allowed;
 						 * error not "equal" transparency properties*/
 						bErrorOccured = true;
 					}//else no error
 					
-				}else if ( ! ( (*itrProperty1) == (*itrProperty2) ) ){
+				}else if ( ! ( (*itrPropertyEvalued) == (*itrPropertyLoaded) ) ){
 					bErrorOccured = true;
 				}
 				
 				if ( bErrorOccured ){
 					cerr<<"Error: The "<< uiNumberOfProperty <<"'th property isn't equal."<<endl;
-					cerr<<"Point for property: "<<endl;
+					cerr<<"Point for property:"<<endl;
 					itrActualPoint->first.storeXml( cerr );
 					cerr<<"   correct property:"<<endl;
-					itrProperty2->storeXml( cerr );
+					itrPropertyLoaded->storeXml( cerr );
 					cerr<<"   evalued property:"<<endl;
-					itrProperty1->storeXml( cerr );
+					itrPropertyEvalued->storeXml( cerr );
 					
 					iReturn++;
 				}
-			}
+				//check next property
+				itrPropertyEvalued++;
+				itrPropertyLoaded++;
+				uiNumberOfProperty++;
+			}//for all properties of the point
 			
 		}else{//point not found in area -> check if it is overwritten
 			const longFib lX = roundToLongFib(

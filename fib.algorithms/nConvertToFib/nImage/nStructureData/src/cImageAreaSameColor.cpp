@@ -44,7 +44,7 @@ History:
 
 
 //switches for debugging proposes
-#define DEBUG
+//#define DEBUG
 
 
 using namespace fib::algorithms::nConvertToFib::nImage::nStructureData;
@@ -155,6 +155,309 @@ cImageAreaSameColor * cImageAreaSameColor::clone() const{
 	
 	return new cImageAreaSameColor( *this );
 }
+
+/**
+ * This method returns the number of properties for the image structure
+ * point.
+ *
+ * @param bEvenIfOutside if false points outside this image structure
+ * 	( getStructurePoints() ) will be ignored (return value 0), else
+ * 	it works as if the given point was included in this image structure
+ * @param vecPoint the point for which to return the number of
+ * 	properties
+ * @return the number of property vectors for the given position
+ */
+unsigned int cImageAreaSameColor::getNumberOfProperties( const bool bEvenIfOutside,
+		const cVectorPosition vecPoint ) const{
+	
+	if ( bEvenIfOutside || isStructurePoint( vecPoint ) ){
+		return 1;
+	}//else
+	return 0;
+}
+
+
+/**
+ * This method returns the number of properties for the image structure
+ * point.
+ *
+ * @param bEvenIfOutside if false points outside this image structure
+ * 	( getStructurePoints() ) will be ignored (return value 0), else
+ * 	it works as if the given point was included in this image structure
+ * @param point the point for which to return the number of
+ * 	properties
+ * @return the number of property vectors for the given position
+ */
+unsigned int cImageAreaSameColor::getNumberOfProperties( const bool bEvenIfOutside,
+		const pair< unsigned int, unsigned int> point ) const{
+	
+	if ( bEvenIfOutside || isStructurePoint( point ) ){
+		return 1;
+	}//else
+	return 0;
+}
+
+/**
+ * This method returns the number of the uiPropertyNumber'th property
+ * type for the image structure point.
+ * @see cTypeProperty
+ * @see getPropertyNumberForType()
+ *
+ * @param uiPropertyNumber the number of the property to return the type of;
+ * 	counting starts with 1; @see getNumberOfProperties()
+ * @param bEvenIfOutside if false points outside this image structure
+ * 	( getStructurePoints() ) will be ignored (return value 0), else
+ * 	it works as if the given point was included in this image structure
+ * @param vecPoint the point for which to return the number of
+ * 	the type of the property
+ * @return the number of the type of the uiPropertyNumber'th property
+ * 	on the given position, or 0 (cTypeProperty::NONE) if non exists
+ * 	@see cTypeProperty
+ */
+unsigned int cImageAreaSameColor::getPropertyType( const unsigned int uiPropertyNumber,
+		const bool bEvenIfOutside, const cVectorPosition vecPoint ) const{
+	
+	if ( ( uiPropertyNumber == 1 ) &&
+			( bEvenIfOutside || isStructurePoint( vecPoint ) ) ){
+		//return the property type
+		return vecColor.getPropertyType();
+	}//else
+	return cTypeProperty::NONE;
+}
+
+
+/**
+ * This method returns the number of the uiPropertyNumber'th property
+ * type for the image structure point.
+ * @see cTypeProperty
+ * @see getPropertyNumberForType()
+ *
+ * @param uiPropertyNumber the number of the property to return the type of;
+ * 	counting starts with 1; @see getNumberOfProperties()
+ * @param bEvenIfOutside if false points outside this image structure
+ * 	( getStructurePoints() ) will be ignored (return value 0), else
+ * 	it works as if the given point was included in this image structure
+ * @param point the point for which to return the number of
+ * 	the type of the property
+ * @return the number of the type of the uiPropertyNumber'th property
+ * 	on the given position, or 0 (cTypeProperty::NONE) if non exists
+ * 	@see cTypeProperty
+ */
+unsigned int cImageAreaSameColor::getPropertyType( const unsigned int uiPropertyNumber,
+		const bool bEvenIfOutside, const pair< unsigned int, unsigned int> point ) const{
+	
+	if ( ( uiPropertyNumber == 1 ) &&
+			( bEvenIfOutside || isStructurePoint( point ) ) ){
+		return vecColor.getPropertyType();
+	}//else
+	return cTypeProperty::NONE;
+}
+
+
+/**
+ * This method returns the property number for the given property type
+ * for the image position.
+ * @see cTypeProperty
+ * @see getPropertyType()
+ * @see getNumberOfProperties()
+ *
+ * @param uiPropertyType the type number of the property to return the
+ * 	number of (e. g. cTypeProperty::COLOR_RGB )
+ * @param bEvenIfOutside if false points outside this image structure
+ * 	( getStructurePoints() ) will be ignored (return value 0), else
+ * 	it works as if the given point was included in this image structure
+ * @param vecPoint the point for which to return the number of
+ * 	the property of the given type
+ * @return the number for the given property type for the image position,
+ * 	or 0 if no such property extists
+ * 	@see cTypeProperty
+ */
+unsigned int cImageAreaSameColor::getPropertyNumberForType( const unsigned int uiPropertyType,
+		const bool bEvenIfOutside, const cVectorPosition vecPoint ) const{
+	
+	if ( bEvenIfOutside || isStructurePoint( vecPoint ) ){
+		return ( vecColor.getPropertyType() == uiPropertyType )? 1 : 0;
+	}//else
+	return 0;
+}
+
+
+/**
+ * This method returns the property number for the given property type
+ * for the image position.
+ * @see cTypeProperty
+ * @see getPropertyType()
+ * @see getNumberOfProperties()
+ *
+ * @param uiPropertyType the type number of the property to return the
+ * 	number of (e. g. cTypeProperty::COLOR_RGB )
+ * @param bEvenIfOutside if false points outside this image structure
+ * 	( getStructurePoints() ) will be ignored (return value 0), else
+ * 	it works as if the given point was included in this image structure
+ * @param point the point for which to return the number of
+ * 	the property of the given type
+ * @return the number for the given property type for the image position,
+ * 	or 0 if no such property extists
+ * 	@see cTypeProperty
+ */
+unsigned int cImageAreaSameColor::getPropertyNumberForType( const unsigned int uiPropertyType,
+		const bool bEvenIfOutside, const pair< unsigned int, unsigned int> point ) const{
+	
+	if ( bEvenIfOutside || isStructurePoint( point ) ){
+		return ( vecColor.getPropertyType() == uiPropertyType )? 1 : 0;
+	}//else
+	return 0;
+}
+
+
+/**
+ * With this method the properties for given point are returned.
+ * (Antialising will be ignored. @see bIsAntialised )
+ *
+ * @param vecPoint the point, for which the properties should be returned
+ * @param bEvenIfOutside if false points outside this image structure
+ * 	( getStructurePoints() ) will be ignored (return empty list), else
+ * 	it works as if the given point was included in this image structure
+ * @return a list of the properties of the point
+ */
+list<cVectorProperty> cImageAreaSameColor::getPointProperties(
+		const cVectorPosition & vecPoint, const bool bEvenIfOutside ) const{
+	
+	if ( bEvenIfOutside || isStructurePoint( vecPoint ) ){
+		return list<cVectorProperty>( 1, vecColor );
+	}//else
+	return list<cVectorProperty>();
+}
+
+
+/**
+ * With this method the properties for given point are returned.
+ * (Antialising will be ignored. @see bIsAntialised )
+ *
+ * @param point the point, for which the properties should be
+ * 	returned
+ * @param bEvenIfOutside if false points outside this image structure
+ * 	( getStructurePoints() ) will be ignored (return empty list), else
+ * 	it works as if the given point was included in this image structure
+ * @return a list of the properties of the point
+ */
+list<cVectorProperty> cImageAreaSameColor::getPointProperties(
+		const pair< unsigned int, unsigned int> & point,
+		const bool bEvenIfOutside ) const{
+	
+	if ( bEvenIfOutside || isStructurePoint( point ) ){
+		return list<cVectorProperty>( 1, vecColor );
+	}//else
+	return list<cVectorProperty>();
+}
+
+
+/**
+ * This method returns the property of the given type for the given image
+ * structure point.
+ * (Antialising will be ignored. @see bIsAntialised )
+ *
+ * @param vecPoint the point of which to return the property vector
+ * @param uiPropertyType the type number of the property to return
+ * 	(e. g. cTypeProperty::COLOR_RGB ) @see cTypeProperty
+ * @param bEvenIfOutside if false points outside this image structure
+ * 	( getStructurePoints() ) will be ignored (return cTypeProperty::NONE),
+ * 	 else it works as if the given point was included in this image structure
+ * @return the property for the given type uiPropertyType for the given
+ * 	point or the property of type cTypeProperty::NONE if non exists
+ */
+cVectorProperty cImageAreaSameColor::getProperty( const cVectorPosition & vecPoint,
+		const unsigned int uiPropertyType, const bool bEvenIfOutside ) const{
+	
+	if ( bEvenIfOutside || isStructurePoint( vecPoint ) ){
+		if ( vecColor.getPropertyType() == uiPropertyType ){
+			return vecColor;
+		}
+	}//else
+	return cVectorProperty( cTypeProperty::NONE );
+}
+
+
+/**
+ * This method returns the property of the given type for the given image
+ * structure point.
+ * (Antialising will be ignored. @see bIsAntialised )
+ *
+ * @param point the point of which to return the property vector
+ * @param uiPropertyType the type number of the property to return
+ * 	(e. g. cTypeProperty::COLOR_RGB ) @see cTypeProperty
+ * @param bEvenIfOutside if false points outside this image structure
+ * 	( getStructurePoints() ) will be ignored (return cTypeProperty::NONE),
+ * 	 else it works as if the given point was included in this image structure
+ * @return the property for the given type uiPropertyType for the given
+ * 	point or the property of type cTypeProperty::NONE if non exists
+ */
+cVectorProperty cImageAreaSameColor::getProperty(
+		const pair< unsigned int, unsigned int> & point,
+		const unsigned int uiPropertyType, const bool bEvenIfOutside ) const{
+	
+	if ( bEvenIfOutside || isStructurePoint( point ) ){
+		if ( vecColor.getPropertyType() == uiPropertyType ){
+			return vecColor;
+		}
+	}//else
+	return cVectorProperty( cTypeProperty::NONE );
+}
+
+
+/**
+ * This method returns the uiPropertyNumber'th property for the given image
+ * structure point.
+ * (Antialising will be ignored. @see bIsAntialised )
+ *
+ * @param vecPoint the point of which to return the property vector
+ * @param uiPropertyNumber the number of the property to return;
+ * 	counting starts with 1; @see getNumberOfProperties()
+ * @param bEvenIfOutside if false points outside this image structure
+ * 	( getStructurePoints() ) will be ignored (return cTypeProperty::NONE),
+ * 	 else it works as if the given point was included in this image structure
+ * @return the uiPropertyNumber'th property from the given position or the
+ * 	property of type cTypeProperty::NONE if non exists
+ */
+cVectorProperty cImageAreaSameColor::getPropertyForNumber(
+		const cVectorPosition & vecPoint,
+		const unsigned int uiPropertyNumber, const bool bEvenIfOutside ) const{
+	
+	if ( bEvenIfOutside || isStructurePoint( vecPoint ) ){
+		if ( uiPropertyNumber == 1 ){
+			return vecColor;
+		}
+	}//else
+	return cVectorProperty( cTypeProperty::NONE );
+}
+
+
+/**
+ * This method returns the uiPropertyNumber'th property for the given image
+ * structure point.
+ * (Antialising will be ignored. @see bIsAntialised )
+ *
+ * @param point the point of which to return the property vector
+ * @param uiPropertyNumber the number of the property to return;
+ * 	counting starts with 1; @see getNumberOfProperties()
+ * @param bEvenIfOutside if false points outside this image structure
+ * 	( getStructurePoints() ) will be ignored (return cTypeProperty::NONE),
+ * 	 else it works as if the given point was included in this image structure
+ * @return the uiPropertyNumber'th property from the given position or the
+ * 	property of type cTypeProperty::NONE if non exists
+ */
+cVectorProperty cImageAreaSameColor::getPropertyForNumber(
+		const pair< unsigned int, unsigned int> & point,
+		const unsigned int uiPropertyNumber, const bool bEvenIfOutside ) const{
+	
+	if ( bEvenIfOutside || isStructurePoint( point ) ){
+		if ( uiPropertyNumber == 1 ){
+			return vecColor;
+		}
+	}//else
+	return cVectorProperty( cTypeProperty::NONE );
+}
+
 
 
 /**
@@ -391,6 +694,12 @@ cRoot * cImageAreaSameColor::convertToFib(
 		const cImageSearchData * pImageSearchData,
 		const double maxValue, const unsigned long ulMaxErrorPerPoint ) const{
 	
+#ifdef DEBUG
+	cout<<" cImageAreaSameColor::convertToFib( pImageSearchData, maxValue="<<
+		maxValue<<", ulMaxErrorPerPoint="<<ulMaxErrorPerPoint<<" ) started"<<endl;
+	cout<<"This object:"<<endl;
+	storeXml( cout );
+#endif //DEBUG
 	const double maxErrorPerValue = ulMaxErrorPerPoint;
 	
 	//convert this object into a external object area
@@ -398,6 +707,10 @@ cRoot * cImageAreaSameColor::convertToFib(
 		getStrategy()->convertToExtObjects( structurePoints, pImageSearchData,
 			bIsAntialised, maxValue, maxErrorPerValue );
 	
+	if ( liConvertedTiles.empty() ){
+		//can not create an Fib object
+		return NULL;
+	}
 	//sort external objects acording their identifiers
 	map< longFib, list< cExtObject * > > mapExtObjectClasses;
 	
@@ -577,6 +890,11 @@ cRoot * cImageAreaSameColor::convertToFib(
 	//put the created object into an root element
 	cRoot * pCreatedRootObject = new cRoot( pConvertedObject );
 	
+#ifdef DEBUG
+	cout<<endl<<"created Fib object:"<<endl;
+	pCreatedRootObject->storeXml( cout );
+	cout<<endl;
+#endif //DEBUG
 	return pCreatedRootObject;
 }
 

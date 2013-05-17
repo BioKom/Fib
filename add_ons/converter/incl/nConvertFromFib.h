@@ -36,8 +36,8 @@ History:
 23.10.2012  Oesterholz  changes to store intermediate result
 */
 
-#ifndef ___N_CONVERT_FROM_FIB_H__
-#define ___N_CONVERT_FROM_FIB_H__
+#ifndef ___FIB__N_CONVERT_TO_FIB__N_CONVERT_FROM_FIB_H__
+#define ___FIB__N_CONVERT_TO_FIB__N_CONVERT_FROM_FIB_H__
 
 #include "version.h"
 
@@ -84,7 +84,7 @@ namespace nConvertFromFib{
 }//end namespace nConvertFromFib
 
 
-#endif //___N_CONVERT_FROM_FIB_H__
+#endif //___FIB__N_CONVERT_TO_FIB__N_CONVERT_FROM_FIB_H__
 
 
 

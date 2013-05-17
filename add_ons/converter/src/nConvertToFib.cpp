@@ -100,6 +100,8 @@ using namespace fib::algorithms::nAnalyse::nFibObject::nBits;
 //combines just two combinebel neighbours at a time
 #define FEATURE_N_CONVERT__SAVE_COMBINING_AREAS
 
+namespace fib{
+
 namespace nConvertToFib{
 
 namespace nConvertReduced{
@@ -964,6 +966,7 @@ public:
 
 };//end namespace nConvertReduced
 };//end namespace nConvertToFib
+};//end namespace fib
 
 
 
@@ -978,9 +981,9 @@ public:
  * 	the inputformat is in the FreeImagePlus fipImage object
  * @return the created fib -object
  */
-cFibElement * nConvertToFib::convert( const fipImage & multimediaObject ){
+cFibElement * fib::nConvertToFib::convert( const fipImage & multimediaObject ){
 	
-	DEBUG_OUT_L1( <<"nConvertToFib::convert() started"<<endl; );
+	DEBUG_OUT_L1( <<"fib::nConvertToFib::convert() started"<<endl; );
 	
 	const unsigned long ulWidth  = multimediaObject.getWidth();
 	const unsigned long ulHeight = multimediaObject.getHeight();
@@ -1185,7 +1188,7 @@ cFibElement * nConvertToFib::convert( const fipImage & multimediaObject ){
 	delete colorRGBValue;
 	delete indexValue;
 
-	DEBUG_OUT_L1( <<"nConvertToFib::convert() ended correctly"<<endl );
+	DEBUG_OUT_L1( <<"fib::nConvertToFib::convert() ended correctly"<<endl );
 	
 	return pMasterRoot;
 }
@@ -1214,10 +1217,10 @@ cFibElement * nConvertToFib::convert( const fipImage & multimediaObject ){
  * 	last compressing step
  * @return the created fib -object
  */
-cFibElement * nConvertToFib::convertOptimized( const fipImage & multimediaObject,
+cFibElement * fib::nConvertToFib::convertOptimized( const fipImage & multimediaObject,
 		bool bCreatebackground, const bool bCorrectPoints ){
 	
-	DEBUG_OUT_L1( <<"nConvertToFib::convertOptimized() started"<<endl; );
+	DEBUG_OUT_L1( <<"fib::nConvertToFib::convertOptimized() started"<<endl; );
 	
 	const unsigned long ulWidth  = multimediaObject.getWidth();
 	const unsigned long ulHeight = multimediaObject.getHeight();
@@ -1849,7 +1852,7 @@ cFibElement * nConvertToFib::convertOptimized( const fipImage & multimediaObject
 		pMainFibObject = liUnderobjects.front();
 	}else{
 		DEBUG_OUT_EL2(<<"Error: no underobjects to create the fib object"<<endl<<flush);
-		DEBUG_OUT_EL2( <<"nConvertToFib::convertOptimized() done"<<endl );
+		DEBUG_OUT_EL2( <<"fib::nConvertToFib::convertOptimized() done"<<endl );
 		return NULL;
 	}
 	cRoot * pMasterRoot = new cRoot( pMainFibObject );
@@ -1914,7 +1917,7 @@ cFibElement * nConvertToFib::convertOptimized( const fipImage & multimediaObject
 	delete colorRGBValue;
 	delete indexValue;
 
-	DEBUG_OUT_L1( <<"nConvertToFib::convertOptimized() ended correctly"<<endl );
+	DEBUG_OUT_L1( <<"fib::nConvertToFib::convertOptimized() ended correctly"<<endl );
 	
 	return pMasterRoot;
 }
@@ -1965,7 +1968,7 @@ cFibElement * nConvertToFib::convertOptimized( const fipImage & multimediaObject
  * 	will beequal or less than maxError
  * @return the created fib -object
  */
-cFibElement * nConvertToFib::convertReduced( const fipImage & multimediaObject,
+cFibElement * fib::nConvertToFib::convertReduced( const fipImage & multimediaObject,
 		bool bCreatebackground, const unsigned long ulMaxAreaDiff,
 		const unsigned long ulMinPoints, const unsigned long ulMaxDiff,
 		const unsigned int uiMinPointsNeighbourAreas,
@@ -1974,7 +1977,7 @@ cFibElement * nConvertToFib::convertReduced( const fipImage & multimediaObject,
 		const bool bReplaceAreasWithPoints, const unsigned int uiInMinPointsForArea,
 		const double maxError ){
 	
-	DEBUG_OUT_L1( <<"nConvertToFib::convertReduced( multimediaObject, bCreatebackground="<<bCreatebackground<<", ulMaxAreaDiff="<<ulMaxAreaDiff<<", ulMinPoints="<<ulMinPoints<<", ulMaxDiff="<<ulMaxDiff<<", bCorrectPoints="<<bCorrectPoints<<", bCorrectMissingPoints="<<bCorrectMissingPoints<<", bAddNeighbours="<<bAddNeighbours<<", bReduceFunctionDomains="<<bReduceFunctionDomains<<", bReplaceAreasWithPoints="<<bReplaceAreasWithPoints<<", uiInMinPointsForArea="<<uiInMinPointsForArea<<"  ) started"<<endl; );
+	DEBUG_OUT_L1( <<"fib::nConvertToFib::convertReduced( multimediaObject, bCreatebackground="<<bCreatebackground<<", ulMaxAreaDiff="<<ulMaxAreaDiff<<", ulMinPoints="<<ulMinPoints<<", ulMaxDiff="<<ulMaxDiff<<", bCorrectPoints="<<bCorrectPoints<<", bCorrectMissingPoints="<<bCorrectMissingPoints<<", bAddNeighbours="<<bAddNeighbours<<", bReduceFunctionDomains="<<bReduceFunctionDomains<<", bReplaceAreasWithPoints="<<bReplaceAreasWithPoints<<", uiInMinPointsForArea="<<uiInMinPointsForArea<<"  ) started"<<endl; );
 	
 	if ( ( ulMaxAreaDiff == 0 ) && ( ulMinPoints == 0 ) && ( ulMaxDiff == 0 ) ){
 		//don*t need this function -> use simpler function
@@ -3866,7 +3869,7 @@ cFibElement * nConvertToFib::convertReduced( const fipImage & multimediaObject,
 		pMainFibObject = liUnderobjects.front();
 	}else{
 		DEBUG_OUT_EL2(<<"Error: no underobjects to create the fib object"<<endl<<flush);
-		DEBUG_OUT_EL2( <<"nConvertToFib::convertOptimized() done"<<endl );
+		DEBUG_OUT_EL2( <<"fib::nConvertToFib::convertOptimized() done"<<endl );
 		return NULL;
 	}
 	cRoot * pMasterRoot = new cRoot( pMainFibObject );
@@ -4181,7 +4184,7 @@ cFibElement * nConvertToFib::convertReduced( const fipImage & multimediaObject,
 	delete colorRGBValue;
 	delete indexValue;
 
-	DEBUG_OUT_L1( <<"nConvertToFib::convertReduced() ended correctly"<<endl );
+	DEBUG_OUT_L1( <<"fib::nConvertToFib::convertReduced() ended correctly"<<endl );
 	
 	return pMasterRoot;
 }
@@ -4196,7 +4199,7 @@ cFibElement * nConvertToFib::convertReduced( const fipImage & multimediaObject,
  * @param multimediaObject the multimedaobject wher to count the colors
  * @return a map with the color values and ther counts
  */
-map< vector< unsigned int >, unsigned long > nConvertToFib::countColors(
+map< vector< unsigned int >, unsigned long > fib::nConvertToFib::countColors(
 		const fipImage & multimediaObject ){
 	
 	//count colors
@@ -4281,7 +4284,7 @@ map< vector< unsigned int >, unsigned long > nConvertToFib::countColors(
  * 	value: to which color the color should be mapped
  * 	(BEWARE: all color vectors of the map should have the correct size.)
  */
-void nConvertToFib::mapColors( fipImage & multimediaObject,
+void fib::nConvertToFib::mapColors( fipImage & multimediaObject,
 		const map< vector< unsigned int >, vector< unsigned int > > & mapColorMapping ){
 	
 	//count colors

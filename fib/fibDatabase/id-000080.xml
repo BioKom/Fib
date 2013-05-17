@@ -7,7 +7,7 @@
 		<multimedia_info fib_version="3" db_version="2"/>
 		<optionalpart>
 			<pair key="name" value="tile antialiased"/>
-			<pair key="description" value="This object represents a tile with one side antialiased. In the first dimension it goes from x_s to x_e. In the second dimension the area is filled between y_s and the antialiased line y_e = f( x ) = a_0 + a_1 * x + a_2 * x^2 (wher y goes from x_s to x_e; the side of f( x ) is the only antialiased side of the tile). The points of the triangle are given back as variables of the subobject."/>
+			<pair key="description" value="This object represents a tile with one side antialiased. In the first dimension it goes from x_s to x_e. In the second dimension the area is filled between y_s and the antialiased line y_e = f( x ) = a_0 + a_1 * x + a_2 * x^2 (wher y goes from x_s to x_e; the side of f( x ) is the only antialiased side of the tile). The points of the tile are given back as variables of the subobject."/>
 			<pair key="inVar1::description" value="position start point dimension 1 (x_s)"/>
 			<pair key="inVar2::description" value="position start point dimension 2 (y_s)"/>
 			<pair key="inVar3::description" value="position end point dimension 1 (x_e)"/>
@@ -62,7 +62,7 @@
 				</domainReference>
 			</inVar>
 			<externSubobject number="1">
-				<vector elements="2">
+				<vector elements="3">
 					<!--actually any numbers are possible;
 						the next  lines are just a space holder-->
 					<naturalNumberB bit="0" />

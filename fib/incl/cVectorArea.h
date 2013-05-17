@@ -37,6 +37,7 @@ History:
 13.02.2010  Oesterholz  created
 25.08.2011  Oesterholz  underarea to subarea
 02.01.2012  Oesterholz  changes for cTypeArea and cFibMatrix
+16.03.2013  Oesterholz  clone() method added
 */
 
 #ifndef ___C_VECTOR_AREA_H__
@@ -169,6 +170,14 @@ public:
 		list<cFibVariable*> & liDefinedVariables,
 		const cDomain * pInVectorDomain, const cDomain * pInDomainVariable );
 
+
+
+	/**
+	 * This method clones this object.
+	 *
+	 * @return a pointer to the clone of this object
+	 */
+	virtual cVectorArea * clone() const;
 
 //TODO change cFibElement to cPoint
 	/**

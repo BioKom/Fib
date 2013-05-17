@@ -267,6 +267,36 @@
 						</subobject>
 					</obj>
 			
+					<obj identifier="-75">
+						<vector type="externObjectInput">
+							<value>40</value>
+							<value>50</value>
+							<value>60</value>
+							<value>50</value>
+							<value>0</value>
+							<value>0</value>
+						</vector>
+						<subobject>
+							<output_variables>
+								<variable>1</variable>
+								<variable>2</variable>
+							</output_variables>
+							<property>
+								<vector type="property.colorRGB">
+									<value>0</value>
+									<value>150</value>
+									<value>0</value>
+								</vector>
+								<point>
+									<vector type="position">
+										<variable>1</variable>
+										<variable>2</variable>
+									</vector>
+								</point>
+							</property>
+						</subobject>
+					</obj>
+				
 				</list>
 			</property>
 			

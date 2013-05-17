@@ -45,7 +45,7 @@
 		
 
 		<list>
-			<obj identifier="-47">
+			<obj identifier="-46">
 				<vector type="externObjectInput">
 					<value>7</value>
 					<value>5</value>
@@ -60,11 +60,10 @@
 					<output_variables>
 						<variable>1</variable>
 						<variable>2</variable>
-						<variable>3</variable>
 					</output_variables>
 					<property>
 						<vector type="property.transparency">
-							<variable>3</variable>
+							<value>0</value>
 						</vector>
 						<property>
 							<vector type="property.colorRGB">
@@ -83,7 +82,7 @@
 				</subobject>
 			</obj>
 			
-			<obj identifier="-56">
+			<obj identifier="-55">
 				<vector type="externObjectInput">
 					<value>32</value>
 					<value>20</value>
@@ -93,11 +92,10 @@
 					<output_variables>
 						<variable>1</variable>
 						<variable>2</variable>
-						<variable>3</variable>
 					</output_variables>
 					<property>
 						<vector type="property.transparency">
-							<variable>3</variable>
+							<value>0</value>
 						</vector>
 						<property>
 							<vector type="property.colorRGB">

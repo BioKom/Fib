@@ -36,8 +36,9 @@
 /*
 History:
 16.05.2010  Oesterholz  created
-14.09.2011  Oesterholz  lNumberOfValues added
+14.09.2011  Oesterholz  ulNumberOfValues added
 01.12.2011  Oesterholz  method isInBoundaries() added
+12.05.2013  Oesterholz  lNumberOfValues to unsigned ulNumberOfValues
 */
 
 #ifndef ___C_DOMAIN_INTEGER_H__
@@ -69,7 +70,7 @@ protected:
 	/**
 	 * The number of the integer numbers in this domain.
 	 */
-	longFib lNumberOfValues;
+	unsignedLongFib ulNumberOfValues;
 	
 	/**
 	 * The cDomainInteger uses a cDomainNaturalNumberBit domain for

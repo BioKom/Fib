@@ -32,6 +32,7 @@
 /*
 History:
 11.05.2009  Oesterholz  created
+16.03.2013  Oesterholz  clone() method added
 */
 
 
@@ -174,6 +175,17 @@ cVectorPosition::cVectorPosition( cReadBits & iBitStream, intFib & outStatus,
 			pInVectorDomain, pInDomainVariable ){
 	//nothing to do
 	DEBUG_OUT_L3(<<this<<"->cVectorPosition() constructor restore bit"<<endl);
+}
+
+
+/**
+ * This method clones this object.
+ *
+ * @return a pointer to the clone of this object
+ */
+cVectorPosition * cVectorPosition::clone() const{
+	
+	return new cVectorPosition( *this );
 }
 
 

@@ -31,6 +31,7 @@
 History:
 24.09.2009  Oesterholz  created
 16.01.2011  Oesterholz  functions isEqualNull() added
+11.05.2013  Oesterholz  function composeDoubleFib() added
 */
 
 #include "fibDatatyps.h"
@@ -39,6 +40,104 @@ History:
 
 
 using namespace fib;
+
+//TODO check
+
+/**
+ * This function evalues the digits needed to store a value as an
+ * natural number.
+ *
+ * @param uiValue the value to evalue the digits for
+ * @return the digits needed to store a value as an natural number
+ */
+unsigned int fib::getDigits( unsigned int uiValue ){
+
+	if ( uiValue == 0 ){
+		//no digits needed to store value
+		return 0;
+	}
+	
+	unsigned int uiDigits = 0;
+	
+	static const unsigned int BITS_OF_UNSIGNED_INT = sizeof( unsigned int ) * 8;
+	for ( unsigned int iActualDigit = 1; iActualDigit <= BITS_OF_UNSIGNED_INT;
+			iActualDigit += 4 ){
+			
+		if ( (uiValue & 0x01) != 0 ){
+			//digit found
+			uiDigits = iActualDigit;
+		}
+		if ( (uiValue & 0x02) != 0 ){
+			//digit found
+			uiDigits = iActualDigit + 1;
+		}
+		if ( (uiValue & 0x04) != 0 ){
+			//digit found
+			uiDigits = iActualDigit + 2;
+		}
+		if ( (uiValue & 0x08) != 0 ){
+			//digit found
+			uiDigits = iActualDigit + 3;
+		}
+		
+		uiValue = uiValue >> 4;
+		
+		if ( uiValue == 0 ){
+			//no more digits
+			break;
+		}
+	}
+	return uiDigits;
+}
+
+
+/**
+ * This function evalues the digits needed to store a value as an
+ * natural number.
+ *
+ * @param ulValue the value to evalue the digits for
+ * @return the digits needed to store a value as an natural number
+ */
+unsigned int fib::getDigits( unsigned long ulValue ){
+
+	if ( ulValue == 0 ){
+		//no digits needed to store value
+		return 0;
+	}
+	
+	unsigned int uiDigits = 0;
+	
+	static const unsigned int BITS_OF_UNSIGNED_LONG =
+		sizeof( unsigned long ) * 8;
+	for ( unsigned int iActualDigit = 1; iActualDigit <= BITS_OF_UNSIGNED_LONG;
+			iActualDigit += 4 ){
+			
+		if ( (ulValue & 0x01) != 0 ){
+			//digit found
+			uiDigits = iActualDigit;
+		}
+		if ( (ulValue & 0x02) != 0 ){
+			//digit found
+			uiDigits = iActualDigit + 1;
+		}
+		if ( (ulValue & 0x04) != 0 ){
+			//digit found
+			uiDigits = iActualDigit + 2;
+		}
+		if ( (ulValue & 0x08) != 0 ){
+			//digit found
+			uiDigits = iActualDigit + 3;
+		}
+		
+		ulValue = ulValue >> 4;
+		
+		if ( ulValue == 0 ){
+			//no more digits
+			break;
+		}
+	}
+	return uiDigits;
+}
 
 
 /**
@@ -50,14 +149,16 @@ using namespace fib;
  */
 unsigned int fib::getDigits( unsigned long long llValue ){
 
-	unsigned int uiDigits = 0;
-	
 	if ( llValue == 0 ){
 		//no digits needed to store value
 		return 0;
 	}
 	
-	for ( unsigned int iActualDigit = 1; iActualDigit <= 64;
+	unsigned int uiDigits = 0;
+	
+	static const unsigned int BITS_OF_UNSIGNED_LONG_LONG =
+		sizeof( unsigned long long ) * 8;
+	for ( unsigned int iActualDigit = 1; iActualDigit <= BITS_OF_UNSIGNED_LONG_LONG;
 			iActualDigit += 4 ){
 			
 		if ( (llValue & 0x01) != 0 ){
@@ -89,7 +190,244 @@ unsigned int fib::getDigits( unsigned long long llValue ){
 
 
 /**
- * Decompses a doubleFib number into it's mantissa and exponent part.
+ * This function evalues the digits needed to store a value as an
+ * integer number (including 1 bit for the sign).
+ *
+ * @param iValue the value to evalue the digits for
+ * @return the digits needed to store a value as an integer number
+ */
+unsigned int fib::getDigits( int iValue ){
+
+	if ( iValue == 0 ){
+		//no digits needed to store value
+		return 0;
+	}
+	unsigned int uiDigits = 0;
+	
+	static const unsigned int BITS_OF_INT = sizeof( int ) * 8;
+	if ( 0 <= iValue ){
+		//number is positiv -> search for last 1 bit
+		for ( unsigned int iActualDigit = 1; iActualDigit <= BITS_OF_INT;
+				iActualDigit += 4 ){
+				
+			if ( (iValue & 0x01) != 0 ){
+				//digit found
+				uiDigits = iActualDigit;
+			}
+			if ( (iValue & 0x02) != 0 ){
+				//digit found
+				uiDigits = iActualDigit + 1;
+			}
+			if ( (iValue & 0x04) != 0 ){
+				//digit found
+				uiDigits = iActualDigit + 2;
+			}
+			if ( (iValue & 0x08) != 0 ){
+				//digit found
+				uiDigits = iActualDigit + 3;
+			}
+			
+			iValue = iValue >> 4;
+			
+			if ( iValue == 0 ){
+				//no more digits
+				break;
+			}
+		}
+	}else{//number is negativ -> search for last 0 bit
+		for ( unsigned int iActualDigit = 1; iActualDigit <= BITS_OF_INT;
+				iActualDigit += 4 ){
+				
+			if ( (iValue & 0x01) == 0 ){
+				//digit found
+				uiDigits = iActualDigit;
+			}
+			if ( (iValue & 0x02) == 0 ){
+				//digit found
+				uiDigits = iActualDigit + 1;
+			}
+			if ( (iValue & 0x04) == 0 ){
+				//digit found
+				uiDigits = iActualDigit + 2;
+			}
+			if ( (iValue & 0x08) == 0 ){
+				//digit found
+				uiDigits = iActualDigit + 3;
+			}
+			
+			iValue = iValue >> 4;
+			
+			if ( iValue == -1 ){
+				//no more digits
+				break;
+			}
+		}
+	}
+	//add digit for sign
+	return uiDigits + 1;
+}
+
+
+/**
+ * This function evalues the digits needed to store a value as an
+ * integer number (including 1 bit for the sign).
+ *
+ * @param lValue the value to evalue the digits for
+ * @return the digits needed to store a value as an integer number
+ */
+unsigned int fib::getDigits( long lValue ){
+
+	if ( lValue == 0 ){
+		//no digits needed to store value
+		return 0;
+	}
+	unsigned int uiDigits = 0;
+	
+	static const unsigned int BITS_OF_LONG = sizeof( long ) * 8;
+	if ( 0 <= lValue ){
+		//number is positiv -> search for last 1 bit
+		for ( unsigned int iActualDigit = 1; iActualDigit <= BITS_OF_LONG;
+				iActualDigit += 4 ){
+				
+			if ( (lValue & 0x01) != 0 ){
+				//digit found
+				uiDigits = iActualDigit;
+			}
+			if ( (lValue & 0x02) != 0 ){
+				//digit found
+				uiDigits = iActualDigit + 1;
+			}
+			if ( (lValue & 0x04) != 0 ){
+				//digit found
+				uiDigits = iActualDigit + 2;
+			}
+			if ( (lValue & 0x08) != 0 ){
+				//digit found
+				uiDigits = iActualDigit + 3;
+			}
+			
+			lValue = lValue >> 4;
+			
+			if ( lValue == 0 ){
+				//no more digits
+				break;
+			}
+		}
+	}else{//number is negativ -> search for last 0 bit
+		for ( unsigned int iActualDigit = 1; iActualDigit <= BITS_OF_LONG;
+				iActualDigit += 4 ){
+				
+			if ( (lValue & 0x01) == 0 ){
+				//digit found
+				uiDigits = iActualDigit;
+			}
+			if ( (lValue & 0x02) == 0 ){
+				//digit found
+				uiDigits = iActualDigit + 1;
+			}
+			if ( (lValue & 0x04) == 0 ){
+				//digit found
+				uiDigits = iActualDigit + 2;
+			}
+			if ( (lValue & 0x08) == 0 ){
+				//digit found
+				uiDigits = iActualDigit + 3;
+			}
+			
+			lValue = lValue >> 4;
+			
+			if ( lValue == -1 ){
+				//no more digits
+				break;
+			}
+		}
+	}
+	//add digit for sign
+	return uiDigits + 1;
+}
+
+
+/**
+ * This function evalues the digits needed to store a value as an
+ * integer number (including 1 bit for the sign).
+ *
+ * @param llValue the value to evalue the digits for
+ * @return the digits needed to store a value as an integer number
+ */
+unsigned int fib::getDigits( long long llValue ){
+
+	if ( llValue == 0 ){
+		//no digits needed to store value
+		return 0;
+	}
+	unsigned int uiDigits = 0;
+	
+	static const unsigned int BITS_OF_LONG_LONG = sizeof( long long ) * 8;
+	if ( 0 <= llValue ){
+		//number is positiv -> search for last 1 bit
+		for ( unsigned int iActualDigit = 1; iActualDigit <= BITS_OF_LONG_LONG;
+				iActualDigit += 4 ){
+				
+			if ( (llValue & 0x01) != 0 ){
+				//digit found
+				uiDigits = iActualDigit;
+			}
+			if ( (llValue & 0x02) != 0 ){
+				//digit found
+				uiDigits = iActualDigit + 1;
+			}
+			if ( (llValue & 0x04) != 0 ){
+				//digit found
+				uiDigits = iActualDigit + 2;
+			}
+			if ( (llValue & 0x08) != 0 ){
+				//digit found
+				uiDigits = iActualDigit + 3;
+			}
+			
+			llValue = llValue >> 4;
+			
+			if ( llValue == 0 ){
+				//no more digits
+				break;
+			}
+		}
+	}else{//number is negativ -> search for last 0 bit
+		for ( unsigned int iActualDigit = 1; iActualDigit <= BITS_OF_LONG_LONG;
+				iActualDigit += 4 ){
+				
+			if ( (llValue & 0x01) == 0 ){
+				//digit found
+				uiDigits = iActualDigit;
+			}
+			if ( (llValue & 0x02) == 0 ){
+				//digit found
+				uiDigits = iActualDigit + 1;
+			}
+			if ( (llValue & 0x04) == 0 ){
+				//digit found
+				uiDigits = iActualDigit + 2;
+			}
+			if ( (llValue & 0x08) == 0 ){
+				//digit found
+				uiDigits = iActualDigit + 3;
+			}
+			
+			llValue = llValue >> 4;
+			
+			if ( llValue == -1 ){
+				//no more digits
+				break;
+			}
+		}
+	}
+	//add digit for sign
+	return uiDigits + 1;
+}
+
+
+/**
+ * Decompses a double number into it's mantissa and exponent part.
  *
  * @param dNumber the number to decompose
  * @param lMantissa a pointer to the longFib field wher the mantissa
@@ -103,11 +441,11 @@ unsigned int fib::getDigits( unsigned long long llValue ){
  * 	the exponent in bits should be stored or NULL if it shouldn't be
  * 	stored
  */
-void fib::decomposeDoubleFib( const doubleFib dNumber,
+void fib::decomposeDoubleFib( const double dNumber,
 	longFib * lMantissa, longFib * lExponent,
 	intFib * iSizeMantissa , intFib * iSizeExponent ){
 	
-	if ( dNumber == (doubleFib)(1.0) ){
+	if ( dNumber == (double)(1.0) ){
 		(*lMantissa) = 1;
 		(*lExponent) = 0;
 		
@@ -119,82 +457,54 @@ void fib::decomposeDoubleFib( const doubleFib dNumber,
 		}
 	}
 	
-	//get the sign; it's the bit 63
-	unsigned char* c = (unsigned char*)&dNumber;
-	int sign = 0x80 & c[7];
+	const long long llNumber = *((const long long*)&dNumber);
 	
+	//get the sign; (it's the bit 63)
+	const bool bSign = ( llNumber < 0);
 	//get the exponent; its the bit 52 till 62
-	int iExponent = 0x7F & c[7];
-	iExponent = iExponent << 8;
-	iExponent += 0xF0 & c[6];
-	iExponent = iExponent >> 4;
-		
+	int iExponent = (int) ( 0x7FFL & (llNumber >> 52) );
 	//get the matissa; its the bit 0 till 51
-	long long llMantissa;
-	if ( iExponent != 0 ){
-		iExponent += -1023 - 52;
-		llMantissa = 0x10 | (0x0F & c[6]);
-	}else{
-		iExponent = -1022 - 52;
-		llMantissa = (0x0F & c[6]);
+	long long llMantissa = 0xFFFFFFFFFFFFFL & llNumber;
+	
+	if ( iExponent == 0 ){
+		/* Subnormal numbers; exponent is effectively one higher,
+		but there's no extra normalisation bit in the mantissa*/
+		iExponent++;
+	}else{/* Normal numbers; leave exponent as it is but add extra
+		bit to the front of the mantissa*/
+		llMantissa = llMantissa | (1L << 52);
 	}
-	llMantissa = llMantissa << 8;
-	llMantissa += c[5];
-	llMantissa = llMantissa << 8;
-	llMantissa += c[4];
-	llMantissa = llMantissa << 8;
-	llMantissa += c[3];
-	llMantissa = llMantissa << 8;
-	llMantissa += c[2];
-	llMantissa = llMantissa << 8;
-	llMantissa += c[1];
-	llMantissa = llMantissa << 8;
-	llMantissa += c[0];
+	/* Bias the exponent. It's actually biased by 1023, but we're
+	treating the mantissa as m.0 rather than 0.m, so we need
+	to subtract another 52 from it.*/
+	iExponent -= 1075;
 	
 	unsigned int uiDigitsMantissa = 0;
 	unsigned int uiDigitsExponent = 0;
 	
 	if ( llMantissa != 0 ){
-		while ( (llMantissa & 0x01) == 0x00 ) {
+		//add mantissa sign
+		while ( (llMantissa & 0x01) == 0x00 ){
 			llMantissa = llMantissa >> 1;
 			iExponent++;
+		}
+		if ( bSign ){
+			//the mantissa is negativ
+			llMantissa = 0 - llMantissa;
 		}
 		
 		if ( iSizeMantissa != NULL ){
 			//evalue the digits in the mantissa
 			uiDigitsMantissa = getDigits( llMantissa );
-			
-			//add digit for sign
-			uiDigitsMantissa++;
 		}
-		
 		if ( iSizeExponent != NULL ){
 			//evalue the digits in the exponent
-			//to evalue the digits a positiv number is needed
-			unsigned int uiExponent;
-			if ( iExponent >= 0 ){
-				uiExponent = iExponent;
-			}else{//negativ exponent
-				uiExponent = -1.0 * iExponent;
-			}
-			
-			uiDigitsExponent = getDigits( uiExponent );
-			
-			//add digit for sign
-			uiDigitsExponent++;
+			uiDigitsExponent = getDigits( iExponent );
 		}
 	
 	}else{
-		iExponent=0;
+		iExponent = 0;
 	}
-	
-	//add mantissa sign
-	if ( sign != 0 ){
-		//the mantissa is negativ
-		llMantissa *= -1.0;
-	}//the mantissa is positiv
-	
-	
 	//transfer the evauled numbers to the output valus
 	if ( lMantissa != NULL ){
 		(*lMantissa) = llMantissa;
@@ -210,6 +520,48 @@ void fib::decomposeDoubleFib( const doubleFib dNumber,
 	}
 }
 
+
+/**
+ * Composes a doubleFib number into it's mantissa and exponent part.
+ * It's the invers of: @see decomposeDoubleFib()
+ * Basicly it evalues: lMantissa * 2^lExponent
+ *
+ * @param lMantissa the mantissa of the number
+ * @param lExponent the exponent of the number
+ * @return lMantissa * 2^lExponent
+ */
+doubleFib fib::composeDoubleFib(
+		const longFib & lMantissa, const longFib & lExponent ){
+	
+	if ( lMantissa == 0 ){
+		return 0.0;
+	}
+	double dReturnValue = 0.0;
+	long long & llNumber = *((long long*)&dReturnValue);
+	
+	if ( lMantissa < 0 ){
+		//set the sign to negativ; it's the bit 63
+		llNumber = 0x8000000000000000L;
+	}
+	//set the mantissa
+	long long llMantissa = (( 0 <= lMantissa) ? lMantissa : ( 0 - lMantissa ) );
+	//bring first mantissa bit to the bit 52
+	unsigned int iExponent = lExponent + 1075; //1075 = (1023 + 52);
+	while ( ( llMantissa & 0x10000000000000L ) == 0x0L ){
+		llMantissa = llMantissa << 1;
+		iExponent--;
+	}
+	llNumber |= 0xFFFFFFFFFFFFFL & llMantissa;
+
+	//set the exponent; its the bit 52 till 62
+	if ( iExponent != 0 ){
+		llNumber |= ( 0x7FFL & iExponent ) << 52;
+	}//else exponent in double are bits with value 0
+	
+	return dReturnValue;
+}
+
+//TODO check end
 
 /**
  * This function rounds the given number of bits ulNumberOfBits up
@@ -288,7 +640,7 @@ doubleFib fib::gcd( doubleFib dValue1, doubleFib dValue2 ){
  */
 float fib::absF( const float & dValue ){
 
-	return (0.0 <= dValue)? dValue : dValue * ((float)(-1.0));
+	return (0.0 <= dValue)? dValue : ( ((float)(0.0)) - dValue );
 }
 
 /**
@@ -297,7 +649,7 @@ float fib::absF( const float & dValue ){
  */
 double fib::absF( const double & dValue ){
 
-	return (0.0 <= dValue)? dValue : dValue * ((double)(-1.0));
+	return (0.0 <= dValue)? dValue : ( ((double)(0.0)) - dValue );
 }
 
 

@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fib_object
+			xmlns:xsd="http://www.w3.org/2001/XMLSchema-instance"
+			xmlns="http://www.biokom.info/"
+			xsd:schemaLocation="http://www.biokom.info/fib.xsd">
+<root>
+	<multimedia_info fib_version="3" db_version="2"/>
+	<optionalpart>
+		<pair key="description" value="This object is for testing database object with id -24 ."/>
+		<pair key="call" value="../../../add_ons/converter/bin/convertFromFib dbId-000024.xml dbId-000024.png"/>
+	</optionalpart>
+	<domains>
+		<dim count="2">
+			<dimension number="1" direction="horizontal"/>
+			<dimension number="2" direction="vertical"/>
+			<vector elements="2">
+				<integer min="0" max="255"/>
+				<integer min="0" max="400"/>
+			</vector>
+		</dim>
+		<property name="colorRGB" >
+			<vector elements="3">
+				<naturalNumberB bit="8" />
+				<naturalNumberB bit="8" />
+				<naturalNumberB bit="8" />
+			</vector>
+		</property>
+		<property name="transparency" >
+			<vector elements="1">
+				<naturalNumberB bit="8" />
+			</vector>
+		</property>
+		<subfunction>
+			<naturalNumber max="255" />
+		</subfunction>
+		<externObject>
+			<vector elements="4">
+				<integer min="-10000" max="10000" /><!--Identifier-->
+				<naturalNumber max="32" /><!--number input values-->
+				<naturalNumber max="8" /><!--number subobjects-->
+				<naturalNumber max="16" /><!--number output values-->
+			</vector>
+		</externObject>
+	</domains>
+	<main_fib_object>
+		<list>
+			<property>
+				<vector type="property.colorRGB">
+					<value>0</value>
+					<value>0</value>
+					<value>0</value>
+				</vector>
+				<background/>
+			</property>
+			
+			<property>
+				<vector type="property.colorRGB">
+					<value>0</value>
+					<value>255</value>
+					<value>0</value>
+				</vector>
+				<list>
+					<point>
+						<vector type="position">
+							<value>2</value>
+							<value>2</value>
+						</vector>
+					</point>
+					<point>
+						<vector type="position">
+							<value>4</value>
+							<value>2</value>
+						</vector>
+					</point>
+					<point>
+						<vector type="position">
+							<value>2</value>
+							<value>4</value>
+						</vector>
+					</point>
+				</list>
+			</property>
+			
+			
+			<property>
+				<vector type="property.transparency">
+					<value>64</value>
+				</vector>
+				<list>
+					
+					<property>
+						<vector type="property.colorRGB">
+							<value>0</value>
+							<value>255</value>
+							<value>0</value>
+						</vector>
+						<area  define_variable="1">
+							<vector type="subarea">
+								<value>1</value>
+								<value>10</value>
+							</vector>
+							<area  define_variable="2">
+								<vector type="subarea">
+									<value>-5</value>
+									<value>10</value>
+								</vector>
+								
+								<function define_variable="3">
+									<subfunction><!-- x position -->
+										<add>
+											<add>
+												<value>30</value>
+												<mult>
+													<variable>1</variable>
+													<value>10</value>
+												</mult>
+											</add>
+											<mult>
+												<variable>2</variable>
+												<value>3</value>
+											</mult>
+										</add>
+									</subfunction>
+									<function define_variable="4">
+										<subfunction><!-- y_1 position -->
+											<add>
+												<add>
+													<value>100</value>
+													<mult>
+														<variable>1</variable>
+														<value>10</value>
+													</mult>
+												</add>
+												<mult>
+													<value>15</value>
+													<variable>2</variable>
+												</mult>
+											</add>
+										</subfunction>
+										
+										<function define_variable="5">
+											<subfunction><!-- y_2 position -->
+												<add>
+													<add>
+														<variable>4</variable>
+														<variable>1</variable>
+													</add>
+													<mult>
+														<variable>2</variable>
+														<value>3</value>
+													</mult>
+												</add>
+											</subfunction>
+								
+											<obj identifier="-24">
+												<vector type="externObjectInput">
+													<variable>3</variable>
+													<variable>4</variable>
+													<variable>5</variable>
+												</vector>
+											</obj>
+										</function>
+									</function>
+								</function>
+									
+							</area>
+						</area>
+					</property>
+					
+					
+					<point/>
+				</list>
+			</property>
+		</list>
+	</main_fib_object>
+</root>
+</fib_object>
