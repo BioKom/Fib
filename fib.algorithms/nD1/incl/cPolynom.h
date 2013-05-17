@@ -38,15 +38,19 @@ History:
 29.12.2012  Oesterholz  FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING:
 	evalueSplineIterativFast(): the glp library (extern package) linear
 	solver will be used to find a spline for a vector of range data points
+30.04.2013  Oesterholz  evalueSplineIterativFast() for data points with
+	weights for the solver and the error
+08.05.2013  Oesterholz  method reduceBits() added
 */
 
-#ifndef ___N_D_1_C_POLYNOM_H__
-#define ___N_D_1_C_POLYNOM_H__
+#ifndef ___FIB__ALGORITHMS__N_D_1_C_POLYNOM_H__
+#define ___FIB__ALGORITHMS__N_D_1_C_POLYNOM_H__
 
 #include "version.h"
 
 #include "nD1.h"
 #include "cDataPoint.h"
+#include "cDataPointRange.h"
 #include "cLinearEquation.h"
 #include "cOneAryFunction.h"
 #include "cInequation.h"
@@ -65,6 +69,42 @@ namespace fib{
 namespace algorithms{
 
 namespace nD1{
+
+template <class tX, class tY>
+	class cDataPointRangeWithWeights: public cDataPointRange< tX, tY>{
+public:
+	/**
+	 * The weight for the error value for the point in the optimize function,
+	 * when evaluing the factors.
+	 */
+	double dWeightSolver;
+	
+	/**
+	 * The weight for the error on the point.
+	 */
+	double dWeightError;
+	
+	/**
+	 * standard constructor for a data point
+	 *
+	 * @param inX the @see x value for the datapoint
+	 * @param inMinY the @see minY value for the datapoint
+	 * @param inMaxY the @see maxY value for the datapoint
+	 * @param dInWeightSolver the weight for the error value for the point
+	 * 	in the optimize function @see dWeightSolver
+	 * @param dInWeightError the weight for the error on the point
+	 * 	@see dWeightError
+	 */
+	cDataPointRangeWithWeights( const tX inX = 0,
+			const tY inMinY = 0, const tY inMaxY = 0,
+			const double dInWeightSolver = 1.0, const double dInWeightError = 1.0 ):
+		cDataPointRange< tX, tY>( inX, inMinY, inMaxY ),
+		dWeightSolver( dInWeightSolver ), dWeightError( dInWeightError ){
+		//nothing to do
+	}
+	
+};//end class cDataPointRangeWithWeights
+
 
 template <class tX, class tY>
 class cPolynom: public cOneAryFunction<tX, tY>{
@@ -135,6 +175,25 @@ public:
 	 */
 	virtual tY evalueErrorMax( const vector< cDataPoint< tX, tY> > & vecData,
 		const tY maxYError ) const;
+	
+	/**
+	 * This method checks the error of this polynom on the given data points.
+	 *
+	 * @param vecRangesForError the range data points which the polynom
+	 * 	should match
+	 * @param maxError the maximal error for the polynom;
+	 * 	the error on the found polynom for vecRangesForError should be equal or
+	 * 	less than maxError
+	 * @param maxErrorPerValue the maximal error for the polynom to find on
+	 * 	one data point; the error on the polynom for every data point
+	 * 	in vecRangesForError should be equal or less than maxErrorPerValue
+	 * @return true if the error is Ok, else false;
+	 * 	the error is OK if the error sum on all data points is less than
+	 * 	maxError and less than maxErrorPerValue on ever data point
+	 */
+	virtual bool checkError(
+		const vector< fib::algorithms::nD1::cDataPointRange< tX, tY > > vecRangesForError,
+		const tY maxError, const tY maxErrorPerValue ) const;
 
 	/**
 	 * This method evalues the error of the given range datapoints to the
@@ -369,12 +428,17 @@ public:
 	 * 	point in vecData will be equal or less than maxErrorPerValue;
 	 * 	if maxErrorPerValue is 0 and maxError is not 0, maxErrorPerValue will
 	 * 	be set to maxError * 2 / vecInputData.size()
-	 * @param dWeightParameter a value for the weight of the parameters;
-	 * 	with this value greater 0 it will be searched for smaal parameter;
+	 * @param liWeightParameters a list with values for the weight of the
+	 * 	parameters; with the weight value greater 0 it will be searched
+	 * 	for a smaal parameter;
+	 * 	the first element of the list is the weight for the first polynom
+	 * 	factor / parameter, the second weight for the second factor and so
+	 * 	on, the last n'th weight is for the n't factor and all that follow;
+	 * 	if the weight list is empty the weights will be set to very smaal values;
 	 * 	when searching for a solution the error is minimized and the
 	 * 	spline parameter will be multiplied with this value and also minimized;
-	 * 	when set to 1 a parameter increas of 1 is as bad as an error increas
-	 * 	of 1, when set to 0.01 parameter increas of 100 is as bad an error increas
+	 * 	when set to 1 a parameter increase of 1 is as bad as an error increase
+	 * 	of 1, when set to 0.01 parameter increase of 100 is as bad an error increase
 	 * 	of 1
 	 * @return the number n of data points vecData, which the spline matches;
 	 * 	the data points vecData[0] to vecData[ return - 1 ] will be
@@ -386,8 +450,75 @@ public:
 		const tY maxValue = 1E+36,
 		const tY maxError = 0,
 		const tY maxErrorPerValue = 0,
-		const double dWeightParameter = 0.0000000001 );
-
+		const list< double > liWeightParameters = list< double >() );
+	
+	/**
+	 * This functions evalues a spline, which matches all points of the
+	 * given range data vecData (if possible).
+	 * The y value, to wich the spline evalues the x value, will be in the
+	 * bound of the range data point, so that:
+	 * 	vecData[i].minY <= spline( vecData[i].x ) + error_i <= vecData[i].maxY,
+	 * 	with maxError <= sum ( error_i * vecData[i].dWeightError )
+	 * 	for i = 0 till vecData.size()
+	 *
+	 * The evalued spline (this polynom) will have the form:
+	 * The evalued polynoms (@see cPolynom) will have the form:
+	 * 	y = vecFactors[ 0 ] + vecFactors[ 1 ] * x +
+	 * 	vecFactors[ 2 ] * x^2 + ... +
+	 * 	vecFactors[ uiNumberOfParameters - 1 ] *
+	 * 		x^(uiNumberOfParameters - 1)
+	 *
+	 * The method will iterativ increase the number of parameters for the
+	 * polynoms (from 1 to uiMaxNumberOfParameters) and will try to use
+	 * all of the given range points to find the polynoms.
+	 *
+	 * @see evalue()
+	 * @see cPolynom::evalueSplineIterativFast()
+	 * @param vecInputData the data which the returend spline should match,
+	 * 	including the weight parameters for the data points;
+	 * 	the dWeightError parameter influence how the error for the point
+	 * 	is evalued (min difference to a point in the range multiplied by dWeightError);
+	 * 	the dWeightSolver is the weight for the error given to the solver
+	 * 	optimize function
+	 * @param uiMaxNumberOfParameters the number of parameters for the spline;
+	 * 	Don't choose this number to big, because the evaluation time will
+	 * 	grow exponentialy with this number. Even splines with 8
+	 * 	parameters will take some time.
+	 * @param maxValue the maximum possible value in all parameters
+	 * 	the evalued spline will allways have parameters vecFactors[i] with
+	 * 	-1 * maxValue <= vecFactors[i] <= maxValue for 0 <= i \< vecFactors.size()
+	 * @param maxError the maximal error for the spline to find;
+	 * 	the error on the interpolated spline for vecData will be equal or
+	 * 	less than maxError
+	 * @param maxErrorPerValue the maximal error for the spline to find on
+	 * 	one data point; the error on the interpolated spline for every data
+	 * 	point in vecData will be equal or less than maxErrorPerValue;
+	 * 	if maxErrorPerValue is 0 and maxError is not 0, maxErrorPerValue will
+	 * 	be set to maxError * 2 / vecInputData.size()
+	 * @param liWeightParameters a list with values for the weight of the
+	 * 	parameters; with the weight value greater 0 it will be searched
+	 * 	for a smaal parameter;
+	 * 	the first element of the list is the weight for the first polynom
+	 * 	factor / parameter, the second weight for the second factor and so
+	 * 	on, the last n'th weight is for the n't factor and all that follow;
+	 * 	if the weight list is empty the weights will be set to very smaal values;
+	 * 	when searching for a solution the error is minimized and the
+	 * 	spline parameter will be multiplied with this value and also minimized;
+	 * 	when set to 1 a parameter increase of 1 is as bad as an error increase
+	 * 	of 1, when set to 0.01 parameter increase of 100 is as bad an
+	 * 	error increase of 1
+	 * @return the number n of data points vecData, which the spline matches;
+	 * 	the data points vecData[0] to vecData[ return - 1 ] will be
+	 * 	matched by the spline
+	 */
+	virtual unsigned long evalueSplineIterativFast(
+		const vector< cDataPointRangeWithWeights< tX, tY> > & vecInputData,
+		unsigned int uiMaxNumberOfParameters = 4,
+		const tY maxValue = 1E+36,
+		const tY maxError = 0,
+		const tY maxErrorPerValue = 0,
+		const list< double > liWeightParameters = list< double >() );
+	
 #else //FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
 
 	/**
@@ -447,7 +578,30 @@ public:
 		const unsigned long ulMaxMemoryCost = 0 );
 
 #endif //FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
-
+	
+	//TODO check
+	/**
+	 * This method will try to reduce the bits of the parameters (beginning
+	 * with the first parameter).
+	 *
+	 * @param vecRangesForError the range data points which the polynom
+	 * 	should match
+	 * @param maxValue the maximum possible value in all parameters
+	 * 	the evalued spline will allways have parameters vecFactors[i] with
+	 * 	-1 * maxValue <= vecFactors[i] <= maxValue for 0 <= i \< vecFactors.size()
+	 * @param maxError the maximal error for the spline parameter to find;
+	 * 	the error on the found spline for vecData will be equal or
+	 * 	less than maxError (if it was equal or less befor)
+	 * @param maxErrorPerValue the maximal error for the spline to find on
+	 * 	one data point; the error on the interpolated spline for every data
+	 * 	point in vecData will be equal or less than maxErrorPerValue
+	 * 	(if it was equal or less befor);
+	 * 	if maxErrorPerValue is 0 and maxError is not 0, maxErrorPerValue will
+	 * 	be set to maxError * 2 / vecInputData.size()
+	 */
+	void reduceBits( const vector< fib::algorithms::nD1::cDataPointRange< tX, tY > >
+			vecRangesForError,
+		const tY maxValue, const tY maxError, const tY maxErrorPerValue );
 
 	/**
 	 * @param dataPoint the polynom to compare this polynom with
@@ -473,7 +627,7 @@ public:
 #include "../src/cPolynom.cpp"
 
 
-#endif //___N_D_1_C_POLYNOM_H__
+#endif //___FIB__ALGORITHMS__N_D_1_C_POLYNOM_H__
 
 
 

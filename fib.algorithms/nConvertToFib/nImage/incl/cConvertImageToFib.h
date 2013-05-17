@@ -45,8 +45,8 @@ History:
 */
 
 
-#ifndef ___C_CONVERT_IMAGE_TO_FIB_H__
-#define ___C_CONVERT_IMAGE_TO_FIB_H__
+#ifndef ___FIB__ALGORITHMS__N_CONVERT_TO_FIB__N_IMAGE__C_CONVERT_IMAGE_TO_FIB_H__
+#define ___FIB__ALGORITHMS__N_CONVERT_TO_FIB__N_IMAGE__C_CONVERT_IMAGE_TO_FIB_H__
 
 
 #include "version.h"
@@ -56,6 +56,9 @@ History:
 
 #include "cImageSearchData.h"
 
+#include <string>
+
+using std::string;
 
 
 namespace fib{
@@ -67,7 +70,7 @@ namespace nConvertToFib{
 namespace nImage{
 
 
-class cConvertImageToFib: public fib::algorithms::nConvertToFib::iConvertToFib{
+class cConvertImageToFib{
 protected:
 	
 	/**
@@ -91,14 +94,21 @@ protected:
 	/**
 	 * A map with the buffered derivations of this object.
 	 */
-	map< list< unsigned int >, const iMatrix3D * > mapEvaluedDerivations;
+	mutable map< list< unsigned int >, const iMatrix3D * > mapEvaluedDerivations;
 	
 	
 	/**
-	 *  The actual search data of the to convert image.
+	 * The actual search data of the to convert image.
 	 */
 	fib::algorithms::nConvertToFib::nImage::nStructureData::cImageSearchData *
 		pImageSearchData;
+	
+	
+	/**
+	 * constructor
+	 * (Constructs an empty object, childs have to fill the member fields.)
+	 */
+	cConvertImageToFib();
 	
 public:
 	
@@ -131,10 +141,16 @@ public:
 	 *
 	 * @pattern Factory Method
 	 * @return a Fib object which represents the the image data of this object
+	 * 	or NULL if non could be generated
 	 * 	Beware: You have to delete the returned Fib object after usage.
 	 */
-	virtual cRoot * convertToFib() const = 0;
+	virtual cRoot * convertToFib() = 0;
 	
+	
+	/**
+	 * @return the name of this class
+	 */
+	virtual string getName() const;
 	
 	/**
 	 * @return a pointer to the data of the to convert image
@@ -152,8 +168,10 @@ public:
 	 * @param liDirection a list with the direction in which the
 	 * 	derivation should be evalued; the first derivat will be evalued
 	 * 	for the first element of the list and so on
+	 * 	(the only valid directions are 0 or 1)
 	 * @return a pointer to the data of the to convert image derivation
-	 * 	(This object will delete the evalued derivation on destructing.)
+	 * 	(This object will delete the evalued derivation on destructing,
+	 * 	so do not delete them youself.)
 	 */
 	const iMatrix3D * getDerivation(
 		const list< unsigned int > liDirection ) const;
@@ -165,8 +183,10 @@ public:
 	 * @see mapEvaluedDerivations
 	 *
 	 * @param uiDirection the direction in which the derivation should be evalued
+	 * 	(the only valid directions are 0 or 1)
 	 * @return a pointer to the data of the to convert image derivation
-	 * 	(This object will delete the evalued derivation on destructing.)
+	 * 	(This object will delete the evalued derivation on destructing,
+	 * 	so do not delete them youself.)
 	 */
 	const iMatrix3D * getDerivation( const unsigned int uiDirection ) const;
 	
@@ -188,4 +208,4 @@ public:
 };//end namespace fib
 
 
-#endif //___C_CONVERT_IMAGE_TO_FIB_H__
+#endif //___FIB__ALGORITHMS__N_CONVERT_TO_FIB__N_IMAGE__C_CONVERT_IMAGE_TO_FIB_H__

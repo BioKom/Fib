@@ -24,6 +24,8 @@
 # 05.07.2011   Oesterholz   tSpline added
 # 04.03.2013   Oesterholz   tImageStructureConvertToFib and
 #	tImageStructureConvertToTiles added
+# 05.04.2013   Oesterholz   tImageSearchData added
+# 08.04.2013   Oesterholz   tFindImageStructure added
 #
 
 first(){
@@ -161,6 +163,17 @@ echo >>${OUTPUT}
 echo >>${OUTPUT}
 echo "Memory leaks in tImageStructureConvertToFib" >>${OUTPUT}
 ${LEAK_CHECKER} ./nStructureData/testcase/tImageStructureConvertToFib ./testObjects/ 64  > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./nStructureData/testcase/tImageStructureConvertToFib >>${OUTPUT} 2>>${ERROR_OUTPUT}
+echo >>${OUTPUT}
+
+echo >>${OUTPUT}
+echo "Memory leaks in tImageSearchData" >>${OUTPUT}
+${LEAK_CHECKER} ./nStructureData/testcase/tImageSearchData 64  > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./nStructureData/testcase/tImageSearchData >>${OUTPUT} 2>>${ERROR_OUTPUT}
+echo >>${OUTPUT}
+
+
+echo >>${OUTPUT}
+echo "Memory leaks in tFindImageStructure" >>${OUTPUT}
+${LEAK_CHECKER} ./nSearchForStructure/testcase/tFindImageStructure 64  > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./nSearchForStructure/testcase/tFindImageStructure >>${OUTPUT} 2>>${ERROR_OUTPUT}
 echo >>${OUTPUT}
 
 

@@ -33,6 +33,7 @@
 History:
 29.01.2012  Oesterholz  created
 17.02.2013  Oesterholz FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE implemented
+16.03.2013  Oesterholz  clone() method added
 */
 
 
@@ -183,6 +184,17 @@ cVectorExtSubobject::cVectorExtSubobject( cReadBits & iBitStream, intFib & outSt
 			pInVectorDomain, pInDomainVariable, uiInNumberOfElements ){
 	//nothing to do
 	DEBUG_OUT_L3(<<this<<"->cVectorExtSubobject() constructor restore bit"<<endl);
+}
+
+
+/**
+ * This method clones this object.
+ *
+ * @return a pointer to the clone of this object
+ */
+cVectorExtSubobject * cVectorExtSubobject::clone() const{
+	
+	return new cVectorExtSubobject( *this );
 }
 
 

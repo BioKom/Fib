@@ -33,6 +33,7 @@
 History:
 06.12.2011  Oesterholz  created
 17.02.2013  Oesterholz FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE implemented
+16.03.2013  Oesterholz  clone() method added
 */
 
 
@@ -169,6 +170,17 @@ cVectorFibMatrix::cVectorFibMatrix( cReadBits & iBitStream, intFib & outStatus,
 			pInVectorDomain, pInDomainVariable, uiInNumberOfElements ){
 	//nothing to do
 	DEBUG_OUT_L3(<<this<<"->cVectorFibMatrix() constructor restore bit"<<endl);
+}
+
+
+/**
+ * This method clones this object.
+ *
+ * @return a pointer to the clone of this object
+ */
+cVectorFibMatrix * cVectorFibMatrix::clone() const{
+	
+	return new cVectorFibMatrix( *this );
 }
 
 

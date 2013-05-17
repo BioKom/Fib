@@ -46,6 +46,8 @@
 # 21.01.2012   Oesterholz   tTypeExtObjectInput added
 # 04.02.2012   Oesterholz   tVectorExtObject and tVectorExtSubobject added
 # 14.02.2012   Oesterholz   tDomainReference added
+# 09.03.2013   Oesterholz   tMatrix3D added
+# 11.05.2013   Oesterholz   tFibDatatyps added
 #
 
 
@@ -84,6 +86,12 @@ export TAIL_PID=$(first $(ps | grep tail))
 
 echo
 #evaluate testcases
+
+echo >>${OUTPUT}
+echo "Memoryleaks in tFibDatatyps" >>${OUTPUT}
+${LEAK_CHECKER} ./tFibDatatyps 256 > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tFibDatatyps >>${OUTPUT} 2>>${ERROR_OUTPUT}
+echo >>${OUTPUT}
+
 
 echo >>${OUTPUT}
 echo "Memoryleaks in tTypeDimension:" >>${OUTPUT}
@@ -401,6 +409,12 @@ echo >>${OUTPUT}
 echo >>${OUTPUT}
 echo "Memoryleaks in tFibDatabase" >>${OUTPUT}
 ${LEAK_CHECKER} ./tFibDatabase 64 ../testObjects/testFibDatabase/ > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tFibDatabase >>${OUTPUT} 2>>${ERROR_OUTPUT}
+echo >>${OUTPUT}
+
+
+echo >>${OUTPUT}
+echo "Memoryleaks in tMatrix3D" >>${OUTPUT}
+${LEAK_CHECKER} ./tMatrix3D 64 > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tMatrix3D >>${OUTPUT} 2>>${ERROR_OUTPUT}
 echo >>${OUTPUT}
 
 

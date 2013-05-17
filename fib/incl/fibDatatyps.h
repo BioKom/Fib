@@ -40,6 +40,7 @@ History:
 	subFromFirst() added
 13.10.2011  Oesterholz  functions getListElement() added
 13.10.2011  Oesterholz  min() function replaced
+11.05.2013  Oesterholz  function composeDoubleFib() added
 */
 
 
@@ -145,14 +146,59 @@ namespace fib{
 	 * This function evalues the digits needed to store a value as an
 	 * natural number.
 	 *
+	 * @param uiValue the value to evalue the digits for
+	 * @return the digits needed to store a value as an natural number
+	 */
+	unsigned int getDigits( unsigned int uiValue );
+
+	/**
+	 * This function evalues the digits needed to store a value as an
+	 * natural number.
+	 *
+	 * @param ulValue the value to evalue the digits for
+	 * @return the digits needed to store a value as an natural number
+	 */
+	unsigned int getDigits( unsigned long ulValue );
+	
+	/**
+	 * This function evalues the digits needed to store a value as an
+	 * natural number.
+	 *
 	 * @param llValue the value to evalue the digits for
 	 * @return the digits needed to store a value as an natural number
 	 */
 	unsigned int getDigits( unsigned long long llValue );
 
+	/**
+	 * This function evalues the digits needed to store a value as an
+	 * integer number (including 1 bit for the sign).
+	 *
+	 * @param iValue the value to evalue the digits for
+	 * @return the digits needed to store a value as an integer number
+	 */
+	unsigned int getDigits( int iValue );
 
 	/**
-	 * Decompses a doubleFib number into it's mantissa and exponent part.
+	 * This function evalues the digits needed to store a value as an
+	 * integer number (including 1 bit for the sign).
+	 *
+	 * @param llValue the value to evalue the digits for
+	 * @return the digits needed to store a value as an integer number
+	 */
+	unsigned int getDigits( long llValue );
+	
+	/**
+	 * This function evalues the digits needed to store a value as an
+	 * integer number (including 1 bit for the sign).
+	 *
+	 * @param llValue the value to evalue the digits for
+	 * @return the digits needed to store a value as an integer number
+	 */
+	unsigned int getDigits( long long llValue );
+
+
+	/**
+	 * Decomposes a double number into it's mantissa and exponent part.
 	 *
 	 * @param dNumber the number to decompose
 	 * @param lMantissa a pointer to the longFib field wher the mantissa
@@ -166,10 +212,21 @@ namespace fib{
 	 * 	the exponent in bits should be stored or NULL if it shouldn't be
 	 * 	stored
 	 */
-	void decomposeDoubleFib( const doubleFib dNumber,
+	void decomposeDoubleFib( const double dNumber,
 		longFib * lMantissa, longFib * lExponent,
 		intFib * iSizeMantissa = NULL, intFib * iSizeExponent = NULL );
-//TODO NULL not possible		intFib * iSizeMantissa = NULL, intFib * iSizeExponent = NULL );
+	
+	/**
+	 * Composes a double number into it's mantissa and exponent part.
+	 * It's the invers of: @see decomposeDoubleFib()
+	 * Basicly it evalues: lMantissa * 2^lExponent
+	 *
+	 * @param lMantissa the mantissa of the number
+	 * @param lExponent the exponent of the number
+	 * @return lMantissa * 2^lExponent
+	 */
+	double composeDoubleFib(
+		const longFib & lMantissa, const longFib & lExponent );
 	
 	/**
 	 * This function rounds the given number of bits ulNumberOfBits up

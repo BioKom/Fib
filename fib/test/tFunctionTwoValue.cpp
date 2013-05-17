@@ -87,6 +87,7 @@ History:
 04.04.2011  Oesterholz  storing to binary stream
 09.11.2012  Oesterholz  cFunctionMod added
 09.11.2012  Oesterholz  Bugfix: exponent value check (if not a number set to 0)
+09.03.2013  Oesterholz  Bugfix: isEqual() corrected
 */
 
 #include "version.h"
@@ -376,10 +377,10 @@ bool isEqual( doubleFib dValue1, doubleFib dValue2 ){
 	
 	const doubleFib dSaveBoundery1 = abs( dValue1 / 1000000.0 );
 	const doubleFib dSaveBoundery2 = abs( dValue2 / 1000000.0 );
-	const doubleFib dSaveBoundery = min( dSaveBoundery1, dSaveBoundery2 );
+	const doubleFib dSaveBoundery  = min( dSaveBoundery1, dSaveBoundery2 );
 	
-	if ( (dValue1 - dSaveBoundery <= dValue2) &&
-			(dValue1 <= dValue2 + dSaveBoundery) ){
+	if ( ( dValue1 - dSaveBoundery <= dValue2 ) &&
+			( dValue2 <= dValue1 + dSaveBoundery ) ){
 		return true;
 	}
 	return false;

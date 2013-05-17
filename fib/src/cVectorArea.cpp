@@ -36,6 +36,7 @@ History:
 25.08.2011  Oesterholz  underarea to subarea
 02.01.2012  Oesterholz  cTypeSubarea to cTypeArea;
    changes for cTypeArea and cFibMatrix
+16.03.2013  Oesterholz  clone() method added
 */
 
 
@@ -258,6 +259,17 @@ cVectorArea::cVectorArea( cReadBits & iBitStream, intFib & outStatus,
 	DEBUG_OUT_L3(<<this<<"->cVectorArea() restore bit"<<endl);
 	
 	//nothing to do
+}
+
+
+/**
+ * This method clones this object.
+ *
+ * @return a pointer to the clone of this object
+ */
+cVectorArea * cVectorArea::clone() const{
+	
+	return new cVectorArea( *this );
 }
 
 

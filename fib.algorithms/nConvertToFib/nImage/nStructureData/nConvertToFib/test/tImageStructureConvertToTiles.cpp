@@ -365,24 +365,30 @@ unsigned int testConvertForObject( const string szActualAreaData,
 				itrActualObject != liConvertedFibObjects.end(); itrActualObject++ ){
 			
 			//check max values
-			cVectorExtObject * vecExtObject = (*itrActualObject)->getInputVector();
-			
-			if ( vecExtObject->getNumberOfElements() != 6 ){
-				cerr<<"Error: External object has not than 6 input values, but "<<
-					vecExtObject->getNumberOfElements()<<endl;
-				iReturn++;
-				(*itrActualObject)->storeXml( cerr );
-			}
-			
-			for ( unsigned int uiNumberActualValue = 3;
-				uiNumberActualValue <= 6; uiNumberActualValue++ ){
-				
-				if ( maxValue < abs( vecExtObject->getValue( uiNumberActualValue ) ) ){
-					cerr<<"Error: The "<<uiNumberActualValue<<
-						" absulute input value of the external object is bigger as the maxValue (of "<<
-							maxValue<<") , it is "<<
-							vecExtObject->getValue( uiNumberActualValue )<<endl;
+			if ( (*itrActualObject)->getIdentifier() <= -70 ){
+				cVectorExtObject * vecExtObject = (*itrActualObject)->getInputVector();
+				const unsigned int uiNumberOfExtobjInputValues =
+					vecExtObject->getNumberOfElements();
+				/*other external object as just spline tiles are possible*/
+				if ( uiNumberOfExtobjInputValues < 3 ){
+					cerr<<"Error: External object has less than 3 input values, it are "<<
+						vecExtObject->getNumberOfElements()<<endl;
 					iReturn++;
+					(*itrActualObject)->storeXml( cerr );
+				}
+				
+				for ( unsigned int uiNumberActualValue = 3;
+					uiNumberActualValue <= uiNumberOfExtobjInputValues;
+					uiNumberActualValue++ ){
+					
+					if ( maxValue < abs( vecExtObject->getValue( uiNumberActualValue ) ) ){
+						cerr<<"Error: The "<<uiNumberActualValue<<
+							" absulute input value of the external object is bigger as the maxValue (of "<<
+								maxValue<<") , it is "<<
+								vecExtObject->getValue( uiNumberActualValue )<<endl;
+						(*itrActualObject)->storeXml( cerr );
+						iReturn++;
+					}
 				}
 			}
 			

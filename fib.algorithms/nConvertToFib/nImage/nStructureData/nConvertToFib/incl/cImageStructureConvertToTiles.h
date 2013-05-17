@@ -33,8 +33,8 @@ History:
 */
 
 
-#ifndef ___C_IMAGE_STRUCTURE_CONVERT_TO_TILES_H__
-#define ___C_IMAGE_STRUCTURE_CONVERT_TO_TILES_H__
+#ifndef ___FIB__ALGORITHMS__N_CONVERT_TO_FIB__N_IMAGE__N_STRUCTURE_DATA__N_CONVERT_TO_FIB__C_IMAGE_STRUCTURE_CONVERT_TO_TILES_H__
+#define ___FIB__ALGORITHMS__N_CONVERT_TO_FIB__N_IMAGE__N_STRUCTURE_DATA__N_CONVERT_TO_FIB__C_IMAGE_STRUCTURE_CONVERT_TO_TILES_H__
 
 #include "version.h"
 
@@ -63,12 +63,78 @@ namespace nConvertToFib{
 
 
 class cImageStructureConvertToTiles: public iConvertAreaToExtObjects{
+protected:
+	
+	/**
+	 * The number of parameters for the porder function.
+	 * Beware: The values IDENTIFIER_SPLINE_OBJECT_XY and IDENTIFIER_SPLINE_OBJECT_YX
+	 * 	should match.
+	 * @see IDENTIFIER_SPLINE_OBJECT_XY
+	 * @see IDENTIFIER_SPLINE_OBJECT_YX
+	 */
+	unsigned int NUMBER_OF_SPLINE_PARAMETERS;
+	
+	/**
+	 * The identifier for a tile object in x y direction (spline border is f( x ) )
+	 */
+	int IDENTIFIER_SPLINE_OBJECT_XY;
+	/**
+	 * The identifier for a tile object in y x direction (spline border is f( y ) )
+	 */
+	int IDENTIFIER_SPLINE_OBJECT_YX;
+
+	/**
+	 * The identifier for a antialised tile object in x y direction (spline border is f( x ) )
+	 */
+	int IDENTIFIER_SPLINE_OBJECT_AA_XY;
+	/**
+	 * The identifier for a antialised tile object in y x direction (spline border is f( y ) )
+	 */
+	int IDENTIFIER_SPLINE_OBJECT_AA_YX;
+
+	/**
+	 * The factor of difference betwean the weigt factors.
+	 * if the weight for the i'th parameter p_i is w_i
+	 * the weight for the (i-1)'th parameter p_(i-1) is w_(i-1) = w_i * D_WEIGHT_FACTOR
+	 * (exsept the 0't parameter weight (the constant) which is allways 0);
+	 * The weight parameter for last parameter id allways D_WEIGHT_FACTOR
+	 */
+	const double D_WEIGHT_FACTOR;
+	
+	/**
+	 * If true, it will be tried to reduce the number of bits for the
+	 * parameter of the found splines.
+	 */
+	bool bReduceBitsForParameter;
+	
 public:
 	
 	/**
 	 * standard constructor
+	 *
+	 * @param uiNumberOfSplineParameters the number of parameters for the
+	 * 	porder function
+	 * 	Beware: Just some values are valid
+	 * 	Valid values: 2, 3, 4
+	 * 	@see NUMBER_OF_SPLINE_PARAMETERS
+	 * @param dWeightFactor the factor of difference betwean the weigt factors
+	 * 	@see D_WEIGHT_FACTOR
+	 * @param bInReduceBitsForParameter if true, it will be tried to reduce
+	 * 	the number of bits for the parameter of the found splines
+	 * 	@see bReduceBitsForParameter
 	 */
-	cImageStructureConvertToTiles();
+	cImageStructureConvertToTiles( unsigned int uiNumberOfSplineParameters = 3,
+			const double dWeightFactor = 0.0001,
+			const bool bInReduceBitsForParameter = true );
+	
+	/**
+	 * copy constructor
+	 *
+	 * @param imageStructureConvertToTiles the cImageStructureConvertToTiles
+	 * 	object to copy
+	 */
+	cImageStructureConvertToTiles(
+		const cImageStructureConvertToTiles & imageStructureConvertToTiles );
 	
 	/**
 	 * destructor
@@ -127,4 +193,4 @@ public:
 };//end namespace fib
 
 
-#endif //___C_IMAGE_STRUCTURE_CONVERT_TO_TILES_H__
+#endif //___FIB__ALGORITHMS__N_CONVERT_TO_FIB__N_IMAGE__N_STRUCTURE_DATA__N_CONVERT_TO_FIB__C_IMAGE_STRUCTURE_CONVERT_TO_TILES_H__

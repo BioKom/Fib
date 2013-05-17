@@ -35,20 +35,106 @@ History:
 //switches for debugging proposes
 //#define DEBUG
 //#define DEBUG_ADDING_POINTS
+//#define DEBUG_REMOVE_POINT_METHOD
 //#define DEBUG_DELETING_POINTS
+//#define DEBUG_OUTPUT_GENERATED_AREA_DATA
 
+
+#ifdef DEBUG
+	#include <iomanip>
+#endif //DEBUG
 
 #include "cImageStructureConvertToTiles.h"
 
 #include "cDataPointRange.h"
 
+#include "fibDatatyps.h"
 #include "cVectorPosition.h"
 #include "cProperty.h"
 #include "cVectorProperty.h"
 #include "cTypeProperty.h"
 #include "cPoint.h"
 #include "cEvaluePositionList.h"
+#include "cEvaluePositionListLimit.h"
 #include "cPolynom.h"
+#include "cDomainNaturalNumber.h"
+#include "cDomainVector.h"
+
+
+#if defined(DEBUG_OUTPUT_GENERATED_AREA_DATA) //|| defined(DEBUG)
+	#include <iostream>
+	#include <fstream>
+	
+	#include "cImageAreaSameColor.h"
+	
+	#ifndef DEBUG_OUTPUT_GENERATED_AREA_DATA_FILE
+		#define DEBUG_OUTPUT_GENERATED_AREA_DATA_FILE "genAreaData.xml"
+	#endif //DEBUG_OUTPUT_STRUCTURE_DATA_FILE
+#endif //defined(DEBUG_OUTPUT_GENERATED_AREA_DATA) || defined(DEBUG)
+
+
+/**
+ * With this feature the new external object for antialised tiles is used.
+ *
+ * created: 11.03.2013  Betti Oesterholz
+ * status:  running and tested(03.2013)
+ * (deprecated: not FEATURE_USE_ADAPTED_ANTIALISED_EXT_OBJECT)
+ *//*
+History:
+*/
+#define FEATURE_USE_ADAPTED_ANTIALISED_EXT_OBJECT
+
+/**
+ * With this feature the size of the straight lines will be the number of
+ * points in the area to the straight line.
+ *
+ * created: 29.04.2013  Betti Oesterholz
+ * status:  running and tested(04.2013)
+ * (deprecated: not FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE)
+ *//*
+History:
+*/
+#define FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+
+
+/**
+ * With this feature the rectangle external object with identifer -40 will
+ * be used for areas, for which it is possible.
+ *
+ * created: 13.05.2013  Betti Oesterholz
+ * status:  running and tested(05.2013)
+ * (deprecated: not FEATURE_USE_RECTANGLE_EXT_OBJECT)
+ *//*
+History:
+*/
+#define FEATURE_USE_RECTANGLE_EXT_OBJECT
+
+/**
+ * With this feature the cImageStructureConvertToTiles::convertToTiles()
+ * method will use extra range points for area border line to match.
+ * These extra points will have a lower whight than the possible range points.
+ *
+ * @see fib::algorithms::nConvertToFib::nImage::nStructureData::nConvertToFib::cImageStructureConvertToTiles::convertToTiles()
+ *
+ * created: 30.04.2013  Betti Oesterholz
+ * Status:  implemened and tested(30.04.2013 not a good parameter)
+ * Needed: FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
+ *//*
+History:
+*/
+#ifdef FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
+	//#define FEATURE_C_IMAGE_STRUCTURE_CONVERT_TO_TILES_USE_INNER_LINE
+#endif //FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
+
+
+
+#ifdef FEATURE_C_IMAGE_STRUCTURE_CONVERT_TO_TILES_USE_INNER_LINE
+	/**
+	 * The weight for a point to match the area border line.
+	 */
+	#define D_WEIGHT_INNER_POINT 0.00000001
+#endif //FEATURE_C_IMAGE_STRUCTURE_CONVERT_TO_TILES_USE_INNER_LINE
+
 
 
 using namespace fib::algorithms::nConvertToFib::nImage::nStructureData::nConvertToFib;
@@ -67,7 +153,7 @@ namespace nImageStructureConvertToTiles{
 /**
  * The area line for one fix coordinat value.
  * This is a helper class for:
- * 	@see cImageStructureConvertToTiles::convertToTiles()
+ * 	@see cImageStructureConvertToTiles::convertToExtObjects()
  */
 class cLine{
 public:
@@ -214,6 +300,11 @@ public:
 	 */
 	bool removePoint( const long lPointsOtherCoordinate ){
 		
+#ifdef DEBUG_REMOVE_POINT_METHOD
+		cout<<"removePoint( lPointsOtherCoordinate="<<
+			lPointsOtherCoordinate<<" ) started (line="<<
+			lLineDirectionCoordinateValue<<")"<<endl;
+#endif //DEBUG_REMOVE_POINT_METHOD
 		const double dPointsOtherCoordinate = lPointsOtherCoordinate;
 		//the upper border has x.51 so (x + 1) is the border
 		const double dPointsOtherCoordinateDec1 = dPointsOtherCoordinate - 1;
@@ -230,6 +321,17 @@ public:
 				break;
 			}
 		}//end find line part nearest to the coordinat value
+#ifdef DEBUG_REMOVE_POINT_METHOD
+		if ( itrNearestLinePart != lineParts.end() ){
+			cout<<"   nearest line part from max "<<std::fixed<<
+				itrNearestLinePart->first.maxY<<" min "<<
+				itrNearestLinePart->first.minY<<" till min "<<
+				itrNearestLinePart->second.minY<<" max "<<
+				itrNearestLinePart->second.maxY<<""<<endl;
+		}else{
+			cout<<"   no nearest line part found (in "<<lineParts.size()<<" line parts)"<<endl;
+		}
+#endif //DEBUG_REMOVE_POINT_METHOD
 		
 		if ( ( itrNearestLinePart != lineParts.end() ) &&
 				( itrNearestLinePart->first.minY - 1 < dPointsOtherCoordinate ) &&
@@ -244,6 +346,10 @@ public:
 					first.minY has 0.49 after point and second.minY 0.51 */
 				if ( ( itrNearestLinePart->second.minY + 1.0 ) < itrNearestLinePart->first.minY ){
 					lineParts.erase( itrNearestLinePart );
+#ifdef DEBUG_REMOVE_POINT_METHOD
+					cout<<"   line part erased"<<endl;
+					itrNearestLinePart == lineParts.end();
+#endif //DEBUG_REMOVE_POINT_METHOD
 				}
 			}else if ( itrNearestLinePart->second.minY < dPointsOtherCoordinate ){
 				/* else if at end of the part line -> move min border one to the
@@ -260,14 +366,65 @@ public:
 				//the new part line is befor the old part line
 				tLinePart newPartLine( *itrNearestLinePart );
 				//remove point from part line
-				newPartLine.second.minY = dPointsOtherCoordinate - 0.51;
-				itrNearestLinePart->first.minY = dPointsOtherCoordinate + 0.51;
+				newPartLine.second.minY = dPointsOtherCoordinate - 1.49;
+				itrNearestLinePart->first.minY = dPointsOtherCoordinate + 1.49;
 				
 				lineParts.insert( itrNearestLinePart, newPartLine );
+#ifdef DEBUG_REMOVE_POINT_METHOD
+			cout<<"   adding new line part from max "<<std::fixed<<
+				newPartLine.first.maxY<<" min "<<
+				newPartLine.first.minY<<" till min "<<
+				newPartLine.second.minY<<" max "<<
+				newPartLine.second.maxY<<""<<endl;
+#endif //DEBUG_REMOVE_POINT_METHOD
 			}//end remove point
 			
+#ifdef DEBUG_REMOVE_POINT_METHOD
+			if ( itrNearestLinePart != lineParts.end() ){
+				cout<<"   changed line part from max "<<std::fixed<<
+					itrNearestLinePart->first.maxY<<" min "<<
+					itrNearestLinePart->first.minY<<" till min "<<
+					itrNearestLinePart->second.minY<<" max "<<
+					itrNearestLinePart->second.maxY<<""<<endl;
+				cout<<"removePoint( lPointsOtherCoordinate="<<
+					lPointsOtherCoordinate<<" ) done point removed"<<endl;
+			}
+#endif //DEBUG_REMOVE_POINT_METHOD
 			return true;
 		}//else if point was not removed
+#ifdef DEBUG_REMOVE_POINT_METHOD
+		cout<<"removePoint( lPointsOtherCoordinate="<<
+			lPointsOtherCoordinate<<" ) done point was not removed"<<endl;
+		
+		//check if point is in one line part
+		for ( itrNearestLinePart = lineParts.begin();
+				itrNearestLinePart != lineParts.end(); itrNearestLinePart++ ){
+			if ( ( itrNearestLinePart->first.maxY <= dPointsOtherCoordinate ) &&
+					( dPointsOtherCoordinate <= itrNearestLinePart->second.maxY ) ){
+				//line part for point found
+				break;
+			}
+		}//end find line part nearest to the coordinat value
+		if ( itrNearestLinePart == lineParts.end() ){
+			//line part for point not found
+			cout<<"Point "<<lPointsOtherCoordinate<<" for line "<<
+				lLineDirectionCoordinateValue<<" in no line part (betwean max max)"<<endl;
+		}
+		//check if point is in one line part
+		for ( itrNearestLinePart = lineParts.begin();
+				itrNearestLinePart != lineParts.end(); itrNearestLinePart++ ){
+			if ( ( (itrNearestLinePart->first.minY - 1.0) <= dPointsOtherCoordinate ) &&
+					( dPointsOtherCoordinate <= (itrNearestLinePart->second.minY + 1.0 ) ) ){
+				//line part for point found
+				break;
+			}
+		}//end find line part nearest to the coordinat value
+		if ( itrNearestLinePart != lineParts.end() ){
+			//line part for point not found
+			cerr<<"Error: Point "<<lPointsOtherCoordinate<<" for line "<<
+				lLineDirectionCoordinateValue<<" in removebel line part (betwean min min)"<<endl;
+		}
+#endif //DEBUG_REMOVE_POINT_METHOD
 		return false;
 	}
 	
@@ -303,7 +460,7 @@ public:
 	 */
 	void enlargeMaxForSearchData( const unsigned int uiDimension,
 			const cImageSearchData * pImageSearchData,
-			double dLeftBorder = -65536.0 ){
+			double dLeftBorder = -32.0 ){
 		
 		if ( pImageSearchData == NULL ){
 			//no search data nothing overlapped
@@ -435,7 +592,7 @@ public:
 /**
  * The straight border line for one fix coordinat area.
  * This is a helper class for:
- * 	@see cImageStructureConvertToTiles::convertToTiles()
+ * 	@see cImageStructureConvertToTiles::convertToExtObjects()
  */
 class cStraightBorderLine{
 public:
@@ -460,13 +617,19 @@ public:
 	 * lLineEndPoint.
 	 */
 	pair< double, double > areaForLine;
-	
+
+#ifdef FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+	/**
+	 * The size of the area for the line.
+	 * Number of points in the area to the line.
+	 */
+#else //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
 	/**
 	 * The size of the line.
 	 * lLineEndPoint - lLineStartPoint
 	 */
+#endif //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
 	unsigned long size;
-	
 	
 	/**
 	 * parameter constructor
@@ -513,8 +676,74 @@ public:
 
 /**
  * standard constructor
+ *
+ * @param uiNumberOfSplineParameters the number of parameters for the
+ * 	porder function
+ * 	Beware: Just some values are valid
+ * 	Valid values: 2, 3, 4
+ * 	@see NUMBER_OF_SPLINE_PARAMETERS
+ * @param dWeightFactor the factor of difference betwean the weigt factors
+ * 	@see D_WEIGHT_FACTOR
+ * @param bInReduceBitsForParameter if true, it will be tried to reduce
+ * 	the number of bits for the parameter of the found splines
+ * 	@see bReduceBitsForParameter
  */
-cImageStructureConvertToTiles::cImageStructureConvertToTiles(){
+cImageStructureConvertToTiles::cImageStructureConvertToTiles(
+		unsigned int uiNumberOfSplineParameters,
+		const double dWeightFactor,
+			const bool bInReduceBitsForParameter ):
+		D_WEIGHT_FACTOR( dWeightFactor ),
+		bReduceBitsForParameter( bInReduceBitsForParameter ){
+	//map uiNumberOfSplineParameters to valid value
+	if ( uiNumberOfSplineParameters < 2 ){
+		//value to smaal
+		NUMBER_OF_SPLINE_PARAMETERS = 2;
+	}else if ( 4 < uiNumberOfSplineParameters ){
+		//value to great
+		NUMBER_OF_SPLINE_PARAMETERS = 4;
+	}else{//use given value
+		NUMBER_OF_SPLINE_PARAMETERS = uiNumberOfSplineParameters;
+	}
+	//set the correct identifiers
+	switch ( NUMBER_OF_SPLINE_PARAMETERS ){
+		case 2:
+			IDENTIFIER_SPLINE_OBJECT_XY = -702;
+			IDENTIFIER_SPLINE_OBJECT_YX = -712;
+			IDENTIFIER_SPLINE_OBJECT_AA_XY = -752;
+			IDENTIFIER_SPLINE_OBJECT_AA_YX = -762;
+		break;
+		case 3:
+			IDENTIFIER_SPLINE_OBJECT_XY = -70;
+			IDENTIFIER_SPLINE_OBJECT_YX = -71;
+			IDENTIFIER_SPLINE_OBJECT_AA_XY = -85;
+			IDENTIFIER_SPLINE_OBJECT_AA_YX = -86;
+		break;
+		case 4:
+			IDENTIFIER_SPLINE_OBJECT_XY = -72;
+			IDENTIFIER_SPLINE_OBJECT_YX = -73;
+			IDENTIFIER_SPLINE_OBJECT_AA_XY = -87;
+			IDENTIFIER_SPLINE_OBJECT_AA_YX = -88;
+		break;
+		//TODO more cases
+		
+	}
+}
+
+/**
+ * copy constructor
+ *
+ * @param imageStructureConvertToTiles the cImageStructureConvertToTiles
+ * 	object to copy
+ */
+cImageStructureConvertToTiles::cImageStructureConvertToTiles(
+		const cImageStructureConvertToTiles & imageStructureConvertToTiles ):
+		NUMBER_OF_SPLINE_PARAMETERS( imageStructureConvertToTiles.NUMBER_OF_SPLINE_PARAMETERS ),
+		IDENTIFIER_SPLINE_OBJECT_XY( imageStructureConvertToTiles.IDENTIFIER_SPLINE_OBJECT_XY ),
+		IDENTIFIER_SPLINE_OBJECT_YX( imageStructureConvertToTiles.IDENTIFIER_SPLINE_OBJECT_YX ),
+		IDENTIFIER_SPLINE_OBJECT_AA_XY( imageStructureConvertToTiles.IDENTIFIER_SPLINE_OBJECT_AA_XY ),
+		IDENTIFIER_SPLINE_OBJECT_AA_YX( imageStructureConvertToTiles.IDENTIFIER_SPLINE_OBJECT_AA_YX ),
+		D_WEIGHT_FACTOR( imageStructureConvertToTiles.D_WEIGHT_FACTOR ),
+		bReduceBitsForParameter( imageStructureConvertToTiles.bReduceBitsForParameter ){
 	//nothing to do
 }
 
@@ -534,7 +763,7 @@ cImageStructureConvertToTiles::~cImageStructureConvertToTiles(){
  */
 cImageStructureConvertToTiles * cImageStructureConvertToTiles::clone() const{
 	
-	return new cImageStructureConvertToTiles();
+	return new cImageStructureConvertToTiles( *this );
 }
 
 
@@ -574,11 +803,11 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 		double maxValue,
 		const double maxErrorPerValue ) const{
 	
-	DEBUG_OUT_L2(<<"cImageStructureConvertToTiles("<<this<<")::convertToTiles( pImageSearchData, maxValue="<<maxValue<<", maxErrorPerValue="<<maxErrorPerValue<<" ) started"<<endl<<flush);
+	DEBUG_OUT_L2(<<"cImageStructureConvertToTiles("<<this<<")::convertToExtObjects( pImageSearchData, maxValue="<<maxValue<<", maxErrorPerValue="<<maxErrorPerValue<<" ) started"<<endl<<flush);
 	
 	if ( maxValue < 0.0 ){
 		//can't create spline with negativ maximum value
-		DEBUG_OUT_EL2(<<"cImageStructureConvertToTiles("<<this<<")::convertToTiles() done: can't create spline with negativ maximum value"<<endl<<flush);
+		DEBUG_OUT_EL2(<<"cImageStructureConvertToTiles("<<this<<")::convertToExtObjects() done: can't create spline with negativ maximum value"<<endl<<flush);
 		return list< cExtObject * >();
 	}//else
 	if ( maxValue == 0.0 ){
@@ -593,6 +822,18 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 		maxValue *= 256.0;
 		DEBUG_OUT_L2(<<"maximum value (maxValue) evalued to: "<<maxValue<<endl<<flush);
 	}
+	//the weight parameters for the to generate polynom (factors)
+	list< double > liWeightParameters;
+	
+	double dActualWeightValue = D_WEIGHT_FACTOR;
+	for ( unsigned int uiActualParameterWeight = 1;
+			uiActualParameterWeight < NUMBER_OF_SPLINE_PARAMETERS;
+			uiActualParameterWeight++, dActualWeightValue *= D_WEIGHT_FACTOR ){
+	
+		liWeightParameters.push_front( dActualWeightValue );
+	}
+	//set parameter for the constant factor
+	liWeightParameters.push_front( 0.0 );
 	
 	//evalue minimum and maximum borders of area in both directions
 	/*The map with the borders of the areas.
@@ -700,6 +941,17 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 	}
 	cout<<endl;
 #endif //DEBUG
+#ifdef FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+	//evalue dimensions of area (for cEvaluePositionListLimit)
+	cDomainNaturalNumber domDimension1( bordersDim1.rbegin()->first + 10 );
+	cDomainNaturalNumber domDimension2( bordersDim2.rbegin()->first + 10 );
+	vector<cDomainSingle*> vecDomainsDim;
+	vecDomainsDim.push_back( &domDimension1 );
+	vecDomainsDim.push_back( &domDimension2 );
+	
+	cDomainVector vecDomainDimension( vecDomainsDim );
+	DEBUG_OUT_L2(<<"evalue just in dimensions till max ("<<(bordersDim1.rbegin()->first + 10)<<", "<<(bordersDim2.rbegin()->first + 10)<<" )"<<endl<<flush);
+#endif //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
 	DEBUG_OUT_L2(<<"for all line parts: set maximum to minimum"<<endl<<flush);
 	for ( map< longFib, nImageStructureConvertToTiles::cLine >::iterator
 			itrActualLineDim1 = bordersDim1.begin();
@@ -749,7 +1001,7 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 	}
 	
 	//the minimum number of lines for an tile area to create
-	unsigned long ulMinGoodLines = min( min( bordersDim1.size(), bordersDim2.size() ) / 2 + 1,
+	unsigned long ulMinGoodStraightLineSize = min( min( bordersDim1.size(), bordersDim2.size() ) / 2 + 1,
 		1024UL );
 	
 	/*parameter needed for the cPolynom::evalueSplineIterativFast() method
@@ -885,7 +1137,13 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 							//enlarge border line
 							DEBUG_OUT_L4(<<"enlarge border line from "<<dBorderLineMin<<" to "<<dBorderLineMax<<" (new from "<<max( dBorderLineMin, dLinePartBeginMin )<<" to "<<min( dBorderLineMax, dLinePartBeginMax )<<" size "<<((*itrActualToEnlargeBorderLine)->size)<<")"<<endl<<flush);
 						
+#ifdef FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+							((*itrActualToEnlargeBorderLine)->size) +=
+								itrActualLinePart->second.minY - itrActualLinePart->first.minY;
 							((*itrActualToEnlargeBorderLine)->size)++;
+#else //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+							((*itrActualToEnlargeBorderLine)->size)++;
+#endif //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
 							((*itrActualToEnlargeBorderLine)->lLineEndPoint) =
 								itrActualLineDim1->first;
 							
@@ -915,7 +1173,13 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 						//enlarge border line
 						DEBUG_OUT_L4(<<"enlarge border line from "<<dBorderLineMin<<" to "<<dBorderLineMax<<" (new from "<<max( dBorderLineMin, dLinePartEndMin )<<" to "<<min( dBorderLineMax, dLinePartEndMax )<<" size "<<((*itrActualToEnlargeBorderLine)->size)<<")"<<endl<<flush);
 						
+#ifdef FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+						((*itrActualToEnlargeBorderLine)->size) +=
+							itrActualLinePart->second.minY - itrActualLinePart->first.minY;
 						((*itrActualToEnlargeBorderLine)->size)++;
+#else //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+						((*itrActualToEnlargeBorderLine)->size)++;
+#endif //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
 						((*itrActualToEnlargeBorderLine)->lLineEndPoint) =
 							itrActualLineDim1->first;
 						
@@ -945,6 +1209,12 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 					break;
 				}
 			}//end for all remaining part lines
+			//erase all remaining not enlarged straight border lines from enlarge list
+			while ( itrActualToEnlargeBorderLine != liStraightBorderLinesToEnlarge.end() ){
+				itrActualToEnlargeBorderLine = liStraightBorderLinesToEnlarge.erase(
+						itrActualToEnlargeBorderLine );
+			}
+			
 			if ( liStraightBorderLinesToEnlarge.empty() ){
 				//if no border line to enlarged or crated -> break
 				DEBUG_OUT_L2(<<"no border line to enlarged or crated -> break evalue next area line"<<endl<<flush);
@@ -958,7 +1228,7 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 		liStraightBorderLinesDim1Top.sort();
 		
 		bool bFindMoreBorderLines = true;
-		if ( ulMinGoodLines <= liStraightBorderLinesDim1Top.front().size ){
+		if ( ulMinGoodStraightLineSize <= liStraightBorderLinesDim1Top.front().size ){
 			//good border line allready found
 			bFindMoreBorderLines = false;
 		}
@@ -1058,7 +1328,13 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 								//enlarge border line
 								DEBUG_OUT_L4(<<"enlarge border line from "<<dBorderLineMin<<" to "<<dBorderLineMax<<" (new from "<<max( dBorderLineMin, dLinePartEndMin )<<" to "<<min( dBorderLineMax, dLinePartEndMax )<<" size "<<((*itrActualToEnlargeBorderLine)->size)<<")"<<endl<<flush);
 								
+#ifdef FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+								((*itrActualToEnlargeBorderLine)->size) +=
+									itrActualLinePart->second.minY - itrActualLinePart->first.minY;
 								((*itrActualToEnlargeBorderLine)->size)++;
+#else //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+								((*itrActualToEnlargeBorderLine)->size)++;
+#endif //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
 								((*itrActualToEnlargeBorderLine)->lLineEndPoint) =
 									itrActualLineDim1->first;
 								
@@ -1088,7 +1364,13 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 							//enlarge border line
 							DEBUG_OUT_L4(<<"enlarge border line from "<<dBorderLineMin<<" to "<<dBorderLineMax<<" (new from "<<max( dBorderLineMin, dLinePartBeginMin )<<" to "<<min( dBorderLineMax, dLinePartBeginMax )<<" size "<<((*itrActualToEnlargeBorderLine)->size)<<")"<<endl<<flush);
 						
+#ifdef FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+							((*itrActualToEnlargeBorderLine)->size) +=
+								itrActualLinePart->second.minY - itrActualLinePart->first.minY;
 							((*itrActualToEnlargeBorderLine)->size)++;
+#else //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+							((*itrActualToEnlargeBorderLine)->size)++;
+#endif //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
 							((*itrActualToEnlargeBorderLine)->lLineEndPoint) =
 								itrActualLineDim1->first;
 							
@@ -1118,6 +1400,11 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 						break;
 					}
 				}//end for all remaining part lines
+				//erase all remaining not enlarged straight border lines from enlarge list
+				while ( itrActualToEnlargeBorderLine != liStraightBorderLinesToEnlarge.end() ){
+					itrActualToEnlargeBorderLine = liStraightBorderLinesToEnlarge.erase(
+							itrActualToEnlargeBorderLine );
+				}
 				if ( liStraightBorderLinesToEnlarge.empty() ){
 					//if no border line to enlarged or crated -> break
 					DEBUG_OUT_L2(<<"no border line to enlarged or crated -> break evalue next area line"<<endl<<flush);
@@ -1130,7 +1417,7 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 			DEBUG_OUT_L2(<<"sort border lines for dimension"<<endl<<flush);
 			liStraightBorderLinesDim1Top.sort();
 			
-			if ( ulMinGoodLines <= liStraightBorderLinesDim1Top.front().size ){
+			if ( ulMinGoodStraightLineSize <= liStraightBorderLinesDim1Top.front().size ){
 				//good border line allready found
 				bFindMoreBorderLines = false;
 			}
@@ -1235,7 +1522,13 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 								//enlarge border line
 								DEBUG_OUT_L4(<<"enlarge border line from "<<dBorderLineMin<<" to "<<dBorderLineMax<<" (new from "<<max( dBorderLineMin, dLinePartBeginMin )<<" to "<<min( dBorderLineMax, dLinePartBeginMax )<<" size "<<((*itrActualToEnlargeBorderLine)->size)<<")"<<endl<<flush);
 							
+#ifdef FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+								((*itrActualToEnlargeBorderLine)->size) +=
+									itrActualLinePart->second.minY - itrActualLinePart->first.minY;
 								((*itrActualToEnlargeBorderLine)->size)++;
+#else //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+								((*itrActualToEnlargeBorderLine)->size)++;
+#endif //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
 								((*itrActualToEnlargeBorderLine)->lLineEndPoint) =
 									itrActualLineDim1->first;
 								
@@ -1265,7 +1558,13 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 							//enlarge border line
 							DEBUG_OUT_L4(<<"enlarge border line from "<<dBorderLineMin<<" to "<<dBorderLineMax<<" (new from "<<max( dBorderLineMin, dLinePartEndMin )<<" to "<<min( dBorderLineMax, dLinePartEndMax )<<" size "<<((*itrActualToEnlargeBorderLine)->size)<<")"<<endl<<flush);
 							
+#ifdef FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+							((*itrActualToEnlargeBorderLine)->size) +=
+								itrActualLinePart->second.minY - itrActualLinePart->first.minY;
 							((*itrActualToEnlargeBorderLine)->size)++;
+#else //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+							((*itrActualToEnlargeBorderLine)->size)++;
+#endif //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
 							((*itrActualToEnlargeBorderLine)->lLineEndPoint) =
 								itrActualLineDim1->first;
 							
@@ -1295,6 +1594,11 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 						break;
 					}
 				}//end for all remaining part lines
+				//erase all remaining not enlarged straight border lines from enlarge list
+				while ( itrActualToEnlargeBorderLine != liStraightBorderLinesToEnlarge.end() ){
+					itrActualToEnlargeBorderLine = liStraightBorderLinesToEnlarge.erase(
+							itrActualToEnlargeBorderLine );
+				}
 				if ( liStraightBorderLinesToEnlarge.empty() ){
 					//if no border line to enlarged or crated -> break
 					DEBUG_OUT_L2(<<"no border line to enlarged or crated -> break evalue next area line"<<endl<<flush);
@@ -1307,7 +1611,7 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 			DEBUG_OUT_L2(<<"sort border lines for dimension"<<endl<<flush);
 			liStraightBorderLinesDim1Bottom.sort();
 			
-			if ( ulMinGoodLines <= liStraightBorderLinesDim1Bottom.front().size ){
+			if ( ulMinGoodStraightLineSize <= liStraightBorderLinesDim1Bottom.front().size ){
 				//good border line allready found
 				bFindMoreBorderLines = false;
 			}
@@ -1409,7 +1713,13 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 								//enlarge border line
 								DEBUG_OUT_L4(<<"enlarge border line from "<<dBorderLineMin<<" to "<<dBorderLineMax<<" (new from "<<max( dBorderLineMin, dLinePartEndMin )<<" to "<<min( dBorderLineMax, dLinePartEndMax )<<" size "<<((*itrActualToEnlargeBorderLine)->size)<<")"<<endl<<flush);
 								
+#ifdef FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+								((*itrActualToEnlargeBorderLine)->size) +=
+									itrActualLinePart->second.minY - itrActualLinePart->first.minY;
 								((*itrActualToEnlargeBorderLine)->size)++;
+#else //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+								((*itrActualToEnlargeBorderLine)->size)++;
+#endif //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
 								((*itrActualToEnlargeBorderLine)->lLineEndPoint) =
 									itrActualLineDim1->first;
 								
@@ -1439,7 +1749,13 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 							//enlarge border line
 							DEBUG_OUT_L4(<<"enlarge border line from "<<dBorderLineMin<<" to "<<dBorderLineMax<<" (new from "<<max( dBorderLineMin, dLinePartBeginMin )<<" to "<<min( dBorderLineMax, dLinePartBeginMax )<<" size "<<((*itrActualToEnlargeBorderLine)->size)<<")"<<endl<<flush);
 						
+#ifdef FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+							((*itrActualToEnlargeBorderLine)->size) +=
+								itrActualLinePart->second.minY - itrActualLinePart->first.minY;
 							((*itrActualToEnlargeBorderLine)->size)++;
+#else //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+							((*itrActualToEnlargeBorderLine)->size)++;
+#endif //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
 							((*itrActualToEnlargeBorderLine)->lLineEndPoint) =
 								itrActualLineDim1->first;
 							
@@ -1469,6 +1785,11 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 						break;
 					}
 				}//end for all remaining part lines
+				//erase all remaining not enlarged straight border lines from enlarge list
+				while ( itrActualToEnlargeBorderLine != liStraightBorderLinesToEnlarge.end() ){
+					itrActualToEnlargeBorderLine = liStraightBorderLinesToEnlarge.erase(
+							itrActualToEnlargeBorderLine );
+				}
 				if ( liStraightBorderLinesToEnlarge.empty() ){
 					//if no border line to enlarged or crated -> break
 					DEBUG_OUT_L2(<<"no border line to enlarged or crated -> break evalue next area line"<<endl<<flush);
@@ -1481,7 +1802,7 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 			DEBUG_OUT_L2(<<"sort border lines for dimension"<<endl<<flush);
 			liStraightBorderLinesDim1Bottom.sort();
 			
-			if ( ulMinGoodLines <= liStraightBorderLinesDim1Bottom.front().size ){
+			if ( ulMinGoodStraightLineSize <= liStraightBorderLinesDim1Bottom.front().size ){
 				//good border line allready found
 				bFindMoreBorderLines = false;
 			}
@@ -1588,7 +1909,13 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 								//enlarge border line
 								DEBUG_OUT_L4(<<"enlarge border line from "<<dBorderLineMin<<" to "<<dBorderLineMax<<" (new from "<<max( dBorderLineMin, dLinePartBeginMin )<<" to "<<min( dBorderLineMax, dLinePartBeginMax )<<" size "<<((*itrActualToEnlargeBorderLine)->size)<<")"<<endl<<flush);
 							
+#ifdef FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+								((*itrActualToEnlargeBorderLine)->size) +=
+									itrActualLinePart->second.minY - itrActualLinePart->first.minY;
 								((*itrActualToEnlargeBorderLine)->size)++;
+#else //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+								((*itrActualToEnlargeBorderLine)->size)++;
+#endif //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
 								((*itrActualToEnlargeBorderLine)->lLineEndPoint) =
 									itrActualLineDim2->first;
 								
@@ -1618,7 +1945,13 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 							//enlarge border line
 							DEBUG_OUT_L4(<<"enlarge border line from "<<dBorderLineMin<<" to "<<dBorderLineMax<<" (new from "<<max( dBorderLineMin, dLinePartEndMin )<<" to "<<min( dBorderLineMax, dLinePartEndMax )<<" size "<<((*itrActualToEnlargeBorderLine)->size)<<")"<<endl<<flush);
 							
+#ifdef FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+							((*itrActualToEnlargeBorderLine)->size) +=
+								itrActualLinePart->second.minY - itrActualLinePart->first.minY;
 							((*itrActualToEnlargeBorderLine)->size)++;
+#else //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+							((*itrActualToEnlargeBorderLine)->size)++;
+#endif //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
 							((*itrActualToEnlargeBorderLine)->lLineEndPoint) =
 								itrActualLineDim2->first;
 							
@@ -1648,6 +1981,11 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 						break;
 					}
 				}//end for all remaining part lines
+				//erase all remaining not enlarged straight border lines from enlarge list
+				while ( itrActualToEnlargeBorderLine != liStraightBorderLinesToEnlarge.end() ){
+					itrActualToEnlargeBorderLine = liStraightBorderLinesToEnlarge.erase(
+							itrActualToEnlargeBorderLine );
+				}
 				if ( liStraightBorderLinesToEnlarge.empty() ){
 					//if no border line to enlarged or crated -> break
 					DEBUG_OUT_L2(<<"no border line to enlarged or crated -> break evalue next area line"<<endl<<flush);
@@ -1660,7 +1998,7 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 			DEBUG_OUT_L2(<<"sort border lines for dimension"<<endl<<flush);
 			liStraightBorderLinesDim2Top.sort();
 			
-			if ( ulMinGoodLines <= liStraightBorderLinesDim2Top.front().size ){
+			if ( ulMinGoodStraightLineSize <= liStraightBorderLinesDim2Top.front().size ){
 				//good border line allready found
 				bFindMoreBorderLines = false;
 			}
@@ -1762,7 +2100,13 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 								//enlarge border line
 								DEBUG_OUT_L4(<<"enlarge border line from "<<dBorderLineMin<<" to "<<dBorderLineMax<<" (new from "<<max( dBorderLineMin, dLinePartEndMin )<<" to "<<min( dBorderLineMax, dLinePartEndMax )<<" size "<<((*itrActualToEnlargeBorderLine)->size)<<")"<<endl<<flush);
 								
+#ifdef FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+								((*itrActualToEnlargeBorderLine)->size) +=
+									itrActualLinePart->second.minY - itrActualLinePart->first.minY;
 								((*itrActualToEnlargeBorderLine)->size)++;
+#else //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+								((*itrActualToEnlargeBorderLine)->size)++;
+#endif //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
 								((*itrActualToEnlargeBorderLine)->lLineEndPoint) =
 									itrActualLineDim2->first;
 								
@@ -1792,7 +2136,13 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 							//enlarge border line
 							DEBUG_OUT_L4(<<"enlarge border line from "<<dBorderLineMin<<" to "<<dBorderLineMax<<" (new from "<<max( dBorderLineMin, dLinePartBeginMin )<<" to "<<min( dBorderLineMax, dLinePartBeginMax )<<" size "<<((*itrActualToEnlargeBorderLine)->size)<<")"<<endl<<flush);
 						
+#ifdef FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+							((*itrActualToEnlargeBorderLine)->size) +=
+								itrActualLinePart->second.minY - itrActualLinePart->first.minY;
 							((*itrActualToEnlargeBorderLine)->size)++;
+#else //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+							((*itrActualToEnlargeBorderLine)->size)++;
+#endif //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
 							((*itrActualToEnlargeBorderLine)->lLineEndPoint) =
 								itrActualLineDim2->first;
 							
@@ -1822,6 +2172,11 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 						break;
 					}
 				}//end for all remaining part lines
+				//erase all remaining not enlarged straight border lines from enlarge list
+				while ( itrActualToEnlargeBorderLine != liStraightBorderLinesToEnlarge.end() ){
+					itrActualToEnlargeBorderLine = liStraightBorderLinesToEnlarge.erase(
+							itrActualToEnlargeBorderLine );
+				}
 				if ( liStraightBorderLinesToEnlarge.empty() ){
 					//if no border line to enlarged or crated -> break
 					DEBUG_OUT_L2(<<"no border line to enlarged or crated -> break evalue next area line"<<endl<<flush);
@@ -1834,7 +2189,7 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 			DEBUG_OUT_L2(<<"sort border lines for dimension"<<endl<<flush);
 			liStraightBorderLinesDim2Top.sort();
 			
-			if ( ulMinGoodLines <= liStraightBorderLinesDim2Top.front().size ){
+			if ( ulMinGoodStraightLineSize <= liStraightBorderLinesDim2Top.front().size ){
 				//good border line allready found
 				bFindMoreBorderLines = false;
 			}
@@ -1939,7 +2294,13 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 								//enlarge border line
 								DEBUG_OUT_L4(<<"enlarge border line from "<<dBorderLineMin<<" to "<<dBorderLineMax<<" (new from "<<max( dBorderLineMin, dLinePartBeginMin )<<" to "<<min( dBorderLineMax, dLinePartBeginMax )<<" size "<<((*itrActualToEnlargeBorderLine)->size)<<")"<<endl<<flush);
 							
+#ifdef FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+								((*itrActualToEnlargeBorderLine)->size) +=
+									itrActualLinePart->second.minY - itrActualLinePart->first.minY;
 								((*itrActualToEnlargeBorderLine)->size)++;
+#else //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+								((*itrActualToEnlargeBorderLine)->size)++;
+#endif //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
 								((*itrActualToEnlargeBorderLine)->lLineEndPoint) =
 									itrActualLineDim2->first;
 								
@@ -1969,7 +2330,13 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 							//enlarge border line
 							DEBUG_OUT_L4(<<"enlarge border line from "<<dBorderLineMin<<" to "<<dBorderLineMax<<" (new from "<<max( dBorderLineMin, dLinePartEndMin )<<" to "<<min( dBorderLineMax, dLinePartEndMax )<<" size "<<((*itrActualToEnlargeBorderLine)->size)<<")"<<endl<<flush);
 							
+#ifdef FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+							((*itrActualToEnlargeBorderLine)->size) +=
+								itrActualLinePart->second.minY - itrActualLinePart->first.minY;
 							((*itrActualToEnlargeBorderLine)->size)++;
+#else //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+							((*itrActualToEnlargeBorderLine)->size)++;
+#endif //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
 							((*itrActualToEnlargeBorderLine)->lLineEndPoint) =
 								itrActualLineDim2->first;
 							
@@ -1999,6 +2366,11 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 						break;
 					}
 				}//end for all remaining part lines
+				//erase all remaining not enlarged straight border lines from enlarge list
+				while ( itrActualToEnlargeBorderLine != liStraightBorderLinesToEnlarge.end() ){
+					itrActualToEnlargeBorderLine = liStraightBorderLinesToEnlarge.erase(
+							itrActualToEnlargeBorderLine );
+				}
 				if ( liStraightBorderLinesToEnlarge.empty() ){
 					//if no border line to enlarged or crated -> break
 					DEBUG_OUT_L2(<<"no border line to enlarged or crated -> break evalue next area line"<<endl<<flush);
@@ -2011,7 +2383,7 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 			DEBUG_OUT_L2(<<"sort border lines for dimension"<<endl<<flush);
 			liStraightBorderLinesDim2Bottom.sort();
 			
-			if ( ulMinGoodLines <= liStraightBorderLinesDim2Bottom.front().size ){
+			if ( ulMinGoodStraightLineSize <= liStraightBorderLinesDim2Bottom.front().size ){
 				//good border line allready found
 				bFindMoreBorderLines = false;
 			}
@@ -2113,7 +2485,13 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 								//enlarge border line
 								DEBUG_OUT_L4(<<"enlarge border line from "<<dBorderLineMin<<" to "<<dBorderLineMax<<" (new from "<<max( dBorderLineMin, dLinePartEndMin )<<" to "<<min( dBorderLineMax, dLinePartEndMax )<<" size "<<((*itrActualToEnlargeBorderLine)->size)<<")"<<endl<<flush);
 								
+#ifdef FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+								((*itrActualToEnlargeBorderLine)->size) +=
+									itrActualLinePart->second.minY - itrActualLinePart->first.minY;
 								((*itrActualToEnlargeBorderLine)->size)++;
+#else //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+								((*itrActualToEnlargeBorderLine)->size)++;
+#endif //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
 								((*itrActualToEnlargeBorderLine)->lLineEndPoint) =
 									itrActualLineDim2->first;
 								
@@ -2143,7 +2521,13 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 							//enlarge border line
 							DEBUG_OUT_L4(<<"enlarge border line from "<<dBorderLineMin<<" to "<<dBorderLineMax<<" (new from "<<max( dBorderLineMin, dLinePartBeginMin )<<" to "<<min( dBorderLineMax, dLinePartBeginMax )<<" size "<<((*itrActualToEnlargeBorderLine)->size)<<")"<<endl<<flush);
 						
+#ifdef FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+							((*itrActualToEnlargeBorderLine)->size) +=
+								itrActualLinePart->second.minY - itrActualLinePart->first.minY;
 							((*itrActualToEnlargeBorderLine)->size)++;
+#else //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+							((*itrActualToEnlargeBorderLine)->size)++;
+#endif //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
 							((*itrActualToEnlargeBorderLine)->lLineEndPoint) =
 								itrActualLineDim2->first;
 							
@@ -2173,6 +2557,11 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 						break;
 					}
 				}//end for all remaining part lines
+				//erase all remaining not enlarged straight border lines from enlarge list
+				while ( itrActualToEnlargeBorderLine != liStraightBorderLinesToEnlarge.end() ){
+					itrActualToEnlargeBorderLine = liStraightBorderLinesToEnlarge.erase(
+							itrActualToEnlargeBorderLine );
+				}
 				if ( liStraightBorderLinesToEnlarge.empty() ){
 					//if no border line to enlarged or crated -> break
 					DEBUG_OUT_L2(<<"no border line to enlarged or crated -> break evalue next area line"<<endl<<flush);
@@ -2185,7 +2574,7 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 			DEBUG_OUT_L2(<<"sort border lines for dimension"<<endl<<flush);
 			liStraightBorderLinesDim2Bottom.sort();
 			
-			if ( ulMinGoodLines <= liStraightBorderLinesDim2Bottom.front().size ){
+			if ( ulMinGoodStraightLineSize <= liStraightBorderLinesDim2Bottom.front().size ){
 				//good border line allready found
 				bFindMoreBorderLines = false;
 			}
@@ -2276,7 +2665,13 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 							//enlarge border line
 							DEBUG_OUT_L4(<<"enlarge border line from "<<dBorderLineMin<<" to "<<dBorderLineMax<<" (new from "<<max( dBorderLineMin, dLinePartMin )<<" to "<<min( dBorderLineMax, dLinePartMax )<<" size "<<((*itrActualToEnlargeBorderLine)->size)<<")"<<endl<<flush);
 						
+#ifdef FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+							((*itrActualToEnlargeBorderLine)->size) +=
+								itrActualLinePart->second.minY - itrActualLinePart->first.minY;
 							((*itrActualToEnlargeBorderLine)->size)++;
+#else //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+							((*itrActualToEnlargeBorderLine)->size)++;
+#endif //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
 							((*itrActualToEnlargeBorderLine)->lLineEndPoint) =
 								itrActualLineDim1->first;
 							
@@ -2305,6 +2700,11 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 						break;
 					}
 				}//end for all remaining part lines
+				//erase all remaining not enlarged straight border lines from enlarge list
+				while ( itrActualToEnlargeBorderLine != liStraightBorderLinesToEnlarge.end() ){
+					itrActualToEnlargeBorderLine = liStraightBorderLinesToEnlarge.erase(
+							itrActualToEnlargeBorderLine );
+				}
 				if ( liStraightBorderLinesToEnlarge.empty() ){
 					//if no border line to enlarged or crated -> break
 					DEBUG_OUT_L2(<<"no border line to enlarged or crated -> break evalue next area line"<<endl<<flush);
@@ -2317,7 +2717,7 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 			DEBUG_OUT_L2(<<"sort border lines for dimension"<<endl<<flush);
 			liStraightAreaLinesDim1Top.sort();
 			
-			if ( ulMinGoodLines <= liStraightAreaLinesDim1Top.front().size ){
+			if ( ulMinGoodStraightLineSize <= liStraightAreaLinesDim1Top.front().size ){
 				//good border line allready found
 				bFindMoreBorderLines = false;
 			}
@@ -2402,7 +2802,13 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 							//enlarge border line
 							DEBUG_OUT_L4(<<"enlarge border line from "<<dBorderLineMin<<" to "<<dBorderLineMax<<" (new from "<<max( dBorderLineMin, dLinePartMin )<<" to "<<min( dBorderLineMax, dLinePartMax )<<" size "<<((*itrActualToEnlargeBorderLine)->size)<<")"<<endl<<flush);
 						
+#ifdef FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+							((*itrActualToEnlargeBorderLine)->size) +=
+								itrActualLinePart->second.minY - itrActualLinePart->first.minY;
 							((*itrActualToEnlargeBorderLine)->size)++;
+#else //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+							((*itrActualToEnlargeBorderLine)->size)++;
+#endif //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
 							((*itrActualToEnlargeBorderLine)->lLineEndPoint) =
 								itrActualLineDim1->first;
 							
@@ -2431,6 +2837,11 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 						break;
 					}
 				}//end for all remaining part lines
+				//erase all remaining not enlarged straight border lines from enlarge list
+				while ( itrActualToEnlargeBorderLine != liStraightBorderLinesToEnlarge.end() ){
+					itrActualToEnlargeBorderLine = liStraightBorderLinesToEnlarge.erase(
+							itrActualToEnlargeBorderLine );
+				}
 				if ( liStraightBorderLinesToEnlarge.empty() ){
 					//if no border line to enlarged or crated -> break
 					DEBUG_OUT_L2(<<"no border line to enlarged or crated -> break evalue next area line"<<endl<<flush);
@@ -2443,7 +2854,7 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 			DEBUG_OUT_L2(<<"sort border lines for dimension"<<endl<<flush);
 			liStraightAreaLinesDim1Top.sort();
 			
-			if ( ulMinGoodLines <= liStraightAreaLinesDim1Top.front().size ){
+			if ( ulMinGoodStraightLineSize <= liStraightAreaLinesDim1Top.front().size ){
 				//good border line allready found
 				bFindMoreBorderLines = false;
 			}
@@ -2533,7 +2944,13 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 							//enlarge border line
 							DEBUG_OUT_L4(<<"enlarge border line from "<<dBorderLineMin<<" to "<<dBorderLineMax<<" (new from "<<max( dBorderLineMin, dLinePartMin )<<" to "<<min( dBorderLineMax, dLinePartMax )<<" size "<<((*itrActualToEnlargeBorderLine)->size)<<")"<<endl<<flush);
 						
+#ifdef FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+							((*itrActualToEnlargeBorderLine)->size) +=
+								itrActualLinePart->second.minY - itrActualLinePart->first.minY;
 							((*itrActualToEnlargeBorderLine)->size)++;
+#else //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+							((*itrActualToEnlargeBorderLine)->size)++;
+#endif //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
 							((*itrActualToEnlargeBorderLine)->lLineEndPoint) =
 								itrActualLineDim1->first;
 							
@@ -2562,6 +2979,11 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 						break;
 					}
 				}//end for all remaining part lines
+				//erase all remaining not enlarged straight border lines from enlarge list
+				while ( itrActualToEnlargeBorderLine != liStraightBorderLinesToEnlarge.end() ){
+					itrActualToEnlargeBorderLine = liStraightBorderLinesToEnlarge.erase(
+							itrActualToEnlargeBorderLine );
+				}
 				if ( liStraightBorderLinesToEnlarge.empty() ){
 					//if no border line to enlarged or crated -> break
 					DEBUG_OUT_L2(<<"no border line to enlarged or crated -> break evalue next area line"<<endl<<flush);
@@ -2574,7 +2996,7 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 			DEBUG_OUT_L2(<<"sort border lines for dimension"<<endl<<flush);
 			liStraightAreaLinesDim1Bottom.sort();
 			
-			if ( ulMinGoodLines <= liStraightAreaLinesDim1Bottom.front().size ){
+			if ( ulMinGoodStraightLineSize <= liStraightAreaLinesDim1Bottom.front().size ){
 				//good border line allready found
 				bFindMoreBorderLines = false;
 			}
@@ -2660,7 +3082,13 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 							//enlarge border line
 							DEBUG_OUT_L4(<<"enlarge border line from "<<dBorderLineMin<<" to "<<dBorderLineMax<<" (new from "<<max( dBorderLineMin, dLinePartMin )<<" to "<<min( dBorderLineMax, dLinePartMax )<<" size "<<((*itrActualToEnlargeBorderLine)->size)<<")"<<endl<<flush);
 						
+#ifdef FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+							((*itrActualToEnlargeBorderLine)->size) +=
+								itrActualLinePart->second.minY - itrActualLinePart->first.minY;
 							((*itrActualToEnlargeBorderLine)->size)++;
+#else //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+							((*itrActualToEnlargeBorderLine)->size)++;
+#endif //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
 							((*itrActualToEnlargeBorderLine)->lLineEndPoint) =
 								itrActualLineDim1->first;
 							
@@ -2689,6 +3117,11 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 						break;
 					}
 				}//end for all remaining part lines
+				//erase all remaining not enlarged straight border lines from enlarge list
+				while ( itrActualToEnlargeBorderLine != liStraightBorderLinesToEnlarge.end() ){
+					itrActualToEnlargeBorderLine = liStraightBorderLinesToEnlarge.erase(
+							itrActualToEnlargeBorderLine );
+				}
 				if ( liStraightBorderLinesToEnlarge.empty() ){
 					//if no border line to enlarged or crated -> break
 					DEBUG_OUT_L2(<<"no border line to enlarged or crated -> break evalue next area line"<<endl<<flush);
@@ -2701,7 +3134,7 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 			DEBUG_OUT_L2(<<"sort border lines for dimension"<<endl<<flush);
 			liStraightAreaLinesDim1Bottom.sort();
 			
-			if ( ulMinGoodLines <= liStraightAreaLinesDim1Bottom.front().size ){
+			if ( ulMinGoodStraightLineSize <= liStraightAreaLinesDim1Bottom.front().size ){
 				//good border line allready found
 				bFindMoreBorderLines = false;
 			}
@@ -2792,7 +3225,13 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 							//enlarge border line
 							DEBUG_OUT_L4(<<"enlarge border line from "<<dBorderLineMin<<" to "<<dBorderLineMax<<" (new from "<<max( dBorderLineMin, dLinePartMin )<<" to "<<min( dBorderLineMax, dLinePartMax )<<" size "<<((*itrActualToEnlargeBorderLine)->size)<<")"<<endl<<flush);
 						
+#ifdef FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+							((*itrActualToEnlargeBorderLine)->size) +=
+								itrActualLinePart->second.minY - itrActualLinePart->first.minY;
 							((*itrActualToEnlargeBorderLine)->size)++;
+#else //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+							((*itrActualToEnlargeBorderLine)->size)++;
+#endif //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
 							((*itrActualToEnlargeBorderLine)->lLineEndPoint) =
 								itrActualLineDim2->first;
 							
@@ -2821,6 +3260,11 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 						break;
 					}
 				}//end for all remaining part lines
+				//erase all remaining not enlarged straight border lines from enlarge list
+				while ( itrActualToEnlargeBorderLine != liStraightBorderLinesToEnlarge.end() ){
+					itrActualToEnlargeBorderLine = liStraightBorderLinesToEnlarge.erase(
+							itrActualToEnlargeBorderLine );
+				}
 				if ( liStraightBorderLinesToEnlarge.empty() ){
 					//if no border line to enlarged or crated -> break
 					DEBUG_OUT_L2(<<"no border line to enlarged or crated -> break evalue next area line"<<endl<<flush);
@@ -2833,7 +3277,7 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 			DEBUG_OUT_L2(<<"sort border lines for dimension"<<endl<<flush);
 			liStraightAreaLinesDim2Top.sort();
 			
-			if ( ulMinGoodLines <= liStraightAreaLinesDim2Top.front().size ){
+			if ( ulMinGoodStraightLineSize <= liStraightAreaLinesDim2Top.front().size ){
 				//good border line allready found
 				bFindMoreBorderLines = false;
 			}
@@ -2919,7 +3363,13 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 							//enlarge border line
 							DEBUG_OUT_L4(<<"enlarge border line from "<<dBorderLineMin<<" to "<<dBorderLineMax<<" (new from "<<max( dBorderLineMin, dLinePartMin )<<" to "<<min( dBorderLineMax, dLinePartMax )<<" size "<<((*itrActualToEnlargeBorderLine)->size)<<")"<<endl<<flush);
 						
+#ifdef FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+							((*itrActualToEnlargeBorderLine)->size) +=
+								itrActualLinePart->second.minY - itrActualLinePart->first.minY;
 							((*itrActualToEnlargeBorderLine)->size)++;
+#else //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+							((*itrActualToEnlargeBorderLine)->size)++;
+#endif //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
 							((*itrActualToEnlargeBorderLine)->lLineEndPoint) =
 								itrActualLineDim2->first;
 							
@@ -2948,6 +3398,11 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 						break;
 					}
 				}//end for all remaining part lines
+				//erase all remaining not enlarged straight border lines from enlarge list
+				while ( itrActualToEnlargeBorderLine != liStraightBorderLinesToEnlarge.end() ){
+					itrActualToEnlargeBorderLine = liStraightBorderLinesToEnlarge.erase(
+							itrActualToEnlargeBorderLine );
+				}
 				if ( liStraightBorderLinesToEnlarge.empty() ){
 					//if no border line to enlarged or crated -> break
 					DEBUG_OUT_L2(<<"no border line to enlarged or crated -> break evalue next area line"<<endl<<flush);
@@ -2960,7 +3415,7 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 			DEBUG_OUT_L2(<<"sort border lines for dimension"<<endl<<flush);
 			liStraightAreaLinesDim2Top.sort();
 			
-			if ( ulMinGoodLines <= liStraightAreaLinesDim2Top.front().size ){
+			if ( ulMinGoodStraightLineSize <= liStraightAreaLinesDim2Top.front().size ){
 				//good border line allready found
 				bFindMoreBorderLines = false;
 			}
@@ -3050,7 +3505,13 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 							//enlarge border line
 							DEBUG_OUT_L4(<<"enlarge border line from "<<dBorderLineMin<<" to "<<dBorderLineMax<<" (new from "<<max( dBorderLineMin, dLinePartMin )<<" to "<<min( dBorderLineMax, dLinePartMax )<<" size "<<((*itrActualToEnlargeBorderLine)->size)<<")"<<endl<<flush);
 						
+#ifdef FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+							((*itrActualToEnlargeBorderLine)->size) +=
+								itrActualLinePart->second.minY - itrActualLinePart->first.minY;
 							((*itrActualToEnlargeBorderLine)->size)++;
+#else //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+							((*itrActualToEnlargeBorderLine)->size)++;
+#endif //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
 							((*itrActualToEnlargeBorderLine)->lLineEndPoint) =
 								itrActualLineDim2->first;
 							
@@ -3079,6 +3540,11 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 						break;
 					}
 				}//end for all remaining part lines
+				//erase all remaining not enlarged straight border lines from enlarge list
+				while ( itrActualToEnlargeBorderLine != liStraightBorderLinesToEnlarge.end() ){
+					itrActualToEnlargeBorderLine = liStraightBorderLinesToEnlarge.erase(
+							itrActualToEnlargeBorderLine );
+				}
 				if ( liStraightBorderLinesToEnlarge.empty() ){
 					//if no border line to enlarged or crated -> break
 					DEBUG_OUT_L2(<<"no border line to enlarged or crated -> break evalue next area line"<<endl<<flush);
@@ -3091,7 +3557,7 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 			DEBUG_OUT_L2(<<"sort border lines for dimension"<<endl<<flush);
 			liStraightAreaLinesDim2Bottom.sort();
 			
-			if ( ulMinGoodLines <= liStraightAreaLinesDim2Bottom.front().size ){
+			if ( ulMinGoodStraightLineSize <= liStraightAreaLinesDim2Bottom.front().size ){
 				//good border line allready found
 				bFindMoreBorderLines = false;
 			}
@@ -3177,7 +3643,13 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 							//enlarge border line
 							DEBUG_OUT_L4(<<"enlarge border line from "<<dBorderLineMin<<" to "<<dBorderLineMax<<" (new from "<<max( dBorderLineMin, dLinePartMin )<<" to "<<min( dBorderLineMax, dLinePartMax )<<" size "<<((*itrActualToEnlargeBorderLine)->size)<<")"<<endl<<flush);
 						
+#ifdef FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+							((*itrActualToEnlargeBorderLine)->size) +=
+								itrActualLinePart->second.minY - itrActualLinePart->first.minY;
 							((*itrActualToEnlargeBorderLine)->size)++;
+#else //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+							((*itrActualToEnlargeBorderLine)->size)++;
+#endif //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
 							((*itrActualToEnlargeBorderLine)->lLineEndPoint) =
 								itrActualLineDim2->first;
 							
@@ -3206,6 +3678,11 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 						break;
 					}
 				}//end for all remaining part lines
+				//erase all remaining not enlarged straight border lines from enlarge list
+				while ( itrActualToEnlargeBorderLine != liStraightBorderLinesToEnlarge.end() ){
+					itrActualToEnlargeBorderLine = liStraightBorderLinesToEnlarge.erase(
+							itrActualToEnlargeBorderLine );
+				}
 				if ( liStraightBorderLinesToEnlarge.empty() ){
 					//if no border line to enlarged or crated -> break
 					DEBUG_OUT_L2(<<"no border line to enlarged or crated -> break evalue next area line"<<endl<<flush);
@@ -3218,7 +3695,7 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 			DEBUG_OUT_L2(<<"sort border lines for dimension"<<endl<<flush);
 			liStraightAreaLinesDim2Bottom.sort();
 			
-			if ( ulMinGoodLines <= liStraightAreaLinesDim2Bottom.front().size ){
+			if ( ulMinGoodStraightLineSize <= liStraightAreaLinesDim2Bottom.front().size ){
 				//good border line allready found
 				bFindMoreBorderLines = false;
 			}
@@ -3282,7 +3759,7 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 		}
 		
 		//the next best line from max to max should be so much better than the actual found line
-		const double dImproveFactorMaxMax = 1.8;
+		const double dImproveFactorMaxMax = 4.0;
 		bool bStraightBorderLineFromMinToMax = true;
 		
 		if ( ! liStraightAreaLinesDim1Top.empty() ){
@@ -3342,8 +3819,13 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 		
 		
 		//for the best straight line evalue the other part lines side border (for the spline)
+#ifdef FEATURE_C_IMAGE_STRUCTURE_CONVERT_TO_TILES_USE_INNER_LINE
+		vector< fib::algorithms::nD1::cDataPointRangeWithWeights< long, double > >
+			vecSplineRanges;
+#else //FEATURE_C_IMAGE_STRUCTURE_CONVERT_TO_TILES_USE_INNER_LINE
 		vector< fib::algorithms::nD1::cDataPointRange< long, double > >
 			vecSplineRanges;
+#endif //FEATURE_C_IMAGE_STRUCTURE_CONVERT_TO_TILES_USE_INNER_LINE
 		
 		//find other side for tile (border oposide the straight line border)
 		//the borders in which to search for the other side
@@ -3352,81 +3834,310 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 		
 		const long lStartPoint = min( pBestLineBorderLine->lLineStartPoint,
 				pBestLineBorderLine->lLineEndPoint );
-		const long lEndPoint   = max( pBestLineBorderLine->lLineStartPoint,
+		long lEndPoint   = max( pBestLineBorderLine->lLineStartPoint,
 				pBestLineBorderLine->lLineEndPoint );
+		
 		/*if bigger 0 more other borders of the line part to the right (higher
 		 * values), else (lower 0) more other border to the left */
-		long lMoreRightOtherBorders = 0;
+		long lGoodStraightBorderPoint;
 		
+		//if first other border points to the right it is positiv else negativ
+		bool bFirstIsRightOtherBorder = false;
+		
+#ifdef FEATURE_USE_RECTANGLE_EXT_OBJECT
+		/*if a rectangle should be used the other side to lGoodStraightBorderPoint,
+		 else (use not a rectangle) -1*/
+		long lRectangleOfOtherSide = -1;
+		bool bUseRectangle = false;
+#endif //FEATURE_USE_RECTANGLE_EXT_OBJECT
 		if ( bStraightBorderLineFromMinToMax ){
 			
-			const double dMinBorderArea = pBestLineBorderLine->areaForLine.first;
-			/* not needed:
-			const double dMaxBorderArea = pBestLineBorderLine->areaForLine.second;*/
+			const double dMinBorderArea = pBestLineBorderLine->areaForLine.first + 0.001;
+			const double dMaxBorderArea = pBestLineBorderLine->areaForLine.second - 0.001;
+			DEBUG_OUT_L2(<<"Creating straight line min max ("<<(bStraightBorderLineInDim1?"Dim1":"Dim2")<<") ( from "<<pBestLineBorderLine->areaForLine.first<<" ("<<dMinBorderArea<<") to "<<pBestLineBorderLine->areaForLine.second<<" ("<<dMaxBorderArea<<") and size "<<pBestLineBorderLine->size<<")"<<endl<<flush);
 			
-			for ( long lActualPoint = lStartPoint;
-					lActualPoint <= lEndPoint; lActualPoint++ ){
-				
+#ifdef FEATURE_USE_RECTANGLE_EXT_OBJECT
+			//the minimal and maximal values for the other side
+			double dMinOtherBorderArea = 0;
+			double dMaxOtherBorderArea = 0;
+			bUseRectangle = true;
+#endif //FEATURE_USE_RECTANGLE_EXT_OBJECT
+			//TODO check
+			{//check first part line for border
 				map< longFib, nImageStructureConvertToTiles::cLine >::const_iterator
-					itrActualLine = bordersDimToSearchIn.find( lActualPoint );
+					itrActualLine = bordersDimToSearchIn.find( lStartPoint );
 				
-				if ( itrActualLine == bordersDimToSearchIn.end() ){
-					//gap in line
-					DEBUG_OUT_EL2(<<"Error: gap in best line found"<<endl<<flush);
-					break;
-				}
-				const nImageStructureConvertToTiles::cLine::tLineParts &
-					actualLine = itrActualLine->second.lineParts;
-				//find the line part for the straight line border point
-				nImageStructureConvertToTiles::cLine::tLineParts::const_iterator
-					itrActualPartLine = actualLine.begin();
-				for (  ; itrActualPartLine != actualLine.end(); itrActualPartLine++ ){
-					
-					if ( ( itrActualPartLine->first.maxY <= dMinBorderArea ) &&
-							( dMinBorderArea <= itrActualPartLine->first.minY )
-							/* not needed: &&
-							( itrActualPartLine->first.maxY <= dMaxBorderArea ) &&
-							( dMaxBorderArea <= itrActualPartLine->first.minY )*/ ){
-						//line part for border found
-						vecSplineRanges.push_back( itrActualPartLine->second );
-						lMoreRightOtherBorders++;
-						break;
-					}
-					if ( ( itrActualPartLine->second.minY <= dMinBorderArea ) &&
-							( dMinBorderArea <= itrActualPartLine->second.maxY )
-							/* not needed: &&
-							( itrActualPartLine->second.minY <= dMaxBorderArea ) &&
-							( dMaxBorderArea <= itrActualPartLine->second.maxY )*/ ){
-						//line part for border found
-						//vecSplineRanges.push_back( itrActualPartLine->first );
+				if ( itrActualLine != bordersDimToSearchIn.end() ){
+					//end if first part line for border found
+					const nImageStructureConvertToTiles::cLine::tLineParts &
+						actualLine = itrActualLine->second.lineParts;
+					//find the line part for the straight line border point
+					nImageStructureConvertToTiles::cLine::tLineParts::const_iterator
+						itrActualPartLine = actualLine.begin();
+					for (  ; itrActualPartLine != actualLine.end(); itrActualPartLine++ ){
 						
-						vecSplineRanges.push_back(
-							fib::algorithms::nD1::cDataPointRange< long, double >(
-								lActualPoint,
-								itrActualPartLine->first.maxY,
-								itrActualPartLine->first.minY ) );
-						lMoreRightOtherBorders--;
+						if ( ( itrActualPartLine->first.maxY <= dMinBorderArea ) &&
+								( dMaxBorderArea <= itrActualPartLine->first.minY ) ){
+							//line part for border found
+							bFirstIsRightOtherBorder = true;
+							DEBUG_OUT_L2(<<"first border line to the right"<<endl<<flush);
+#ifdef FEATURE_USE_RECTANGLE_EXT_OBJECT
+							dMinOtherBorderArea = itrActualPartLine->second.minY;
+							dMaxOtherBorderArea = itrActualPartLine->second.maxY;
+#endif //FEATURE_USE_RECTANGLE_EXT_OBJECT
+							break;
+						}
+						if ( ( itrActualPartLine->second.minY <= dMinBorderArea ) &&
+								( dMaxBorderArea <= itrActualPartLine->second.maxY ) ){
+							//line part for border found
+							bFirstIsRightOtherBorder = false;
+							DEBUG_OUT_L2(<<"first border line to the left"<<endl<<flush);
+#ifdef FEATURE_USE_RECTANGLE_EXT_OBJECT
+							dMinOtherBorderArea = itrActualPartLine->first.maxY;
+							dMaxOtherBorderArea = itrActualPartLine->first.minY;
+#endif //FEATURE_USE_RECTANGLE_EXT_OBJECT
+							break;
+						}
+					}//for find the line part for the straight line border point
+				}//end if first part line for border found
+			}//end check first part line for border
+			
+			if ( bFirstIsRightOtherBorder ){
+				//if first border line to the right
+				
+				for ( long lActualPoint = lStartPoint;
+						lActualPoint <= lEndPoint; lActualPoint++ ){
+					
+					map< longFib, nImageStructureConvertToTiles::cLine >::const_iterator
+						itrActualLine = bordersDimToSearchIn.find( lActualPoint );
+					
+					if ( itrActualLine == bordersDimToSearchIn.end() ){
+						//gap in line
+						DEBUG_OUT_EL2(<<"Error: gap in best line found"<<endl<<flush);
 						break;
 					}
-				}//for find the line part for the straight line border point
-			}//for all lines in area
+					const nImageStructureConvertToTiles::cLine::tLineParts &
+						actualLine = itrActualLine->second.lineParts;
+					//find the line part for the straight line border point
+					nImageStructureConvertToTiles::cLine::tLineParts::const_iterator
+						itrActualPartLine = actualLine.begin();
+					bool bNoNextLineFound = true;
+					
+					for (  ; itrActualPartLine != actualLine.end(); itrActualPartLine++ ){
+						
+						if ( ( itrActualPartLine->first.maxY <= dMinBorderArea ) &&
+								( dMaxBorderArea <= itrActualPartLine->first.minY ) ){
+							//line part for border found
+							const double dMinY = itrActualPartLine->second.minY;
+							const double dMaxY = itrActualPartLine->second.maxY;
+#ifdef FEATURE_C_IMAGE_STRUCTURE_CONVERT_TO_TILES_USE_INNER_LINE
+							vecSplineRanges.push_back(
+								fib::algorithms::nD1::cDataPointRangeWithWeights< long, double >(
+									lActualPoint, dMinY, dMaxY, 1.0, 1.0 ) );
+							
+							if ( ( dMinY + 1.0 ) < dMaxY ){
+								//the border width is greater 1
+								vecSplineRanges.push_back(
+									fib::algorithms::nD1::cDataPointRangeWithWeights< long, double >(
+										lActualPoint, dMinY , dMinY + 0.98,
+										D_WEIGHT_INNER_POINT, 0.0 ) );
+							}
+#else //FEATURE_C_IMAGE_STRUCTURE_CONVERT_TO_TILES_USE_INNER_LINE
+							vecSplineRanges.push_back( itrActualPartLine->second );
+#endif //FEATURE_C_IMAGE_STRUCTURE_CONVERT_TO_TILES_USE_INNER_LINE
+#ifdef FEATURE_USE_RECTANGLE_EXT_OBJECT
+							if ( bUseRectangle ){
+								//evalue the minimal and maximal values for the other side
+								dMinOtherBorderArea = max( dMinOtherBorderArea, dMinY );
+								dMaxOtherBorderArea = min( dMaxOtherBorderArea, dMaxY );
+								bUseRectangle &= ( dMinOtherBorderArea < dMaxOtherBorderArea );
+							}
+#endif //FEATURE_USE_RECTANGLE_EXT_OBJECT
+							bNoNextLineFound = false;
+							
+							DEBUG_OUT_L4(<<"Part line second point added on "<<lActualPoint<<" from ("<<itrActualPartLine->first.maxY<<", "<<itrActualPartLine->first.minY<<") to ("<<itrActualPartLine->second.minY<<", "<<itrActualPartLine->second.maxY<<")"<<endl<<flush);
+							break;
+						}
+						if ( ( itrActualPartLine->second.minY <= dMinBorderArea ) &&
+								( dMaxBorderArea <= itrActualPartLine->second.maxY ) ){
+							//line part for border found
+							
+#ifdef FEATURE_C_IMAGE_STRUCTURE_CONVERT_TO_TILES_USE_INNER_LINE
+							const double dMinY = itrActualPartLine->first.maxY;
+							const double dMaxY = itrActualPartLine->first.minY;
+							vecSplineRanges.push_back(
+								fib::algorithms::nD1::cDataPointRangeWithWeights< long, double >(
+									lActualPoint, dMinY, dMaxY, 1.0, 1.0 ) );
+							
+							if ( dMinY < ( dMaxY - 1.0 ) ){
+								//the border width is greater 1
+								vecSplineRanges.push_back(
+									fib::algorithms::nD1::cDataPointRangeWithWeights< long, double >(
+										lActualPoint, (dMaxY - 0.98) , dMaxY,
+										D_WEIGHT_INNER_POINT, 0.0 ) );
+							}
+#else //FEATURE_C_IMAGE_STRUCTURE_CONVERT_TO_TILES_USE_INNER_LINE
+							vecSplineRanges.push_back(
+								fib::algorithms::nD1::cDataPointRange< long, double >(
+									lActualPoint, itrActualPartLine->first.maxY,
+									itrActualPartLine->first.minY ) );
+#endif //FEATURE_C_IMAGE_STRUCTURE_CONVERT_TO_TILES_USE_INNER_LINE
+#ifdef FEATURE_USE_RECTANGLE_EXT_OBJECT
+							bUseRectangle = false;
+#endif //FEATURE_USE_RECTANGLE_EXT_OBJECT
+							bNoNextLineFound = false;
+							
+							DEBUG_OUT_L4(<<"Part line first point added on "<<lActualPoint<<" from ("<<itrActualPartLine->first.maxY<<", "<<itrActualPartLine->first.minY<<") to ("<<itrActualPartLine->second.minY<<", "<<itrActualPartLine->second.maxY<<")"<<endl<<flush);
+							
+							break;
+						}
+					}//for find the line part for the straight line border point
+					if ( bNoNextLineFound ){
+						//gap in line
+						DEBUG_OUT_EL2(<<"Error: gap in best line (min to max) found, because no next line was found"<<endl<<flush);
+						break;
+					}
+				}//for all lines in area
+			
+				/* if first other border points to the right -> minimize area
+					outside the to convert area (betwean min max or overlapt points)
+					-> move straight border as far as possible to the right */
+				lGoodStraightBorderPoint = roundToLongFib( dMaxBorderArea );
+				DEBUG_OUT_L2(<<"taking max straight border line as good straight border line start point: "<<lGoodStraightBorderPoint<<endl<<flush);
+#ifdef FEATURE_USE_RECTANGLE_EXT_OBJECT
+				if ( bUseRectangle ){
+					//use a rectangle external object
+					DEBUG_OUT_L2(<<"use a rectangle external object from "<<dMinOtherBorderArea<<" till "<<dMaxOtherBorderArea<<endl<<flush);
+					
+					lRectangleOfOtherSide = roundToLongFib( dMinOtherBorderArea );
+					DEBUG_OUT_L2(<<"taking min border line as the other border: "<<lRectangleOfOtherSide<<endl<<flush);
+				}
+#endif //FEATURE_USE_RECTANGLE_EXT_OBJECT
+			}else{//if first border line to the left
+				
+				for ( long lActualPoint = lStartPoint;
+						lActualPoint <= lEndPoint; lActualPoint++ ){
+					
+					map< longFib, nImageStructureConvertToTiles::cLine >::const_iterator
+						itrActualLine = bordersDimToSearchIn.find( lActualPoint );
+					
+					if ( itrActualLine == bordersDimToSearchIn.end() ){
+						//gap in line
+						DEBUG_OUT_EL2(<<"Error: gap in best line found"<<endl<<flush);
+						break;
+					}
+					const nImageStructureConvertToTiles::cLine::tLineParts &
+						actualLine = itrActualLine->second.lineParts;
+					//find the line part for the straight line border point
+					nImageStructureConvertToTiles::cLine::tLineParts::const_iterator
+						itrActualPartLine = actualLine.begin();
+					bool bNoNextLineFound = true;
+					
+					for (  ; itrActualPartLine != actualLine.end(); itrActualPartLine++ ){
+						
+						if ( ( itrActualPartLine->second.minY <= dMinBorderArea ) &&
+								( dMaxBorderArea <= itrActualPartLine->second.maxY ) ){
+							//line part for border found
+							
+							const double dMinY = itrActualPartLine->first.maxY;
+							const double dMaxY = itrActualPartLine->first.minY;
+#ifdef FEATURE_C_IMAGE_STRUCTURE_CONVERT_TO_TILES_USE_INNER_LINE
+							vecSplineRanges.push_back(
+								fib::algorithms::nD1::cDataPointRangeWithWeights< long, double >(
+									lActualPoint, dMinY, dMaxY, 1.0, 1.0 ) );
+							
+							if ( dMinY < ( dMaxY - 1.0 ) ){
+								//the border width is greater 1
+								vecSplineRanges.push_back(
+									fib::algorithms::nD1::cDataPointRangeWithWeights< long, double >(
+										lActualPoint, (dMaxY - 0.98) , dMaxY,
+										D_WEIGHT_INNER_POINT, 0.0 ) );
+							}
+#else //FEATURE_C_IMAGE_STRUCTURE_CONVERT_TO_TILES_USE_INNER_LINE
+							vecSplineRanges.push_back(
+								fib::algorithms::nD1::cDataPointRange< long, double >(
+									lActualPoint, dMinY, dMaxY ) );
+#endif //FEATURE_C_IMAGE_STRUCTURE_CONVERT_TO_TILES_USE_INNER_LINE
+#ifdef FEATURE_USE_RECTANGLE_EXT_OBJECT
+							if ( bUseRectangle ){
+								//evalue the minimal and maximal values for the other side
+								dMinOtherBorderArea = max( dMinOtherBorderArea, dMinY );
+								dMaxOtherBorderArea = min( dMaxOtherBorderArea, dMaxY );
+								bUseRectangle &= ( dMinOtherBorderArea < dMaxOtherBorderArea );
+							}
+#endif //FEATURE_USE_RECTANGLE_EXT_OBJECT
+							bNoNextLineFound = false;
+							
+							DEBUG_OUT_L4(<<"Part line first point added on "<<lActualPoint<<" from ("<<itrActualPartLine->first.maxY<<", "<<itrActualPartLine->first.minY<<") to ("<<itrActualPartLine->second.minY<<", "<<itrActualPartLine->second.maxY<<")"<<endl<<flush);
+							
+							break;
+						}
+						if ( ( itrActualPartLine->first.maxY <= dMinBorderArea ) &&
+								( dMaxBorderArea <= itrActualPartLine->first.minY ) ){
+							//line part for border found
+#ifdef FEATURE_C_IMAGE_STRUCTURE_CONVERT_TO_TILES_USE_INNER_LINE
+							const double dMinY = itrActualPartLine->second.minY;
+							const double dMaxY = itrActualPartLine->second.maxY;
+							vecSplineRanges.push_back(
+								fib::algorithms::nD1::cDataPointRangeWithWeights< long, double >(
+									lActualPoint, dMinY, dMaxY, 1.0, 1.0 ) );
+							
+							if ( ( dMinY + 1.0 ) < dMaxY ){
+								//the border width is greater 1
+								vecSplineRanges.push_back(
+									fib::algorithms::nD1::cDataPointRangeWithWeights< long, double >(
+										lActualPoint, dMinY , dMinY + 0.98,
+										D_WEIGHT_INNER_POINT, 0.0 ) );
+							}
+#else //FEATURE_C_IMAGE_STRUCTURE_CONVERT_TO_TILES_USE_INNER_LINE
+							vecSplineRanges.push_back( itrActualPartLine->second );
+#endif //FEATURE_C_IMAGE_STRUCTURE_CONVERT_TO_TILES_USE_INNER_LINE
+#ifdef FEATURE_USE_RECTANGLE_EXT_OBJECT
+							bUseRectangle = false;
+#endif //FEATURE_USE_RECTANGLE_EXT_OBJECT
+							bNoNextLineFound = false;
+							
+							DEBUG_OUT_L4(<<"Part line second point added on "<<lActualPoint<<" from ("<<itrActualPartLine->first.maxY<<", "<<itrActualPartLine->first.minY<<") to ("<<itrActualPartLine->second.minY<<", "<<itrActualPartLine->second.maxY<<")"<<endl<<flush);
+							break;
+						}
+					}//for find the line part for the straight line border point
+					if ( bNoNextLineFound ){
+						//gap in line
+						DEBUG_OUT_EL2(<<"Error: gap in best line (min to max) found, because no next line was found"<<endl<<flush);
+						break;
+					}
+				}//for all lines in area
+			
+				/* if first other border points to the left -> minimize area
+					outside the to convert area (betwean min max or overlapt points)
+					-> move straight border as far as possible to the left */
+				lGoodStraightBorderPoint = roundToLongFib( dMinBorderArea );
+				DEBUG_OUT_L2(<<"taking min straight border line as good straight border line start point: "<<lGoodStraightBorderPoint<<endl<<flush);
+#ifdef FEATURE_USE_RECTANGLE_EXT_OBJECT
+				if ( bUseRectangle ){
+					//use a rectangle external object
+					DEBUG_OUT_L2(<<"use a rectangle external object from "<<dMinOtherBorderArea<<" till "<<dMaxOtherBorderArea<<endl<<flush);
+					
+					lRectangleOfOtherSide = roundToLongFib( dMaxOtherBorderArea );
+					DEBUG_OUT_L2(<<"taking max border line as the other border: "<<lRectangleOfOtherSide<<endl<<flush);
+				}
+#endif //FEATURE_USE_RECTANGLE_EXT_OBJECT
+			}//end if border left or right
 			
 		}else{//if max to max oposide border allways to the left (lower numbers)
-			lMoreRightOtherBorders--;
-			
-			const double dMinBorderArea = pBestLineBorderLine->areaForLine.first;
-			/* not needed:
-			const double dMaxBorderArea = pBestLineBorderLine->areaForLine.second;*/
-			
-			for ( long lActualPoint = lStartPoint;
-					lActualPoint <= lEndPoint; lActualPoint++ ){
-				
+			//check on which side of the straigt line the area should go
+			double dStraightBorderMaxToMax;
+			bool bAreaToTheLeft = true;
+			const double dMaxBorderArea = pBestLineBorderLine->areaForLine.second;
+			//enlarge check value because of rounding errors
+			const double dMaxBorderAreaLower = dMaxBorderArea - 0.001;
+			const double dMaxBorderAreaUpper = dMaxBorderArea + 0.001;
+			{
 				map< longFib, nImageStructureConvertToTiles::cLine >::const_iterator
-					itrActualLine = bordersDimToSearchIn.find( lActualPoint );
-				
+					itrActualLine = bordersDimToSearchIn.find( lStartPoint );
 				if ( itrActualLine == bordersDimToSearchIn.end() ){
 					//gap in line
-					DEBUG_OUT_EL2(<<"Error: gap in best line (max to max) found"<<endl<<flush);
+					DEBUG_OUT_EL2(<<"Error: first line for best line (max to max) could not be found"<<endl<<flush);
 					break;
 				}
 				const nImageStructureConvertToTiles::cLine::tLineParts &
@@ -3436,236 +4147,645 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 					itrActualPartLine = actualLine.begin();
 				for (  ; itrActualPartLine != actualLine.end(); itrActualPartLine++ ){
 					
-					if ( ( itrActualPartLine->first.maxY <= dMinBorderArea ) &&
-							( dMinBorderArea <= itrActualPartLine->second.maxY )
-							/* not needed: &&
-							( itrActualPartLine->first.maxY <= dMaxBorderArea ) &&
-							( dMaxBorderArea <= itrActualPartLine->second.maxY )*/ ){
-						//line part for border found -> add left line part border
-						vecSplineRanges.push_back(
-							fib::algorithms::nD1::cDataPointRange< long, double >(
-								lActualPoint,
-								itrActualPartLine->first.maxY,
-								itrActualPartLine->first.minY ) );
+					if ( ( itrActualPartLine->first.maxY <= dMaxBorderAreaUpper ) &&
+							( dMaxBorderAreaLower <= itrActualPartLine->second.maxY ) ){
+						//line part for border found -> check upper minY value
+						if ( dMaxBorderAreaUpper < itrActualPartLine->first.minY ){
+							/* the min area of the line part of the first line
+							 * begins after the straight line border to use
+							 * -> create area for other side*/
+							bAreaToTheLeft = false;
+						}
+						
+						DEBUG_OUT_L2(<<"The max max area object will be created on the "<<(bAreaToTheLeft?"left":"right")<<" side of the straight line"<<endl<<flush);
 						break;
 					}
 				}//for find the line part for the straight line border point
-			}//for all lines in area
+			}
+			
+			if ( bAreaToTheLeft ){
+				dStraightBorderMaxToMax = dMaxBorderArea;
+				
+				DEBUG_OUT_L2(<<"Creating straight line max max ("<<(bStraightBorderLineInDim1?"Dim1":"Dim2")<<" for position init: "<<std::fixed<<dMaxBorderArea<<"; for line from "<<pBestLineBorderLine->areaForLine.first<<" till "<<pBestLineBorderLine->areaForLine.second<<" and size "<<pBestLineBorderLine->size<<")"<<endl<<flush);
+				
+				for ( long lActualPoint = lStartPoint;
+						lActualPoint <= lEndPoint; lActualPoint++ ){
+					
+					map< longFib, nImageStructureConvertToTiles::cLine >::const_iterator
+						itrActualLine = bordersDimToSearchIn.find( lActualPoint );
+					
+					if ( itrActualLine == bordersDimToSearchIn.end() ){
+						//gap in line
+						DEBUG_OUT_EL2(<<"Error: gap in best line (max to max) found"<<endl<<flush);
+						break;
+					}
+					const nImageStructureConvertToTiles::cLine::tLineParts &
+						actualLine = itrActualLine->second.lineParts;
+					//find the line part for the straight line border point
+					nImageStructureConvertToTiles::cLine::tLineParts::const_iterator
+						itrActualPartLine = actualLine.begin();
+					bool bNoNextLineFound = true;
+					for (  ; itrActualPartLine != actualLine.end(); itrActualPartLine++ ){
+						
+						if ( ( itrActualPartLine->first.maxY <= dMaxBorderAreaUpper ) &&
+								( dMaxBorderAreaLower <= itrActualPartLine->second.maxY )
+								/* not needed: &&
+								( itrActualPartLine->first.maxY <= dMaxBorderArea ) &&
+								( dMaxBorderArea <= itrActualPartLine->second.maxY )*/ ){
+							//line part for border found -> add left line part border
+#ifdef FEATURE_C_IMAGE_STRUCTURE_CONVERT_TO_TILES_USE_INNER_LINE
+							const double dMinY = itrActualPartLine->first.maxY;
+							const double dMaxY = itrActualPartLine->first.minY;
+							vecSplineRanges.push_back(
+								fib::algorithms::nD1::cDataPointRangeWithWeights< long, double >(
+									lActualPoint, dMinY, dMaxY, 1.0, 1.0 ) );
+							
+							if ( dMinY < ( dMaxY - 1.0 ) ){
+								//the border width is greater 1
+								vecSplineRanges.push_back(
+									fib::algorithms::nD1::cDataPointRangeWithWeights< long, double >(
+										lActualPoint, (dMaxY - 0.98) , dMaxY,
+										D_WEIGHT_INNER_POINT, 0.0 ) );
+							}
+#else //FEATURE_C_IMAGE_STRUCTURE_CONVERT_TO_TILES_USE_INNER_LINE
+							vecSplineRanges.push_back(
+								fib::algorithms::nD1::cDataPointRange< long, double >(
+									lActualPoint,
+									itrActualPartLine->first.maxY,
+									itrActualPartLine->first.minY ) );
+#endif //FEATURE_C_IMAGE_STRUCTURE_CONVERT_TO_TILES_USE_INNER_LINE
+							/*go for the straight border as far as the min borders
+							go for the other side, but maximal to the best straight
+							border line maximum dMaxBorderArea*/
+							const double dOtherSide = itrActualPartLine->second.minY;
+							if ( dMaxBorderArea < dOtherSide ){
+								dStraightBorderMaxToMax = dMaxBorderArea;
+							}else{
+								dStraightBorderMaxToMax = max(
+									dStraightBorderMaxToMax, dOtherSide );
+							}
+							bNoNextLineFound = false;
+							DEBUG_OUT_L4(<<"Part line first point added on "<<lActualPoint<<" from ("<<itrActualPartLine->first.maxY<<", "<<itrActualPartLine->first.minY<<") to ("<<itrActualPartLine->second.minY<<", "<<itrActualPartLine->second.maxY<<" and size "<<pBestLineBorderLine->size<<")"<<endl<<flush);
+
+							break;
+						}
+					}//for find the line part for the straight line border point
+					if ( bNoNextLineFound ){
+						//gap in line
+						DEBUG_OUT_EL2(<<"Error: gap in best line (max to max) found, because no next line was found"<<endl<<flush);
+						break;
+					}
+				}//for all lines in area
+			}else{//create area on the right side
+				const double dMinBorderArea = pBestLineBorderLine->areaForLine.first;
+				//enlarge check value because of rounding errors
+				const double dMinBorderAreaLower = dMinBorderArea - 0.001;
+				const double dMinBorderAreaUpper = dMinBorderArea + 0.001;
+				
+				dStraightBorderMaxToMax = dMinBorderArea;
+				
+				DEBUG_OUT_L2(<<"Creating straight line max max ("<<(bStraightBorderLineInDim1?"Dim1":"Dim2")<<" for position init: "<<std::fixed<<dMinBorderArea<<" for line from "<<pBestLineBorderLine->areaForLine.first<<" till "<<pBestLineBorderLine->areaForLine.second<<", with area on the right)"<<endl<<flush);
+				
+				for ( long lActualPoint = lStartPoint;
+						lActualPoint <= lEndPoint; lActualPoint++ ){
+					
+					map< longFib, nImageStructureConvertToTiles::cLine >::const_iterator
+						itrActualLine = bordersDimToSearchIn.find( lActualPoint );
+					
+					if ( itrActualLine == bordersDimToSearchIn.end() ){
+						//gap in line
+						DEBUG_OUT_EL2(<<"Error: gap in best line (max to max) found"<<endl<<flush);
+						break;
+					}
+					const nImageStructureConvertToTiles::cLine::tLineParts &
+						actualLine = itrActualLine->second.lineParts;
+					//find the line part for the straight line border point
+					nImageStructureConvertToTiles::cLine::tLineParts::const_iterator
+						itrActualPartLine = actualLine.begin();
+					bool bNoNextLineFound = true;
+					for (  ; itrActualPartLine != actualLine.end(); itrActualPartLine++ ){
+						
+						if ( ( itrActualPartLine->first.maxY <= dMinBorderAreaUpper ) &&
+								( dMinBorderAreaLower <= itrActualPartLine->second.maxY ) ){
+							//line part for border found -> add left line part border
+#ifdef FEATURE_C_IMAGE_STRUCTURE_CONVERT_TO_TILES_USE_INNER_LINE
+							const double dMinY = itrActualPartLine->second.minY;
+							const double dMaxY = itrActualPartLine->second.maxY;
+							vecSplineRanges.push_back(
+								fib::algorithms::nD1::cDataPointRangeWithWeights< long, double >(
+									lActualPoint, dMinY, dMaxY, 1.0, 1.0 ) );
+							
+							if ( dMaxY < ( dMinY + 1.0 ) ){
+								//the border width is greater 1
+								vecSplineRanges.push_back(
+									fib::algorithms::nD1::cDataPointRangeWithWeights< long, double >(
+										lActualPoint, dMinY , dMinY + 0.98,
+										D_WEIGHT_INNER_POINT, 0.0 ) );
+							}
+#else //FEATURE_C_IMAGE_STRUCTURE_CONVERT_TO_TILES_USE_INNER_LINE
+							vecSplineRanges.push_back(
+								fib::algorithms::nD1::cDataPointRange< long, double >(
+									lActualPoint,
+									itrActualPartLine->second.minY,
+									itrActualPartLine->second.maxY ) );
+#endif //FEATURE_C_IMAGE_STRUCTURE_CONVERT_TO_TILES_USE_INNER_LINE
+							/*go for the straight border as far as the min borders
+							go for the other side, but minimal to the best straight
+							border line minimum dMinBorderArea*/
+							const double dOtherSide = itrActualPartLine->first.minY;
+							if ( dOtherSide < dMinBorderArea ){
+								dStraightBorderMaxToMax = dMinBorderArea;
+							}else{
+								dStraightBorderMaxToMax = min(
+									dStraightBorderMaxToMax, dOtherSide );
+							}
+							bNoNextLineFound = false;
+							DEBUG_OUT_L4(<<"Part line first point added on "<<lActualPoint<<" from ("<<itrActualPartLine->first.maxY<<", "<<itrActualPartLine->first.minY<<") to ("<<itrActualPartLine->second.minY<<", "<<itrActualPartLine->second.maxY<<")"<<endl<<flush);
+							break;
+						}
+					}//for find the line part for the straight line border point
+					if ( bNoNextLineFound ){
+						//gap in line
+						DEBUG_OUT_EL2(<<"Error: gap in best line (max to max) found, because no next line was found"<<endl<<flush);
+						break;
+					}
+				}//for all lines in area
+			}
+			
+			lGoodStraightBorderPoint = roundToLongFib( dStraightBorderMaxToMax );
+			DEBUG_OUT_EL2(<<"Creating straight line max max for position: "<<dStraightBorderMaxToMax<<endl<<flush);
 		}
-		sort( vecSplineRanges.begin(), vecSplineRanges.end() );
 #ifdef DEBUG
-		cout<<endl<<"Create polynom for spline vecSplineRanges: ";
+		cout<<endl<<"Create polynom for spline vecSplineRanges: "<<std::fixed;
 		for ( unsigned int uiActRange = 0; uiActRange < vecSplineRanges.size(); uiActRange++ ){
+#ifdef FEATURE_C_IMAGE_STRUCTURE_CONVERT_TO_TILES_USE_INNER_LINE
+			cout<<"("<<vecSplineRanges[uiActRange].x<<";["<<
+				vecSplineRanges[uiActRange].minY<<" ... "<<vecSplineRanges[uiActRange].maxY<<
+				"] ( wS="<<vecSplineRanges[uiActRange].dWeightSolver<<
+				" wE="<<vecSplineRanges[uiActRange].dWeightError<<") ); ";
+#else //FEATURE_C_IMAGE_STRUCTURE_CONVERT_TO_TILES_USE_INNER_LINE
 			cout<<"("<<vecSplineRanges[uiActRange].x<<";["<<
 				vecSplineRanges[uiActRange].minY<<" ... "<<vecSplineRanges[uiActRange].maxY<<"] ); ";
+#endif //FEATURE_C_IMAGE_STRUCTURE_CONVERT_TO_TILES_USE_INNER_LINE
 		}
 		cout<<endl;
 #endif //DEBUG
-		//evalue tile spline
-		cPolynom< long, double > splineForBorder;
-		const unsigned long ulNumberOfLinesInTile =
-			splineForBorder.evalueSplineIterativFast(
-				vecSplineRanges, 3,
-				maxValue, maxError, maxErrorPerValue,
-				0.0000000001 );
-		
+#ifdef FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+		cEvaluePositionListLimit pointsInTile( 0, &vecDomainDimension,
+				false, 256L * pBestLineBorderLine->size + 1024L,
+				1024L * pBestLineBorderLine->size + 1024L );
 #ifdef DEBUG
-		cout<<endl<<"Found spline for "<<ulNumberOfLinesInTile<<" lines: ";
-		splineForBorder.print( cout );
-		cout<<endl;
+		cout<<endl<<"cEvaluePositionListLimit pointsInTile( 0, "<<
+			"&vecDomainDimension, false, 256L * pBestLineBorderLine->size(="<<
+			pBestLineBorderLine->size<<") ="<<(256L * pBestLineBorderLine->size + 1024L)<<
+			", 1024L * pBestLineBorderLine->size + 1024L="<<
+			(1024L * pBestLineBorderLine->size + 1024L)<<" );"<<endl;
 #endif //DEBUG
-		if ( ulNumberOfLinesInTile == 0 ){
-			DEBUG_OUT_EL2(<<"Error: spline for next tile not found (no lines in spline)"<<endl<<flush);
-			break;
-		}
+#else //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+		cEvaluePositionList pointsInTile;
+#endif //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+		cExtObject * pNewExtObject = NULL;
 		
-		if ( ulNumberOfLinesInTile < ulMinGoodLines ){
-		/*if lines of found tile are less than ulMinGoodLines
-		 -> new number of lines is betwean number of lines in found tile and ulMinGoodLines*/
-			ulMinGoodLines = ( ulMinGoodLines + ulNumberOfLinesInTile ) / 2 + 1;
-		}else{/*if lines of found tile is equal ulMinGoodLines
-		 -> new number is the twice of ulMinGoodLines*/
-			ulMinGoodLines *= dImproveFactorDim2;
-		}
-		//create the tile
-		cVectorExtObject vecTileExtObjectInputValues( 6 );
-		/* set tile parameters:
-			* inVar1 : position start point dimension 1 (x_s)
-			* inVar2 : position start point dimension 2 (y_s)
-			* inVar3 : position end point dimension 1 (x_e)
-			* inVar4 : parameter a_0 of the line function f
-			* inVar5 : parameter a_1 of the line function f
-			* inVar6 : parameter a_2 of the line function f
-		*/
-		//position start point
-		
-		//first 3 parameters for straight border line
-		vecTileExtObjectInputValues.setValue( (bStraightBorderLineInDim1 ?1:2),
-			lStartPoint );
-		//set value for the straight border
-		
-		if ( ( 0 < lMoreRightOtherBorders ) || ( ! bStraightBorderLineFromMinToMax ) ){
-			/* if more other border points to the right -> minimize area
-				outside the to convert area (betwean min max or overlapt points)
-				-> move straight border as far as possible to the right
-			if straight border from max to max or in to convert area
-				-> maximize area for tile */
-			vecTileExtObjectInputValues.setValue( (bStraightBorderLineInDim1 ?2:1),
-				roundToLongFib( pBestLineBorderLine->areaForLine.second ) );
-		}else{//more other line part borders to the left
-			vecTileExtObjectInputValues.setValue( (bStraightBorderLineInDim1 ?2:1),
-				roundToLongFib( pBestLineBorderLine->areaForLine.first ) );
-		}
-		//position end point
-		vecTileExtObjectInputValues.setValue( 3,
-			lStartPoint + ulNumberOfLinesInTile - 1 );
-		//parameter a_0 of the line function f
-		
-		if ( ! splineForBorder.vecFactors.empty() ){
-			//set tile spline factors
-			vecTileExtObjectInputValues.setValue( 4,
-				splineForBorder.vecFactors[ 0 ] );
-			
-			if ( 2 <= splineForBorder.vecFactors.size() ){
-				vecTileExtObjectInputValues.setValue( 5,
-					splineForBorder.vecFactors[ 1 ] );
+		if ( ( vecSplineRanges.size() == 1 ) ||
+				( ( vecSplineRanges.size() == 2 ) &&
+					( vecSplineRanges[ 0 ].x == vecSplineRanges[ 1 ].x ) ) ){
+			/* if area contains just positions with one value for one coordinate
+			 -> area is line*/
+			//find line part for border
+			const double dMinBorderArea = pBestLineBorderLine->areaForLine.first;
+			//enlarge check value because of rounding errors
+			const double dMinBorderAreaLower = dMinBorderArea - 0.001;
+			const double dMinBorderAreaUpper = dMinBorderArea + 0.001;
+			longFib lPartLineStartPoint = 0;
+			longFib lPartLineEndPoint = 0;
+			bool bPartLineFound = false;
+			{
+				map< longFib, nImageStructureConvertToTiles::cLine >::const_iterator
+					itrActualLine = bordersDimToSearchIn.find( lStartPoint );
+				if ( itrActualLine == bordersDimToSearchIn.end() ){
+					//gap in line
+					DEBUG_OUT_EL2(<<"Error: First line for best straight line could not be found"<<endl<<flush);
+					break;
+				}
+				const nImageStructureConvertToTiles::cLine::tLineParts &
+					actualLine = itrActualLine->second.lineParts;
+				//find the line part for the straight line border point
+				nImageStructureConvertToTiles::cLine::tLineParts::const_iterator
+					itrActualPartLine = actualLine.begin();
 				
-				if ( 3 <= splineForBorder.vecFactors.size() ){
-					vecTileExtObjectInputValues.setValue( 6,
-						splineForBorder.vecFactors[ 2 ] );
+				for (  ; itrActualPartLine != actualLine.end(); itrActualPartLine++ ){
+					
+					if ( ( bStraightBorderLineFromMinToMax && (
+							( ( itrActualPartLine->second.minY <= dMinBorderAreaUpper ) &&
+								( dMinBorderAreaLower <= itrActualPartLine->second.maxY ) ) ||
+							( ( itrActualPartLine->first.maxY <= dMinBorderAreaUpper ) &&
+								( dMinBorderAreaLower <= itrActualPartLine->first.minY ) ) )
+							) || ( ( ! bStraightBorderLineFromMinToMax ) &&
+								( ( itrActualPartLine->first.maxY <= dMinBorderAreaUpper ) &&
+									( dMinBorderAreaLower <= itrActualPartLine->second.maxY ) ) ) ){
+						//line part for border found -> check upper minY value
+						lPartLineStartPoint = roundToLongFib( itrActualPartLine->first.minY );
+						lPartLineEndPoint   = roundToLongFib( itrActualPartLine->second.minY );
+						bPartLineFound = true;
+						DEBUG_OUT_L2(<<"The only part line of the straight line on "<<lStartPoint<<" found it goes from "<<lPartLineStartPoint<<" to "<<lPartLineEndPoint<<endl<<flush);
+						break;
+					}
+				}//for find the line part for the straight line border point
+			}
+			if ( ! bPartLineFound ){
+				DEBUG_OUT_EL2(<<"Error: Line part of first line for best straight line could not be found -> stop evaluation to prevent infinite loops"<<endl<<flush);
+				break;
+			}
+			
+			if ( lPartLineStartPoint == lPartLineEndPoint ){
+				//create point external object
+				cVectorExtObject vecPointExtObjectInputValues( 2 );
+				
+				vecPointExtObjectInputValues.setValue( (bStraightBorderLineInDim1?1:2 ),
+					lStartPoint );
+				vecPointExtObjectInputValues.setValue( (bStraightBorderLineInDim1?2:1 ),
+					lPartLineStartPoint );
+				
+				pNewExtObject = new cExtObject( -2, vecPointExtObjectInputValues );
+			}else{//create line
+				// use area elements if just one line wher found
+				cVectorExtObject vecLineExtObjectInputValues( 3 );
+				/* parameters for horizontal line (id -23) :
+				* 	- position start point dimension 1 (x_1)
+				* 	- position points in dimension 2 (y)
+				* 	- position end point dimension 1 (x_2)
+				* parameters for horizontal line (id -24) :
+				* 	- position points in dimension 1 (x)
+				* 	- position start point dimension 2 (y_1)
+				* 	- position end point dimension 2 (y_2)
+				*/
+				vecLineExtObjectInputValues.setValue( (bStraightBorderLineInDim1?1:2 ),
+					lStartPoint );
+				vecLineExtObjectInputValues.setValue( (bStraightBorderLineInDim1?2:1 ),
+					lPartLineStartPoint );
+				vecLineExtObjectInputValues.setValue( 3, lPartLineEndPoint );
+				//id -23 or -24
+				pNewExtObject = new cExtObject(
+					( bStraightBorderLineInDim1 ? -24 : -23 ), vecLineExtObjectInputValues );
+			}
+			bUseRectangle = false;
+			//ignore antialising
+#ifdef DEBUG
+			cout<<endl<<"Generated external line object:"<<endl;
+			pNewExtObject->storeXml( cout );
+			cout<<endl;
+#endif //DEBUG
+			//evalue points in tile
+			pNewExtObject->evalueObjectSimple( pointsInTile );
+#ifdef FEATURE_USE_RECTANGLE_EXT_OBJECT
+		}else  if ( ! bUseRectangle ){//evalue tile
+#else //FEATURE_USE_RECTANGLE_EXT_OBJECT
+		}else{//evalue tile
+#endif //FEATURE_USE_RECTANGLE_EXT_OBJECT
+			//evalue tile spline
+			cPolynom< long, double > splineForBorder;
+			const unsigned long ulNumberOfPointsInSpline =
+				splineForBorder.evalueSplineIterativFast(
+					vecSplineRanges, NUMBER_OF_SPLINE_PARAMETERS,
+					maxValue, maxError, maxErrorPerValue, liWeightParameters );
+			
+#ifdef DEBUG
+			cout<<endl<<"Found spline for "<<ulNumberOfPointsInSpline<<" data points: "<<fixed;
+			splineForBorder.print( cout );
+			cout<<endl;
+#endif //DEBUG
+			if ( ulNumberOfPointsInSpline == 0 ){
+				DEBUG_OUT_EL2(<<"Error: spline for next tile not found (no lines in spline)"<<endl<<flush);
+				break;
+			}
+
+#ifdef FEATURE_USE_RECTANGLE_EXT_OBJECT
+		//TODO check
+		
+		//check if a quadrangle could be used for data points in the found spline
+		if ( ulNumberOfPointsInSpline < vecSplineRanges.size() ){
+			/*not all points in polynom
+			 -> check if points in polynom till ulNumberOfPointsInSpline are straight line*/
+			unsigned int ulLastPointForStraightOtherBorderLine = 0;
+			double dMinOtherBorderArea = vecSplineRanges[ 0 ].minY;
+			double dMaxOtherBorderArea = vecSplineRanges[ 0 ].maxY;
+			double dMinOtherBorderAreaTmp = dMinOtherBorderArea;
+			double dMaxOtherBorderAreaTmp = dMaxOtherBorderArea;
+			for (
+#ifdef FEATURE_C_IMAGE_STRUCTURE_CONVERT_TO_TILES_USE_INNER_LINE
+					vector< fib::algorithms::nD1::cDataPointRangeWithWeights< long, double > >::const_iterator
+#else //FEATURE_C_IMAGE_STRUCTURE_CONVERT_TO_TILES_USE_INNER_LINE
+					vector< fib::algorithms::nD1::cDataPointRange< long, double > >::const_iterator
+#endif //FEATURE_C_IMAGE_STRUCTURE_CONVERT_TO_TILES_USE_INNER_LINE
+					itrActualDataPoint = vecSplineRanges.begin();
+					itrActualDataPoint != vecSplineRanges.end();
+					itrActualDataPoint++, ulLastPointForStraightOtherBorderLine++ ){
+				
+				dMinOtherBorderAreaTmp = max( dMinOtherBorderArea, itrActualDataPoint->minY );
+				dMaxOtherBorderAreaTmp = min( dMaxOtherBorderArea, itrActualDataPoint->maxY );
+				if ( dMaxOtherBorderAreaTmp <= dMinOtherBorderAreaTmp ){
+					//the actual data point is not other side of the rectangle
+					break;
+				}
+				dMinOtherBorderArea = dMinOtherBorderAreaTmp;
+				dMaxOtherBorderArea = dMaxOtherBorderAreaTmp;
+			}
+			DEBUG_OUT_L2(<<"check if to use rectangle object for the area, min range spline data points "<<dMinOtherBorderArea<<" max "<<dMaxOtherBorderArea<<endl<<flush);
+			if ( ( ulNumberOfPointsInSpline * 0.7 ) <=
+					ulLastPointForStraightOtherBorderLine ){
+				//use a rectangle object for the area
+				DEBUG_OUT_L2(<<"Use a rectangle object for the area, because "<<ulLastPointForStraightOtherBorderLine<<" data points for the spline border are on straight line"<<endl<<flush);
+				bUseRectangle = true;
+				lEndPoint = roundToLongFib(
+					vecSplineRanges[ ulLastPointForStraightOtherBorderLine ].x );
+				
+				if ( bFirstIsRightOtherBorder ){
+					lRectangleOfOtherSide = roundToLongFib( dMinOtherBorderArea );
+				}else{
+					lRectangleOfOtherSide = roundToLongFib( dMaxOtherBorderArea );
 				}
 			}
-		}//end set tile spline factors
+		}
 		
-		cExtObject * pNewExtObject = new cExtObject(
-			( bStraightBorderLineInDim1 ? -70 : -71 ), vecTileExtObjectInputValues );
+		if ( ! bUseRectangle ){
+			//do not use a rectangle instead of a spline tile
+		//TODO check end
 		
-		liFoundTiles.push_back( pNewExtObject );
-		
-#ifdef DEBUG
-		cout<<endl<<"Generated external object: "<<endl;
-		pNewExtObject->storeXml( cout );
-		cout<<endl;
-#endif //DEBUG
-		
-		//remove points in tile from minimum borders
-		//evalue points in tile
-		cEvaluePositionList pointsInTile;
-		pNewExtObject->evalueObjectSimple( pointsInTile );
-		
-		if ( bIsAntialised ){
-			//change values for antialising
-			pNewExtObject->setIdentifier( bStraightBorderLineInDim1 ? -80 : -81 );
-			
-			cVectorExtObject * pVecExtObject = pNewExtObject->getInputVector();
-			
-			/* The antialised border goes for a pixle line from f( x ) till
-			* f( x + 1 ) (and not just f( x ) like in the not antialised case).
-			* The area end pixle line e should not be outside f( e ) (instead of
-			* f( e + 1 ) ). So the line needs to be stretched, so that f( e ) is
-			* at the position (e + 1) .
-			* - l is the length of the (tile) area ( ulNumberOfLinesInTile = e - s )
-			* - s is the start point of the (tile) area
-			* 	( pBestLineBorderLine->areaForLine.second )
-			* - w = (l + 1) / l
-			* - x' = x - s (move the area start to the 0 on the x achsis)
-			* - x'' = w * x' (stretch area so that f( e' ) is at (e + 1)' )
-			* - x''' = x'' + s (move the area back to the tile start)
-			* - x''' = s + w * (x - s) = s + w * x - w * s
-			*        = s * ( 1 - w ) + w * x
-			* - x = ( x''' - s * ( 1 - w ) ) / w
-			*     = x''' / w - s * ( 1 / w - 1 )
-			*     = x''' * ( l / (l + 1) ) - s * ( l / (l + 1) - 1 )
-			* - t = l / (l + 1) = 1 / w
-			* - f( x ) = a_0 + a_1 * x + a_2 * x^2
-			* - f( x''' ) = a_0 +
-			*  	a_1 * ( x''' * t - s * ( t - 1 ) ) +
-			*  	a_2 * ( x''' * t - s * ( t - 1 ) )^2
-			*  	= a_0 +
-			*  	a_1 * x''' * t - a_1 * s * ( t - 1 ) +
-			*  	a_2 * ( ( x''' * t )^2 - 2 * x''' * t * s * ( t - 1 ) + ( s * ( t - 1 ) )^2 )
-			*  	= a_0 - a_1 * s * ( t - 1 ) +
-			*  	   a_2 * ( s * ( t - 1 ) )^2 +
-			*  	x''' * ( a_1 * t - a_2 * 2 * t * s * ( t - 1 ) ) +
-			*  	x'''^2 * ( a_2 * t^2 )
-			* 
-			* - a_0' = a_0 - a_1 * s * ( t - 1 ) +
-			*  	   a_2 * ( s * ( t - 1 ) )^2
-			* - a_1' = a_1 * t - a_2 * 2 * t * s * ( t - 1 )
-			* - a_2' = a_2 * t^2
-			* or
-			* - g = s * ( t - 1 )
-			* - a_0' = a_0 - a_1 * g + a_2 * g^2
-			* - a_1' = a_1 * t - a_2 * 2 * t * g
-			*  	= t * ( a_1 - a_2 * 2 * g )
-			* - a_2' = a_2 * t^2
-			*/
-			if ( ! splineForBorder.vecFactors.empty() ){
-				//t = l / (l + 1)
-				const double dStretchFactor =
-					((double)(ulNumberOfLinesInTile)) /
-						((double)( ulNumberOfLinesInTile + 1 ));
-				//g = s * ( t - 1 )
-				const double dTranslationFactor =
-					((double)(pBestLineBorderLine->areaForLine.second)) *
-					( dStretchFactor - 1.0 );
-				//correct the tile spline factors
-				//a_0' = a_0 - a_1 * g + a_2 * g^2
-				pVecExtObject->setValue( 4,
-					splineForBorder.vecFactors[ 0 ] -
-					splineForBorder.vecFactors[ 1 ] * dTranslationFactor +
-					splineForBorder.vecFactors[ 2 ] *
-						dTranslationFactor * dTranslationFactor );
+#endif //FEATURE_USE_RECTANGLE_EXT_OBJECT
 				
-				if ( 2 <= splineForBorder.vecFactors.size() ){
-					//a_1' = t * ( a_1 - a_2 * 2 * g )
-					pVecExtObject->setValue( 5, dStretchFactor * (
-						splineForBorder.vecFactors[ 1 ] -
-						2.0 * splineForBorder.vecFactors[ 2 ] * dTranslationFactor ) );
+				//evalue the end point of the tile / spline
+				const long lEndPointOfInTile = roundToLongFib(
+					vecSplineRanges[ ulNumberOfPointsInSpline - 1 ].x );
+				
+				
+				//reduce the number of bits per value
+				if ( bReduceBitsForParameter ){
+#ifdef DEBUG
+					cout<<"reducing bit for parameters"<<endl;
+#endif //DEBUG
+#ifdef FEATURE_C_IMAGE_STRUCTURE_CONVERT_TO_TILES_USE_INNER_LINE
+					vector< fib::algorithms::nD1::cDataPointRange< long, double > >
+						vecPossibleSplineRanges;
+					//select all ranges wich are error relevant
+					for ( unsigned long uiActualPoint = 0;
+							uiActualPoint < ulNumberOfPointsInSpline; uiActualPoint++ ){
+						if ( 0.5 < vecSplineRanges[ uiActualPoint ].dWeightError ){
+							//point is error relevant
+							vecPossibleSplineRanges.push_back(
+								cDataPointRange< long, double >( vecSplineRanges[ uiActualPoint ] ) );
+						}
+					}
+					splineForBorder.reduceBits( vecPossibleSplineRanges,
+						maxValue, maxError, maxErrorPerValue );
+#else //FEATURE_C_IMAGE_STRUCTURE_CONVERT_TO_TILES_USE_INNER_LINE
+					splineForBorder.reduceBits( vecSplineRanges,
+						maxValue, maxError, maxErrorPerValue );
+#endif //FEATURE_C_IMAGE_STRUCTURE_CONVERT_TO_TILES_USE_INNER_LINE
+#ifdef DEBUG
+					cout<<"Found spline for "<<ulNumberOfPointsInSpline<<" data points: ";
+					splineForBorder.print( cout );
+					cout<<endl;
+#endif //DEBUG
+				}
+				
+				//create the tile
+				cVectorExtObject vecTileExtObjectInputValues( 3 + NUMBER_OF_SPLINE_PARAMETERS );
+				/* set tile parameters:
+					* inVar1 : position start point dimension 1 (x_s)
+					* inVar2 : position start point dimension 2 (y_s)
+					* inVar3 : position end point dimension 1 (x_e)
+					* inVar4 : parameter a_0 of the line function f
+					* inVar5 : parameter a_1 of the line function f
+					* inVar6 : parameter a_2 of the line function f
+				*/
+				//position start point
+				
+				//first 3 parameters for straight border line
+				vecTileExtObjectInputValues.setValue( (bStraightBorderLineInDim1 ?1:2 ),
+					lStartPoint );
+				//set value for the straight border
+				vecTileExtObjectInputValues.setValue( (bStraightBorderLineInDim1 ?2:1 ),
+					lGoodStraightBorderPoint );
+				
+				//position end point
+				vecTileExtObjectInputValues.setValue( 3, lEndPointOfInTile );
+				
+				//set spline parameter parameters
+				for ( unsigned int uiActualSplineParameter = 0;
+						uiActualSplineParameter < NUMBER_OF_SPLINE_PARAMETERS;
+						uiActualSplineParameter++ ){
 					
-					if ( 3 <= splineForBorder.vecFactors.size() ){
-						//a_2' = a_2 * t^2
-						pVecExtObject->setValue( 6,
-							splineForBorder.vecFactors[ 2 ] *
-								dStretchFactor * dStretchFactor );
+					if ( uiActualSplineParameter < splineForBorder.vecFactors.size()  ){
+						//set tile spline factors
+						vecTileExtObjectInputValues.setValue(
+							uiActualSplineParameter + 4,
+							splineForBorder.vecFactors[ uiActualSplineParameter ] );
 					}
 				}
-			}//end set tile spline factors
-			
-			//create subobject with point and transparecy property
-			cVectorPosition vecPosition( 2 );
-			cPoint * pPoint = new cPoint( &vecPosition );
-			//create the subobject for the external object element
-			pNewExtObject->setNumberOfSubobjects( 1 );
-			pNewExtObject->setNumberOfOutputVariables( 1, 3 );
-			
-			//set the position of the point to the external object output variables
-			pPoint->getPosition()->setVariable( 1,
-				pNewExtObject->getOutputVariable( 1, 1 ) );
-			pPoint->getPosition()->setVariable( 2,
-				pNewExtObject->getOutputVariable( 1, 2 ) );
-			//create the transparency property
-			cVectorProperty vecTransparency( cTypeProperty::TRANSPARENCY );
-			cProperty * pProperty = new cProperty( vecTransparency, pPoint );
-			pProperty->getProperty()->setVariable( 1,
-				pNewExtObject->getOutputVariable( 1, 3 ) );
-			
-			//set the created property and point as the first subobject of the external object
-			pNewExtObject->setSubobject( 1, pProperty );
+				
+				pNewExtObject = new cExtObject(
+					( bStraightBorderLineInDim1 ? IDENTIFIER_SPLINE_OBJECT_XY :
+						IDENTIFIER_SPLINE_OBJECT_YX ), vecTileExtObjectInputValues );
+				
 #ifdef DEBUG
-			cout<<endl<<"Modified antialised external object: "<<endl;
+				cout<<endl<<"Generated external object:"<<endl;
+				pNewExtObject->storeXml( cout );
+				cout<<endl;
+#endif //DEBUG
+				
+				//remove points in tile from minimum borders
+				//evalue points in tile
+				pNewExtObject->evalueObjectSimple( pointsInTile );
+				
+				if ( bIsAntialised ){
+					//change values for antialising
+#ifdef FEATURE_USE_ADAPTED_ANTIALISED_EXT_OBJECT
+					pNewExtObject->setIdentifier( bStraightBorderLineInDim1 ?
+						IDENTIFIER_SPLINE_OBJECT_AA_XY : IDENTIFIER_SPLINE_OBJECT_AA_YX );
+#else //FEATURE_USE_ADAPTED_ANTIALISED_EXT_OBJECT
+					pNewExtObject->setIdentifier( bStraightBorderLineInDim1 ? -80 : -81 );
+					
+					cVectorExtObject * pVecExtObject = pNewExtObject->getInputVector();
+					
+					/* The antialised border goes for a pixle line from f( x ) till
+					* f( x + 1 ) (and not just f( x ) like in the not antialised case).
+					* The area end pixle line e should not be outside f( e ) (instead of
+					* f( e + 1 ) ). So the line needs to be stretched, so that f( e ) is
+					* at the position (e + 1) .
+					* - l is the length of the (tile) area ( ulNumberOfLinesInTile = e - s )
+					* - s is the start point of the (tile) area
+					* 	( pBestLineBorderLine->areaForLine.second )
+					* - w = (l + 1) / l
+					* - x' = x - s (move the area start to the 0 on the x achsis)
+					* - x'' = w * x' (stretch area so that f( e' ) is at (e + 1)' )
+					* - x''' = x'' + s (move the area back to the tile start)
+					* - x''' = s + w * (x - s) = s + w * x - w * s
+					*        = s * ( 1 - w ) + w * x
+					* - x = ( x''' - s * ( 1 - w ) ) / w
+					*     = x''' / w - s * ( 1 / w - 1 )
+					*     = x''' * ( l / (l + 1) ) - s * ( l / (l + 1) - 1 )
+					* - t = l / (l + 1) = 1 / w
+					* - f( x ) = a_0 + a_1 * x + a_2 * x^2
+					* - f( x''' ) = a_0 +
+					*  	a_1 * ( x''' * t - s * ( t - 1 ) ) +
+					*  	a_2 * ( x''' * t - s * ( t - 1 ) )^2
+					*  	= a_0 +
+					*  	a_1 * x''' * t - a_1 * s * ( t - 1 ) +
+					*  	a_2 * ( ( x''' * t )^2 - 2 * x''' * t * s * ( t - 1 ) + ( s * ( t - 1 ) )^2 )
+					*  	= a_0 - a_1 * s * ( t - 1 ) +
+					*  	   a_2 * ( s * ( t - 1 ) )^2 +
+					*  	x''' * ( a_1 * t - a_2 * 2 * t * s * ( t - 1 ) ) +
+					*  	x'''^2 * ( a_2 * t^2 )
+					* 
+					* - a_0' = a_0 - a_1 * s * ( t - 1 ) +
+					*  	   a_2 * ( s * ( t - 1 ) )^2
+					* - a_1' = a_1 * t - a_2 * 2 * t * s * ( t - 1 )
+					* - a_2' = a_2 * t^2
+					* or
+					* - g = s * ( t - 1 )
+					* - a_0' = a_0 - a_1 * g + a_2 * g^2
+					* - a_1' = a_1 * t - a_2 * 2 * t * g
+					*  	= t * ( a_1 - a_2 * 2 * g )
+					* - a_2' = a_2 * t^2
+					*/
+					if ( ! splineForBorder.vecFactors.empty() ){
+						//t = l / (l + 1)
+						const double dStretchFactor =
+							((double)(ulNumberOfLinesInTile)) /
+								((double)( ulNumberOfLinesInTile + 1 ));
+						//g = s * ( t - 1 )
+						const double dTranslationFactor =
+							((double)(lStartPoint)) * ( dStretchFactor - 1.0 );
+						//correct the tile spline factors
+						//a_0' = a_0 - a_1 * g + a_2 * g^2
+						pVecExtObject->setValue( 4,
+							splineForBorder.vecFactors[ 0 ] -
+							splineForBorder.vecFactors[ 1 ] * dTranslationFactor +
+							splineForBorder.vecFactors[ 2 ] *
+								dTranslationFactor * dTranslationFactor );
+						
+						if ( 2 <= splineForBorder.vecFactors.size() ){
+							//a_1' = t * ( a_1 - a_2 * 2 * g )
+							pVecExtObject->setValue( 5, dStretchFactor * (
+								splineForBorder.vecFactors[ 1 ] -
+								2.0 * splineForBorder.vecFactors[ 2 ] * dTranslationFactor ) );
+							
+							if ( 3 <= splineForBorder.vecFactors.size() ){
+								//a_2' = a_2 * t^2
+								pVecExtObject->setValue( 6,
+									splineForBorder.vecFactors[ 2 ] *
+										dStretchFactor * dStretchFactor );
+							}
+						}
+					}//end set tile spline factors
+#endif //FEATURE_USE_ADAPTED_ANTIALISED_EXT_OBJECT
+					
+					//create subobject with point and transparecy property
+					cVectorPosition vecPosition( 2 );
+					cPoint * pPoint = new cPoint( &vecPosition );
+					//create the subobject for the external object element
+					pNewExtObject->setNumberOfSubobjects( 1 );
+					pNewExtObject->setNumberOfOutputVariables( 1, 3 );
+					
+					//set the position of the point to the external object output variables
+					pPoint->getPosition()->setVariable( 1,
+						pNewExtObject->getOutputVariable( 1, 1 ) );
+					pPoint->getPosition()->setVariable( 2,
+						pNewExtObject->getOutputVariable( 1, 2 ) );
+					//create the transparency property
+					cVectorProperty vecTransparency( cTypeProperty::TRANSPARENCY );
+					cProperty * pProperty = new cProperty( vecTransparency, pPoint );
+					pProperty->getProperty()->setVariable( 1,
+						pNewExtObject->getOutputVariable( 1, 3 ) );
+					
+					//set the created property and point as the first subobject of the external object
+					pNewExtObject->setSubobject( 1, pProperty );
+#ifdef DEBUG
+					cout<<endl<<"Modified antialised external object:"<<endl;
+					pNewExtObject->storeXml( cout );
+					cout<<endl;
+#endif //DEBUG
+				}
+#ifdef FEATURE_USE_RECTANGLE_EXT_OBJECT
+			}
+		}//end if create external subobjects
+		if ( (pNewExtObject == NULL) && bUseRectangle ){
+			DEBUG_OUT_L2(<<"Use the rectangle object for the area"<<endl<<flush);
+			
+			cVectorExtObject vecRectangleExtObjectInputValues( 4 );
+			/* position of the start point in dimension 1 (x_s)
+			 * position of the start point in dimension 2 (y_s)
+			 * position of the end point in dimension 1 (x_e)
+			 * position of the end point in dimension 2 (y_e)
+			 */
+			vecRectangleExtObjectInputValues.setValue(
+				(bStraightBorderLineInDim1? 1 : 2 ), lStartPoint );
+			vecRectangleExtObjectInputValues.setValue(
+				(bStraightBorderLineInDim1? 3 : 4 ), lEndPoint );
+			vecRectangleExtObjectInputValues.setValue(
+				(bStraightBorderLineInDim1? 2 : 1 ),
+				min( lRectangleOfOtherSide, lGoodStraightBorderPoint ) );
+			vecRectangleExtObjectInputValues.setValue(
+				(bStraightBorderLineInDim1? 4 : 3 ),
+				max( lRectangleOfOtherSide, lGoodStraightBorderPoint ) );
+			
+			pNewExtObject = new cExtObject( -40, vecRectangleExtObjectInputValues );
+			
+			pNewExtObject->evalueObjectSimple( pointsInTile );
+#ifdef DEBUG
+			cout<<endl<<"Generated external rectangle object:"<<endl;
 			pNewExtObject->storeXml( cout );
 			cout<<endl;
 #endif //DEBUG
 		}
+#else //FEATURE_USE_RECTANGLE_EXT_OBJECT
+		}//end if create external subobjects
+#endif //FEATURE_USE_RECTANGLE_EXT_OBJECT
 		
 		
 #ifdef DEBUG
-		cout<<"Points in tile:"<<endl;
+		cout<<"Points in external object (tile):"<<fixed<<endl;
 		pointsInTile.printPositionsData( pointsInTile.liEvaluedPositionData, cout );
 #endif //DEBUG
+#ifdef DEBUG_OUTPUT_GENERATED_AREA_DATA
+		static unsigned long ulOutputDebugIteration = 0;
+		ulOutputDebugIteration++;
+		
+		cout<<endl<<"Storing points of generated Fib object number: "<<ulOutputDebugIteration<<endl;
+		cVectorProperty vecBorderColor( cTypeProperty::COLOR_RGB );
+		vecBorderColor.setValue( 3, 255 );
+		
+		vecBorderColor.setValue( 2, ulOutputDebugIteration % 256 );
+		vecBorderColor.setValue( 1, ( ulOutputDebugIteration / 256 ) % 256 );
+		
+#ifdef DEBUG_OUTPUT_GENERATED_AREA_DATA_FILE
+		cImageAreaSameColor structureArea( vecBorderColor );
+		
+		set<cVectorPosition> setStructurePoints;
+		
+		const list< pair< cVectorPosition, list< cVectorProperty > > > &
+			liEvaluedData = pointsInTile.liEvaluedPositionData;
+		for ( list< pair< cVectorPosition, list< cVectorProperty > > >::const_iterator
+				itrPoint = liEvaluedData.begin();
+				itrPoint != liEvaluedData.end(); itrPoint++ ){
+			
+			setStructurePoints.insert( itrPoint->first );
+		}
+		structureArea.setStructurePoints( setStructurePoints );
+		
+		ofstream ofFileStructurAreaData( DEBUG_OUTPUT_GENERATED_AREA_DATA_FILE, ios_base::app );
+		structureArea.storeXml( ofFileStructurAreaData );
+		ofFileStructurAreaData.close();
+#endif //DEBUG_OUTPUT_GENERATED_AREA_DATA_FILE
+		
+#endif //DEBUG_OUTPUT_GENERATED_AREA_DATA
 		if ( pointsInTile.liEvaluedPositionData.empty() ){
 			DEBUG_OUT_EL2(<<"Error: no points evalued for the tile -> no change -> stop evaluation (beware infinit loop)"<<endl<<flush);
+#ifdef DEBUG
+			if ( pNewExtObject ){
+				pNewExtObject->evalueObjectSimple( pointsInTile );
+			}
+#endif //DEBUG
 			break;
 		}
 		DEBUG_OUT_L2(<<"Erasing found (=tile) points"<<endl<<flush);
@@ -3673,6 +4793,11 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 				itrActualLineDim1 = bordersDim1.begin();
 		map< longFib, nImageStructureConvertToTiles::cLine >::iterator
 				itrActualLineDim2 = bordersDim2.begin();
+#ifdef FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+		unsigned long ulNumberOfAreaPointsInTile = 0;
+#else //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+		bool bPointsRemoved = false;
+#endif //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
 		for ( list< pair< cVectorPosition, list< cVectorProperty > > >::iterator
 				itrActualPoint = pointsInTile.liEvaluedPositionData.begin();
 				itrActualPoint != pointsInTile.liEvaluedPositionData.end();
@@ -3695,13 +4820,24 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 				
 				nImageStructureConvertToTiles::cLine & lineDim1 =
 					itrActualLineDim1->second;
-				lineDim1.removePoint( lDim2Coordinate );
+#ifdef FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+				if ( lineDim1.removePoint( lDim2Coordinate ) ){
+					ulNumberOfAreaPointsInTile++;
+				}
+#else //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+				bPointsRemoved |= lineDim1.removePoint( lDim2Coordinate );
+#endif //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
 				if ( lineDim1.lineParts.empty() ){
 					//if line contains no part lines -> remove it
 					bordersDim1.erase( lDim1Coordinate );
 					itrActualLineDim1 = bordersDim1.end();
 				}
 			}//else Error: should not happen
+#ifdef DEBUG
+			else{
+				cout<<"Deleting point from line parts ("<<lDim1Coordinate<<", "<<lDim2Coordinate<<") could not find point in dimension 1"<<endl<<flush;
+			}
+#endif //DEBUG_DELETING_POINTS
 			//remember old itrActualLineDim2 and check if it could be used again
 			if ( ( itrActualLineDim2 == bordersDim2.end() ) ||
 					( itrActualLineDim2->first != lDim2Coordinate ) ){
@@ -3720,6 +4856,11 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 					itrActualLineDim2 = bordersDim2.end();
 				}
 			}//else Error: should not happen
+#ifdef DEBUG
+			else{
+				cout<<"Deleting point from line parts ("<<lDim1Coordinate<<", "<<lDim2Coordinate<<") could not find point in dimension 2"<<endl<<flush;
+			}
+#endif //DEBUG_DELETING_POINTS
 			
 #ifdef DEBUG_DELETING_POINTS
 			cout<<endl<<"Deleting point from line parts ("<<lDim1Coordinate<<", "<<lDim2Coordinate<<")"<<endl<<flush;
@@ -3742,9 +4883,56 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 #endif //DEBUG_DELETING_POINTS
 			
 		}//end remove all points from tile
+#ifdef FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+		if ( pNewExtObject == NULL ){
+			DEBUG_OUT_EL2(<<endl<<"Error: No external object generated -> stop evaluation to prevent infinite loop"<<endl<<endl<<flush);
+		}
+		if ( 0 == ulNumberOfAreaPointsInTile ){
+			//should not occure
+			pNewExtObject->deleteObject();
+			
+			DEBUG_OUT_EL2(<<endl<<"Error: No points removed -> stop evaluation to prevent infinite loops"<<endl<<endl<<flush);
+			bordersDim1.clear();
+			break;
+		}//else
+		DEBUG_OUT_L2(<<endl<<" points removed: "<<ulNumberOfAreaPointsInTile<<endl<<endl<<flush);
+		
+#else //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+		if ( ! bPointsRemoved ){
+			//should not occure
+			pNewExtObject->deleteObject();
+			
+			DEBUG_OUT_EL2(<<endl<<"Error: No points removed -> stop evaluation to prevent infinite loops"<<endl<<endl<<flush);
+			bordersDim1.clear();
+			break;
+		}
+#endif //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+	
+		liFoundTiles.push_back( pNewExtObject );
+		
+#ifdef FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+		if ( ulNumberOfAreaPointsInTile < ulMinGoodStraightLineSize ){
+		/*if lines of found tile are less than ulMinGoodStraightLineSize
+		 -> new number of lines is betwean number of lines in found tile and ulMinGoodStraightLineSize*/
+			ulMinGoodStraightLineSize = ( ulMinGoodStraightLineSize + ulNumberOfAreaPointsInTile ) / 2 + 1;
+		}else{/*if lines of found tile is equal ulMinGoodStraightLineSize
+		 -> new number is the twice of ulMinGoodStraightLineSize*/
+			ulMinGoodStraightLineSize *= dImproveFactorDim2;
+		}
+#else //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+		if ( ulNumberOfLinesInTile < ulMinGoodStraightLineSize ){
+		/*if lines of found tile are less than ulMinGoodStraightLineSize
+		 -> new number of lines is betwean number of lines in found tile and ulMinGoodStraightLineSize*/
+			ulMinGoodStraightLineSize = ( ulMinGoodStraightLineSize + ulNumberOfLinesInTile ) / 2 + 1;
+		}else{/*if lines of found tile is equal ulMinGoodStraightLineSize
+		 -> new number is the twice of ulMinGoodStraightLineSize*/
+			ulMinGoodStraightLineSize *= dImproveFactorDim2;
+		}
+#endif //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
+		
 	}//end while points in area to convert
 	
-	DEBUG_OUT_L2(<<"cImageStructureConvertToTiles("<<this<<")::convertToTiles( pImageSearchData, maxValue="<<maxValue<<", maxErrorPerValue="<<maxErrorPerValue<<", maxError="<<maxError<<" ) done"<<endl<<flush);
+	DEBUG_OUT_L2(<<"cImageStructureConvertToTiles("<<this<<")::convertToExtObjects( pImageSearchData, maxValue="<<maxValue<<", maxErrorPerValue="<<maxErrorPerValue<<", maxError="<<maxError<<" ) done"<<endl<<flush);
 	
 #ifdef DEBUG
 	cout<<"creating external objects:"<<endl;

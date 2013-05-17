@@ -1,23 +1,15 @@
 
-
-
-wenn DB quadrangle OK: see next two
+next steps:
+	- ? imlement operator on Fib objects to reduce bits per number
+	- ? implement find background color (as what??; image -> Fib )
+	- ? implement method to reduce root elements
 
 
 testen list< cExtObject * > tImageStructureConvertToFib::testConvertToFib:
-- test for cImageAreaSameColor:
-	- + antialised
 - test for cImageAreaLinearColor:
 	- area: complex, search: non
 	- + antialised
 - test for cImageStructure:
-	- create objects: dreieck, balken, kreis, rechteck teil größer als kreis
-	- area: dreieck, search: non
-	- area: balken, search: non
-	- area: kreis, search: non
-	- area: kreis, search: rechteck teil größer als kreis
-	- area: quadrangle + circle, search: non
-	- area: complex, search: non
 	- + antialised
 	
 - test for cImageStructure*:
@@ -30,38 +22,30 @@ testen list< cExtObject * > tImageStructureConvertToFib::testConvertToFib:
 	- area: complex, search: non
 	- + antialised
 
-
-
-next steps:
-	- implement classes which implements iConvertToFib and inherit the structures
-	-- cImageAreaLinearColor::convertToFib()
-	
-	- implement search algorithm for structures in image
-	- ? implement method to reduce root elements
-
-
-
-
-Suche von linar color Bereichen:
-	- erste Ableitung konstante Bereiche suchen (fuer beide Richtungen)
-		- Bereich konstant wenn (alternativen; mittelwert gut?):
-			- vom ersten Punkt nur delta abweicht
-			- vom Median oder Mittelwert nur delta abweicht
-		-? versuche approximation über:
-			- Mittelwerte erste Ableitung als Anstieg
-			- Basis = Mittelwert - Anstig * Punkt
-
-
-	-Vector vor linear components
-		- irgendwie max und min von geraden merken? (ist das möglich?)
-		- Bedingungen: größer als y_min, kleiner als y_max
+cImageStructure*:
+	in tImageStructureConvertToFib:
+		- isStructurePoint() + isStructureBorderPoint() + isStructureNeighbourPoint()
+	new test tImageStructure*Property:
+ * 	-(TODO) virtual bool isPropertyTypeIndependentOfPosition() const;
+ * 	-(TODO) virtual unsigned int getNumberOfProperties( bool bEvenIfOutside = false, const cVectorPosition vecPoint = cVectorPosition( 2 ) ) const;
+ * 	-(TODO) virtual unsigned int getNumberOfProperties( bool bEvenIfOutside = false, const pair< unsigned int, unsigned int> point = pair< unsigned int, unsigned int>(0, 0) ) const;
+ * 	-(TODO) virtual unsigned int getPropertyType( const unsigned int uiPropertyNumber, bool bEvenIfOutside = false, const cVectorPosition vecPoint = cVectorPosition( 2 ) ) const;
+ * 	-(TODO) virtual unsigned int getPropertyType( const unsigned int uiPropertyNumber, bool bEvenIfOutside = false, const pair< unsigned int, unsigned int> point = pair< unsigned int, unsigned int>(0, 0) ) const;
+ * 	-(TODO) virtual unsigned int getPropertyNumberForType( const unsigned int uiPropertyType, bool bEvenIfOutside = false, const cVectorPosition vecPoint = cVectorPosition( 2 ) ) const;
+ * 	-(TODO) virtual unsigned int getPropertyNumberForType( const unsigned int uiPropertyType, bool bEvenIfOutside = false, const pair< unsigned int, unsigned int> point = pair< unsigned int, unsigned int>(0, 0) ) const;
+ * 	-(TODO) virtual list<cVectorProperty> getPointProperties( const cVectorPosition & vecPoint, bool bEvenIfOutside = false ) const;
+ * 	-(TODO) virtual list<cVectorProperty> getPointProperties( const pair< unsigned int, unsigned int> & point, bool bEvenIfOutside = false ) const;
+ * 	-(TODO) virtual cVectorProperty getProperty( const cVectorPosition & vecPoint,
+		const unsigned int uiPropertyType = 0, bool bEvenIfOutside = false ) const;
+ * 	-(TODO) virtual cVectorProperty getProperty( const pair< unsigned int, unsigned int> & point, const unsigned int uiPropertyType = 0, bool bEvenIfOutside = false ) const;
+ * 	-(TODO) virtual cVectorProperty getPropertyForNumber( const cVectorPosition & vecPoint, const unsigned int uiPropertyNumber = 0, bool bEvenIfOutside = false ) const;
+ * 	-(TODO) virtual cVectorProperty getPropertyForNumber( const pair< unsigned int, unsigned int> & point, const unsigned int uiPropertyNumber = 0, bool bEvenIfOutside = false ) const;
+ * 	-(TODO) bool evalue( iEvaluePosition & evaluePosition ) const;
+ * 	-(TODO) virtual bool equal( const cImageStructure &imageStructure ) const;
+ * 	-(TODO) virtual bool operator==( const cImageStructure &imageStructure ) const;
 
 
 
-- von structutur abgeleitete klasse mit methode zum erzeugen von Fib object aus struktur
-	- implementiert interface nConvertToFib::iConvertToFib
-		- cRoot * convertToFib() const;
-- Erzeuge jeweils pro Struktur ein root mit evtl. subroots
 - Methode die root objekte wieder vorteilhaft reduziert:
 	- fuer jedes root objekt
 		- ersetze externale Objekte durch main Fib objekt von root objekt

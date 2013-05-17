@@ -39,6 +39,8 @@ History:
 #include "iDistFunction.h"
 
 
+namespace fib{
+
 namespace nConvertToFib{
 
 
@@ -80,6 +82,8 @@ public:
 
 
 };//end namespace nConvertToFib
+
+};//end namespace fib
 
 
 #endif //___C_COLOR_DISTANCE__

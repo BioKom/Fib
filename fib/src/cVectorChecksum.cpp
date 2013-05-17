@@ -32,6 +32,7 @@
 /*
 History:
 06.10.2009  Oesterholz  created
+16.03.2013  Oesterholz  clone() method added
 */
 
 
@@ -110,6 +111,17 @@ cVectorChecksum::cVectorChecksum( const TiXmlElement * pXmlElement, intFib &outS
 		outStatus = 2;
 		return;
 	}
+}
+
+
+/**
+ * This method clones this object.
+ *
+ * @return a pointer to the clone of this object
+ */
+cVectorChecksum * cVectorChecksum::clone() const{
+	
+	return new cVectorChecksum( *this );
 }
 
 

@@ -50,6 +50,8 @@
 # 21.01.2012   Oesterholz   tTypeExtObjectInput added
 # 04.02.2012   Oesterholz   tTypeExtSubobject and tVectorExtSubobject added
 # 14.02.2012   Oesterholz   tDomainReference added
+# 09.03.2013   Oesterholz   tMatrix3D added
+# 11.05.2013   Oesterholz   tFibDatatyps added
 #
 
 first(){
@@ -85,6 +87,11 @@ export TAIL_PID=$(first $(ps | grep tail))
 
 echo
 #evaluate testcases
+./tFibDatatyps 1024 >>${OUTPUT} 2>>${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tFibDatatyps : ${ERRORS}" >>${SUM_OUTPUT}
+
 
 ./tTypeDimension >>${OUTPUT} 2>>${ERROR_OUTPUT}
 ERRORS=$?
@@ -405,6 +412,12 @@ echo "Errors in tEvalueObject : ${ERRORS}" >>${SUM_OUTPUT}
 ERRORS=$?
 ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
 echo "Errors in tFibDatabase : ${ERRORS}" >>${SUM_OUTPUT}
+
+
+./tMatrix3D 64 >>${OUTPUT} 2>>${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tMatrix3D : ${ERRORS}" >>${SUM_OUTPUT}
 
 
 

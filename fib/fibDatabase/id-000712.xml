@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fib_object
+			xmlns:xsd="http://www.w3.org/2001/XMLSchema-instance"
+			xmlns="http://www.fib-development.org/"
+			xsd:schemaLocation="http://www.fib-development.org/fib.xsd">
+	<root>
+		<multimedia_info fib_version="3" db_version="2"/>
+		<optionalpart>
+			<pair key="name" value="tile"/>
+			<pair key="description" value="This object represents a tile. In the second dimension it goes from y_s to y_e. In the first dimension the area is filled between x_s and the line x_e = f( y ) = a_0 + a_1 * y (wher y goes from y_s to y_e)."/>
+			<pair key="inVar1::description" value="position start point dimension 1 (x_s)"/>
+			<pair key="inVar2::description" value="position start point dimension 2 (y_s)"/>
+			<pair key="inVar3::description" value="position end point dimension 2 (y_e)"/>
+			<pair key="inVar4::description" value="parameter a_0 of the line function f"/>
+			<pair key="inVar5::description" value="parameter a_1 of the line function f"/>
+			
+			<pair key="author" value="Betti Oesterholz"/>
+			<pair key="author::email" value="Oesterholz@Fib-Development.org"/>
+			<pair key="copyright" value="LGPL3 (see database object with identifier -12)"/>
+			
+			<pair key="isPointElement" value=""/>
+			<pair key="DbObject::isPointSubObject" value="-732"/>
+			<pair key="isNotAntialiased" value=""/>
+		</optionalpart>
+		<input_variables>
+			<variable number="1" default="0"/>
+			<variable number="2" default="0"/>
+			<variable number="3" default="0"/>
+			<variable number="4" default="0"/>
+			<variable number="5" default="0"/>
+		</input_variables>
+		<domains>
+			<inVar number="1">
+				<domainReference subdomain="1">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="2">
+				<domainReference subdomain="2">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="3">
+				<domainReference subdomain="2">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<subfunction>
+				<naturalNumber max="2" />
+			</subfunction>
+		</domains>
+		<main_fib_object>
+			<area define_variable="7">
+				<vector type="subarea">
+					<variable>2</variable>
+					<variable>3</variable>
+				</vector>
+				<function define_variable="8">
+					<!-- f( y ) = a_0 + a_1 * y -->
+					<subfunction>
+						<add>
+							<variable>4</variable>
+							<mult>
+								<variable>5</variable>
+								<variable>7</variable>
+							</mult>
+						</add>
+					</subfunction>
+					<area define_variable="9">
+						<vector type="subarea">
+							<variable>1</variable>
+							<variable>8</variable>
+						</vector>
+						<point>
+							<vector type="position">
+								<variable>9</variable>
+								<variable>7</variable>
+							</vector>
+						</point>
+					</area>
+				</function>
+			</area>
+		</main_fib_object>
+	</root>
+</fib_object>

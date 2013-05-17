@@ -32,8 +32,8 @@ History:
 */
 
 
-#ifndef ___C_IMAGE_STRUCTURE_H__
-#define ___C_IMAGE_STRUCTURE_H__
+#ifndef ___FIB__ALGORITHMS__N_CONVERT_TO_FIB__N_IMAGE__N_STRUCTURE_DATA__C_IMAGE_STRUCTURE_H__
+#define ___FIB__ALGORITHMS__N_CONVERT_TO_FIB__N_IMAGE__N_STRUCTURE_DATA__C_IMAGE_STRUCTURE_H__
 
 #include "version.h"
 
@@ -47,6 +47,7 @@ History:
 #include "cFibSet.h"
 #include "cList.h"
 #include "cRoot.h"
+#include "iEvaluePosition.h"
 #include "cConvertFibDatabaseObject.h"
 
 #include <set>
@@ -212,13 +213,13 @@ public:
 	 * structure, but not in it.
 	 *
 	 * @see structureNeighbourPoints
-	 * @param setInStructureBorderPoints the set with the points which are
+	 * @param setInStructureNeighbourPoints the set with the points which are
 	 * 	neighbours of points of the structure
 	 */
 	void setStructureNeighbourPoints( const set<cVectorPosition> & setInStructureNeighbourPoints );
 	
 	/**
-	 * This method adds the given the given points to the structure.
+	 * This method adds the given points to the structure.
 	 *
 	 * @see structurePoints
 	 * @param setInStructurePoints the set with the points to add to the
@@ -242,39 +243,59 @@ public:
 	 * of points of the structure, but not in it.
 	 *
 	 * @see structureNeighbourPoints
-	 * @param setInStructureBorderPoints the set with the points to add as
+	 * @param setInStructureNeighbourPoints the set with the points to add as
 	 * 	the neighbours of points of the structure
 	 */
 	void addStructureNeighbourPoints( const set<cVectorPosition> & setInStructureNeighbourPoints );
 	
 	/**
-	 * This method adds the given the given point to the structure.
+	 * This method adds the given point to the structure.
 	 *
 	 * @see structurePoints
-	 * @param setInStructurePoints the point to add to the structure
+	 * @param pointInImageStructure the point to add to the structure
 	 */
-	void addStructurePoint( const cVectorPosition & pointInStructurePoint );
+	void addStructurePoint( const cVectorPosition & pointInImageStructure );
 	
 	/**
 	 * This method adds the given point to the points which are in the
 	 * structure, but have neighbour points, which are not in the structure.
 	 *
 	 * @see structureBorderPoints
-	 * @param setInStructureBorderPoints the point which to add to the
+	 * @param pointInImageStructureBorder the point which to add to the
 	 * 	structure of points which have neighbour points, which are not in
 	 * 	the structure
 	 */
-	void addStructureBorderPoint( const cVectorPosition & pointInStructureBorderPoint );
+	void addStructureBorderPoint( const cVectorPosition & pointInImageStructureBorder );
 	
 	/**
 	 * This method adds the given point to the points, which are neighbours
 	 * of points of the structure, but not in it.
 	 *
 	 * @see structureNeighbourPoints
-	 * @param setInStructureBorderPoints the points to add to the
+	 * @param pointInImageStructureNeighbour the points to add to the
 	 * 	neighbours of points of the structure
 	 */
-	void addStructureNeighbourPoint( const cVectorPosition & pointInStructureNeighbourPoint );
+	void addStructureNeighbourPoint( const cVectorPosition & pointInImageStructureNeighbour );
+	
+	/**
+	 * This method generates the structure neighbour points.
+	 * This means all points neighbour to the border points of the structure
+	 * but not in it will be added to the structure neighbour points.
+	 * All old neighbour points will be discarded before the search.
+	 *
+	 * @see structureNeighbourPoints
+	 * @see structureBorderPoints
+	 * @param pImageSearchData the image search data in which the neighbour
+	 * 	point must lay and which determines what are neighbour points;
+	 * 	if no image search structure is given the four neighbours with
+	 * 	distance one in one direction to a border point will be
+	 * 	considered its neighbour
+	 * @param bAddOverlapped if overlappted points should be added as
+	 * 	neighbour point
+	 */
+	void generateStructureNeighbourPoint(
+		const cImageSearchData * pImageSearchData = NULL,
+		const bool bAddOverlapped = true );
 	
 	
 	/**
@@ -302,39 +323,226 @@ public:
 	 * of points of the structure, but not in it.
 	 *
 	 * @see structureNeighbourPoints
-	 * @param setInStructureBorderPoints the set with the points to delete
+	 * @param setInStructureNeighbourPoints the set with the points to delete
 	 * 	of the neighbours of points of the structure
 	 */
 	void deleteStructureNeighbourPoints( const set<cVectorPosition> & setInStructureNeighbourPoints );
 	
 	/**
-	 * This method deletes the given the given point from the structure.
+	 * This method deletes the given point from the structure.
 	 *
 	 * @see structurePoints
-	 * @param setInStructurePoints the point to delete from the structure
+	 * @param pointInImageStructure the point to delete from the structure
 	 */
-	void deleteStructurePoint( const cVectorPosition & pointInStructurePoint );
+	void deleteStructurePoint( const cVectorPosition & pointInImageStructure );
 	
 	/**
 	 * This method deletes the given point from the points which are in the
 	 * structure, but have neighbour points, which are not in the structure.
 	 *
 	 * @see structureBorderPoints
-	 * @param setInStructureBorderPoints the point which to delete from the
+	 * @param pointInImageStructureBorder the point which to delete from the
 	 * 	structure of points which have neighbour points, which are not in
 	 * 	the structure
 	 */
-	void deleteStructureBorderPoint( const cVectorPosition & pointInStructureBorderPoint );
+	void deleteStructureBorderPoint( const cVectorPosition & pointInImageStructureBorder );
 	
 	/**
 	 * This method deletes the given point from the points which are neighbours
 	 * of points of the structure, but not in it.
 	 *
 	 * @see structureNeighbourPoints
-	 * @param setInStructureBorderPoints the points to delete from the
+	 * @param pointInImageStructureNeighbour the points to delete from the
 	 * 	neighbours of points of the structure
 	 */
-	void deleteStructureNeighbourPoint( const cVectorPosition & pointInStructureNeighbourPoint );
+	void deleteStructureNeighbourPoint( const cVectorPosition & pointInImageStructureNeighbour );
+	
+	
+//methods for points given as unsigned int pairs:
+	
+	/**
+	 * @return the set with the points of the structure
+	 * 	@see structurePoints
+	 */
+	set< pair< unsigned int, unsigned int> > getStructurePointsPair() const;
+	
+	/**
+	 * @return the set with the points which are in the structure, but have
+	 * 	neighbour points which are not in the structure
+	 * 	@see structureBorderPoints
+	 */
+	set< pair< unsigned int, unsigned int> > getStructureBorderPointsPair() const;
+	
+	/**
+	 * @return the set with the points which are neighbours of points of the
+	 * 	structure, but not in it
+	 * 	@see structureNeighbourPoints
+	 */
+	set< pair< unsigned int, unsigned int> > getStructureNeighbourPointsPair() const;
+	
+	
+	/**
+	 * This method sets the points of the structure to the given points.
+	 *
+	 * @see structurePoints
+	 * @param setInStructurePoints the set with the points of the structure
+	 */
+	void setStructurePoints(
+		const set< pair< unsigned int, unsigned int> > & setInStructurePoints );
+	
+	/**
+	 * This method sets the points which are in the structure, but have
+	 * neighbour points which are not in the structure.
+	 *
+	 * @see structureBorderPoints
+	 * @param setInStructureBorderPoints the set with the points which are
+	 * 	in the structure, but have neighbour points which are not in the
+	 * 	structure
+	 */
+	void setStructureBorderPoints( const set< pair< unsigned int, unsigned int> > &
+		setInStructureBorderPoints );
+	
+	/**
+	 * This method sets the points which are neighbours of points of the
+	 * structure, but not in it.
+	 *
+	 * @see structureNeighbourPoints
+	 * @param setInStructureNeighbourPoints the set with the points which are
+	 * 	neighbours of points of the structure
+	 */
+	void setStructureNeighbourPoints( const set< pair< unsigned int, unsigned int> > &
+		setInStructureNeighbourPoints );
+	
+	/**
+	 * This method adds the given points to the structure.
+	 *
+	 * @see structurePoints
+	 * @param setInStructurePoints the set with the points to add to the
+	 * 	points of the structure
+	 */
+	void addStructurePoints( const set< pair< unsigned int, unsigned int> > &
+		setInStructurePoints );
+	
+	/**
+	 * This method adds the given points to the points which are in the
+	 * structure, but have neighbour points which are not in the structure.
+	 *
+	 * @see structureBorderPoints
+	 * @param setInStructureBorderPoints the set with the points which to
+	 * 	add to the structure of points, which have neighbour points which
+	 * 	are not in the structure
+	 */
+	void addStructureBorderPoints( const set< pair< unsigned int, unsigned int> > &
+		setInStructureBorderPoints );
+	
+	/**
+	 * This method adds the given points to the points which are neighbours
+	 * of points of the structure, but not in it.
+	 *
+	 * @see structureNeighbourPoints
+	 * @param setInStructureNeighbourPoints the set with the points to add as
+	 * 	the neighbours of points of the structure
+	 */
+	void addStructureNeighbourPoints( const set< pair< unsigned int, unsigned int> > &
+		setInStructureNeighbourPoints );
+	
+	/**
+	 * This method adds the given point to the structure.
+	 *
+	 * @see structurePoints
+	 * @param pointInImageStructure the point to add to the structure
+	 */
+	void addStructurePoint( const pair< unsigned int, unsigned int> &
+		pointInImageStructure );
+	
+	/**
+	 * This method adds the given point to the points which are in the
+	 * structure, but have neighbour points, which are not in the structure.
+	 *
+	 * @see structureBorderPoints
+	 * @param pointInImageStructureBorder the point which to add to the
+	 * 	structure of points which have neighbour points, which are not in
+	 * 	the structure
+	 */
+	void addStructureBorderPoint( const pair< unsigned int, unsigned int> &
+		pointInImageStructureBorder );
+	
+	/**
+	 * This method adds the given point to the points, which are neighbours
+	 * of points of the structure, but not in it.
+	 *
+	 * @see structureNeighbourPoints
+	 * @param pointInImageStructureNeighbour the points to add to the
+	 * 	neighbours of points of the structure
+	 */
+	void addStructureNeighbourPoint( const pair< unsigned int, unsigned int> &
+		pointInImageStructureNeighbour );
+
+	/**
+	 * This method deletes the given points from the structure.
+	 *
+	 * @see structurePoints
+	 * @param setInStructurePoints the set with the points to delete from the
+	 * 	points of the structure
+	 */
+	void deleteStructurePoints( const set< pair< unsigned int, unsigned int> > &
+		setInStructurePoints );
+	
+	/**
+	 * This method deletes the given points from the points which are in the
+	 * structure, but have neighbour points, which are not in the structure.
+	 *
+	 * @see structureBorderPoints
+	 * @param setInStructureBorderPoints the set with the points which to
+	 * 	delete from the structure of points which have neighbour points, which
+	 * 	are not in the structure
+	 */
+	void deleteStructureBorderPoints( const set< pair< unsigned int, unsigned int> > &
+		setInStructureBorderPoints );
+	
+	/**
+	 * This method deletes the given points from the points which are neighbours
+	 * of points of the structure, but not in it.
+	 *
+	 * @see structureNeighbourPoints
+	 * @param setInStructureNeighbourPoints the set with the points to delete
+	 * 	of the neighbours of points of the structure
+	 */
+	void deleteStructureNeighbourPoints( const set< pair< unsigned int, unsigned int> > &
+		setInStructureNeighbourPoints );
+	
+	/**
+	 * This method deletes the given point from the structure.
+	 *
+	 * @see structurePoints
+	 * @param pointInImageStructure the point to delete from the structure
+	 */
+	void deleteStructurePoint( const pair< unsigned int, unsigned int> &
+		pointInImageStructure );
+	
+	/**
+	 * This method deletes the given point from the points which are in the
+	 * structure, but have neighbour points, which are not in the structure.
+	 *
+	 * @see structureBorderPoints
+	 * @param pointInImageStructureBorder the point which to delete from the
+	 * 	structure of points which have neighbour points, which are not in
+	 * 	the structure
+	 */
+	void deleteStructureBorderPoint( const pair< unsigned int, unsigned int> &
+		pointInImageStructureBorder );
+	
+	/**
+	 * This method deletes the given point from the points which are neighbours
+	 * of points of the structure, but not in it.
+	 *
+	 * @see structureNeighbourPoints
+	 * @param pointInImageStructureNeighbour the points to delete from the
+	 * 	neighbours of points of the structure
+	 */
+	void deleteStructureNeighbourPoint( const pair< unsigned int, unsigned int> &
+		pointInImageStructureNeighbour );
+	
 	
 	
 	/**
@@ -351,6 +559,311 @@ public:
 	 * 	antialised or if false, it will be to set to not antialised
 	 */
 	void setAntialised( const bool bInIsAntialised = true );
+	
+	
+	/**
+	 * This method returns if the given point is a structure point.
+	 *
+	 * @see structurePoints
+	 * @param pointInImageStructure the point for which to check if it is
+	 * 	a structure point
+	 * @return true if the given point is a structure point, else false
+	 */
+	bool isStructurePoint( const cVectorPosition & pointInImageStructure ) const;
+	
+	/**
+	 * This method returns if the given point is a structure border point.
+	 *
+	 * @see structureBorderPoints
+	 * @param pointInImageStructureBorder the point for which to check if
+	 * 	it is a structure border point
+	 * @return true if the given point is a structure border point, else false
+	 */
+	bool isStructureBorderPoint( const cVectorPosition & pointInImageStructureBorder ) const;
+	
+	/**
+	 * This method returns if the given point is a structure neighbour point.
+	 *
+	 * @see structureNeighbourPoints
+	 * @param pointInImageStructureNeighbour the point for which to check
+	 * 	if it is a structure neighbour point
+	 * @return true if the given point is a structure neighbour point, else false
+	 */
+	bool isStructureNeighbourPoint( const cVectorPosition & pointInImageStructureNeighbour ) const;
+	
+	/**
+	 * This method returns if the given point is a structure point.
+	 *
+	 * @see structurePoints
+	 * @param pointInImageStructure the point for which to check if it is
+	 * 	a structure point
+	 * @return true if the given point is a structure point, else false
+	 */
+	bool isStructurePoint(
+		const pair< unsigned int, unsigned int> & pointInImageStructure ) const;
+	
+	/**
+	 * This method returns if the given point is a structure border point.
+	 *
+	 * @see structureBorderPoints
+	 * @param pointInImageStructureBorder the point for which to check if
+	 * 	it is a structure border point
+	 * @return true if the given point is a structure border point, else false
+	 */
+	bool isStructureBorderPoint(
+		const pair< unsigned int, unsigned int> & pointInImageStructureBorder ) const;
+	
+	/**
+	 * This method returns if the given point is a structure neighbour point.
+	 *
+	 * @see structureNeighbourPoints
+	 * @param pointInImageStructureNeighbour the point for which to check
+	 * 	if it is a structure neighbour point
+	 * @return true if the given point is a structure neighbour point, else false
+	 */
+	bool isStructureNeighbourPoint(
+		const pair< unsigned int, unsigned int> & pointInImageStructureNeighbour ) const;
+	
+	
+	/**
+	 * @return true if the property types don't depend on the position of the
+	 * 	point, else false;
+	 * 	If true you can for example ignore the position parameters of:
+	 * 		@see getPropertyType()
+	 * 		@see getPropertyNumberForType()
+	 */
+	virtual bool isPropertyTypeIndependentOfPosition() const;
+	
+	/**
+	 * This method returns the number of properties for the given image
+	 * structure point.
+	 *
+	 * @param bEvenIfOutside if false points outside this image structure
+	 * 	( isStructurePoint() ) will be ignored (return value 0), else
+	 * 	it works as if the given point was included in this image structure
+	 * @param vecPoint the point for which to return the number of properties
+	 * @return the number of property vectors for the given point
+	 */
+	virtual unsigned int getNumberOfProperties( const bool bEvenIfOutside = false,
+		const cVectorPosition vecPoint = cVectorPosition( 2 ) ) const;
+	
+	/**
+	 * This method returns the number of properties for the given image
+	 * structure point.
+	 *
+	 * @param bEvenIfOutside if false points outside this image structure
+	 * 	( isStructurePoint() ) will be ignored (return value 0), else
+	 * 	it works as if the given point was included in this image structure
+	 * @param point the point for which to return the number of
+	 * 	properties
+	 * @return the number of property vectors for the given point
+	 */
+	virtual unsigned int getNumberOfProperties( const bool bEvenIfOutside = false,
+		const pair< unsigned int, unsigned int> point =
+			pair< unsigned int, unsigned int>(0, 0) ) const;
+	
+	/**
+	 * This method returns the number of the uiPropertyNumber'th property
+	 * type for the image structure point.
+	 * @see cTypeProperty
+	 * @see getPropertyNumberForType()
+	 *
+	 * @param uiPropertyNumber the number of the property to return the type of;
+	 * 	counting starts with 1; @see getNumberOfProperties()
+	 * @param bEvenIfOutside if false points outside this image structure
+	 * 	( isStructurePoint() ) will be ignored (return value 0), else
+	 * 	it works as if the given point was included in this image structure
+	 * @param vecPoint the point for which to return the number of
+	 * 	the type of the property
+	 * @return the number of the type of the uiPropertyNumber'th property
+	 * 	on the given point, or 0 (cTypeProperty::NONE) if non exists
+	 * 	@see cTypeProperty
+	 */
+	virtual unsigned int getPropertyType( const unsigned int uiPropertyNumber,
+		const bool bEvenIfOutside = false,
+		const cVectorPosition vecPoint = cVectorPosition( 2 ) ) const;
+	
+	/**
+	 * This method returns the number of the uiPropertyNumber'th property
+	 * type for the image structure point.
+	 * @see cTypeProperty
+	 * @see getPropertyNumberForType()
+	 *
+	 * @param uiPropertyNumber the number of the property to return the type of;
+	 * 	counting starts with 1; @see getNumberOfProperties()
+	 * @param bEvenIfOutside if false points outside this image structure
+	 * 	( isStructurePoint() ) will be ignored (return value 0), else
+	 * 	it works as if the given point was included in this image structure
+	 * @param point the point for which to return the number of
+	 * 	the type of the property
+	 * @return the number of the type of the uiPropertyNumber'th property
+	 * 	on the given point, or 0 (cTypeProperty::NONE) if non exists
+	 * 	@see cTypeProperty
+	 */
+	virtual unsigned int getPropertyType( const unsigned int uiPropertyNumber,
+		const bool bEvenIfOutside = false,
+		const pair< unsigned int, unsigned int> point =
+			pair< unsigned int, unsigned int>(0, 0) ) const;
+	
+	/**
+	 * This method returns the property number for the given property type
+	 * for the image point.
+	 * @see cTypeProperty
+	 * @see getPropertyType()
+	 * @see getNumberOfProperties()
+	 *
+	 * @param uiPropertyType the type number of the property to return the
+	 * 	number of (e. g. cTypeProperty::COLOR_RGB )
+	 * @param bEvenIfOutside if false points outside this image structure
+	 * 	( isStructurePoint() ) will be ignored (return value 0), else
+	 * 	it works as if the given point was included in this image structure
+	 * @param vecPoint the point for which to return the number of
+	 * 	the property of the given type
+	 * @return the number for the given property type for the image point,
+	 * 	or 0 if no such property extists
+	 * 	@see cTypeProperty
+	 */
+	virtual unsigned int getPropertyNumberForType( const unsigned int uiPropertyType,
+		const bool bEvenIfOutside = false,
+		const cVectorPosition vecPoint = cVectorPosition( 2 ) ) const;
+	
+	/**
+	 * This method returns the property number for the given property type
+	 * for the image point.
+	 * @see cTypeProperty
+	 * @see getPropertyType()
+	 * @see getNumberOfProperties()
+	 *
+	 * @param uiPropertyType the type number of the property to return the
+	 * 	number of (e. g. cTypeProperty::COLOR_RGB )
+	 * @param bEvenIfOutside if false points outside this image structure
+	 * 	( isStructurePoint() ) will be ignored (return value 0), else
+	 * 	it works as if the given point was included in this image structure
+	 * @param point the point for which to return the number of
+	 * 	the property of the given type
+	 * @return the number for the given property type for the image point,
+	 * 	or 0 if no such property extists
+	 * 	@see cTypeProperty
+	 */
+	virtual unsigned int getPropertyNumberForType( const unsigned int uiPropertyType,
+		const bool bEvenIfOutside = false,
+		const pair< unsigned int, unsigned int> point =
+			pair< unsigned int, unsigned int>(0, 0) ) const;
+	
+	/**
+	 * With this method the properties for given point are returned.
+	 * Antialising will be ignored. @see bIsAntialised
+	 *
+	 * @param vecPoint the point, for which the properties should be returned
+	 * @param bEvenIfOutside if false points outside this image structure
+	 * 	( isStructurePoint() ) will be ignored (return empty list), else
+	 * 	it works as if the given point was included in this image structure
+	 * @return a list of the properties of the point
+	 */
+	virtual list<cVectorProperty> getPointProperties(
+		const cVectorPosition & vecPoint,
+		const bool bEvenIfOutside = false ) const;
+	
+	/**
+	 * With this method the properties for given point are returned.
+	 * Antialising will be ignored. @see bIsAntialised
+	 *
+	 * @param point the point, for which the properties should be
+	 * 	returned
+	 * @param bEvenIfOutside if false points outside this image structure
+	 * 	( isStructurePoint() ) will be ignored (return empty list), else
+	 * 	it works as if the given point was included in this image structure
+	 * @return a list of the properties of the point
+	 */
+	virtual list<cVectorProperty> getPointProperties(
+		const pair< unsigned int, unsigned int> & point,
+		const bool bEvenIfOutside = false ) const;
+	
+	/**
+	 * This method returns the property of the given type for the given image
+	 * structure point.
+	 * Antialising will be ignored. @see bIsAntialised
+	 *
+	 * @param vecPoint the point of which to return the property vector
+	 * @param uiPropertyType the type number of the property to return
+	 * 	(e. g. cTypeProperty::COLOR_RGB ) @see cTypeProperty
+	 * @param bEvenIfOutside if false points outside this image structure
+	 * 	( isStructurePoint() ) will be ignored (return cTypeProperty::NONE),
+	 * 	 else it works as if the given point was included in this image structure
+	 * @return the property for the given type uiPropertyType for the given
+	 * 	point or the property of type cTypeProperty::NONE if non exists
+	 */
+	virtual cVectorProperty getProperty( const cVectorPosition & vecPoint,
+		const unsigned int uiPropertyType = 0, const bool bEvenIfOutside = false ) const;
+	
+	/**
+	 * This method returns the property of the given type for the given image
+	 * structure point.
+	 * Antialising will be ignored. @see bIsAntialised
+	 *
+	 * @param point the point of which to return the property vector
+	 * @param uiPropertyType the type number of the property to return
+	 * 	(e. g. cTypeProperty::COLOR_RGB ) @see cTypeProperty
+	 * @param bEvenIfOutside if false points outside this image structure
+	 * 	( isStructurePoint() ) will be ignored (return cTypeProperty::NONE),
+	 * 	 else it works as if the given point was included in this image structure
+	 * @return the property for the given type uiPropertyType for the given
+	 * 	point or the property of type cTypeProperty::NONE if non exists
+	 */
+	virtual cVectorProperty getProperty(
+		const pair< unsigned int, unsigned int> & point,
+		const unsigned int uiPropertyType = 0, const bool bEvenIfOutside = false ) const;
+	
+	/**
+	 * This method returns the uiPropertyNumber'th property for the given
+	 * image structure point.
+	 * Antialising will be ignored. @see bIsAntialised
+	 *
+	 * @param vecPoint the point of which to return the property vector
+	 * @param uiPropertyNumber the number of the property to return;
+	 * 	counting starts with 1; @see getNumberOfProperties()
+	 * @param bEvenIfOutside if false points outside this image structure
+	 * 	( isStructurePoint() ) will be ignored (return cTypeProperty::NONE),
+	 * 	 else it works as if the given point was included in this image structure
+	 * @return the uiPropertyNumber'th property from the given point or the
+	 * 	property of type cTypeProperty::NONE if non exists
+	 */
+	virtual cVectorProperty getPropertyForNumber( const cVectorPosition & vecPoint,
+		const unsigned int uiPropertyNumber = 0, const bool bEvenIfOutside = false ) const;
+	
+	/**
+	 * This method returns the uiPropertyNumber'th property for the given image
+	 * structure point.
+	 * Antialising will be ignored. @see bIsAntialised
+	 *
+	 * @param point the point of which to return the property vector
+	 * @param uiPropertyNumber the number of the property to return;
+	 * 	counting starts with 1; @see getNumberOfProperties()
+	 * @param bEvenIfOutside if false points outside this image structure
+	 * 	( isStructurePoint() ) will be ignored (return cTypeProperty::NONE),
+	 * 	 else it works as if the given point was included in this image structure
+	 * @return the uiPropertyNumber'th property from the given point or the
+	 * 	property of type cTypeProperty::NONE if non exists
+	 */
+	virtual cVectorProperty getPropertyForNumber(
+		const pair< unsigned int, unsigned int> & point,
+		const unsigned int uiPropertyNumber = 0, const bool bEvenIfOutside = false ) const;
+	
+	/**
+	 * This method evaluades this image structure.
+	 * (Antialising will be ignored. @see bIsAntialised
+	 * It uses the getPointProperties() method of this class.)
+	 * @see getPointProperties()
+	 *
+	 * @pattern strategy
+	 * @param evaluePosition a reference to the object with the
+	 * 	evaluePosition() method to evalue /store the positions and ther
+	 * 	properties; for every point in the structure, this method is
+	 * 	called with the point/position and the properties of the point;
+	 * 	@see iEvaluePosition
+	 * @return if the evaluation was successfull true, else false
+	 */
+	bool evalue( iEvaluePosition & evaluePosition ) const;
 	
 	
 	/**
@@ -490,9 +1003,9 @@ public:
 	 * 	of points;
 	 * 	if 0 (standard value) is given, the maximum possible value will
 	 * 	be evalued from the given data (absolute maximum in given data * 256)
-	 * @param maxErrorPerValue the maximal error for the border points to
+	 * @param ulMaxErrorPerPoint the maximal error for the border points to
 	 * 	find on one border point; every point in the area of the generated
-	 * 	Fib object will have a distance lower or equal maxErrorPerValue
+	 * 	Fib object will have a distance lower or equal ulMaxErrorPerPoint
 	 * 	to a point in this structure or an overlappted point of pImageSearchData
 	 * @return a Fib object which represents the data of this object
 	 * 	Beware: You have to delete the returned Fib object after usage.
@@ -501,7 +1014,48 @@ public:
 	 */
 	virtual cRoot * convertToFib( const cImageSearchData * pImageSearchData,
 		const double maxValue = 65536.0, const unsigned long ulMaxErrorPerPoint = 0.0 ) const;
+
+protected:
 	
+	/**
+	 * This function converts the given point into a cVectorPosition point.
+	 *
+	 * @param paPoint the point to convert
+	 * @return a cVectorPosition object which represents the point
+	 */
+	static cVectorPosition convertToVectorPosition(
+		const pair< unsigned int, unsigned int> & paPoint );
+	
+	/**
+	 * This function converts the given points into cVectorPosition points.
+	 *
+	 * @param setPaPoint the set with the points to convert
+	 * @return a set with the cVectorPosition objects, which represents the
+	 * 	points in setPaPoint
+	 */
+	static set< cVectorPosition > convertToVectorPosition(
+		const set< pair< unsigned int, unsigned int> > & setPaPoint );
+
+	
+	/**
+	 * This function converts the given point into a pair point.
+	 *
+	 * @param vecPoint the point to convert
+	 * @return a unsigned int pair which represents the point
+	 */
+	static pair< unsigned int, unsigned int> convertToVectorPair(
+		const cVectorPosition & vecPoint );
+	
+	/**
+	 * This function converts the given points into pair points.
+	 *
+	 * @param setVecPoint the set with the points to convert
+	 * @return a set with the unsigned int pairs, which represents the
+	 * 	points in setVecPoint
+	 */
+	static set< pair< unsigned int, unsigned int> > convertToVectorPair(
+		const set< cVectorPosition > & setVecPoint );
+
 };//class cImageStructure
 
 };//end namespace nStructureData
@@ -511,4 +1065,4 @@ public:
 };//end namespace fib
 
 
-#endif //___C_IMAGE_STRUCTURE_H__
+#endif //___FIB__ALGORITHMS__N_CONVERT_TO_FIB__N_IMAGE__N_STRUCTURE_DATA__C_IMAGE_STRUCTURE_H__

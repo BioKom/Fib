@@ -38,6 +38,7 @@ History:
 17.05.2010  Oesterholz  created
 14.09.2011  Oesterholz  storeUnscaledValue(): store in two's complement system
 01.12.2011  Oesterholz  method isInBoundaries() added
+01.05.2013  Oesterholz  Bugfix in restore(): iBits read buffer should not const
 */
 
 
@@ -540,7 +541,7 @@ intFib cDomainIntegerBit::restore( cReadBits & iBitStream ){
 		return -2;
 	}
 	//restore the bits number
-	const unsigned int iBits = 0;
+	unsigned int iBits = 1;
 	uiBitsRead = iBitStream.readBits( iBits, 8 );
 	if ( ! iBitStream.getStream()->good() ){
 		return -2;

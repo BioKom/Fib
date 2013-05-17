@@ -7,7 +7,7 @@
 		<multimedia_info fib_version="3" db_version="2"/>
 		<optionalpart>
 			<pair key="name" value="tile antialiased"/>
-			<pair key="description" value="This object represents a tile with one side antialiased. In the first dimension it goes from y_s to y_e. In the second dimension the area is filled between y_s and the antialiased line x_e = f( y ) = a_0 + a_1 * y + a_2 * y^2 (wher y goes from y_s to y_e; the side of f( y ) is the only antialiased side of the tile). The points of the triangle are given back as variables of the subobject."/>
+			<pair key="description" value="This object represents a tile with one side antialiased. In the first dimension it goes from y_s to y_e. In the second dimension the area is filled between y_s and the antialiased line x_e = f( y ) = a_0 + a_1 * y + a_2 * y^2 (wher y goes from y_s to y_e; the side of f( y ) is the only antialiased side of the tile). The points of the tile are given back as variables of the subobject."/>
 			<pair key="inVar1::description" value="position start point dimension 1 (x_s)"/>
 			<pair key="inVar2::description" value="position start point dimension 2 (y_s)"/>
 			<pair key="inVar3::description" value="position end point dimension 2 (y_e)"/>
@@ -22,7 +22,7 @@
 			
 			<pair key="author" value="Betti Oesterholz"/>
 			<pair key="author::email" value="Oesterholz@Fib-Development.org"/>
-			<pair key="copyright" value="LGPL3"/>
+			<pair key="copyright" value="LGPL3 (see database object with identifier -12)"/>
 			
 			<pair key="isPointSubObject" value=""/>
 			<pair key="isAntialiased" value=""/>
@@ -62,7 +62,7 @@
 				</domainReference>
 			</inVar>
 			<externSubobject number="1">
-				<vector elements="2">
+				<vector elements="3">
 					<!--actually any numbers are possible;
 						the next  lines are just a space holder-->
 					<naturalNumberB bit="0" />

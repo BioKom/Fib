@@ -39,6 +39,7 @@ History:
 17.12.2010  Oesterholz  isOverwritenVector() method added
 18.12.2010  Oesterholz  isOverwriting() and isEvalued() methods added
 17.02.2013  Oesterholz FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE implemented
+16.03.2013  Oesterholz  clone() method added
 */
 
 #include "cVectorProperty.h"
@@ -264,6 +265,17 @@ cVectorProperty::cVectorProperty( cReadBits & iBitStream, intFib & outStatus,
 			pInVectorDomain, pInDomainVariable ), uiPropertyType( uiInPropertyType ){
 	//nothing to do
 	DEBUG_OUT_L3(<<this<<"->cVectorProperty() constructor restore bit"<<endl);
+}
+
+
+/**
+ * This method clones this object.
+ *
+ * @return a pointer to the clone of this object
+ */
+cVectorProperty * cVectorProperty::clone() const{
+	
+	return new cVectorProperty( *this );
 }
 
 

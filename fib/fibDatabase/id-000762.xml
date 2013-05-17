@@ -1,0 +1,483 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fib_object
+			xmlns:xsd="http://www.w3.org/2001/XMLSchema-instance"
+			xmlns="http://www.fib-development.org/"
+			xsd:schemaLocation="http://www.fib-development.org/fib.xsd">
+	<root>
+		<multimedia_info fib_version="6" db_version="5"/>
+		<optionalpart>
+			<pair key="name" value="tile antialiased"/>
+			<pair key="description" value="This object represents a tile with one side antialiased. It is the antialised version of the Fib database objects with identifier -712 or -732 (the area will be the same, except one point width, for the same parameters).  In the first dimension it goes from y_s to y_e. In the second dimension the area is filled between x_s and the antialiased line x_e = f( y ) = a_0 + a_1 * y (wher x goes from y_s to y_e; the side of f( y ) is the only antialiased side of the tile). The points of the tile are given back as variables of the subobject."/>
+			<pair key="inVar1::description" value="position start point dimension 1 (x_s)"/>
+			<pair key="inVar2::description" value="position start point dimension 2 (y_s)"/>
+			<pair key="inVar3::description" value="position end point dimension 2 (y_e)"/>
+			<pair key="inVar4::description" value="parameter a_0 of the line function f"/>
+			<pair key="inVar5::description" value="parameter a_1 of the line function f"/>
+			
+			<pair key="subObj1::description" value="The points of the tile. The subobject is called for every point on the tile."/>
+			<pair key="subObj1::outVar1::description" value="the position of the tile point in dimension 1 (x)"/>
+			<pair key="subObj1::outVar2::description" value="the position of the tile point in dimension 2 (y)"/>
+			<pair key="subObj1::outVar3::description" value="the antialising factor (1 is full transparent and 0 full opaque)"/>
+			
+			<pair key="author" value="Betti Oesterholz"/>
+			<pair key="author::email" value="Oesterholz@Fib-Development.org"/>
+			<pair key="copyright" value="LGPL3 (see database object with identifier -12)"/>
+			
+			<pair key="isPointSubObject" value=""/>
+			<pair key="isAntialiased" value=""/>
+			<pair key="DbObject::isNotAntialiased" value="-732"/>
+		</optionalpart>
+		<input_variables>
+			<variable number="1" default="0"/>
+			<variable number="2" default="0"/>
+			<variable number="3" default="0"/>
+			<variable number="4" default="0"/>
+			<variable number="5" default="0"/>
+		</input_variables>
+		<domains>
+			<inVar number="1">
+				<domainReference subdomain="1">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="2">
+				<domainReference subdomain="2">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="3">
+				<domainReference subdomain="1">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<externSubobject number="1">
+				<vector elements="3">
+					<!--actually any numbers are possible;
+						the next  lines are just a space holder-->
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+				</vector>
+			</externSubobject>
+			<externObject>
+				<vector elements="4">
+					<integer min="-901" max="-900" /><!--Identifier-->
+					<integer min="4" max="4" /><!--number input values-->
+					<naturalNumber max="1" /><!--number subobjects-->
+					<naturalNumber max="1" /><!--number output values-->
+				</vector>
+			</externObject>
+			<externObjectInput identifier="-901">
+				<vector elements="4">
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+				</vector>
+			</externObjectInput>
+			<externObjectInput identifier="-900">
+				<vector elements="4">
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+				</vector>
+			</externObjectInput>
+			<subfunction>
+				<naturalNumber max="2" />
+			</subfunction>
+		</domains>
+		<database_identifiers>
+			<identifier>-901</identifier>
+			<identifier>-900</identifier>
+		</database_identifiers>
+		<main_fib_object>
+			<area define_variable="7">
+				<vector type="subarea">
+					<variable>2</variable>
+					<variable>3</variable>
+				</vector>
+				<!-- evalue f( y ), f( y + 1 ) and f( y - 1 );
+					  f( y + 1 ) = f( y ) + a_1;
+					  f( y - 1 ) = f( y ) - a_1 -->
+				<function define_variable="8">
+					<subfunction><!-- f( y ) = a_0 + a_1 * y -->
+						<add>
+							<variable>4</variable>
+							<mult>
+								<variable>5</variable>
+								<variable>7</variable>
+							</mult>
+						</add>
+					</subfunction>
+					<function define_variable="9">
+						<subfunction><!-- f( y + 1 ) = f( y ) + a_1 -->
+							<add>
+								<variable>8</variable>
+								<variable>5</variable>
+							</add>
+						</subfunction>
+						<function define_variable="10">
+							<subfunction><!-- f( y - 1 ) = f( y ) - a_2 -->
+								<sub>
+									<variable>8</variable>
+									<variable>5</variable>
+								</sub>
+							</subfunction>
+							
+							<if><!-- if line f( y ) bigger x_s -->
+								<condition>
+									<lo>
+										<variable>1</variable>
+										<variable>8</variable>
+									</lo>
+								</condition>
+								<function define_variable="11">
+									<subfunction><!-- min( f(y), f(y+1), f(y-1) ) -->
+										<min>
+											<variable>8</variable>
+											<min>
+												<variable>9</variable>
+												<variable>10</variable>
+											</min>
+										</min>
+									</subfunction>
+									<list>
+										<!-- go from x_s to min( f(y), f(y+1), f(y-1) ) - 1 if x_s is smaaler (full opaque) -->
+										<function define_variable="12">
+											<subfunction><!-- min( f(y), f(y+1), f(y-1) )) - 1 -->
+												<sub>
+													<variable>11</variable>
+													<value>1</value>
+												</sub>
+											</subfunction>
+											<if>
+												<condition>
+													<not>
+														<gr>
+															<round><variable>1</variable></round>
+															<round><variable>12</variable></round>
+														</gr>
+													</not>
+												</condition>
+												<area define_variable="14">
+													<vector type="subarea">
+														<variable>1</variable>
+														<variable>12</variable>
+													</vector>
+													<subobject number="1">
+														<vector type="externSubobject">
+															<variable>14</variable>
+															<variable>7</variable>
+															<value>0</value>
+														</vector>
+													</subobject>
+												</area>
+												<!-- else do nothing -->
+												<point/>
+											</if>
+										</function>
+										<!-- go antialised from f(y) to max( x_s, min( f(y), f(y+1), f(y-1) ) ) -->
+										<function define_variable="12">
+											<subfunction><!-- max( x_s, min( f(y), f(y+1), f(y-1) ) ) -->
+												<max>
+													<variable>1</variable>
+													<variable>11</variable>
+												</max>
+											</subfunction>
+											
+											<if><!-- if f(y+1) < f(y-1) -->
+												<condition>
+													<lo>
+														<variable>9</variable>
+														<variable>10</variable>
+													</lo>
+												</condition>
+												
+												<function define_variable="13">
+													<subfunction><!-- (negativ) slope of line s = max( x_s, min( f(y), f(y+1), f(y-1) ) ) - f(y) -->
+														<sub>
+															<variable>12</variable>
+															<variable>8</variable>
+														</sub>
+													</subfunction>
+													<function define_variable="14"><!-- evalue base of line betwean f( y ) and max( x_s, min( f(y), f(y+1), f(y-1) ) ) -->
+														<subfunction><!-- base of line b = (f(y) + 1) - x * s -->
+															<sub>
+																<add>
+																	<variable>8</variable>
+																	<value>1</value>
+																</add>
+																<mult>
+																	<variable>7</variable>
+																	<variable>13</variable>
+																</mult>
+															</sub>
+														</subfunction>
+														
+														<area define_variable="15"><!-- x_actual -->
+															<vector type="subarea">
+																<variable>8</variable>
+																<variable>12</variable>
+															</vector>
+															<!-- evalue which part of the pixle is below the line betwean the points f(y) and max( x_s, min( f(y), f(y+1), f(y-1) ) ) -->
+															<obj identifier="-901">
+																<vector type="externObjectInput">
+																	<variable>14</variable><!-- base of line betwean f( y ) and max( x_s, min( f(y), f(y+1), f(y-1) ) ) -->
+																	<variable>13</variable><!-- slope of line betwean f( y ) and max( x_s, min( f(y), f(y+1), f(y-1) ) ) -->
+																	<variable>7</variable>
+																	<variable>15</variable>
+																</vector>
+																<subobject>
+																	<output_variables>
+																		<variable>16</variable>
+																	</output_variables>
+																	<subobject number="1">
+																		<vector type="externSubobject">
+																			<variable>15</variable>
+																			<variable>7</variable>
+																			<variable>16</variable>
+																		</vector>
+																	</subobject>
+																</subobject>
+															</obj>
+														</area>
+													</function>
+												</function>
+												<!-- else f(y-1) <= f(y+1) -->
+												<function define_variable="13">
+													<subfunction><!-- (positiv) slope of line s = f(y) - max( x_s, min( f(y), f(y+1), f(y-1) ) ) -->
+														<sub>
+															<variable>12</variable>
+															<variable>8</variable>
+														</sub>
+													</subfunction>
+													<function define_variable="14"><!-- evalue base of line betwean f( y ) and max( x_s, min( f(y), f(y+1), f(y-1) ) ) -->
+														<subfunction><!-- base of line b = (f(y) + 1) - x * s -->
+															<sub>
+																<add>
+																	<variable>8</variable>
+																	<value>1</value>
+																</add>
+																<mult>
+																	<variable>7</variable>
+																	<variable>13</variable>
+																</mult>
+															</sub>
+														</subfunction>
+														
+														<area define_variable="15"><!-- x_actual -->
+															<vector type="subarea">
+																<variable>8</variable>
+																<variable>12</variable>
+															</vector>
+															<!-- evalue which part of the pixle is below the line betwean the points f(y) and max( x_s, min( f(y), f(y+1), f(y-1) ) ) -->
+															<obj identifier="-901">
+																<vector type="externObjectInput">
+																	<variable>14</variable><!-- base of line betwean f( y ) and max( x_s, min( f(y), f(y+1), f(y-1) ) ) -->
+																	<variable>13</variable><!-- slope of line betwean f( y ) and max( x_s, min( f(y), f(y+1), f(y-1) ) ) -->
+																	<variable>7</variable>
+																	<variable>15</variable>
+																</vector>
+																<subobject>
+																	<output_variables>
+																		<variable>16</variable>
+																	</output_variables>
+																	<subobject number="1">
+																		<vector type="externSubobject">
+																			<variable>15</variable>
+																			<variable>7</variable>
+																			<variable>16</variable>
+																		</vector>
+																	</subobject>
+																</subobject>
+															</obj>
+														</area>
+													</function>
+												</function>
+												
+											</if>
+										</function>
+									</list>
+								</function>
+							<!-- else line f( y ) smaaler x_s -->
+								<function define_variable="11">
+									<subfunction><!-- max( f(y), f(y+1), f(y-1) ) -->
+										<max>
+											<variable>8</variable>
+											<max>
+												<variable>9</variable>
+												<variable>10</variable>
+											</max>
+										</max>
+									</subfunction>
+									<list>
+										<!-- go from x_s to max( f(y), f(y+1), f(y-1) ) + 1 if x_s is bigger (full opaque) -->
+										<function define_variable="12">
+											<subfunction><!-- max( f(y), f(y+1), f(y-1) ) + 1 -->
+												<add>
+													<variable>11</variable>
+													<value>1</value>
+												</add>
+											</subfunction>
+											<if>
+												<condition>
+													<not>
+														<lo>
+															<round><variable>1</variable></round>
+															<round><variable>12</variable></round>
+														</lo>
+													</not>
+												</condition>
+												<area define_variable="14">
+													<vector type="subarea">
+														<variable>1</variable>
+														<variable>12</variable>
+													</vector>
+													<subobject number="1">
+														<vector type="externSubobject">
+															<variable>14</variable>
+															<variable>7</variable>
+															<value>0</value>
+														</vector>
+													</subobject>
+												</area>
+												<!-- else do nothing -->
+												<point/>
+											</if>
+										</function>
+										<!-- go antialised from f(y) to min( x_s, max( f(y), f(y+1), f(y-1) ) ) -->
+										<function define_variable="12">
+											<subfunction><!-- min( x_s, max( f(y), f(y+1), f(y-1) ) ) -->
+												<min>
+													<variable>1</variable>
+													<variable>11</variable>
+												</min>
+											</subfunction>
+											
+											<if><!-- if f(y-1) < f(y+1) -->
+												<condition>
+													<lo>
+														<variable>10</variable>
+														<variable>9</variable>
+													</lo>
+												</condition>
+												
+												<function define_variable="13">
+													<subfunction><!-- (positiv) slope of line s = max( x_s, min( f(y), f(y+1), f(y-1) ) ) - f(y) -->
+														<sub>
+															<variable>12</variable>
+															<variable>8</variable>
+														</sub>
+													</subfunction>
+													<function define_variable="14"><!-- evalue base of line betwean f( y ) and min( x_s, max( f(y), f(y+1), f(y-1) ) ) -->
+														<subfunction><!-- base of line b = f(y) - x * s -->
+															<sub>
+																<variable>8</variable>
+																<mult>
+																	<variable>7</variable>
+																	<variable>13</variable>
+																</mult>
+															</sub>
+														</subfunction>
+														
+														<area define_variable="15"><!-- x_actual -->
+															<vector type="subarea">
+																<variable>8</variable>
+																<variable>12</variable>
+															</vector>
+															<!-- evalue which part of the pixle is above the line betwean the points f(y) and min( x_s, max( f(y), f(y+1), f(y-1) ) ) -->
+															<obj identifier="-900">
+																<vector type="externObjectInput">
+																	<variable>14</variable><!-- base of line betwean f( y ) and max( x_s, max( f(y), f(y+1), f(y-1) ) ) -->
+																	<variable>13</variable><!-- slope of line betwean f( y ) and max( x_s, max( f(y), f(y+1), f(y-1) ) ) -->
+																	<variable>7</variable>
+																	<variable>15</variable>
+																</vector>
+																<subobject>
+																	<output_variables>
+																		<variable>16</variable>
+																	</output_variables>
+																	<subobject number="1">
+																		<vector type="externSubobject">
+																			<variable>15</variable>
+																			<variable>7</variable>
+																			<variable>16</variable>
+																		</vector>
+																	</subobject>
+																</subobject>
+															</obj>
+														</area>
+													</function>
+												</function>
+											<!-- else f(y-1) <= f(y+1) -->
+												<function define_variable="13">
+													<subfunction><!-- (negativ) slope of line s = f(y) - max( x_s, min( f(y), f(y+1), f(y-1) ) ) -->
+														<sub>
+															<variable>12</variable>
+															<variable>8</variable>
+														</sub>
+													</subfunction>
+													<function define_variable="14"><!-- evalue base of line betwean f( y ) and min( x_s, max( f(y), f(y+1), f(y-1) ) ) -->
+														<subfunction><!-- base of line b = f(y) - x * s -->
+															<sub>
+																<variable>8</variable>
+																<mult>
+																	<variable>7</variable>
+																	<variable>13</variable>
+																</mult>
+															</sub>
+														</subfunction>
+														
+														<area define_variable="15"><!-- x_actual -->
+															<vector type="subarea">
+																<variable>8</variable>
+																<variable>12</variable>
+															</vector>
+															<!-- evalue which part of the pixle is above the line betwean the points f(y) and min( x_s, max( f(y), f(y+1), f(y-1) ) ) -->
+															<obj identifier="-900">
+																<vector type="externObjectInput">
+																	<variable>14</variable><!-- base of line betwean f( y ) and max( x_s, max( f(y), f(y+1), f(y-1) ) ) -->
+																	<variable>13</variable><!-- slope of line betwean f( y ) and max( x_s, max( f(y), f(y+1), f(y-1) ) ) -->
+																	<variable>7</variable>
+																	<variable>15</variable>
+																</vector>
+																<subobject>
+																	<output_variables>
+																		<variable>16</variable>
+																	</output_variables>
+																	<subobject number="1">
+																		<vector type="externSubobject">
+																			<variable>15</variable>
+																			<variable>7</variable>
+																			<variable>16</variable>
+																		</vector>
+																	</subobject>
+																</subobject>
+															</obj>
+														</area>
+													</function>
+												</function>
+												
+											</if>
+										</function>
+									</list>
+								</function>
+								
+							</if>
+						</function>
+					</function>
+				</function>
+			</area>
+		</main_fib_object>
+	</root>
+</fib_object>

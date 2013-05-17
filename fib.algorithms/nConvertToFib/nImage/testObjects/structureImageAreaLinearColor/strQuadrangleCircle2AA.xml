@@ -1,12 +1,12 @@
 <imageAreaLinearColor>
 	<vector type="property.colorRGB">
 		<value>255</value>
-		<value>255</value>
+		<value>200</value>
 		<value>0</value>
 	</vector>
 	<vector type="property.colorRGB">
 		<value>0</value>
-		<value>2</value>
+		<value>-2</value>
 		<value>0</value>
 	</vector>
 	<vector type="property.colorRGB">

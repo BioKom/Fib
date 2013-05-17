@@ -48,8 +48,8 @@ History:
 **************************************/
 
 //Versionsinformation for the Fib Multimedialanguage
-#define FIB_ALGORITHMS_VERSION          1
-#define FIB_ALGORITHMS_VERSION_NAME     V0.1.0
+#define FIB_ALGORITHMS_VERSION          2
+#define FIB_ALGORITHMS_VERSION_NAME     V0.1.1
 
 
 /**************************************
@@ -195,7 +195,6 @@ History:
 #define FEATURE_HYPERPLANE_BODY_SIMPLE_ADD_INEQUIATIONS_NO_DOUBLE_POINTS
 
 
-
 /**
  * With this feature the glp library (extern package) linear solver will be
  * used to find a spline for a vector of range data points.
@@ -208,6 +207,7 @@ History:
 History:
 */
 #define FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
+
 
 /**
  * With this feature the glp library (extern package) linear solver will be

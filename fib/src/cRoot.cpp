@@ -68,6 +68,7 @@ History:
 21.12.2012  Oesterholz  debugging printf formating improved
 30.12.2012  Oesterholz  DEBUG_EVALUE: debugging evalue will print first
 	optional part entry
+12.05.2013  Oesterholz  getDigits() andling changed (now version for integers)
 */
 
 
@@ -1837,8 +1838,8 @@ unsignedLongFib cRoot::getCompressedSize( bool bWriteOptionalPart ) const{
 	cDomain * pOldVariableDomain = NULL;
 	if ( uiVariablenCount > 0 ){//create the domain for the variables
 		cTypeVariable typeVariable;
-		unsigned int uiDigidsForVariables = getDigits( uiVariablenCount );
-		cDomainNaturalNumberBit domainVariables( uiDigidsForVariables );
+		unsigned int uiDigitsForVariables = getDigits( uiVariablenCount );
+		cDomainNaturalNumberBit domainVariables( uiDigitsForVariables );
 		
 		//store the old variable domain
 		pOldVariableDomain = const_cast<cDomains*>(&domains)->
@@ -1968,10 +1969,10 @@ unsignedLongFib cRoot::getCompressedSize( bool bWriteOptionalPart ) const{
 				itrActualVariable++ ){
 				
 			if ( uiBitPerOutputVariable <
-					getDigits( (long long)(*itrActualVariable) ) ){
+					getDigits( *itrActualVariable ) ){
 				
 				uiBitPerOutputVariable =
-					getDigits( (long long)(*itrActualVariable) );
+					getDigits( *itrActualVariable );
 			}
 				
 		}
@@ -2014,14 +2015,13 @@ unsignedLongFib cRoot::getCompressedSize( bool bWriteOptionalPart ) const{
 				itrActualRootElement++ ){
 			
 			if ( uiBitPerIdentifier <
-					getDigits( (long long)(itrActualRootElement->first) ) ){
+					getDigits( itrActualRootElement->first ) ){
 				
 				uiBitPerIdentifier=
-					getDigits( (long long)(itrActualRootElement->first) );
+					getDigits( itrActualRootElement->first );
 			}
 		}
 		//add one bit for the sign of the identifier
-		uiBitPerIdentifier++;
 		uiBitPerIdentifier = roundUpToFullByte( uiBitPerIdentifier );
 		
 		for ( list< pair< longFib, cRoot * > >::const_iterator itrActualRootElement =
@@ -2060,13 +2060,12 @@ unsignedLongFib cRoot::getCompressedSize( bool bWriteOptionalPart ) const{
 				itrIdentifier != setDatabaseIdentifiers.end(); itrIdentifier++ ){
 			
 			const unsigned int uiBitsForIdentifier =
-				getDigits( ((unsigned long long)(*itrIdentifier)) );
+				getDigits( *itrIdentifier );
 			if ( uiMaxBitsForIdentifier < uiBitsForIdentifier ){
 				uiMaxBitsForIdentifier = uiBitsForIdentifier;
 			}
 		}
 		//add sign bit
-		uiMaxBitsForIdentifier++;
 		
 		ulCompressedSize += setDatabaseIdentifiers.size() * uiMaxBitsForIdentifier;
 	}
@@ -6277,8 +6276,8 @@ bool cRoot::storeBit( ostream & stream, char & cRestBits,
 	}
 	if ( uiVariablenCount > 0 ){//create the domain for the variables
 		cTypeVariable typeVariable;
-		unsigned int uiDigidsForVariables = getDigits( uiVariablenCount );
-		cDomainNaturalNumberBit domainVariables( uiDigidsForVariables );
+		unsigned int uiDigitsForVariables = getDigits( uiVariablenCount );
+		cDomainNaturalNumberBit domainVariables( uiDigitsForVariables );
 		
 		const_cast<cDomains*>(&domains)->addDomain( typeVariable, domainVariables );
 	}
@@ -6549,10 +6548,10 @@ bool cRoot::storeBit( ostream & stream, char & cRestBits,
 				itrActualVariable++ ){
 				
 			if ( uiBitPerOutputVariable <
-					getDigits( (long long)(*itrActualVariable) ) ){
+					getDigits( *itrActualVariable ) ){
 				
 				uiBitPerOutputVariable =
-					getDigits( (long long)(*itrActualVariable) );
+					getDigits( *itrActualVariable );
 			}
 				
 		}
@@ -6603,14 +6602,13 @@ bool cRoot::storeBit( ostream & stream, char & cRestBits,
 				itrActualRootElement++ ){
 			
 			if ( uiBitPerSubRootIdentifier <
-					getDigits( (long long)(itrActualRootElement->first) ) ){
+					getDigits( itrActualRootElement->first ) ){
 				
 				uiBitPerSubRootIdentifier=
-					getDigits( (long long)(itrActualRootElement->first) );
+					getDigits( itrActualRootElement->first );
 			}
 		}
 		//add one bit for the sign of the identifier
-		uiBitPerSubRootIdentifier++;
 		uiBitPerSubRootIdentifier = roundUpToFullByte( uiBitPerSubRootIdentifier );
 		
 		for ( list< pair< longFib, cRoot * > >::const_iterator itrActualRootElement =
@@ -6651,13 +6649,12 @@ bool cRoot::storeBit( ostream & stream, char & cRestBits,
 				itrIdentifier != setDatabaseIdentifiers.end(); itrIdentifier++ ){
 			
 			const unsigned int uiBitsForIdentifier =
-				getDigits( ((unsigned long long)(*itrIdentifier)) );
+				getDigits( *itrIdentifier );
 			if ( uiMaxBitsForUsedDbIdentifier < uiBitsForIdentifier ){
 				uiMaxBitsForUsedDbIdentifier = uiBitsForIdentifier;
 			}
 		}
 		//add sign bit
-		uiMaxBitsForUsedDbIdentifier++;
 		//add byts of the used database identifiers
 		ulOffset += 8 + 8 + 1 + roundUpToFullByte(
 			uiMaxBitsForUsedDbIdentifier * setDatabaseIdentifiers.size() );
@@ -6825,10 +6822,10 @@ bool cRoot::storeBit( ostream & stream, char & cRestBits,
 				itrActualVariable++ ){
 				
 			if ( uiBitPerOutputVariable <
-					getDigits( (long long)(*itrActualVariable) ) ){
+					getDigits( *itrActualVariable ) ){
 				
 				uiBitPerOutputVariable =
-					getDigits( (long long)(*itrActualVariable) );
+					getDigits( *itrActualVariable );
 			}
 				
 		}
@@ -6920,15 +6917,13 @@ bool cRoot::storeBit( ostream & stream, char & cRestBits,
 				itrActualRootElement != liSubRootObjects.end();
 				itrActualRootElement++ ){
 			
-			const unsigned long long ulActualIdentifier = abs( itrActualRootElement->first );
-			const unsigned int uiDigitsForActualIdentifier = getDigits( ulActualIdentifier );
+			const unsigned int uiDigitsForActualIdentifier =
+				getDigits( itrActualRootElement->first );
 			if ( uiBitPerIdentifier < uiDigitsForActualIdentifier ){
 				
 				uiBitPerIdentifier = uiDigitsForActualIdentifier;
 			}
 		}
-		//add one bit for the sign of the identifier
-		uiBitPerIdentifier++;
 		
 		uiBitPerIdentifier = roundUpToFullByte( uiBitPerIdentifier );
 		const unsignedIntFib uiBytePerIdentifier = uiBitPerIdentifier / 8;
@@ -7461,7 +7456,7 @@ unsignedIntFib cRoot::getBitsForStoredPropertyType() const{
 	if ( liStorePropertyOrder.empty() ){
 		return 0;
 	}
-	return getDigits( liStorePropertyOrder.size() - 1 );
+	return getDigits( ((unsigned int)liStorePropertyOrder.size() - 1) );
 }
 
 
