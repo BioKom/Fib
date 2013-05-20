@@ -68,6 +68,7 @@ History:
 21.12.2012  Oesterholz  debugging printf formating improved
 30.12.2012  Oesterholz  DEBUG_EVALUE: debugging evalue will print first
 	optional part entry
+09.05.2013  Oesterholz  added debugging info: DEBUG_RESTORE_XML
 */
 
 
@@ -287,19 +288,35 @@ cRoot::cRoot( const TiXmlElement * pXmlRootElement, intFib & outStatus,
 	
 	fibUnderObjects.push_back( NULL );
 	
+#ifdef DEBUG_RESTORE_XML
+	//print debugging output
+	printf("restoring root element\n" );
+#endif//DEBUG_RESTORE_XML
 	if ( pFibDatabase == NULL ){
 		//get new database instance
+#ifdef DEBUG_RESTORE_XML
+		//print debugging output
+		printf("get new database instance\n" );
+#endif//DEBUG_RESTORE_XML
 		pFibDatabase = cFibDatabase::getInstance();
 	}
 
 	if ( pXmlRootElement == NULL ){
-		//noting to restore
+		//nothing to restore
+#ifdef DEBUG_RESTORE_XML
+		//print debugging output
+		printf("nothing to restore\n" );
+#endif//DEBUG_RESTORE_XML
 		outStatus = -1;
 		return;
 	}
 	string szElementType( pXmlRootElement->Value() );
 	if ( szElementType != "root" ){
 		//wrong element type to restore
+#ifdef DEBUG_RESTORE_XML
+		//print debugging output
+		printf("wrong element type to restore\n" );
+#endif//DEBUG_RESTORE_XML
 		outStatus = -2;
 		return;
 	}
@@ -316,7 +333,11 @@ cRoot::cRoot( const TiXmlElement * pXmlRootElement, intFib & outStatus,
 #endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	
 	unsignedIntFib uiVariablenCount = 0;
-	//set the defined variables to ther store value
+	//set the defined variables to their store value
+#ifdef DEBUG_RESTORE_XML
+	//print debugging output
+	printf("set the defined variables to their store value\n" );
+#endif//DEBUG_RESTORE_XML
 	for ( list<cFibVariable*>::iterator itrActualVariable = liDefinedVariables.begin();
 			itrActualVariable != liDefinedVariables.end();
 			itrActualVariable++ ){
@@ -325,10 +346,42 @@ cRoot::cRoot( const TiXmlElement * pXmlRootElement, intFib & outStatus,
 		(*itrActualVariable)->setIntegerValue( (longFib)(uiVariablenCount) );
 	}
 
+#ifdef DEBUG_RESTORE_XML
+	//print debugging output
+	printf("restoring sub elements\n" );
+#endif//DEBUG_RESTORE_XML
 	for ( const TiXmlNode * pChild = pXmlRootElement->FirstChild();
 			pChild != NULL; pChild = pChild->NextSibling() ) {
 		
 		int iType = pChild->Type();
+		
+#ifdef DEBUG_RESTORE_XML
+		//print debugging output
+		switch ( iType ){
+			case TiXmlNode::ELEMENT:
+				printf( "Element \"%s\" (outStatus now %i)\n", pChild->Value(), outStatus );
+			break;
+			
+			case TiXmlNode::DOCUMENT:
+				printf( "Document\n" );
+			break;
+			case TiXmlNode::COMMENT:
+				printf( "Comment: \"%s\"\n", pChild->Value());
+			break;
+			case TiXmlNode::UNKNOWN:
+				printf( "Unknown\n" );
+			break;
+			case TiXmlNode::TEXT:{
+				const TiXmlText * pText = pChild->ToText();
+				printf( "Text: [%s]\n", pText->Value() );
+			}break;
+			case TiXmlNode::DECLARATION:
+				printf( "Declaration\n" );
+			break;
+			default:
+				printf( "No known XML element\n" );
+		}
+#endif
 		
 		switch ( iType ){
 			case TiXmlNode::ELEMENT:{
@@ -336,6 +389,10 @@ cRoot::cRoot( const TiXmlElement * pXmlRootElement, intFib & outStatus,
 				the apropirate Fib element and call its restoreXml() method*/
 				const TiXmlElement * pXmlElement = pChild->ToElement();
 				if ( pXmlElement == NULL ){
+#ifdef DEBUG_RESTORE_XML
+					//print debugging output
+					printf("no valid xml sub element\n" );
+#endif//DEBUG_RESTORE_XML
 					outStatus = 2;
 					continue;
 				}
@@ -511,6 +568,10 @@ cRoot::cRoot( const TiXmlElement * pXmlRootElement, intFib & outStatus,
 							}
 							if ( outStatus < 0 ){
 								//an error occured
+#ifdef DEBUG_RESTORE_XML
+								//print debugging output
+								printf("restoring root element: main Fib object could not be restored\n" );
+#endif//DEBUG_RESTORE_XML
 								return;
 							}
 						}
@@ -591,6 +652,10 @@ cRoot::cRoot( const TiXmlElement * pXmlRootElement, intFib & outStatus,
 #endif //FEATURE_FAST_UPDATE
 										}
 										outStatus = iReturnStatus;
+#ifdef DEBUG_RESTORE_XML
+										//print debugging output
+										printf("restoring root element: sub root object could not be restored\n" );
+#endif//DEBUG_RESTORE_XML
 										return;
 									}else if ( (outStatus == 0) && (iReturnStatus != 0) ){
 										outStatus = iReturnStatus;
@@ -651,11 +716,15 @@ cRoot::cRoot( const TiXmlElement * pXmlRootElement, intFib & outStatus,
 			case TiXmlNode::TEXT:
 			case TiXmlNode::UNKNOWN:
 			default:
-				//invalid pointobject
+				//invalid point object
 				outStatus = 2;
 		}
 		if ( outStatus < 0 ){
 			//an error occured
+#ifdef DEBUG_RESTORE_XML
+			//print debugging output
+			printf("restoring root element: an error occured\n" );
+#endif//DEBUG_RESTORE_XML
 			return;
 		}
 	}
@@ -672,6 +741,10 @@ cRoot::cRoot( const TiXmlElement * pXmlRootElement, intFib & outStatus,
 		//Warning: no main -Fib-object restored
 		outStatus = 2;
 	}
+#ifdef DEBUG_RESTORE_XML
+	//print debugging output
+	printf("restoring root element done\n" );
+#endif//DEBUG_RESTORE_XML
 #ifdef FEATURE_FAST_UPDATE
 	updateAllCounters();
 #endif //FEATURE_FAST_UPDATE

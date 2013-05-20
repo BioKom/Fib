@@ -108,13 +108,13 @@ DIR_BIN:=bin/
 DIR_TESTCASE:=testcase/
 
 # folder for tinyxml an (tiny) XML -parser
-DIR_TINYXML:=../tinyxml/
+DIR_TINYXML:=$(BASE_DIR)tinyxml/
 #Flags for tinyxml
 TINYXML_FLAGS:=-DTIXML_USE_STL
 
 
 # folder for zlib package
-DIR_ZLIB:=../other_packages/zlib/
+DIR_ZLIB:=$(BASE_DIR)other_packages/zlib/
 
 # flag if windows is the operating system passible values: true, false
 WINDOWS:=false
@@ -185,7 +185,7 @@ TEST_PROGRAMS:=tDomainNaturalNumberBit tDomainNaturalNumber\
 	tGenerateFibObjects tFibObjectVariable tFibElementStructur tFibObject\
 	tFibObjectStore tEvalueObject\
 	sizeofElements countElementsAndBits tGeneratePictures\
-	extractFibDbDescriptions
+	extractFibDbDescriptions saveAsBitmap
 
 TEST_TOOLS:=$(DIR_OBJ_TEST)tDomainTools.o $(DIR_OBJ_TEST)tGeneratorForFibObjects.o
 
