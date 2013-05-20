@@ -34,12 +34,20 @@
 # 07.01.2011   Oesterholz   nDn added
 # 14.03.2011   Oesterholz   nAnalyse/nFibObject added
 # 18.03.2011   Oesterholz   nCluster added
+# 01.01.2013   Oesterholz   nConvertToFib* added
+# 29.01.2013   Oesterholz   nFibDatabase added
+# 14.04.2013   Oesterholz   nConvertToFib/nImage/nSearchForStructure and
+#   nConvertToFib/nImage/nStructureData/nOperators added
 
 
 #the sub -namespace variable
 NAMESPACES:=./ nD1 nD2 nDn\
-  nLinearEquation nLinearInequation\
-  nReduceFibObject nTidyFibObjects nCorrectFibObject\
-  nEvalueFibObject/nNeededUnderobjects nAnalyse/nFibObject\
-  nCluster
- 
+   nLinearEquation nLinearInequation\
+   nReduceFibObject nTidyFibObjects nCorrectFibObject\
+   nEvalueFibObject/nNeededUnderobjects nAnalyse/nFibObject\
+   nCluster nFibDatabase\
+   nConvertToFib nConvertToFib/nImage nConvertToFib/nImage/nStructureData\
+   nConvertToFib/nImage/nStructureData/nConvertToFib\
+   nConvertToFib/nImage/nSearchForStructure\
+    nConvertToFib/nImage/nStructureData/nOperators
+

@@ -1,0 +1,62 @@
+
+next steps:
+	- ? imlement operator on Fib objects to reduce bits per number
+	- ? implement find background color (as what??; image -> Fib )
+	- ? implement method to reduce root elements
+
+
+testen list< cExtObject * > tImageStructureConvertToFib::testConvertToFib:
+- test for cImageAreaLinearColor:
+	- area: complex, search: non
+	- + antialised
+- test for cImageStructure:
+	- + antialised
+	
+- test for cImageStructure*:
+	- create objects: dreieck, balken, kreis, rechteck teil größer als kreis
+	- area: dreieck, search: non
+	- area: balken, search: non
+	- area: kreis, search: non
+	- area: kreis, search: rechteck teil größer als kreis
+	- area: quadrangle + circle, search: non
+	- area: complex, search: non
+	- + antialised
+
+cImageStructure*:
+	in tImageStructureConvertToFib:
+		- isStructurePoint() + isStructureBorderPoint() + isStructureNeighbourPoint()
+	new test tImageStructure*Property:
+ * 	-(TODO) virtual bool isPropertyTypeIndependentOfPosition() const;
+ * 	-(TODO) virtual unsigned int getNumberOfProperties( bool bEvenIfOutside = false, const cVectorPosition vecPoint = cVectorPosition( 2 ) ) const;
+ * 	-(TODO) virtual unsigned int getNumberOfProperties( bool bEvenIfOutside = false, const pair< unsigned int, unsigned int> point = pair< unsigned int, unsigned int>(0, 0) ) const;
+ * 	-(TODO) virtual unsigned int getPropertyType( const unsigned int uiPropertyNumber, bool bEvenIfOutside = false, const cVectorPosition vecPoint = cVectorPosition( 2 ) ) const;
+ * 	-(TODO) virtual unsigned int getPropertyType( const unsigned int uiPropertyNumber, bool bEvenIfOutside = false, const pair< unsigned int, unsigned int> point = pair< unsigned int, unsigned int>(0, 0) ) const;
+ * 	-(TODO) virtual unsigned int getPropertyNumberForType( const unsigned int uiPropertyType, bool bEvenIfOutside = false, const cVectorPosition vecPoint = cVectorPosition( 2 ) ) const;
+ * 	-(TODO) virtual unsigned int getPropertyNumberForType( const unsigned int uiPropertyType, bool bEvenIfOutside = false, const pair< unsigned int, unsigned int> point = pair< unsigned int, unsigned int>(0, 0) ) const;
+ * 	-(TODO) virtual list<cVectorProperty> getPointProperties( const cVectorPosition & vecPoint, bool bEvenIfOutside = false ) const;
+ * 	-(TODO) virtual list<cVectorProperty> getPointProperties( const pair< unsigned int, unsigned int> & point, bool bEvenIfOutside = false ) const;
+ * 	-(TODO) virtual cVectorProperty getProperty( const cVectorPosition & vecPoint,
+		const unsigned int uiPropertyType = 0, bool bEvenIfOutside = false ) const;
+ * 	-(TODO) virtual cVectorProperty getProperty( const pair< unsigned int, unsigned int> & point, const unsigned int uiPropertyType = 0, bool bEvenIfOutside = false ) const;
+ * 	-(TODO) virtual cVectorProperty getPropertyForNumber( const cVectorPosition & vecPoint, const unsigned int uiPropertyNumber = 0, bool bEvenIfOutside = false ) const;
+ * 	-(TODO) virtual cVectorProperty getPropertyForNumber( const pair< unsigned int, unsigned int> & point, const unsigned int uiPropertyNumber = 0, bool bEvenIfOutside = false ) const;
+ * 	-(TODO) bool evalue( iEvaluePosition & evaluePosition ) const;
+ * 	-(TODO) virtual bool equal( const cImageStructure &imageStructure ) const;
+ * 	-(TODO) virtual bool operator==( const cImageStructure &imageStructure ) const;
+
+
+
+- Methode die root objekte wieder vorteilhaft reduziert:
+	- fuer jedes root objekt
+		- ersetze externale Objekte durch main Fib objekt von root objekt
+		- update domains
+		- pruefe ob Groesse reduziert -> wenn nicht verwerfe Aenderungen
+	- renummeriere die verbleibenden root objekt identifier
+
+
+
+
+
+
+
+

@@ -1,0 +1,66 @@
+<data>
+	<vector type="position">
+		<value>2</value>
+		<value>3</value>
+	</vector>
+	<vector type="position">
+		<value>2</value>
+		<value>4</value>
+	</vector>
+	<vector type="position">
+		<value>2</value>
+		<value>5</value>
+	</vector>
+	<vector type="position">
+		<value>2</value>
+		<value>6</value>
+	</vector>
+	<vector type="position">
+		<value>2</value>
+		<value>7</value>
+	</vector>
+	
+	<vector type="position">
+		<value>3</value>
+		<value>4</value>
+	</vector>
+	<vector type="position">
+		<value>3</value>
+		<value>5</value>
+	</vector>
+	<vector type="position">
+		<value>3</value>
+		<value>6</value>
+	</vector>
+	<vector type="position">
+		<value>3</value>
+		<value>7</value>
+	</vector>
+	
+	<vector type="position">
+		<value>4</value>
+		<value>5</value>
+	</vector>
+	<vector type="position">
+		<value>4</value>
+		<value>6</value>
+	</vector>
+	<vector type="position">
+		<value>4</value>
+		<value>7</value>
+	</vector>
+	
+	<vector type="position">
+		<value>5</value>
+		<value>6</value>
+	</vector>
+	<vector type="position">
+		<value>5</value>
+		<value>7</value>
+	</vector>
+	
+	<vector type="position">
+		<value>6</value>
+		<value>7</value>
+	</vector>
+</data>

@@ -42,6 +42,9 @@ History:
 	implemented ( with the help of cEvalueSimpleRGBA255 )
 23.10.2012  Oesterholz  changes to store intermediate result
 28.01.2013  Oesterholz  COLOR_SW changed to COLOR_GRAYSCALE
+15.02.2013  Oesterholz  cEvalueSimpleRGBA255Scaled added for scaled
+	property elements
+25.04.2013  Oesterholz  Bugfixing
 */
 
 //TODO for testing
@@ -66,6 +69,7 @@ History:
 #include "cEvalueSimpleRGBA255.h"
 #include "cEvalueSimpleRGBA255Scaled.h"
 
+#include "cEvalueSimpleRGBA255Sec.h"
 
 #include <ctime>
 
@@ -152,209 +156,6 @@ public:
 	
 };//end class cEvaluePositionListMemLimitSec
 
-
-
-
-/**
- * @class cEvalueSimpleRGBA255Sec This class limits the evaluation time
- * of the class @see cEvalueSimpleRGBA255.
- */
-class cEvalueSimpleRGBA255Sec: public virtual cEvalueSimpleRGBA255{
-public:
-	
-	/**
-	 * the maximal time for evaluation in seconds, till the creation of
-	 * this object
-	 */
-	long lMaxEvaluationTimeInSec;
-	
-	/**
-	 * the time this object was created
-	 */
-	time_t tmStartTime;
-	
-	
-#ifdef FEATURE_CONVERT_FROM_FIB_INTERVALL_TO_SAVE_CURRENT_PICTURE
-	/**
-	 * The path wher to store the intermediate result picture.
-	 */
-	string szPathForFileToStoreIntermediateResultImage;
-	
-	/**
-	 * Every which seconds to store the intermediate result picture.
-	 */
-	long lSecoundsBetweanIntermediateResultSaves;
-	
-	/**
-	 * Time after which to store the next intermediate result.
-	 */
-	time_t tmNextIntermediateResultTime;
-	
-#endif //FEATURE_CONVERT_FROM_FIB_INTERVALL_TO_SAVE_CURRENT_PICTURE
-	
-	
-	/**
-	 * standard constructor
-	 *
-	 * @param uiInMaxX the maximum value for the first (x) dimension @see uiMaxX
-	 * @param uiInMaxY the maximum value for the second (y) dimension @see uiMaxY
-	 * @param ulInMaxEvaluationTimeInSec the maximal time for evaluation in
-	 * 	seconds, till the creation of this object (if 0 time is unlimeted)
-	 * 	@see ulMaxEvaluationTimeInSec
-	 * @param pInPathForFileToStoreIntermediateResultImage the path wher to
-	 * 	store the intermediate result picture, if NULL non is stored
-	 * @param ulInSecoundsBetweanIntermediateResultSaves every which
-	 * 	seconds to store the intermediate result picture
-	 */
-	cEvalueSimpleRGBA255Sec( const unsigned int uiInMaxX, const unsigned int uiInMaxY,
-			unsigned long ulInMaxEvaluationTimeInSec = 0,
-			const char * pInPathForFileToStoreIntermediateResultImage = NULL,
-			unsigned long ulInSecoundsBetweanIntermediateResultSaves = 10 ):
-			cEvalueSimpleRGBA255( uiInMaxX, uiInMaxY ),
-			lMaxEvaluationTimeInSec( ulInMaxEvaluationTimeInSec ),
-			tmStartTime( time( NULL ) )
-#ifdef FEATURE_CONVERT_FROM_FIB_INTERVALL_TO_SAVE_CURRENT_PICTURE
-			, szPathForFileToStoreIntermediateResultImage(
-				pInPathForFileToStoreIntermediateResultImage ),
-			lSecoundsBetweanIntermediateResultSaves(
-				( pInPathForFileToStoreIntermediateResultImage != NULL ) ? ulInSecoundsBetweanIntermediateResultSaves : -1 ){
-		
-		tmNextIntermediateResultTime = tmStartTime + lSecoundsBetweanIntermediateResultSaves;
-	}
-#else //FEATURE_CONVERT_FROM_FIB_INTERVALL_TO_SAVE_CURRENT_PICTURE
-	{//nothing to do
-	}
-#endif //FEATURE_CONVERT_FROM_FIB_INTERVALL_TO_SAVE_CURRENT_PICTURE
-
-	
-	/**
-	 * The method with wich the evalued points with ther properties are
-	 * inserted. Everytime a point (to evalue) is reached in the
-	 * evaluation, this method is called with the position and the
-	 * properties of the point and stores the data into @see pImageData
-	 * This method will just evalue two dimensional points and properties
-	 * for RGB and transparency.
-	 * Points first dimension can have values from 0 ( including ) to the
-	 * maximum value for the first (x) dimension.
-	 * 	( 0 =< vPosition.getValue( 1 ) < uiMaxX ) @see uiMaxX
-	 * Points second dimension ( vPosition.getValue( 2 ) ) can have values
-	 * from 0 ( including ) to the maximum value for the second (y) dimension.
-	 * 	( 0 =< vPosition.getValue( 2 ) < uiMaxY ) @see uiMaxY
-	 * Background points (with 0 elements) are also possible.
-	 * All other points will be discarded.
-	 * Property (color RGB or transparency) element values should have a
-	 * values from 0 to 255 (both including), else they will be rounded
-	 * into the area.
-	 *
-	 * @see cEvalueSimpleRGBA255::evaluePosition()
-	 * @see pImageData
-	 * @param vPosition the position of the point, which is evalued
-	 * @param vProperties a list of the properties of the point
-	 */
-	virtual bool evaluePosition( const cVectorPosition & vPosition,
-		const list<cVectorProperty> & vProperties ){
-		
-		const bool bPointEvalued = cEvalueSimpleRGBA255::
-			evaluePosition( vPosition, vProperties );
-		
-		if ( ( lMaxEvaluationTimeInSec != 0 ) &&
-				( lMaxEvaluationTimeInSec < ( time( NULL ) - tmStartTime ) ) ){
-			//max time reached
-			return false;
-		}
-#ifdef FEATURE_CONVERT_FROM_FIB_INTERVALL_TO_SAVE_CURRENT_PICTURE
-		checkIntervallToSaveCurrentPicture();
-#endif //FEATURE_CONVERT_FROM_FIB_INTERVALL_TO_SAVE_CURRENT_PICTURE
-		
-		return bPointEvalued;
-	}
-	
-	
-#ifdef FEATURE_CONVERT_FROM_FIB_INTERVALL_TO_SAVE_CURRENT_PICTURE
-	/**
-	 * This method stores the current picture, if it should be stored.
-	 */
-	void checkIntervallToSaveCurrentPicture(){
-		
-		if ( ( 0 <= lSecoundsBetweanIntermediateResultSaves ) &&
-				( tmNextIntermediateResultTime <= time( NULL ) ) ){
-			//save actual (intermediate result) picture
-			fipImage * pCovertedObject = convertToFipImage();
-			
-			if ( pCovertedObject ){
-				//output the multimedia object
-				
-				/*cout<<"Saving the intermediate result multimedia object to the file \""<<
-					szPathForFileToStoreIntermediateResultImage <<"\" . "<<endl;*/
-				const bool bObjectConverted = pCovertedObject->save( szPathForFileToStoreIntermediateResultImage.c_str() );
-				if ( ! bObjectConverted ){
-					cerr<<"Error: Couldn't save to the file \""<< szPathForFileToStoreIntermediateResultImage <<"\" ." <<endl;
-				}
-				delete pCovertedObject;
-			}else{
-				cerr<<"Error: Could not convert the data into a multimedia object."<<endl;
-			}
-			
-			tmNextIntermediateResultTime = time( NULL ) +
-				lSecoundsBetweanIntermediateResultSaves;
-		}
-	}
-#endif //FEATURE_CONVERT_FROM_FIB_INTERVALL_TO_SAVE_CURRENT_PICTURE
-	
-	/**
-	 * This method converts the data of this class to the @see fipImage
-	 * format and stores it into a returned fipImage object.
-	 * (Beware: The background color will be added to the points with
-	 * colorWithBackgroundColor() .)
-	 *
-	 * @see cEvalueSimpleRGBA255::colorWithBackgroundColor()
-	 * @return a pointer to the fipImage, wher the data was store
-	 * 	(please delete it after usage)
-	 */
-	fipImage * convertToFipImage(){
-		
-		fipImage * pFipImage = new fipImage( FIT_BITMAP, uiMaxX, uiMaxY, 32 );
-		pFipImage->setTransparent( true );
-		
-		RGBQUAD * pColorValue = new RGBQUAD();
-		if ( bBackgroundColorExists ){
-			//set background color
-			pColorValue->rgbReserved = pBackgroundColor[ 0 ];
-			pColorValue->rgbRed   = pBackgroundColor[ 1 ];
-			pColorValue->rgbGreen = pBackgroundColor[ 2 ];
-			pColorValue->rgbBlue  = pBackgroundColor[ 3 ];
-			
-//TODO dosn't work correct
-//				const bool bBkColorSet =
-//					pFipImage->setFileBkColor( pColorValue, FI_COLOR_IS_RGBA_COLOR );
-				pFipImage->setFileBkColor( pColorValue );
-			
-			colorWithBackgroundColor();
-		}
-		//set the color values of the points
-		const unsigned char * pEntry = pImageData;
-		for ( unsigned int uiX = 0; uiX < uiMaxX; uiX++ ){
-			for ( unsigned int uiY = 0; uiY < uiMaxY; uiY++ ){
-				//set color values
-				pColorValue->rgbReserved = *pEntry;
-				pEntry++;
-				pColorValue->rgbRed   = *pEntry;
-				pEntry++;
-				pColorValue->rgbGreen = *pEntry;
-				pEntry++;
-				pColorValue->rgbBlue  = *pEntry;
-				pEntry++;
-				
-				pFipImage->setPixelColor( uiX, uiY, pColorValue );
-			}
-		}//end for set all pixel values
-		delete pColorValue;
-		
-		return pFipImage;
-	}
-	
-	
-};//end class cEvalueSimpleRGBA255Sec
 
 
 
@@ -704,29 +505,6 @@ fipImage * nConvertFromFib::convertToFipImage( const cFibElement & fibMultimedia
 		
 		DEBUG_OUT_L2( <<"color blue used with min="<< dMinBlueValue <<" max=" << dMaxBlueValue <<" and count values="<< ulCountBlueValues<<" (scaling=" <<dColorBlueScaling<< ")"<<endl );
 		
-#ifdef FEATURE_FROM_FIB_BITS_PER_RGB_COLOR_VALUE
-
-		ulMaxOutputValues = (1L << FEATURE_FROM_FIB_BITS_PER_RGB_COLOR_VALUE) - 1;
-		
-		uiBitsPerPixel = 3 * FEATURE_FROM_FIB_BITS_PER_RGB_COLOR_VALUE;
-#else //FEATURE_FROM_FIB_BITS_PER_RGB_COLOR_VALUE
-		//getPixel per bit
-		uiBitsPerPixel = getDigits( std::max( ulCountRedValues,
-			std::max( ulCountGreenValues, ulCountBlueValues ) ) );
-		
-		if ( uiBitsPerPixel <= 8 ){
-			uiBitsPerPixel = 8;
-		}else if ( uiBitsPerPixel <= 16 ){
-			uiBitsPerPixel = 16;
-		}else{
-			uiBitsPerPixel = 32;
-		}
-		
-		ulMaxOutputValues = (1L << uiBitsPerPixel) - 1;
-		
-		uiBitsPerPixel = uiBitsPerPixel * 3;
-#endif //FEATURE_FROM_FIB_BITS_PER_RGB_COLOR_VALUE
-		
 		
 		if ( bDimensionXY && ( ( ! bTransparencyUsed ) ||
 				( ( dMinTransparencyValue == 0.0 ) && ( dMaxTransparencyValue == 255.0 ) &&
@@ -749,7 +527,8 @@ fipImage * nConvertFromFib::convertToFipImage( const cFibElement & fibMultimedia
 			 * object for cEvalueSimpleRGBA255Sec*/
 			DEBUG_OUT_L1( <<"Using cEvalueSimpleRGBA255Sec to evalue image data"<<endl );
 			
-			cEvalueSimpleRGBA255Sec evalueSimpleRGBA255Sec( ulWidth, ulHeight, ulMaxEvaluationTimeInSec
+			cEvalueSimpleRGBA255Sec evalueSimpleRGBA255Sec(
+				ulWidth - 1, ulHeight - 1, ulMaxEvaluationTimeInSec
 #ifdef FEATURE_CONVERT_FROM_FIB_INTERVALL_TO_SAVE_CURRENT_PICTURE
 				,pPathForFileToStoreImage, FEATURE_CONVERT_FROM_FIB_INTERVALL_TO_SAVE_CURRENT_PICTURE
 #endif //FEATURE_CONVERT_FROM_FIB_INTERVALL_TO_SAVE_CURRENT_PICTURE
@@ -789,7 +568,8 @@ fipImage * nConvertFromFib::convertToFipImage( const cFibElement & fibMultimedia
 			DEBUG_OUT_L1( <<"Using cEvalueSimpleRGBA255ScaledSec to evalue image data"<<endl );
 			DEBUG_OUT_L1( <<"Scaling factors transparency="<<(255.0 / dMaxTransparencyValue)<<" red="<<(255.0 / dMaxRedValue)<<" green="<<(255.0 / dMaxGreenValue)<<" blue="<<(255.0 / dMaxBlueValue)<<endl );
 			
-			cEvalueSimpleRGBA255ScaledSec evalueSimpleRGBA255Sec( ulWidth, ulHeight,
+			cEvalueSimpleRGBA255ScaledSec evalueSimpleRGBA255Sec(
+				ulWidth - 1, ulHeight - 1,
 				255.0 / dMaxTransparencyValue, 255.0 / dMaxRedValue,
 				255.0 / dMaxGreenValue, 255.0 / dMaxBlueValue,
 				ulMaxEvaluationTimeInSec
@@ -816,6 +596,34 @@ fipImage * nConvertFromFib::convertToFipImage( const cFibElement & fibMultimedia
 			DEBUG_OUT_L1( <<"nConvertFromFib::convert() ended correctly (valueSimpleRGBA255Sec.convertToFipImage())"<<endl );
 			return evalueSimpleRGBA255Sec.convertToFipImage();
 		}
+#ifdef FEATURE_FROM_FIB_BITS_PER_RGB_COLOR_VALUE
+
+		ulMaxOutputValues = (1L << FEATURE_FROM_FIB_BITS_PER_RGB_COLOR_VALUE);
+		
+		uiBitsPerPixel = 3 * FEATURE_FROM_FIB_BITS_PER_RGB_COLOR_VALUE;
+#else //FEATURE_FROM_FIB_BITS_PER_RGB_COLOR_VALUE
+		//getPixel per bit
+		uiBitsPerPixel = getDigits( std::max( ulCountRedValues,
+			std::max( ulCountGreenValues, ulCountBlueValues ) ) );
+		
+		if ( uiBitsPerPixel <= 8 ){
+			uiBitsPerPixel = 8;
+		}else if ( uiBitsPerPixel <= 16 ){
+			uiBitsPerPixel = 16;
+		}else{//( uiBitsPerPixel <= 32 )
+			uiBitsPerPixel = 32;
+		}
+		
+		ulMaxOutputValues = (1L << uiBitsPerPixel);
+		
+		if ( bTransparencyUsed ){
+			//four chanels
+			uiBitsPerPixel *= 4;
+		}else{//tree chanels
+			uiBitsPerPixel *= 3;
+		}
+#endif //FEATURE_FROM_FIB_BITS_PER_RGB_COLOR_VALUE
+		
 	}else{
 		cDomain * pDomainSw = fibMultimediaObject.
 			getValidDomains().getDomainForElement( typePropertyColorSw );
@@ -839,7 +647,7 @@ fipImage * nConvertFromFib::convertToFipImage( const cFibElement & fibMultimedia
 				return NULL;
 			}
 			cDomainSingle * pColorSWDomain = (cDomainSingle*)(
-					pVecDomainColorSW->getElementDomain( 1 ));
+				pVecDomainColorSW->getElementDomain( 1 ));
 			
 			dMinGrayValue = pColorSWDomain->getMinimum();
 			dMaxGrayValue = pColorSWDomain->getMaximum();
@@ -864,10 +672,19 @@ fipImage * nConvertFromFib::convertToFipImage( const cFibElement & fibMultimedia
 				uiBitsPerPixel = 8;
 			}
 			
-			ulMaxOutputValues = (1L << uiBitsPerPixel) - 1;
+			ulMaxOutputValues = (1L << uiBitsPerPixel);
 			
+			//TODO use real grayscale (new rgba)
+			if ( bTransparencyUsed ){
+				//four chanels
+				uiBitsPerPixel *= 4;
+			}else{//tree chanels
+				uiBitsPerPixel *= 3;
+			}
+			
+			DEBUG_OUT_L2( <<"color grayscale used with min="<< dMinGrayValue <<" max=" << dMaxGrayValue <<" and count values="<< ulCountGrayValues<<" (scaling=" <<dColorGrayScaling<< " maximal output values="<<ulMaxOutputValues<<" (bits per pixle="<<uiBitsPerPixel<<"))"<<endl; );
 		}else{
-			DEBUG_OUT_EL1( <<"Error: No colordomain in Fib object."<<endl; );
+			DEBUG_OUT_EL1( <<"Error: No colord omain in Fib object."<<endl; );
 			if ( pOutStatus ){
 				*pOutStatus = -1;
 			}
@@ -879,7 +696,8 @@ fipImage * nConvertFromFib::convertToFipImage( const cFibElement & fibMultimedia
 	
 	if ( ! bColorRGB ){
 		//convert to grayscale
-		pFipImage->convertToGrayscale();
+		//TODO
+		//pFipImage->convertToGrayscale();
 	}
 	
 	//evalue the Fib object
@@ -930,10 +748,26 @@ fipImage * nConvertFromFib::convertToFipImage( const cFibElement & fibMultimedia
 	
 	/*for every point evalued from the Fib object set the
 	corresponding pixel color into the fipImage*/
-	RGBQUAD * colorValue = new RGBQUAD();
+	RGBQUAD * pColorValue = new RGBQUAD();
 	BYTE * colorIndexValue = new BYTE();
 	
+	const unsigned long ulMaxOutputValue = ( 0 < ulMaxOutputValues ) ?
+		(ulMaxOutputValues - 1) : 0;
+	const doubleFib dScalingRed =
+		(doubleFib)(ulMaxOutputValue) / (doubleFib)(dMaxRedValue - dMinRedValue);
+	const doubleFib dScalingGreen =
+		(doubleFib)(ulMaxOutputValue) / (doubleFib)(dMaxGreenValue - dMinGreenValue);
+	const doubleFib dScalingBlue =
+		(doubleFib)(ulMaxOutputValue) / (doubleFib)(dMaxBlueValue - dMinBlueValue);
+	
+	const doubleFib dScalingGray =
+		(doubleFib)(ulMaxOutputValue) / (doubleFib)(dMaxGrayValue - dMinGrayValue);
+	
+	const doubleFib dScalingTransparency = (doubleFib)(ulMaxOutputValue) /
+		(doubleFib)(dMaxTransparencyValue - dMinTransparencyValue);
+	
 	//check for background color
+	bool bBackgroundProperty = false;
 	for ( list< pair< cVectorPosition, list< cVectorProperty > > >::iterator
 			itrList = pEvaluePositionList->liEvaluedPositionData.begin();
 			(itrList != pEvaluePositionList->liEvaluedPositionData.end()); ){
@@ -944,41 +778,32 @@ fipImage * nConvertFromFib::convertToFipImage( const cFibElement & fibMultimedia
 					itrProperty = itrList->second.begin();
 					itrProperty != itrList->second.end(); itrProperty++ ){
 				
-				bool bColorProperty = false;
 				if ( itrProperty->getPropertyType() == cTypeProperty::COLOR_RGB ){
 					//set color values
-					colorValue->rgbRed   = (unsigned long)((itrProperty->getValue( 1 ) - dMinRedValue) /
-						(doubleFib)(ulCountRedValues) * (doubleFib)(ulMaxOutputValues));
-					colorValue->rgbGreen = (unsigned long)((itrProperty->getValue( 2 ) - dMinGreenValue) /
-						(doubleFib)(ulCountGreenValues) * (doubleFib)(ulMaxOutputValues));
-					colorValue->rgbBlue  = (unsigned long)((itrProperty->getValue( 3 ) - dMinBlueValue) /
-						(doubleFib)(ulCountBlueValues) * (doubleFib)(ulMaxOutputValues));
+					pColorValue->rgbRed   = (unsigned long)((itrProperty->getValue( 1 ) - dMinRedValue) *
+						dScalingRed);
+					pColorValue->rgbGreen = (unsigned long)((itrProperty->getValue( 2 ) - dMinGreenValue) *
+						dScalingGreen);
+					pColorValue->rgbBlue  = (unsigned long)((itrProperty->getValue( 3 ) - dMinBlueValue) *
+						dScalingBlue);
 					
-					bColorProperty= true;
+					bBackgroundProperty = true;
 				}else if ( itrProperty->getPropertyType() == cTypeProperty::COLOR_GRAYSCALE ){
 					//set color values
-					colorValue->rgbRed   = (unsigned long)((itrProperty->getValue( 1 ) - dMinGrayValue) /
-						(doubleFib)(ulCountGrayValues) * (doubleFib)(ulMaxOutputValues));
-					colorValue->rgbGreen = colorValue->rgbRed;
-					colorValue->rgbBlue  = colorValue->rgbRed;
+					pColorValue->rgbRed   = (unsigned long)((itrProperty->getValue( 1 ) - dMinGrayValue ) *
+						dScalingGray);
+					pColorValue->rgbGreen = pColorValue->rgbRed;
+					pColorValue->rgbBlue  = pColorValue->rgbRed;
 					
-					bColorProperty= true;
-				}//else ignore property
-				if ( bColorProperty ){
-//TODO dosn't work correct
-//					const bool bBkColorSet =
-						pFipImage->setFileBkColor( colorValue );
-					
-//					if ( ! bBkColorSet ){
+					bBackgroundProperty = true;
+				}else if ( itrProperty->getPropertyType() == cTypeProperty::TRANSPARENCY ){
+					pColorValue->rgbReserved =
+						(unsigned long)((dMaxTransparencyValue -
+							itrProperty->getValue( 1 ) ) *
+						dScalingTransparency);
 						
-						for ( unsigned long ulX = 0; ulX < ulWidth; ulX++ ){
-							for ( unsigned long ulY = 0; ulY < ulHeight; ulY++ ){
-								
-								pFipImage->setPixelColor( ulX, ulY, colorValue );
-							}
-						}
-//					}
-				}
+					bBackgroundProperty = true;
+				}//else ignore property
 			}
 			
 			itrList = pEvaluePositionList->liEvaluedPositionData.erase( itrList );
@@ -986,6 +811,22 @@ fipImage * nConvertFromFib::convertToFipImage( const cFibElement & fibMultimedia
 			itrList++;
 		}
 	}
+	if ( bBackgroundProperty ){
+//TODO dosn't work correct
+//			const bool bBkColorSet =
+			pFipImage->setFileBkColor( pColorValue );
+		
+//		if ( ! bBkColorSet ){
+			
+			for ( unsigned long ulX = 0; ulX < ulWidth; ulX++ ){
+				for ( unsigned long ulY = 0; ulY < ulHeight; ulY++ ){
+					
+					pFipImage->setPixelColor( ulX, ulY, pColorValue );
+				}
+			}
+//		}
+	}
+	
 #ifdef TEST_OUTPUT
 	ofstream ofFilePixel( "./dataPixel.txt" );
 	
@@ -993,13 +834,25 @@ fipImage * nConvertFromFib::convertToFipImage( const cFibElement & fibMultimedia
 	ofFilePixel<<"dMinRedValue="<< dMinRedValue <<endl;
 	ofFilePixel<<"dMaxRedValue="<< dMaxRedValue <<endl;
 	ofFilePixel<<"ulCountRedValues="<< ulCountRedValues <<endl;
+	ofFilePixel<<"dScalingRed="<< dScalingRed <<endl;
 	ofFilePixel<<"dMinGreenValue="<< dMinGreenValue <<endl;
 	ofFilePixel<<"dMaxGreenValue="<< dMaxGreenValue <<endl;
 	ofFilePixel<<"ulCountGreenValues="<< ulCountGreenValues <<endl;
+	ofFilePixel<<"dScalingGreen="<< dScalingGreen <<endl;
 	ofFilePixel<<"dMinBlueValue="<< dMinBlueValue <<endl;
 	ofFilePixel<<"dMaxBlueValue="<< dMaxBlueValue <<endl;
 	ofFilePixel<<"ulCountBlueValues="<< ulCountBlueValues <<endl;
+	ofFilePixel<<"dScalingBlue="<< dScalingBlue <<endl<<endl;
 
+	ofFilePixel<<"dMinGrayValue="<< dMinGrayValue <<endl;
+	ofFilePixel<<"dMaxGrayValue="<< dMaxGrayValue <<endl;
+	ofFilePixel<<"ulCountGrayValues="<< ulCountGrayValues <<endl;
+	ofFilePixel<<"dScalingGray="<< dScalingGray <<endl<<endl;
+
+	ofFilePixel<<"dMinTransparencyValue="<< dMinTransparencyValue <<endl;
+	ofFilePixel<<"dMaxTransparencyValue="<< dMaxTransparencyValue <<endl;
+	ofFilePixel<<"ulCountTransparencyValues="<< ulCountTransparencyValues <<endl;
+	ofFilePixel<<"dScalingTransparency="<< dScalingTransparency <<endl<<endl;
 #endif
 	for ( list< pair< cVectorPosition, list< cVectorProperty > > >::const_iterator
 			itrList = pEvaluePositionList->liEvaluedPositionData.begin();
@@ -1010,35 +863,53 @@ fipImage * nConvertFromFib::convertToFipImage( const cFibElement & fibMultimedia
 				itrProperty = itrList->second.begin();
 				itrProperty != itrList->second.end(); itrProperty++ ){
 			
-			if ( itrList->first.getNumberOfElements() == 0 ){
+			if ( itrList->first.getNumberOfElements() != 2 ){
 				continue;
-			}else if ( itrProperty->getPropertyType() == cTypeProperty::COLOR_RGB ){
+			}//else
+			unsigned int uiX;
+			if ( bDimensionXY ){
+				const long lX = fib::roundToLongFib( ( itrList->first.getValue( 1 ) -
+					dDirection1Minimum ) * dDirection1Scaling );
+				if ( lX < 0 ){
+					continue;
+				}
+				uiX = lX;
+			}else{
+				const long lX = fib::roundToLongFib( ( itrList->first.getValue( 2 ) -
+					dDirection2Minimum ) * dDirection2Scaling );
+				if ( lX < 0 ){
+					continue;
+				}
+				uiX = lX;
+			}
+			unsigned int uiY;
+			if ( bDimensionXY ){
+				const long lY = fib::roundToLongFib( ( itrList->first.getValue( 2 ) -
+					dDirection2Minimum ) * dDirection2Scaling );
+				if ( lY < 0 ){
+					continue;
+				}
+				uiY = lY;
+			}else{
+				const long lY = fib::roundToLongFib( ( itrList->first.getValue( 1 ) -
+					dDirection1Minimum ) * dDirection1Scaling );
+				if ( lY < 0 ){
+					continue;
+				}
+				uiY = lY;
+			}
+			if ( itrProperty->getPropertyType() == cTypeProperty::COLOR_RGB ){
 				//evalue the pixel position
-				unsigned int uiX;
-				if ( bDimensionXY ){
-					uiX = fib::roundToLongFib( ( itrList->first.getValue( 1 ) -
-						dDirection1Minimum ) * dDirection1Scaling );
-				}else{
-					uiX = fib::roundToLongFib( ( itrList->first.getValue( 2 ) -
-						dDirection2Minimum ) * dDirection2Scaling );
-				}
-				unsigned int uiY;
-				if ( bDimensionXY ){
-					uiY = fib::roundToLongFib( ( itrList->first.getValue( 2 ) -
-						dDirection2Minimum ) * dDirection2Scaling );
-				}else{
-					uiY = fib::roundToLongFib( ( itrList->first.getValue( 1 ) -
-						dDirection1Minimum ) * dDirection1Scaling );
-				}
+				pFipImage->getPixelColor( uiX, uiY, pColorValue );
 				//set color values
-				colorValue->rgbRed   = (unsigned long)((itrProperty->getValue( 1 ) - dMinRedValue) /
-					(doubleFib)(ulCountRedValues) * (doubleFib)(ulMaxOutputValues));
-				colorValue->rgbGreen = (unsigned long)((itrProperty->getValue( 2 ) - dMinGreenValue) /
-					(doubleFib)(ulCountGreenValues) * (doubleFib)(ulMaxOutputValues));
-				colorValue->rgbBlue  = (unsigned long)((itrProperty->getValue( 3 ) - dMinBlueValue) /
-					(doubleFib)(ulCountBlueValues) * (doubleFib)(ulMaxOutputValues));
+				pColorValue->rgbRed   = (unsigned long)((itrProperty->getValue( 1 ) - dMinRedValue) *
+					dScalingRed);
+				pColorValue->rgbGreen = (unsigned long)((itrProperty->getValue( 2 ) - dMinGreenValue) *
+					dScalingGreen);
+				pColorValue->rgbBlue  = (unsigned long)((itrProperty->getValue( 3 ) - dMinBlueValue) *
+					dScalingBlue);
 				
-				pFipImage->setPixelColor( uiX, uiY, colorValue );
+				pFipImage->setPixelColor( uiX, uiY, pColorValue );
 #ifdef TEST_OUTPUT
 				ofFilePixel<<"( "<< uiX <<"; "<< uiY <<")->"<<
 					"( "<< itrProperty->getValue( 1 ) <<"; "<<
@@ -1046,49 +917,78 @@ fipImage * nConvertFromFib::convertToFipImage( const cFibElement & fibMultimedia
 					itrProperty->getValue( 3 ) <<" )"<<endl;
 				
 				ofFilePixel<<"( "<< uiX <<"; "<< uiY <<")->"<<
-					"( "<< (int)(colorValue->rgbRed) <<"; "<< (int)(colorValue->rgbGreen) <<
-					"; "<< (int)(colorValue->rgbBlue) <<" )"<<endl;
+					"( "<< (int)(pColorValue->rgbRed) <<"; "<< (int)(pColorValue->rgbGreen) <<
+					"; "<< (int)(pColorValue->rgbBlue) <<" )"<<endl;
 #endif
-
 			}else if ( itrProperty->getPropertyType() == cTypeProperty::COLOR_GRAYSCALE ){
 				//evalue the pixel position
-				unsigned int uiX;
-				if ( bDimensionXY ){
-					uiX = itrList->first.getValue( 1 ) - dDirection1Minimum * dDirection1Scaling;
-				}else{
-					uiX = itrList->first.getValue( 2 ) - dDirection2Minimum * dDirection2Scaling;
-				}
-				unsigned int uiY;
-				if ( bDimensionXY ){
-					uiY = itrList->first.getValue( 2 ) - dDirection2Minimum * dDirection2Scaling;
-				}else{
-					uiY = itrList->first.getValue( 1 ) - dDirection1Minimum * dDirection1Scaling;
-				}
 				if ( ! bColorRGB ){
 					//set color values
-					colorValue->rgbRed   = (unsigned long)((itrProperty->getValue( 1 ) - dMinGrayValue) /
-						(doubleFib)(ulCountGrayValues) * (doubleFib)(ulMaxOutputValues));
-					colorValue->rgbGreen = colorValue->rgbRed;
-					colorValue->rgbBlue  = colorValue->rgbRed;
+					pFipImage->getPixelColor( uiX, uiY, pColorValue );
 					
-					pFipImage->setPixelColor( uiX, uiY, colorValue );
+					pColorValue->rgbRed   = (unsigned long)((itrProperty->getValue( 1 ) - dMinGrayValue) *
+						dScalingGray);
+					pColorValue->rgbGreen = pColorValue->rgbRed;
+					pColorValue->rgbBlue  = pColorValue->rgbRed;
+					
+					pFipImage->setPixelColor( uiX, uiY, pColorValue );
+#ifdef TEST_OUTPUT
+					ofFilePixel<<"( "<< uiX <<"; "<< uiY <<")->"<<
+						"( "<< itrProperty->getValue( 1 ) <<" )"<<endl;
+					
+					ofFilePixel<<"( "<< uiX <<"; "<< uiY <<")->"<<
+						"( "<< (int)(pColorValue->rgbRed) <<"; "<< (int)(pColorValue->rgbGreen) <<
+						"; "<< (int)(pColorValue->rgbBlue) <<" )"<<endl;
+#endif
 				}else{
-					*colorIndexValue = (unsigned long)((itrProperty->getValue( 1 ) - dMinGrayValue) /
-						(doubleFib)(ulCountGrayValues) * (doubleFib)(ulMaxOutputValues));
+					(*colorIndexValue) = (unsigned long)((itrProperty->getValue( 1 ) - dMinGrayValue) *
+						dScalingGray);
 					
 					pFipImage->setPixelIndex( uiX, uiY, colorIndexValue );
+#ifdef TEST_OUTPUT
+					ofFilePixel<<"( "<< uiX <<"; "<< uiY <<")->"<<
+						"( "<< itrProperty->getValue( 1 ) <<" )"<<endl;
+					
+					ofFilePixel<<"( "<< uiX <<"; "<< uiY <<")->"<<
+						"( "<< (int)(*colorIndexValue) <<" )"<<endl;
+#endif
 				}
+			}else if ( itrProperty->getPropertyType() == cTypeProperty::TRANSPARENCY ){
+				//evalue the pixel position
+					//set color values
+					pFipImage->getPixelColor( uiX, uiY, pColorValue );
+					
+					pColorValue->rgbReserved =
+						(unsigned long)((dMaxTransparencyValue -
+							itrProperty->getValue( 1 ) ) *
+						dScalingTransparency);
+					
+					pFipImage->setPixelColor( uiX, uiY, pColorValue );
+#ifdef TEST_OUTPUT
+					ofFilePixel<<"( "<< uiX <<"; "<< uiY <<")->"<<
+						"Tr( "<< itrProperty->getValue( 1 ) <<" )"<<endl;
+					
+					ofFilePixel<<"( "<< uiX <<"; "<< uiY <<")->"<<
+						"( "<< (int)(pColorValue->rgbReserved) <<"; "<<
+						(int)(pColorValue->rgbRed) <<"; "<<(int)(pColorValue->rgbGreen)<<
+						"; "<< (int)(pColorValue->rgbBlue) <<" )"<<endl;
+#endif
 			}//else ignore property
 		}
 	}
-	delete colorValue;
+	delete pColorValue;
 	delete colorIndexValue;
 	delete pEvaluePositionList;
+	
+	//TODO weg?
+	if ( ( ! bColorRGB ) && ( ! bTransparencyUsed ) ){
+		//convert to grayscale
+		pFipImage->convertToGrayscale();
+	}
 
-
-	/*include image description data from the optionalpart of the
+	/*include image description data from the optional part of the
 	root -element*/
-	//TODO
+	//TODO (also cEvalueSimpleRGBA255* above)
 
 	DEBUG_OUT_L1( <<"nConvertFromFib::convert() ended correctly"<<endl );
 	

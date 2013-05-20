@@ -1,0 +1,412 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fib_object
+			xmlns:xsd="http://www.w3.org/2001/XMLSchema-instance"
+			xmlns="http://www.biokom.info/"
+			xsd:schemaLocation="http://www.biokom.info/fib.xsd">
+<root>
+	<multimedia_info fib_version="6" db_version="5"/>
+	<optionalpart>
+		<pair key="description" value="This object is for testing database object with id -86 ."/>
+		<pair key="call" value="../../../add_ons/converter/bin/convertFromFib dbId-000086.xml dbId-000086.png"/>
+	</optionalpart>
+	<domains>
+		<dim count="2">
+			<dimension number="1" direction="horizontal"/>
+			<dimension number="2" direction="vertical"/>
+			<vector elements="2">
+				<integer min="0" max="127"/>
+				<integer min="0" max="127"/>
+			</vector>
+		</dim>
+		<property name="colorRGB" >
+			<vector elements="3">
+				<naturalNumberB bit="8" />
+				<naturalNumberB bit="8" />
+				<naturalNumberB bit="8" />
+			</vector>
+		</property>
+		<property name="transparency" >
+			<vector elements="1">
+				<naturalNumberB bit="8" />
+			</vector>
+		</property>
+		<subfunction>
+			<naturalNumber max="255" />
+		</subfunction>
+		<externObject>
+			<vector elements="4">
+				<integer min="-10000" max="10000" /><!--Identifier-->
+				<naturalNumber max="32" /><!--number input values-->
+				<naturalNumber max="8" /><!--number subobjects-->
+				<naturalNumber max="16" /><!--number output values-->
+			</vector>
+		</externObject>
+	</domains>
+	<main_fib_object>
+		<list>
+			<property>
+				<vector type="property.colorRGB">
+					<value>255</value>
+					<value>0</value>
+					<value>0</value>
+				</vector>
+				<background/>
+			</property>
+			
+			<property>
+				<vector type="property.transparency">
+					<value>64</value>
+				</vector>
+				<list>
+					
+					<property>
+						<vector type="property.colorRGB">
+							<value>0</value>
+							<value>255</value>
+							<value>0</value>
+						</vector>
+						<list>
+							<point>
+								<vector type="position">
+									<value>2</value>
+									<value>2</value>
+								</vector>
+							</point>
+							<point>
+								<vector type="position">
+									<value>4</value>
+									<value>2</value>
+								</vector>
+							</point>
+							<point>
+								<vector type="position">
+									<value>2</value>
+									<value>4</value>
+								</vector>
+							</point>
+						</list>
+					</property>
+					
+					<obj identifier="-86">
+						<vector type="externObjectInput">
+							<value>10</value>
+							<value>10</value>
+							<value>30</value>
+							<value>20</value>
+							<value>0</value>
+							<value>0</value>
+						</vector>
+						<subobject>
+							<output_variables>
+								<variable>1</variable>
+								<variable>2</variable>
+								<variable>3</variable>
+							</output_variables>
+							<function define_variable="4">
+								<!-- bring antialised value in range from 0 to 255 -->
+								<subfunction>
+									<mult>
+										<variable>3</variable>
+										<value>255</value>
+									</mult>
+								</subfunction>
+								<property>
+									<vector type="property.transparency">
+										<variable>4</variable>
+									</vector>
+									<property>
+										<vector type="property.colorRGB">
+											<value>0</value>
+											<value>0</value>
+											<value>255</value>
+										</vector>
+										<point>
+											<vector type="position">
+												<variable>1</variable>
+												<variable>2</variable>
+											</vector>
+										</point>
+									</property>
+								</property>
+							</function>
+						</subobject>
+					</obj>
+					
+					<obj identifier="-86">
+						<vector type="externObjectInput">
+							<value>10</value>
+							<value>40</value>
+							<value>60</value>
+							<value>0</value>
+							<value>0.5</value>
+							<value>0</value>
+						</vector>
+						<subobject>
+							<output_variables>
+								<variable>1</variable>
+								<variable>2</variable>
+								<variable>3</variable>
+							</output_variables>
+							<function define_variable="4">
+								<!-- bring antialised value in range from 0 to 255 -->
+								<subfunction>
+									<mult>
+										<variable>3</variable>
+										<value>255</value>
+									</mult>
+								</subfunction>
+								<property>
+									<vector type="property.transparency">
+										<variable>4</variable>
+									</vector>
+									<property>
+										<vector type="property.colorRGB">
+											<value>0</value>
+											<value>255</value>
+											<value>0</value>
+										</vector>
+										<point>
+											<vector type="position">
+												<variable>1</variable>
+												<variable>2</variable>
+											</vector>
+										</point>
+									</property>
+								</property>
+							</function>
+						</subobject>
+					</obj>
+					
+					<obj identifier="-86">
+						<vector type="externObjectInput">
+							<value>10</value>
+							<value>70</value>
+							<value>90</value>
+							<value>50</value>
+							<value>-0.5</value>
+							<value>0.0</value>
+						</vector>
+						<subobject>
+							<output_variables>
+								<variable>1</variable>
+								<variable>2</variable>
+								<variable>3</variable>
+							</output_variables>
+							<function define_variable="4">
+								<!-- bring antialised value in range from 0 to 255 -->
+								<subfunction>
+									<mult>
+										<variable>3</variable>
+										<value>255</value>
+									</mult>
+								</subfunction>
+								<property>
+									<vector type="property.transparency">
+										<variable>4</variable>
+									</vector>
+									<property>
+										<vector type="property.colorRGB">
+											<value>0</value>
+											<value>255</value>
+											<value>0</value>
+										</vector>
+										<point>
+											<vector type="position">
+												<variable>1</variable>
+												<variable>2</variable>
+											</vector>
+										</point>
+									</property>
+								</property>
+							</function>
+						</subobject>
+					</obj>
+					
+					<obj identifier="-86">
+						<vector type="externObjectInput">
+							<value>10</value>
+							<value>120</value>
+							<value>100</value>
+							<value>-290</value>
+							<value>3</value>
+							<value>0.0</value>
+						</vector>
+						<subobject>
+							<output_variables>
+								<variable>1</variable>
+								<variable>2</variable>
+								<variable>3</variable>
+							</output_variables>
+							<function define_variable="4">
+								<!-- bring antialised value in range from 0 to 255 -->
+								<subfunction>
+									<mult>
+										<variable>3</variable>
+										<value>255</value>
+									</mult>
+								</subfunction>
+								<property>
+									<vector type="property.transparency">
+										<variable>4</variable>
+									</vector>
+									<property>
+										<vector type="property.colorRGB">
+											<value>0</value>
+											<value>255</value>
+											<value>255</value>
+										</vector>
+										<point>
+											<vector type="position">
+												<variable>1</variable>
+												<variable>2</variable>
+											</vector>
+										</point>
+									</property>
+								</property>
+							</function>
+						</subobject>
+					</obj>
+					
+					<obj identifier="-86">
+						<vector type="externObjectInput">
+							<value>40</value>
+							<value>10</value>
+							<value>30</value>
+							<value>50</value>
+							<value>-3</value>
+							<value>0.1</value>
+						</vector>
+						<subobject>
+							<output_variables>
+								<variable>1</variable>
+								<variable>2</variable>
+								<variable>3</variable>
+							</output_variables>
+							<function define_variable="4">
+								<!-- bring antialised value in range from 0 to 255 -->
+								<subfunction>
+									<mult>
+										<variable>3</variable>
+										<value>255</value>
+									</mult>
+								</subfunction>
+								<property>
+									<vector type="property.transparency">
+										<variable>4</variable>
+									</vector>
+									<property>
+										<vector type="property.colorRGB">
+											<value>255</value>
+											<value>255</value>
+											<value>255</value>
+										</vector>
+										<point>
+											<vector type="position">
+												<variable>1</variable>
+												<variable>2</variable>
+											</vector>
+										</point>
+									</property>
+								</property>
+							</function>
+						</subobject>
+					</obj>
+					
+					<obj identifier="-86">
+						<vector type="externObjectInput">
+							<value>40</value>
+							<value>40</value>
+							<value>60</value>
+							<value>160</value>
+							<value>-5</value>
+							<value>0.05</value>
+						</vector>
+						<subobject>
+							<output_variables>
+								<variable>1</variable>
+								<variable>2</variable>
+								<variable>3</variable>
+							</output_variables>
+							<function define_variable="4">
+								<!-- bring antialised value in range from 0 to 255 -->
+								<subfunction>
+									<mult>
+										<variable>3</variable>
+										<value>255</value>
+									</mult>
+								</subfunction>
+								<property>
+									<vector type="property.transparency">
+										<variable>4</variable>
+									</vector>
+									<property>
+										<vector type="property.colorRGB">
+											<value>0</value>
+											<value>0</value>
+											<value>0</value>
+										</vector>
+										<point>
+											<vector type="position">
+												<variable>1</variable>
+												<variable>2</variable>
+											</vector>
+										</point>
+									</property>
+								</property>
+							</function>
+						</subobject>
+					</obj>
+			
+					<obj identifier="-86">
+						<vector type="externObjectInput">
+							<value>50</value>
+							<value>40</value>
+							<value>60</value>
+							<value>50</value>
+							<value>0</value>
+							<value>0</value>
+						</vector>
+						<subobject>
+							<output_variables>
+								<variable>1</variable>
+								<variable>2</variable>
+								<variable>3</variable>
+							</output_variables>
+							<function define_variable="4">
+								<!-- bring antialised value in range from 0 to 255 -->
+								<subfunction>
+									<mult>
+										<variable>3</variable>
+										<value>255</value>
+									</mult>
+								</subfunction>
+								<property>
+									<vector type="property.transparency">
+										<variable>4</variable>
+									</vector>
+									<property>
+										<vector type="property.colorRGB">
+											<value>0</value>
+											<value>150</value>
+											<value>0</value>
+										</vector>
+										<point>
+											<vector type="position">
+												<variable>1</variable>
+												<variable>2</variable>
+											</vector>
+										</point>
+									</property>
+								</property>
+							</function>
+						</subobject>
+					</obj>
+					
+					
+				</list>
+			</property>
+			
+		</list>
+	</main_fib_object>
+</root>
+</fib_object>

@@ -32,6 +32,7 @@
 /*
 History:
 06.10.2009  Oesterholz  created
+16.03.2013  Oesterholz  clone() method added
 */
 
 #ifndef ___C_VECTOR_CHECKSUM_H__
@@ -88,6 +89,13 @@ public:
 	cVectorChecksum( const TiXmlElement * pXmlElement, intFib &outStatus,
 		list<cFibVariable*> & liDefinedVariables );
 
+
+	/**
+	 * This method clones this object.
+	 *
+	 * @return a pointer to the clone of this object
+	 */
+	virtual cVectorChecksum * clone() const;
 
 	/**
 	 * This method creates an instance of this vector type.

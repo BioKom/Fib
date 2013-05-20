@@ -38,6 +38,8 @@ History:
 07.08.2011  Oesterholz  isDefinedVariable() and getDefinedVariables() with
 	pCallingFibElement
 19.10.2011  Oesterholz  FEATURE_EQUAL_FIB_OBJECT implemented
+21.02.2013  Oesterholz  Bugfix in overwriteObjectWithObject() old
+	pUnderObject could be NULL
 */
 
 //TODO weg
@@ -1179,75 +1181,76 @@ bool cFibLimb::insertObjectInElement( cFibElement *fibObject, const char cType,
 
 /**
  * This method overwrites the Fib-object on specified position with
- * the given Fib-object fibObject. The Fib-object on specified
- * position will be replaced with the given Fib-object fibObject.
+ * the given Fib-object pFibObject. The Fib-object on specified
+ * position will be replaced with the given Fib-object pFibObject.
  *
  * @see getNumberOfElement()
  * @see getNumberOfElements()
  * @see insertObjectInElement()
  * @see getType()
  * @param cType the type of the Fib-element, on which position the 
- * 	given Fib-object fibObject should be inserted
+ * 	given Fib-object pFibObject should be inserted
  * @param elementPoint the number of the Fib-element, in the order of
  * 	Fib-elements of the given type cType, on which position the given
- * 	Fib-object fibObject should be inserted
- * @param fibObject the Fib-object to insert
+ * 	Fib-object pFibObject should be inserted
+ * @param pFibObject the Fib-object to insert
  * @param bDeleteOld if true, delete the old Fib-object from the memory
  * @param bAbsolute if the elementPoint is an absolute value for the wool
  * 	Fib-object
  * @return true if the old Fib-object was overwritten and the given 
- * 	Fib-object fibObject was inserted, else false
+ * 	Fib-object pFibObject was inserted, else false
  */
-bool cFibLimb::overwriteObjectWithObject( cFibElement *fibObject, const char cType,
-		const unsignedIntFib elementPoint, bool bDeleteOld,
+bool cFibLimb::overwriteObjectWithObject( cFibElement * pFibObject,
+		const char cType, const unsignedIntFib elementPoint, bool bDeleteOld,
 		bool bAbsolute ){
 	
-	if ( fibObject == NULL ){
+	if ( pFibObject == NULL ){
 		//nothing to insert
 		return false;
 	}
 	
 	if ( elementPoint == 0 ){
 		//insert for the (first) underobject of this Fib-element
-		return overwriteObjectWithObject( fibObject, 'u', 2, bDeleteOld );
+		return overwriteObjectWithObject( pFibObject, 'u', 2, bDeleteOld );
 	}
 	
 	if ( bAbsolute ){
-		return getMasterRoot()->overwriteObjectWithObject( fibObject, cType,
+		return getMasterRoot()->overwriteObjectWithObject( pFibObject, cType,
 			elementPoint, bDeleteOld );
 	}//else elementPoint is an relative value
 
-	/*check ( if (cType=='u') ) if the fibObject should inserted as an
+	/*check ( if (cType=='u') ) if the pFibObject should inserted as an
 	neibour of an underobject of this object*/
 	if ( (elementPoint == 2) && (cType == 'u') ){
 	
-		if ( fibObject->getType() == 'r' ){
+		if ( pFibObject->getType() == 'r' ){
 			//insert a root -element into a limb element
 			return false;
 		}
 		
 		//set the values of the fibElement
 #ifdef FEATURE_FAST_UPDATE
-		if ( pUnderObject->pSuperiorElement == this ){
+		if ( ( pUnderObject != NULL ) &&
+				( pUnderObject->pSuperiorElement == this ) ){
 			pUnderObject->pSuperiorElement = NULL;
 			if ( bDeleteOld && (pUnderObject != NULL) ){
 				pUnderObject->deleteObject();
 			}//else don't delete
 		}
-		pUnderObject = fibObject;
+		pUnderObject = pFibObject;
 		if ( pUnderObject->pSuperiorElement != NULL ){
 			pUnderObject->pSuperiorElement->cutConnectionsTo(
 				pUnderObject );
 		}
 		pUnderObject->pSuperiorElement = this;
 #else //FEATURE_FAST_UPDATE
-		fibObject->pSuperiorElement    = this;
-		fibObject->pPreviousFibElement = this;
+		pFibObject->pSuperiorElement    = this;
+		pFibObject->pPreviousFibElement = this;
 		
 		//check if the underobject to overwrite is NULL
 		if ( pUnderObject == NULL ){
 		
-			pUnderObject = fibObject;
+			pUnderObject = pFibObject;
 			
 			updateAllValues();
 			
@@ -1255,7 +1258,7 @@ bool cFibLimb::overwriteObjectWithObject( cFibElement *fibObject, const char cTy
 		}//else
 		
 		cFibElement * pOldFibObject = pUnderObject;
-		pUnderObject = fibObject;
+		pUnderObject = pFibObject;
 		
 		//remove connections of pOldFibObject to this Fib-object
 		cFibElement * pLastFibElementInOld = pOldFibObject->getFibElement(
@@ -1284,7 +1287,7 @@ bool cFibLimb::overwriteObjectWithObject( cFibElement *fibObject, const char cTy
 			(pFibElementPosition->pSuperiorElement != NULL) ){
 			
 			return pFibElementPosition->pSuperiorElement->overwriteObjectWithObject(
-				fibObject, 'u', 1 + (pFibElementPosition->getNumberOfElement()) -
+				pFibObject, 'u', 1 + (pFibElementPosition->getNumberOfElement()) -
 				(pFibElementPosition->pSuperiorElement->getNumberOfElement() ),
 				bDeleteOld );
 			

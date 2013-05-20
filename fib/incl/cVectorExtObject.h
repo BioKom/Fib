@@ -32,6 +32,7 @@
 /*
 History:
 22.01.2012  Oesterholz  created
+16.03.2013  Oesterholz  clone() method added
 */
 
 #ifndef ___C_VECTOR_EXT_OBJECT_H__
@@ -129,6 +130,13 @@ public:
 		const cDomain * pInVectorDomain, const cDomain * pInDomainVariable,
 		const unsignedIntFib uiInNumberOfElements );
 
+
+	/**
+	 * This method clones this object.
+	 *
+	 * @return a pointer to the clone of this object
+	 */
+	virtual cVectorExtObject * clone() const;
 
 	/**
 	 * This method creates an instance of this vector type.

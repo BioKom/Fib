@@ -53,8 +53,8 @@ History:
 
 
 using namespace std;
-using namespace fib;
 
+namespace fib{
 namespace nConvertToFib{
 
 	/**
@@ -168,6 +168,7 @@ namespace nConvertToFib{
 		const map< vector< unsigned int >, vector< unsigned int > > & mapColorMapping );
 
 }//end namespace nConvertToFib
+}//end namespace fib
 
 
 #endif //___N_CONVERT_TO_FIB_H__

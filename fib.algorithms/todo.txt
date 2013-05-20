@@ -1,14 +1,10 @@
 
 
-cHyperplaneBody ist noch fehlerhaft (wegen Rundungsfehlern?)
+test:
+	- nFibDatabase::cConvertFibDatabaseObject
 
-cHyperplaneBodySimple:
-  - korrigiere FEATURE_HYPERPLANE_BODY_SIMPLE_ADD_INEQUIATIONS_SAVE_ON_BIG_NUMBERS Fehler
-  - weiter implementieren?: FEATURE_HYPERPLANE_BODY_SIMPLE_ADD_INEQUIATIONS_NO_DOUBLE_POINTS
 
 test:
-  - cHyperplane(const nLinearInequation::cInequation< tFactors > & inequation, unsigned int uiInNumberOfDimensions )
-  - cHyperplane::fillType
   - cInequation<tFactors>::isTrue()
   - cInequation<tFactors>::isFalse()
   - cInequation<tFactors>::sameInequiation()
@@ -52,6 +48,21 @@ nD2::createAreasForPoints():
 fib::algorithms::nCorrectFibObject::nCorrectPoints::replaceWrongPoints():
   - for fast evaluation: case if ( liDistancesCountedWrong.size() == 1)
 
+
+
+
 nDn/test/tHyperplane.cpp:
   - some TODOs because of rounding errors still open
+
+cHyperplaneBody has errors (because of rounding errors?)
+
+cHyperplaneBodySimple:
+  - correct FEATURE_HYPERPLANE_BODY_SIMPLE_ADD_INEQUIATIONS_SAVE_ON_BIG_NUMBERS Fehler
+  - implement more?: FEATURE_HYPERPLANE_BODY_SIMPLE_ADD_INEQUIATIONS_NO_DOUBLE_POINTS
+
+test:
+  - cHyperplane(const nLinearInequation::cInequation< tFactors > & inequation, unsigned int uiInNumberOfDimensions )
+  - cHyperplane::fillType
+
+
 

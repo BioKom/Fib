@@ -32,6 +32,7 @@
 /*
 History:
 11.05.2009  Oesterholz  created
+16.03.2013  Oesterholz  clone() method added
 */
 
 #ifndef ___C_VECTOR_POSITION_H__
@@ -129,6 +130,13 @@ public:
 		list<cFibVariable*> & liDefinedVariables,
 		const cDomain * pInVectorDomain, const cDomain * pInDomainVariable );
 
+
+	/**
+	 * This method clones this object.
+	 *
+	 * @return a pointer to the clone of this object
+	 */
+	virtual cVectorPosition * clone() const;
 
 //TODO change cFibElement to cPoint
 	/**

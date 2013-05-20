@@ -74,6 +74,8 @@
 # 24.02.2012   Oesterholz   changes for windows zlib
 # 17.08.2012   Oesterholz   bash "if [ -a" is depricated using "-e"
 # 14.10.2012   Oesterholz   library "-lpthread" included
+# 09.03.2013   Oesterholz   tMatrix3D included
+# 11.05.2013   Oesterholz   tFibDatatyps included
 
 
 ##########################################################################
@@ -167,7 +169,8 @@ INCL_FIB:=$(addprefix $(DIR_INCL), $(shell ls $(DIR_INCL)) )
 
 TEST_FIB:=$(addprefix $(DIR_TEST), $(shell ls $(DIR_TEST)) )
 
-TEST_PROGRAMS:=tDomainNaturalNumberBit tDomainNaturalNumber\
+TEST_PROGRAMS:=tFibDatatyps\
+	tDomainNaturalNumberBit tDomainNaturalNumber\
 	tDomainIntegerBit tDomainInteger tDomainRational tDomainVector\
 	tDomainVectorOpenEnd tDomainReference tDomainElement tDomains\
 	tMultimediaInfo tOptionalPart tFibDatabase\
@@ -184,6 +187,7 @@ TEST_PROGRAMS:=tDomainNaturalNumberBit tDomainNaturalNumber\
 	tConditionComparison\
 	tGenerateFibObjects tFibObjectVariable tFibElementStructur tFibObject\
 	tFibObjectStore tEvalueObject\
+	tMatrix3D\
 	sizeofElements countElementsAndBits tGeneratePictures\
 	extractFibDbDescriptions saveAsBitmap
 

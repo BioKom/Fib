@@ -87,6 +87,7 @@
 History:
 09.06.2011  Oesterholz  created
 09.10.2012  Oesterholz  Warning removed: "(char)" for char arrays added
+09.03.2013  Oesterholz  Bugfix: isEqual() corrected
 */
 
 #include "version.h"
@@ -228,10 +229,10 @@ bool isEqual( doubleFib dValue1, doubleFib dValue2 ){
 	
 	const doubleFib dSaveBoundery1 = abs( dValue1 / 1000000.0 );
 	const doubleFib dSaveBoundery2 = abs( dValue2 / 1000000.0 );
-	const doubleFib dSaveBoundery = min( dSaveBoundery1, dSaveBoundery2 );
+	const doubleFib dSaveBoundery  = min( dSaveBoundery1, dSaveBoundery2 );
 	
-	if ( (dValue1 - dSaveBoundery <= dValue2) &&
-			(dValue1 <= dValue2 + dSaveBoundery) ){
+	if ( ( dValue1 - dSaveBoundery <= dValue2 ) &&
+			( dValue2 <= dValue1 + dSaveBoundery ) ){
 		return true;
 	}
 	return false;

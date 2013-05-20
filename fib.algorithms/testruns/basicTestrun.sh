@@ -23,6 +23,10 @@
 # 13.02.2011   Oesterholz   t_nD1_nPolynom removed and tPolynom added
 # 21.02.2011   Oesterholz   t_nD2 added
 # 05.07.2011   Oesterholz   tSpline added
+# 04.03.2013   Oesterholz   tImageStructureConvertToFib and
+#	tImageStructureConvertToTiles added
+# 05.04.2013   Oesterholz   tImageSearchData added
+# 08.04.2013   Oesterholz   tFindImageStructure added
 #
 
 first(){
@@ -153,6 +157,29 @@ ERRORS=$?
 ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
 echo "Errors in t_nD2 : ${ERRORS}" >>${SUM_OUTPUT}
 
+# test nImage classes
+cd ${ORIGINAL_DIR}/../nConvertToFib/nImage >>${OUTPUT} 2>>${ERROR_OUTPUT}
+
+./nStructureData/nConvertToFib/testcase/tImageStructureConvertToTiles ./testObjects/ 4 >>${OUTPUT} 2>>${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tImageStructureConvertToTiles : ${ERRORS}" >>${SUM_OUTPUT}
+
+./nStructureData/testcase/tImageStructureConvertToFib ./testObjects/ 256 >>${OUTPUT} 2>>${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tImageStructureConvertToFib : ${ERRORS}" >>${SUM_OUTPUT}
+
+./nStructureData/testcase/tImageSearchData 256 >>${OUTPUT} 2>>${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tImageSearchData : ${ERRORS}" >>${SUM_OUTPUT}
+
+
+./nSearchForStructure/testcase/tFindImageStructure ./testObjects/ 256 >>${OUTPUT} 2>>${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tFindImageStructure : ${ERRORS}" >>${SUM_OUTPUT}
 
 
 

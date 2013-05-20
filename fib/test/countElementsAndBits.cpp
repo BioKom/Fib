@@ -64,6 +64,8 @@ History:
 23.01.2012  Oesterholz  input values changed to input vector
 04.02.2011  Oesterholz  FEATURE_EXT_SUBOBJECT_INPUT_VECTOR implemented:
 	the input values are now a vector of values
+07.05.2013  Oesterholz  "average byts per element" added
+11.05.2013  Oesterholz  bits per different external object added
 */
 
 #include "version.h"
@@ -136,8 +138,8 @@ bool bPrintValidDomains = true;
 int main(int argc, char* argv[]){
 
 	
-	cout<<endl<<"This programm evalues the element and bits of a Fib-object."<<endl;
-	cout<<      "==========================================================="<<endl;
+	cout<<endl<<"This program evalues the element and bits of a Fib-object."<<endl;
+	cout<<      "=========================================================="<<endl;
 	
 	char * pFileFibObject = NULL;
 	
@@ -233,6 +235,14 @@ int main(int argc, char* argv[]){
 	
 	unsignedLongFib uiNumberOfExtObjects = 0;
 	unsignedLongFib uiBitsForExtObjects = 0;
+	/* The bits per external object type (identifier).
+	 * 	first: identifer of th external object
+	 * 	second: the bit counters
+	 * 		first: number of elements found
+	 * 		second: the number of Bits for the elements
+	 */
+	map< longFib, pair< unsignedLongFib, unsignedLongFib > >
+		mapBitsPerExtObject;
 	
 	unsignedLongFib uiNumberOfExtSubobjects = 0;
 	unsignedLongFib uiBitsForExtSubobjects = 0;
@@ -500,14 +510,21 @@ int main(int argc, char* argv[]){
 				case 'o':{//external object element
 					uiNumberOfExtObjects++;
 					cExtObject * pActualExtObject = ((cExtObject*)(pActualFibElement));
+					
 					//add bits for identifier, count of subobjects and count of input variables
-					uiBitsForExtObjects += 4 + uiExtObjectIdCountSubObjInVarBits;
+					unsignedLongFib ulBitsForExtObjectElement = 0;
+					ulBitsForExtObjectElement += 4 + uiExtObjectIdCountSubObjInVarBits;
 					//add bits for input values
-					uiBitsForExtObjects +=
+					ulBitsForExtObjectElement +=
 						pActualExtObject->getInputVector()->getCompressedSize();
 					//add bits for counts of output variables
-					uiBitsForExtObjects += ulBitsForOutVarCount *
+					ulBitsForExtObjectElement += ulBitsForOutVarCount *
 						pActualExtObject->getNumberOfSubobjects();
+					uiBitsForExtObjects += ulBitsForExtObjectElement;
+					
+					mapBitsPerExtObject[ pActualExtObject->getIdentifier() ].first++;
+					mapBitsPerExtObject[ pActualExtObject->getIdentifier() ].second +=
+						ulBitsForExtObjectElement;
 					
 				}break;
 				case 's':{//external subobject element
@@ -567,7 +584,7 @@ int main(int argc, char* argv[]){
 	cout.width(20);
 	cout<<right;
 	
-	cout<<"Element          ;Number of elements  ; Bit sum for elements; Byte sum for elements; Kilo byte sum for elements"<<endl;
+	cout<<"Element          ;Number of elements  ; Bit sum for elements; Byte sum for elements; Kilo byte sum elements; average byts per element"<<endl;
 	cout<<"all              ;";
 	cout.width(20);
 	cout<<uiNumberOfAllElements<<"; ";
@@ -576,13 +593,18 @@ int main(int argc, char* argv[]){
 	cout.width(20);
 	cout<<(uiBitsFibObject / 8);
 	cout.width(20);
-	cout<<(uiBitsFibObject / BITS_PER_KILOBYTE)<<endl;
+	cout<<(uiBitsFibObject / BITS_PER_KILOBYTE);
+	cout.width(20);
+	cout<<((uiNumberOfAllElements == 0) ? 0 :
+		(((double)uiBitsFibObject / 8.0) / (double)uiNumberOfAllElements))<<endl;
 	
 	cout<<"roots            ;";
 	cout.width(20);
 	cout<<uiNumberOfRoots<<"; ";
 	cout.width(20);
 	cout<<"???"<<"; ";
+	cout.width(20);
+	cout<<"???";
 	cout.width(20);
 	cout<<"???";
 	cout.width(20);
@@ -596,7 +618,10 @@ int main(int argc, char* argv[]){
 	cout.width(20);
 	cout<<(uiBitsForPoints / 8);
 	cout.width(20);
-	cout<<(uiBitsForPoints / BITS_PER_KILOBYTE)<<endl;
+	cout<<(uiBitsForPoints / BITS_PER_KILOBYTE);
+	cout.width(20);
+	cout<<((uiNumberOfPoints == 0) ? 0 :
+		(((double)uiBitsForPoints / 8.0) / (double)uiNumberOfPoints))<<endl;
 	
 	cout<<"position vectors ;";
 	cout.width(20);
@@ -606,7 +631,10 @@ int main(int argc, char* argv[]){
 	cout.width(20);
 	cout<<(uiBitsForPositionVector / 8);
 	cout.width(20);
-	cout<<(uiBitsForPositionVector / BITS_PER_KILOBYTE)<<endl;
+	cout<<(uiBitsForPositionVector / BITS_PER_KILOBYTE);
+	cout.width(20);
+	cout<<((uiNumberOfPositionVectors == 0) ? 0 :
+		(((double)uiBitsForPositionVector / 8.0) / (double)uiNumberOfPositionVectors))<<endl;
 	
 	cout<<"properties       ;";
 	cout.width(20);
@@ -616,7 +644,10 @@ int main(int argc, char* argv[]){
 	cout.width(20);
 	cout<<(uiBitsForProperties / 8);
 	cout.width(20);
-	cout<<(uiBitsForProperties / BITS_PER_KILOBYTE)<<endl;
+	cout<<(uiBitsForProperties / BITS_PER_KILOBYTE);
+	cout.width(20);
+	cout<<((uiNumberOfProperties == 0) ? 0 :
+		(((double)uiBitsForProperties / 8.0) / (double)uiNumberOfProperties))<<endl;
 	
 	cout<<"property vectors ;";
 	cout.width(20);
@@ -626,7 +657,10 @@ int main(int argc, char* argv[]){
 	cout.width(20);
 	cout<<(uiBitsForPropertyVector / 8);
 	cout.width(20);
-	cout<<(uiBitsForPropertyVector / BITS_PER_KILOBYTE)<<endl;
+	cout<<(uiBitsForPropertyVector / BITS_PER_KILOBYTE);
+	cout.width(20);
+	cout<<((uiNumberOfPropertyVectors == 0) ? 0 :
+		(((double)uiBitsForPropertyVector / 8.0) / (double)uiNumberOfPropertyVectors))<<endl;
 	
 	cout<<"area elements    ;";
 	cout.width(20);
@@ -636,7 +670,10 @@ int main(int argc, char* argv[]){
 	cout.width(20);
 	cout<<(uiBitsForAreas / 8);
 	cout.width(20);
-	cout<<(uiBitsForAreas / BITS_PER_KILOBYTE)<<endl;
+	cout<<(uiBitsForAreas / BITS_PER_KILOBYTE);
+	cout.width(20);
+	cout<<((uiNumberOfAreas == 0) ? 0 :
+		(((double)uiBitsForAreas / 8.0) / (double)uiNumberOfAreas))<<endl;
 	
 	cout<<"functions        ;";
 	cout.width(20);
@@ -646,7 +683,10 @@ int main(int argc, char* argv[]){
 	cout.width(20);
 	cout<<(uiBitsForFunctions / 8);
 	cout.width(20);
-	cout<<(uiBitsForFunctions / BITS_PER_KILOBYTE)<<endl;
+	cout<<(uiBitsForFunctions / BITS_PER_KILOBYTE);
+	cout.width(20);
+	cout<<((uiNumberOfFunctions == 0) ? 0 :
+		(((double)uiBitsForFunctions / 8.0) / (double)uiNumberOfFunctions))<<endl;
 	
 	cout<<"under functions  ;";
 	cout.width(20);
@@ -656,7 +696,10 @@ int main(int argc, char* argv[]){
 	cout.width(20);
 	cout<<(uiBitsForSubfunctions / 8);
 	cout.width(20);
-	cout<<(uiBitsForSubfunctions / BITS_PER_KILOBYTE)<<endl;
+	cout<<(uiBitsForSubfunctions / BITS_PER_KILOBYTE);
+	cout.width(20);
+	cout<<((uiNumberOfSubfunctions == 0) ? 0 :
+		(((double)uiBitsForSubfunctions / 8.0) / (double)uiNumberOfSubfunctions))<<endl;
 	
 	cout<<"list elements    ;";
 	cout.width(20);
@@ -666,7 +709,10 @@ int main(int argc, char* argv[]){
 	cout.width(20);
 	cout<<(uiBitsForLists / 8);
 	cout.width(20);
-	cout<<(uiBitsForLists / BITS_PER_KILOBYTE)<<endl;
+	cout<<(uiBitsForLists / BITS_PER_KILOBYTE);
+	cout.width(20);
+	cout<<((uiNumberOfLists == 0) ? 0 :
+		(((double)uiBitsForLists / 8.0) / (double)uiNumberOfLists))<<endl;
 
 	cout<<"if-elements      ;";
 	cout.width(20);
@@ -676,7 +722,10 @@ int main(int argc, char* argv[]){
 	cout.width(20);
 	cout<<(uiBitsForIfs / 8);
 	cout.width(20);
-	cout<<(uiBitsForIfs / BITS_PER_KILOBYTE)<<endl;
+	cout<<(uiBitsForIfs / BITS_PER_KILOBYTE);
+	cout.width(20);
+	cout<<((uiNumberOfIfs == 0) ? 0 :
+		(((double)uiBitsForIfs / 8.0) / (double)uiNumberOfIfs))<<endl;
 	
 	cout<<"conditions       ;";
 	cout.width(20);
@@ -686,7 +735,10 @@ int main(int argc, char* argv[]){
 	cout.width(20);
 	cout<<(uiBitsForConditions / 8);
 	cout.width(20);
-	cout<<(uiBitsForConditions / BITS_PER_KILOBYTE)<<endl;
+	cout<<(uiBitsForConditions / BITS_PER_KILOBYTE);
+	cout.width(20);
+	cout<<((uiNumberOfConditions == 0) ? 0 :
+		(((double)uiBitsForConditions / 8.0) / (double)uiNumberOfConditions))<<endl;
 	
 	cout<<"external objects ;";
 	cout.width(20);
@@ -696,7 +748,31 @@ int main(int argc, char* argv[]){
 	cout.width(20);
 	cout<<(uiBitsForExtObjects / 8);
 	cout.width(20);
-	cout<<(uiBitsForExtObjects / BITS_PER_KILOBYTE)<<endl;
+	cout<<(uiBitsForExtObjects / BITS_PER_KILOBYTE);
+	cout.width(20);
+	cout<<((uiNumberOfExtObjects == 0) ? 0 :
+		(((double)uiBitsForExtObjects / 8.0) / (double)uiNumberOfExtObjects))<<endl;
+		
+	for ( map< longFib, pair< unsignedLongFib, unsignedLongFib > >::const_iterator
+			itrActualElement = mapBitsPerExtObject.begin();
+			itrActualElement != mapBitsPerExtObject.end(); itrActualElement++ ){
+		
+		cout<<"   id ";
+		cout.width(10);
+		cout<<itrActualElement->first<<" ;";
+		cout.width(20);
+		cout<<itrActualElement->second.first<<"; ";
+		cout.width(20);
+		cout<<itrActualElement->second.second<<"; ";
+		cout.width(20);
+		cout<<(itrActualElement->second.second / 8);
+		cout.width(20);
+		cout<<(itrActualElement->second.second / BITS_PER_KILOBYTE);
+		cout.width(20);
+		cout<<((uiNumberOfExtObjects == 0) ? 0 :
+			(((double)itrActualElement->second.second / 8.0) /
+				(double)itrActualElement->second.first))<<endl;
+	}
 	
 	cout<<"external subobj. ;";
 	cout.width(20);
@@ -706,7 +782,10 @@ int main(int argc, char* argv[]){
 	cout.width(20);
 	cout<<(uiBitsForExtSubobjects / 8);
 	cout.width(20);
-	cout<<(uiBitsForExtSubobjects / BITS_PER_KILOBYTE)<<endl;
+	cout<<(uiBitsForExtSubobjects / BITS_PER_KILOBYTE);
+	cout.width(20);
+	cout<<((uiNumberOfExtSubobjects == 0) ? 0 :
+		(((double)uiBitsForExtSubobjects / 8.0) / (double)uiNumberOfExtSubobjects))<<endl;
 	
 	cout<<"set-elements     ;";
 	cout.width(20);
@@ -716,7 +795,10 @@ int main(int argc, char* argv[]){
 	cout.width(20);
 	cout<<(uiBitsForFibSets / 8);
 	cout.width(20);
-	cout<<(uiBitsForFibSets / BITS_PER_KILOBYTE)<<endl;
+	cout<<(uiBitsForFibSets / BITS_PER_KILOBYTE);
+	cout.width(20);
+	cout<<((uiNumberOfFibSets == 0) ? 0 :
+		(((double)uiBitsForFibSets / 8.0) / (double)uiNumberOfFibSets))<<endl;
 	
 	cout<<"matrix elements  ;";
 	cout.width(20);
@@ -726,7 +808,10 @@ int main(int argc, char* argv[]){
 	cout.width(20);
 	cout<<(uiBitsForFibMatrixs / 8);
 	cout.width(20);
-	cout<<(uiBitsForFibMatrixs / BITS_PER_KILOBYTE)<<endl;
+	cout<<(uiBitsForFibMatrixs / BITS_PER_KILOBYTE);
+	cout.width(20);
+	cout<<((uiNumberOfFibMatrixs == 0) ? 0 :
+		(((double)uiBitsForFibMatrixs / 8.0) / (double)uiNumberOfFibMatrixs))<<endl;
 	
 	cout<<"comments elements;";
 	cout.width(20);
@@ -736,9 +821,11 @@ int main(int argc, char* argv[]){
 	cout.width(20);
 	cout<<"???";
 	cout.width(20);
+	cout<<"???";
+	cout.width(20);
 	cout<<"???"<<endl;
 	
-	cout<<endl<<"The bits and byts for the elements are given without contained Fib-objects, but with contained vectors."<<endl;
+	cout<<endl<<"The bits and byts for the elements are given without contained Fib objects, but with contained vectors."<<endl;
 	
 	
 	pRestoredFibObject->deleteObject();

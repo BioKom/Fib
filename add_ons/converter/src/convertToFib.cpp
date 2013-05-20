@@ -47,13 +47,44 @@
  * 		Parameters for converting into the Fib multimedia format
  * 	Possible parameters are:
  * 		-mode=VALUE
- * 			possible VALUE: simple, compress or reduce
- * 			standard VALUE: compress
+ * 			possible VALUE: simple, converter, compress or reduce
+ * 			standard VALUE: converter
  * 			(instead of the values, just the first letter of the values
  * 			can be used)
  * 			the compression mode
  * 			if simple: the picture will be converted directly, without
  * 				trying to reduce the data
+ * 			if converter or co: the converter
+ * 				cConvertImageToFibForOnePropertySimple will be used
+ * 				@see fib::algorithms::nConvertToFib::nImage::cConvertImageToFibForOnePropertySimple
+ * 				;the converter is build on the convert framework
+ * 				@see fib::algorithms::nConvertToFib::nImage::cConvertImageToFib
+ * 				possible options:
+ * 					-max_area_diff=VALUE
+ * 						VALUE: a positive integer value
+ * 						the maximal difference of color values in an area (as
+ * 						the sum of the color vector element distances)
+ * 					-max_error_per_border_point=VALUE or -errB=VALUE
+ * 				 		the maximal error for the border points to
+ * 						find on one border point; every point in the part
+ * 						areas of the generated Fib objects will have a
+ * 						distance lower or equal dMaxErrorPerBorderPoint
+ * 						to a point in the correct area border
+ * 					-no_antialising or -noAA
+ * 						the found Fib objects can not use antialising
+ * 						(transparency for border points of part areas)
+ * 					-op[NAME]:
+ * 						call the operation NAME;
+ * 						operators are called in the order they occure on the
+ * 						command line, if an operator is specified multiple
+ * 						times it will also be called multiple times;
+ * 						Possible operations are:
+ * 						-opDilate or -opD:
+ * 							dilate operator: all neighbour points are added to
+ * 								the found part areas
+ * 						-opErode or -opE
+ * 							erode operator: all border of the found part areas
+ * 								are deleted from the found part areas
  * 			if compress: the multimedia data will be compressed, by
  * 				building Fib under objects for areas with the same color
  * 				and evaluating the background color (see option "-bg=")
@@ -63,7 +94,7 @@
  * 				similar color and evaluating the background color;
  * 				some pixels won't have the correct color (see option "-bg="
  * 				in combination with "-max_area_dif")
- * 				possible options: 
+ * 				possible options:
  * 					-max_area_diff=VALUE
  * 						VALUE: a positive integer value
  * 						the maximal difference of color values in an area (as
@@ -104,8 +135,10 @@
  * 			standard VALUE: yes
  * 			if an background color should be set, if non exists;
  * 			if no: no background color will be evaluated, if non exists;
+ * 			works with modus: compress and reduce
  * 		-correct-points or -cp
  * 			if wrong points should be corrected, in the last compressing step
+ * 			works with modus: compress and reduce
  * 		-reduce_lists or -rl
  * 			reduce the number of lists in the Fib object
  * 		-minColDist=VALUE
@@ -140,11 +173,13 @@ History:
 	compressed storege in fib
 10.03.2011  Oesterholz  parameter and functionality for -minFreeMemPc added
 11.03.2012  Oesterholz  parameter help added
+22.04.2013  Oesterholz  modus converter and its parameters added
 */
 
 #include "version.h"
 #include "nConvertToFib.h"
 #include "nConvertFromFib.h"
+#include "cFreeImageData.h"
 #include "cColorDistance.h"
 #include "cFibElement.h"
 
@@ -153,6 +188,12 @@ History:
 #include "cClusterFunArea.h"
 #include "cClusterFunExp.h"
 
+#include "iImageStructureSearchOperator.h"
+#include "cConvertImageToFibForOnePropertySimple.h"
+#include "cImageStructureOperatorErode.h"
+#include "cImageStructureOperatorDilate.h"
+
+#include "cClusterFunExp.h"
 
 #ifdef FEATURE_OWN_FREE_IMAGE_WARPER
 	//no FreeImagePlus wraper for windows -> use own
@@ -171,6 +212,7 @@ History:
 using namespace fib;
 using namespace std;
 using namespace fib::algorithms;
+using namespace fib::algorithms::nConvertToFib::nImage::nStructureData::nOperators;
 
 
 //comment in for debugging
@@ -224,6 +266,7 @@ static void * stopMemFull( void * pMinFreeMemPc ){
 
 
 void printDetailedHelp();
+void printShortHelp();
 
 
 int main(int argc, char* argv[]){
@@ -237,26 +280,7 @@ int main(int argc, char* argv[]){
 		return 0;
 	}else if ( argc < 2 ){
 		//no input file -> exit
-		cout<<"No inputfile with the originalmultimedia data given."<<endl;
-		cout<<endl;
-		cout<<"This program is for converting multimedia objects in non Fib"<<endl;
-		cout<<"multimedia formats into Fib objects."<<endl;
-		cout<<endl;
-		cout<<" call: convertToFib [PARAMETER] FILE_MULTIMEDIADATA [FILE_OUTPUT]"<<endl;
-		cout<<" or call for help: convertToFib -h[elp]"<<endl;
-		cout<<endl;
-		cout<<" parameters:"<<endl;
-		cout<<" 	PARAMETER"<<endl;
-		cout<<" 		The parameter to convert the multimedia data."<<endl;
-		cout<<" 		Run \">convertToFib -help\" for more info"<<endl;
-		cout<<" 	PATH_MULTIMEDIADATA"<<endl;
-		cout<<" 		The path to the to load non Fib multimedia data."<<endl;
-		cout<<" 	FILE_OUTPUT"<<endl;
-		cout<<" 		The name of the file where the Fib multimedia data would be"<<endl;
-		cout<<" 		stored to. If the file ending is \".xml\" the data will be written"<<endl;
-		cout<<" 		in the Fib Xml format. If no parameter FILE_OUTPUT is given"<<endl;
-		cout<<" 		the Fib object will be stored in the Fib Xml format to the"<<endl;
-		cout<<" 		standard output."<<endl;
+		printShortHelp();
 		return 1;
 	}
 	
@@ -265,9 +289,9 @@ int main(int argc, char* argv[]){
 	the standartoutput*/
 	char * pFileForStoringData = NULL;
 	
-	enum typeModus { SIMPLE, COMPRESS, REDUCE };
+	enum typeModus { SIMPLE, COMPRESS, REDUCE, CONVERTER };
 
-	typeModus mode = COMPRESS;
+	typeModus mode = CONVERTER;
 	//parameters for the convert and reduce mode
 	bool bEvalueBackground = true;
 	//if wrong points should be corrected, in the last compressing step
@@ -300,6 +324,17 @@ int main(int argc, char* argv[]){
 	//the ending of the image to store the converted Fib object to
 	char * szStoreConvertedImage = NULL;
 	
+	//parameter vor the convert modus
+	//the maximal error for the border points to find on one border point
+	double dMaxErrorPerBorderPoint = 0.0;
+	//the found Fib objects can not use antialising
+	bool bCanBeAntialised = false;
+	
+	//the list with the operator to call for the found part areas
+	list< fib::algorithms::nConvertToFib::nImage::nStructureData::nOperators::iImageStructureSearchOperator * >
+			liInOperatoresForImageStructure;
+	
+	
 	//read parameter
 	for ( int iActualParameter = 1; iActualParameter < argc;
 			iActualParameter++ ){
@@ -309,8 +344,13 @@ int main(int argc, char* argv[]){
 				mode = SIMPLE;
 				cout<<"Converting in simple mode."<<endl;
 			}else if ( argv[ iActualParameter ][ 6 ] == 'c' ){
-				mode = COMPRESS;
-				cout<<"Converting in compressed mode."<<endl;
+				if ( argv[ iActualParameter ][ 8 ] == 'm' ){
+					mode = COMPRESS;
+					cout<<"Converting in compressed mode."<<endl;
+				}else{
+					mode = CONVERTER;
+					cout<<"Converting in converter mode."<<endl;
+				}
 			}else if ( argv[ iActualParameter ][ 6 ] == 'r' ){
 				mode = REDUCE;
 				cout<<"Converting in reduced mode."<<endl;
@@ -369,35 +409,69 @@ int main(int argc, char* argv[]){
 			ulMaxDiff = atol( &( argv[ iActualParameter ][ 10 ] )  );
 			cout<<"The maximal difference of color values for not areas points: "<<ulMaxDiff<<endl;
 		
-		}else if ( ( strncmp( argv[ iActualParameter ], "-min_point_for_area=", 20 ) == 0 ) ){
+		}else if ( strncmp( argv[ iActualParameter ], "-min_point_for_area=", 20 ) == 0 ){
 			uiMinPointsForArea = atol( &( argv[ iActualParameter ][ 20 ] )  );
 			cout<<"The minimal number of points an area should have, to create an area object for it: "<<uiMinPointsForArea<<endl;
 		
-		}else if ( ( strncmp( argv[ iActualParameter ], "-min_pfa=", 9 ) == 0 ) ){
+		}else if ( strncmp( argv[ iActualParameter ], "-min_pfa=", 9 ) == 0 ){
 			uiMinPointsForArea = atol( &( argv[ iActualParameter ][ 9 ] )  );
 			cout<<"The minimal number of points an area should have, to create an area object for it: "<<uiMinPointsForArea<<endl;
 		
 		
-		}else if ( ( strncmp( argv[ iActualParameter ], "-min_point_for_neighbor_area=", 29 ) == 0 ) ){
+		}else if ( strncmp( argv[ iActualParameter ], "-min_point_for_neighbor_area=", 29 ) == 0 ){
 			uiMinPointsNeighbourAreas = atol( &( argv[ iActualParameter ][ 30 ] )  );
 			cout<<"The minimal number of points an neighbor area should have: "<<uiMinPointsNeighbourAreas<<endl;
 		
-		}else if ( ( strncmp( argv[ iActualParameter ], "-min_pfna=", 10 ) == 0 ) ){
+		}else if ( strncmp( argv[ iActualParameter ], "-min_pfna=", 10 ) == 0 ){
 			uiMinPointsNeighbourAreas = atol( &( argv[ iActualParameter ][ 10 ] )  );
 			cout<<"The minimal number of points an neighbor area should have: "<<uiMinPointsNeighbourAreas<<endl;
 		
-		}else if ( ( strncmp( argv[ iActualParameter ], "-max_error=", 11 ) == 0 ) ){
+		}else if ( strncmp( argv[ iActualParameter ], "-max_error=", 11 ) == 0 ){
 			maxError = atol( &( argv[ iActualParameter ][ 11 ] )  );
 			cout<<"The maximal error for the area border polynomials to find: "<<maxError<<endl;
 
-		}else if ( ( strncmp( argv[ iActualParameter ], "-minColDist=", 12 ) == 0 ) ){
+		}else if ( strncmp( argv[ iActualParameter ], "-minColDist=", 12 ) == 0 ){
 			uiMinColorDistance = atol( &( argv[ iActualParameter ][ 12 ] )  );
 			cout<<"The minimal color distance, to which reduce the original picture data: "<<uiMinColorDistance<<endl;
 		
-		}else if ( ( strncmp( argv[ iActualParameter ], "-expColDistFactor=", 18 ) == 0 ) ){
+		}else if ( strncmp( argv[ iActualParameter ], "-expColDistFactor=", 18 ) == 0 ){
 			dExpColorDistanceFactor = atof( &( argv[ iActualParameter ][ 18 ] )  );
 			cout<<"The factor for reducing the color exponentially in the original picture data: "<<dExpColorDistanceFactor<<endl;
-
+		
+		//parameter vor mode convert
+		}else if ( strncmp( argv[ iActualParameter ], "-max_error_per_border_point=", 28 ) == 0 ){
+			dMaxErrorPerBorderPoint = atof( &( argv[ iActualParameter ][ 28 ] )  );
+			cout<<"The maximal error for the border points to find on one border point: "<<dMaxErrorPerBorderPoint<<endl;
+		
+		}else if ( strncmp( argv[ iActualParameter ], "-errB=", 6 ) == 0 ){
+			dMaxErrorPerBorderPoint = atof( &( argv[ iActualParameter ][ 6 ] )  );
+			cout<<"The maximal error for the border points to find on one border point: "<<dMaxErrorPerBorderPoint<<endl;
+			
+		}else if ( ( strncmp( argv[ iActualParameter ], "-no_antialising", 15 ) == 0 ) ||
+				( strncmp( argv[ iActualParameter ], "-noAA", 5 ) == 0 ) ){
+			bCanBeAntialised = false;
+			cout<<"The found Fib objects can not use antialising."<<endl;
+			
+		
+		}else if ( strncmp( argv[ iActualParameter ], "-op", 3 ) == 0 ){
+			//add operators to call
+			if ( ( strncmp( argv[ iActualParameter ], "-opDilate", 9 ) == 0 ) ||
+					( strncmp( argv[ iActualParameter ], "-opD", 4 ) == 0 ) ){
+				/* dilate operator: all neighbour points are added to the found
+				 * part areas*/
+				liInOperatoresForImageStructure.push_back(
+					new cImageStructureOperatorDilate() );
+				
+			}else if ( ( strncmp( argv[ iActualParameter ], "-opErode", 8 ) == 0 ) ||
+					( strncmp( argv[ iActualParameter ], "-opE", 4 ) == 0 ) ){
+				/* erode operator: all border of the found part areas are
+				 * deleted from the found part areas*/
+				liInOperatoresForImageStructure.push_back(
+					new cImageStructureOperatorErode() );
+			}else{
+				cerr<<"Unknown operator: "<<argv[ iActualParameter ]<<endl;
+			}
+		
 		}else if ( ( strncmp( argv[ iActualParameter ], "-minFreeMemPc=", 14 ) == 0 ) ){
 			dMinFreeMemPc = atof( &( argv[ iActualParameter ][ 14 ] )  );
 			
@@ -433,6 +507,12 @@ int main(int argc, char* argv[]){
 		}
 	}
 	
+	if ( pFileWithOriginalData == NULL ){
+		//no input file -> exit
+		printShortHelp();
+		return 1;
+	}
+	
 #ifndef WINDOWS
 	//linux only
 	pthread_t threadStop;
@@ -465,7 +545,7 @@ int main(int argc, char* argv[]){
 			( dExpColorDistanceFactor != 0.0 ) ){
 		
 		const map< vector< unsigned int >, unsigned long > mapColorCounts =
-			nConvertToFib::countColors( orignalImage );
+			fib::nConvertToFib::countColors( orignalImage );
 #ifdef DEBUG
 		cout<<endl<<"Color counts befor reducing (number of colors="<<mapColorCounts.size()<<"):"<<endl;
 		for (  map< vector< unsigned int >, unsigned long >::const_iterator
@@ -567,7 +647,7 @@ int main(int argc, char* argv[]){
 				cout<<"reducing colors exponential:"<<endl;
 #endif //DEBUG
 				//create exponential color mapping
-				nConvertToFib::cColorDistance colorDistance;
+				fib::nConvertToFib::cColorDistance colorDistance;
 				nCluster::cClusterFunExp< vector< unsigned int > >
 					clusterFunExp( colorDistance, dExpColorDistanceFactor );
 				const map< vector< unsigned int >, vector< unsigned int > > mapColorMappingNew =
@@ -590,7 +670,7 @@ int main(int argc, char* argv[]){
 			}//end if cluster exponential
 		}else if ( dExpColorDistanceFactor != 0.0 ){
 			//create exponential color mapping
-			nConvertToFib::cColorDistance colorDistance;
+			fib::nConvertToFib::cColorDistance colorDistance;
 			nCluster::cClusterFunExp< vector< unsigned int > >
 				clusterFunExp( colorDistance, dExpColorDistanceFactor );
 			mapColorMapping = nCluster::cluster( mapColorCounts, clusterFunExp );
@@ -628,12 +708,12 @@ int main(int argc, char* argv[]){
 #endif //DEBUG
 		
 		//map the colors in the picture data
-		nConvertToFib::mapColors( orignalImage, mapColorMapping );
+		fib::nConvertToFib::mapColors( orignalImage, mapColorMapping );
 		
 #ifdef DEBUG
 		//check number of colors
 		const map< vector< unsigned int >, unsigned long > mapColorCountsTest =
-			nConvertToFib::countColors( orignalImage );
+			fib::nConvertToFib::countColors( orignalImage );
 		cout<<endl<<"Color counts after reducing (number of colors="<<mapColorCountsTest.size()<<"):"<<endl;
 		for (  map< vector< unsigned int >, unsigned long >::const_iterator
 				itrColor = mapColorCountsTest.begin();
@@ -656,10 +736,10 @@ int main(int argc, char* argv[]){
 	cFibElement * pFibCovertedObject = NULL;
 	switch ( mode ){
 		case SIMPLE:
-			 pFibCovertedObject = nConvertToFib::convert( orignalImage );
+			 pFibCovertedObject = fib::nConvertToFib::convert( orignalImage );
 		break;
 		case REDUCE:
-			pFibCovertedObject = nConvertToFib::convertReduced( orignalImage,
+			pFibCovertedObject = fib::nConvertToFib::convertReduced( orignalImage,
 				bEvalueBackground, ulMaxAreaDiff, ulMinPoints, ulMaxDiff,
 				uiMinPointsNeighbourAreas,
 				bCorrectPoints, bCorrectMissingPoints, bAddNeighbours,
@@ -667,11 +747,30 @@ int main(int argc, char* argv[]){
 				uiMinPointsForArea, maxError );
 		break;
 		case COMPRESS:
-		default:
-			pFibCovertedObject = nConvertToFib::convertOptimized(
+			pFibCovertedObject = fib::nConvertToFib::convertOptimized(
 				orignalImage, bEvalueBackground, bCorrectPoints );
 		break;
+		case CONVERTER:
+		default:
+			const cFreeImageData freeImageData( &orignalImage );
+			
+			const unsigned int uiPropertyType = freeImageData.getPropertyType( 2 );
+			
+			fib::algorithms::nConvertToFib::nImage::cConvertImageToFibForOnePropertySimple
+				convertImageToFibForOnePropertySimple( freeImageData,
+					uiPropertyType, ulMaxAreaDiff, dMaxErrorPerBorderPoint,
+					bCanBeAntialised, liInOperatoresForImageStructure );
+			
+			pFibCovertedObject = convertImageToFibForOnePropertySimple.convertToFib();
+		break;
 	}
+	//operators are not needed any more -> delete them
+	while ( ! liInOperatoresForImageStructure.empty() ){
+		
+		delete liInOperatoresForImageStructure.back();
+		liInOperatoresForImageStructure.pop_back();
+	}
+	
 	
 	if ( pFibCovertedObject == NULL ){
 		cerr<<"Error: Could not convert the data into a Fib multimedia object."<<endl;
@@ -726,7 +825,7 @@ int main(int argc, char* argv[]){
 			
 		}
 
-	}else{//store to file in compressedformat
+	}else{//store to file in compressed format
 		cout<<"Storing Fib object in the compressedformat to the file "<< pFileForStoringData <<" . "<<endl;
 		
 		ofstream outFile( pFileForStoringData, ios_base::out | ios_base::binary );
@@ -789,6 +888,34 @@ int main(int argc, char* argv[]){
 		cFibElement::deleteObject( pFibCovertedObject );
 	}
 	return 0;
+}
+
+
+/**
+ * Print short help information.
+ */
+void printShortHelp(){
+	
+	cout<<"No inputfile with the originalmultimedia data given."<<endl;
+	cout<<endl;
+	cout<<"This program is for converting multimedia objects in non Fib"<<endl;
+	cout<<"multimedia formats into Fib objects."<<endl;
+	cout<<endl;
+	cout<<" call: convertToFib [PARAMETER] FILE_MULTIMEDIADATA [FILE_OUTPUT]"<<endl;
+	cout<<" or call for help: convertToFib -h[elp]"<<endl;
+	cout<<endl;
+	cout<<" parameters:"<<endl;
+	cout<<" 	PARAMETER"<<endl;
+	cout<<" 		The parameter to convert the multimedia data."<<endl;
+	cout<<" 		Run \">convertToFib -help\" for more info"<<endl;
+	cout<<" 	PATH_MULTIMEDIADATA"<<endl;
+	cout<<" 		The path to the to load non Fib multimedia data."<<endl;
+	cout<<" 	FILE_OUTPUT"<<endl;
+	cout<<" 		The name of the file where the Fib multimedia data would be"<<endl;
+	cout<<" 		stored to. If the file ending is \".xml\" the data will be written"<<endl;
+	cout<<" 		in the Fib Xml format. If no parameter FILE_OUTPUT is given"<<endl;
+	cout<<" 		the Fib object will be stored in the Fib Xml format to the"<<endl;
+	cout<<" 		standard output."<<endl;
 }
 
 
@@ -869,13 +996,15 @@ void printDetailedHelp(){
 	cout<<"					-max_error=VALUE"<<endl;
 	cout<<"						VALUE: a positive integer value"<<endl;
 	cout<<"						the maximal error for the area border polynomials to find"<<endl;
-	cout<<"		-bg=VALUE"<<endl;
-	cout<<"			possible VALUE: yes or no"<<endl;
-	cout<<"			standard VALUE: yes"<<endl;
-	cout<<"			if an background color should be set, if non exists;"<<endl;
-	cout<<"			if no: no background color will be evaluated, if non exists;"<<endl;
-	cout<<"		-correct-points or -cp"<<endl;
-	cout<<"			if wrong points should be corrected, in the last compressing step"<<endl;
+	cout<<"					-bg=VALUE"<<endl;
+	cout<<"						possible VALUE: yes or no"<<endl;
+	cout<<"						standard VALUE: yes"<<endl;
+	cout<<"						if an background color should be set, if non exists;"<<endl;
+	cout<<"						if no: no background color will be evaluated, if non exists;"<<endl;
+	cout<<"						works with modus: compress and reduce"<<endl;
+	cout<<"					-correct-points or -cp"<<endl;
+	cout<<"						if wrong points should be corrected, in the last compressing step"<<endl;
+	cout<<"						works with modus: compress and reduce"<<endl;
 	cout<<"		-reduce_lists or -rl"<<endl;
 	cout<<"			reduce the number of lists in the Fib object"<<endl;
 	cout<<"		-minColDist=VALUE"<<endl;

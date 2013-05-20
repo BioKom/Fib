@@ -36,6 +36,8 @@ History:
 	FirstChildElement()
 19.08.2012  Oesterholz  Bugfix?: equal* check if same pointers
 30.12.2012  Oesterholz  debugging evalue will print number of input variables
+03.03.2013  Oesterholz  Bugfix?: if an subobject is deleted, change it's
+	superior just if it (the superior) is this object
 */
 
 
@@ -2354,11 +2356,11 @@ bool cExtObject::overwriteObjectWithObject( cFibElement * pFibObject, const char
 				//remove old underobject
 				if ( pFibElementPosition->pSuperiorElement == this ){
 					pFibElementPosition->pSuperiorElement = NULL;
-					if ( bDeleteOld ){
-						DEBUG_OUT_L3(<<"cExtObject::overwriteObjectWithObject() deleting pFibElementPosition"<<endl<<flush);
-						pFibElementPosition->deleteObject();
-					}//else don't delete
 				}
+				if ( bDeleteOld ){
+					DEBUG_OUT_L3(<<"cExtObject::overwriteObjectWithObject() deleting pFibElementPosition"<<endl<<flush);
+					pFibElementPosition->deleteObject();
+				}//else don't delete
 				//done and pFibObject inserted
 				DEBUG_OUT_L3(<<"cExtObject::overwriteObjectWithObject() done pFibObject inserted"<<endl<<flush);
 				return true;
@@ -2614,7 +2616,9 @@ void cExtObject::setNumberOfSubobjects(
 			
 			if ( pOldSubObject != NULL ){
 				
-				pOldSubObject->pSuperiorElement = NULL;
+				if ( pOldSubObject->pSuperiorElement == this ){
+					pOldSubObject->pSuperiorElement = NULL;
+				}
 				fibObjectCountsDelta -= evalueCountersForObject( pOldSubObject );
 				
 				if ( bDeleteOld ){
@@ -2720,11 +2724,13 @@ bool cExtObject::setSubobject( const unsignedIntFib uiNumberSubobject,
 		setNumberOfSubobjects( uiNumberSubobject );
 	}
 	//update counters
-	if ( pFibObject->pSuperiorElement != NULL ){
-		pFibObject->pSuperiorElement->cutConnectionsTo(
-			pFibObject );
+	if ( pFibObject->pSuperiorElement != this ){
+		if ( pFibObject->pSuperiorElement != NULL ){
+			pFibObject->pSuperiorElement->cutConnectionsTo(
+				pFibObject );
+		}
+		pFibObject->pSuperiorElement = this;
 	}
-	pFibObject->pSuperiorElement = this;
 	
 #ifdef FEATURE_C_EXT_OBJECT_USE_LIST
 	list< pair< cFibElement * , list< cFibVariable * > > >::iterator
@@ -2737,11 +2743,17 @@ bool cExtObject::setSubobject( const unsignedIntFib uiNumberSubobject,
 #else //FEATURE_C_EXT_OBJECT_USE_LIST
 	cFibElement * pOldSubObject = vecSubobjects[ uiNumberSubobject - 1 ].first;
 #endif //FEATURE_C_EXT_OBJECT_USE_LIST
+	if ( pFibObject == pOldSubObject ){
+		//nothing to change
+		return true;
+	}
 	cFibObjectCounts fibObjectCountsDelta = evalueCountersForObject( pFibObject );
 	
 	if ( pOldSubObject != NULL ){
 		
-		pOldSubObject->pSuperiorElement = NULL;
+		if ( pOldSubObject->pSuperiorElement == this ){
+			pOldSubObject->pSuperiorElement = NULL;
+		}
 		fibObjectCountsDelta -= evalueCountersForObject( pOldSubObject );
 		
 		if ( bDeleteOld && ( pOldSubObject != pFibObject ) ){
@@ -3147,10 +3159,10 @@ bool cExtObject::deleteSubobject( unsignedIntFib uiSubobjectNumber,
 			
 			if ( pSubobjectToDelete->pSuperiorElement == this ){
 				pSubobjectToDelete->pSuperiorElement = NULL;
-				if ( bDeleteOld ){
-					pSubobjectToDelete->deleteObject();
-				}//else don't delete
 			}
+			if ( bDeleteOld ){
+				pSubobjectToDelete->deleteObject();
+			}//else don't delete
 		}else{//( pSubobjectToDelete == NULL )
 			fibObjectCountsDelta.uiNumberOfObjectpoints--;
 			updateAllCounters( fibObjectCountsDelta );

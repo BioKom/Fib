@@ -141,6 +141,7 @@ cDomainReference test:
 testen (prio 3):
 	- cFibVector::operator*( const double dFactor )const
 	- tFibElementStructur test for (const) getSuperiorRootElement()
+	- tFibDatatyps: more tests (see TODO)
 	- cDomain ( all children ) Test:
 		- bool isReference() const;
 		- bool isScalar() const;
@@ -166,7 +167,7 @@ testen fuer cVectorProperty (prio 7):
 testen (prio 7):
   - cEvaluePositionList methods not tested in tEvalueObject
   - cEvaluePositionListMemLimit mit tEvalueObject testen
-  - cFibVector: operator<() and lowerVector()
+  - cFibVector: operator<() and lowerVector(); clone()
   - cEvaluePositionList::distanceOfProperties()
   - cEvaluePositionList::toFibObject()
   - cList( list< cFibElement * > liUnderObjects, cFibElement * pInSuperiorElement = NULL );

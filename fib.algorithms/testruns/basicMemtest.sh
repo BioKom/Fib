@@ -22,6 +22,10 @@
 # 13.02.2011   Oesterholz   t_nD1_nPolynom removed and tPolynom added
 # 21.02.2011   Oesterholz   t_nD2 added
 # 05.07.2011   Oesterholz   tSpline added
+# 04.03.2013   Oesterholz   tImageStructureConvertToFib and
+#	tImageStructureConvertToTiles added
+# 05.04.2013   Oesterholz   tImageSearchData added
+# 08.04.2013   Oesterholz   tFindImageStructure added
 #
 
 first(){
@@ -61,33 +65,33 @@ echo
 #evaluate testcases
 
 echo >>${OUTPUT}
-echo "Memoryleaks in tNReduceFibObject" >>${OUTPUT}
+echo "Memory leaks in tNReduceFibObject" >>${OUTPUT}
 ${LEAK_CHECKER} ./tNReduceFibObject ../testObjects/ > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tNReduceFibObject >>${OUTPUT} 2>>${ERROR_OUTPUT}
 echo >>${OUTPUT}
 
 echo >>${OUTPUT}
-echo "Memoryleaks in t_nD1_createAreasForPoints" >>${OUTPUT}
+echo "Memory leaks in t_nD1_createAreasForPoints" >>${OUTPUT}
 ${LEAK_CHECKER} ./t_nD1_createAreasForPoints > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./t_nD1_createAreasForPoints >>${OUTPUT} 2>>${ERROR_OUTPUT}
 echo >>${OUTPUT}
 
 echo >>${OUTPUT}
-echo "Memoryleaks in t_nTidyFibObjects_nBalanceLists" >>${OUTPUT}
+echo "Memory leaks in t_nTidyFibObjects_nBalanceLists" >>${OUTPUT}
 ${LEAK_CHECKER} ./t_nTidyFibObjects_nBalanceLists 64 4 > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./t_nTidyFibObjects_nBalanceLists >>${OUTPUT} 2>>${ERROR_OUTPUT}
 echo >>${OUTPUT}
 
 
 echo >>${OUTPUT}
-echo "Memoryleaks in t_nD1_nPolynom_evaluePolynomHillClimbing" >>${OUTPUT}
+echo "Memory leaks in t_nD1_nPolynom_evaluePolynomHillClimbing" >>${OUTPUT}
 ${LEAK_CHECKER} ./t_nD1_nPolynom_evaluePolynomHillClimbing > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./t_nD1_nPolynom_evaluePolynomHillClimbing >>${OUTPUT} 2>>${ERROR_OUTPUT}
 echo >>${OUTPUT}
 
 echo >>${OUTPUT}
-echo "Memoryleaks in t_nD1_nPolynom_evaluePolynomRange" >>${OUTPUT}
+echo "Memory leaks in t_nD1_nPolynom_evaluePolynomRange" >>${OUTPUT}
 ${LEAK_CHECKER} ./t_nD1_nPolynom_evaluePolynomRange > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./t_nD1_nPolynom_evaluePolynomRange >>${OUTPUT} 2>>${ERROR_OUTPUT}
 echo >>${OUTPUT}
 
 echo >>${OUTPUT}
-echo "Memoryleaks in t_nD1_nPolynom_findPolynomRand" >>${OUTPUT}
+echo "Memory leaks in t_nD1_nPolynom_findPolynomRand" >>${OUTPUT}
 ${LEAK_CHECKER} ./t_nD1_nPolynom_findPolynomRand > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./t_nD1_nPolynom_findPolynomRand >>${OUTPUT} 2>>${ERROR_OUTPUT}
 echo >>${OUTPUT}
 
@@ -98,7 +102,7 @@ if [ ! -d test_output ]; then
 fi
 
 echo >>${OUTPUT}
-echo "Memoryleaks in tCEvalueUnderObjects" >>${OUTPUT}
+echo "Memory leaks in tCEvalueUnderObjects" >>${OUTPUT}
 ${LEAK_CHECKER} ./tCEvalueUnderObjects ../testObjects/ > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tCEvalueUnderObjects >>${OUTPUT} 2>>${ERROR_OUTPUT}
 echo >>${OUTPUT}
 
@@ -109,12 +113,12 @@ if [ ! -d test_output ]; then
 fi
 
 echo >>${OUTPUT}
-echo "Memoryleaks in tHyperplane" >>${OUTPUT}
+echo "Memory leaks in tHyperplane" >>${OUTPUT}
 ${LEAK_CHECKER} ./tHyperplane  > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tHyperplane >>${OUTPUT} 2>>${ERROR_OUTPUT}
 echo >>${OUTPUT}
 
 echo >>${OUTPUT}
-echo "Memoryleaks in tHyperplaneBody" >>${OUTPUT}
+echo "Memory leaks in tHyperplaneBody" >>${OUTPUT}
 ${LEAK_CHECKER} ./tHyperplaneBody  > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tHyperplaneBody >>${OUTPUT} 2>>${ERROR_OUTPUT}
 echo >>${OUTPUT}
 
@@ -125,12 +129,12 @@ if [ ! -d test_output ]; then
 fi
 
 echo >>${OUTPUT}
-echo "Memoryleaks in tPolynom" >>${OUTPUT}
+echo "Memory leaks in tPolynom" >>${OUTPUT}
 ${LEAK_CHECKER} ./tPolynom  > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tPolynom >>${OUTPUT} 2>>${ERROR_OUTPUT}
 echo >>${OUTPUT}
 
 echo >>${OUTPUT}
-echo "Memoryleaks in tSpline" >>${OUTPUT}
+echo "Memory leaks in tSpline" >>${OUTPUT}
 ${LEAK_CHECKER} ./tSpline  > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tSpline >>${OUTPUT} 2>>${ERROR_OUTPUT}
 echo >>${OUTPUT}
 
@@ -142,10 +146,35 @@ if [ ! -d test_output ]; then
 fi
 
 echo >>${OUTPUT}
-echo "Memoryleaks in t_nD2" >>${OUTPUT}
+echo "Memory leaks in t_nD2" >>${OUTPUT}
 ${LEAK_CHECKER} ./t_nD2  > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./t_nD2 >>${OUTPUT} 2>>${ERROR_OUTPUT}
 echo >>${OUTPUT}
 
+
+
+# test nImage classes
+cd ${ORIGINAL_DIR}/../nConvertToFib/nImage >>${OUTPUT} 2>>${ERROR_OUTPUT}
+
+echo >>${OUTPUT}
+echo "Memory leaks in tImageStructureConvertToTiles" >>${OUTPUT}
+${LEAK_CHECKER} ./nStructureData/nConvertToFib/testcase/tImageStructureConvertToTiles ./testObjects/ 4  > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./nStructureData/nConvertToFib/testcase/tImageStructureConvertToTiles >>${OUTPUT} 2>>${ERROR_OUTPUT}
+echo >>${OUTPUT}
+
+echo >>${OUTPUT}
+echo "Memory leaks in tImageStructureConvertToFib" >>${OUTPUT}
+${LEAK_CHECKER} ./nStructureData/testcase/tImageStructureConvertToFib ./testObjects/ 64  > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./nStructureData/testcase/tImageStructureConvertToFib >>${OUTPUT} 2>>${ERROR_OUTPUT}
+echo >>${OUTPUT}
+
+echo >>${OUTPUT}
+echo "Memory leaks in tImageSearchData" >>${OUTPUT}
+${LEAK_CHECKER} ./nStructureData/testcase/tImageSearchData 64  > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./nStructureData/testcase/tImageSearchData >>${OUTPUT} 2>>${ERROR_OUTPUT}
+echo >>${OUTPUT}
+
+
+echo >>${OUTPUT}
+echo "Memory leaks in tFindImageStructure" >>${OUTPUT}
+${LEAK_CHECKER} ./nSearchForStructure/testcase/tFindImageStructure 64  > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./nSearchForStructure/testcase/tFindImageStructure >>${OUTPUT} 2>>${ERROR_OUTPUT}
+echo >>${OUTPUT}
 
 
 

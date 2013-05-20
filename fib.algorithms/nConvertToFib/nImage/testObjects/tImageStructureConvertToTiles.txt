@@ -1,0 +1,9 @@
+pointAreas/triangle_x2y3_x2y7_x6y7.xml;pointAreas/empty.xml
+pointAreas/quadrangle_x2y3_x4y6.xml;pointAreas/empty.xml
+pointAreas/circleM12_12R8.xml;pointAreas/empty.xml
+pointAreas/circleM12_12R8.xml;pointAreas/quadranglePLx8y8x8y22x22y22x22y8.xml
+pointAreas/quadrangleCirclePL.xml;pointAreas/empty.xml
+pointAreas/quadrangleCirclePL.xml;pointAreas/quadranglePLx8y8x8y22x22y22x22y8.xml
+pointAreas/quadrangleCircle2PL.xml;pointAreas/empty.xml
+pointAreas/quadrangleCircle2PL.xml;pointAreas/quadranglePLx8y8x8y22x22y22x22y8.xml
+pointAreas/quadrangleCircle2PL.xml;pointAreas/quadrangleCirclePL.xml

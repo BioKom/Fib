@@ -39,6 +39,8 @@ History:
 14.09.2011  Oesterholz  storeUnscaledValue(): store in something like the
 	two's complement system
 01.12.2011  Oesterholz  method isInBoundaries() added
+12.05.2013  Oesterholz  lNumberOfValues to unsigned ulNumberOfValues;
+	getDigits() handling changed
 */
 
 
@@ -64,16 +66,16 @@ cDomainInteger::cDomainInteger( longFib lInMinNumber,
 		longFib lInMaxNumber ):
 		cDomainIntegerBasis( (doubleFib)( 1.0 ) ),
 		lMinNumber( lInMinNumber ), lMaxNumber( lInMaxNumber ),
-		lNumberOfValues( lMaxNumber - lMinNumber + 1 ),
-		domainNaturalNumberBit( getDigits( lInMaxNumber - lInMinNumber ) ){
+		ulNumberOfValues( lMaxNumber - lMinNumber + 1 ),
+		domainNaturalNumberBit( getDigits( ulNumberOfValues - 1 ) ){
 	
 	if ( lInMaxNumber < lInMinNumber ){
 		//switch bouderies
 		lMinNumber = lInMaxNumber;
 		lMaxNumber = lInMinNumber;
-		lNumberOfValues = 1;
+		ulNumberOfValues = lMaxNumber - lMinNumber + 1;
 		domainNaturalNumberBit = cDomainNaturalNumberBit(
-			getDigits( lMaxNumber - lMinNumber ) );
+			getDigits( ulNumberOfValues - 1 ) );
 	}
 }
 
@@ -95,16 +97,16 @@ cDomainInteger::cDomainInteger( longFib lInMinNumber,
 		longFib lInMaxNumber, doubleFib dScalingFactor ):
 		cDomainIntegerBasis( dScalingFactor ),
 		lMinNumber( lInMinNumber ), lMaxNumber( lInMaxNumber ),
-		lNumberOfValues( lMaxNumber - lMinNumber + 1 ),
-		domainNaturalNumberBit( getDigits( lInMaxNumber - lInMinNumber ) ){
+		ulNumberOfValues( lMaxNumber - lMinNumber + 1 ),
+		domainNaturalNumberBit( getDigits( ulNumberOfValues - 1 ) ){
 	
 	if ( lInMaxNumber < lInMinNumber ){
 		//switch bouderies
 		lMinNumber = lInMaxNumber;
 		lMaxNumber = lInMinNumber;
-		lNumberOfValues = 1;
+		ulNumberOfValues = lMaxNumber - lMinNumber + 1;
 		domainNaturalNumberBit = cDomainNaturalNumberBit(
-			getDigits( lMaxNumber - lMinNumber ) );
+			getDigits( ulNumberOfValues - 1 ) );
 	}
 }
 
@@ -117,7 +119,7 @@ cDomainInteger::cDomainInteger( longFib lInMinNumber,
 cDomainInteger::cDomainInteger( const cDomainInteger &domain ):
 		cDomainIntegerBasis( domain.getScalingFactor() ),
 		lMinNumber( domain.lMinNumber ), lMaxNumber( domain.lMaxNumber ),
-		lNumberOfValues( domain.lNumberOfValues ),
+		ulNumberOfValues( domain.ulNumberOfValues ),
 		domainNaturalNumberBit( domain.domainNaturalNumberBit ){
 	//nothing to do
 }
@@ -458,13 +460,19 @@ intFib cDomainInteger::restoreXml( const TiXmlElement * pXmlElement ){
 		//Warning: attribute max is missing
 		iReturnValue = 2;
 	}
-	lNumberOfValues = lMaxNumber - lMinNumber + 1;
+	if ( lMaxNumber < lMinNumber ){
+		//switch min and max numbers
+		const longFib lTmpNumber = lMinNumber;
+		lMinNumber = lMaxNumber;
+		lMaxNumber = lTmpNumber;
+	}
+	ulNumberOfValues = lMaxNumber - lMinNumber + 1;
 	//restore the attribute scalingfactor
 	const char * szXmlScalingFactor = pXmlElement->Attribute( "scalingfactor" );
 	setXmlScaling( szXmlScalingFactor );
 	
 	domainNaturalNumberBit = cDomainNaturalNumberBit(
-		getDigits( lMaxNumber - lMinNumber  ) );
+		getDigits( ulNumberOfValues - 1 ) );
 	
 	return iReturnValue;
 }
@@ -581,11 +589,16 @@ intFib cDomainInteger::restore( cReadBits & iBitStream ){
 		return -2;
 	}
 	//set the domain properties
-	lMinNumber = lMinNumberStored;
-	lMaxNumber = lMaxNumberStored;
-	lNumberOfValues = lMaxNumber - lMinNumber + 1;
+	if ( lMinNumberStored <= lMaxNumberStored ){
+		lMinNumber = lMinNumberStored;
+		lMaxNumber = lMaxNumberStored;
+	}else{//( lMaxNumberStored < lMinNumberStored )
+		lMinNumber = lMaxNumberStored;
+		lMaxNumber = lMinNumberStored;
+	}
+	ulNumberOfValues = lMaxNumber - lMinNumber + 1;
 	domainNaturalNumberBit = cDomainNaturalNumberBit(
-		getDigits( lMaxNumber - lMinNumber ) );
+		getDigits( ulNumberOfValues - 1 ) );
 	
 	if ( (cDomainName & 0x02) == 0x02 ){
 		//restore the scalingfactor
@@ -646,7 +659,7 @@ bool cDomainInteger::storeUnscaledValue( longFib lValue, ostream & stream,
 	}//else ( lMinNumber <= 0 ) and ( 0 <= lMaxNumber )
 	if ( lValue < 0 ){
 		//store negative value
-		return domainNaturalNumberBit.storeUnscaledValue( lNumberOfValues + lValue,
+		return domainNaturalNumberBit.storeUnscaledValue( ulNumberOfValues + lValue,
 			stream, cRestBits, uiRestBitPosition );
 	}//else ( 0 <= lValue )
 	return domainNaturalNumberBit.storeUnscaledValue( lValue,
@@ -691,7 +704,7 @@ longFib cDomainInteger::restoreIntegerValue(
 	}//else ( lMinNumber <= 0 ) and ( 0 <= lMaxNumber )
 	if ( lMaxNumber < lLoadedValue ){
 		//negative number restored
-		return roundUnscaled( lLoadedValue - lNumberOfValues );
+		return roundUnscaled( lLoadedValue - ulNumberOfValues );
 	}//else ( lLoadedValue <= lMaxNumber )
 	return roundUnscaled( lLoadedValue );
 }

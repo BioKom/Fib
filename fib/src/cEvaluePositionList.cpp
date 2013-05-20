@@ -461,7 +461,7 @@ void cEvaluePositionList::printPositionsData(
 				
 				strOutput << itrProperty->getValue( uiActualElement )<<"; ";
 			}
-			strOutput<<"); ";
+			strOutput<<");";
 		}
 		
 		strOutput<<endl;

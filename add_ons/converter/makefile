@@ -47,6 +47,8 @@
 # 14.10.2012   Oesterholz   library "-lpthread" included
 # 21.12.2012   Oesterholz   FreeImage needs libm
 # 21.01.2013   Oesterholz   convertFibToFibPointList added
+# 27.04.2013   Oesterholz   convertFromImageStructure and
+#		cEvalueSimpleRGBA255Sec added
 
 
 
@@ -161,7 +163,7 @@ LIBS_WIN_TEST:=-L$(DIR_FIB_LIB) -lfib_test\
 ##########################################################################
 
 SRC_CONVERTER:=$(addprefix $(DIR_SRC), nConvertToFib.cpp nConvertFromFib.cpp\
-	fipImage.cpp cFreeImageData.cpp)
+	fipImage.cpp cFreeImageData.cpp cEvalueSimpleRGBA255Sec.cpp)
 
 
 ##########################################################################
@@ -204,7 +206,7 @@ OBJ_TEST_CONVERTER:=$(subst .cpp,.o,$(subst $(DIR_SRC),$(DIR_OBJ_TEST),$(SRC_CON
 
 # the to create executebels
 EXE_FILES:=convertToFib convertFromFib convertFibToFib evalueDerivate\
-	convertFibToFibPointList
+	convertFibToFibPointList convertFromImageStructure
 
 SRC_EXE_FILES:=$(addprefix $(DIR_SRC), $(addsuffix .cpp, $(EXE_FILES) ) )
 

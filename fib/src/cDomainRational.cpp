@@ -37,6 +37,8 @@ History:
 01.12.2011  Oesterholz  method isInBoundaries() added
 18.04.2012  Oesterholz  Bugfix: replace FirstChild()->ToElement() with
 	FirstChildElement()
+17.05.2013  Oesterholz  replaced (m*pow(2,e)) with composeDoubleFib() and
+	m*2 with m<<1 and m72 with m>>1
 */
 
 
@@ -175,7 +177,7 @@ doubleFib cDomainRational::round( const doubleFib dValue ) const{
 	longFib lExponent;
 	decomposeDoubleFib( dValue, lMantissa, lExponent );
 
-	return ((doubleFib)lMantissa) * pow( 2.0, ((doubleFib)lExponent) );
+	return composeDoubleFib( lMantissa, lExponent );
 }
 
 
@@ -191,12 +193,12 @@ doubleFib cDomainRational::getMaximum() const{
 	}
 	if ( 0 <= pDomainMantissa->getMaximumUnscaled() ){
 		//use biggest second (exponent) factor
-		return ((doubleFib)pDomainMantissa->getMaximumUnscaled()) *
-			pow( 2.0, ((doubleFib)pDomainExponent->getMaximumUnscaled()) );
+		return composeDoubleFib( pDomainMantissa->getMaximumUnscaled(),
+			pDomainExponent->getMaximumUnscaled() );
 	}//else pDomainMantissa->getMaximum() < 0
 	//use smalest second (exponent) factor
-	return ((doubleFib)pDomainMantissa->getMaximumUnscaled()) *
-		pow( 2.0, ((doubleFib)pDomainExponent->getMinimumUnscaled()) );
+	return composeDoubleFib( pDomainMantissa->getMaximumUnscaled(),
+		pDomainExponent->getMinimumUnscaled() );
 }
 
 
@@ -211,11 +213,11 @@ doubleFib cDomainRational::getMinimum() const{
 		return 0.0;
 	}
 	if ( 0 <= pDomainMantissa->getMinimumUnscaled() ){
-		return ((doubleFib)pDomainMantissa->getMinimumUnscaled()) *
-			pow( 2.0, ((doubleFib)pDomainExponent->getMinimumUnscaled()) );
+		return composeDoubleFib( pDomainMantissa->getMinimumUnscaled(),
+			pDomainExponent->getMinimumUnscaled() );
 	}//else
-	return ((doubleFib)pDomainMantissa->getMinimumUnscaled()) *
-		pow( 2.0, ((doubleFib)pDomainExponent->getMaximumUnscaled()) );
+	return composeDoubleFib( pDomainMantissa->getMinimumUnscaled(),
+		pDomainExponent->getMaximumUnscaled() );
 }
 
 
@@ -587,7 +589,7 @@ doubleFib cDomainRational::restoreValue( cReadBits & iBitStream,
 		//error
 		return 0.0;
 	}
-	return ((doubleFib)lMantissa) * pow( 2.0, ((doubleFib)lExponent) );
+	return composeDoubleFib( lMantissa, lExponent );
 }
 
 
@@ -638,7 +640,7 @@ void cDomainRational::decomposeDoubleFib( const doubleFib dValue,
 	longFib lMantissa;
 	longFib lExponent;
 	fib::decomposeDoubleFib( dValue, & lMantissa, & lExponent );
-	DEBUG_OUT_L3(<<"initialvalues: "<<((doubleFib)lMantissa) * pow( 2.0, ((doubleFib)lExponent) )<<"= "<<lMantissa<<" *2^"<<lExponent<<endl);
+	DEBUG_OUT_L3(<<"initialvalues: "<<composeDoubleFib( lMantissa, lExponent )<<"= "<<lMantissa<<" *2^"<<lExponent<<endl);
 	
 	//search for the neares number
 	const longFib lMinExponent = pDomainExponent->getMinimumUnscaled();
@@ -647,23 +649,23 @@ void cDomainRational::decomposeDoubleFib( const doubleFib dValue,
 	if ( lExponent < lMinExponent ){
 		const longFib lExponentMin = pDomainExponent->roundUnscaled( lExponent );
 		
-		lMantissa = pDomainMantissa->roundUnscaled( lMantissa *
-			pow( 2.0, lExponent - lExponentMin) );
+		lMantissa = pDomainMantissa->roundUnscaled(
+			composeDoubleFib( lMantissa, (lExponent - lExponentMin ) ) );
 		lExponent = lExponentMin;
 		
-		DEBUG_OUT_L3(<<"min exponent reached new values: "<<((doubleFib)lMantissa) * pow( 2.0, ((doubleFib)lExponent) )<<"= "<<lMantissa<<" *2^"<<lExponent<<endl);
+		DEBUG_OUT_L3(<<"min exponent reached new values: "<<composeDoubleFib( lMantissa, lExponent )<<"= "<<lMantissa<<" *2^"<<lExponent<<endl);
 	}else if ( lMaxExponent < lExponent ){
 		const longFib lExponentMax = pDomainExponent->roundUnscaled( lExponent );
 		
-		lMantissa = pDomainMantissa->roundUnscaled( lMantissa *
-			pow( 2.0, lExponent - lExponentMax ) );
+		lMantissa = pDomainMantissa->roundUnscaled(
+			composeDoubleFib( lMantissa, ( lExponent - lExponentMax ) ) );
 		lExponent = lExponentMax;
 	
-		DEBUG_OUT_L3(<<"max exponent reached new values: "<<((doubleFib)lMantissa) * pow( 2.0, ((doubleFib)lExponent) )<<"= "<<lMantissa<<" *2^"<<lExponent<<endl);
+		DEBUG_OUT_L3(<<"max exponent reached new values: "<<composeDoubleFib( lMantissa, lExponent )<<"= "<<lMantissa<<" *2^"<<lExponent<<endl);
 	}
 	
 	doubleFib dBestDistance = abs( dValue -
-		((doubleFib)lMantissa) * pow( 2.0, ((doubleFib)lExponent) ) );
+		composeDoubleFib( lMantissa, lExponent ) );
 	longFib lBestMantissa = lMantissa;
 	longFib lBestExponent = lExponent;
 	
@@ -674,37 +676,37 @@ void cDomainRational::decomposeDoubleFib( const doubleFib dValue,
 	const longFib lMaxMatissa = pDomainMantissa->getMaximumUnscaled();
 	DEBUG_OUT_L3(<<"mantissa min= "<<lMinMatissa<<" max= "<<lMaxMatissa<<endl);
 	
-	longFib lMantissaHalf = lMantissa / 2;
+	longFib lMantissaHalf = lMantissa >> 1;
 	longFib lBounderyMantisse = lMinMatissa;
 	if ( lMantissa < 0 ){
 		lBounderyMantisse = abs( lMaxMatissa );
 	}
-	DEBUG_OUT_L4(<<"searching for better than: "<<((doubleFib)lBestMantissa) * pow( 2.0, ((doubleFib)lBestExponent) )<<"= "<<lBestMantissa<<" *2^"<<lBestExponent<<endl);
+	DEBUG_OUT_L4(<<"searching for better than: "<<composeDoubleFib( lBestMantissa, lBestExponent )<<"= "<<lBestMantissa<<" *2^"<<lBestExponent<<endl);
 	while ( (lMantissaHalf != 0) && ( lBounderyMantisse < abs( lMantissaHalf ) ) &&
 			(lExponent < lMaxExponent ) ){
 		//decrease precision
 		lExponent++;
 		lMantissa = lMantissaHalf;
-		lMantissaHalf = lMantissa / 2;
+		lMantissaHalf = lMantissa >> 1;
 		
 		const longFib lMantissaTmp = pDomainMantissa->roundUnscaled( lMantissa );
 		const longFib lExponentTmp = pDomainExponent->roundUnscaled( lExponent );
 		
 		//check distance lower
 		const doubleFib dBestDistanceTmp = abs( dValue -
-			((doubleFib)lMantissaTmp) * pow( 2.0, ((doubleFib)lExponentTmp) ) );
+			composeDoubleFib( lMantissaTmp, lExponentTmp ) );
 		if ( dBestDistanceTmp < dBestDistance ){
 			dBestDistance = dBestDistanceTmp;
 			lBestMantissa = lMantissa;
 			lBestExponent = lExponent;
-			DEBUG_OUT_L4(<<"better found: "<<((doubleFib)lBestMantissa) * pow( 2.0, ((doubleFib)lBestExponent) )<<"= "<<lBestMantissa<<" *2^"<<lBestExponent<<endl);
+			DEBUG_OUT_L4(<<"better found: "<<composeDoubleFib( lBestMantissa, lBestExponent )<<"= "<<lBestMantissa<<" *2^"<<lBestExponent<<endl);
 		}
 	}
 	//check the other direction
 	lMantissa = lOrgMantissa;
 	lExponent = lOrgExponent;
 	
-	longFib lMantissaDouble = lMantissa * 2;
+	longFib lMantissaDouble = lMantissa << 1;
 	
 	lBounderyMantisse = lMaxMatissa;
 	if ( lMantissa < 0 ){
@@ -714,19 +716,19 @@ void cDomainRational::decomposeDoubleFib( const doubleFib dValue,
 		//increase precision
 		lExponent--;
 		lMantissa = lMantissaDouble;
-		lMantissaDouble = lMantissa * 2;
+		lMantissaDouble = lMantissa << 1;
 		
 		const longFib lMantissaTmp = pDomainMantissa->roundUnscaled( lMantissa );
 		const longFib lExponentTmp = pDomainExponent->roundUnscaled( lExponent );
 		
 		//check distance lower
 		const doubleFib dBestDistanceTmp = abs( dValue -
-			((doubleFib)lMantissaTmp) * pow( 2.0, ((doubleFib)lExponentTmp) ) );
+			composeDoubleFib( lMantissaTmp, lExponentTmp) );
 		if ( dBestDistanceTmp < dBestDistance ){
 			dBestDistance = dBestDistanceTmp;
 			lBestMantissa = lMantissa;
 			lBestExponent = lExponent;
-			DEBUG_OUT_L4(<<"better found rev : "<<((doubleFib)lBestMantissa) * pow( 2.0, ((doubleFib)lBestExponent) )<<"= "<<lBestMantissa<<" *2^"<<lBestExponent<<endl);
+			DEBUG_OUT_L4(<<"better found rev : "<<composeDoubleFib( lBestMantissa, lBestExponent )<<"= "<<lBestMantissa<<" *2^"<<lBestExponent<<endl);
 		}
 	}
 	
@@ -734,13 +736,13 @@ void cDomainRational::decomposeDoubleFib( const doubleFib dValue,
 	if ( lBestMantissa < lMinMatissa ){
 		if ( ( 0 < lBestMantissa ) && ( 0 < lMinMatissa ) ){
 			while ( lBestMantissa < lMinMatissa ){
-				lBestMantissa *= 2;
+				lBestMantissa = lBestMantissa << 1;
 				lBestExponent--;
 			}
 		}
 		if ( ( lBestMantissa < 0 ) && ( lMinMatissa < 0 ) ){
 			while ( lBestMantissa < lMinMatissa ){
-				lBestMantissa /= 2;
+				lBestMantissa = lBestMantissa >> 1;
 				lBestExponent++;
 			}
 		}
@@ -748,13 +750,13 @@ void cDomainRational::decomposeDoubleFib( const doubleFib dValue,
 	}else if ( lMaxMatissa < lBestMantissa ){
 		if ( ( 0 < lBestMantissa ) && ( 0 < lMaxMatissa ) ){
 			while ( lMaxMatissa < lBestMantissa ){
-				lBestMantissa /= 2;
+				lBestMantissa = lBestMantissa >> 1;
 				lBestExponent++;
 			}
 		}
 		if ( ( lBestMantissa < 0 ) && ( lMaxMatissa < 0 ) ){
 			while ( lMaxMatissa < lBestMantissa ){
-				lBestMantissa *= 2;
+				lBestMantissa = lBestMantissa << 1;
 				lBestExponent--;
 			}
 		}
