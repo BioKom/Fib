@@ -380,9 +380,9 @@ History:
  *//*
 History:
 */
-//#ifdef NEVER
+#ifdef NEVER
 #define SWITCH_JUST_STORE_AND_EVALUE
-//#endif //NEVER
+#endif //NEVER
 
 
 
