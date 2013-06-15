@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fib_object
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://www.biokom.info/"
+         xsd:schemaLocation="http://www.biokom.info/fib.xsd">
+<root>
+   <multimedia_info fib_version="3" db_version="2"/>
+   <optionalpart>
+      <pair key="description" value="This object just prints a green point. "/>
+   </optionalpart>
+   <domains>
+      <dim count="2"><!-- picture size 8 x 12 pixles -->
+         <dimension number="1" direction="horizontal"/>
+         <dimension number="2" direction="vertical"/>
+         <vector elements="2">
+            <integer min="0" max="7"/>
+            <integer min="0" max="11"/>
+         </vector>
+      </dim>
+      <property name="colorRGB" >
+         <vector elements="3"><!-- RGB color with 8 bit color depth -->
+            <naturalNumberB bit="8" />
+            <naturalNumberB bit="8" />
+            <naturalNumberB bit="8" />
+         </vector>
+      </property>
+     <property name="transparency" >
+         <vector elements="1"><!-- transparency property domain;
+            0 full opaque till 255 full transparent (invisible) -->
+            <naturalNumberB bit="8" />
+         </vector>
+      </property>
+      <subfunction><!-- values for subfunctions -->
+         <naturalNumber scalingfactor="0.00001" max="10000000000"/>
+      </subfunction>
+      <externObject><!-- domain for external objects -->
+         <vector elements="4">
+            <integer min="-10000" max="10000" /><!-- identifier -->
+            <naturalNumber max="32" /><!--number input values -->
+            <naturalNumber max="8" /> <!--number subobjects -->
+            <naturalNumber max="16" /><!--number output values -->
+         </vector>
+      </externObject>
+   </domains>
+   <main_fib_object>
+      
+      <property><!-- set the color -->
+         <vector type="property.colorRGB">
+            <value>0</value><!-- red -->
+            <value>250</value><!-- green -->
+            <value>0</value><!-- blue -->
+         </vector>
+         <point><!-- make a point -->
+            <vector type="position">
+               <value>1</value>
+               <value>3</value>
+            </vector>
+         </point>
+      </property>
+      
+   </main_fib_object>
+</root>
+</fib_object>

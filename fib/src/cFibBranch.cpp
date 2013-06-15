@@ -54,6 +54,7 @@ History:
 15.12.2011  Oesterholz  cFibSet and cFibmatrix added to evalueCountersForObject()
 18.01.2012  Oesterholz  Bugfix: in insertElement() check variables above
 	the to replace element
+19.05.2013  Oesterholz  SWITCH_JUST_STORE_AND_EVALUE implemented
 */
 
 //TODO weg
@@ -725,6 +726,8 @@ bool lower_second_pair_element( const pair<size_t, size_t> &pairFirst,
 }
 
 
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
+
 /**
  * This method returns a number of (lNumberOfMaxReturnedElements)
  * Fib elements beginning from the actual Fib element in the
@@ -1193,6 +1196,7 @@ list<cFibVariable*> cFibBranch::getDefinedVariablesInternal(
 	return liDefinedVariables;
 }
 
+#endif //SWITCH_JUST_STORE_AND_EVALUE
 
 /**
  * This method replace the variable variableOld with the variable
@@ -1481,6 +1485,8 @@ unsignedIntFib cFibBranch::getNumberOfObjectPoints() const{
 
 #endif //FEATURE_FAST_UPDATE
 
+
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
 
 /**
  * This method returns the number of the Fib element over wich the
@@ -2415,6 +2421,7 @@ bool cFibBranch::removeObject( const unsignedIntFib objectPoint,
 	return false;
 }
 
+#endif //SWITCH_JUST_STORE_AND_EVALUE
 
 /**
  * This method checks, if all Fib elements of this Fib object
@@ -2440,6 +2447,8 @@ bool cFibBranch::hasUnderAllObjects() const{
 	}
 	return true;
 }
+
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
 
 /**
  * This method checks, if the Fib element on the specified position
@@ -2625,6 +2634,8 @@ cFibElement *cFibBranch::cutElement( const char cType, const unsignedIntFib
 		false, bCheckVariables );
 }
 
+#endif //SWITCH_JUST_STORE_AND_EVALUE
+
 
 #ifdef FEATURE_FAST_UPDATE
 
@@ -2649,6 +2660,7 @@ void cFibBranch::deleteObject(){
 }
 #endif //FEATURE_FAST_UPDATE
 
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
 
 /**
  * This method moves a Fib limb -element (cFibLimb) on the specified
@@ -2838,6 +2850,7 @@ intFib cFibBranch::moveLimbElement( const char cType, const unsignedIntFib
 		pFibElementToMove->getNumberOfElement(), iHowfar, true );
 }
 
+
 #ifdef FEATURE_EQUAL_FIB_OBJECT
 
 /**
@@ -2974,6 +2987,8 @@ bool cFibBranch::equal( const cFibElement & fibObject ) const{
 bool cFibBranch::isBranch() const{
 	return true;
 }
+
+#endif //SWITCH_JUST_STORE_AND_EVALUE
 
 //protected methods
 
@@ -3408,6 +3423,7 @@ unsignedIntFib cFibBranch::getNumberOfObjectPointUp(
 	return uiNumberOfObjectPoint;
 }
 
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
 
 /**
  * This method returns the numbers of all object points that contain the
@@ -3469,6 +3485,7 @@ list<unsignedIntFib> cFibBranch::elementPointToObjectPointsUp(
 	return liObjectPoints;
 }
 
+#endif //SWITCH_JUST_STORE_AND_EVALUE
 
 #else //FEATURE_FAST_UPDATE
 

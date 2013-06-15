@@ -738,6 +738,7 @@ bool cExtObject::isValidFibElement() const{
 	return true;
 }
 
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
 
 /**
  * This method checks if the given variable is used in the given
@@ -802,6 +803,7 @@ set< cFibVariable* > cExtObject::getUsedVariables( edDirection direction ){
 	return setUsedVariables;
 }
 
+#endif //SWITCH_JUST_STORE_AND_EVALUE
 
 /**
  * This method replace the variable pVariableOld with the variable
@@ -829,6 +831,7 @@ bool cExtObject::replaceVariable( cFibVariable * pVariableOld,
 	return cFibBranch::replaceVariable( pVariableOld, pVariableNew );
 }
 
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
 
 /**
  * This method checks if the given variable is defined in the given
@@ -952,6 +955,7 @@ list< cFibVariable* > cExtObject::getDefinedVariablesInternal(
 	return liDefinedVariables;
 }
 
+#endif //SWITCH_JUST_STORE_AND_EVALUE
 
 /**
  * This method evaluades the Fib-object.
@@ -994,10 +998,13 @@ bool cExtObject::evalueObject( iEvaluePosition & evaluePosition,
 		
 		if ( pExternalRootObject == NULL ){
 #ifdef DEBUG_EVALUE
-			printf( "cExtObject::evalueObject() Error: with identifier %li external root object is NULL \n ", lTmpIdentifier);
+			printf( "cExtObject::evalueObject() Error: with identifier %li external root object is NULL\n", lTmpIdentifier);
 #endif //DEBUG_EVALUE
 			return false;
 		}
+#ifdef DEBUG_EVALUE
+		printf( "cExtObject::evalueObject() with identifier %li loaded\n ", lTmpIdentifier);
+#endif //DEBUG_EVALUE
 		//set this cExtObject element as calling
 		pExternalRootObject->setCallingFibElement( pThisObject );
 		
@@ -1297,6 +1304,7 @@ unsignedLongFib cExtObject::getCompressedSize() const{
 	return ulCompressedSize;
 }
 
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
 
 /**
  * @return true if this Fib-element is movebel else false
@@ -1306,6 +1314,7 @@ bool cExtObject::isMovable() const{
 	return false;
 }
 
+#endif //SWITCH_JUST_STORE_AND_EVALUE
 
 /**
  * This method copies the Fib-element on the specified position.
@@ -1337,6 +1346,7 @@ cFibElement * cExtObject::copyElement( const char cType,
 	return NULL;
 }
 
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
 
 #ifdef FEATURE_EQUAL_FIB_OBJECT
 
@@ -1939,6 +1949,8 @@ bool cExtObject::equalValuesSet( const cFibVariable * pVariableOwn,
 
 #endif //FEATURE_EQUAL_FIB_OBJECT
 
+#endif //SWITCH_JUST_STORE_AND_EVALUE
+
 
 /**
  * This method stores this Fib-object in the XML-format into the
@@ -2014,6 +2026,7 @@ bool cExtObject::storeXml( ostream & stream ) const{
 	return bReturnValue;
 }
 
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
 
 /**
  * This method inserts the given Fib-element fibElement on the
@@ -2462,6 +2475,7 @@ intFib cExtObject::moveLimbElement( const char cType, const
 	return iElementsMoved;
 }
 
+#endif //SWITCH_JUST_STORE_AND_EVALUE
 
 /**
  * @return The identifier of the external Fib-object this external

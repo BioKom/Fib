@@ -46,6 +46,7 @@ History:
 02.01.2012  Oesterholz  cTypeSubarea to cTypeArea
 06.01.2012  Oesterholz  DEBUG_RESTORE_XML: debugging information added for
 	restore from Xml
+03.06.2013  Oesterholz  SWITCH_JUST_STORE_AND_EVALUE implemented
 */
 
 
@@ -883,6 +884,7 @@ unsignedLongFib cArea::getCompressedSize() const{
 	return ulCompressedSize;
 }
 
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
 
 /**
  * This method checks if the given variable is used in the given
@@ -1036,6 +1038,7 @@ list<cFibVariable*> cArea::getDefinedVariablesInternal(
 	return liDefinedVariables;
 }
 
+#endif //SWITCH_JUST_STORE_AND_EVALUE
 
 /**
  * This method replace the variable variableOld with the variable
@@ -1097,6 +1100,7 @@ cFibElement * cArea::copyElement( const char cType, const unsignedIntFib
 	return NULL;
 }
 
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
 
 #ifdef FEATURE_EQUAL_FIB_OBJECT
 
@@ -1308,6 +1312,7 @@ bool cArea::equalElement( const cFibElement & fibElement ) const{
 
 #endif //FEATURE_EQUAL_FIB_OBJECT
 
+#endif //SWITCH_JUST_STORE_AND_EVALUE
 
 
 /**
@@ -1712,6 +1717,7 @@ unsignedIntFib cArea::enumerateVariablesForStoring(
 	
 	return cFibLimb::enumerateVariablesForStoring( uiLastVariableNumber );
 }
+
 
 
 /**

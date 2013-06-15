@@ -48,6 +48,7 @@ History:
 19.10.2011  Oesterholz  FEATURE_EQUAL_FIB_OBJECT implemented
 11.12.2011  Oesterholz  cFibSet added
 02.01.2012  Oesterholz  cFibMatrix added
+19.05.2013  Oesterholz  SWITCH_JUST_STORE_AND_EVALUE implemented
 */
 
 
@@ -380,6 +381,7 @@ public:
 	cFibElement *getFibElement( char cType, longFib lNumber,
 		bool bAbsolute=false );
 
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
 	/**
 	 * This method returns a number of (lNumberOfMaxReturnedElements)
 	 * Fib-elements beginning from the reference Fib-element in the
@@ -401,6 +403,8 @@ public:
 		longFib lNumber=1, char cType='u', edDirection direction=ED_ALL,
 		unsignedLongFib lNumberOfMaxReturnedElements=0, bool bAbsolute=false );
 
+#endif //SWITCH_JUST_STORE_AND_EVALUE
+	
 	/**
 	 * This method evaluades the Fib-object.
 	 *
@@ -517,6 +521,8 @@ public:
 	 */
 	virtual unsignedLongFib getCompressedSize() const = 0;
 
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
+	
 	/**
 	 * This method checks if the given variable is used in the given
 	 * direction from this Fib-element.
@@ -591,6 +597,7 @@ public:
 	bool variablesAreDefined( const set<cFibVariable*> & setVariable ,
 		edDirection direction=ED_HIGHER ) const;
 
+#endif //SWITCH_JUST_STORE_AND_EVALUE
 
 	/**
 	 * This method replace the variable variableOld with the variable
@@ -609,6 +616,7 @@ public:
 	 */
 	virtual bool replaceVariable( cFibVariable *variableOld,
 		cFibVariable *variableNew ) = 0;
+		
 
 #ifdef FEATURE_FAST_UPDATE
 
@@ -664,6 +672,7 @@ public:
 
 #endif //FEATURE_FAST_UPDATE
 
+	
 	/**
 	 * This method returns the number of the next connected object point
 	 * in the order of connected object points that conntains this fib
@@ -674,7 +683,7 @@ public:
 	 * 	-element
 	 */
 	virtual unsignedIntFib getNumberOfObjectPoint() const;
-
+	
 	/**
 	 * This method returns the number of Fib-elements of a type in this fib
 	 * -object.
@@ -695,7 +704,7 @@ public:
 	 * @return the number of move points in this Fib-object
 	 */
 	virtual unsignedIntFib getNumberOfMovePoints() const = 0;
-
+	
 	/**
 	 * This method returns the number of object points in this Fib-object.
 	 *
@@ -703,6 +712,8 @@ public:
 	 * @return the number of object points in this Fib-object
 	 */
 	virtual unsignedIntFib getNumberOfObjectPoints() const = 0;
+	
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
 
 	/**
 	 * This method converts the number of the elementPoint Fib-element
@@ -806,6 +817,8 @@ public:
 		const unsignedIntFib elementPoint=0, bool bAbsolute=false,
 		bool bCheckVariables=true ) = 0;
 
+#endif //SWITCH_JUST_STORE_AND_EVALUE
+
 	/**
 	 * This method inserts the given Fib-object fibObject on the
 	 * specified position. On the specified position a listelement will
@@ -832,6 +845,8 @@ public:
 		const unsignedIntFib elementPoint=0, bool first=true, 
 		bool bAbsolute=false ) = 0;
 
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
+	
 	/**
 	 * This method overwrites the Fib-object on specified position with
 	 * the given Fib-object fibObject. The Fib-object on specified
@@ -874,6 +889,8 @@ public:
 	virtual bool removeObject( const unsignedIntFib objectPoint,
 		bool bDeleteOld=true, bool bAbsolute=false ) = 0;
 
+#endif //SWITCH_JUST_STORE_AND_EVALUE
+	
 	/**
 	 * This method checks, if all Fib-elements of this Fib-object
 	 * have the subobjects they need to be correct.
@@ -883,6 +900,8 @@ public:
 	 */
 	virtual bool hasUnderAllObjects() const = 0;
 
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
+	
 	/**
 	 * This method checks, if the Fib-element on the specified position
 	 * is deletable.
@@ -945,6 +964,8 @@ public:
 	virtual cFibElement *cutElement( const char cType='u', const unsignedIntFib
 		elementPoint=0, bool bAbsolute=false, bool bCheckVariables=true ) = 0;
 
+#endif //SWITCH_JUST_STORE_AND_EVALUE
+		
 #ifdef FEATURE_FAST_UPDATE
 	
 	/**
@@ -974,6 +995,7 @@ public:
 	static void deleteObject( cFibElement * fibObject );
 #endif //FEATURE_FAST_UPDATE
 
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
 	/**
 	 * @return true if this Fib-element is movebel else false
 	 */
@@ -1008,6 +1030,8 @@ public:
 	virtual intFib moveLimbElement( const char cType='u', const unsignedIntFib 
 		elementPoint=0, const intFib iHowfar=1, bool bAbsolute=false ) = 0;
 
+#endif //SWITCH_JUST_STORE_AND_EVALUE
+	
 	/**
 	 * This method duplicates the whole Fib-object, beginning with it's
 	 * highest root-element (the one which contains all the other elements).
@@ -1046,6 +1070,7 @@ public:
 	virtual cFibElement *copyElement( const char cType='u', const unsignedIntFib
 		elementPoint=0, bool bAbsolute=false ) const = 0;
 
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
 
 #ifdef FEATURE_EQUAL_FIB_OBJECT
 	/**
@@ -1149,6 +1174,8 @@ public:
 		const cFibVariable * variable ) const;
 
 #endif //FEATURE_EQUAL_FIB_OBJECT
+
+#endif//SWITCH_JUST_STORE_AND_EVALUE
 
 	/**
 	 * This method stores this Fib-object in the XML -format into the
@@ -1637,7 +1664,7 @@ protected:
 	 */
 	virtual unsignedIntFib getNumberOfObjectPointUp(
 		const cFibElement * pLastFibElement ) const;
-		
+	
 	/**
 	 * This method returns the numbers of all object points that contain the
 	 * elementPoint Fib -element.
@@ -1745,6 +1772,8 @@ protected:
 		unsignedIntFib uiLastVariableNumber = 0 ) = 0;
 
 
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
+		
 	/**
 	 * This method moves a Fib-limb -element (cFibLimb) on the specified
 	 * position over uiHowfar Fib-elements up.
@@ -1771,6 +1800,8 @@ protected:
 	intFib moveLimbElementUp( const char cType = 'u', const unsignedIntFib 
 		elementPoint = 0, const unsignedIntFib uiHowfar=1, bool bAbsolute=false );
 
+#endif //SWITCH_JUST_STORE_AND_EVALUE
+	
 	/**
 	 * This method copies the connected object with the given number in the
 	 * order of connected objects.
@@ -1787,6 +1818,8 @@ protected:
 	 */
 	virtual cFibElement *copyInternal( const unsignedIntFib iObjectPoint=0 ) const = 0;
 
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
+	
 	/**
 	 * This method returns a number of (lNumberOfMaxReturnedElements)
 	 * Fib-elements beginning from the actual Fib-element in the
@@ -1804,6 +1837,8 @@ protected:
 	virtual list<cFibElement*> getAllFibElementsFromPosition( char cType,
 		edDirection direction, unsignedLongFib lNumberOfMaxReturnedElements ) = 0;
 	
+#endif //SWITCH_JUST_STORE_AND_EVALUE
+	
 	/**
 	 * @return the highest Fib-element in the wool Fib-object this
 	 * 	Fib-element is part of
@@ -1816,6 +1851,8 @@ protected:
 	 */
 	cFibElement * getMasterRoot() const;
 
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
+	
 	/**
 	 * This method checks if the given variable is defined in the given
 	 * direction from this Fib-element.
@@ -1965,6 +2002,8 @@ protected:
 		const bool bCheckExternalObjects ) const;
 
 #endif //FEATURE_EQUAL_FIB_OBJECT
+	
+#endif //SWITCH_JUST_STORE_AND_EVALUE
 
 
 };//end class cFibElement

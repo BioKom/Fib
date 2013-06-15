@@ -1,0 +1,202 @@
+<html>
+	<head>
+		<title>
+			Fib editor
+		</title>
+
+		<meta name="Description" lang="en" content="This is a simple online Fib image editor. With which you can load and edit Fib objects. The created Fib objects can be displayed as RGB images." >
+		<meta name="page-topic" lang="en" content="Online Fib image editor ">
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta name="expires" content="NEVER">
+		<meta name="audience" content="all">
+		<meta name="keywords" lang="en" content="Fib,Fib-Development,example,Fib-Multimediasystem,format,multimedia language,multimedia,picture,BioKom,fib,
+			project,usefull,free,HTML,include,object,create,write,display,
+			base64,bitmap">
+		<meta name="keywords" lang="de" content="Fib,Fib-Development,Fib,Beispiel,Fib-Multimediaformat,Multimedia,Fib-Multimediasystem,
+			Multimediasprache,Format,Multimediaformat,Bildverarbeitung,
+			Bildformat,HTML,include,erstellen,schreiben,anzeigen,
+			base64,bitmap,
+			kostenlos,frei">
+		<meta name="publisher" content="Betti &Ouml;sterholz">
+		<meta name="copyright" content="(c) 2013 Betti &Ouml;sterholz">
+		<meta name="revisit-after" content="30 days">
+		<meta name="robots" content="index,follow">
+		<meta name="Author" content="Betti &Ouml;sterholz">
+		<meta name="DC.Language" content="en">
+		
+		<link rel="stylesheet" type="text/css" media="screen,projection" href="../fib_development.css">
+		
+		<!-- redirect output -->
+		<script type="text/javascript" src="javascript/init_fs.js"></script>
+		<!-- load the JavaScript library with the functions to load and
+		convert Fib objects, version with debugging output -->
+		<script type="text/javascript" src="javascript/libfib_dbg.js"></script>
+
+		<script type="text/javascript">
+			//import the convertFibToImageData() function from emscripten
+			convertFibToImageData = Module.cwrap('convertFibToImageData', 'string', 'string' );
+			
+			//set the database path
+			setDatabasePathInt = Module.cwrap('setDatabasePath', 'number', 'string' );
+			var fibDatabasePath = allocate( intArrayFromString( "../fibDatabase/" ), 'i8', ALLOC_STACK );
+			setDatabasePathInt( fibDatabasePath );
+			
+			/**
+			 * Function to load the Fib image data from a file into a img element.
+			 *
+			 * @pre imgElementId the element id for the image element, where to
+			 * 	load the Fib object image to
+			 * @pre fibObjFileName the file name / path of the Fib object to load
+			 * @pre onLoad optional parameter: the new onload parameter
+			 * 	for the to load image
+			 */
+			function displayFibObject( imgElementId, fibObjFileName,
+					/*optional*/ onLoad ){
+				
+				var pFibObjFileName =
+					allocate( intArrayFromString( fibObjFileName ), 'i8', ALLOC_STACK );
+				//load the Fib object data from the file
+				var loadedData = _jsFunOpenFileStream( pFibObjFileName );
+				
+				if ( HEAPU8[(((loadedData)+(0))|0)] == 0 ){
+					alert( "Error: could not load the Fib data from " + fibObjFileName +
+						"\nDid the file exists in the same domain as this page?\n" +
+						"Note: The example doesn't work on your local computer.");
+					return;
+				}//else data loaded
+				//load the Fib object bmp image data into the image element
+				var fibObjectImage = document.getElementById( imgElementId );
+				if ( fibObjectImage == typeof('undefined') ){
+					alert( "Error: could not find image element with id " +
+						imgElementId + " to store data to" );
+					return;
+				}
+				if ( onLoad ){
+					//set new onload
+					fibObjectImage.onload = onLoad;
+				}else{//don't load image again (don't use old onload again)
+					fibObjectImage.onload = "";
+				}
+				//convert loaded Fib object data into a bitmap image in base64
+				var dataFibImage = convertFibToImageData( loadedData );
+				//add image data header
+				dataFibImage = "data:image/bmp;base64," + dataFibImage;
+				fibObjectImage.src = dataFibImage;
+			}
+			
+			
+			/**
+			 * Function to load the Fib image data from the text field with id
+			 * "xmlFibObjectText" into a img element with id "xmlFibObjectImage".
+			 */
+			function displayTextFieldFibObject(){
+				//load the Fib object data from the text field
+				var szToConvertFibObject = document.getElementById("xmlFibObjectText").value;
+				if ( szToConvertFibObject == "" ){
+					alert( "Error: no Fib object to convert found" );
+					return;
+				}//else data loaded
+				//load the Fib object bmp image data into the image element
+				var fibObjectImage = document.getElementById("xmlFibObjectImage");
+				if ( fibObjectImage == typeof('undefined') ){
+					alert( "Error: could not find image element to store data to" );
+					return;
+				}
+				var pToConvertFibObject =
+					allocate( intArrayFromString( szToConvertFibObject ), 'i8', ALLOC_STACK );
+				//convert loaded Fib object data into a bitmap image in base64
+				var dataFibImage = convertFibToImageData( pToConvertFibObject );
+				//add image data header
+				dataFibImage = "data:image/bmp;base64," + dataFibImage;
+				fibObjectImage.src = dataFibImage;
+			}
+			
+			
+			/**
+			 * This function loads the data from the given file into the
+			 * text area with id "xmlFibObjectText".
+			 */
+			function loadFibObjectToTextarea( szFilepath ){
+				//load the Fib object data from the file szFilepath
+				var pFileDataPointer =
+					allocate( intArrayFromString( szFilepath ), 'i8', ALLOC_STACK );
+				
+				var loadedData = _jsFunOpenFileStream( pFileDataPointer );
+				
+				var szJsLoadedData = Pointer_stringify( loadedData, loadedData.length );
+				
+				if ( szJsLoadedData == "" ){
+					return;
+				}//else data loaded
+				
+				document.getElementById("xmlFibObjectText").value = szJsLoadedData;
+			}
+			
+		</script>
+	</head>
+<body onload="loadFibObjectToTextarea( 'pictures/wappen_en.xml' )">
+
+<div id="main">
+
+<div id="head">
+	<h1 align="center">Create your own Fib image</h1>
+</div><!--head-->
+<div id="content">
+			
+	
+		<img name="xmlFibObjectImage" id="xmlFibObjectImage" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUA
+			AAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO
+			9TXL0Y4OHwAAAABJRU5ErkJggg==" alt="No Fib object data given">
+		<br />
+		
+		
+		<button type="button" onclick="displayTextFieldFibObject()">Display Fib object</button>
+		<button type="button" onclick="document.getElementById('xmlFibObjectText').value = ''">Clear textarea</button><br>
+		
+		Textarea with the Fib object:<br>
+		<small>(Input your Fib object to display here (in the Fib Xml representation) or load an example (see below) and modify it.)</small>
+		<textarea name="xmlFibObjectText" id="xmlFibObjectText" cols="80" rows="40"
+			 style="width:100%"></textarea><br>
+		<small>(If you want to export or import Fib objects from local files, please use copy and past.<br>
+		At the time just 24 bit RGB images are supported.)</small>
+		
+		<!--TODO implement (instead of use copy and paste): <input type="file"/> -->
+		
+		<h4>Examples to load:</h4>
+		<small>(Beware the examples will overwrite the existing Fib object in the textarea.)</small><br>
+		
+
+
+		<table>
+		<tr>
+			<td align="center"> <a onclick="loadFibObjectToTextarea( 'pictures/point_en.xml' )">
+				Point<br> (you can use<br> as a starting<br> point)</a></td>
+			<td align="center"> <a onclick="loadFibObjectToTextarea( 'pictures/quadrangle_en.xml' )">
+				Quadrangle<br><img id="fibImageQuadrangle" src="pictures/quadrangle.png" alt="Load quadrangle"></a></td>
+			<td align="center"> <a onclick="loadFibObjectToTextarea( 'pictures/wappen_en.xml' )">
+				Crest<br><img id="fibImageQuadrangle" src="pictures/wappen_64x64.png" alt="Load quadrangle"></a>
+			</td>
+<!--TODO add + check-->
+
+		</tr>
+		</table>
+		
+
+		<!--TODO examples to load:
+		- tree objects (circle, quadrangle, line)
+		- stickman
+		- fractal
+		- load database object with id X
+		-->
+		
+<!--TODO add + check end-->
+
+		<h4>Output (for debugging)</h4>
+		<button type="button" onclick="document.getElementById('stdOutput').value = ''">Clear output</button><br>
+		<textarea name="stdOutput" id="stdOutput" cols="80" rows="50" style="width:100%" readonly></textarea><br>
+		
+		
+</div><!--content-->
+</div><!--main-->
+	</body>
+</html>

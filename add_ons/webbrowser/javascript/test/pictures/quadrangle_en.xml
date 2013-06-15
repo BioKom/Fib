@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fib_object
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://www.biokom.info/"
+         xsd:schemaLocation="http://www.biokom.info/fib.xsd">
+<root>
+   <multimedia_info fib_version="3" db_version="2"/>
+   <optionalpart>
+      <pair key="description" value="This object is for creating a quadrangle."/>
+   </optionalpart>
+   <domains>
+      <dim count="2"><!-- picture size 32 x 40 pixles -->
+         <dimension number="1" direction="horizontal"/>
+         <dimension number="2" direction="vertical"/>
+         <vector elements="2">
+            <integer min="0" max="31"/>
+            <integer min="0" max="39"/>
+         </vector>
+      </dim>
+      <property name="colorRGB" ><!-- domain RGB color -->
+         <vector elements="3"><!-- RGB color with 8 bit color depth -->
+            <naturalNumberB bit="8" />
+            <naturalNumberB bit="8" />
+            <naturalNumberB bit="8" />
+         </vector>
+      </property>
+      <externObject><!-- domain for external objects -->
+         <vector elements="4">
+            <integer min="-10000" max="10000" /><!--Identifier-->
+            <naturalNumber max="32" /><!--number input values-->
+            <naturalNumber max="8" /><!--number subobjects-->
+            <naturalNumber max="16" /><!--number output values-->
+         </vector>
+      </externObject>
+   </domains>
+   <main_fib_object>
+      
+      <property><!-- set the color -->
+         <vector type="property.colorRGB">
+            <value>0</value><!-- red -->
+            <value>0</value><!-- green -->
+            <value>250</value><!-- blue -->
+         </vector>
+         <obj identifier="-41"><!-- quadrangle with 4 border point -->
+            <vector type="externObjectInput">
+               <!-- first point p_1 -->
+               <value>8</value><!-- position of the first point p_1 in dimension 1 (x_1) -->
+               <value>8</value><!-- position of the first point p_1 in dimension 2 (y_1) -->
+               <!-- second point p_2 -->
+               <value>8</value><!-- position of the second point p_2 in dimension 1 (x_2) -->
+               <value>30</value><!-- position of the second point p_2 in dimension 2 (y_2) -->
+               <!-- 3. point p_3 -->
+               <value>22</value><!-- position of the 3. point p_3 in dimension 1 (x_3) -->
+               <value>30</value><!-- position of the 3. point p_3 in dimension 2 (y_3) -->
+               <!-- 4. point p_4 -->
+               <value>22</value><!-- position of the 4. point p_4 in dimension 1 (x_4) -->
+               <value>8</value><!-- position of the 4. point p_4 in dimension 2 (y_4) -->
+            </vector>
+         </obj>
+      </property>
+      
+   </main_fib_object>
+</root>
+</fib_object>

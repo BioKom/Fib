@@ -1,0 +1,4 @@
+
+- include improvments from website
+- RGB add scaled color pictures
+- add class or possibility in classes for using in RGB black

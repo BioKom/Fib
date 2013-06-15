@@ -35,9 +35,11 @@ History:
 25.11.2011  Oesterholz  created
 25.02.2012  Oesterholz  if while restoring the Fib object a warning ocured
 	don't abord
+09.05.2013  Oesterholz  added debugging info: DEBUG_RESTORE_XML and
+14.05.2013  Oesterholz  changes so that the database class can be replaced
 */
 
-//TODO switches for test proposes
+//switches for test proposes
 //#define DEBUG
 
 
@@ -54,6 +56,7 @@ History:
 	static pthread_mutex_t mutexFibDatabaseLoad = PTHREAD_MUTEX_INITIALIZER;
 #endif //FEATURE_FIB_DB_USE_TREADS
 
+
 using namespace fib;
 using namespace std;
 
@@ -67,6 +70,16 @@ cFibDatabase * cFibDatabase::pFibDbInstance = NULL;
 * The path to the actual loaded database.
 */
 string cFibDatabase::szDatabasePath = "";
+
+/**
+ * True if the database path is Ok else false.
+ * @see szDatabasePath
+ * If true the @see mapDatabaseIdentifiers
+ * and @see liDatabaseIdentifiers
+ * should be loaded correctly from the given path.
+ */
+bool cFibDatabase::bDatabasePathOk = false;
+
 
 /**
  * A map with the loaded Fib database objects.
@@ -126,17 +139,6 @@ cFibDatabaseDeleter cFibDatabase::fibDatabaseDeleter;
 cFibDatabase::cFibDatabase(){
 	
 	pFibDbInstance = this;
-	
-	//load database
-	bool bDatabaseLoaded = false;
-	if ( ! szDatabasePath.empty() ){
-		//if a database path was set -> try to load it
-		bDatabaseLoaded = setDatabasePath( szDatabasePath );
-	}
-	if ( ! bDatabaseLoaded ){
-		//no valid Fib database directory check standard Fib database directories
-		searchForDatabasePath();
-	}
 }
 
 
@@ -169,8 +171,14 @@ cFibDatabase * cFibDatabase::getInstance(){
 	
 	if ( pFibDbInstance == NULL ){
 		//create a new instance
+#ifdef DEBUG_RESTORE_XML
+		printf("cFibDatabase::getInstance(): create a new instance\n" );
+#endif//DEBUG_RESTORE_XML
 		pFibDbInstance = new cFibDatabase();
 	}//else return existing instance
+#ifdef DEBUG_RESTORE_XML
+	printf("cFibDatabase::getInstance(): return existing instance\n" );
+#endif//DEBUG_RESTORE_XML
 	return pFibDbInstance;
 }
 
@@ -183,6 +191,12 @@ cFibDatabase * cFibDatabase::getInstance(){
  */
 list< longFib > cFibDatabase::getAllDatabaseObjectIdentifiers() const{
 	
+	const string szOkDatabasePath = const_cast<cFibDatabase*>(this)->getDatabase();
+	if ( szOkDatabasePath == "" ){
+		DEBUG_OUT_EL2(<<"Error: No valid database path could be found -> can't load the database identifiers"<<endl);
+		return list< longFib >();
+	}
+	
 	return liDatabaseIdentifiers;
 }
 
@@ -190,7 +204,7 @@ list< longFib > cFibDatabase::getAllDatabaseObjectIdentifiers() const{
 /**
  * This method returns the database Fib object for the identifier, if it
  * exists.
- * 
+ *
  * @see loadFibObject()
  * @see mapLoadedDatabaseObjects
  * @see setDatabaseIdentifiers
@@ -199,6 +213,13 @@ list< longFib > cFibDatabase::getAllDatabaseObjectIdentifiers() const{
  * 	such exists
  */
 cRoot * cFibDatabase::getFibObject( const longFib lIdentifier ){
+	
+	//check database path
+	const string szOkDatabasePath = getDatabase();
+	if ( szOkDatabasePath == "" ){
+		DEBUG_OUT_EL2(<<"Error: No valid database path could be found -> can't load the database object with identifier "<<lIdentifier<<endl);
+		return NULL;
+	}
 	
 	//check if the object is allready loaded
 #ifdef FEATURE_FIB_DB_USE_TREADS
@@ -210,6 +231,7 @@ cRoot * cFibDatabase::getFibObject( const longFib lIdentifier ){
 		//the object is allready loaded -> return it
 		return itrLoadedObject->second;
 	}//else check if the database object for the identifier exists
+	
 	map< longFib, string >::iterator
 		itrDatabaseObject = mapDatabaseIdentifiers.find( lIdentifier );
 	if ( itrDatabaseObject == mapDatabaseIdentifiers.end() ){
@@ -217,41 +239,12 @@ cRoot * cFibDatabase::getFibObject( const longFib lIdentifier ){
 		DEBUG_OUT_EL2(<<"Error: No such database object exists. -> return NULL"<<endl);
 		return NULL;
 	}//else load the database object
-	const string & szFileName = itrDatabaseObject->second;
-	string szPathToDbObject( szDatabasePath.c_str() );
-	szPathToDbObject.append( szFileName );
 #ifdef FEATURE_FIB_DB_USE_TREADS
 	pthread_mutex_unlock( & mutexFibDatabaseLoad );
 #endif //FEATURE_FIB_DB_USE_TREADS
-	cRoot * pRestoredFibObject = NULL;
-	if ( szFileName.compare( szFileName.length() - 4, 4, ".xml" ) == 0 ){
-		//restore to file in xml -format
-		ifstream inFile( szPathToDbObject.c_str() );
-		intFib outStatus = 0;
-		
-		pRestoredFibObject = ((cRoot*)(cFibElement::restoreXml( inFile , &outStatus )));
-		
-		if ( outStatus != 0 ){
-			DEBUG_OUT_EL2(<<"Error: Restoring Fib object in the Xml-Fib-format from the database file "<<itrDatabaseObject->second <<" not successfull. (return status="<< outStatus <<")"<<endl);
-			if ( outStatus < 0 ){
-				return NULL;
-			}
-		}
-	}else{//restore to file in compressedformat
-		ifstream inFile( szPathToDbObject.c_str(), ios_base::in | ios_base::binary );
-		
-		intFib outStatus = 0;
-		pRestoredFibObject = ((cRoot*)(cFibElement::restore( inFile , &outStatus )));
-		
-		if ( outStatus != 0 ){
-			DEBUG_OUT_EL2(<<"Error: Restoring Fib object in the compressed Fib-format from the database file "<<itrDatabaseObject->second <<" not successfull. (return status="<< outStatus <<")"<<endl);
-			if ( outStatus < 0 ){
-				return NULL;
-			}
-		}
-	}
+	
+	cRoot * pRestoredFibObject = loadFibObject( itrDatabaseObject->second );
 	if ( pRestoredFibObject == NULL ){
-		DEBUG_OUT_EL2(<<"Error: Restoring Fib object in the compressed Fib-format from the database file "<<itrDatabaseObject->second <<" not successfull. (return object NULL)"<<endl);
 		return NULL;
 	}
 
@@ -273,7 +266,7 @@ cRoot * cFibDatabase::getFibObject( const longFib lIdentifier ){
  * If you load Fib objects some time befor you want it
  * (call getFibObject() for them) this could speed up the process. 
  * This method won't load Fib objects that are allready loaded.
- * 
+ *
  * @see getFibObject()
  * @see reloadDatabase()
  * @see mapLoadedDatabaseObjects
@@ -282,10 +275,18 @@ cRoot * cFibDatabase::getFibObject( const longFib lIdentifier ){
  */
 void cFibDatabase::loadFibObject( const longFib lIdentifier ){
 	
+	//check database path
+	const string szOkDatabasePath = getDatabase();
+	if ( szOkDatabasePath == "" ){
+		DEBUG_OUT_EL2(<<"Error: No valid database path could be found -> can't load the database object with identifier "<<lIdentifier<<endl);
+		return;
+	}
+	
 	//check if the object is allready loaded
 #ifdef FEATURE_FIB_DB_USE_TREADS
 	pthread_mutex_lock( & mutexFibDatabaseLoad );
 #endif //FEATURE_FIB_DB_USE_TREADS
+	
 	if ( mapLoadedDatabaseObjects.find( lIdentifier ) !=
 			mapLoadedDatabaseObjects.end() ){
 		//the object is allready loaded -> nothing to do
@@ -299,9 +300,7 @@ void cFibDatabase::loadFibObject( const longFib lIdentifier ){
 	}//else load the database object
 #ifdef FEATURE_FIB_DB_USE_TREADS
 	pthread_mutex_unlock( & mutexFibDatabaseLoad );
-#endif //FEATURE_FIB_DB_USE_TREADS
 	
-#ifdef FEATURE_FIB_DB_USE_TREADS
 	//load in own tread
 	pthread_t * pThreadLoad = new pthread_t();
 	const int iReturn = pthread_create( pThreadLoad, NULL,
@@ -313,39 +312,9 @@ void cFibDatabase::loadFibObject( const longFib lIdentifier ){
 	}
 	pthread_detach( *pThreadLoad );
 #else //FEATURE_FIB_DB_USE_TREADS
-	const string & szFileName = itrDatabaseObject->second;
-	string szPathToDbObject( szDatabasePath.c_str() );
-	szPathToDbObject.append( szFileName );
 	
-	cRoot * pRestoredFibObject = NULL;
-	if ( szFileName.compare( szFileName.length() - 4, 4, ".xml" ) == 0 ){
-		//restore to file in xml -format
-		ifstream inFile( szPathToDbObject.c_str() );
-		intFib outStatus = 0;
-		
-		pRestoredFibObject = ((cRoot*)(cFibElement::restoreXml( inFile , &outStatus )));
-		
-		if ( outStatus != 0 ){
-			DEBUG_OUT_EL2(<<"Error: Restoring Fib object in the Xml-Fib-format from the database file "<<itrDatabaseObject->second <<" not successfull. (return status="<< outStatus <<")"<<endl);
-			if ( outStatus < 0 ){
-				return;
-			}
-		}
-	}else{//restore to file in compressedformat
-		ifstream inFile( szPathToDbObject.c_str(), ios_base::in | ios_base::binary );
-		
-		intFib outStatus = 0;
-		pRestoredFibObject = ((cRoot*)(cFibElement::restore( inFile , &outStatus )));
-		
-		if ( outStatus != 0 ){
-			DEBUG_OUT_EL2(<<"Error: Restoring Fib object in the compressed Fib-format from the database file "<<itrDatabaseObject->second <<" not successfull. (return status="<< outStatus <<")"<<endl);
-			if ( outStatus < 0 ){
-				return;
-			}
-		}
-	}
+	cRoot * pRestoredFibObject = loadFibObject( itrDatabaseObject->second );
 	if ( pRestoredFibObject == NULL ){
-		DEBUG_OUT_EL2(<<"Error: Restoring Fib object in the compressed Fib-format from the database file "<<itrDatabaseObject->second <<" not successfull. (return object NULL)"<<endl);
 		return;
 	}
 	
@@ -357,7 +326,7 @@ void cFibDatabase::loadFibObject( const longFib lIdentifier ){
 /**
  * This method frees the Fib object for the identifier.
  * You could free some memory in this way.
- * 
+ *
  * @see getFibObject()
  * @see loadFibObject()
  * @see reloadDatabase()
@@ -424,7 +393,7 @@ string cFibDatabase::getDatabasePath(){
  */
 bool cFibDatabase::setDatabasePath( const char * szInDatabasePath ){
 	
-	return setDatabasePath( string( szInDatabasePath ) );
+	return getInstance()->setDatabasePath( string( szInDatabasePath ) );
 }
 
 
@@ -441,10 +410,16 @@ bool cFibDatabase::setDatabasePath( const string szInDatabasePath ){
 	
 	if ( szInDatabasePath == "" ){
 		//no database path to set
+#ifdef DEBUG_RESTORE_XML
+		printf("cFibDatabase::setDatabasePath(): no database path to set\n" );
+#endif//DEBUG_RESTORE_XML
 		return false;
 	}
-	if ( szInDatabasePath == szDatabasePath ){
+	if ( bDatabasePathOk && ( szInDatabasePath == szDatabasePath ) ){
 		//database path set already
+#ifdef DEBUG_RESTORE_XML
+		printf("cFibDatabase::setDatabasePath(): database path set already\n" );
+#endif//DEBUG_RESTORE_XML
 		return true;
 	}
 	//check if the path if valid
@@ -452,15 +427,25 @@ bool cFibDatabase::setDatabasePath( const string szInDatabasePath ){
 	
 	if ( ! folder.good() ){
 		//the path is not valid
+#ifdef DEBUG_RESTORE_XML
+		printf("cFibDatabase::setDatabasePath(): the path is not valid\n" );
+#endif//DEBUG_RESTORE_XML
 		return false;
 	}//else if the path if valid
 	//set database path
+#ifdef DEBUG_RESTORE_XML
+	printf("cFibDatabase::setDatabasePath(): set database path\n" );
+#endif//DEBUG_RESTORE_XML
 #ifdef FEATURE_FIB_DB_USE_TREADS
 	pthread_mutex_lock( & mutexFibDatabaseLoad );
 #endif //FEATURE_FIB_DB_USE_TREADS
 
-	szDatabasePath = szInDatabasePath;
+	szDatabasePath  = szInDatabasePath;
+	bDatabasePathOk = true;
 	
+#ifdef DEBUG_RESTORE_XML
+	printf("cFibDatabase::setDatabasePath(): load list with contained database objects\n" );
+#endif//DEBUG_RESTORE_XML
 	//load list with contained database objects
 	const bool bListContainedDbObjectsLoaded =
 		loadListContainedDbObjects( folder );
@@ -468,6 +453,9 @@ bool cFibDatabase::setDatabasePath( const string szInDatabasePath ){
 #ifdef FEATURE_FIB_DB_USE_TREADS
 	pthread_mutex_unlock( & mutexFibDatabaseLoad );
 #endif //FEATURE_FIB_DB_USE_TREADS
+#ifdef DEBUG_RESTORE_XML
+	printf("cFibDatabase::setDatabasePath() done\n" );
+#endif//DEBUG_RESTORE_XML
 	return bListContainedDbObjectsLoaded;
 }
 
@@ -476,13 +464,16 @@ bool cFibDatabase::setDatabasePath( const string szInDatabasePath ){
  * This function search for the standard Fib database paths, to find a
  * valid Fib database, and set the first found Fib database path, if one was
  * found.
- * 
+ *
  * @see szDatabasePath
  * @return true if a Fib database (path) was found and was set, else
  * 	false and the database path is not changed
  */
 bool cFibDatabase::searchForDatabasePath(){
 	
+#ifdef DEBUG_RESTORE_XML
+	printf("cFibDatabase::searchForDatabasePath() started\n" );
+#endif//DEBUG_RESTORE_XML
 	//list with the standard database folders
 	list< string > liSzStandardDatabaseFolders;
 	liSzStandardDatabaseFolders.push_back( "fibDatabase/" );
@@ -496,26 +487,43 @@ bool cFibDatabase::searchForDatabasePath(){
 	string szFoundDatabasePath;
 	//the path to the actual base directory
 	string szActualBasePath( "./" );
-
+	
+	unsigned int uiActualSearchDepth = 0;
 	//search for path
 	while ( szFoundDatabasePath.empty() ){
 		//check if base folder exists
+#ifdef DEBUG_RESTORE_XML
+		printf("cFibDatabase::searchForDatabasePath() check path: %s\n", szActualBasePath.c_str() );
+#endif//DEBUG_RESTORE_XML
 		cFolder baseFolder( szActualBasePath );
 		
 		if ( ! baseFolder.good() ){
-			//the path is not valid -> no standar database folder could be found
+			//the path is not valid -> no standard database folder could be found
+#ifdef DEBUG_RESTORE_XML
+			printf("   the path %s is not valid -> no standar database folder could be found\n", szActualBasePath.c_str() );
+#endif//DEBUG_RESTORE_XML
 			return false;
 		}//else if the base path if valid
 		
 		//search in subpath for standard database folders
+#ifdef DEBUG_RESTORE_XML
+		printf("   search in subpath for standard database folders\n" );
+#endif//DEBUG_RESTORE_XML
 		for ( list< string >::iterator
 				itrActualStandardDbFolder = liSzStandardDatabaseFolders.begin();
 				itrActualStandardDbFolder != liSzStandardDatabaseFolders.end();
 				itrActualStandardDbFolder++ ){
 			
 			string szActualPath( szActualBasePath );
+#ifdef DEBUG_RESTORE_XML
+			printf("      actual subpath for standard database folders: %s\n",
+				szActualPath.c_str() );
+#endif//DEBUG_RESTORE_XML
 			if ( itrActualStandardDbFolder->at( 0 ) == '/' ){
 				//absolute path
+#ifdef DEBUG_RESTORE_XML
+				printf("         absolute path\n" );
+#endif//DEBUG_RESTORE_XML
 				if ( szActualBasePath.compare( "./" ) == 0 ){
 					//just check the path ons, without the base folder part
 					szActualPath = *itrActualStandardDbFolder;
@@ -523,19 +531,39 @@ bool cFibDatabase::searchForDatabasePath(){
 					continue;
 				}
 			}else{//relativ path -> add actual standard subfolder part
+#ifdef DEBUG_RESTORE_XML
+				printf("         relativ path -> add actual standard subfolder part\n" );
+#endif//DEBUG_RESTORE_XML
 				szActualPath.append( "/" );
 				szActualPath.append( *itrActualStandardDbFolder );
 			}
 			//check if database folder exists
+#ifdef DEBUG_RESTORE_XML
+			printf("   check if database folder %s exists\n", szActualPath.c_str() );
+#endif//DEBUG_RESTORE_XML
 			cFolder databaseFolder( szActualPath );
 			
 			if ( databaseFolder.good() ){
 				//valid Fib database path found
+#ifdef DEBUG_RESTORE_XML
+				printf("      valid Fib database path %s found\n", szActualPath.c_str() );
+#endif//DEBUG_RESTORE_XML
 				szFoundDatabasePath = szActualPath;
 				break;
 			}//else if the database path is not valid -> check next path
+#ifdef DEBUG_RESTORE_XML
+			printf("   the database %s path is not valid -> check next path\n", szActualPath.c_str() );
+#endif//DEBUG_RESTORE_XML
 		}//end for all possible database subpaths
 		//check superior folder
+		uiActualSearchDepth++;
+		if ( MAX_DATABASE_PATH_SEARCH_DEPTH < uiActualSearchDepth ){
+#ifdef DEBUG_RESTORE_XML
+			printf("the maximal database search depth %i was reached\n",
+				MAX_DATABASE_PATH_SEARCH_DEPTH );
+#endif//DEBUG_RESTORE_XML
+			break;
+		}
 		if ( szActualBasePath.compare( "./" ) == 0 ){
 			//replace "." with ".."
 			szActualBasePath = string( "../" );
@@ -545,18 +573,23 @@ bool cFibDatabase::searchForDatabasePath(){
 	}//end while no database path was found
 	if ( szFoundDatabasePath.empty() ){
 		//no standard Fib database directory found
+#ifdef DEBUG_RESTORE_XML
+		printf("cFibDatabase::searchForDatabasePath(): no standard Fib database directory found\n" );
+#endif//DEBUG_RESTORE_XML
 		return false;
 	}//else standard Fib database directory found -> set it
+#ifdef DEBUG_RESTORE_XML
+	printf("cFibDatabase::searchForDatabasePath(): standard Fib database directory found\n" );
+#endif//DEBUG_RESTORE_XML
 	return setDatabasePath( szFoundDatabasePath );
 }
-
 
 
 /**
  * This method reloads all Fib database objects identifiers from the set
  * database path.
  * No database objects will be loaded after the reload.
- * 
+ *
  * @see szDatabasePath
  * @see mapLoadedDatabaseObjects
  * @return true if the database objects identifiers could be reloded (the
@@ -564,15 +597,25 @@ bool cFibDatabase::searchForDatabasePath(){
  */
 bool cFibDatabase::reloadDatabase(){
 	
+	//check database path
+	const string szOkDatabasePath = getDatabase();
+	if ( szOkDatabasePath == "" ){
+		DEBUG_OUT_EL2(<<"Error: No valid database path could be found -> can't reload the database"<<endl);
+		return false;
+	}
+	
 #ifdef FEATURE_FIB_DB_USE_TREADS
 	pthread_mutex_lock( & mutexFibDatabaseLoad );
 #endif //FEATURE_FIB_DB_USE_TREADS
-	if ( szDatabasePath.empty() ){
+	if ( szOkDatabasePath.empty() ){
 		//no database to reloade
+#ifdef FEATURE_FIB_DB_USE_TREADS
+		pthread_mutex_unlock( & mutexFibDatabaseLoad );
+#endif //FEATURE_FIB_DB_USE_TREADS
 		return false;
 	}
 	//check if the path if valid
-	cFolder folder( szDatabasePath.c_str() );
+	cFolder folder( szOkDatabasePath.c_str() );
 	
 	if ( ! folder.good() ){
 		//the path is not valid
@@ -596,7 +639,7 @@ bool cFibDatabase::reloadDatabase(){
 
 /**
  * This method loads the database folder data.
- * 
+ *
  * @see liDatabaseIdentifiers
  * @see mapDatabaseIdentifiers
  * @param folder the database folder from which to load the data
@@ -666,6 +709,104 @@ bool cFibDatabase::loadListContainedDbObjects( cFolder & folder ){
 }
 
 
+/**
+ * This method returns a valid database path if possible.
+ * If the database is ok @see bDatabasePathOk
+ * this will be the actual set database, else it will be searched for a
+ * Fib database.
+ * If a Fib database was found, the members dependent on the database
+ * will be updated:
+ * 	@see mapLoadedDatabaseObjects
+ * 	@see mapDatabaseIdentifiers
+ * 	@see liDatabaseIdentifiers
+ *
+ * @return a valid database path if possible
+ */
+string cFibDatabase::getDatabase(){
+	
+	if ( bDatabasePathOk ){
+		//the actual set database path is OK
+		return szDatabasePath;
+	}//else bDatabasePathOk is not OK
+	if ( szDatabasePath != "" ){
+		//try the existing database path again
+		if ( setDatabasePath( szDatabasePath ) ){
+			//the database path was sucessfully set
+			return szDatabasePath;
+		}
+	}//else search for the database path
+	
+	if ( searchForDatabasePath() ){
+		//a valid database path found
+		return szDatabasePath;
+	}
+	return "";
+}
+
+
+/**
+ * This method loads the Fib object for the given file name.
+ * This function won't handle mutex variables.
+ *
+ * @see loadFibObject()
+ * @see getFibObject()
+ * @see treadloadFibObject()
+ *
+ * @see reloadDatabase()
+ * @see mapLoadedDatabaseObjects
+ * @see setDatabaseIdentifiers
+ * @param lIdentifer the identifer of the Fib object to load
+ */
+cRoot * cFibDatabase::loadFibObject( const string & szFileName ){
+	
+	//check database path
+	const string szOkDatabasePath = getDatabase();
+	if ( szOkDatabasePath == "" ){
+		DEBUG_OUT_EL2(<<"Error: No valid database path could be found -> can't load the database object with file name "<<szFileName<<endl);
+		return NULL;
+	}
+	
+	string szPathToDbObject( szOkDatabasePath.c_str() );
+	szPathToDbObject.append( szFileName );
+	
+	cRoot * pRestoredFibObject = NULL;
+	if ( szFileName.compare( szFileName.length() - 4, 4, ".xml" ) == 0 ){
+		//restore to file in xml -format
+		ifstream inFile( szPathToDbObject.c_str() );
+		intFib outStatus = 0;
+		
+		pRestoredFibObject = ((cRoot*)(cFibElement::restoreXml( inFile , &outStatus )));
+		
+		if ( outStatus != 0 ){
+			DEBUG_OUT_EL2(<<"Error: Restoring Fib object in the Xml-Fib-format from the database file "<<szPathToDbObject<<" not successfull. (return status="<< outStatus <<")"<<endl);
+			if ( outStatus < 0 ){
+				bDatabasePathOk = false;
+				return NULL;
+			}
+		}
+	}else{//restore to file in compressedformat
+		ifstream inFile( szPathToDbObject.c_str(), ios_base::in | ios_base::binary );
+		
+		intFib outStatus = 0;
+		pRestoredFibObject = ((cRoot*)(cFibElement::restore( inFile , &outStatus )));
+		
+		if ( outStatus != 0 ){
+			DEBUG_OUT_EL2(<<"Error: Restoring Fib object in the compressed Fib-format from the database file "<<szPathToDbObject<<" not successfull. (return status="<< outStatus <<")"<<endl);
+			if ( outStatus < 0 ){
+				bDatabasePathOk = false;
+				return NULL;
+			}
+		}
+	}
+	if ( pRestoredFibObject == NULL ){
+		DEBUG_OUT_EL2(<<"Error: Restoring Fib object from the database file "<<szPathToDbObject<<" not successfull. (return object NULL)"<<endl);
+		return NULL;
+	}
+	return pRestoredFibObject;
+}
+
+
+
 #ifdef FEATURE_FIB_DB_USE_TREADS
 
 /**
@@ -681,6 +822,12 @@ void * cFibDatabase::treadloadFibObject( void * inputArg ){
 	
 	longFib & lIdentifier = *((longFib*)(inputArg));
 	
+	const string szOkDatabasePath = getDatabase();
+	if ( szOkDatabasePath == "" ){
+		DEBUG_OUT_EL2(<<"Error: No valid database path could be found -> can't load the database object with identifier "<<lIdentifier<<endl);
+		return NULL;
+	}
+	
 	pthread_mutex_lock( & mutexFibDatabaseLoad );
 	map< longFib, string >::iterator
 		itrDatabaseObject = mapDatabaseIdentifiers.find( lIdentifier );
@@ -689,44 +836,13 @@ void * cFibDatabase::treadloadFibObject( void * inputArg ){
 		return NULL;
 	}//else load the database object
 	
-	const string & szFileName = itrDatabaseObject->second;
-	string szPathToDbObject( szDatabasePath.c_str() );
-	szPathToDbObject.append( szFileName );
-	
 	pthread_mutex_unlock( & mutexFibDatabaseLoad );
 	
-	cRoot * pRestoredFibObject = NULL;
-	if ( szFileName.compare( szFileName.length() - 4, 4, ".xml" ) == 0 ){
-		//restore to file in xml -format
-		ifstream inFile( szPathToDbObject.c_str() );
-		intFib outStatus = 0;
-		
-		pRestoredFibObject = ((cRoot*)(cFibElement::restoreXml( inFile , &outStatus )));
-		
-		if ( outStatus != 0 ){
-			DEBUG_OUT_EL2(<<"Error: Restoring Fib object in the Xml-Fib-format from the database file "<<itrDatabaseObject->second <<" not successfull. (return status="<< outStatus <<")"<<endl);
-			if ( outStatus < 0 ){
-				return NULL;
-			}
-		}
-	}else{//restore to file in compressedformat
-		ifstream inFile( szPathToDbObject.c_str(), ios_base::in | ios_base::binary );
-		
-		intFib outStatus = 0;
-		pRestoredFibObject = ((cRoot*)(cFibElement::restore( inFile , &outStatus )));
-		
-		if ( outStatus != 0 ){
-			DEBUG_OUT_EL2(<<"Error: Restoring Fib object in the compressed Fib-format from the database file "<<itrDatabaseObject->second <<" not successfull. (return status="<< outStatus <<")"<<endl);
-			if ( outStatus < 0 ){
-				return NULL;
-			}
-		}
-	}
+	cRoot * pRestoredFibObject = loadFibObject( itrDatabaseObject->second );
 	if ( pRestoredFibObject == NULL ){
-		DEBUG_OUT_EL2(<<"Error: Restoring Fib object in the compressed Fib-format from the database file "<<itrDatabaseObject->second <<" not successfull. (return object NULL)"<<endl);
 		return NULL;
 	}
-
+	
 	//use mutex for storing loaded
 	pthread_mutex_lock( & mutexFibDatabaseLoad );
 	mapLoadedDatabaseObjects.insert( make_pair( lIdentifier, pRestoredFibObject ) );

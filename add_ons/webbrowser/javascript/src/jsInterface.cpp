@@ -1,102 +1,70 @@
+
+//TODO check
+
 /**
- * @file saveAsBitmap
- * file name: saveAsBitmap.cpp
+ * @file jsInterface
+ * file name: jsInterface.cpp
  * @author Betti Oesterholz
- * @date 20.05.2013
+ * @date 10.04.2012
  * @mail webmaster@BioKom.info
  *
  * System: C++
  *
- * This programm evalues the size of the different fib -datatyps.
+ * This file implements a interface to interact with the Fib library for
+ * Javascript.
  *
- * Copyright (C) @c GPL3 2013 Betti Oesterholz
+ * Copyright (C) @c GPL3 2012 Betti Oesterholz
  *
  * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
+ * it under the terms of the GNU General Public License (GPL) as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * This file implements a class to store the data for a search on image data.
+ * If you want to convert an image to Fib structures, you have to search
+ * the image for structures, which can be converted to Fib.
+ * To mark for which points structures wher found and which points you can
+ * set to any overwritten property because the points are overwritten, you
+ * can use this class.
  *
  *
- * This programm evalues the size of the different fib -datatyps.
+ * This file implements a interface to interact with the Fib library for
+ * Javascript.
  *
  */
 /*
 History:
-20.05.2013  Oesterholz  created
+10.04.2012  Oesterholz  created
 */
 
-#include "version.h"
+//switches for debugging proposes
+//#define DEBUG
 
-#include "cPoint.h"
-#include "cRoot.h"
-#include "cList.h"
-#include "cArea.h"
-#include "cProperty.h"
-#include "cFunction.h"
-#include "cComment.h"
 
-#include "cFunctionValue.h"
-#include "cFunctionVariable.h"
-#include "cFunctionAbs.h"
-#include "cFunctionSin.h"
-#include "cFunctionLog.h"
-#include "cFunctionArcsin.h"
-#include "cFunctionAdd.h"
-#include "cFunctionSub.h"
-#include "cFunctionMult.h"
-#include "cFunctionDiv.h"
-#include "cFunctionExp.h"
-#include "cFunctionMin.h"
-#include "cFunctionMax.h"
 #include "cFibElement.h"
-
+#include "cPoint.h"
+#include "cVectorPosition.h"
+#include "cVectorProperty.h"
 #include "cTypeProperty.h"
 #include "cTypeDimension.h"
 #include "cEvalueSimpleRGBA255.h"
 
-
-#include "cDomainNaturalNumberBit.h"
-#include "cDomainVector.h"
-#include "cTypeVariable.h"
-#include "cTypeInVar.h"
-
-#include "cFibVariable.h"
-#include "cVectorProperty.h"
-#include "cVectorPosition.h"
-
-#include "cEvaluePositionList.h"
-#include "cEvalueFibElementList.h"
+#include "cFibDatabaseJavaScript.h"
 
 
-#include "tinyxml.h"
-
-#include <algorithm>
-#include <iostream>
-#include <fstream>
-#include <ostream>
-#include <ctime>
 #include <string>
+#include <ostream>
 #include <sstream>      // std::ostringstream
+#include <fstream>
+#include <vector>
 
-#include "tCompareBits.inc"
-
-#ifndef DIR_OUTPUT
-	#define DIR_OUTPUT "test_output/"
-#endif
-
-
-
-using namespace fib;
 using namespace std;
-
+using namespace fib;
 
 pair< long, long > getFibObjectDimensions( cFibElement * pFibObject );
 bool saveAsBitmap( const cEvalueSimpleRGBA255 * pImageData,
@@ -105,30 +73,43 @@ std::basic_string<unsigned char> base64Encode(
 		const unsigned char * pInputBuffer, const unsigned int uiBufferSize );
 
 
-int main(int argc, char* argv[]){
+extern "C" {
 
-	int iReturn = 0;//returnvalue of the test; the number of occured Errors
+/*
+ * give parameters ( [ ... ] ):
+ * 	printP = Module.convertFibToImageData('printPoint', 'string', ['number'] )
+ */
+
+/**
+ * @return a image data encoded with base64 for a default image
+ */
+char * getDefaultImage(){
+	return ((char *)"iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==");
+}
+
+
+/**
+ * This function converts the given Fib object into bmp image data encoded
+ * with base64.
+ *
+ * @param szGivenData the Fib object given in the Fib Xml representation
+ * @return the given Fib object into bmp image data encoded with base64
+ */
+char * convertFibToImageData( const char * szGivenData ){
 	
-	srand( time( NULL ) );
 	
-	cout<<endl<<"This programm stores a cEvalueSimpleRGBA255 as an bitmap image"<<endl;
-	cout<<      "=============================================================="<<endl;
-	
-	char * pPathToLoadFibObject = NULL;
-	string szOutputFileName( "test.bmp" );
-	string szOutputFileNamebase64( "test.bmp.base64.txt" );
-	if ( 2 <= argc ){
-		//one parameter given; get parameter test data path
-		pPathToLoadFibObject = argv[1];
+	if ( szGivenData == NULL ){
+		printf("convertFibToImageData(): no data given\n" );
+		return getDefaultImage();
 	}
-	if ( ! pPathToLoadFibObject ){
-		cout<<endl<<"No path for a Fib object to convert given"<<endl;
-		//TODO
-		return 1;
-	}
+	//comment out
+	//printf("Data given: %s\n", szGivenData );
+	
+	//set the correct database class cFibDatabaseJavaScript
+	cFibDatabaseJavaScript::getInstance();
 	
 	//load the given Fib object
-	ifstream strXmlFibObject( pPathToLoadFibObject );
+	istringstream strXmlFibObject( ((string)( szGivenData )) );
 	intFib outStatus = 0;
 	
 	cFibElement * pRestoredFibObject =
@@ -141,7 +122,7 @@ int main(int argc, char* argv[]){
 		if ( pRestoredFibObject ){
 			cFibElement::deleteObject( pRestoredFibObject );
 		}
-		return 2;
+		return getDefaultImage();
 	}
 	if ( outStatus != 0 ){
 		const int iOutStatus = outStatus;
@@ -153,7 +134,7 @@ int main(int argc, char* argv[]){
 	pair< long, long > paDimensions = getFibObjectDimensions( pRestoredFibObject );
 	if ( ( paDimensions.first < 0 ) || ( paDimensions.second < 0 ) ){
 		//no valid dimensions
-		return 3;
+		return getDefaultImage();
 	}
 	
 	//evalue the Fib object into image
@@ -163,143 +144,50 @@ int main(int argc, char* argv[]){
 	
 	pRestoredFibObject->evalueObjectSimple( imageData );
 	
-	
-	
-	/*
-	cEvalueSimpleRGBA255 imageData( 4, 6 );
-	
-	//TODO set image data
-	cVectorPosition vecPosition( 2 );
-	cVectorProperty vecProperty( cTypeProperty::COLOR_RGB );
-	
-	list<cVectorProperty> liProperties;
-	liProperties.push_back( vecProperty );
-	cVectorProperty & vecLiProperty = liProperties.back();
-	
-	
-	vecPosition.setValue( 1, 0 );
-	vecPosition.setValue( 2, 0 );
-	vecLiProperty.setValue( 1, 255 );
-	vecLiProperty.setValue( 2, 255 );
-	vecLiProperty.setValue( 3, 255 );
-	imageData.setPoint( vecPosition, liProperties );
-
-	vecPosition.setValue( 1, 1 );
-	vecPosition.setValue( 2, 0 );
-	vecLiProperty.setValue( 1, 128 );
-	vecLiProperty.setValue( 2, 128 );
-	vecLiProperty.setValue( 3, 128 );
-	imageData.setPoint( vecPosition, liProperties );
-
-	vecPosition.setValue( 1, 0 );
-	vecPosition.setValue( 2, 1 );
-	vecLiProperty.setValue( 1, 64 );
-	vecLiProperty.setValue( 2, 64 );
-	vecLiProperty.setValue( 3, 64 );
-	imageData.setPoint( vecPosition, liProperties );
-
-	vecPosition.setValue( 1, 0 );
-	vecPosition.setValue( 2, 2 );
-	vecLiProperty.setValue( 1, 64 );
-	vecLiProperty.setValue( 2, 0 );
-	vecLiProperty.setValue( 3, 0 );
-	imageData.setPoint( vecPosition, liProperties );
-
-	vecPosition.setValue( 1, 0 );
-	vecPosition.setValue( 2, 3 );
-	vecLiProperty.setValue( 1, 128 );
-	vecLiProperty.setValue( 2, 0 );
-	vecLiProperty.setValue( 3, 0 );
-	imageData.setPoint( vecPosition, liProperties );
-
-
-	vecPosition.setValue( 1, 1 );
-	vecPosition.setValue( 2, 1 );
-	vecLiProperty.setValue( 1, 64 );
-	vecLiProperty.setValue( 2, 128 );
-	vecLiProperty.setValue( 3, 88 );
-	imageData.setPoint( vecPosition, liProperties );
-	
-	vecPosition.setValue( 1, 3 );
-	vecPosition.setValue( 2, 1 );
-	vecLiProperty.setValue( 1, 0 );
-	vecLiProperty.setValue( 2, 255 );
-	vecLiProperty.setValue( 3, 0 );
-	imageData.setPoint( vecPosition, liProperties );
-	
-	vecPosition.setValue( 1, 1 );
-	vecPosition.setValue( 2, 4 );
-	vecLiProperty.setValue( 1, 255 );
-	vecLiProperty.setValue( 2, 0 );
-	vecLiProperty.setValue( 3, 0 );
-	imageData.setPoint( vecPosition, liProperties );
-	
-	vecPosition.setValue( 1, 2 );
-	vecPosition.setValue( 2, 2 );
-	vecLiProperty.setValue( 1, 255 );
-	vecLiProperty.setValue( 2, 255 );
-	vecLiProperty.setValue( 3, 0 );
-	imageData.setPoint( vecPosition, liProperties );
-	
-	vecPosition.setValue( 1, 3 );
-	vecPosition.setValue( 2, 5 );
-	vecLiProperty.setValue( 1, 0 );
-	vecLiProperty.setValue( 2, 0 );
-	vecLiProperty.setValue( 3, 255 );
-	imageData.setPoint( vecPosition, liProperties );
-	*/
-	
-	{
-		ofstream ostrForImageData( szOutputFileName.c_str(),
-			ios_base::out | ios_base::binary );
-		cout<<endl<<"saving bitmap image to "<<szOutputFileName<<endl;
-		
-		const bool bBitmapSaved = saveAsBitmap( &imageData, &ostrForImageData );
-		if ( ! bBitmapSaved ){
-			return 1;
-		}
+	//store the image data as a bitmap
+	printf("store the image data as a bitmap\n");
+	std::ostringstream ostrForImageData;
+	const bool bBitmapSaved = saveAsBitmap( &imageData, &ostrForImageData );
+	if ( ! bBitmapSaved ){
+		return NULL;
 	}
 	
-	
-	{
-		//convert to base64 format
-		cout<<endl<<"Convert to base64 format"<<endl;
-		std::ostringstream ostrForImageData;
-		const bool bBitmapSaved2 = saveAsBitmap( &imageData, &ostrForImageData );
-		if ( ! bBitmapSaved2 ){
-			return 1;
-		}
-		
-		const string strForImageData = ostrForImageData.str();
-		std::basic_string<unsigned char> strBase64ForImageData =
-			base64Encode( ((const unsigned char *)(strForImageData.c_str())),
-				strForImageData.size() );
-		
-		ofstream ostrForImageDataBase64( szOutputFileNamebase64.c_str(),
-			ios_base::out | ios_base::binary );
-		cout<<"saving bitmap image converted to base64 to "<<
-			szOutputFileNamebase64<<endl;
-		
-		ostrForImageDataBase64<<strBase64ForImageData.c_str();
-	}
+	//convert to base64 format
+	printf("convert to base64 format\n");
+	const string strForImageData = ostrForImageData.str();
+	std::basic_string<unsigned char> strBase64ForImageData =
+		base64Encode( ((const unsigned char *)(strForImageData.c_str())),
+			strForImageData.size() );
 	
 	//convert to java compatible string (global char *)
-	/*static char * szBase64ForImageData = NULL;
+	printf("convert to java compatible string (global char *)\n");
+	static char * szBase64ForImageData = NULL;
 	if ( szBase64ForImageData != NULL ){
 		delete szBase64ForImageData;
 	}
 	szBase64ForImageData = new char [ strBase64ForImageData.length() + 1 ];
 	std::strcpy( szBase64ForImageData, ((const char *)strBase64ForImageData.c_str()) );
-	*/
-
-
-
-
-
-	cout<<"done"<<endl;
 	
-	return iReturn;
+	printf("convertFibToImageData() done result (a bitmap in base64, for the img element \"<img src=\"data:image/bmp;base64,...\">\" ):\n\"%s\"\n", szBase64ForImageData );
+	return szBase64ForImageData;
 }
+
+
+/**
+ * This function sets the Fib database path to the given path.
+ *
+ * @param szInDatabasePath the path to set
+ * @return 0 (dummy)
+ */
+int setDatabasePath( const char * szInDatabasePath ){
+	
+	cFibDatabaseJavaScript::getInstance()->setDatabasePath( szInDatabasePath );
+	
+	return 0;
+}
+
+};//end extern "C"
+
 
 
 
@@ -402,10 +290,19 @@ pair< long, long > getFibObjectDimensions( cFibElement * pFibObject ){
 }
 
 
+
+
+
+
+
+
 /**
- * writes the value of write with byte bytes to the stream stream
- * pre: the value write to write, how much usByte byte write should use and the stream to write to
- * post: the value of write with byte bytes in the stream stream
+ * This function writes the value of iWrite with usByte bytes to the stream stream.
+ *
+ * @param stream the stream to iWrite to
+ * @param usByte the number of byts to write
+ * @param iWrite the value iWrite to write
+ * @return the value of iWrite with byte bytes in the stream stream
  */
 void writeInteger( ostream * stream, unsigned short usByte, int iWrite ){
 	for ( unsigned short i = 0; i < usByte ; i++ ){
@@ -413,6 +310,10 @@ void writeInteger( ostream * stream, unsigned short usByte, int iWrite ){
 		iWrite = iWrite >> 8;
 	}
 }
+
+
+//TODO color with background color
+
 
 
 /**
@@ -468,34 +369,7 @@ bool saveAsBitmap( const cEvalueSimpleRGBA255 * pImageData,
 	const char pcNull[ 4 ] = { 0x00, 0x00, 0x00, 0x00 };
 	
 	//( ( lX * (uiBorderIndexY==uiWidth)  + lY ) * 4 );
-	/*TODO test
-	unsigned int uiNumberOfPixle = 1;
-	for ( unsigned int uiY = 0; uiY < uiHight; uiY++ ){
-		for ( unsigned int uiX = 0; uiX < uiWidth; uiX++ ){
-			//write pixle data
-			pCursor = ((const char *)(pImageData->pImageData)) +
-				( ( uiX * (uiHight + 1) + uiY ) * 4 );
-			
-			stream->write( pCursor + 3, 1 );
-			stream->write( pCursor + 2, 1 );
-			stream->write( pCursor + 1, 1 );
-			
-			unsigned char c = 0;
-			cout<<uiNumberOfPixle<<": ("<<uiX<<", "<<uiY<<") -> (";
-			c = (*(pCursor + 3));
-			cout<<((int)(c))<<", ";
-			c = (*(pCursor + 2));
-			cout<<((int)(c))<<", ";
-			c = (*(pCursor + 1));
-			cout<<((int)(c))<<")"<<endl;
-			uiNumberOfPixle++;
-		}
-		//fill till line is a multiple of 4 bytes
-		stream->write( pcNull, uiToFillNullBytesOfLine );
-	}*/
-	
-	
-	/**/
+
 	const char * pCursor2 = pCursor;
 	const unsigned int uiBytsPerLine = (uiHight + 1) * 4;
 	for ( unsigned int uiY = 0; uiY < uiHight; uiY++ ){
@@ -520,9 +394,13 @@ bool saveAsBitmap( const cEvalueSimpleRGBA255 * pImageData,
 }
 
 
+
+
+
+
 /**
-	Below is a C++ version of Base64Encode. This code is released into public domain.
-	Source: http://en.wikibooks.org/wiki/Algorithm_Implementation/Miscellaneous/Base64#C.2B.2B
+ * Below is a C++ version of Base64Encode. This code is released into public domain.
+ * Source: http://en.wikibooks.org/wiki/Algorithm_Implementation/Miscellaneous/Base64#C.2B.2B
 */
 // Prototype
 // std::basic_string<TCHAR> base64Encode(std::vector<BYTE> inputBuffer);
@@ -554,6 +432,7 @@ const static TCHAR encodeLookup[] =
 	{'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','0','1','2','3','4','5','6','7','8','9','+','/'};
 
 const static TCHAR padCharacter = TEXT('=');
+
 
 /**
  * This functions encodes the characters of the buffer with base64 .
@@ -602,6 +481,19 @@ std::basic_string<unsigned char> base64Encode(
 	}
 	return szEncodedString;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -44,6 +44,7 @@ History:
 22.10.2012  Oesterholz  DEBUG_EVALUE added
 16.01.2013  Oesterholz  FEATURE_FIB_ELEMENT_CHECKS_DATABASE_FOR_EXTERNAL_OBJECTS added
 17.02.2013  Oesterholz  FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE added
+09.05.2013  Oesterholz  SWITCH_JUST_STORE_AND_EVALUE added
 */
 
 
@@ -365,6 +366,30 @@ History:
 History:
 */
 #define FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
+
+
+/**
+ * With this switch just code wich is needed to store, restore or evalue
+ * a Fib object is included. The remaining code is commented out.
+ *
+ * This switch should be just used as a compiler flag to exclude not needed
+ * code and reduce the project size
+ *
+ * created: 09.05.2013 Betti Oesterholz
+ * status:  running and tested(09.05.2013)
+ *//*
+History:
+*/
+//#ifdef NEVER
+#define SWITCH_JUST_STORE_AND_EVALUE
+//#endif //NEVER
+
+
+
+
+
+
+
 
 
 

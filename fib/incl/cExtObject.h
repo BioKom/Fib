@@ -316,6 +316,8 @@ public:
 	virtual bool replaceVariable( cFibVariable * pVariableOld,
 		cFibVariable * pVariableNew );
 	
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
+	
 	/**
 	 * This method checks if the given variable is used in the given
 	 * direction from this fib-element.
@@ -346,11 +348,13 @@ public:
 	 */
 	virtual set<cFibVariable*> getUsedVariables( edDirection direction=ED_POSITION );
 
+	
 	/**
 	 * @return true if this Fib-element is movebel else false
 	 */
 	virtual bool isMovable() const;
 
+#endif //SWITCH_JUST_STORE_AND_EVALUE
 
 	/**
 	 * This method copies the Fib-element on the specified position.
@@ -368,6 +372,8 @@ public:
 	virtual cFibElement * copyElement( const char cType='u', const unsignedIntFib
 		elementPoint=0, bool bAbsolute=false ) const;
 
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
+		
 #ifndef FEATURE_EQUAL_FIB_OBJECT
 	
 	/**
@@ -416,6 +422,7 @@ public:
 
 #endif //FEATURE_EQUAL_FIB_OBJECT
 	
+#endif //SWITCH_JUST_STORE_AND_EVALUE
 	/**
 	 * This method stores this Fib-object in the XML -format into the
 	 * given stream.
@@ -426,6 +433,8 @@ public:
 	virtual bool storeXml( ostream & stream ) const;
 
 
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
+	
 	/**
 	 * This method inserts the given Fib-element fibelement on the
 	 * specified position. The replaced Fib-element will be the subobject
@@ -555,6 +564,7 @@ public:
 	virtual intFib moveLimbElement( const char cType='u', const unsignedIntFib
 		elementPoint=0, const intFib iHowfar=1, bool bAbsolute=false );
 
+#endif //SWITCH_JUST_STORE_AND_EVALUE
 
 
 /*
@@ -881,6 +891,8 @@ protected:
 	 */
 	virtual cExtObject * copyInternal( const unsignedIntFib iObjectPoint = 0 ) const;
 
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
+	
 	/**
 	 * This method checks if the given variable is defined in the given
 	 * direction from this Fib-element.
@@ -1029,6 +1041,9 @@ protected:
 		const bool bCheckExternalObjects ) const;
 
 #endif //FEATURE_EQUAL_FIB_OBJECT
+
+#endif //SWITCH_JUST_STORE_AND_EVALUE
+
 
 };//class cExtObject
 }//namespace fib

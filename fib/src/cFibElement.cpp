@@ -8,6 +8,7 @@
  * System: C++
  *
  * This class represents a basic Fib element.
+ *
  * Copyright (C) @c LGPL3 2009 Betti Oesterholz
  *
  * This program is free software: you can redistribute it and/or modify
@@ -57,6 +58,7 @@ History:
 16.01.2013  Oesterholz  FEATURE_FIB_ELEMENT_CHECKS_DATABASE_FOR_EXTERNAL_OBJECTS
 	implemented: if no root object exists to retrieve external objects
 	-> search the Fib database
+19.05.2013  Oesterholz  SWITCH_JUST_STORE_AND_EVALUE implemented
 */
 
 
@@ -111,7 +113,7 @@ cFibElement::cFibElement( cFibElement * pInSuperiorElement ):
 #else //FEATURE_SIMPLE_CONSTRUCTOR
 
 /**
- * parameterconstructor
+ * parameter constructor
  *
  * @param pInSuperiorElement the Fib Element in which this Fib element
  * 	is the underobject
@@ -586,6 +588,8 @@ cFibElement * cFibElement::getFibElement( char cType, longFib lNumber,
 }
 
 
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
+
 /**
  * This method returns a number of (lNumberOfMaxReturnedElements)
  * Fib elements beginning from the reference Fib element in the
@@ -652,6 +656,7 @@ list<cFibElement*> cFibElement::getAllFibElements( char cTypeBasis,
 	return list<cFibElement*>();
 }
 
+#endif //SWITCH_JUST_STORE_AND_EVALUE
 
 /**
  * This method evaluades the Fib object.
@@ -701,6 +706,7 @@ bool cFibElement::evalueObjectSimple( iEvalueFibElement & evalueFibElement,
 		liCFibElementTyps );
 }
 
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
 
 /** This method checks if the given variable is defined in the given
  * direction from this Fib element.
@@ -778,6 +784,8 @@ bool cFibElement::variablesAreDefined( const set<cFibVariable*> & setVariable ,
 	return true;
 }
 
+#endif //SWITCH_JUST_STORE_AND_EVALUE
+
 
 #ifdef FEATURE_FAST_UPDATE
 
@@ -798,6 +806,7 @@ unsignedIntFib cFibElement::getNumberOfObjectPoint() const{
 }
 
 
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
 
 /**
  * This method converts the number of the elementPoint Fib element
@@ -921,6 +930,8 @@ list<unsignedIntFib> cFibElement::getObjectPointsForElement(
 	return list<unsignedIntFib>();
 }
 
+#endif //SWITCH_JUST_STORE_AND_EVALUE
+
 
 /**
  * This method deletes the whool given Fib object with all the Fib
@@ -1020,6 +1031,7 @@ unsignedIntFib cFibElement::getNumberOfObjectPoint() const{
 	return 0;
 }
 
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
 
 /**
  * This method converts the number of the elementPoint Fib element
@@ -1164,6 +1176,8 @@ list<unsignedIntFib> cFibElement::getObjectPointsForElement(
 	return list<unsignedIntFib>();
 }
 
+#endif //SWITCH_JUST_STORE_AND_EVALUE
+
 
 /**
  * This method deletes the whool given Fib object with all the Fib
@@ -1193,6 +1207,8 @@ void cFibElement::deleteObject( cFibElement * fibObject ){
 
 #endif //FEATURE_FAST_UPDATE
 
+
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
 
 /**
  * @return true if this Fib element is movebel else false
@@ -1285,6 +1301,7 @@ bool cFibElement::removeElement(  const char cType, const unsignedIntFib
 	return true;
 }
 
+#endif //SWITCH_JUST_STORE_AND_EVALUE
 
 /**
  * This method duplicates the whole Fib object, beginning with it's
@@ -1613,6 +1630,8 @@ cFibElement * cFibElement::restoreXmlInternal( const TiXmlNode * pXmlNode,
 				if ( pRestoredFibObject == NULL ){
 					printf( "Error: No Fib object restored (NULL)\n" );
 				}
+				printf( "Restoring element %s done, outStatus now: %i\n",
+					szElementType.c_str(), outStatus );
 #endif//DEBUG_RESTORE_XML
 				
 				return pRestoredFibObject;
@@ -2266,6 +2285,7 @@ unsignedIntFib cFibElement::getNumberOfObjectPoint(
 #endif //FEATURE_FAST_UPDATE
 
 
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
 
 #ifdef FEATURE_EQUAL_FIB_OBJECT
 
@@ -2420,8 +2440,12 @@ bool cFibElement::equalValuesSet( const cFibVariable * variableOwn,
 
 #endif //FEATURE_EQUAL_FIB_OBJECT
 
+#endif //SWITCH_JUST_STORE_AND_EVALUE
+
 
 #ifdef FEATURE_FAST_UPDATE
+
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
 
 /**
  * This method returns the numbers of all object points that contain the
@@ -2449,6 +2473,8 @@ list<unsignedIntFib> cFibElement::elementPointToObjectPointsUp(
 	}//else all object points found
 	return list<unsignedIntFib>();
 }
+
+#endif //SWITCH_JUST_STORE_AND_EVALUE
 
 
 /**
@@ -2490,6 +2516,8 @@ void cFibElement::cutConnectionsTo( const cFibElement * pFibElement ){
 
 #else //FEATURE_FAST_UPDATE
 
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
+
 /**
  * This method returns the numbers of all object points that contain the
  * elementPoint Fib element of the type cType.
@@ -2517,6 +2545,8 @@ list<unsignedIntFib> cFibElement::elementPointToObjectPoints(
 	}//else this==referenceFibObject or no pSuperiorElement -> all object points found
 	return list<unsignedIntFib>();
 }
+
+#endif //SWITCH_JUST_STORE_AND_EVALUE
 
 
 /**
@@ -2630,6 +2660,7 @@ void cFibElement::cutConnections( edDirection direction ){
 
 #endif //FEATURE_FAST_UPDATE
 
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
 
 /**
  * This method moves a Fib limb element (cFibLimb) on the specified
@@ -2736,6 +2767,8 @@ intFib cFibElement::moveLimbElementUp( const char cType, const unsignedIntFib
 	
 	return uiHowfar - uiRemainingElementsToMoveUp;
 }
+
+#endif //SWITCH_JUST_STORE_AND_EVALUE
 
 
 /**

@@ -39,6 +39,7 @@ History:
 19.10.2011  Oesterholz  FEATURE_EQUAL_FIB_OBJECT implemented
 02.12.2011  Oesterholz  XML format: the "value" can also loaded as a
 	XML element
+03.06.2013  Oesterholz  SWITCH_JUST_STORE_AND_EVALUE implemented
 */
 
 
@@ -507,6 +508,7 @@ cFibElement *cComment::copyElement( const char cType, const unsignedIntFib
 	return NULL;
 }
 
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
 
 #ifdef FEATURE_EQUAL_FIB_OBJECT
 
@@ -648,6 +650,8 @@ bool cComment::equalElement( const cFibElement & fibElement ) const{
 }
 
 #endif //FEATURE_EQUAL_FIB_OBJECT
+
+#endif //SWITCH_JUST_STORE_AND_EVALUE
 
 /**
  * This method stores this fib-object in the XML -format into the

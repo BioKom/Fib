@@ -74,7 +74,7 @@ History:
 
 
 //TODO weg
-//#define DEBUG
+#define DEBUG
 
 
 #include "cRoot.h"

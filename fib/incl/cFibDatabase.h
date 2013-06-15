@@ -33,6 +33,7 @@
 /*
 History:
 25.11.2011  Oesterholz  created
+14.05.2013  Oesterholz  changes so that the database class can be replaced
 */
 
 #ifndef ___C_FIB_DATABASE_H__
@@ -51,6 +52,11 @@ History:
 #include <map>
 
 
+#ifndef MAX_DATABASE_PATH_SEARCH_DEPTH
+	#define MAX_DATABASE_PATH_SEARCH_DEPTH 32
+#endif //MAX_DATABASE_PATH_SEARCH_DEPTH
+
+
 namespace fib{
 
 class cFibDatabaseDeleter;
@@ -59,7 +65,7 @@ class cFibDatabase{
 
 friend class cFibDatabaseDeleter;
 
-private:
+protected:
 	
 	/**
 	 * The instance for the Fib database
@@ -70,6 +76,15 @@ private:
 	 * The path to the actual loaded database.
 	 */
 	static std::string szDatabasePath;
+	
+	/**
+	 * True if the database path is Ok else false.
+	 * @see szDatabasePath
+	 * If true the @see mapDatabaseIdentifiers
+	 * and @see liDatabaseIdentifiers
+	 * should be loaded correctly from the given path.
+	 */
+	static bool bDatabasePathOk;
 	
 	/**
 	 * A map with the loaded Fib database objects.
@@ -94,12 +109,12 @@ private:
 	 */
 	static std::list< longFib > liDatabaseIdentifiers;
 	
+protected:
+	
 	/**
 	 * constructor
 	 */
 	cFibDatabase();
-	
-protected:
 	
 	/**
 	 * This class is for deleting the database when the programm ends.
@@ -130,7 +145,7 @@ public:
 	/**
 	 * This method returns the database Fib object for the identifer, if it
 	 * exists.
-	 * 
+	 *
 	 * @see loadFibObject()
 	 * @see mapLoadedDatabaseObjects
 	 * @see setDatabaseIdentifiers
@@ -138,26 +153,26 @@ public:
 	 * @return the Fib object for the identifer lIdentifer or NULL if non
 	 * 	such exists
 	 */
-	cRoot * getFibObject( const longFib lIdentifer );
+	virtual cRoot * getFibObject( const longFib lIdentifer );
 	
 	/**
 	 * This method loads the Fib object for the identifier.
 	 * If you load Fib objects some time befor you want it
 	 * (call getFibObject() for them) this could speed up the process. 
 	 * This method won't load Fib objects that are allready loaded.
-	 * 
+	 *
 	 * @see getFibObject()
 	 * @see reloadDatabase()
 	 * @see mapLoadedDatabaseObjects
 	 * @see setDatabaseIdentifiers
 	 * @param lIdentifer the identifer of the Fib object to load
 	 */
-	void loadFibObject( const longFib lIdentifer );
+	virtual void loadFibObject( const longFib lIdentifer );
 	
 	/**
 	 * This method frees the Fib object for the identifier.
 	 * You could free some memory in this way.
-	 * 
+	 *
 	 * @see getFibObject()
 	 * @see loadFibObject()
 	 * @see reloadDatabase()
@@ -204,44 +219,73 @@ public:
 	 * @return true if the given Fib database path exists and was set, else
 	 * 	false and the database path is not changed
 	 */
-	static bool setDatabasePath( const std::string szInDatabasePath );
+	virtual bool setDatabasePath( const std::string szInDatabasePath );
 	
 	/**
 	 * This function search standard Fib database paths to find a valid Fib
 	 * database and sets the first found Fib database path if one was found.
-	 * 
+	 *
 	 * @see szDatabasePath
 	 * @see szStandardDatabaseFolder
 	 * @return true if a Fib database (path) was found and was set, else
 	 * 	false and the database path is not changed
 	 */
-	static bool searchForDatabasePath();
+	virtual bool searchForDatabasePath();
 	
 	/**
 	 * This method reloads all Fib database objects identifiers from the set
 	 * database path.
-	* No database objects will be loaded after the reload.
-	 * 
+	 * No database objects will be loaded after the reload.
+	 *
 	 * @see szDatabasePath
 	 * @see mapLoadedDatabaseObjects
 	 * @return true if the database objects identifiers could be reloded
 	 * 	(the database path exists), else false
 	 */
-	bool reloadDatabase();
+	virtual bool reloadDatabase();
 	
-private:
+protected:
+	
+	/**
+	 * This method returns a valid database path if possible.
+	 * If the database is ok @see bDatabasePathOk
+	 * this will be the actual set database, else it will be searched for a
+	 * Fib database.
+	 * If a Fib database was found, the members dependent on the database
+	 * will be updated:
+	 * 	@see mapLoadedDatabaseObjects
+	 * 	@see mapDatabaseIdentifiers
+	 * 	@see liDatabaseIdentifiers
+	 *
+	 * @return a valid database path if possible, else ""
+	 */
+	virtual std::string getDatabase();
 	
 	/**
 	 * This method loads the database folder data.
 	 * (Attention: No mutex variables are used in this method.)
-	 * 
+	 *
 	 * @see liDatabaseIdentifiers
 	 * @see mapDatabaseIdentifiers
 	 * @param folder the database folder from which to load the data
 	 * @return true if the data was loaded, else false
 	 */
-	static bool loadListContainedDbObjects( cFolder & folder );
+	virtual bool loadListContainedDbObjects( cFolder & folder );
 	
+	/**
+	 * This method loads the Fib object for the given file name.
+	 * This function won't handle mutex variables.
+	 *
+	 * @see loadFibObject()
+	 * @see getFibObject()
+	 * @see treadloadFibObject()
+	 *
+	 * @see reloadDatabase()
+	 * @see mapLoadedDatabaseObjects
+	 * @see setDatabaseIdentifiers
+	 * @param lIdentifer the identifer of the Fib object to load
+	 */
+	virtual cRoot * loadFibObject( const string & szFileName );
 	
 #ifdef FEATURE_FIB_DB_USE_TREADS
 	

@@ -36,6 +36,7 @@
 History:
 26.07.2010  Oesterholz  created
 19.10.2011  Oesterholz  FEATURE_EQUAL_FIB_OBJECT implemented
+03.06.2013  Oesterholz  SWITCH_JUST_STORE_AND_EVALUE implemented
 */
 
 #ifndef ___C_COMMENT_H__
@@ -278,7 +279,7 @@ public:
 	 * @return the size of the fib-object in bits in the compressed form
 	 */
 	virtual unsignedLongFib getCompressedSize() const;
-
+	
 	/**
 	 * This method copies the fib-element on the specified position.
 	 * Variables which are not defined in the fib-element but used
@@ -295,6 +296,8 @@ public:
 	virtual cFibElement *copyElement( const char cType='u', const unsignedIntFib
 		elementPoint=0, bool bAbsolute=false ) const;
 
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
+		
 #ifndef FEATURE_EQUAL_FIB_OBJECT
 	
 	/**
@@ -324,6 +327,8 @@ public:
 	virtual bool equalElement( const cFibElement & fibElement ) const;
 
 #endif //FEATURE_EQUAL_FIB_OBJECT
+	
+#endif //SWITCH_JUST_STORE_AND_EVALUE
 	
 	/**
 	 * This method stores this fib-object in the XML -format into the
@@ -414,7 +419,6 @@ protected:
 	 */
 	virtual cFibElement *copyInternal( const unsignedIntFib iObjectPoint=0 ) const;
 
-
 #ifdef FEATURE_EQUAL_FIB_OBJECT
 
 	/**
@@ -484,6 +488,7 @@ protected:
 		const bool bCheckExternalObjects ) const;
 
 #endif //FEATURE_EQUAL_FIB_OBJECT
+
 
 };
 }//namespace fib

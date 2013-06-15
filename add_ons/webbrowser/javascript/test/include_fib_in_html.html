@@ -1,0 +1,192 @@
+<html>
+	<head>
+		<title>
+			Load Fib object
+		</title>
+
+		<meta name="Description" lang="en" content="Fib example: This example demonstrates how to use an image Fib object in a website." >
+		<meta name="page-topic" lang="en" content="Fib example: include Fib in HTML">
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta name="expires" content="NEVER">
+		<meta name="audience" content="all">
+		<meta name="keywords" lang="en" content="Fib,Fib-Development,example,
+			Fib-Multimediasystem,format,multimedia language,multimedia,picture,BioKom,fib,
+			project,usefull,free,HTML,include,object,draw,show">
+		<meta name="keywords" lang="de" content="Fib,Fib-Development,Fib,Beispiel,
+			Fib-Multimediaformat,Multimedia,Fib-Multimediasystem,
+			Multimediasprache,Format,Multimediaformat,Bildverarbeitung,
+			Bildformat,HTML,include,zeichnen,darstellen,
+			kostenlos,frei">
+		<meta name="publisher" content="Betti &Ouml;sterholz">
+		<meta name="copyright" content="(c) 2013 Betti &Ouml;sterholz">
+		<meta name="revisit-after" content="30 days">
+		<meta name="robots" content="index,follow">
+		<meta name="Author" content="Betti &Ouml;sterholz">
+		<meta name="DC.Language" content="en">
+		
+		<link rel="stylesheet" type="text/css" media="screen,projection" href="../fib_development.css">
+		
+		<!-- load the JavaScript library with the functions to load and convert Fib objects -->
+		<script type="text/javascript" src="javascript/libfib.js"></script>
+		<script type="text/javascript">
+			//import the convertFibToImageData() function from emscripten
+			convertFibToImageData = Module.cwrap('convertFibToImageData', 'string', 'string' );
+			
+			/**
+			 * Function to load the Fib image data from a file into a img element.
+			 *
+			 * @pre imgElementId the element id for the image element, where to
+			 * 	load the Fib object image to
+			 * @pre fibObjFileName the file name / path of the Fib object to load
+			 * @pre onLoad optional parameter: the new onload parameter
+			 * 	for the to load image
+			 */
+			function displayFibObject( imgElementId, fibObjFileName,
+					/*optional*/ onLoad ){
+				
+				var pFibObjFileName =
+					allocate( intArrayFromString( fibObjFileName ), 'i8', ALLOC_STACK );
+				//load the Fib object data from the file
+				var loadedData = _jsFunOpenFileStream( pFibObjFileName );
+				
+				if ( HEAPU8[(((loadedData)+(0))|0)] == 0 ){
+					alert( "Error: could not load the Fib data from " + fibObjFileName +
+						"\nDid the file exists in the same domain as this page?\n" +
+						"Note: The example doesn't work on your local computer.");
+					return;
+				}//else data loaded
+				//load the Fib object bmp image data into the image element
+				var fibObjectImage = document.getElementById( imgElementId );
+				if ( fibObjectImage == typeof('undefined') ){
+					alert( "Error: could not find image element with id " +
+						imgElementId + " to store data to" );
+					return;
+				}
+				if ( onLoad ){
+					//set new onload
+					fibObjectImage.onload = onLoad;
+				}else{//don't load image again (=don't use old onload again)
+					fibObjectImage.onload = "";
+				}
+				//convert loaded Fib object data into a bitmap image in base64
+				var dataFibImage = convertFibToImageData( loadedData );
+				//add image data header
+				dataFibImage = "data:image/bmp;base64," + dataFibImage;
+				fibObjectImage.src = dataFibImage;
+			}
+			
+		</script>
+	</head>
+<body>
+
+<div id="main">
+
+<div id="head">
+	<h1 align="center">Load Fib object</h1>
+</div><!--head-->
+<div id="content">
+		
+		This example demonstrates, how to use an image Fib object on a website with the help of JavaScript.<br>
+		
+		<h3>Loaded Fib image:</h3>
+		<!-- The image element to load the Fib data to.
+		the important part:
+			"onload="displayFibObject('xmlFibObjectImage', 'pictures/wappen.xml' )""
+		-->
+		<img id="xmlFibObjectImage" onload="displayFibObject('xmlFibObjectImage', 'pictures/wappen.xml' )" src="data:image/bmp;base64,Qk05AAAAAAAAADYAAAAoAAAAAQAAAAEAAAABABgAAAAAAAM
+            AAAAAAAAAAAAAAAAAAAAAAAAAAAD/AA==" alt="No Fib object data given"><br>
+		<small>If this is a red point the example doesn’t work on your browser.<br>
+		The example was build with emscripten in JavaScript from the original Fib C++ code.</small>
+		
+		
+		<h3>The web page code needed</h3>
+		
+		You will need the "libfib.js" library, which can be created with the
+		"add_ons/webbrowser/javascript/" sub module of the <a href="http://www.github.com/BioKom/Fib">Fib system (www.github.com/BioKom/Fib)</a>.
+		<br>
+		The following code is an example for the HTML web page to create:
+		
+			<code>
+<pre>
+&lt;html&gt;
+   &lt;head&gt;
+      &lt;meta http-equiv="Content-Type" content="text/html; charset=utf-8"&gt;
+      
+      &lt;!-- load the JavaScript library with the functions to load and
+      convert Fib objects --&gt;
+      &lt;script type="text/javascript" src="../lib/libfib.js"&gt;&lt;/script&gt;
+      &lt;script type="text/javascript"&gt;
+         //import the convertFibToImageData() function from emscripten
+         convertFibToImageData = Module.cwrap('convertFibToImageData', 'string', 'string' );
+         
+         /**
+          * Function to load the Fib image data from a file into a img element.
+          *
+          * @pre imgElementId the element id for the image element, where to
+          *    load the Fib object image to
+          * @pre fibObjFileName the file name / path of the Fib object to load
+          * @pre onLoad optional parameter: the new onload parameter
+          *    for the to load image
+          */
+         function displayFibObject( imgElementId, fibObjFileName,
+               /*optional*/ onLoad ){
+            
+            var pFibObjFileName =
+               allocate( intArrayFromString( fibObjFileName ), 'i8', ALLOC_STACK );
+            //load the Fib object data from the file
+            var loadedData = _jsFunOpenFileStream( pFibObjFileName );
+            
+            if ( HEAPU8[(((loadedData)+(0))|0)] == 0 ){
+               alert( "Error: could not load the Fib data from " + fibObjFileName +
+                  "\nDid the file exists in the same domain as this page?\n" +
+                  "Note: The example doesn't work on your local computer.");
+               return;
+            }//else data loaded
+            //load the Fib object bmp image data into the image element
+            var fibObjectImage = document.getElementById( imgElementId );
+            if ( fibObjectImage == typeof('undefined') ){
+               alert( "Error: could not find image element with id " +
+                  imgElementId + " to store data to" );
+               return;
+            }
+            if ( onLoad ){
+               //set new onload
+               fibObjectImage.onload = onLoad;
+            }else{//don't load image again (=don't use old onload again)
+               fibObjectImage.onload = "";
+            }
+            //convert loaded Fib object data into a bitmap image in base64
+            var dataFibImage = convertFibToImageData( loadedData );
+            //add image data header
+            dataFibImage = "data:image/bmp;base64," + dataFibImage;
+            fibObjectImage.src = dataFibImage;
+         }
+         
+      &lt;/script&gt;
+   &lt;/head&gt;
+   &lt;body&gt;
+      
+      &lt;!-- The image element to load the Fib data to.
+      the important part:
+         "onload="displayFibObject('xmlFibObjectImage', 'pictures/wappen.xml' )""
+      --&gt;
+      &lt;img id="xmlFibObjectImage"
+         onload="displayFibObject('xmlFibObjectImage', 'pictures/wappen.xml' )"
+         src="data:image/bmp;base64,Qk05AAAAAAAAADYAAAAoAAAAAQAAAAEAAAABABgAAAAAAAM
+            AAAAAAAAAAAAAAAAAAAAAAAAAAAD/AA=="
+         alt="No Fib object data given"&gt;
+   &lt;/body&gt;
+&lt;/html&gt;
+
+</pre>
+	</code>
+
+		
+		
+
+</div><!--content-->
+
+</div><!--main-->
+
+</body>
+</html>
