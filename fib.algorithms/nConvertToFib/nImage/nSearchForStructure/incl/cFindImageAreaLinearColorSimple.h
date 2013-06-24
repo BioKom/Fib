@@ -1,6 +1,3 @@
-
-//TODO check
-
 /**
  * @file cFindImageAreaLinearColorSimple
  * file name: cFindImageAreaLinearColorSimple.h
@@ -25,9 +22,12 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
  *
  * This header specifies a class for searching for a structure with
- * linear color gradient color in an image.
+ * linear color gradient in an image.
  * For this a method findImageStructure() is defined.
  * If you want to convert an image to Fib structures, you have to search
  * the image for structures, which can be converted to Fib.
@@ -76,15 +76,17 @@ protected:
 	 * @see fib::cTypeProperty
 	 * @see iImageData::getNumberOfProperties()
 	 * @see iImageData::getProperty()
+	 * @see maxErrorPerPoint
 	 * @see maxErrorPerPropertyElement
 	 */
 	unsigned int propertyTypeNumber;
 	
 	/**
 	 * The maximal error for a point of the area.
-	 * The difference of the properties (of type propertyTypeNumber) for the
-	 * point. @see iImageData::getDifference()
+	 * The difference of the properties (orginal to evalued area property
+	 * of type propertyTypeNumber) for the point. @see iImageData::getDifference()
 	 * @see propertyTypeNumber
+	 * @see maxErrorPerPropertyElement
 	 */
 	const double maxErrorPerPoint;
 	
@@ -97,9 +99,10 @@ protected:
 	
 	/**
 	 * The maximal error for a element of a property of a point of the area.
-	 * The difference of the properties (of type propertyTypeNumber) for the
-	 * point. @see iImageData::getDifference()
+	 * The difference of the property elements  (orginal to evalued area
+	 * property of type propertyTypeNumber) for the point.
 	 * @see propertyTypeNumber
+	 * @see maxErrorPerPoint
 	 */
 	const double maxErrorPerPropertyElement;
 	
@@ -128,8 +131,8 @@ public:
 	 * 	@see bCanBeAntialised
 	 * @param dMaxErrorPerPropertyElement the maximal error for a property
 	 * 	element value for a point of the area;
-	 * 	This value is just for evaluing the base and slope parameters for the
-	 * 	image structure (for linear properties) to create.
+	 * 	This value is just for evaluing the base and slope parameters for
+	 * 	the image structure (for linear properties) to create.
 	 * 	@see maxErrorPerPropertyElement
 	 */
 	cFindImageAreaLinearColorSimple( unsigned int uiPropertyType,
@@ -139,7 +142,7 @@ public:
 	
 	
 	/**
-	 * This method is for searching in an image for an area with the linear color.
+	 * This method is for searching in an image for an area with linear color.
 	 * If the returned structure is antialised, the border points of the
 	 * structure, will not be in the structure points of the structure.
 	 * @see cImageStructure::bIsAntialised
@@ -192,7 +195,7 @@ protected:
 	 * 	(pConvertImageToFib->getImageSearchData()) should have a
 	 * 	propertyTypeNumber'th property for each point.
 	 * @return a new start point which is neighbour of the start point
-	 * 	paStartPoint and  which has (if possible) no overlapped neighbours
+	 * 	paStartPoint and which has (if possible) no overlapped neighbours
 	 */
 	pair< unsigned int, unsigned int> findGoodAreaStartPoint(
 		const pair< unsigned int, unsigned int> & paStartPoint,
@@ -204,8 +207,9 @@ protected:
 	 * direction, for the area which includs the start point paStartPoint,
 	 * is not overlapped and has in dimension 3 the given index uiIndexDim3.
 	 *
-	 * @param uiIndexDim3 the index in dimension 3 for the values for which the
-	 * 	slope should be evalued
+	 * @see searchForGoodSlope()
+	 * @param uiIndexDim3 the index in dimension 3 for the values, for which
+	 * 	the slope should be evalued
 	 * @param paStartPoint the start point for the area
 	 * @param dMaxErrorPerValue the maximal error for a value of the matrix
 	 * @param pConvertImageToFib a pointer to the object for converting an
@@ -213,7 +217,7 @@ protected:
 	 * 	image search data);
 	 * 	The image data (getImageData()) of the search data
 	 * 	(pConvertImageToFib->getImageSearchData()) should have a
-	 * 	propertyTypeNumber'th property for each point.
+	 * 	uiIndexDim3'th value for each point.)
 	 * @return a good slope parameter
 	 */
 	doubleFib evalueSlopeXForIndex( const unsigned int uiIndexDim3,
@@ -226,8 +230,9 @@ protected:
 	 * direction, for the area which includs the start point paStartPoint,
 	 * is not overlapped and has in dimension 3 the given index uiIndexDim3.
 	 *
-	 * @param uiIndexDim3 the index in dimension 3 for the values for which the
-	 * 	slope should be evalued
+	 * @see searchForGoodSlope()
+	 * @param uiIndexDim3 the index in dimension 3 for the values, for which
+	 * 	the slope should be evalued
 	 * @param paStartPoint the start point for the area
 	 * @param dMaxErrorPerValue the maximal error for a value of the matrix
 	 * @param pConvertImageToFib a pointer to the object for converting an
@@ -235,7 +240,7 @@ protected:
 	 * 	image search data);
 	 * 	The image data (getImageData()) of the search data
 	 * 	(pConvertImageToFib->getImageSearchData()) should have a
-	 * 	propertyTypeNumber'th property for each point.
+	 * 	uiIndexDim3'th value for each point.)
 	 * @return a good slope parameter
 	 */
 	doubleFib evalueSlopeYForIndex( const unsigned int uiIndexDim3,
@@ -248,12 +253,13 @@ protected:
 	 * matrix, for the area which includs the start point paStartPoint,
 	 * is not overlapped and has in dimension 3 the given index uiIndexDim3.
 	 *
-	 * @param uiIndexDim3 the index in dimension 3 for the values for which the
-	 * 	slope should be evalued
+	 * @param uiIndexDim3 the index in dimension 3 for the values, for which
+	 * 	the slope should be evalued
 	 * @param paStartPoint the start point for the area
 	 * @param dMaxErrorPerValue the maximal error for a value of the matrix
-	 * @param pDerivateMatrix the derivation matrix in which the slope
+	 * @param pDerivateMatrix the derivation matrix, with which the slope
 	 * 	parameter should be evalued
+	 * 	(It should have a uiIndexDim3'th value for each point.)
 	 * @param pImageSearchData the image search data with the overlapped points
 	 * 	marked; all points in the slope area will be marked as found
 	 * @return a good slope parameter
@@ -269,8 +275,8 @@ protected:
 	 * start point paStartPoint, is not overlapped and has in dimension 3 the
 	 * given index uiIndexDim3.
 	 *
-	 * @param uiIndexDim3 the index in dimension 3 for the values for which the
-	 * 	base should be evalued
+	 * @param uiIndexDim3 the index in dimension 3 for the values, for which
+	 * 	the base should be evalued
 	 * @param paStartPoint the start point for the area
 	 * @param dSlopeX the slope in the first (x) direction
 	 * @param dSlopeY the slope in the second (y) direction
@@ -280,8 +286,8 @@ protected:
 	 * 	image search data);
 	 * 	The image data (getImageData()) of the search data
 	 * 	(pConvertImageToFib->getImageSearchData()) should have a
-	 * 	propertyTypeNumber'th property for each point.
-	 * @return a good slope parameter
+	 * 	uiIndexDim3'th value for each point.)
+	 * @return a good base parameter
 	 */
 	doubleFib evalueBaseForIndex( const unsigned int uiIndexDim3,
 		const pair< unsigned int, unsigned int> & paStartPoint,
@@ -290,7 +296,7 @@ protected:
 		cConvertImageToFib * pConvertImageToFib ) const;
 	
 	/**
-	 * This method searches for all points which can be included into the given
+	 * This method searches for all points, which can be included into the given
 	 * image structure pInOutImageStructure and includes them into it.
 	 *
 	 * @param pInOutImageStructure the image structure for which the points
@@ -298,8 +304,8 @@ protected:
 	 * 	It should already contain at last one point, at which to start the
 	 * 	search (if it contains more than one point they should be in one
 	 * 	connected (via neighbours) area).
-	 * 	The structure and structure neighbour points will be added, you have
-	 * 	to add the structure border points to it.
+	 * 	The structure and structure neighbour points will be added, you
+	 * 	have to add the structure border points to it.
 	 * @param dMaxErrorPerPoint the maximal error for a property of a point
 	 * @param pConvertImageToFib a pointer to the object for converting an
 	 * 	image to a Fib object (it should implement methods to get the
@@ -321,13 +327,14 @@ protected:
 	 * are antialised.
 	 * This is a help method for: @see findImageStructure()
 	 *
-	 * @param pStructureToCheck the structure which neighbours to check
+	 * @param pInOutImageStructure the structure, which neighbours to check
+	 * 	 and which will be adapted, if the border is antialised
 	 * @param pImageSearchData the image search data for the structure,
-	 * 	all points in the structure pStructureToCheck and there neighbour
+	 * 	all points in the structure pInOutImageStructure and there neighbour
 	 * 	points have to be marked as found in pImageSearchData
 	 * @return true if the structure border neighbours are antialised else false
 	 */
-	bool checkIfBorderIsAntialised( cImageAreaLinearColor * pStructureToCheck,
+	bool checkIfBorderIsAntialised( cImageAreaLinearColor * pInOutImageStructure,
 		const cImageSearchData * pImageSearchData ) const;
 	
 	

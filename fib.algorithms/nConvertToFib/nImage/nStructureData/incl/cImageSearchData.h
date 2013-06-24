@@ -28,6 +28,10 @@
  * set to any overwritten property because the points are overwritten, you
  * can use this class.
  *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ *
  * All positions vectors (cVectorPosition) elements should be positiv
  * integers from 0 to ulBorderX or ulBorderY respectively.
  *

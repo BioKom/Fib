@@ -2231,38 +2231,6 @@ template<class tX, class tY> unsigned long fib::algorithms::nD1::cPolynom<tX, tY
 		//warning: no new spline found -> no new data points found
 		cout<<endl<<"Warning: no new data points / spline found"<<endl;
 	}
-#endif
-/*TODO weg?
-	//enlarge ulIndexLastGoodDataPoint till last point for which error is OK
-	tY errorSum = ((tY)0);
-	ulIndexLastGoodDataPoint = 0;
-	for ( typename vector< fib::algorithms::nD1::cDataPointRangeWithWeights< tX, tY > >::
-			const_iterator itrActualDataPoint = vecInputData.begin();
-			itrActualDataPoint != vecInputData.end();
-			itrActualDataPoint++, ulIndexLastGoodDataPoint++ ){
-		
-		const tY dPolynomValue = evalue( itrActualDataPoint->x );
-		
-		const tY minY = itrActualDataPoint->minY;
-		const tY maxY = itrActualDataPoint->maxY;
-		
-		const tY errorOnValue = (itrActualDataPoint->dWeightError) *
-			( ( dPolynomValue < minY ) ? ( minY - dPolynomValue ) :
-				( ( maxY < dPolynomValue ) ? (dPolynomValue - maxY) : ((tY)0) ) );
-		
-		errorSum += errorOnValue;
-		
-		if ( ( maxErrorPerValue < errorOnValue ) || ( maxError < errorSum ) ){
-			//max error reached
-			if ( itrActualDataPoint == vecInputData.begin() ){
-				//no correct polynom exists
-				vecFactors.clear();
-			}
-			break;
-		}
-	}//else for all data points
-*/
-#ifdef DEBUG_C_POLYNOM
 	cout<<"actual polynom: ";
 	print( cout );
 	cout<<"cPolynom<tX, tY>::evalueSpline( vecInputData, uiMaxNumberOfParameters="<<
@@ -2991,11 +2959,9 @@ template<class tX, class tY> unsigned long fib::algorithms::nD1::cPolynom<tX, tY
 
 #endif //FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
 
-//TODO check
-
 /**
- * This method will try to reduce the bits of the parameters (beginning
- * with the first parameter).
+ * This method will try to reduce the bits of the polynom parameters
+ * (beginning with the first parameter).
  *
  * @param vecRangesForError the range data points which the polynom
  * 	should match
@@ -3005,10 +2971,11 @@ template<class tX, class tY> unsigned long fib::algorithms::nD1::cPolynom<tX, tY
  * @param maxError the maximal error for the polynom parameter to find;
  * 	the error on the found polynom for vecRangesForError will be equal or
  * 	less than maxError (if it was equal or less befor)
+ * 	@see checkError()
  * @param maxErrorPerValue the maximal error for the polynom to find on
  * 	one data point; the error on the interpolated polynom for every data
  * 	point in vecRangesForError will be equal or less than maxErrorPerValue
- * 	(if it was equal or less befor);
+ * 	(if it was equal or less befor); @see checkError()
  * 	if maxErrorPerValue is 0 and maxError is not 0, maxErrorPerValue will
  * 	be set to maxError * 2 / vecInputData.size()
  */
@@ -3025,14 +2992,14 @@ template<class tX, class tY> void fib::algorithms::nD1::cPolynom<tX, tY>::
 #endif //DEBUG_CPOLYNOM_REDUCE_BITS
 	
 	/*if maxErrorPerValue is 0 and maxError is not 0, maxErrorPerValue will
-	be set to maxError / vecInputData.size()*/
+	be set to maxError * 2 / vecInputData.size()*/
 	const tY dMaxErrorPerValue = ( maxErrorPerValue != ((tY)(0.0)) ) ?
 			maxErrorPerValue : ( maxError == ((tY)(0.0)) ) ? 0.0 :
 				( (maxError * 2.0) / ((tY)vecRangesForError.size()) );
 #ifdef DEBUG_CPOLYNOM_REDUCE_BITS
 	cout<<"used maxErrorPerValue=dMaxErrorPerValue="<<dMaxErrorPerValue<<endl;
 #endif //DEBUG_CPOLYNOM_REDUCE_BITS
-	
+	//for every parameter
 	for ( typename vector< tY >::iterator itrActualFactor = vecFactors.begin();
 			itrActualFactor != vecFactors.end(); itrActualFactor++ ){
 		//reduce number of bits
@@ -3050,6 +3017,7 @@ template<class tX, class tY> void fib::algorithms::nD1::cPolynom<tX, tY>::
 		intFib iSizeExponent;
 		decomposeDoubleFib( dActualParameter,
 			&lMantissa, &lExponent, &iSizeMantissa, &iSizeExponent );
+		
 		intFib iMinMatissaBits = iSizeMantissa;
 #ifdef DEBUG_CPOLYNOM_REDUCE_BITS
 		cout<<"init "<<dActualParameter<<" mantissa="<<lMantissa<<
@@ -3174,11 +3142,13 @@ template<class tX, class tY> void fib::algorithms::nD1::cPolynom<tX, tY>::
 #endif //DEBUG_CPOLYNOM_REDUCE_BITS
 					
 					if ( iChangedSizeMantissa < iMinMatissaBits ){
-						//remeber best bits per value
+						//remeber best value found
+						iMinMatissaBits = iChangedSizeMantissa;
+					
 						bestOkValue.first.first  = lMantissaToCheck;
 						bestOkValue.first.second = lChangedExponent;
 						bestOkValue.second = iChangedSizeMantissa;
-						if ( lMantissa == 0 ){
+						if ( lMantissaToCheck == 0 ){
 							//best possible ( 1 ) bit found -> stop evaluation for parameter
 							liOkValuesToReduce.clear();
 							break;
@@ -3214,8 +3184,6 @@ template<class tX, class tY> void fib::algorithms::nD1::cPolynom<tX, tY>::
 		", maxErrorPerValue="<<maxErrorPerValue<<" ) done"<<endl;
 #endif //DEBUG_CPOLYNOM_REDUCE_BITS
 }
-
-//TODO check end
 
 
 /**

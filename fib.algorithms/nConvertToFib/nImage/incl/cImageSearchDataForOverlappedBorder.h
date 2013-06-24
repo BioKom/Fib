@@ -8,7 +8,7 @@
  * System: C++
  *
  * This header specifies a class to store the data for a search on image
- * data and data for the overlapped border.
+ * data and data for the border of the overlapped area.
  *
  * Copyright (C) @c GPL3 2013 Betti Oesterholz
  *
@@ -22,9 +22,12 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
  *
  * This header specifies a class to store the data for a search on image
- * data and data for the overlapped border.
+ * data and data for the border of the overlapped area.
  * If you want to convert an image to Fib structures, you have to search
  * the image for structures, which can be converted to Fib.
  * To mark for which points structures wher found and which points you can
@@ -95,7 +98,7 @@ public:
 	 *
 	 * @param ulInWidth the width of the image to search @see ulBorderX
 	 * @param ulInHeight the height of the image to search @see ulBorderY
-	 * @param dInTransparencyThreshold just points with a lower transparency
+	 * @param dInTransparencyThreshold just points with a lower or equal transparency
 	 * 	value will be marked as overlapped when evalued by @see evaluePosition()
 	 * 	@see dTransparencyThreshold
 	 */
@@ -108,7 +111,7 @@ public:
 	 *
 	 * @param pInImageData pointer to the image data, of the image to convert
 	 * 	@see pImageData
-	 * @param dInTransparencyThreshold just points with a lower transparency
+	 * @param dInTransparencyThreshold just points with a lower or equal transparency
 	 * 	value will be marked as overlapped when evalued by @see evaluePosition()
 	 * 	@see dTransparencyThreshold
 	 */
@@ -154,8 +157,8 @@ public:
 	pair< bool, pair< unsigned int, unsigned int> > getBorderPoint();
 	
 	/**
-	 * This method will mark every points with a transparency value lower
-	 * the transparency threshold (or no transparency) as overlapped.
+	 * This method will mark every point with a transparency value lower or
+	 * equal the transparency threshold (or no transparency) as overlapped.
 	 * @see dTransparencyThreshold
 	 *
 	 * @param vPosition the position of the point, which is evalued

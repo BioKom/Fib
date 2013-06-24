@@ -144,29 +144,29 @@ namespace fib{
 
 
 	/**
-	 * This function evalues the digits needed to store a value as an
+	 * This function evalues the digits needed to store a value as a
 	 * natural number.
 	 *
 	 * @param uiValue the value to evalue the digits for
-	 * @return the digits needed to store a value as an natural number
+	 * @return the digits needed to store a value as a natural number
 	 */
 	unsigned int getDigits( unsigned int uiValue );
 
 	/**
-	 * This function evalues the digits needed to store a value as an
+	 * This function evalues the digits needed to store a value as a
 	 * natural number.
 	 *
 	 * @param ulValue the value to evalue the digits for
-	 * @return the digits needed to store a value as an natural number
+	 * @return the digits needed to store a value as a natural number
 	 */
 	unsigned int getDigits( unsigned long ulValue );
 	
 	/**
-	 * This function evalues the digits needed to store a value as an
+	 * This function evalues the digits needed to store a value as a
 	 * natural number.
 	 *
 	 * @param llValue the value to evalue the digits for
-	 * @return the digits needed to store a value as an natural number
+	 * @return the digits needed to store a value as a natural number
 	 */
 	unsigned int getDigits( unsigned long long llValue );
 

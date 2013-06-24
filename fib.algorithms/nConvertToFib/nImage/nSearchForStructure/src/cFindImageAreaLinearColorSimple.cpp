@@ -1,6 +1,3 @@
-
-//TODO check
-
 /**
  * @file cFindImageAreaLinearColorSimple
  * file name: cFindImageAreaLinearColorSimple.cpp
@@ -10,7 +7,7 @@
  *
  * System: C++
  *
- * This file implements specifies a class for searching for a structure with
+ * This file implements a class for searching for a structure with
  * linear color gradient in an image.
  *
  * Copyright (C) @c GPL3 2013 Betti Oesterholz
@@ -25,10 +22,13 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
  *
  * This file implements a class for searching for a structure with
- * linear color gradient color in an image.
- * For this a method findImageStructure() is defined.
+ * linear color gradient in an image.
+ * For this a method findImageStructure() is implemented.
  * If you want to convert an image to Fib structures, you have to search
  * the image for structures, which can be converted to Fib.
  * For this you can use this class.
@@ -63,8 +63,19 @@ using namespace std;
 using namespace fib::algorithms::nConvertToFib::nImage::nSearchForStructure;
 using namespace fib::algorithms::nConvertToFib::nImage::nStructureData;
 
+/**
+ * This feature adds also the original point to init the search for the
+ * area for the found image structure.
+ */
 #define FEATURE_FIND_POINTS_FOR_IMAGE_STRUCTURE_WITH_ORIGINAL_START_POINT
+
+/**
+ * Different methods to evalue the error distance when evaluing the base
+ * parameter.
+ * (Values lower 2 are obsolete.)
+ */
 #define FEATURE_EVALUE_BASE_FOR_INDEX__ERROR_DISTANCE 2
+
 
 /**
  * Constructor
@@ -98,7 +109,7 @@ cFindImageAreaLinearColorSimple::cFindImageAreaLinearColorSimple(
 
 
 /**
- * This method is for searching in an image for an area with the linear color.
+ * This method is for searching in an image for an area with linear color.
  * If the returned structure is antialised, the border points of the
  * structure, will not be in the structure points of the structure.
  * @see cImageStructure::bIsAntialised
@@ -134,18 +145,18 @@ cImageAreaLinearColor * cFindImageAreaLinearColorSimple::findImageStructure(
 	 * 		point can be antialised, without make the evaluation of the
 	 * 		parameters (slope base) difficult)
 	 * 	- find good parameters for the area (base + slope)
-	 * 	- find slope parameters:
-	 * 		- evalue derivate (in both directions)
-	 * 		- (min distance for property elements needed)
-	 * 		- from start point: evalue not overlapped neighbours with
-	 * 			 +-(min distance) to mean slope for property element
-	 * 		- use mean slope for property element and direction as their slope
-	 * 	- find base property parameters:
-	 * 		- for every point in intersection of all slope areas:
-	 * 			point property - (x * slopeX) - (y * slopeY)
+	 * 		- find slope parameters:
+	 * 			- evalue derivate (in both directions)
+	 * 			- (min distance for property elements needed)
+	 * 			- from start point: evalue not overlapped neighbours with
+	 * 				 +-(min distance) to mean slope for property element
+	 * 			- use mean slope for property element and direction as their slope
+	 * 		- find base property parameters:
+	 * 			- for some points near the start point:
+	 * 				point property - (x * slopeX) - (y * slopeY)
 	 * 	- find area of points with element error lower equal maxErrorPerPropertyElement
 	 * - evalue if antialised
-	 * - add start point paStartPoint to area border (if needed)
+	 * - add start point paStartPoint
 	 */
 	
 	if ( pConvertImageToFib == NULL ){
@@ -191,7 +202,7 @@ cImageAreaLinearColor * cFindImageAreaLinearColorSimple::findImageStructure(
 	const vector< unsigned int > vecPropertyIndexDim3 =
 		pImageData->getDimension3IndexesForPropertyType(
 			propertyTypeNumber, vecStartPoint.first, vecStartPoint.second );
-		
+	
 	//for the base vector value
 	cVectorProperty vecBase( pImageData->getProperty( vecStartPoint, propertyTypeNumber ) );
 	//for the first (x) direction
@@ -238,8 +249,8 @@ cImageAreaLinearColor * cFindImageAreaLinearColorSimple::findImageStructure(
 	
 	if ( bCanBeAntialised ){
 		/* if antialising is possible
-		*-> check if border neighbours are antialised border
-		*-> if yes add them as new border and make area antitalised*/
+		-> check if border neighbours are antialised border
+		-> if yes add them as new border and make area antitalised*/
 		if ( checkIfBorderIsAntialised( pFoundImageStructure, pImageSearchData ) ){
 			//structure is antialised
 			bIsAntialised = true;
@@ -251,7 +262,7 @@ cImageAreaLinearColor * cFindImageAreaLinearColorSimple::findImageStructure(
 			setStructureNeighboursPoints =
 				pFoundImageStructure->getStructureNeighbourPointsPair();
 		pImageSearchData->registerFound( setStructureNeighboursPoints, false );
-		/*the neighbour points are correct, but the border points needs to be evalued
+		/* the neighbour points are correct, but the border points needs to be evalued
 		-> evalue border points
 		pre: all structure points are marked as found but no structure
 			neighbour point or other point is marked as found*/
@@ -343,7 +354,7 @@ string cFindImageAreaLinearColorSimple::getName() const{
  * 	(pConvertImageToFib->getImageSearchData()) should have a
  * 	propertyTypeNumber'th property for each point.
  * @return a new start point which is neighbour of the start point
- * 	paStartPoint and  which has (if possible) no overlapped neighbours
+ * 	paStartPoint and which has (if possible) no overlapped neighbours
  */
 pair< unsigned int, unsigned int> cFindImageAreaLinearColorSimple::findGoodAreaStartPoint(
 		const pair< unsigned int, unsigned int> & paStartPoint,
@@ -367,7 +378,7 @@ pair< unsigned int, unsigned int> cFindImageAreaLinearColorSimple::findGoodAreaS
 	const iImageData * pImageData = pImageSearchData->getImageData();
 	if ( pImageData == NULL ){
 		//no image data
-		DEBUG_OUT_L2(<<"cFindImageAreaLinearColorSimple("<<this<<")::findGoodAreaStartPoint( paStartPoint=("<<paStartPoint.first<<", "<<paStartPoint.second<<"), dMaxErrorPerValue="<<dMaxErrorPerValue<<", pConvertImageToFib ) done: /no image data"<<endl<<flush);
+		DEBUG_OUT_L2(<<"cFindImageAreaLinearColorSimple("<<this<<")::findGoodAreaStartPoint( paStartPoint=("<<paStartPoint.first<<", "<<paStartPoint.second<<"), dMaxErrorPerValue="<<dMaxErrorPerValue<<", pConvertImageToFib ) done: no image data"<<endl<<flush);
 		return paStartPoint;
 	}
 	/* Take as start point a not found point as near as possible to the
@@ -389,6 +400,7 @@ pair< unsigned int, unsigned int> cFindImageAreaLinearColorSimple::findGoodAreaS
 	if ( pDerivateMatrix1 ){
 		liDerivateMatrix.push_back( pDerivateMatrix1 );
 	}
+	//maximal sum error for all derivation property values for one points
 	const double dMaxErrorPerPoint = dMaxErrorPerValue *
 		((double)liDerivateMatrix.size()) * ((double)vecPropertyIndexDim3.size());
 	/* evalue all not found or overlapped neighbours till miximal distance
@@ -466,7 +478,7 @@ pair< unsigned int, unsigned int> cFindImageAreaLinearColorSimple::findGoodAreaS
 				pImageSearchData->getNeighbours( *itrPoint );
 			
 			const unsigned int uiNumberOfNeighbourPoints = setNeighbourPoints.size();
-			if ( uiNumberOfNeighbourPoints <= 2 ){
+			if ( uiNumberOfNeighbourPoints < 2 ){
 				//not enougth neighbours -> skip point
 				DEBUG_OUT_L2(<<"      point ("<<itrPoint->first<<", "<<itrPoint->second<<") has not enougth neighbours ("<<setNeighbourPoints.size()<<")"<<endl<<flush);
 				continue;
@@ -537,7 +549,7 @@ pair< unsigned int, unsigned int> cFindImageAreaLinearColorSimple::findGoodAreaS
 				//sort vector
 				sort( vecSumAbsSlopesDifferenceForNeighbours.begin(),
 					vecSumAbsSlopesDifferenceForNeighbours.end() );
-				
+				//just take the two points with the lowesed distance
 				dSumAbsSlopesDifference = vecSumAbsSlopesDifferenceForNeighbours[ 0 ];
 				dSumAbsSlopesDifference += vecSumAbsSlopesDifferenceForNeighbours[ 1 ];
 				
@@ -545,8 +557,9 @@ pair< unsigned int, unsigned int> cFindImageAreaLinearColorSimple::findGoodAreaS
 				DEBUG_OUT_L2(<<"      point ("<<itrPoint->first<<", "<<itrPoint->second<<") has absolute distance value="<<dSumAbsSlopesDifference<<endl<<flush);
 			}
 			
-			if ( ( ( uiActualDistance < 3 ) &&
+			if ( ( ( uiActualDistance < 3 ) && //till distance 3 take every point with lower difference
 						( dSumAbsSlopesDifference < dSumAbsSlopesDifferenceBestPoint ) ) ||
+					//else ((distance greater 3) == distance is 4) make it harder
 					( ( dSumAbsSlopesDifference + dMaxErrorPerPoint ) <
 						dSumAbsSlopesDifferenceBestPoint ) ){
 				//the actual point has a better sum absolute slope difference
@@ -569,178 +582,12 @@ pair< unsigned int, unsigned int> cFindImageAreaLinearColorSimple::findGoodAreaS
 		if ( dSumAbsSlopesDifferenceBestPoint <= zeroErrorValue ){
 			//error can't get smaaler -> break
 			break;
-		}/* else if better point (with error lower maxErrorPerPropertyElement
-		 * to last lower distance point) was found
-		 * -> take next bigger distance*/
-	}
+		}// else take next bigger distance
+	}//end for distance
 	
 	DEBUG_OUT_L2(<<"cFindImageAreaLinearColorSimple("<<this<<")::findGoodAreaStartPoint( paStartPoint=("<<paStartPoint.first<<", "<<paStartPoint.second<<"), dMaxErrorPerValue="<<dMaxErrorPerValue<<", pConvertImageToFib ) done new start point ("<<paActualBestPoint.first<<", "<<paActualBestPoint.second<<")"<<endl<<flush);
 	return paActualBestPoint;
 }
-
-#ifdef TODO_WEG
-
-/**
- * This method takes as start point a neighbour of the start point paStartPoint
- * which has (if possible) no overlapped neighbours (so the start
- * point can be antialised, without make the evaluation of the
- * parameters (slope base) difficult).
- *
- * @param paStartPoint the original start point
- * @param pImageSearchData the image search data wher the overlapped
- * 	points are marked
- * @return a new start point which is neighbour of the start point
- * 	paStartPoint and  which has (if possible) no overlapped neighbours
- */
-pair< unsigned int, unsigned int> cFindImageAreaLinearColorSimple::findGoodAreaStartPoint(
-		const pair< unsigned int, unsigned int> & paStartPoint,
-		const cImageSearchData * pImageSearchData ) const{
-	/* take as start point a neighbour of the start point paStartPoint
-	 * which has (if possible) no overlapped neighbours (so the start
-	 * point can be antialised, without make the evaluation of the
-	 * parameters (slope base) difficult)*/
-	
-	DEBUG_OUT_L2(<<"cFindImageAreaLinearColorSimple("<<this<<")::findGoodAreaStartPoint( paStartPoint=("<<paStartPoint.first<<", "<<paStartPoint.second<<"), pImageSearchData ) started"<<endl<<flush);
-	pair< unsigned int, unsigned int> paNewStartPoint( paStartPoint );
-	
-	if ( pImageSearchData == NULL ){
-		DEBUG_OUT_L2(<<"cFindImageAreaLinearColorSimple("<<this<<")::findGoodAreaStartPoint( paStartPoint=("<<paStartPoint.first<<", "<<paStartPoint.second<<"), pImageSearchData=NULL ) done new start is old start point"<<endl<<flush);
-		return paNewStartPoint;
-	}
-	set< pair< unsigned int, unsigned int> > setNotOverlappedNeighbours =
-		pImageSearchData->getNotOverlappedNeighbours( paStartPoint );
-	
-	//get neighbours points which wher overlapped
-	set< pair< unsigned int, unsigned int> > setOverlappedNeighbours =
-		pImageSearchData->getOverlappedNeighbours( paStartPoint );
-	
-	
-	if ( ( setNotOverlappedNeighbours.empty() ) ||
-			( setOverlappedNeighbours.empty() ) ){
-		/*evalue neighbours of distance 1 and try to evalue the overlapped
-		 * and not for them*/
-		const set< pair< unsigned int, unsigned int> > setNeighboursDist1 =
-			pImageSearchData->getNeighbours( paStartPoint );
-		if ( setNotOverlappedNeighbours.empty() ){
-			//evalue not overlapped neighbours of distance 1
-			for ( set< pair< unsigned int, unsigned int> >::const_iterator
-					itrNeighbour = setNeighboursDist1.begin();
-					itrNeighbour != setNeighboursDist1.end(); itrNeighbour++ ){
-				
-				const set< pair< unsigned int, unsigned int> > setNotOverlappedNeighboursDist1 =
-					pImageSearchData->getNotOverlappedNeighbours( *itrNeighbour );
-				
-				setNotOverlappedNeighbours.insert(
-					setNotOverlappedNeighboursDist1.begin(),
-					setNotOverlappedNeighboursDist1.end() );
-			}
-		}//end if no not overlapped neighbours
-		if ( setOverlappedNeighbours.empty() ){
-			//evalue overlapped neighbours of distance 1
-			for ( set< pair< unsigned int, unsigned int> >::const_iterator
-					itrNeighbour = setNeighboursDist1.begin();
-					itrNeighbour != setNeighboursDist1.end(); itrNeighbour++ ){
-				
-				const set< pair< unsigned int, unsigned int> > setOverlappedNeighboursDist1 =
-					pImageSearchData->getOverlappedNeighbours( *itrNeighbour );
-				
-				setOverlappedNeighbours.insert(
-					setOverlappedNeighboursDist1.begin(),
-					setOverlappedNeighboursDist1.end() );
-			}
-		}//end if no overlapped neighbours
-		
-		if ( ( setNotOverlappedNeighbours.empty() ) ||
-				( setOverlappedNeighbours.empty() ) ){
-			//no neighbour points till distance 1 -> can't choose new start point
-			DEBUG_OUT_L2(<<"cFindImageAreaLinearColorSimple("<<this<<")::findGoodAreaStartPoint( paStartPoint=("<<paStartPoint.first<<", "<<paStartPoint.second<<"), pImageSearchData ) done no neighbour points: new start is old start point"<<endl<<flush);
-			return paNewStartPoint;
-		}
-	}
-	//get neighbours (till distance 3) points which wher overlapped
-	set< pair< unsigned int, unsigned int> > setOverlappedNeighboursDist2;
-	for ( set< pair< unsigned int, unsigned int> >::iterator
-			itrNeighbour = setOverlappedNeighbours.begin();
-			itrNeighbour != setOverlappedNeighbours.end(); itrNeighbour++ ){
-		
-		const set< pair< unsigned int, unsigned int> > setOverlappedNeighboursNeig =
-			pImageSearchData->getOverlappedNeighbours( *itrNeighbour );
-		setOverlappedNeighboursDist2.insert( setOverlappedNeighboursNeig.begin(),
-			setOverlappedNeighboursNeig.end() );
-	}
-	for ( set< pair< unsigned int, unsigned int> >::iterator
-			itrNeighbour = setOverlappedNeighboursDist2.begin();
-			itrNeighbour != setOverlappedNeighboursDist2.end(); itrNeighbour++ ){
-		
-		const set< pair< unsigned int, unsigned int> > setOverlappedNeighboursNeig =
-			pImageSearchData->getOverlappedNeighbours( *itrNeighbour );
-		setOverlappedNeighbours.insert( setOverlappedNeighboursNeig.begin(),
-			setOverlappedNeighboursNeig.end() );
-	}
-	setOverlappedNeighbours.insert( setOverlappedNeighboursDist2.begin(),
-		setOverlappedNeighboursDist2.end() );
-	
-	/* remove from the not overlapped neighbours all points, which are
-	 * neighbours to overlapped points
-	 * (= border line betwean overlappted and not overlappted points/areas) */
-	set< pair< unsigned int, unsigned int> > setNeigbousOfOverlappedNeighbours;
-	for ( set< pair< unsigned int, unsigned int> >::const_iterator
-			itrActualPoint = setOverlappedNeighbours.begin();
-			itrActualPoint != setOverlappedNeighbours.end();
-			itrActualPoint++ ){
-		
-		set< pair< unsigned int, unsigned int> > setNeighbours =
-			pImageSearchData->getNotOverlappedNeighbours( *itrActualPoint );
-		
-		setNeigbousOfOverlappedNeighbours.insert(
-			setNeighbours.begin(), setNeighbours.end() );
-	}
-	
-	set< pair< unsigned int, unsigned int> > setNotOverlappedNeighboursMinusBorder =
-		setNotOverlappedNeighbours;
-	//remove the border line betwean overlappted and not overlappted points/areas
-	for ( set< pair< unsigned int, unsigned int> >::const_iterator
-			itrActualPoint = setNeigbousOfOverlappedNeighbours.begin();
-			itrActualPoint != setNeigbousOfOverlappedNeighbours.end();
-			itrActualPoint++ ){
-		
-		setNotOverlappedNeighboursMinusBorder.erase( *itrActualPoint );
-	}
-	if ( setNotOverlappedNeighboursMinusBorder.empty() ){
-		//find not overlapped neighbours of not overlapped neighbours and try again
-		
-		for ( set< pair< unsigned int, unsigned int> >::const_iterator
-				itrNeighbour = setNotOverlappedNeighbours.begin();
-				itrNeighbour != setNotOverlappedNeighbours.end(); itrNeighbour++ ){
-			
-			set< pair< unsigned int, unsigned int> > setNeighbours =
-				pImageSearchData->getNotOverlappedNeighbours( *itrNeighbour );
-			
-			setNotOverlappedNeighboursMinusBorder.insert(
-				setNeighbours.begin(), setNeighbours.end() );
-		}
-		//remove the border line betwean overlappted and not overlappted points/areas
-		for ( set< pair< unsigned int, unsigned int> >::const_iterator
-				itrActualPoint = setNeigbousOfOverlappedNeighbours.begin();
-				itrActualPoint != setNeigbousOfOverlappedNeighbours.end();
-				itrActualPoint++ ){
-			
-			setNotOverlappedNeighboursMinusBorder.erase( *itrActualPoint );
-		}
-		
-		if ( setNotOverlappedNeighboursMinusBorder.empty() ){
-			//no neighbour points -> not antialised
-			DEBUG_OUT_L2(<<"cFindImageAreaLinearColorSimple("<<this<<")::findGoodAreaStartPoint( paStartPoint=("<<paStartPoint.first<<", "<<paStartPoint.second<<"), pImageSearchData ) done no neighbour points without border: new start is old start point"<<endl<<flush);
-			return paNewStartPoint;
-		}//else
-	}//else
-	//choose first point of generated set as new start point
-	paNewStartPoint = *(setNotOverlappedNeighboursMinusBorder.begin());
-	
-	DEBUG_OUT_L2(<<"cFindImageAreaLinearColorSimple("<<this<<")::findGoodAreaStartPoint( paStartPoint=("<<paStartPoint.first<<", "<<paStartPoint.second<<"), pImageSearchData ) done new start point: ("<<paNewStartPoint.first<<", "<<paNewStartPoint.second<<")"<<endl<<flush);
-	return paNewStartPoint;
-}
-#endif //TODO_WEG
 
 
 /**
@@ -748,7 +595,8 @@ pair< unsigned int, unsigned int> cFindImageAreaLinearColorSimple::findGoodAreaS
  * direction, for the area which includs the start point paStartPoint,
  * is not overlapped and has in dimension 3 the given index uiIndexDim3.
  *
- * @param uiIndexDim3 the index in dimension 3 for the values for which the
+ * @see searchForGoodSlope()
+ * @param uiIndexDim3 the index in dimension 3 for the values, for which the
  * 	slope should be evalued
  * @param paStartPoint the start point for the area
  * @param dMaxErrorPerValue the maximal error for a value of the matrix
@@ -757,7 +605,7 @@ pair< unsigned int, unsigned int> cFindImageAreaLinearColorSimple::findGoodAreaS
  * 	image search data);
  * 	The image data (getImageData()) of the search data
  * 	(pConvertImageToFib->getImageSearchData()) should have a
- * 	propertyTypeNumber'th property for each point.
+ * 	uiIndexDim3'th value for each point.)
  * @return a good slope parameter
  */
 doubleFib cFindImageAreaLinearColorSimple::evalueSlopeXForIndex( const unsigned int uiIndexDim3,
@@ -765,7 +613,7 @@ doubleFib cFindImageAreaLinearColorSimple::evalueSlopeXForIndex( const unsigned 
 		const double dMaxErrorPerValue,
 		cConvertImageToFib * pConvertImageToFib ) const{
 	/* - evalue derivate in x direction
-	 * 	- from start point: evalue not overlapped neighbours with
+	 * 	- from start point: evalue not overlapped neighbours
 	 * 	- use mean slope for property element and direction as their slope
 	 */
 	DEBUG_OUT_L2(<<"cFindImageAreaLinearColorSimple("<<this<<")::evalueSlopeXForIndex( uiIndexDim3="<<uiIndexDim3<<", paStartPoint=("<<paStartPoint.first<<", "<<paStartPoint.second<<"), pConvertImageToFib ) started"<<endl<<flush);
@@ -808,8 +656,9 @@ doubleFib cFindImageAreaLinearColorSimple::evalueSlopeXForIndex( const unsigned 
  * direction, for the area which includs the start point paStartPoint,
  * is not overlapped and has in dimension 3 the given index uiIndexDim3.
  *
- * @param uiIndexDim3 the index in dimension 3 for the values for which the
- * 	slope should be evalued
+ * @see searchForGoodSlope()
+ * @param uiIndexDim3 the index in dimension 3 for the values, for which
+ * 	the slope should be evalued
  * @param paStartPoint the start point for the area
  * @param dMaxErrorPerValue the maximal error for a value of the matrix
  * @param pConvertImageToFib a pointer to the object for converting an
@@ -817,7 +666,7 @@ doubleFib cFindImageAreaLinearColorSimple::evalueSlopeXForIndex( const unsigned 
  * 	image search data);
  * 	The image data (getImageData()) of the search data
  * 	(pConvertImageToFib->getImageSearchData()) should have a
- * 	propertyTypeNumber'th property for each point.
+ * 	uiIndexDim3'th value for each point.)
  * @return a good slope parameter
  */
 doubleFib cFindImageAreaLinearColorSimple::evalueSlopeYForIndex( const unsigned int uiIndexDim3,
@@ -825,7 +674,7 @@ doubleFib cFindImageAreaLinearColorSimple::evalueSlopeYForIndex( const unsigned 
 		const double dMaxErrorPerValue,
 		cConvertImageToFib * pConvertImageToFib ) const{
 	/* - evalue derivate in y direction
-	 * 	- from start point: evalue not overlapped neighbours with
+	 * 	- from start point: evalue not overlapped neighbours
 	 * 	- use mean slope for property element and direction as their slope
 	 */
 	DEBUG_OUT_L2(<<"cFindImageAreaLinearColorSimple("<<this<<")::evalueSlopeYForIndex( uiIndexDim3="<<uiIndexDim3<<", paStartPoint=("<<paStartPoint.first<<", "<<paStartPoint.second<<"), pConvertImageToFib ) started"<<endl<<flush);
@@ -867,12 +716,13 @@ doubleFib cFindImageAreaLinearColorSimple::evalueSlopeYForIndex( const unsigned 
  * matrix, for the area which includs the start point paStartPoint,
  * is not overlapped and has in dimension 3 the given index uiIndexDim3.
  *
- * @param uiIndexDim3 the index in dimension 3 for the values for which the
+ * @param uiIndexDim3 the index in dimension 3 for the values, for which the
  * 	slope should be evalued
  * @param paStartPoint the start point for the area
  * @param dMaxErrorPerValue the maximal error for a value of the matrix
- * @param pDerivateMatrix the derivation matrix in which the slope
+ * @param pDerivateMatrix the derivation matrix, with which the slope
  * 	parameter should be evalued
+ * 	(It should have a uiIndexDim3'th value for each point.)
  * @param pImageSearchData the image search data with the overlapped points
  * 	marked; all points in the slope area will be marked as found
  * @return a good slope parameter
@@ -892,7 +742,7 @@ doubleFib cFindImageAreaLinearColorSimple::searchForGoodSlope(
 	
 	/* - from start point: evalue not overlapped neighbours with
 	 * 	+-(min_distance or max_dist) to mean slope for property element
-	 * 	(what if maxErrorPerPropertyElement != 0 ?
+	 * 	(if maxErrorPerPropertyElement != 0 ->
 	 * 		max_dist = min_distance +
 	 * 			maxErrorPerPropertyElement / distance( point, paStartPoint ) )
 	 * - use mean slope for property element and direction as their slope
@@ -918,7 +768,7 @@ doubleFib cFindImageAreaLinearColorSimple::searchForGoodSlope(
 	map< doubleFib, list< pair< unsigned int, unsigned int> > >::iterator
 		itrActualPoints;
 	while ( ! mapBorderPoints.empty() ){
-		//choose point
+		//choose point (with minimal difference to mean)
 		itrActualPoints = mapBorderPoints.begin();
 		
 		list< pair< unsigned int, unsigned int> > &
@@ -944,7 +794,7 @@ doubleFib cFindImageAreaLinearColorSimple::searchForGoodSlope(
 		pImageSearchData->registerFound( setPointsToCheck );
 		
 		for ( set< pair< unsigned int, unsigned int> >::const_iterator
-				itrNeighbour = setPointsToCheck.begin();
+					itrNeighbour = setPointsToCheck.begin();
 				itrNeighbour != setPointsToCheck.end(); itrNeighbour++ ){
 			//get the slope value for the point, add it to slope sum (for average)
 			const double dActualSlope = pDerivateMatrix->getValue(
@@ -966,7 +816,7 @@ doubleFib cFindImageAreaLinearColorSimple::searchForGoodSlope(
 					DEBUG_OUT_L4(<<"-> difference to mean great"<<endl<<flush);
 					continue;
 				}
-			}
+			}//else diff to mean OK -> use point for mean slope
 			if ( dMinDistanceDouble < dDiffToMean ){
 				DEBUG_OUT_L4(<<"-> OK (but big) -> adding "<<dNumberOfAreaPoints<<"'th point to border"<<endl<<flush);
 				dSlopeSumBigValues += dActualSlope;
@@ -985,12 +835,13 @@ doubleFib cFindImageAreaLinearColorSimple::searchForGoodSlope(
 			}
 			
 			if ( ((doubleFib)uiPointsToUseToEvalueParameters) < dNumberOfAreaPoints ){
+				//there where enough points used to evalue the mean slope
 				DEBUG_OUT_L2(<<"cFindImageAreaLinearColorSimple("<<this<<")::searchForGoodSlope( uiIndexDim3="<<uiIndexDim3<<", paStartPoint=("<<paStartPoint.first<<", "<<paStartPoint.second<<"), dMaxErrorPerValue="<<dMaxErrorPerValue<<", pDerivateMatrix="<<pDerivateMatrix<<", pImageSearchData ) done (used points "<<dNumberOfAreaPoints<<") evalued mean: "<<dMeanSlope<<endl<<flush);
 				//return mean dMeanSlope
 				return dMeanSlope;
 			}
-		}
-	}
+		}//end for all neighbours of the actual border point
+	}//end while there are still border points to check
 	
 	DEBUG_OUT_L2(<<"cFindImageAreaLinearColorSimple("<<this<<")::searchForGoodSlope( uiIndexDim3="<<uiIndexDim3<<", paStartPoint=("<<paStartPoint.first<<", "<<paStartPoint.second<<"), dMaxErrorPerValue="<<dMaxErrorPerValue<<", pDerivateMatrix="<<pDerivateMatrix<<", pImageSearchData ) done evalued mean: "<<dMeanSlope<<endl<<flush);
 	//return mean dMeanSlope
@@ -1009,7 +860,7 @@ doubleFib cFindImageAreaLinearColorSimple::searchForGoodSlope(
  * start point paStartPoint, is not overlapped and has in dimension 3 the
  * given index uiIndexDim3.
  *
- * @param uiIndexDim3 the index in dimension 3 for the values for which the
+ * @param uiIndexDim3 the index in dimension 3 for the values, for which the
  * 	base should be evalued
  * @param paStartPoint the start point for the area
  * @param dSlopeX the slope in the first (x) direction
@@ -1020,8 +871,8 @@ doubleFib cFindImageAreaLinearColorSimple::searchForGoodSlope(
  * 	image search data);
  * 	The image data (getImageData()) of the search data
  * 	(pConvertImageToFib->getImageSearchData()) should have a
- * 	propertyTypeNumber'th property for each point.
- * @return a good slope parameter
+ * 	uiIndexDim3'th value for each point.)
+ * @return a good base parameter
  */
 doubleFib cFindImageAreaLinearColorSimple::evalueBaseForIndex(
 		const unsigned int uiIndexDim3,
@@ -1054,7 +905,7 @@ doubleFib cFindImageAreaLinearColorSimple::evalueBaseForIndex(
 	pImageSearchData->registerFound( paStartPoint );
 	/* the base from a point can be evalued with:
 	 * 	base = point property - (x * slopeX) - (y * slopeY)
-	 * every point in the area didn't should exclue the start point
+	 * every point in the area didn't should exclude the start point
 	 * -> the difference betwaen the base of the start point and the actual
 	 * point should be lower equal the maximal error dMaxErrorPerValue */
 	const doubleFib dMinDistance = pImageData->getMinDifference(
@@ -1115,21 +966,21 @@ doubleFib cFindImageAreaLinearColorSimple::evalueBaseForIndex(
 				liBorderPoints.clear();
 				break;
 			}
-		}
-	}
+		}//end for all neighbour points to check
+	}//end while (search) border points contains points
 	const double dMeanBase = ( dSumBase / ((doubleFib)uiNumberOfAreaPoints) );
 	const double dMaxDistanceToStartPoint = dMinDistance / 2.0 + dMaxErrorPerValue;
 	if ( ( dBaseStartPoint + dMaxDistanceToStartPoint ) < dMeanBase ){
 		//the base mean should also include the start point
 		DEBUG_OUT_L2(<<"cFindImageAreaLinearColorSimple("<<this<<")::evalueBaseForIndex( uiIndexDim3="<<uiIndexDim3<<", paStartPoint=("<<paStartPoint.first<<", "<<paStartPoint.second<<"), dSlopeX="<<dSlopeX<<", dSlopeY="<<dSlopeY<<", dMaxErrorPerValue="<<dMaxErrorPerValue<<", pConvertImageToFib ) done (used points "<<uiNumberOfAreaPoints<<") evalued mean base "<<dMeanBase<<" to great returning as mean base: "<<(dBaseStartPoint + dMaxDistanceToStartPoint - zeroErrorValue)<<endl<<flush);
 		
-		return dBaseStartPoint + dMaxDistanceToStartPoint - zeroErrorValue;
+		return dBaseStartPoint + dMaxDistanceToStartPoint - (dMinDistance / 1024.0);
 	}//else
 	if ( dMeanBase < ( dBaseStartPoint - dMaxDistanceToStartPoint ) ){
 		//the base mean should also include the start point
 		DEBUG_OUT_L2(<<"cFindImageAreaLinearColorSimple("<<this<<")::evalueBaseForIndex( uiIndexDim3="<<uiIndexDim3<<", paStartPoint=("<<paStartPoint.first<<", "<<paStartPoint.second<<"), dSlopeX="<<dSlopeX<<", dSlopeY="<<dSlopeY<<", dMaxErrorPerValue="<<dMaxErrorPerValue<<", pConvertImageToFib ) done (used points "<<uiNumberOfAreaPoints<<") evalued mean base "<<dMeanBase<<" to low returning as mean base: "<<(dBaseStartPoint - dMaxDistanceToStartPoint + zeroErrorValue)<<endl<<flush);
 		
-		return dBaseStartPoint - dMaxDistanceToStartPoint + zeroErrorValue;
+		return dBaseStartPoint - dMaxDistanceToStartPoint + (dMinDistance / 1024.0);
 	}//else
 	
 	DEBUG_OUT_L2(<<"cFindImageAreaLinearColorSimple("<<this<<")::evalueBaseForIndex( uiIndexDim3="<<uiIndexDim3<<", paStartPoint=("<<paStartPoint.first<<", "<<paStartPoint.second<<"), dSlopeX="<<dSlopeX<<", dSlopeY="<<dSlopeY<<", dMaxErrorPerValue="<<dMaxErrorPerValue<<", pConvertImageToFib ) done (used points "<<uiNumberOfAreaPoints<<") evalued mean base: "<<dMeanBase<<endl<<flush);
@@ -1265,7 +1116,7 @@ doubleFib cFindImageAreaLinearColorSimple::evalueBaseForIndex(
 
 
 /**
- * This method searches for all points which can be included into the given
+ * This method searches for all points, which can be included into the given
  * image structure pInOutImageStructure and includes them into it.
  *
  * @param pInOutImageStructure the image structure for which the points
@@ -1293,7 +1144,7 @@ cImageAreaLinearColor * cFindImageAreaLinearColorSimple::findPointsForImageStruc
 	DEBUG_OUT_L2(<<"cFindImageAreaLinearColorSimple("<<this<<")::findPointsForImageStructure( pInOutImageStructure, dMaxErrorPerPoint="<<dMaxErrorPerPoint<<", pConvertImageToFib ) started"<<endl<<flush);
 	
 	if ( ( pConvertImageToFib == NULL ) || ( pInOutImageStructure == NULL ) ){
-		//no convert object
+		//no convert object or no image structure
 		return NULL;
 	}
 	//get image search structure
@@ -1330,7 +1181,11 @@ cImageAreaLinearColor * cFindImageAreaLinearColorSimple::findPointsForImageStruc
 	pImageSearchData->registerFound( paStartPoint );
 #endif //FEATURE_FIND_POINTS_FOR_IMAGE_STRUCTURE_WITH_ORIGINAL_START_POINT
 	
-	//evalue if a element minimum distance half error should be used
+	/*evalue if a element minimum distance half error should be used;
+	 if a min distance half for a property element is bigger than its
+	 share of the max error of point dMaxErrorPerPoint, than if later
+	 the error is greater than dMaxErrorPerPoint check also if the error is
+	 greater as min distance half for one property element to discard point*/
 	bool bUseElementError = false;
 	const vector< unsigned int > vecPropertyIndexDim3 =
 		pImageData->getDimension3IndexesForPropertyType(
@@ -1342,14 +1197,14 @@ cImageAreaLinearColor * cFindImageAreaLinearColorSimple::findPointsForImageStruc
 		const doubleFib dMinDistanceHalf = pImageData->getMinDifference(
 			0, 0, (*itrActualIndex) ) / 2.0;
 		if ( dMaxErrorPerPoint / vecPropertyIndexDim3.size() < dMinDistanceHalf ){
-			//use corrected error value 
+			//use corrected error value
 			bUseElementError = true;
 		}
 	}
 	if ( ! bUseElementError ){
 		//use given error value
 		while ( ! liBorderPoints.empty() ){
-			//choose good border point to enlarge area for
+			//choose border point to enlarge area for
 			const pair< unsigned int, unsigned int> & vecActualPoint =
 				liBorderPoints.front();
 			pInOutImageStructure->addStructurePoint( vecActualPoint );
@@ -1371,7 +1226,7 @@ cImageAreaLinearColor * cFindImageAreaLinearColorSimple::findPointsForImageStruc
 					itrNeighbour = setPointsToCheck.begin();
 					itrNeighbour != setPointsToCheck.end(); itrNeighbour++ ){
 				/*check the neighbour points if their error is smaal enougth and
-				*add them to the structure if */
+				 *add them to the structure if */
 				//get actual property
 				const cVectorProperty vecNeighbourProperty =
 					pImageData->getProperty( *itrNeighbour, propertyTypeNumber );
@@ -1396,20 +1251,24 @@ cImageAreaLinearColor * cFindImageAreaLinearColorSimple::findPointsForImageStruc
 			}//end for all neighbour points
 			//remove choosen border point from search/check border
 			liBorderPoints.pop_front();
-		}//end while border points to check
+		}//end while (search) border points to check
 	}else{//use error of property element components
 		vector< doubleFib > vecPropertyElementErrorHalf;
+		double dPropertyElementHalfErrorSum = 0.0;
 		for ( vector< unsigned int >::const_iterator
 				itrActualIndex = vecPropertyIndexDim3.begin();
 				itrActualIndex != vecPropertyIndexDim3.end(); itrActualIndex++ ){
-			
-			vecPropertyElementErrorHalf.push_back( pImageData->getMinDifference(
-				0, 0, (*itrActualIndex) ) / 2.0 );
+			//get min difference half for actual index
+			const double dMinDifferenceHalf = pImageData->getMinDifference(
+				0, 0, (*itrActualIndex) ) / 2.0;
+			vecPropertyElementErrorHalf.push_back( dMinDifferenceHalf );
+			dPropertyElementHalfErrorSum += dMinDifferenceHalf;
 		}
+		
 		bool bHalfErrorOk = true;
 		
 		while ( ! liBorderPoints.empty() ){
-			//choose good border point to enlarge area for
+			//choose border point to enlarge area for
 			const pair< unsigned int, unsigned int> & vecActualPoint =
 				liBorderPoints.front();
 			pInOutImageStructure->addStructurePoint( vecActualPoint );
@@ -1446,18 +1305,25 @@ cImageAreaLinearColor * cFindImageAreaLinearColorSimple::findPointsForImageStruc
 				DEBUG_OUT_L2(<<"   checking point ("<<itrNeighbour->first<<", "<<itrNeighbour->second<<") with error "<<dErrorOfNeighbour<<", which is "<<((dMaxErrorPerPoint < dErrorOfNeighbour)?"not OK":"OK")<<endl<<flush);
 				if ( dMaxErrorPerPoint < dErrorOfNeighbour ){
 					//check property element error
+					if ( dPropertyElementHalfErrorSum < dErrorOfNeighbour ){
+						//error for point to great -> skip it
+						//neighbour point is area neighbour point
+						pInOutImageStructure->addStructureNeighbourPoint( *itrNeighbour );
+						continue;
+					}
+					//check property element error with every property element
 					bHalfErrorOk = true;
 					unsigned int uiActualPropertyIndex = 1;
 					for ( vector< doubleFib >::const_iterator
-							itrActualError = vecPropertyElementErrorHalf.begin();
-							itrActualError != vecPropertyElementErrorHalf.end();
-							uiActualPropertyIndex++, itrActualError++ ){
+							itrActualMaxError = vecPropertyElementErrorHalf.begin();
+							itrActualMaxError != vecPropertyElementErrorHalf.end();
+							uiActualPropertyIndex++, itrActualMaxError++ ){
 						
 						const doubleFib dErrorValue = abs(
 							vecNeighbourPropertyStructure.getValue( uiActualPropertyIndex ) -
 							vecNeighbourProperty.getValue( uiActualPropertyIndex ) );
 						
-						if ( (*itrActualError) < dErrorValue ){
+						if ( (*itrActualMaxError) < dErrorValue ){
 							bHalfErrorOk = false;
 							break;
 						}
@@ -1477,7 +1343,7 @@ cImageAreaLinearColor * cFindImageAreaLinearColorSimple::findPointsForImageStruc
 			}//end for all neighbour points
 			//remove choosen border point from search/check border
 			liBorderPoints.pop_front();
-		}//end while border points to check
+		}//end while (search) border points to check
 	}
 	DEBUG_OUT_L2(<<"cFindImageAreaLinearColorSimple("<<this<<")::findPointsForImageStructure( pInOutImageStructure, dMaxErrorPerPoint="<<dMaxErrorPerPoint<<", pConvertImageToFib ) done"<<endl<<flush);
 	return pInOutImageStructure;
@@ -1487,9 +1353,10 @@ cImageAreaLinearColor * cFindImageAreaLinearColorSimple::findPointsForImageStruc
 /**
  * This function checks if the border neighbours of the given structure
  * are antialised.
+ * This is a help method for: @see findImageStructure()
  *
- * @param pInOutImageStructure the structure which neighbours to check
- * 	 and in which the points will be included, if antialised
+ * @param pInOutImageStructure the structure, which neighbours to check
+ * 	 and which will be adapted, if the border is antialised
  * @param pImageSearchData the image search data for the structure,
  * 	all points in the structure pInOutImageStructure and there neighbour
  * 	points have to be marked as found in pImageSearchData
@@ -1499,11 +1366,11 @@ bool cFindImageAreaLinearColorSimple::checkIfBorderIsAntialised(
 		cImageAreaLinearColor * pInOutImageStructure,
 		const cImageSearchData * pImageSearchData ) const{
 	
-	/* if 9 times more points are antialised than not antialised (overlapped
-	 * neighbours and neighbours with no not found neighbours don't count)
-	 * - a points is antialised if its color elements values are betwean
-	 * the neighbour in the area (border) and a point outside the area and
-	 * the area neighbours (which is not overlapped)*/
+	/* antialised if 9 times more points are antialised than not antialised
+	 * (overlapped neighbours and neighbours with no not found neighbours don't count)
+	 * - a (neighbour) point is antialised if its color elements values are
+	 *   betwean the neighbour in the area (border) and a point outside the
+	 *   area and the area neighbours (which is not overlapped)*/
 	if ( ( pInOutImageStructure == NULL ) || ( pImageSearchData == NULL ) ){
 		//can't evalue antialising -> return not antialised
 		return false;
@@ -1515,24 +1382,25 @@ bool cFindImageAreaLinearColorSimple::checkIfBorderIsAntialised(
 	}
 	DEBUG_OUT_L2(<<"cFindImageAreaLinearColorSimple("<<this<<")::checkIfBorderIsAntialised( pInOutImageStructure, pImageSearchData )"<<endl<<flush);
 	
-	const cVectorProperty vecAreaColor =
-		pInOutImageStructure->getColorBasisOfArea();
-	const unsigned int uiElementsOfProperties = vecAreaColor.getNumberOfElements();
+	const unsigned int uiElementsOfProperties =
+		(pInOutImageStructure->getColorBasisOfArea()).getNumberOfElements();
 	
+	//evalue all neighbour neighbours as new neighbours if structure is antialised
 	set< pair< unsigned int, unsigned int> > setStructureNeighboursNeighboursPoints;
 	//for all neighbour points
 	const set< pair< unsigned int, unsigned int> > setStructureNeighboursPoints =
 		pInOutImageStructure->getStructureNeighbourPointsPair();
-	//if (1/10) of the neighbour points are not antialised -> area not antialised
+	/*if (1/10) of the neighbour points are not antialised -> area not antialised
+	 ( +2 so it is never 0 or minimum one not antialised point possible)*/
 	const unsigned long ulNotAANeighboursNeededForNotAA =
-		setStructureNeighboursPoints.size() / 10;
+		setStructureNeighboursPoints.size() / 10 + 2;
 	unsigned long ulAntialisedNeighbours = 0;
 	unsigned long ulNotAntialisedNeighbours = 0;
 	
 	DEBUG_OUT_L2(<<"   neighbour points "<<setStructureNeighboursPoints.size()<<"  ulNotAANeighboursNeededForNotAA="<<ulNotAANeighboursNeededForNotAA<<endl<<flush);
 	
 	for ( set< pair< unsigned int, unsigned int> >::const_iterator
-			itrNeighbour = setStructureNeighboursPoints.begin();
+				itrNeighbour = setStructureNeighboursPoints.begin();
 			itrNeighbour != setStructureNeighboursPoints.end();
 			itrNeighbour++ ){
 		/* find not found or overlapped border neighbours neighbours
@@ -1564,6 +1432,8 @@ bool cFindImageAreaLinearColorSimple::checkIfBorderIsAntialised(
 			
 			if ( ( vecNeighbourPropertyStructure.getValue( uiActualElement ) < dActualValue ) ==
 					( vecNeighbourNeighbProperty.getValue( uiActualElement ) < dActualValue ) ){
+				/*both structure neighbour and neighbour neighbour property
+				 *element on the same side of the neighbour property element*/
 				if ( ( vecNeighbourPropertyStructure.getValue( uiActualElement ) != dActualValue ) &&
 					( vecNeighbourNeighbProperty.getValue( uiActualElement ) != dActualValue ) ){
 					/*points both lower or bigger (equal to area property not
@@ -1579,10 +1449,10 @@ bool cFindImageAreaLinearColorSimple::checkIfBorderIsAntialised(
 			ulAntialisedNeighbours++;
 		}else{//point is not antialised
 			ulNotAntialisedNeighbours++;
-			if ( ( ulNotAANeighboursNeededForNotAA + 2 ) < ulNotAntialisedNeighbours ){
+			if ( ulNotAANeighboursNeededForNotAA < ulNotAntialisedNeighbours ){
 				/*to much points not antialised -> stop evaluation
 				 -> area is not antialised*/
-				DEBUG_OUT_L2(<<"cFindImageAreaLinearColorSimple("<<this<<")::checkIfBorderIsAntialised() done to much points not antialised (ulNotAANeighboursNeededForNotAA="<<ulNotAANeighboursNeededForNotAA<<" + 2 ?<? ulNotAntialisedNeighbours="<<ulNotAntialisedNeighbours<<"  ulAntialisedNeighbours="<<ulAntialisedNeighbours<<"): return false"<<endl<<flush);
+				DEBUG_OUT_L2(<<"cFindImageAreaLinearColorSimple("<<this<<")::checkIfBorderIsAntialised() done to much points not antialised (ulNotAANeighboursNeededForNotAA="<<ulNotAANeighboursNeededForNotAA<<" ?<? ulNotAntialisedNeighbours="<<ulNotAntialisedNeighbours<<"  ulAntialisedNeighbours="<<ulAntialisedNeighbours<<"): return false"<<endl<<flush);
 				return false;
 			}
 		}
@@ -1592,9 +1462,9 @@ bool cFindImageAreaLinearColorSimple::checkIfBorderIsAntialised(
 	// 9 times more points antialised than not antialised
 	const unsigned long ulAANeighboursNeedeForAA =
 		ulNotAntialisedNeighbours * 9;
-	DEBUG_OUT_L2(<<"ulAANeighboursNeedeForAA="<<ulAANeighboursNeedeForAA<<" ?<=? ulAntialisedNeighbours="<<ulAntialisedNeighbours<<"  ulNotAntialisedNeighbours="<<ulNotAntialisedNeighbours<<" ?<=? ulNotAANeighboursNeededForNotAA="<<ulNotAANeighboursNeededForNotAA<<" + 2"<<endl<<flush);
+	DEBUG_OUT_L2(<<"ulAANeighboursNeedeForAA="<<ulAANeighboursNeedeForAA<<" ?<=? ulAntialisedNeighbours="<<ulAntialisedNeighbours<<"  ulNotAntialisedNeighbours="<<ulNotAntialisedNeighbours<<" ?<=? ulNotAANeighboursNeededForNotAA="<<ulNotAANeighboursNeededForNotAA<<""<<endl<<flush);
 	if ( ( ulAANeighboursNeedeForAA <= ulAntialisedNeighbours ) &&
-			( ulNotAntialisedNeighbours <= ( ulNotAANeighboursNeededForNotAA + 2 ) ) ){
+			( ulNotAntialisedNeighbours <= ulNotAANeighboursNeededForNotAA ) ){
 		//area is antialised
 		//add new structure points to structure
 		pInOutImageStructure->setStructureBorderPoints(

@@ -1,6 +1,3 @@
-
-//TODO check
-
 /**
  * @file cImageStructureOperatorErode
  * file name: cImageStructureOperatorErode.h
@@ -10,7 +7,7 @@
  *
  * System: C++
  *
- * This header specifies a class for the erode operators on a image structure.
+ * This header specifies a class for the erode operator on an image structure.
  *
  * Copyright (C) @c GPL3 2013 Betti Oesterholz
  *
@@ -24,15 +21,20 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * This header specifies a class for the erode operators on a image structure.
+ *
+ * This header specifies a class for the erode operator on an image structure.
  * The operator will remove all the border points of the structure from the
  * structure and adds them (border points) as the new neighbours. It will
  * also evalue the new border points of the structure.
- * For this a method operator() is defined.
+ * For this a operator operator() is defined.
  * The operator will change an image structure and adapt the given search data.
  *
  * @pattern Strategy
+ * @see iImageStructureSearchOperator
+ * @see cImageStructureOperatorDilate
  * @see cImageStructure
  * @see cConvertImageToFib
  */
@@ -95,7 +97,6 @@ public:
 	 */
 	virtual bool operator()( cImageStructure * pImageStructure,
 		cImageSearchData * pSearchData ) const;
-	
 	
 	/**
 	 * @return the name of this class

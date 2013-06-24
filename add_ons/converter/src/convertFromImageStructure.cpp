@@ -1,6 +1,3 @@
-
-//TODO check
-
 /**
  * @file convertFromImageStructure
  * file name: convertFromImageStructure.cpp
@@ -31,21 +28,17 @@
  * This program is for converting image structure data into an image.
  *
  *
- * call: convertFromImageStructure [PARAMETER] FILE_MULTIMEDIADATA FILE_OUTPUT
+ * call: convertFromImageStructure [PARAMETER] FILE_IMAGE_STRUCTURE FILE_OUTPUT
  *
  * parameters:
- * 	PATH_FIB_MULTIMEDIADATA
- * 		the path to the to load Fib multimedia data
+ * 	FILE_IMAGE_STRUCTURE
+ * 		the path to the to load image structure data
  * 	FILE_OUTPUT
  * 		The name of the file where the converted multimedia data would be
  * 		stored to. The file ending will determine the output format.
  * 	PARAMETER
- * 		Parameters for converting into the Fib multimedia format
+ * 		Parameters for converting into the image
  * 	Possible parameters are:
- * 		-just_output_antialised or -justAA
- * 			Just output antialised image structures.
- * 		-just_output_not_antialised or -justNotAA
- * 			Just output not antialised image structures.
  * 		-background=COLOR or -bg=COLOR
  * 			Set the background property to COLOR.
  * 			Possible COLOR values are: white, black, red, green, blue
@@ -55,11 +48,16 @@
  * 		-last_to_output=NUMBER or -last=NUMBER
  * 			The NUMBER of the last image structure to output.
  * 			All image structures befor NUMBER will be ignored.
+ * 		-just_output_antialised or -justAA
+ * 			Just output antialised image structures.
+ * 		-just_output_not_antialised or -justNotAA
+ * 			Just output not antialised image structures.
  *
  *
  * examples:
  * 	> convertFromImageStructure inputImageData.xml output.png
- * 	> convertFromImageStructure inputImageData.fib output.bmp
+ * 	> convertFromImageStructure -first=10 -last=23 -justAA inputImageData.xml output.png
+ * 	> convertFromImageStructure -first=10 -last=10 inputImageData.xml output.png
  */
 /*
 History:
@@ -90,54 +88,43 @@ void printShortHelp();
 
 
 
-
-
 int main(int argc, char* argv[]){
 
-	char * pFileWithOriginalData = NULL;
-	/*filename wher to store the Fib object to, if NULL store in XML to
-	the standartoutput*/
-	char * pFileForStoringData = NULL;
-	
 	if ( argc < 3 ){
 		//no input file -> exit
 		printShortHelp();
 		return 1;
 	}
-	cout<<endl;
-	//just output antialised image structures
-	bool bJustOutputAntialised = false;
-	//just output not antialised image structures
-	bool bJustOutputNotAntialised = false;
+	//the path to the file with the to load data
+	char * pFileWithOriginalData = NULL;
+	/*file name where to store the Fib object to, if NULL store in XML to
+	the standard output*/
+	char * pFileForStoringData = NULL;
 	
 	//background property to use
 	bool bUseBackgroundColor = false;
 	cVectorProperty vecBackground( cTypeProperty::COLOR_RGB );
 	
-	//The NUMBER of the first image structure to output.
+	//The number of the first image structure to output.
 	unsigned long ulFirst = 0;
-	//The NUMBER of the last image structure to output.
+	//The number of the last image structure to output.
 	unsigned long ulLast = 0;
-
+	
+	//just output antialised image structures
+	bool bJustOutputAntialised = false;
+	//just output not antialised image structures
+	bool bJustOutputNotAntialised = false;
+	
 	//read parameter
+	cout<<endl;
 	for ( int iActualParameter = 1; iActualParameter < argc;
 			iActualParameter++ ){
 		
-		if ( ( strncmp( argv[ iActualParameter ], "-just_output_antialised", 23 ) == 0 ) ||
-				( strncmp( argv[ iActualParameter ], "-justAA", 7 ) == 0 ) ){
-			bJustOutputAntialised = true;
-			cout<<"Just output antialised image structures."<<endl;
-			
-		}else if ( ( strncmp( argv[ iActualParameter ], "-just_output_not_antialised", 27 ) == 0 ) ||
-				( strncmp( argv[ iActualParameter ], "-justNotAA", 10 ) == 0 ) ){
-			bJustOutputNotAntialised = true;
-			cout<<"Just output not antialised image structures."<<endl;
-			
-		}else if ( ( strncmp( argv[ iActualParameter ], "-background=", 12 ) == 0 ) ||
+		if ( ( strncmp( argv[ iActualParameter ], "-background=", 12 ) == 0 ) ||
 				( strncmp( argv[ iActualParameter ], "-bg=", 4 ) == 0 ) ){
 			
 			char * pColorName = NULL;
-			if ( strncmp( argv[ iActualParameter ], "-background", 11 ) == 0 ){
+			if ( strncmp( argv[ iActualParameter ], "-background=", 12 ) == 0 ){
 				pColorName = &(argv[ iActualParameter ][ 12 ]);
 			}else if ( strncmp( argv[ iActualParameter ], "-bg=", 4 ) == 0 ){
 				pColorName = &(argv[ iActualParameter ][ 4 ]);
@@ -160,7 +147,7 @@ int main(int argc, char* argv[]){
 				vecBackground.setValue( 2, 0 );
 				vecBackground.setValue( 3, 0 );
 				cout<<"The background color was set to red."<<endl;
-			}else if ( strncmp( pColorName, "green", 3 ) == 0 ){
+			}else if ( strncmp( pColorName, "green", 5 ) == 0 ){
 				bUseBackgroundColor = true;
 				vecBackground.setValue( 1, 0 );
 				vecBackground.setValue( 2, 255 );
@@ -172,7 +159,10 @@ int main(int argc, char* argv[]){
 				vecBackground.setValue( 2, 0 );
 				vecBackground.setValue( 3, 255 );
 				cout<<"The background color was set to blue."<<endl;
-			}//else unknown color
+			}else{//unknown color
+				cout<<"The background color to set \""<<pColorName<<
+					"\" is unknown."<<endl;
+			}
 			
 		}else if ( strncmp( argv[ iActualParameter ], "-first_to_output=", 17 ) == 0 ){
 			ulFirst = atol( &(argv[ iActualParameter ][ 17 ]) );
@@ -191,12 +181,23 @@ int main(int argc, char* argv[]){
 			cout<<"Output all image structures till the "<<ulLast<<"'th."<<endl;
 			
 			
+		}else if ( ( strncmp( argv[ iActualParameter ], "-just_output_antialised", 23 ) == 0 ) ||
+				( strncmp( argv[ iActualParameter ], "-justAA", 7 ) == 0 ) ){
+			bJustOutputAntialised = true;
+			cout<<"Just output antialised image structures."<<endl;
+			
+		}else if ( ( strncmp( argv[ iActualParameter ], "-just_output_not_antialised", 27 ) == 0 ) ||
+				( strncmp( argv[ iActualParameter ], "-justNotAA", 10 ) == 0 ) ){
+			bJustOutputNotAntialised = true;
+			cout<<"Just output not antialised image structures."<<endl;
+			
+		
 		}else if ( pFileWithOriginalData == NULL ){
 			//read original data file
 			pFileWithOriginalData = argv[ iActualParameter ];
 			cout<<"Name of Fib object file to convert: "<<pFileWithOriginalData<<endl;
 		}else if ( pFileForStoringData == NULL ){
-			//get parameter filename where to store the Fib object to
+			//get parameter file name where to store the Fib object to
 			pFileForStoringData = argv[ iActualParameter ];
 			cout<<"Name of converted output picture file: "<<pFileForStoringData<<endl;
 		}else{
@@ -212,7 +213,6 @@ int main(int argc, char* argv[]){
 	
 	
 	//load the multimedia data
-//	FREE_IMAGE_FORMAT imageFormat = fipImage::identifyFIF( pFileWithOriginalData );
 	//evalue image size
 	doubleFib dMaxX = 0;
 	doubleFib dMaxY = 0;
@@ -226,7 +226,7 @@ int main(int argc, char* argv[]){
 	}
 	
 	unsigned long ulNumberOfActualImageStructure = 0;
-	unsigned long ulNumberOfRestoredImageStructure = 0;
+	unsigned long ulNumberOfRestoredImageStructures = 0;
 	while ( ! inFile.eof() ){
 		ulNumberOfActualImageStructure++;
 		if ( ( ulLast != 0 ) && ( ulLast < ulNumberOfActualImageStructure ) ){
@@ -240,7 +240,8 @@ int main(int argc, char* argv[]){
 			inFile , &outStatus );
 		
 		if ( pRestoredImageData != NULL ){
-			ulNumberOfRestoredImageStructure++;
+			//an image structure was restored
+			ulNumberOfRestoredImageStructures++;
 			if ( ulFirst <= ulNumberOfActualImageStructure ){
 				//evalue size of the image to create
 				const set<cVectorPosition> & setStructurPoints =
@@ -273,10 +274,10 @@ int main(int argc, char* argv[]){
 	inFile.close();
 	
 	cout<<"Restoring image structure data from the file \""<<
-		pFileWithOriginalData <<"\" done: "<<ulNumberOfRestoredImageStructure<<
+		pFileWithOriginalData <<"\" done: "<<ulNumberOfRestoredImageStructures<<
 		" structures restored (till image structure "<<
-		ulNumberOfRestoredImageStructure<<")."<<endl<<flush;
-	if ( ulNumberOfRestoredImageStructure == 0 ){
+		ulNumberOfRestoredImageStructures<<")."<<endl<<flush;
+	if ( ulNumberOfRestoredImageStructures == 0 ){
 		cerr<<"Error: No image structures restored."<<endl;
 		return 1;
 	}
@@ -385,6 +386,7 @@ int main(int argc, char* argv[]){
 }
 
 
+
 /**
  * Print short help information.
  */
@@ -392,22 +394,39 @@ void printShortHelp(){
 	
 	cout<<"No input file and output file specified."<<endl;
 	cout<<endl;
-	cout<<" This program is for converting image structure data into an image."<<endl;
-	cout<<""<<endl;
-	cout<<""<<endl;
-	cout<<" call: convertFromImageStructure FILE_MULTIMEDIADATA FILE_OUTPUT [PARAMETER]"<<endl;
-	cout<<""<<endl;
-	cout<<" parameters:"<<endl;
-	cout<<" 	PATH_FIB_MULTIMEDIADATA"<<endl;
-	cout<<" 		the path to the to load Fib multimedia data"<<endl;
-	cout<<" 	FILE_OUTPUT"<<endl;
-	cout<<" 		The name of the file where the converted multimedia data would be"<<endl;
-	cout<<" 		stored to. The file ending will determine the output format."<<endl;
- 	cout<<""<<endl;
-	cout<<""<<endl;
-	cout<<" examples:"<<endl;
-	cout<<" 	> convertFromImageStructure inputImageData.xml output.png"<<endl;
-	cout<<" 	> convertFromImageStructure inputImageData.fib output.bmp"<<endl;
+	cout<<"This program is for converting image structure data into an image."<<endl;
+	cout<<endl;
+	cout<<endl;
+	cout<<"call: convertFromImageStructure [PARAMETER] FILE_IMAGE_STRUCTURE FILE_OUTPUT"<<endl;
+	cout<<endl;
+	cout<<"parameters:"<<endl;
+	cout<<"   FILE_IMAGE_STRUCTURE"<<endl;
+	cout<<"      the path to the to load image structure data"<<endl;
+	cout<<"   FILE_OUTPUT"<<endl;
+	cout<<"      The name of the file where the converted multimedia data would be"<<endl;
+	cout<<"      stored to. The file ending will determine the output format."<<endl;
+	cout<<"   PARAMETER"<<endl;
+	cout<<"      Parameters for converting into the image"<<endl;
+	cout<<"   Possible parameters are:"<<endl;
+	cout<<"      -background=COLOR or -bg=COLOR"<<endl;
+	cout<<"         Set the background property to COLOR."<<endl;
+	cout<<"         Possible COLOR values are: white, black, red, green, blue"<<endl;
+	cout<<"      -first_to_output=NUMBER or -first=NUMBER"<<endl;
+	cout<<"         The NUMBER of the first image structure to output."<<endl;
+	cout<<"         All image structures befor NUMBER will be ignored."<<endl;
+	cout<<"      -last_to_output=NUMBER or -last=NUMBER"<<endl;
+	cout<<"         The NUMBER of the last image structure to output."<<endl;
+	cout<<"         All image structures befor NUMBER will be ignored."<<endl;
+	cout<<"      -just_output_antialised or -justAA"<<endl;
+	cout<<"         Just output antialised image structures."<<endl;
+	cout<<"      -just_output_not_antialised or -justNotAA"<<endl;
+	cout<<"         Just output not antialised image structures."<<endl;
+	cout<<endl;
+	cout<<endl;
+	cout<<"examples:"<<endl;
+	cout<<"   > convertFromImageStructure inputImageData.xml output.png"<<endl;
+	cout<<"   > convertFromImageStructure -first=10 -last=23 -justAA inputImageData.xml output.png"<<endl;
+	cout<<endl;
 	cout<<endl;
 }
 

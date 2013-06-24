@@ -579,23 +579,23 @@ public:
 
 #endif //FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
 	
-	//TODO check
 	/**
-	 * This method will try to reduce the bits of the parameters (beginning
-	 * with the first parameter).
+	 * This method will try to reduce the bits of the polynom parameters
+	 * (beginning with the first parameter).
 	 *
 	 * @param vecRangesForError the range data points which the polynom
 	 * 	should match
 	 * @param maxValue the maximum possible value in all parameters
-	 * 	the evalued spline will allways have parameters vecFactors[i] with
+	 * 	the evalued polynom will allways have parameters vecFactors[i] with
 	 * 	-1 * maxValue <= vecFactors[i] <= maxValue for 0 <= i \< vecFactors.size()
-	 * @param maxError the maximal error for the spline parameter to find;
-	 * 	the error on the found spline for vecData will be equal or
+	 * @param maxError the maximal error for the polynom parameter to find;
+	 * 	the error on the found polynom for vecRangesForError will be equal or
 	 * 	less than maxError (if it was equal or less befor)
-	 * @param maxErrorPerValue the maximal error for the spline to find on
-	 * 	one data point; the error on the interpolated spline for every data
-	 * 	point in vecData will be equal or less than maxErrorPerValue
-	 * 	(if it was equal or less befor);
+	 * 	@see checkError()
+	 * @param maxErrorPerValue the maximal error for the polynom to find on
+	 * 	one data point; the error on the interpolated polynom for every data
+	 * 	point in vecRangesForError will be equal or less than maxErrorPerValue
+	 * 	(if it was equal or less befor); @see checkError()
 	 * 	if maxErrorPerValue is 0 and maxError is not 0, maxErrorPerValue will
 	 * 	be set to maxError * 2 / vecInputData.size()
 	 */

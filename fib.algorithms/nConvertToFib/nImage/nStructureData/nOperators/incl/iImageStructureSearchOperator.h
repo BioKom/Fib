@@ -7,7 +7,7 @@
  *
  * System: C++
  *
- * This header specifies a interface for operators on a image structure .
+ * This header specifies a interface for operators on an image structure .
  *
  * Copyright (C) @c GPL3 2013 Betti Oesterholz
  *
@@ -21,9 +21,12 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * This header specifies a interface for operators on a image structure .
- * For this a method operator() is defined.
+ *
+ * This header specifies a interface for operators on an image structure .
+ * For this a operator operator() is defined.
  * The operator will change an image structure and adapt the given search data.
  *
  * @pattern Strategy
