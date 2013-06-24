@@ -22,6 +22,10 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ *
  * This header specifies a class to convert the data of a area of points
  * in an image to tiles.
  *
@@ -3862,7 +3866,9 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 			double dMaxOtherBorderArea = 0;
 			bUseRectangle = true;
 #endif //FEATURE_USE_RECTANGLE_EXT_OBJECT
+			
 			//TODO check
+			
 			{//check first part line for border
 				map< longFib, nImageStructureConvertToTiles::cLine >::const_iterator
 					itrActualLine = bordersDimToSearchIn.find( lStartPoint );
@@ -4460,8 +4466,6 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 			}
 
 #ifdef FEATURE_USE_RECTANGLE_EXT_OBJECT
-		//TODO check
-		
 		//check if a quadrangle could be used for data points in the found spline
 		if ( ulNumberOfPointsInSpline < vecSplineRanges.size() ){
 			/*not all points in polynom
@@ -4477,19 +4481,19 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 #else //FEATURE_C_IMAGE_STRUCTURE_CONVERT_TO_TILES_USE_INNER_LINE
 					vector< fib::algorithms::nD1::cDataPointRange< long, double > >::const_iterator
 #endif //FEATURE_C_IMAGE_STRUCTURE_CONVERT_TO_TILES_USE_INNER_LINE
-					itrActualDataPoint = vecSplineRanges.begin();
+						itrActualDataPoint = vecSplineRanges.begin();
 					itrActualDataPoint != vecSplineRanges.end();
 					itrActualDataPoint++, ulLastPointForStraightOtherBorderLine++ ){
 				
 				dMinOtherBorderAreaTmp = max( dMinOtherBorderArea, itrActualDataPoint->minY );
 				dMaxOtherBorderAreaTmp = min( dMaxOtherBorderArea, itrActualDataPoint->maxY );
-				if ( dMaxOtherBorderAreaTmp <= dMinOtherBorderAreaTmp ){
+				if ( dMaxOtherBorderAreaTmp < dMinOtherBorderAreaTmp ){
 					//the actual data point is not other side of the rectangle
 					break;
 				}
 				dMinOtherBorderArea = dMinOtherBorderAreaTmp;
 				dMaxOtherBorderArea = dMaxOtherBorderAreaTmp;
-			}
+			}//end for all range points for spline
 			DEBUG_OUT_L2(<<"check if to use rectangle object for the area, min range spline data points "<<dMinOtherBorderArea<<" max "<<dMaxOtherBorderArea<<endl<<flush);
 			if ( ( ulNumberOfPointsInSpline * 0.7 ) <=
 					ulLastPointForStraightOtherBorderLine ){
@@ -4505,12 +4509,10 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 					lRectangleOfOtherSide = roundToLongFib( dMaxOtherBorderArea );
 				}
 			}
-		}
+		}//end check if a quadrangle could be used
 		
 		if ( ! bUseRectangle ){
 			//do not use a rectangle instead of a spline tile
-		//TODO check end
-		
 #endif //FEATURE_USE_RECTANGLE_EXT_OBJECT
 				
 				//evalue the end point of the tile / spline

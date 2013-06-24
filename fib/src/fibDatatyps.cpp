@@ -38,14 +38,13 @@ History:
 
 using namespace fib;
 
-//TODO check
 
 /**
- * This function evalues the digits needed to store a value as an
+ * This function evalues the digits needed to store a value as a
  * natural number.
  *
  * @param uiValue the value to evalue the digits for
- * @return the digits needed to store a value as an natural number
+ * @return the digits needed to store a value as a natural number
  */
 unsigned int fib::getDigits( unsigned int uiValue ){
 
@@ -60,23 +59,19 @@ unsigned int fib::getDigits( unsigned int uiValue ){
 	for ( unsigned int iActualDigit = 1; iActualDigit <= BITS_OF_UNSIGNED_INT;
 			iActualDigit += 4 ){
 			
-		if ( (uiValue & 0x01) != 0 ){
-			//digit found
-			uiDigits = iActualDigit;
-		}
-		if ( (uiValue & 0x02) != 0 ){
-			//digit found
-			uiDigits = iActualDigit + 1;
-		}
-		if ( (uiValue & 0x04) != 0 ){
-			//digit found
-			uiDigits = iActualDigit + 2;
-		}
 		if ( (uiValue & 0x08) != 0 ){
 			//digit found
 			uiDigits = iActualDigit + 3;
+		}else if ( (uiValue & 0x04) != 0 ){
+			//digit found
+			uiDigits = iActualDigit + 2;
+		}else if ( (uiValue & 0x02) != 0 ){
+			//digit found
+			uiDigits = iActualDigit + 1;
+		}else if ( (uiValue & 0x01) != 0 ){
+			//digit found
+			uiDigits = iActualDigit;
 		}
-		
 		uiValue = uiValue >> 4;
 		
 		if ( uiValue == 0 ){
@@ -89,11 +84,11 @@ unsigned int fib::getDigits( unsigned int uiValue ){
 
 
 /**
- * This function evalues the digits needed to store a value as an
+ * This function evalues the digits needed to store a value as a
  * natural number.
  *
  * @param ulValue the value to evalue the digits for
- * @return the digits needed to store a value as an natural number
+ * @return the digits needed to store a value as a natural number
  */
 unsigned int fib::getDigits( unsigned long ulValue ){
 
@@ -109,23 +104,19 @@ unsigned int fib::getDigits( unsigned long ulValue ){
 	for ( unsigned int iActualDigit = 1; iActualDigit <= BITS_OF_UNSIGNED_LONG;
 			iActualDigit += 4 ){
 			
-		if ( (ulValue & 0x01) != 0 ){
-			//digit found
-			uiDigits = iActualDigit;
-		}
-		if ( (ulValue & 0x02) != 0 ){
-			//digit found
-			uiDigits = iActualDigit + 1;
-		}
-		if ( (ulValue & 0x04) != 0 ){
-			//digit found
-			uiDigits = iActualDigit + 2;
-		}
 		if ( (ulValue & 0x08) != 0 ){
 			//digit found
 			uiDigits = iActualDigit + 3;
+		}else if ( (ulValue & 0x04) != 0 ){
+			//digit found
+			uiDigits = iActualDigit + 2;
+		}else if ( (ulValue & 0x02) != 0 ){
+			//digit found
+			uiDigits = iActualDigit + 1;
+		}else if ( (ulValue & 0x01) != 0 ){
+			//digit found
+			uiDigits = iActualDigit;
 		}
-		
 		ulValue = ulValue >> 4;
 		
 		if ( ulValue == 0 ){
@@ -138,11 +129,11 @@ unsigned int fib::getDigits( unsigned long ulValue ){
 
 
 /**
- * This function evalues the digits needed to store a value as an
+ * This function evalues the digits needed to store a value as a
  * natural number.
  *
  * @param llValue the value to evalue the digits for
- * @return the digits needed to store a value as an natural number
+ * @return the digits needed to store a value as a natural number
  */
 unsigned int fib::getDigits( unsigned long long llValue ){
 
@@ -158,21 +149,18 @@ unsigned int fib::getDigits( unsigned long long llValue ){
 	for ( unsigned int iActualDigit = 1; iActualDigit <= BITS_OF_UNSIGNED_LONG_LONG;
 			iActualDigit += 4 ){
 			
-		if ( (llValue & 0x01) != 0 ){
-			//digit found
-			uiDigits = iActualDigit;
-		}
-		if ( (llValue & 0x02) != 0 ){
-			//digit found
-			uiDigits = iActualDigit + 1;
-		}
-		if ( (llValue & 0x04) != 0 ){
-			//digit found
-			uiDigits = iActualDigit + 2;
-		}
 		if ( (llValue & 0x08) != 0 ){
 			//digit found
 			uiDigits = iActualDigit + 3;
+		}else if ( (llValue & 0x04) != 0 ){
+			//digit found
+			uiDigits = iActualDigit + 2;
+		}else if ( (llValue & 0x02) != 0 ){
+			//digit found
+			uiDigits = iActualDigit + 1;
+		}else if ( (llValue & 0x01) != 0 ){
+			//digit found
+			uiDigits = iActualDigit;
 		}
 		
 		llValue = llValue >> 4;
@@ -207,21 +195,18 @@ unsigned int fib::getDigits( int iValue ){
 		for ( unsigned int iActualDigit = 1; iActualDigit <= BITS_OF_INT;
 				iActualDigit += 4 ){
 				
-			if ( (iValue & 0x01) != 0 ){
-				//digit found
-				uiDigits = iActualDigit;
-			}
-			if ( (iValue & 0x02) != 0 ){
-				//digit found
-				uiDigits = iActualDigit + 1;
-			}
-			if ( (iValue & 0x04) != 0 ){
-				//digit found
-				uiDigits = iActualDigit + 2;
-			}
 			if ( (iValue & 0x08) != 0 ){
 				//digit found
 				uiDigits = iActualDigit + 3;
+			}else if ( (iValue & 0x04) != 0 ){
+				//digit found
+				uiDigits = iActualDigit + 2;
+			}else if ( (iValue & 0x02) != 0 ){
+				//digit found
+				uiDigits = iActualDigit + 1;
+			}else if ( (iValue & 0x01) != 0 ){
+				//digit found
+				uiDigits = iActualDigit;
 			}
 			
 			iValue = iValue >> 4;
@@ -235,21 +220,18 @@ unsigned int fib::getDigits( int iValue ){
 		for ( unsigned int iActualDigit = 1; iActualDigit <= BITS_OF_INT;
 				iActualDigit += 4 ){
 				
-			if ( (iValue & 0x01) == 0 ){
-				//digit found
-				uiDigits = iActualDigit;
-			}
-			if ( (iValue & 0x02) == 0 ){
-				//digit found
-				uiDigits = iActualDigit + 1;
-			}
-			if ( (iValue & 0x04) == 0 ){
-				//digit found
-				uiDigits = iActualDigit + 2;
-			}
 			if ( (iValue & 0x08) == 0 ){
 				//digit found
 				uiDigits = iActualDigit + 3;
+			}else if ( (iValue & 0x04) == 0 ){
+				//digit found
+				uiDigits = iActualDigit + 2;
+			}else if ( (iValue & 0x02) == 0 ){
+				//digit found
+				uiDigits = iActualDigit + 1;
+			}else if ( (iValue & 0x01) == 0 ){
+				//digit found
+				uiDigits = iActualDigit;
 			}
 			
 			iValue = iValue >> 4;
@@ -286,21 +268,18 @@ unsigned int fib::getDigits( long lValue ){
 		for ( unsigned int iActualDigit = 1; iActualDigit <= BITS_OF_LONG;
 				iActualDigit += 4 ){
 				
-			if ( (lValue & 0x01) != 0 ){
-				//digit found
-				uiDigits = iActualDigit;
-			}
-			if ( (lValue & 0x02) != 0 ){
-				//digit found
-				uiDigits = iActualDigit + 1;
-			}
-			if ( (lValue & 0x04) != 0 ){
-				//digit found
-				uiDigits = iActualDigit + 2;
-			}
 			if ( (lValue & 0x08) != 0 ){
 				//digit found
 				uiDigits = iActualDigit + 3;
+			}else if ( (lValue & 0x04) != 0 ){
+				//digit found
+				uiDigits = iActualDigit + 2;
+			}else if ( (lValue & 0x02) != 0 ){
+				//digit found
+				uiDigits = iActualDigit + 1;
+			}else if ( (lValue & 0x01) != 0 ){
+				//digit found
+				uiDigits = iActualDigit;
 			}
 			
 			lValue = lValue >> 4;
@@ -314,21 +293,18 @@ unsigned int fib::getDigits( long lValue ){
 		for ( unsigned int iActualDigit = 1; iActualDigit <= BITS_OF_LONG;
 				iActualDigit += 4 ){
 				
-			if ( (lValue & 0x01) == 0 ){
-				//digit found
-				uiDigits = iActualDigit;
-			}
-			if ( (lValue & 0x02) == 0 ){
-				//digit found
-				uiDigits = iActualDigit + 1;
-			}
-			if ( (lValue & 0x04) == 0 ){
-				//digit found
-				uiDigits = iActualDigit + 2;
-			}
 			if ( (lValue & 0x08) == 0 ){
 				//digit found
 				uiDigits = iActualDigit + 3;
+			}else if ( (lValue & 0x04) == 0 ){
+				//digit found
+				uiDigits = iActualDigit + 2;
+			}else if ( (lValue & 0x02) == 0 ){
+				//digit found
+				uiDigits = iActualDigit + 1;
+			}else if ( (lValue & 0x01) == 0 ){
+				//digit found
+				uiDigits = iActualDigit;
 			}
 			
 			lValue = lValue >> 4;
@@ -365,21 +341,18 @@ unsigned int fib::getDigits( long long llValue ){
 		for ( unsigned int iActualDigit = 1; iActualDigit <= BITS_OF_LONG_LONG;
 				iActualDigit += 4 ){
 				
-			if ( (llValue & 0x01) != 0 ){
-				//digit found
-				uiDigits = iActualDigit;
-			}
-			if ( (llValue & 0x02) != 0 ){
-				//digit found
-				uiDigits = iActualDigit + 1;
-			}
-			if ( (llValue & 0x04) != 0 ){
-				//digit found
-				uiDigits = iActualDigit + 2;
-			}
 			if ( (llValue & 0x08) != 0 ){
 				//digit found
 				uiDigits = iActualDigit + 3;
+			}else if ( (llValue & 0x04) != 0 ){
+				//digit found
+				uiDigits = iActualDigit + 2;
+			}else if ( (llValue & 0x02) != 0 ){
+				//digit found
+				uiDigits = iActualDigit + 1;
+			}else if ( (llValue & 0x01) != 0 ){
+				//digit found
+				uiDigits = iActualDigit;
 			}
 			
 			llValue = llValue >> 4;
@@ -393,21 +366,18 @@ unsigned int fib::getDigits( long long llValue ){
 		for ( unsigned int iActualDigit = 1; iActualDigit <= BITS_OF_LONG_LONG;
 				iActualDigit += 4 ){
 				
-			if ( (llValue & 0x01) == 0 ){
-				//digit found
-				uiDigits = iActualDigit;
-			}
-			if ( (llValue & 0x02) == 0 ){
-				//digit found
-				uiDigits = iActualDigit + 1;
-			}
-			if ( (llValue & 0x04) == 0 ){
-				//digit found
-				uiDigits = iActualDigit + 2;
-			}
 			if ( (llValue & 0x08) == 0 ){
 				//digit found
 				uiDigits = iActualDigit + 3;
+			}else if ( (llValue & 0x04) == 0 ){
+				//digit found
+				uiDigits = iActualDigit + 2;
+			}else if ( (llValue & 0x02) == 0 ){
+				//digit found
+				uiDigits = iActualDigit + 1;
+			}else if ( (llValue & 0x01) == 0 ){
+				//digit found
+				uiDigits = iActualDigit;
 			}
 			
 			llValue = llValue >> 4;
@@ -442,7 +412,12 @@ void fib::decomposeDoubleFib( const double dNumber,
 	longFib * lMantissa, longFib * lExponent,
 	intFib * iSizeMantissa , intFib * iSizeExponent ){
 	
+	if ( ( lMantissa == NULL ) || ( lExponent == NULL ) ){
+		//can't store result
+		return;
+	}
 	if ( dNumber == (double)(1.0) ){
+		// 1.0 is special (fast) case
 		(*lMantissa) = 1;
 		(*lExponent) = 0;
 		
@@ -452,7 +427,8 @@ void fib::decomposeDoubleFib( const double dNumber,
 		if (iSizeExponent != NULL){
 			(*iSizeExponent) = 1;
 		}
-	}
+		return;
+	}//else
 	
 	const long long llNumber = *((const long long*)&dNumber);
 	
@@ -476,7 +452,6 @@ void fib::decomposeDoubleFib( const double dNumber,
 	to subtract another 52 from it.*/
 	iExponent -= 1075;
 	
-	unsigned int uiDigitsMantissa = 0;
 	unsigned int uiDigitsExponent = 0;
 	
 	if ( llMantissa != 0 ){
@@ -492,15 +467,24 @@ void fib::decomposeDoubleFib( const double dNumber,
 		
 		if ( iSizeMantissa != NULL ){
 			//evalue the digits in the mantissa
-			uiDigitsMantissa = getDigits( llMantissa );
+			(*iSizeMantissa) = getDigits( llMantissa );
 		}
 		if ( iSizeExponent != NULL ){
 			//evalue the digits in the exponent
-			uiDigitsExponent = getDigits( iExponent );
+			(*iSizeExponent) = getDigits( iExponent );
 		}
 	
 	}else{
 		iExponent = 0;
+		
+		if ( iSizeMantissa != NULL ){
+			//set digits in the mantissa
+			(*iSizeMantissa) = 0;
+		}
+		if ( iSizeExponent != NULL ){
+			//set digits in the exponent
+			(*iSizeExponent) = 0;
+		}
 	}
 	//transfer the evauled numbers to the output valus
 	if ( lMantissa != NULL ){
@@ -508,12 +492,6 @@ void fib::decomposeDoubleFib( const double dNumber,
 	}
 	if ( lMantissa != NULL ){
 		(*lExponent) = iExponent;
-	}
-	if ( iSizeMantissa != NULL ){
-		(*iSizeMantissa) = uiDigitsMantissa;
-	}
-	if ( iSizeExponent != NULL ){
-		(*iSizeExponent) = uiDigitsExponent;
 	}
 }
 
@@ -542,8 +520,11 @@ doubleFib fib::composeDoubleFib(
 	}
 	//set the mantissa
 	long long llMantissa = (( 0 <= lMantissa) ? lMantissa : ( 0 - lMantissa ) );
-	//bring first mantissa bit to the bit 52
+	/* Bias the exponent. It's actually biased by 1023, but we're
+	treating the mantissa as m.0 rather than 0.m, so we need
+	to subtract another 52 from it.*/
 	unsigned int iExponent = lExponent + 1075; //1075 = (1023 + 52);
+	//bring first mantissa bit to the bit 52
 	while ( ( llMantissa & 0x10000000000000L ) == 0x0L ){
 		llMantissa = llMantissa << 1;
 		iExponent--;
@@ -558,7 +539,6 @@ doubleFib fib::composeDoubleFib(
 	return dReturnValue;
 }
 
-//TODO check end
 
 /**
  * This function rounds the given number of bits ulNumberOfBits up
