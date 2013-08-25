@@ -7,7 +7,9 @@
  *
  * System: C++
  *
- * This class represents the multimediainfo of an root -element.
+ * This class represents the multimedia info of an root element.
+ *
+ *
  * Copyright (C) @c LGPL3 2009 Betti Oesterholz
  *
  * This program is free software: you can redistribute it and/or modify
@@ -24,14 +26,15 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * This class represents the multimediainfo for an root -element.
- * This includes the versionsnumbers of Fib and the Fib -Database.
+ * This class represents the multimedia info for an root element.
+ * This includes the versions numbers of Fib and the Fib database.
  *
  */
 /*
 History:
 21.06.2009  Oesterholz  created
 21.12.2012  Oesterholz  virtual destructor added
+01.08.2013  Oesterholz  method assignValues() added
 */
 
 #ifndef ___C_MULTIMEDIA_INFO_H__
@@ -63,16 +66,16 @@ protected:
 
 
 	/**
-	 * The version of the Fib -multimedialanguage needed for the
-	 * Fib -multimediaobject.
-	 * The value 0 means the version of the Fib -multimedialanguage is
+	 * The version of the Fib multimedia language needed for the
+	 * Fib multimedia object.
+	 * The value 0 means the version of the Fib multimedia language is
 	 * irrelevant.
 	 */
 	unsignedLongFib ulFibVersion;
 
 	/**
-	 * The version of the Fib -database needed for the Fib -multimediaobject.
-	 * The value 0 means the version of the Fib -database is irrelevant.
+	 * The version of the Fib database needed for the Fib multimedia object.
+	 * The value 0 means the version of the Fib database is irrelevant.
 	 */
 	unsignedLongFib ulFibDbVersion;
 
@@ -88,20 +91,20 @@ public: //make the following constructor public for the test
 #endif
 
 	/**
-	 * The constructor for the multimediainfo.
-	 * The defaultmapping for the dimension i is the mappingvalue i.
+	 * The constructor for the multimedia info.
+	 * The defaultmapping for the dimension i is the mapping value i.
 	 *
-	 * @param root the root -element this multimediainfo stands in/for
+	 * @param root the root -element this multimedia info stands in/for
 	 */
 	cMultimediaInfo( cRoot * root);
 
 	/**
-	 * The destructor for the multimediainfo.
+	 * The destructor for the multimedia info.
 	 */
 	virtual ~cMultimediaInfo();
 
 	/**
-	 * This Method clones this object.
+	 * This method clones this object.
 	 *
 	 * @return a clone of this object
 	 */
@@ -111,77 +114,91 @@ public: //make the following constructor public for the test
 public:
 
 	/**
-	 * @return the version of the Fib -multimedialanguage needed for the
-	 * 	Fib -multimediaobject
+	 * @return the version of the Fib multimedia language needed for the
+	 * 	Fib multimedia object
 	 */
 	unsignedLongFib getFibVersion() const;
 
 
 	/**
-	 * @param ulFibVersion the version of the Fib -multimedialanguage to set
+	 * @param ulFibVersion the version of the Fib multimedia language to set
 	 */
 	void setFibVersion( unsignedLongFib ulFibVersion );
 
 
 	/**
-	 * @return the version of the Fib -database needed for the
-	 * 	Fib -multimediaobject
+	 * @return the version of the Fib database needed for the
+	 * 	Fib multimedia object
 	 */
 	unsignedLongFib getDatabaseVersion() const;
 
 
 	/**
-	 * @param ulFibVersion the version of the Fib -database to set
+	 * @param ulFibVersion the version of the Fib database to set
 	 */
 	void setDatabaseVersion( unsignedLongFib ulFibDbVersion );
 
 
 	/**
-	 * This method evalues and sets the Fib -multimedialanguage and
-	 * Fib -database versionnumbers, which are needed for the Fib -object.
+	 * This method evalues and sets the Fib multimedia language and
+	 * Fib database version numbers, which are needed for the Fib object.
 	 *
-	 * @return true if the versionsnumbers where evalued and set
+	 * @return true if the versions numbers where evalued and set
 	 */
 	bool evalueMinVersionsNumbers();
 	
 	/**
-	 * This Method checks if the given multimedianfo is equal to this
-	 * multimedianfo.
+	 * This method checks if the given multimedia information is equal to
+	 * this multimedia information.
 	 *
-	 * @param multimediaInfo the multimedianfo which should be equal to this
-	 * 	multimedianfo
-	 * @return true if the given multimedianfo is equal to this
-	 * 	multimedianfo, else false
+	 * @param multimediaInfo the multimedia information which should be
+	 * 	equal to this multimedia information
+	 * @return true if the given multimedia information is equal to this
+	 * 	multimedia information, else false
 	 */
 	virtual bool equal( const cMultimediaInfo &multimediaInfo ) const;
 
 	/**
-	 * This Method checks if the given multimedianfo is equal to this
-	 * multimedianfo.
+	 * This method checks if the given multimedia information is equal to
+	 * this multimedia information.
 	 *
-	 * @param multimediaInfo the multimedianfo which should be equal to this
-	 * 	multimedianfo
-	 * @return true if the given multimedianfo is equal to this
-	 * 	multimedianfo, else false
+	 * @param multimediaInfo the multimedia information which should be
+	 * 	equal to this multimedia information
+	 * @return true if the given multimedia information is equal to this
+	 * 	multimedia information, else false
 	 */
 	virtual bool operator==( const cMultimediaInfo & multimediaInfo) const;
 
 	/**
-	 * This method stores this multimediainfo in the XML -format into the
+	 * This method asigns / copies the values from the given multimedia
+	 * information to rmation. This means, it will copy
+	 * everything of the rmation multimediaInfo except pointers to Fib
+	 * elements (e. g. the master root element), these will remain the same.
+	 *
+	 * @see equal()
+	 * @param multimediaInfo the multimedia information, from which to
+	 * 	assign / copy the values
+	 * @return true if the values could be copied from the given multimedia
+	 * 	information multimediaInfo, else false
+	 */
+	virtual bool assignValues( const cMultimediaInfo & multimediaInfo );
+
+	/**
+	 * This method stores this multimedia info in the XML format into the
 	 * given stream.
 	 * example: <multimedia_info fib_version="1" db_version="0"/>
 	 *
-	 * @param ostream the stream where this multimediainfo should be stored to
-	 * @return true if this multimediainfo is stored, else false
+	 * @param ostream the stream where this multimedia info should be stored to
+	 * @return true if this multimedia info is stored, else false
 	 */
 	virtual bool storeXml( ostream & ostream ) const;
 
 
 	/**
-	 * This method restores this multimediainfo in the XML -format from an
+	 * This method restores this multimedia info in the XML format from an
 	 * an TinyXml element.
 	 *
-	 * @param pXmlNode a pointer to the TinyXml node the multimediainfo is stored in
+	 * @param pXmlNode a pointer to the TinyXml node the multimedia info is stored in
 	 * @return an integervalue with the errorvalue
 	 * 	possible errorvalues are:
 	 * 		- 0  loading successful

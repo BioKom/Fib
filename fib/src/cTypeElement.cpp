@@ -48,6 +48,7 @@ History:
 31.01.2012  Oesterholz  isInherited() method added
 12.02.2012  Oesterholz  restoreXml*() without restoring domain possible
 01.04.2012  Oesterholz  DEBUG_RESTORE_XML implemented
+01.08.2013  Oesterholz  FEATURE_EXT_SUBOBJECT_INPUT_VECTOR as default (not case removed)
 */
 
 
@@ -265,11 +266,7 @@ pair< cTypeElement * , cDomain * > cTypeElement::restoreXmlTypeWithDomain(
 			pXmlElement, outStatus, bRestoreDomain );
 		
 	}else if ( szElementType == "externSubobject" ){
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 		pTypeRestored = new cTypeExtSubobject( 0 );
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-		pTypeRestored = new cTypeExtSubobject();
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 		pDomainRestore = pTypeRestored->restoreXmlWithDomain(
 			pXmlElement, outStatus, bRestoreDomain );
 		
@@ -376,11 +373,7 @@ cTypeElement * cTypeElement::restore( cReadBits & iBitStream, intFib & outStatus
 		outStatus = pTypeRestored->restore( iBitStream );
 	
 	}else if ( cTypeNamePure == 0xC8 ){
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 		pTypeRestored = new cTypeExtSubobject( 0 );
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-		pTypeRestored = new cTypeExtSubobject();
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 		outStatus = pTypeRestored->restore( iBitStream );
 		
 	}else if ( cTypeNamePure == 0xD0 ){

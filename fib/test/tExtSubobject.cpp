@@ -30,12 +30,8 @@
  *
  *
  * What's tested of class cExtSubobject:
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
  * 	- cExtSubobject( unsignedIntFib uiInNumberOfSubobject, cVectorExtSubobject vecInOutputValues, cFibElement * pInSuperiorElement = NULL );
  * 	- cExtSubobject( unsignedIntFib uiInNumberOfSubobject, unsignedIntFib uiNumberOfOutputVariables=0, cFibElement * pInSuperiorElement = NULL );
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
- * 	- cExtSubobject( unsignedIntFib uiInNumberOfSubobject, vector< cFibVariable* > vecInOutputVariables=vector< cFibVariable* >(), cFibElement * pInSuperiorElement = NULL );
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
  * 	- cExtSubobject( const cExtSubobject & extObjectElement );
  * 	- char getType() const;
  * 	- bool isValidFibElement() const;
@@ -59,16 +55,8 @@
  * 	- list<cFibVariable*> getDefinedVariables( ED_POSITION );
  * 	- unsignedIntFib getNumberSubobject() const;
  * 	- bool setNumberSubobject( const unsignedIntFib iInSubobjectNumber );
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
  * 	- cVectorExtSubobject * getOutputVector();
  * 	- const cVectorExtSubobject * cExtSubobject::getOutputVector() const
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
- * 	- unsignedIntFib getNumberOfOutputVariables() const;
- * 	- vector< cFibVariable * > getOutputVariables();
- * 	- bool setOutputVariables( vector< cFibVariable * > vecOutputValues );
- * 	- cFibVariable * getOutputVariable( const unsignedIntFib uiVariableNumber );
- * 	- bool setOutputVariable( const unsignedIntFib uiVariableNumber, cFibVariable * pOutputVariable );
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
  *
  *
  * call: tExtSubobject [MAX_RAND_TEST_SIZE]
@@ -92,6 +80,7 @@ History:
 	the input values are now a vector of values
 09.10.2012  Oesterholz  Warning removed: "(char)" for char arrays added
 28.01.2013  Oesterholz  COLOR_SW changed to COLOR_GRAYSCALE
+01.08.2013  Oesterholz  FEATURE_EXT_SUBOBJECT_INPUT_VECTOR as default (not case removed)
 */
 
 #include "version.h"
@@ -104,9 +93,7 @@ History:
 #include "cArea.h"
 #include "cList.h"
 
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	#include "cVectorExtSubobject.h"
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
+#include "cVectorExtSubobject.h"
 
 #include "cVectorArea.h"
 #include "cDomainNaturalNumberBit.h"
@@ -201,12 +188,8 @@ int main(int argc, char* argv[]){
  * This method tests the constructor of the cExtSubobject class.
  *
  * methods tested:
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
  * 	- cExtSubobject( unsignedIntFib uiInNumberOfSubobject, cVectorExtSubobject vecInOutputValues, cFibElement * pInSuperiorElement = NULL );
  * 	- cExtSubobject( unsignedIntFib uiInNumberOfSubobject, unsignedIntFib uiNumberOfOutputVariables=0, cFibElement * pInSuperiorElement = NULL );
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
- * 	- cExtSubobject( unsignedIntFib uiInNumberOfSubobject, vector< cFibVariable* > vecInOutputVariables=vector< cFibVariable* >(), cFibElement * pInSuperiorElement = NULL );
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
  * 	- char getType() const;
  * 	- bool isValidFibElement() const;
  * 	- bool isMovable() const;
@@ -229,11 +212,7 @@ int testCostructor( unsigned long &ulTestphase ){
 	cout<<"cExtSubobject extObjectSimple( 0 );"<<endl;
 	cExtSubobject extObjectSimple( 0 );
 
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	cVectorExtSubobject vecCorrectOutVariables( 0 );
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	vector< cFibVariable* > vecCorrectOutVariables;
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 
 	//check the getType() methode from cExtSubobject
 	if ( extObjectSimple.getType() == 's' ){
@@ -307,7 +286,6 @@ int testCostructor( unsigned long &ulTestphase ){
 			extObjectSimple.getNumberSubobject()<<" ."<<endl;
 		iReturn++;
 	}
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	//check the getOutputVariables() methode from cExtSubobject
 	if ( *(extObjectSimple.getOutputVector()) == vecCorrectOutVariables ){
 	
@@ -316,25 +294,6 @@ int testCostructor( unsigned long &ulTestphase ){
 		cerr<<"Error: The external subobject element has not the correct output values ."<<endl;
 		iReturn++;
 	}
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	//check the getNumberOfOutputVariables() methode from cExtSubobject
-	if ( extObjectSimple.getNumberOfOutputVariables() == 0 ){
-	
-		cout<<"The number of output values for the external subobject element is correctly 0 . "<<endl;
-	}else{
-		cerr<<"Error: The number of output values for the external subobject element is not 0, but "<<
-			extObjectSimple.getNumberOfOutputVariables()<<" ."<<endl;
-		iReturn++;
-	}
-	//check the getOutputVariables() methode from cExtSubobject
-	if ( extObjectSimple.getOutputVariables() == vecCorrectOutVariables ){
-	
-		cout<<"The external subobject element has the correct output values . "<<endl;
-	}else{
-		cerr<<"Error: The external subobject element has not the correct output values ."<<endl;
-		iReturn++;
-	}
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 
 	//check the hasUnderAllObjects() methode from cExtSubobject
 	if ( extObjectSimple.hasUnderAllObjects()){
@@ -354,7 +313,6 @@ int testCostructor( unsigned long &ulTestphase ){
 	cout<<"root.setNumberOfInputVariables( 10 );"<<endl;
 	root.setNumberOfInputVariables( 10 );
 	
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	cout<<"cVectorExtSubobject vecVariables( 4 );"<<endl;
 	cVectorExtSubobject vecVariables( 4 );
 	
@@ -366,21 +324,6 @@ int testCostructor( unsigned long &ulTestphase ){
 	vecVariables.setVariable( 3, root.getInputVariable( 4 ) );
 	cout<<"vecVariables.setValue( 4, 4 );"<<endl;
 	vecVariables.setValue( 4, 4 );
-	
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	cout<<"root.setNumberOfExternSubobjects( 20 );"<<endl;
-	root.setNumberOfExternSubobjects( 20 );
-	
-	vector< cFibVariable * > vecVariables;
-	cout<<"vecVariables.push_back( root.getInputVariable( 7 ) )"<<endl;
-	vecVariables.push_back( root.getInputVariable( 7 ) );
-	cout<<"vecVariables.push_back( root.getInputVariable( 3 ) )"<<endl;
-	vecVariables.push_back( root.getInputVariable( 3 ) );
-	cout<<"vecVariables.push_back( root.getInputVariable( 4 ) )"<<endl;
-	vecVariables.push_back( root.getInputVariable( 4 ) );
-	cout<<"vecVariables.push_back( root.getInputVariable( 3 ) )"<<endl;
-	vecVariables.push_back( root.getInputVariable( 3 ) );
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	
 	vecCorrectOutVariables = vecVariables;
 	
@@ -459,7 +402,6 @@ int testCostructor( unsigned long &ulTestphase ){
 			extObjectInVar.getNumberSubobject()<<" ."<<endl;
 		iReturn++;
 	}
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	//check the getOutputVariables() methode from cExtSubobject
 	if ( *(extObjectInVar.getOutputVector()) == vecCorrectOutVariables ){
 	
@@ -468,25 +410,6 @@ int testCostructor( unsigned long &ulTestphase ){
 		cerr<<"Error: The external subobject element has not the correct output values ."<<endl;
 		iReturn++;
 	}
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	//check the getNumberOfOutputVariables() methode from cExtSubobject
-	if ( extObjectInVar.getNumberOfOutputVariables() == 4 ){
-	
-		cout<<"The number of output values for the external subobject element is correctly 4 . "<<endl;
-	}else{
-		cerr<<"Error: The number of output values for the external subobject element is not 4, but "<<
-			extObjectInVar.getNumberOfOutputVariables()<<" ."<<endl;
-		iReturn++;
-	}
-	//check the getOutputVariables() methode from cExtSubobject
-	if ( extObjectInVar.getOutputVariables() == vecCorrectOutVariables ){
-	
-		cout<<"The external subobject element has the correct output values . "<<endl;
-	}else{
-		cerr<<"Error: The external subobject element has not the correct output values ."<<endl;
-		iReturn++;
-	}
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	//check the hasUnderAllObjects() methode from cExtSubobject
 	if ( extObjectInVar.hasUnderAllObjects()){
 	
@@ -500,7 +423,6 @@ int testCostructor( unsigned long &ulTestphase ){
 	ulTestphase++;
 	cout<<endl<<"TESTPHASE "<<ulTestphase<<" : Testing constructing cExtSubobject with all parameters given"<<endl;
 
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	cout<<"vecVariables.resize( 3 );"<<endl;
 	vecVariables.resize( 3 );
 	cout<<"vecVariables.setValue(1, 11 )"<<endl;
@@ -509,16 +431,6 @@ int testCostructor( unsigned long &ulTestphase ){
 	vecVariables.setVariable( 2, root.getInputVariable( 3 ) );
 	cout<<"vecVariables.setVariable( 3, root.getInputVariable( 2 ) )"<<endl;
 	vecVariables.setVariable( 3, root.getInputVariable( 2 ) );
-
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	vecVariables.clear();
-	cout<<"vecVariables.push_back( root.getInputVariable( 1 ) )"<<endl;
-	vecVariables.push_back( root.getInputVariable( 1 ) );
-	cout<<"vecVariables.push_back( root.getInputVariable( 3 ) )"<<endl;
-	vecVariables.push_back( root.getInputVariable( 3 ) );
-	cout<<"vecVariables.push_back( root.getInputVariable( 2 ) )"<<endl;
-	vecVariables.push_back( root.getInputVariable( 2 ) );
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	
 	vecCorrectOutVariables = vecVariables;
 	
@@ -597,7 +509,6 @@ int testCostructor( unsigned long &ulTestphase ){
 			extObjectFull.getNumberSubobject()<<" ."<<endl;
 		iReturn++;
 	}
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	//check the getOutputVariables() methode from cExtSubobject
 	if ( *(extObjectFull.getOutputVector()) == vecCorrectOutVariables ){
 	
@@ -606,25 +517,6 @@ int testCostructor( unsigned long &ulTestphase ){
 		cerr<<"Error: The external subobject element has not the correct output values ."<<endl;
 		iReturn++;
 	}
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	//check the getNumberOfOutputVariables() methode from cExtSubobject
-	if ( extObjectFull.getNumberOfOutputVariables() == 3 ){
-	
-		cout<<"The number of output values for the external subobject element is correctly 3 . "<<endl;
-	}else{
-		cerr<<"Error: The number of output values for the external subobject element is not 3, but "<<
-			extObjectFull.getNumberOfOutputVariables()<<" ."<<endl;
-		iReturn++;
-	}
-	//check the getOutputVariables() methode from cExtSubobject
-	if ( extObjectFull.getOutputVariables() == vecCorrectOutVariables ){
-	
-		cout<<"The external subobject element has the correct output values . "<<endl;
-	}else{
-		cerr<<"Error: The external subobject element has not the correct output values ."<<endl;
-		iReturn++;
-	}
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	//check the hasUnderAllObjects() methode from cExtSubobject
 	if ( extObjectFull.hasUnderAllObjects()){
 	
@@ -635,7 +527,6 @@ int testCostructor( unsigned long &ulTestphase ){
 	}
 
 
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	ulTestphase++;
 	cout<<endl<<"TESTPHASE "<<ulTestphase<<" : Testing constructing cExtSubobject with number of output values given"<<endl;
 
@@ -733,7 +624,6 @@ int testCostructor( unsigned long &ulTestphase ){
 		cerr<<"Error: The external subobject element is missing a underobject."<<endl;
 		iReturn++;
 	}
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 
 	return iReturn;
 }
@@ -1494,7 +1384,6 @@ int testEvalueObject( unsigned long &ulTestphase ){
 	cout<<"subroot.setStandardValueOfInputVariable( 2, 12 );"<<endl;
 	subroot.setStandardValueOfInputVariable( 2, 12 );
 	
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	cout<<"pVectorExtSubobject = extSubobject1.getOutputVector();"<<endl;
 	cVectorExtSubobject * pVectorExtSubobject =
 		extSubobject1.getOutputVector();
@@ -1505,13 +1394,6 @@ int testEvalueObject( unsigned long &ulTestphase ){
 	pVectorExtSubobject->setVariable( 1, subroot.getInputVariable( 1 ) );
 	cout<<"pVectorExtSubobject->setValue( 2, 12 );"<<endl;
 	pVectorExtSubobject->setValue( 2, 12 );
-	
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	cout<<"extSubobject1.setOutputVariable( 1, subroot.getInputVariable( 1 ) );"<<endl;
-	extSubobject1.setOutputVariable( 1, subroot.getInputVariable( 1 ) );
-	cout<<"extSubobject1.setOutputVariable( 2, subroot.getInputVariable( 2 ) );"<<endl;
-	extSubobject1.setOutputVariable( 2, subroot.getInputVariable( 2 ) );
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	
 	//check the getTimeNeed() methode from cExtSubobject
 	cout<<"property1.getTimeNeed()"<<endl;
@@ -2284,115 +2166,65 @@ int testEqual( unsigned long &ulTestphase ){
 	rootVariables.setNumberOfInputVariables( 10 );
 	
 	
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	cout<<"cVectorExtSubobject vecInOutputVariables1( 1 );"<<endl;
 	cVectorExtSubobject vecInOutputVariables1( 1 );
 	
 	cout<<"vecInOutputVariables1.setVariable( 1, rootVariables.getInputVariable( 1 ) );"<<endl;
 	vecInOutputVariables1.setVariable( 1, rootVariables.getInputVariable( 1 ) );
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	cout<<"vector< cFibVariable* > vecInOutputVariables1;"<<flush<<endl;
-	vector< cFibVariable* > vecInOutputVariables1;
-	cout<<"vecInOutputVariables1.push_back( rootVariables.getInputVariable( 1 ) );"<<flush<<endl;
-	vecInOutputVariables1.push_back( rootVariables.getInputVariable( 1 ) );
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	
 	cout<<"cExtSubobject extSubobjSub0InVar1( 0, vecInOutputVariables1 );"<<endl;
 	cExtSubobject extSubobjSub0InVar1( 0, vecInOutputVariables1 );
 	
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	cout<<"cVectorExtSubobject vecInOutputVariables2( 1 );"<<endl;
 	cVectorExtSubobject vecInOutputVariables2( 1 );
 	
 	cout<<"vecInOutputVariables2.setVariable( 1, rootVariables.getInputVariable( 7 ) );"<<endl;
 	vecInOutputVariables2.setVariable( 1, rootVariables.getInputVariable( 7 ) );
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	cout<<"vector< cFibVariable* > vecInOutputVariables2;"<<flush<<endl;
-	vector< cFibVariable* > vecInOutputVariables2;
-	cout<<"vecInOutputVariables2.push_back( rootVariables.getInputVariable( 7 ) );"<<flush<<endl;
-	vecInOutputVariables2.push_back( rootVariables.getInputVariable( 7 ) );
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	cout<<"cExtSubobject extSubobjSub0InVar7( 0, vecInOutputVariables2 );"<<endl;
 	cExtSubobject extSubobjSub0InVar7( 0, vecInOutputVariables2 );
 	
 	//with two output values
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	cout<<"vecInOutputVariables1.resize( 2 );"<<endl;
 	vecInOutputVariables1.resize( 2 );
 	
 	cout<<"vecInOutputVariables1.setValue( 2, 77 );"<<endl;
 	vecInOutputVariables1.setValue( 2, 77 );
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	cout<<"vecInOutputVariables1.push_back( rootVariables.getInputVariable( 7 ) );"<<flush<<endl;
-	vecInOutputVariables1.push_back( rootVariables.getInputVariable( 7 ) );
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	cout<<"cExtSubobject extSubobjSub0InVar1u7( 0, vecInOutputVariables1 );"<<endl;
 	cExtSubobject extSubobjSub0InVar1u7( 0, vecInOutputVariables1 );
 	
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	cout<<"vecInOutputVariables2.resize( 2 );"<<endl;
 	vecInOutputVariables2.resize( 2 );
 	
 	cout<<"vecInOutputVariables2.setValue( 2, 77 );"<<endl;
 	vecInOutputVariables2.setValue( 2, 77 );
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	cout<<"vecInOutputVariables2.push_back( rootVariables.getInputVariable( 7 ) );"<<flush<<endl;
-	vecInOutputVariables2.push_back( rootVariables.getInputVariable( 7 ) );
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	cout<<"cExtSubobject extSubobjSub0InVar7u7( 0, vecInOutputVariables2 );"<<endl;
 	cExtSubobject extSubobjSub0InVar7u7( 0, vecInOutputVariables2 );
 	
 	//with tree output values
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	cout<<"vecInOutputVariables1.resize( 3 );"<<endl;
 	vecInOutputVariables1.resize( 3 );
 	
 	cout<<"vecInOutputVariables1.setVariable( 3, rootVariables.getInputVariable( 5 ) );"<<endl;
 	vecInOutputVariables1.setVariable( 3, rootVariables.getInputVariable( 5 )  );
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	cout<<"vecInOutputVariables1.push_back( rootVariables.getInputVariable( 5 ) );"<<flush<<endl;
-	vecInOutputVariables1.push_back( rootVariables.getInputVariable( 5 ) );
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	cout<<"cExtSubobject extSubobjSub0InVar1u7u5( 0, vecInOutputVariables1 );"<<endl;
 	cExtSubobject extSubobjSub0InVar1u7u5( 0, vecInOutputVariables1 );
 	
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	cout<<"vecInOutputVariables1.resize( 4 );"<<endl;
 	vecInOutputVariables1.resize( 4 );
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	cout<<"vecInOutputVariables1.back() = rootVariables.getInputVariable( 4 );"<<flush<<endl;
-	vecInOutputVariables1.back() = rootVariables.getInputVariable( 4 );
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	cout<<"cExtSubobject extSubobjSub0InVar1u7u4( 0, vecInOutputVariables1 );"<<endl;
 	cExtSubobject extSubobjSub0InVar1u7u4( 0, vecInOutputVariables1 );
 	
 	
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	//with input vector with one elemnt which is 0
 	cout<<"cExtSubobject extSubobjSub0InVarNULL( 0, 1 );"<<endl;
 	cExtSubobject extSubobjSub0InVarNULL( 0, 1 );
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	//with one input variable wich is NULL
-	cout<<"vector< cFibVariable* > vecInOutputVariables3;"<<flush<<endl;
-	vector< cFibVariable* > vecInOutputVariables3;
-	cout<<"vecInOutputVariables3.push_back( NULL );"<<flush<<endl;
-	vecInOutputVariables3.push_back( NULL );
-	cout<<"cExtSubobject extSubobjSub0InVarNULL( 0, vecInOutputVariables3 );"<<endl;
-	cExtSubobject extSubobjSub0InVarNULL( 0, vecInOutputVariables3 );
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	
 	//if with superior element
 	cout<<"cRoot rootSimple1;"<<endl;
 	cRoot rootSimple1;
 	
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	cout<<"cExtSubobject extSubobjSub0Sup( 0, 0, &rootSimple1 );"<<endl;
 	cExtSubobject extSubobjSub0Sup( 0, 0, &rootSimple1 );
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	cout<<"cExtSubobject extSubobjSub0Sup( 0, vector<cFibVariable*>(), &rootSimple1 );"<<endl;
-	cExtSubobject extSubobjSub0Sup( 0, vector<cFibVariable*>(), &rootSimple1 );
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	
 	
 	//other Fib objects
 	cout<<"cPoint point;"<<endl;
@@ -2880,7 +2712,6 @@ int testCopy( unsigned long &ulTestphase ){
 	cout<<"root.setNumberOfInputVariables( 10 );"<<endl;
 	root.setNumberOfInputVariables( 10 );
 	
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	cout<<"cVectorExtSubobject vecVariables( 4 );"<<endl;
 	cVectorExtSubobject vecVariables( 4 );
 	
@@ -2892,18 +2723,6 @@ int testCopy( unsigned long &ulTestphase ){
 	vecVariables.setVariable( 3, root.getInputVariable( 4 ) );
 	cout<<"vecVariables.setValue( 4, 4 );"<<endl;
 	vecVariables.setValue( 4, 4 );
-	
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	vector< cFibVariable * > vecVariables;
-	cout<<"vecVariables.push_back( root.getInputVariable( 7 ) )"<<endl;
-	vecVariables.push_back( root.getInputVariable( 7 ) );
-	cout<<"vecVariables.push_back( root.getInputVariable( 3 ) )"<<endl;
-	vecVariables.push_back( root.getInputVariable( 3 ) );
-	cout<<"vecVariables.push_back( root.getInputVariable( 4 ) )"<<endl;
-	vecVariables.push_back( root.getInputVariable( 4 ) );
-	cout<<"vecVariables.push_back( root.getInputVariable( 3 ) )"<<endl;
-	vecVariables.push_back( root.getInputVariable( 3 ) );
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	
 	cout<<"cExtSubobject extSubobj2( 2, vecVariables, &root );"<<endl;
 	cExtSubobject extSubobj2( 2, vecVariables, &root  );
@@ -3033,8 +2852,6 @@ int testXmlExtSubobject( const string szFilename,
 	TiXmlHandle xmlHandleOutputVariables = TiXmlHandle( pXmlElement );
 	TiXmlElement * pXmlOutputVariables = xmlHandleOutputVariables.FirstChild().Element();
 	
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	
 	if ( pXmlOutputVariables ) {
 		
 		const char * szVectorXmlType = pXmlOutputVariables->Attribute( "type" );
@@ -3111,77 +2928,6 @@ int testXmlExtSubobject( const string szFilename,
 			}
 		}
 	}//end if ther are output values
-	
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	if ( pXmlOutputVariables ) {
-		string szElementName = pXmlOutputVariables->Value();
-
-		if ( szElementName == "output_variables" ){
-			cout<<"The subelement is correctly named \"output_variables\". "<<endl;
-		
-		}else{
-			cerr<<"Error: The name of the subelement is "<< szElementName <<" and not \"output_variables\"."<<endl;
-			iReturn++;
-		}
-		
-		TiXmlHandle xmlHandleInputVariable = TiXmlHandle( pXmlOutputVariables );
-		TiXmlElement * pXmlInputVariable = xmlHandleInputVariable.FirstChild().Element();
-		
-		unsigned int uiActualInputVariable = 0;
-		for ( ; pXmlInputVariable; uiActualInputVariable++,
-				pXmlInputVariable = pXmlInputVariable->NextSiblingElement() ){
-		
-			const string szVariableName = pXmlInputVariable->Value();
-			if ( szVariableName == "variable" ){
-				cout<<"The subelement is correctly named \"variable\". "<<endl;
-			
-			}else{
-				cerr<<"Error: The name of the subelement is "<< szVariableName <<" and not \"variable\"."<<endl;
-				iReturn++;
-			}
-			const char * szVariableSubobjNumber = pXmlInputVariable->GetText();
-			
-			if ( szVariableSubobjNumber == NULL ){
-				cerr<<"Error: The "<<uiActualInputVariable<<"'th output values has no subobject number."<<endl;
-				iReturn++;
-			}else if ( uiActualInputVariable < vecOutputValues.size() ){
-				
-				const unsigned int uiCorrectVariableId =
-					vecOutputValues[ uiActualInputVariable ];
-				const unsigned int uiLoadedVariableId =
-					atol( szVariableSubobjNumber );
-				
-				if ( uiCorrectVariableId == uiLoadedVariableId ){
-					cout<<"The "<<uiActualInputVariable<<" input variable subobject number is correctly "<<
-						uiCorrectVariableId<<" . "<<endl;
-				}else{
-					cerr<<"Error: The "<<uiActualInputVariable<<" input variable subobject number is "<<
-						uiLoadedVariableId<<", but should be "<<uiCorrectVariableId<<" ."<<endl;
-					iReturn++;
-				}
-		
-			}else{// pXmlUnderExtSubobject == NULL
-				cerr<<"Error: Ther is an "<<uiActualInputVariable<<
-					"'th input varable with the value \""<< szVariableSubobjNumber <<"\"."<<endl;
-				iReturn++;
-			}
-			
-		}
-		if ( uiActualInputVariable != vecOutputValues.size() ){
-			cerr<<"Error: Ther are "<<uiActualInputVariable<<" output values, but it should be "<<
-				vecOutputValues.size()<<"."<<endl;
-			iReturn++;
-		}
-		
-	}else{// pXmlOutputVariables == NULL
-		if ( vecOutputValues.empty() ){
-			cout<<"Ther are correctly no output values . "<<endl;
-		}else{
-			cerr<<"Error: No output values handle in \""<< szFilename <<"\"."<<endl;
-			iReturn++;
-		}
-	}
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	
 	return iReturn;
 }
@@ -3269,7 +3015,6 @@ int testStoreXml( unsigned long &ulTestphase ){
 	cout<<"root.setNumberOfInputVariables( 10 );"<<endl;
 	root.setNumberOfInputVariables( 10 );
 	
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	cout<<"cVectorExtSubobject vecOutputValues( 3 );"<<endl;
 	cVectorExtSubobject vecOutputValues( 3 );
 	
@@ -3282,22 +3027,6 @@ int testStoreXml( unsigned long &ulTestphase ){
 	cout<<"vecOutputValues.setValue( 3, 3 );"<<endl;
 	vecOutputValues.setValue( 3, 3 );
 	vecOutVarNumbers.push_back( 3 );
-	
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	vector< cFibVariable * > vecOutputValues;
-	cout<<"root.getInputVariable( 1 )->setValue( 1 )"<<endl;
-	root.getInputVariable( 1 )->setValue( 1 );
-	vecOutputValues.push_back( root.getInputVariable( 1 ) );
-	vecOutVarNumbers.push_back( 1 );
-	cout<<"root.getInputVariable( 2 )->setValue( 5 )"<<endl;
-	root.getInputVariable( 2 )->setValue( 5 );
-	vecOutputValues.push_back( root.getInputVariable( 2 ) );
-	vecOutVarNumbers.push_back( 5 );
-	cout<<"root.getInputVariable( 5 )->setValue( 3 )"<<endl;
-	root.getInputVariable( 5 )->setValue( 3 );
-	vecOutputValues.push_back( root.getInputVariable( 5 ) );
-	vecOutVarNumbers.push_back( 3 );
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	
 	lSubobjNumber = -8;
 	cout<<"cExtSubobject extSubobjectNrm8OutVar3( lSubobjNumber, vecOutputValues );"<<endl;
@@ -3349,11 +3078,7 @@ int testStore( unsigned long &ulTestphase ){
 	cRoot root( &extSubobjNr0 );
 	
 	//test get compressed size
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	unsigned int uiCompressedSize = 4 + 0;
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	unsigned int uiCompressedSize = 4 + 0 + 4;
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	if ( (unsigned int)(extSubobjNr0.getCompressedSize()) == uiCompressedSize ){
 	
 		cout<<"The compressed size is correctly "<<
@@ -3394,7 +3119,6 @@ int testStore( unsigned long &ulTestphase ){
 	cout<<"cRoot rootSub12( &extSubobjNr7 );"<<endl;
 	cRoot rootSub12( &extSubobjNr7 );
 	
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	
 	vector<cDomainSingle*> vecDomainsE0( 0 );
 	
@@ -3406,12 +3130,6 @@ int testStore( unsigned long &ulTestphase ){
 	
 	//test get compressed size
 	uiCompressedSize = 4 + 4;
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	cout<<"rootSub12.setNumberOfExternSubobjects( 13 );"<<endl;
-	rootSub12.setNumberOfExternSubobjects( 13 );
-	//test get compressed size
-	uiCompressedSize = 4 + 4 + 4;
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	
 	if ( (unsigned int)(extSubobjNr7.getCompressedSize()) == uiCompressedSize ){
 	
@@ -3440,13 +3158,8 @@ int testStore( unsigned long &ulTestphase ){
 		iReturn++;
 	}
 	//test stored data
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	const char cExtSubobjNr7[] = { (char)0x7E };
 	iReturn += compareBytsWithFile( szFileNameBuffer, cExtSubobjNr7, 1 );
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	const char cExtSubobjNr7[] = { (char)0x7E, (char)0x00 };
-	iReturn += compareBytsWithFile( szFileNameBuffer, cExtSubobjNr7, 2 );
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 
 
 	cout<<endl<<"TESTPHASE "<<ulTestphase<<" : Testing the store() method on external subobject with output values"<<endl;
@@ -3454,8 +3167,6 @@ int testStore( unsigned long &ulTestphase ){
 	cout<<"rootSub12.setNumberOfInputVariables( 10 );"<<endl;
 	rootSub12.setNumberOfInputVariables( 10 );
 	
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-
 	vector<cDomainSingle*> vecDomainsE3( 3 );
 	
 	vecDomainsE3[ 0 ] = new cDomainNaturalNumberBit( 20 );
@@ -3489,20 +3200,6 @@ int testStore( unsigned long &ulTestphase ){
 	
 	//test get compressed size
 	uiCompressedSize = 4 + 4 + (1 + 8) + (1 + 5) + (1 + 8);
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	vector< cFibVariable * > vecOutputValues;
-	cout<<"rootSub12.getInputVariable( 1 )->setValue( 1 )"<<endl;
-	rootSub12.getInputVariable( 1 )->setValue( 1 );
-	vecOutputValues.push_back( rootSub12.getInputVariable( 1 ) );
-	cout<<"rootSub12.getInputVariable( 2 )->setValue( 5 )"<<endl;
-	rootSub12.getInputVariable( 2 )->setValue( 5 );
-	vecOutputValues.push_back( rootSub12.getInputVariable( 2 ) );
-	cout<<"rootSub12.getInputVariable( 5 )->setValue( 3 )"<<endl;
-	rootSub12.getInputVariable( 5 )->setValue( 3 );
-	vecOutputValues.push_back( rootSub12.getInputVariable( 5 ) );
-	//test get compressed size
-	uiCompressedSize = 4 + 4 + 4 + 3 * 8;
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	
 	cout<<"cExtSubobject extObjectNr3InVar3( 3, vecOutputValues  );"<<endl;
 	cExtSubobject extObjectNr3InVar3( 3, vecOutputValues  );
@@ -3537,29 +3234,14 @@ int testStore( unsigned long &ulTestphase ){
 		iReturn++;
 	}
 	//test stored data
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	const char cExtSubobjectNr3InVar3[] = { (char)0x3E, (char)0x03, (char)0x8C, (char)0x03 };
 	iReturn += compareBytsWithFile( szFileNameBuffer, cExtSubobjectNr3InVar3, 4 );
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	const char cExtSubobjectNr3InVar3[] = { (char)0x3E, (char)0x13, (char)0x50, (char)0x30, (char)0x00 };
-	iReturn += compareBytsWithFile( szFileNameBuffer, cExtSubobjectNr3InVar3, 5 );
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 
 
 	cout<<endl<<"TESTPHASE "<<ulTestphase<<" : Testing the store() method on external subobject with subobjects with domains"<<endl;
 	
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	//test get compressed size
 	uiCompressedSize = 4 + 4 + (1 + 4) + (1 + 5) + (1 + 4);
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	cout<<"cDomainNaturalNumberBit domOutVar( 16 );"<<endl;
-	cDomainNaturalNumberBit domOutVar( 16 );
-	
-	cout<<"rootSub12.getDomains()->addDomain( cTypeExtSubobject(), domOutVar );"<<endl;
-	rootSub12.getDomains()->addDomain( cTypeExtSubobject(), domOutVar );
-	//test get compressed size
-	uiCompressedSize = 4 + 4 + 16 + 3 * 4;
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	
 	cout<<"rootSub12.getDomains()->addDomain( cTypeVariable(), cDomainNaturalNumberBit( 4 ) );"<<endl;
 	rootSub12.getDomains()->addDomain( cTypeVariable(), cDomainNaturalNumberBit( 4 ) );
@@ -3591,13 +3273,8 @@ int testStore( unsigned long &ulTestphase ){
 		iReturn++;
 	}
 	//test stored data
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	const char cExtObjectNr3InVar3Dom[] = { (char)0x3E, (char)0xC3, (char)0x38 };
 	iReturn += compareBytsWithFile( szFileNameBuffer, cExtObjectNr3InVar3Dom, 3 );
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	const char cExtObjectNr3InVar3Dom[] = { (char)0x3E, (char)0x03, (char)0x00, (char)0x51, (char)0x03 };
-	iReturn += compareBytsWithFile( szFileNameBuffer, cExtObjectNr3InVar3Dom, 5 );
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 
 	return iReturn;
 }
@@ -3646,7 +3323,6 @@ int testNumberSubobject( unsigned long &ulTestphase ){
 	return iReturn;
 }
 
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 
 
 /**
@@ -3867,296 +3543,6 @@ int testOutputValues( unsigned long &ulTestphase ){
 }
 
 
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-
-/**
- * This function tests the output values methods of the class.
- *
- * methods tested:
- * 	- unsignedIntFib getNumberOfOutputVariables() const;
- * 	- vector< cFibVariable* > getOutputVariables();
- * 	- void setOutputVariables( vector< cFibVariable* > vecInOutputVariables );
- * 	- cFibVariable * getOutputVariable( const unsignedIntFib uiNumberOfOutputVariable );
- * 	- bool setOutputVariable( const unsignedIntFib uiNumberOfOutputVariable, cFibVariable * pOutputVariable );
- *
- * @param ulTestphase a reference to the number for the testphase
- * @return the number of errors occured in the test
- */
-int testOutputValues( unsigned long &ulTestphase ){
-
-	int iReturn = 0;//returnvalue of the test; the number of occured Errors
-
-	cout<<endl<<"TESTPHASE "<<ulTestphase<<" : Testing the output values methods"<<endl;
-	
-	cout<<"cRoot root;"<<flush<<endl;
-	cRoot root;
-	cout<<"root.setNumberOfInputVariables( 10 );"<<endl;
-	root.setNumberOfInputVariables( 10 );
-	vector< cFibVariable * > vecVariablesDef;
-	cout<<"pVariable1 = root.getInputVariable( 1 );"<<endl;
-	vecVariablesDef.push_back( root.getInputVariable( 1 ) );
-	cout<<"pVariable2 = root.getInputVariable( 2 );"<<endl;
-	vecVariablesDef.push_back( root.getInputVariable( 2 ) );
-	cout<<"pVariable3 = root.getInputVariable( 3 );"<<endl;
-	vecVariablesDef.push_back( root.getInputVariable( 3 ) );
-	cout<<"pVariable4 = root.getInputVariable( 4 );"<<endl;
-	vecVariablesDef.push_back( root.getInputVariable( 4 ) );
-	cout<<"pVariable5 = root.getInputVariable( 5 );"<<endl;
-	vecVariablesDef.push_back( root.getInputVariable( 5 ) );
-	cout<<"pVariable6 = root.getInputVariable( 6 );"<<endl;
-	vecVariablesDef.push_back( root.getInputVariable( 6 ) );
-	cout<<"pVariable7 = root.getInputVariable( 7 );"<<endl;
-	vecVariablesDef.push_back( root.getInputVariable( 7 ) );
-	cout<<"pVariable8 = root.getInputVariable( 8 );"<<endl;
-	vecVariablesDef.push_back( root.getInputVariable( 8 ) );
-	cout<<"pVariable9 = root.getInputVariable( 9 );"<<endl;
-	vecVariablesDef.push_back( root.getInputVariable( 9 ) );
-
-	cout<<"cRoot rootNDef;"<<flush<<endl;
-	cRoot rootNDef;
-	cout<<"rootNDef.setNumberOfInputVariables( 10 );"<<endl;
-	rootNDef.setNumberOfInputVariables( 10 );
-	vector< cFibVariable * > vecVariablesNDef;
-	cout<<"pVariableN1 = rootNDef.getInputVariable( 1 );"<<endl;
-	vecVariablesNDef.push_back( rootNDef.getInputVariable( 1 ) );
-	cout<<"pVariableN2 = rootNDef.getInputVariable( 2 );"<<endl;
-	vecVariablesNDef.push_back( rootNDef.getInputVariable( 2 ) );
-	cout<<"pVariableN3 = rootNDef.getInputVariable( 3 );"<<endl;
-	vecVariablesNDef.push_back( rootNDef.getInputVariable( 3 ) );
-	cout<<"pVariableN4 = rootNDef.getInputVariable( 4 );"<<endl;
-	vecVariablesNDef.push_back( rootNDef.getInputVariable( 4 ) );
-	cout<<"pVariableN5 = rootNDef.getInputVariable( 5 );"<<endl;
-	vecVariablesNDef.push_back( rootNDef.getInputVariable( 5 ) );
-	cout<<"pVariableN6 = rootNDef.getInputVariable( 6 );"<<endl;
-	vecVariablesNDef.push_back( rootNDef.getInputVariable( 6 ) );
-	cout<<"pVariableN7 = rootNDef.getInputVariable( 7 );"<<endl;
-	vecVariablesNDef.push_back( rootNDef.getInputVariable( 7 ) );
-	
-	set< cFibVariable * > setVariablesNDef( vecVariablesNDef.begin(),
-		vecVariablesNDef.end() );
-
-	cout<<"root.setNumberOfExternSubobjects( 1 );"<<endl;
-	root.setNumberOfExternSubobjects( 1 );
-	
-	vector< cFibVariable * > vecCorrectOutputVariables;
-	cout<<"cExtSubobject extSubobject( 1, {}, &root );"<<endl;
-	cExtSubobject extSubobject( 1, vecCorrectOutputVariables, &root );
-	
-	unsigned int uiNumberOfOutputvariables = 0;
-	set< cFibVariable * > setCorrectUsedVariables;
-	bool bValidElement = true;
-	
-	for ( unsigned long uiIteration = 1; uiIteration <= MAX_RAND_TEST_SIZE; uiIteration++ ){
-		
-		cout<<endl<<"Running iteration "<<uiIteration<<endl;
-		//make changes
-		const unsigned int uiChangeType = rand() % 2;
-		
-		switch ( uiChangeType ){
-			case 0:{//change with setOutputVariable()
-				//choose output varible to set
-				cFibVariable * pVariableToSet = NULL;
-				bool bVariableCanBeSet = true;
-				if ( rand() % 4 ){
-					//choose defined variable
-					const int iVariable = rand() % vecVariablesDef.size();
-					
-					cout<<"pVariableToSet = pVariable"<<(iVariable+1)<<" ; ";
-					pVariableToSet = vecVariablesDef[ iVariable ];
-				}else if ( rand() % 4 ){//choose not defined variable
-					const int iVariable = rand() % vecVariablesNDef.size();
-					
-					cout<<"pVariableToSet = pVariableN"<<(iVariable+1)<<" ; ";
-					pVariableToSet = vecVariablesNDef[ iVariable ];
-				}else{//choose NULL pointer as output variable
-					cout<<"pVariableToSet = NULL; ";
-					pVariableToSet = NULL;
-					bVariableCanBeSet = false;
-				}
-				
-				//choose position wher to set it
-				const unsignedIntFib uiPositionToSet =
-					rand() % ( vecCorrectOutputVariables.size() + 8 );
-				if ( ( pVariableToSet != NULL ) && ( 1 <= uiPositionToSet ) &&
-						( uiPositionToSet <= vecCorrectOutputVariables.size() + 1 ) ){
-					
-					if ( uiPositionToSet != (vecCorrectOutputVariables.size() + 1) ){
-						
-						vecCorrectOutputVariables[ uiPositionToSet - 1 ] = pVariableToSet;
-					}else{//append to end
-						vecCorrectOutputVariables.push_back( pVariableToSet );
-						uiNumberOfOutputvariables++;
-					}
-				}else{//position outside bounds
-					bVariableCanBeSet = false;
-				}
-				cout<<"setOutputVariable( "<<uiPositionToSet<<", pVariableToSet="<<pVariableToSet<<" );"<<endl;
-				const bool bOutputVariableSet =
-					extSubobject.setOutputVariable( uiPositionToSet, pVariableToSet );
-				
-				if ( bOutputVariableSet == bVariableCanBeSet ){
-					cout<<"The output variable pVariableToSet could correctly be "<<
-						(bOutputVariableSet?"set":"not set")<<" . "<<endl;
-				}else{
-					cerr<<"Error: The output variable pVariableToSet was "<<
-						(bOutputVariableSet?"set":"not set")<<
-						", but should"<<(bVariableCanBeSet?"":"n't")<<" be ."<<endl;
-					iReturn++;
-				}
-				
-			}break;
-			case 1:{//change with setOutputVariables()
-				//choose output varible to set
-				uiNumberOfOutputvariables = rand() % ((rand() % 32) + 1);
-				vecCorrectOutputVariables.clear();
-				cout<<"New output values: ";
-				for ( unsigned int uiActualInVar = 1;
-					 uiActualInVar <= uiNumberOfOutputvariables; uiActualInVar++){
-					
-					if ( rand() % 4 ){
-						//choose defined variable
-						const int iVariable = rand() % vecVariablesDef.size();
-						
-						vecCorrectOutputVariables.push_back( vecVariablesDef[ iVariable ] );
-						cout<<"pVariable"<<(iVariable+1)<<" ; ";
-					}else if ( rand() % 4 ){//choose not defined variable
-						const int iVariable = rand() % vecVariablesNDef.size();
-						
-						vecCorrectOutputVariables.push_back( vecVariablesNDef[ iVariable ] );
-						cout<<"pVariableN"<<(iVariable+1)<<" ; ";
-					}else{//choose NULL pointer as output variable
-						vecCorrectOutputVariables.push_back( NULL );
-						cout<<"NULL ; ";
-					}
-				}
-				cout<<endl;
-				//set new output values
-				const vector< cFibVariable * > vecToSetOutputVariables = vecCorrectOutputVariables;
-				cout<<"xtSubobject.setOutputVariables( {new output values} );"<<endl;
-				extSubobject.setOutputVariables( vecToSetOutputVariables );
-				
-			}break;
-			/*case 2:{//change with setNumberOfOutputVariables()
-				//choose new number of output values
-				uiNumberOfOutputvariables = rand() % ((rand() % 32) + 1);
-				
-				cout<<"extSubobject.setNumberOfOutputVariables( "<<uiNumberOfOutputvariables<<" );"<<endl;
-				extSubobject.setNumberOfOutputVariables( uiNumberOfOutputvariables );
-				//generate correct vector of output values
-				vecCorrectOutputVariables.resize( uiNumberOfOutputvariables, NULL );
-			}break;*/
-			default://Error: Wrong change mode
-				cerr<<"Error: Wrong change mode "<<uiChangeType<<endl;
-				continue;
-		};
-		//generate correct vector of used variables
- 		setCorrectUsedVariables.clear();
-		setCorrectUsedVariables.insert( vecCorrectOutputVariables.begin(),
-			vecCorrectOutputVariables.end() );
-		setCorrectUsedVariables.erase( ((cFibVariable*)(NULL)) );
-/*TODO weg just check Fib element
-		//evalue if the cExtSubobject element is valid
-		bValidElement = true;
-		for ( vector< cFibVariable * >::const_iterator
-				itrOutputVariable = vecCorrectOutputVariables.begin();
-				itrOutputVariable != vecCorrectOutputVariables.end(); itrOutputVariable++ ){
-			
-			if ( (*itrOutputVariable) == NULL ){
-				//variable is NULL pointer -> Fib element not valid
-				bValidElement = false;
-				break;
-			}else if ( setVariablesNDef.find( (*itrOutputVariable) ) !=
-					setVariablesNDef.end() ){
-				//variable not defined above -> Fib element not valid
-				bValidElement = false;
-				break;
-			}
-		}
-*/
-		
-		//check the getNumberOfOutputVariables() methode from cIf
-		if ( extSubobject.getNumberOfOutputVariables() == uiNumberOfOutputvariables ){
-		
-			cout<<"The extSubobject has correctly "<<uiNumberOfOutputvariables<<
-				" output values. "<<endl;
-		}else{
-			cerr<<"Error: The extSubobject has "<<extSubobject.getNumberOfOutputVariables()<<
-				" output values, but sould have "<<uiNumberOfOutputvariables<<" . "<<endl;
-			iReturn++;
-			uiNumberOfOutputvariables = extSubobject.getNumberOfOutputVariables();
-		}
-		//check the getNumberOfOutputVariables() methode from cIf
-		if ( extSubobject.getOutputVariables() == vecCorrectOutputVariables ){
-		
-			cout<<"The extSubobject has the correct output values. "<<endl;
-		}else{
-			cerr<<"Error: The extSubobject has not the correct output values. "<<endl;
-			iReturn++;
-		}
-		//check getOutputVariable() method
-		for ( unsigned int uiActualInVar = 1; uiActualInVar <= uiNumberOfOutputvariables;
-				uiActualInVar++ ){
-			cFibVariable * pActualInVar = extSubobject.getOutputVariable( uiActualInVar );
-			
-			if ( uiActualInVar <= vecCorrectOutputVariables.size() ){
-				if ( pActualInVar == vecCorrectOutputVariables[ uiActualInVar - 1 ] ){
-				
-					cout<<"The extSubobject has the correct "<<uiActualInVar<<"'th output variable. "<<endl;
-				}else{
-					cerr<<"Error: The extSubobject has the correct "<<uiActualInVar
-						<<"'th output variable, it is "<<pActualInVar<<" but should be "<<
-						vecCorrectOutputVariables[ uiActualInVar - 1 ]<<" . "<<endl;
-					iReturn++;
-				}
-			}else{//more output values exists than is correct
-				cerr<<"Error: Ther was an "<<uiActualInVar<<"'th output variable ("<<
-					pActualInVar<<") given back, but ther should be just "<<
-					vecCorrectOutputVariables.size()<<" output values. "<<endl;
-				iReturn++;
-			}
-		}//end for all output values
-		
-		//check the isValidFibElement() method
-		if ( extSubobject.isValidFibElement() == bValidElement ){
-		
-			cout<<"The extSubobject is correctly a "<<
-				(bValidElement?"valid":"not valid")<<" cExtSubobject. "<<endl;
-		}else{
-			cerr<<"Error: The extSubobject is "<<(bValidElement?"not a valid":"a valid")<<
-				" cExtSubobject, but should"<<(bValidElement?"":"n't")<<" be ."<<endl;
-			iReturn++;
-		}
-		//check getUsedVariables() method
-		cout<<"setUsedVariables = extSubobject.getUsedVariables( ED_POSITION ); "<<endl;
-		const set< cFibVariable * > setUsedVariables =
-			extSubobject.getUsedVariables( ED_POSITION );
-		if ( setUsedVariables == setCorrectUsedVariables ){
-		
-			cout<<"The correct used / output values wher given back. "<<endl;
-		}else{
-			cerr<<"Error: The used / output values given back are wrong. "<<endl;
-			iReturn++;
-		}
-		//check getDefinedVariables() method
-		cout<<"liDefinedVariables = extSubobject.getDefinedVariables( ED_POSITION ); "<<endl;
-		const list< cFibVariable * > liDefinedVariables =
-			extSubobject.getDefinedVariables( ED_POSITION );
-		if ( liDefinedVariables.empty() ){
-		
-			cout<<"Ther are correctly no defined variables given back. "<<endl;
-		}else{
-			cerr<<"Error: Ther are defined variables given back. "<<endl;
-			iReturn++;
-		}
-		
-	}//end for rand iteration
-	
-	
-	return iReturn;
-}
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-
-
 
 /**
  * This methods checks the variables of the given object fibObject.
@@ -4349,13 +3735,8 @@ int testVariable( unsigned long &ulTestphase ){
 	liAllVariables.push_back( pVariable5 );
 	liAllVariables.push_back( pVariable6 );
 
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	cout<<"cExtSubobject extObject1( 1, 5 );"<<endl;
 	cExtSubobject extObject1( 1, 5 );
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	cout<<"cExtSubobject extObject1( 1 );"<<endl;
-	cExtSubobject extObject1( 1 );
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	
 	set< cFibVariable * > setCorrectUsedVariables;
 	list< cFibVariable * > liCorrectDefinedVariables;
@@ -4370,13 +3751,8 @@ int testVariable( unsigned long &ulTestphase ){
 	ulTestphase++;
 	cout<<endl<<"TESTPHASE "<<ulTestphase<<" : Testing the variable methods with input / used variables"<<endl;
 
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	cout<<"extObject1.getOutputVector()->setVariable( 1, pVariable4 );"<<endl;
 	extObject1.getOutputVector()->setVariable( 1, pVariable4 );
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	cout<<"extObject1.setOutputVariable( 1, pVariable4 );"<<endl;
-	extObject1.setOutputVariable( 1, pVariable4 );
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	
 	setCorrectUsedVariables.insert( pVariable4 );
 	
@@ -4386,21 +3762,12 @@ int testVariable( unsigned long &ulTestphase ){
 	iReturn += checkVariables( extObject1, liAllVariables, setCorrectUsedVariables, liCorrectDefinedVariables, ED_HIGHER_EQUAL );
 	iReturn += checkVariables( extObject1, liAllVariables, setCorrectUsedVariables, liCorrectDefinedVariables, ED_ALL );
 	
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	cout<<"extObject1.getOutputVector()->setVariable( 2, pVariable1 );"<<endl;
 	extObject1.getOutputVector()->setVariable( 2, pVariable1 );
 	cout<<"extObject1.getOutputVector()->setVariable( 3, pVariable4 );"<<endl;
 	extObject1.getOutputVector()->setVariable( 3, pVariable4 );
 	cout<<"extObject1.getOutputVector()->setVariable( 4, pVariable6 );"<<endl;
 	extObject1.getOutputVector()->setVariable( 4, pVariable6 );
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	cout<<endl<<"extObject1.setOutputVariable( 2, pVariable1 );"<<endl;
-	extObject1.setOutputVariable( 2, pVariable1 );
-	cout<<"extObject1.setOutputVariable( 3, pVariable4 );"<<endl;
-	extObject1.setOutputVariable( 3, pVariable4 );
-	cout<<"extObject1.setOutputVariable( 4, pVariable6 );"<<endl;
-	extObject1.setOutputVariable( 4, pVariable6 );
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	
 	setCorrectUsedVariables.insert( pVariable1 );
 	setCorrectUsedVariables.insert( pVariable6 );
@@ -4411,13 +3778,8 @@ int testVariable( unsigned long &ulTestphase ){
 	iReturn += checkVariables( extObject1, liAllVariables, setCorrectUsedVariables, liCorrectDefinedVariables, ED_HIGHER_EQUAL );
 	iReturn += checkVariables( extObject1, liAllVariables, setCorrectUsedVariables, liCorrectDefinedVariables, ED_ALL );
 	
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	cout<<"extObject1.getOutputVector()->setVariable( 2, pVariable3 );"<<endl;
 	extObject1.getOutputVector()->setVariable( 2, pVariable3 );
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	cout<<endl<<"extObject1.setOutputVariable( 2, pVariable3 );"<<endl;
-	extObject1.setOutputVariable( 2, pVariable3 );
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	
 	setCorrectUsedVariables.erase( pVariable1 );
 	setCorrectUsedVariables.insert( pVariable3 );

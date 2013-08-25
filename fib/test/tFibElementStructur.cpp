@@ -38,8 +38,13 @@
  * 	- cFibElement *getFibElement( longFib lNumber, bool bAbsolute=false );
  * 	- cFibElement *getConstFibElement( char cType, longFib lNumber, bool bAbsolute=false ) const;
  * 	- cFibElement *getFibElement( char cType, longFib lNumber, bool bAbsolute=false );
- * 	-(TODO) cRoot * getSuperiorRootElement()
- * 	-(TODO) const cRoot * getSuperiorRootElement() const
+ * 	- unsignedIntFib getNumberOfSubobjects() const = 0;
+ * 	- cFibElement * getSubobject( const unsignedIntFib uiNumberOfSubobject = 1 )
+ * 	- const cFibElement * getSubobject( const unsignedIntFib uiNumberOfSubobject = 1 ) const
+ * 	- list< cFibElement * > getSubobjects()
+ * 	- list< const cFibElement * > getSubobjects() const
+ * 	- cRoot * getSuperiorRootElement()
+ * 	- const cRoot * getSuperiorRootElement() const
  * 	- unsignedIntFib getNumberOfElement( bool bOfType=false ) const;
  * 	- unsignedIntFib getNumberOfMovePoint( ) const;
  * 	- unsignedIntFib getNumberOfObjectPoint() const;
@@ -56,7 +61,7 @@
  * 	- bool insertObjectInElement( cFibElement *fibObject, const char cType='u', const unsignedIntFib elementPoint=0, bool first=true, bool bAbsolute=false );
  * 	--(TODO) check when the subobject to overwrite is NULL
  * 	- bool hasUnderAllObjects() const;
- * 	--TODO? for branchelements wher subobjects are removed
+ * 	--TODO? for branch elements wher subobjects are removed
  * 	- bool insertElement( cFibElement *fibElement, const char cType='u', const unsignedIntFib elementPoint=0, bool bAbsolute=false, bool bCheckVariables=true, bool bCheckVariables=true );
  * 	- bool isRemovableElement( const char cType='u', const unsignedIntFib elementPoint=0, bool bAbsolute=false, bool bCheckVariables=true ) const;
  * 	- bool removeElement(  const char cType='u', const unsignedIntFib  elementPoint=0, bool bAbsolute=false, bool bCheckVariables=true );
@@ -66,6 +71,7 @@
  * 	- cFibElement *clone( ) const;
  * 	- cFibElement *copy( const unsignedIntFib iObjectPoint=0 ) const;
  * 	- cFibElement *copyElement( const char cType='u', const unsignedIntFib elementPoint=0, bool bAbsolute=true ) const;
+ * 	- bool assignValues( const cFibElement & fibElement );
  *
  * 	-(TODO: when other variable definers are defined) bool equalValuesSet( const cFibVariable * variableOwn, const cFibElement & fibElement, const cFibVariable * variable ) const;
  * 	- void deleteObject( cFibElement * fibObject );
@@ -83,11 +89,7 @@
  * 	- cExtObject
  * 	- cExtSubobject
  * 	- cFibSet
- * 	- cFibmatrix
- *
- * Fib elements vorbereitet:
- * 	- cFibSet (search for TODO cFibSet )
- * 	- cFibMatrix (search for TODO cFibMatrix )
+ * 	- cFibMatrix
  *
  *
  * call: tFibElementStructur [MAX_SIZE] [ITERATIONS]
@@ -117,6 +119,10 @@ History:
 25.01.2012  Oesterholz  input values changed to input vector
 04.02.2012  Oesterholz  FEATURE_EXT_SUBOBJECT_INPUT_VECTOR implemented:
 	the input values are now a vector of values
+10.07.2013  Oesterholz  test for *Subobject* methods and
+	getSuperiorRootElement() implemented
+01.08.2013  Oesterholz  FEATURE_EXT_SUBOBJECT_INPUT_VECTOR as default (not case removed)
+01.08.2013  Oesterholz  test for assignValues() added
 */
 
 
@@ -195,6 +201,7 @@ int testMoveLimbElementUpOnObject( cFibElement * pFibObject, bool bAbsolute );
 int testMoveLimbElementDownOnObject( cFibElement * pFibObject, bool bAbsolute );
 int testCopyElementOnObject( cFibElement * pFibObject, bool bAbsolute );
 int testCopyOnObject( cFibElement * pFibObject );
+int testAssignValues( cFibElement * pFibObject );
 
 int testEqualOnTwoObject( cFibElement * pFibObject1, cFibElement * pFibObject2 );
 int testMoveLimbElementOnNonMovebelOnObject( cFibElement * pFibObject1, cFibElement * pFibObject2 );
@@ -213,7 +220,7 @@ list< pair< char, double > > liFractionOfFibElements;
 int main(int argc, char* argv[]){
 
 	unsigned long ulTestphase = 0;//actual phase of the test 
-	int iReturn = 0;//returnvalue of the test; the number of occured Errors
+	int iReturn = 0;//return value of the test; the number of occured errors
 	
 	srand( time(NULL) );
 	const time_t timeStart = time( 0 );
@@ -258,7 +265,7 @@ int main(int argc, char* argv[]){
 	cout<<endl<<"Running Test for structurs of Fib objects"<<endl;
 	cout<<      "========================================="<<endl;
 	
-/*TODO comment in
+/*TODO comment in:
 */
 	//test basic structure
 	iReturn += testStructurRandom( ulTestphase, uiMaxSize, uiIterations, 1, 2 );
@@ -306,8 +313,6 @@ int main(int argc, char* argv[]){
 	//test equal()
 	iReturn += testOnTwoEqualStructurRandom( ulTestphase, uiMaxSize, uiIterations, 1, 4 );
 
-/*TODO comment in
-*/
 	//test moveLimbElement();
 	iReturn += testOnTwoEqualStructurRandom( ulTestphase, uiMaxSize, uiIterations, 10, 4 );
 	iReturn += testStructurRandom( ulTestphase, uiMaxSize, uiIterations, 60, 2  );
@@ -323,6 +328,9 @@ int main(int argc, char* argv[]){
 	
 	//copy()
 	iReturn += testStructurRandom( ulTestphase, uiMaxSize, uiIterations, 72, 8 );
+	
+	//assignValues()
+	iReturn += testStructurRandom( ulTestphase, uiMaxSize, uiIterations, 73, 8 );
 	
 	//test to call some random functions in in a row
 	iReturn += testRandFunInRow( ulTestphase, uiMaxSize, uiIterations, 8 );
@@ -349,7 +357,14 @@ int main(int argc, char* argv[]){
  * 	- 'p': cPoint
  * 	- 'y': cProperty
  * 	- 'l': cList
+ * 	- 'a': cArea
+ * 	- 'f': cFunction
+ * 	- 'i': cIf
  * 	- 'c': cComment
+ * 	- 'o': cExtObject
+ * 	- 'e': cExtSubobject
+ * 	- 'v': cFibSet
+ * 	- 'm': cFibMatrix
  *
  * @param szRetNameActualType in this string the name of the type if given back
  *	@return a character for the choosen type
@@ -419,15 +434,9 @@ char choosRandomType( string & szRetNameActualType ){
 
 /**
  * This function chooses a randon Fib element type and gives it character back.
- * Fib elements implemented:
- * 	- 'u': all
- * 	- 'r': cRoot
- * 	- 'p': cPoint
- * 	- 'y': cProperty
- * 	- 'c': cComment
- * 	- 'l': cList
  *
- *	@return a character for the choosen type
+ * @see choosRandomType();
+ * @return a character for the choosen type
  */
 char choosRandomType(){
 
@@ -447,6 +456,13 @@ char choosRandomType(){
  * 	- cFibElement *getFibElement( longFib lNumber, bool bAbsolute=false );
  * 	- cFibElement *getConstFibElement( char cType, longFib lNumber, bool bAbsolute=false ) const;
  * 	- cFibElement *getFibElement( char cType, longFib lNumber, bool bAbsolute=false );
+ * 	- unsignedIntFib getNumberOfSubobjects() const = 0;
+ * 	- cFibElement * getSubobject( const unsignedIntFib uiNumberOfSubobject = 1 )
+ * 	- const cFibElement * getSubobject( const unsignedIntFib uiNumberOfSubobject = 1 ) const
+ * 	- list< cFibElement * > getSubobjects()
+ * 	- list< const cFibElement * > getSubobjects() const
+ * 	- cRoot * getSuperiorRootElement()
+ * 	- const cRoot * getSuperiorRootElement() const
  * 	- list<cFibElement*> getAllFibElements( char cTypeBasis='u', longFib lNumber=1, char cType='u', edDirection direction=ED_ALL, unsignedLongFib lNumberOfMaxReturnedElements=0, bool bAbsolute=false );
  * 	- unsignedIntFib getNumberOfElement( bool bOfType=false ) const;
  * 	- unsignedIntFib getNumberOfMovePoint( ) const;
@@ -458,6 +474,7 @@ char choosRandomType(){
  * 	- list<unsignedIntFib> elementPointToObjectPoints( const char cType, const unsignedIntFib elementPoint, bool bAbsolute=false ) const;
  * 	- unsignedIntFib objectPointToElementPoint( const unsignedIntFib uiObjectPoint, bool bAbsolute=false ) const;
  * 	- bool hasUnderAllObjects() const;
+ * 	- bool assignValues( const cFibElement & fibElement );
  *
  *
  * methods tested with uiTestType=5 :
@@ -575,6 +592,8 @@ char choosRandomType(){
  * methods tested with uiTestType=72 :
  * 	-  cFibElement *copy( const unsignedIntFib iObjectPoint ) const;
  *
+ * methods tested with uiTestType=73 :
+ * 	- bool assignValues( const cFibElement & fibElement );
  *
  * @param ulTestphase a reference to the number for the testphase
  * @param uiMaxSize a number for the till wich size the Fib object
@@ -589,116 +608,119 @@ int testStructurRandom( unsigned long &ulTestphase, unsigned int uiMaxSize,
 		unsigned int uiIterations, unsigned int uiTestType = 1,
 		unsigned int uiStepSize = 2 ){
 
-	int iReturn = 0;//returnvalue of the test; the number of occured Errors
+	int iReturn = 0;//return value of the test; the number of occured errors
 	
 	ulTestphase++;
 	switch ( uiTestType ){
 		case 1:{
-			cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing methods to check the Fib object structur on random generated Fib objects"<<endl;
+			cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing methods to check the Fib object structur on random generated Fib objects"<<endl;
 		}break;
 		case 5:{
-			cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the overwriteObjectWithObject() method on random generated Fib objects (with bDeleteOld=true and bAbsolute=false)"<<endl;
+			cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the overwriteObjectWithObject() method on random generated Fib objects (with bDeleteOld=true and bAbsolute=false)"<<endl;
 		}break;
 		case 6:{
-			cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the overwriteObjectWithObject() method on random generated Fib objects (with bDeleteOld=false and bAbsolute=false)"<<endl;
+			cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the overwriteObjectWithObject() method on random generated Fib objects (with bDeleteOld=false and bAbsolute=false)"<<endl;
 		}break;
 		case 7:{
-			cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the overwriteObjectWithObject() method on random generated Fib objects (with bDeleteOld=true and bAbsolute=true)"<<endl;
+			cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the overwriteObjectWithObject() method on random generated Fib objects (with bDeleteOld=true and bAbsolute=true)"<<endl;
 		}break;
 		case 8:{
-			cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the overwriteObjectWithObject() method on random generated Fib objects (with bDeleteOld=false and bAbsolute=true)"<<endl;
+			cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the overwriteObjectWithObject() method on random generated Fib objects (with bDeleteOld=false and bAbsolute=true)"<<endl;
 		}break;
 		case 10:{
-			cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the removeObject() method on random generated Fib objects (with bDeleteOld=true and bAbsolute=false)"<<endl;
+			cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the removeObject() method on random generated Fib objects (with bDeleteOld=true and bAbsolute=false)"<<endl;
 		}break;
 		case 11:{
-			cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the removeObject() method on random generated Fib objects (with bDeleteOld=false and bAbsolute=false)"<<endl;
+			cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the removeObject() method on random generated Fib objects (with bDeleteOld=false and bAbsolute=false)"<<endl;
 		}break;
 		case 12:{
-			cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the removeObject() method on random generated Fib objects (with bDeleteOld=true and bAbsolute=true)"<<endl;
+			cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the removeObject() method on random generated Fib objects (with bDeleteOld=true and bAbsolute=true)"<<endl;
 		}break;
 		case 13:{
-			cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the removeObject() method on random generated Fib objects (with bDeleteOld=false and bAbsolute=true)"<<endl;
+			cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the removeObject() method on random generated Fib objects (with bDeleteOld=false and bAbsolute=true)"<<endl;
 		}break;
 		case 20:{
-			cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the insertObjectInElement() method on random generated Fib objects (with first=true and bAbsolute=false)"<<endl;
+			cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the insertObjectInElement() method on random generated Fib objects (with first=true and bAbsolute=false)"<<endl;
 		}break;
 		case 21:{
-			cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the insertObjectInElement() method on random generated Fib objects (with first=true and bAbsolute=true)"<<endl;
+			cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the insertObjectInElement() method on random generated Fib objects (with first=true and bAbsolute=true)"<<endl;
 		}break;
 		case 22:{
-			cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the insertObjectInElement() method on random generated Fib objects (with first=false and bAbsolute=false)"<<endl;
+			cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the insertObjectInElement() method on random generated Fib objects (with first=false and bAbsolute=false)"<<endl;
 		}break;
 		case 23:{
-			cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the insertObjectInElement() method on random generated Fib objects (with first=false and bAbsolute=true)"<<endl;
+			cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the insertObjectInElement() method on random generated Fib objects (with first=false and bAbsolute=true)"<<endl;
 		}break;
 		case 30:{
-			cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the hasUnderAllObjects() method on random generated Fib objects wher a limbelement is missing it's subobject"<<endl;
+			cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the hasUnderAllObjects() method on random generated Fib objects wher a limbelement is missing it's subobject"<<endl;
 		}break;
 		case 40:{
-			cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the insertElement() method on random generated Fib objects (with bCheckVariables=true and bAbsolute=false)"<<endl;
+			cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the insertElement() method on random generated Fib objects (with bCheckVariables=true and bAbsolute=false)"<<endl;
 		}break;
 		case 41:{
-			cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the insertElement() method on random generated Fib objects(with bCheckVariables=true and bAbsolute=true)"<<endl;
+			cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the insertElement() method on random generated Fib objects(with bCheckVariables=true and bAbsolute=true)"<<endl;
 		}break;
 		case 42:{
-			cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the insertElement() method on random generated Fib objects, wher the inserted Fib element sould replace a NULL subobject (with bCheckVariables=true and bAbsolute=true)"<<endl;
+			cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the insertElement() method on random generated Fib objects, wher the inserted Fib element sould replace a NULL subobject (with bCheckVariables=true and bAbsolute=true)"<<endl;
 		}break;
 		case 43:{
-			cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the insertElement() method on random generated Fib objects (with bCheckVariables=false and bAbsolute=false)"<<endl;
+			cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the insertElement() method on random generated Fib objects (with bCheckVariables=false and bAbsolute=false)"<<endl;
 		}break;
 		case 44:{
-			cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the insertElement() method on random generated Fib objects(with bCheckVariables=false and bAbsolute=true)"<<endl;
+			cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the insertElement() method on random generated Fib objects(with bCheckVariables=false and bAbsolute=true)"<<endl;
 		}break;
 		case 45:{
-			cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the insertElement() method on random generated Fib objects, wher the inserted Fib element sould replace a NULL subobject (with bCheckVariables=false and bAbsolute=true)"<<endl;
+			cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the insertElement() method on random generated Fib objects, wher the inserted Fib element sould replace a NULL subobject (with bCheckVariables=false and bAbsolute=true)"<<endl;
 		}break;
 		case 50:{
-			cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the cutElement() method on random generated Fib objects (with bCheckVariables=true and bAbsolute=false)"<<endl;
+			cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the cutElement() method on random generated Fib objects (with bCheckVariables=true and bAbsolute=false)"<<endl;
 		}break;
 		case 51:{
-			cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the cutElement() method on random generated Fib objects (with bCheckVariables=false and bAbsolute=false)"<<endl;
+			cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the cutElement() method on random generated Fib objects (with bCheckVariables=false and bAbsolute=false)"<<endl;
 		}break;
 		case 52:{
-			cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the removeElement() method on random generated Fib objects (with bCheckVariables=true and bAbsolute=false)"<<endl;
+			cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the removeElement() method on random generated Fib objects (with bCheckVariables=true and bAbsolute=false)"<<endl;
 		}break;
 		case 53:{
-			cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the removeElement() method on random generated Fib objects (with bCheckVariables=false and bAbsolute=false)"<<endl;
+			cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the removeElement() method on random generated Fib objects (with bCheckVariables=false and bAbsolute=false)"<<endl;
 		}break;
 		case 55:{
-			cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the cutElement() method on random generated Fib objects (with bCheckVariables=true and bAbsolute=true)"<<endl;
+			cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the cutElement() method on random generated Fib objects (with bCheckVariables=true and bAbsolute=true)"<<endl;
 		}break;
 		case 56:{
-			cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the cutElement() method on random generated Fib objects (with bCheckVariables=false and bAbsolute=true)"<<endl;
+			cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the cutElement() method on random generated Fib objects (with bCheckVariables=false and bAbsolute=true)"<<endl;
 		}break;
 		case 57:{
-			cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the removeElement() method on random generated Fib objects (with bCheckVariables=true and bAbsolute=true)"<<endl;
+			cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the removeElement() method on random generated Fib objects (with bCheckVariables=true and bAbsolute=true)"<<endl;
 		}break;
 		case 58:{
-			cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the removeElement() method on random generated Fib objects (with bCheckVariables=false and bAbsolute=true)"<<endl;
+			cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the removeElement() method on random generated Fib objects (with bCheckVariables=false and bAbsolute=true)"<<endl;
 		}break;
 		case 60:{
-			cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the moveLimbElement() method on random generated Fib objects for moving a limbelement up (with bAbsolute=false)"<<endl;
+			cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the moveLimbElement() method on random generated Fib objects for moving a limbelement up (with bAbsolute=false)"<<endl;
 		}break;
 		case 61:{
-			cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the moveLimbElement() method on random generated Fib objects for moving a limbelement up (with bAbsolute=true)"<<endl;
+			cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the moveLimbElement() method on random generated Fib objects for moving a limbelement up (with bAbsolute=true)"<<endl;
 		}break;
 		case 62:{
-			cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the moveLimbElement() method on random generated Fib objects for moving a limbelement down (with bAbsolute=false)"<<endl;
+			cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the moveLimbElement() method on random generated Fib objects for moving a limbelement down (with bAbsolute=false)"<<endl;
 		}break;
 		case 63:{
-			cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the moveLimbElement() method on random generated Fib objects for moving a limbelement down (with bAbsolute=true)"<<endl;
+			cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the moveLimbElement() method on random generated Fib objects for moving a limbelement down (with bAbsolute=true)"<<endl;
 		}break;
 		case 70:{
-			cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the copyElement() method on random generated Fib objects (with bAbsolute=false)"<<endl;
+			cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the copyElement() method on random generated Fib objects (with bAbsolute=false)"<<endl;
 		}break;
 		case 71:{
-			cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the copyElement() method on random generated Fib objects (with bAbsolute=true)"<<endl;
+			cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the copyElement() method on random generated Fib objects (with bAbsolute=true)"<<endl;
 		}break;
 		case 72:{
-			cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the copy() method on random generated Fib objects"<<endl;
+			cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the copy() method on random generated Fib objects"<<endl;
 		}break;
 		
+		case 73:{
+			cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the assignValues() method on random generated Fib objects"<<endl;
+		}break;
 		
 		default:
 			cerr<<"No test to evalue choosen"<<endl;
@@ -865,6 +887,9 @@ int testStructurRandom( unsigned long &ulTestphase, unsigned int uiMaxSize,
 			case 72:{
 				uiErrorsInTests += testCopyOnObject( pGeneratedFibObject );
 			}break;
+			case 73:{
+				uiErrorsInTests += testAssignValues( pGeneratedFibObject );
+			}break;
 		}
 
 		iReturn += uiErrorsInTests;
@@ -928,7 +953,7 @@ int testOnTwoEqualStructurRandom( unsigned long &ulTestphase, unsigned int uiMax
 		unsigned int uiIterations, unsigned int uiTestType = 1,
 		unsigned int uiStepSize = 2 ){
 
-	int iReturn = 0;//returnvalue of the test; the number of occured Errors
+	int iReturn = 0;//return value of the test; the number of occured errors
 	
 	ulTestphase++;
 	
@@ -936,13 +961,13 @@ int testOnTwoEqualStructurRandom( unsigned long &ulTestphase, unsigned int uiMax
 
 	switch ( uiTestType ){
 		case 1:{
-			cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the equal() method on two equal random generated Fib objects"<<endl;
+			cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the equal() method on two equal random generated Fib objects"<<endl;
 		}break;
 		case 10:{
-			cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the moveLimbElement() method, with trying to move Fib element that are not movebel"<<endl;
+			cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the moveLimbElement() method, with trying to move Fib element that are not movebel"<<endl;
 		}break;
 		case 20:{
-			cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the clone() method"<<endl;
+			cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the clone() method"<<endl;
 		}break;
 		
 		default:
@@ -1004,16 +1029,6 @@ int testOnTwoEqualStructurRandom( unsigned long &ulTestphase, unsigned int uiMax
 			}
 			cout<<endl;
 			
-//TODO weg
-/*
-ofstream * pFile = new ofstream( "obj1.xml" );
-pGeneratedFibObject1->storeXml( *pFile );
-delete pFile;
-pFile = new ofstream( "obj2.xml" );
-pGeneratedFibObject2->storeXml( *pFile );
-delete pFile;
-*/
-
 		}else{
 			cout<<endl;
 			cerr<<"Error: Generated Fib object failed:"<<
@@ -1110,6 +1125,13 @@ delete pFile;
  * 	- cFibElement *getFibElement( longFib lNumber, bool bAbsolute=false );
  * 	- cFibElement *getConstFibElement( char cType, longFib lNumber, bool bAbsolute=false ) const;
  * 	- cFibElement *getFibElement( char cType, longFib lNumber, bool bAbsolute=false );
+ * 	- unsignedIntFib getNumberOfSubobjects() const = 0;
+ * 	- cFibElement * getSubobject( const unsignedIntFib uiNumberOfSubobject = 1 )
+ * 	- const cFibElement * getSubobject( const unsignedIntFib uiNumberOfSubobject = 1 ) const
+ * 	- list< cFibElement * > getSubobjects()
+ * 	- list< const cFibElement * > getSubobjects() const
+ * 	- cRoot * getSuperiorRootElement()
+ * 	- const cRoot * getSuperiorRootElement() const
  * 	- list<cFibElement*> getAllFibElements( char cTypeBasis='u', longFib lNumber=1, char cType='u', edDirection direction=ED_ALL, unsignedLongFib lNumberOfMaxReturnedElements=0, bool bAbsolute=false );
  * 	- unsignedIntFib getNumberOfElement( bool bOfType=false ) const;
  * 	- unsignedIntFib getNumberOfMovePoint( ) const;
@@ -1168,16 +1190,16 @@ delete pFile;
 int testRandFunInRow( unsigned long &ulTestphase, unsigned int uiMaxSize,
 		unsigned int uiIterations, unsigned int uiStepSize = 8 ){
 
-	int iReturn = 0;//returnvalue of the test; the number of occured Errors
+	int iReturn = 0;//return value of the test; the number of occured errors
 	
 	ulTestphase++;
-	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing Fib structur methods in random generated Fib objects with some random structur functions test in a row"<<endl;
+	cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing Fib structur methods in random generated Fib objects with some random structur functions test in a row"<<endl;
 	
 
 	//generate random objects
 
-	cout<<"The maximal size for generated Fib objects is: "<< uiMaxSize <<endl;
-	cout<<"The number of iterations per parameterset is: "<< uiIterations <<endl;
+	cout<<"The maximal size for generated Fib object is: "<< uiMaxSize <<endl;
+	cout<<"The number of iterations per parameter set is: "<< uiIterations <<endl;
 	
 	for ( unsigned int uiAverageSubRoots = 1 ; uiAverageSubRoots <= 16; uiAverageSubRoots *= 4 ){// * 3
 	for ( unsigned int uiAverageSubRootsDepth = 1; uiAverageSubRootsDepth <= 4 ; uiAverageSubRootsDepth *= 2 ){// * 3
@@ -1233,7 +1255,7 @@ int testRandFunInRow( unsigned long &ulTestphase, unsigned int uiMaxSize,
 			
 			switch ( uiTestType ){
 				case 0:{
-					cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing methods to check the Fib object structur on random generated Fib objects"<<endl;
+					cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing methods to check the Fib object structur on random generated Fib objects"<<endl;
 					uiErrorsInTests += testStructurOnObject( pGeneratedFibObject );
 					uiErrorsInTests += testGetNumberOfCountOnObject( pGeneratedFibObject );
 					uiErrorsInTests += testGetAllFibElementsOnObject( pGeneratedFibObject );
@@ -1241,129 +1263,129 @@ int testRandFunInRow( unsigned long &ulTestphase, unsigned int uiMaxSize,
 					uiErrorsInTests += testObjectPointOnObject( pGeneratedFibObject);
 				}break;
 				case 1:{
-					cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the overwriteObjectWithObject() method on random generated Fib objects (with bDeleteOld=true and bAbsolute=false)"<<endl;
+					cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the overwriteObjectWithObject() method on random generated Fib objects (with bDeleteOld=true and bAbsolute=false)"<<endl;
 					uiErrorsInTests += testOverwriteObjectWithObjectOnObject( pGeneratedFibObject, true );
 				}break;
 				case 2:{
-					cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the overwriteObjectWithObject() method on random generated Fib objects (with bDeleteOld=false and bAbsolute=false)"<<endl;
+					cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the overwriteObjectWithObject() method on random generated Fib objects (with bDeleteOld=false and bAbsolute=false)"<<endl;
 					uiErrorsInTests += testOverwriteObjectWithObjectOnObject( pGeneratedFibObject, false );
 				}break;
 				case 3:{
-					cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the overwriteObjectWithObject() method on random generated Fib objects (with bDeleteOld=true and bAbsolute=true)"<<endl;
+					cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the overwriteObjectWithObject() method on random generated Fib objects (with bDeleteOld=true and bAbsolute=true)"<<endl;
 					uiErrorsInTests += testOverwriteObjectWithObjectAbsoluteOnObject( pGeneratedFibObject, true );
 				}break;
 				case 4:{
-					cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the overwriteObjectWithObject() method on random generated Fib objects (with bDeleteOld=false and bAbsolute=true)"<<endl;
+					cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the overwriteObjectWithObject() method on random generated Fib objects (with bDeleteOld=false and bAbsolute=true)"<<endl;
 					uiErrorsInTests += testOverwriteObjectWithObjectAbsoluteOnObject( pGeneratedFibObject, false );
 				}break;
 				case 5:{
-					cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the removeObject() method on random generated Fib objects (with bDeleteOld=true and bAbsolute=false)"<<endl;
+					cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the removeObject() method on random generated Fib objects (with bDeleteOld=true and bAbsolute=false)"<<endl;
 					uiErrorsInTests += testRemoveObjectOnObject( pGeneratedFibObject, true );
 				}break;
 				case 6:{
-					cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the removeObject() method on random generated Fib objects (with bDeleteOld=false and bAbsolute=false)"<<endl;
+					cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the removeObject() method on random generated Fib objects (with bDeleteOld=false and bAbsolute=false)"<<endl;
 					uiErrorsInTests += testRemoveObjectOnObject( pGeneratedFibObject, false );
 				}break;
 				case 7:{
-					cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the removeObject() method on random generated Fib objects (with bDeleteOld=true and bAbsolute=true)"<<endl;
+					cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the removeObject() method on random generated Fib objects (with bDeleteOld=true and bAbsolute=true)"<<endl;
 					uiErrorsInTests += testRemoveObjectAbsoluteOnObject( pGeneratedFibObject, true );
 				}break;
 				case 8:{
-					cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the removeObject() method on random generated Fib objects (with bDeleteOld=false and bAbsolute=true)"<<endl;
+					cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the removeObject() method on random generated Fib objects (with bDeleteOld=false and bAbsolute=true)"<<endl;
 					uiErrorsInTests += testRemoveObjectAbsoluteOnObject( pGeneratedFibObject, false );
 				}break;
 				case 9:{
-					cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the insertObjectInElement() method on random generated Fib objects (with first=true and bAbsolute=false)"<<endl;
+					cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the insertObjectInElement() method on random generated Fib objects (with first=true and bAbsolute=false)"<<endl;
 					uiErrorsInTests += testInsertObjectInElementObjectFirstOnObject( pGeneratedFibObject );
 				}break;
 				case 10:{
-					cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the insertObjectInElement() method on random generated Fib objects (with first=true and bAbsolute=true)"<<endl;
+					cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the insertObjectInElement() method on random generated Fib objects (with first=true and bAbsolute=true)"<<endl;
 					uiErrorsInTests += testInsertObjectInElementObjectFirstAbsoluteOnObject( pGeneratedFibObject );
 				}break;
 				case 11:{
-					cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the insertObjectInElement() method on random generated Fib objects (with first=false and bAbsolute=false)"<<endl;
+					cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the insertObjectInElement() method on random generated Fib objects (with first=false and bAbsolute=false)"<<endl;
 					uiErrorsInTests += testInsertObjectInElementObjectSecondOnObject( pGeneratedFibObject );
 				}break;
 				case 12:{
-					cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the insertObjectInElement() method on random generated Fib objects (with first=false and bAbsolute=true)"<<endl;
+					cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the insertObjectInElement() method on random generated Fib objects (with first=false and bAbsolute=true)"<<endl;
 					uiErrorsInTests += testInsertObjectInElementObjectSecondAbsoluteOnObject( pGeneratedFibObject );
 				}break;
 				case 13:{
-					cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the insertElement() method on random generated Fib objects (with bCheckVariables=true and bAbsolute=false)"<<endl;
+					cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the insertElement() method on random generated Fib objects (with bCheckVariables=true and bAbsolute=false)"<<endl;
 					uiErrorsInTests += testInsertElementOnObject( pGeneratedFibObject, true );
 				}break;
 				case 14:{
-					cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the insertElement() method on random generated Fib objects(with bCheckVariables=true and bAbsolute=true)"<<endl;
+					cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the insertElement() method on random generated Fib objects(with bCheckVariables=true and bAbsolute=true)"<<endl;
 					uiErrorsInTests += testInsertElementAbsoluteOnObject( pGeneratedFibObject, true );
 				}break;
 				case 15:{
-					cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the cutElement() method on random generated Fib objects (with bCheckVariables=true and bAbsolute=false)"<<endl;
+					cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the cutElement() method on random generated Fib objects (with bCheckVariables=true and bAbsolute=false)"<<endl;
 					uiErrorsInTests += testRemoveElementOnObject( pGeneratedFibObject, true, true );
 				}break;
 				case 16:{
-					cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the removeElement() method on random generated Fib objects (with bCheckVariables=true and bAbsolute=false)"<<endl;
+					cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the removeElement() method on random generated Fib objects (with bCheckVariables=true and bAbsolute=false)"<<endl;
 					uiErrorsInTests += testRemoveElementOnObject( pGeneratedFibObject, false, true );
 				}break;
 				case 17:{
-					cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the cutElement() method on random generated Fib objects (with bCheckVariables=true and bAbsolute=true)"<<endl;
+					cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the cutElement() method on random generated Fib objects (with bCheckVariables=true and bAbsolute=true)"<<endl;
 					uiErrorsInTests += testRemoveElementAbsoluteOnObject( pGeneratedFibObject, true, true );
 				}break;
 				case 18:{
-					cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the removeElement() method on random generated Fib objects (with bCheckVariables=true and bAbsolute=true)"<<endl;
+					cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the removeElement() method on random generated Fib objects (with bCheckVariables=true and bAbsolute=true)"<<endl;
 					uiErrorsInTests += testRemoveElementAbsoluteOnObject( pGeneratedFibObject, false, true );
 				}break;
 				case 19:{
-					cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the moveLimbElement() method on random generated Fib objects for moving a limbelement up (with bAbsolute=false)"<<endl;
+					cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the moveLimbElement() method on random generated Fib objects for moving a limbelement up (with bAbsolute=false)"<<endl;
 					uiErrorsInTests += testMoveLimbElementUpOnObject( pGeneratedFibObject, false );
 				}break;
 				case 20:{
-					cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the moveLimbElement() method on random generated Fib objects for moving a limbelement up (with bAbsolute=true)"<<endl;
+					cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the moveLimbElement() method on random generated Fib objects for moving a limbelement up (with bAbsolute=true)"<<endl;
 					uiErrorsInTests += testMoveLimbElementUpOnObject( pGeneratedFibObject, true );
 				}break;
 				case 21:{
-					cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the moveLimbElement() method on random generated Fib objects for moving a limbelement down (with bAbsolute=false)"<<endl;
+					cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the moveLimbElement() method on random generated Fib objects for moving a limbelement down (with bAbsolute=false)"<<endl;
 					uiErrorsInTests += testMoveLimbElementDownOnObject( pGeneratedFibObject, false );
 				}break;
 				case 22:{
-					cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the moveLimbElement() method on random generated Fib objects for moving a limbelement down (with bAbsolute=true)"<<endl;
+					cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the moveLimbElement() method on random generated Fib objects for moving a limbelement down (with bAbsolute=true)"<<endl;
 					uiErrorsInTests += testMoveLimbElementDownOnObject( pGeneratedFibObject, true );
 				}break;
 				case 23:{
-					cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the copyElement() method on random generated Fib objects (with bAbsolute=false)"<<endl;
+					cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the copyElement() method on random generated Fib objects (with bAbsolute=false)"<<endl;
 					uiErrorsInTests += testCopyElementOnObject( pGeneratedFibObject, false );
 				}break;
 				case 24:{
-					cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the copyElement() method on random generated Fib objects (with bAbsolute=true)"<<endl;
+					cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the copyElement() method on random generated Fib objects (with bAbsolute=true)"<<endl;
 					uiErrorsInTests += testCopyElementOnObject( pGeneratedFibObject, true );
 				}break;
 				case 25:{
-					cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the copy() method on random generated Fib objects"<<endl;
+					cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the copy() method on random generated Fib objects"<<endl;
 					uiErrorsInTests += testCopyOnObject( pGeneratedFibObject );
 				}break;
 				
 				/*don't use bCheckVariables=false variable test could fail afterwards
 				case 15:{
-					cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the insertElement() method on random generated Fib objects (with bCheckVariables=false and bAbsolute=false)"<<endl;
+					cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the insertElement() method on random generated Fib objects (with bCheckVariables=false and bAbsolute=false)"<<endl;
 					uiErrorsInTests += testInsertElementOnObject( pGeneratedFibObject, false );
 				}break;
 				case 16:{
-					cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the insertElement() method on random generated Fib objects(with bCheckVariables=false and bAbsolute=true)"<<endl;
+					cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the insertElement() method on random generated Fib objects(with bCheckVariables=false and bAbsolute=true)"<<endl;
 					uiErrorsInTests += testInsertElementAbsoluteOnObject( pGeneratedFibObject, false );
 				}break;
 				case 18:{
-					cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the cutElement() method on random generated Fib objects (with bCheckVariables=false and bAbsolute=false)"<<endl;
+					cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the cutElement() method on random generated Fib objects (with bCheckVariables=false and bAbsolute=false)"<<endl;
 					uiErrorsInTests += testRemoveElementOnObject( pGeneratedFibObject, true, false );
 				}break;
 				case 20:{
-					cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the removeElement() method on random generated Fib objects (with bCheckVariables=false and bAbsolute=false)"<<endl;
+					cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the removeElement() method on random generated Fib objects (with bCheckVariables=false and bAbsolute=false)"<<endl;
 					uiErrorsInTests += testRemoveElementOnObject( pGeneratedFibObject, false, false );
 				}break;
 				case 22:{
-					cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the cutElement() method on random generated Fib objects (with bCheckVariables=false and bAbsolute=true)"<<endl;
+					cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the cutElement() method on random generated Fib objects (with bCheckVariables=false and bAbsolute=true)"<<endl;
 					uiErrorsInTests += testRemoveElementAbsoluteOnObject( pGeneratedFibObject, true, false );
 				}break;
 				case 24:{
-					cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the removeElement() method on random generated Fib objects (with bCheckVariables=false and bAbsolute=true)"<<endl;
+					cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the removeElement() method on random generated Fib objects (with bCheckVariables=false and bAbsolute=true)"<<endl;
 					uiErrorsInTests += testRemoveElementAbsoluteOnObject( pGeneratedFibObject, false, false );
 				}break;
 				*/
@@ -1434,6 +1456,7 @@ bool isBranchElement( cFibElement * pFibElement ){
 	return false;
 }
 
+
 /**
  * This function copies a Fib limbelement without it's pointers to
  * other Fib elements.
@@ -1500,13 +1523,8 @@ cFibLeaf * copyFibLeafWithoutStructur( cFibLeaf * pFibLeaf ){
 			return new cPoint( ((cPoint*)pFibLeaf)->getPosition() );
 		}break;
 		case 's':{
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 			return new cExtSubobject( ((cExtSubobject*)pFibLeaf)->getNumberSubobject(),
 				*(((cExtSubobject*)pFibLeaf)->getOutputVector()) );
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-			return new cExtSubobject( ((cExtSubobject*)pFibLeaf)->getNumberSubobject(),
-				((cExtSubobject*)pFibLeaf)->getOutputVariables() );
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 		}break;
 	}
 	return NULL;
@@ -1552,16 +1570,6 @@ cFibBranch * copyFibBranchWithoutStructur( cFibBranch * pFibBranch ){
 					pRoot->getStandardValueOfInputVariable( uiActualInVar ) );
 			}
 			
-#ifndef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-			unsignedIntFib uiNumberOfExtObj = pRoot->getNumberOfExternSubobjects();
-			pRootCopy->setNumberOfExternSubobjects( uiNumberOfExtObj );
-			for ( unsignedIntFib uiActualExtObj = 1;
-					uiActualExtObj <= uiNumberOfExtObj; uiActualExtObj++ ){
-				
-				pRootCopy->setNumberOfOutputVariables( uiActualExtObj,
-					pRoot->getNumberOfOutputVariables( uiActualExtObj ) );
-			}
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 			pRootCopy->setChecksum( pRoot->getChecksum() );
 			
 			return pRootCopy;
@@ -1612,7 +1620,7 @@ cFibElement * copyFibElementWithoutStructur( cFibElement * pFibElement ){
 
 /**
  * This function tests simple methods for the structur of a Fib object on
- * an given Fib object.
+ * a given Fib object.
  * ATTENTION: The random number generator should to be initialisized with srand()
  *
  * methods tested:
@@ -1623,6 +1631,13 @@ cFibElement * copyFibElementWithoutStructur( cFibElement * pFibElement ){
  * 	- cFibElement *getFibElement( longFib lNumber, bool bAbsolute=false );
  * 	- cFibElement *getConstFibElement( char cType, longFib lNumber, bool bAbsolute=false ) const;
  * 	- cFibElement *getFibElement( char cType, longFib lNumber, bool bAbsolute=false );
+ * 	- unsignedIntFib getNumberOfSubobjects() const = 0;
+ * 	- cFibElement * getSubobject( const unsignedIntFib uiNumberOfSubobject = 1 )
+ * 	- const cFibElement * getSubobject( const unsignedIntFib uiNumberOfSubobject = 1 ) const
+ * 	- list< cFibElement * > getSubobjects()
+ * 	- list< const cFibElement * > getSubobjects() const
+ * 	- cRoot * getSuperiorRootElement()
+ * 	- const cRoot * getSuperiorRootElement() const
  * 	- unsignedIntFib getNumberOfElement( bool bOfType=false ) const;
  * 	- unsignedIntFib getNumberOfMovePoint() const;
  * 	- unsignedIntFib getNumberOfObjectPoint() const;
@@ -1646,13 +1661,13 @@ cFibElement * copyFibElementWithoutStructur( cFibElement * pFibElement ){
  * 	- cFibSet
  * 	- cFibMatrix
  *
- * @param fibObject a pointer to the Fib object to test
+ * @param pFibObject a pointer to the Fib object to test
  * @param bPrintMessages if true some messages about the Fib object will be written
  * @return the number of erros occured in the test
  */
 int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 
-	int iReturn = 0;//returnvalue of the test; the number of occured Errors
+	int iReturn = 0;//return value of the test; the number of occured errors
 	
 	if ( pFibObject == NULL ){
 		cerr<<"Error: No Fib object to check ."<<endl;
@@ -1694,22 +1709,22 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 		pFibObject->getNumberOfObjectPoints();
 	
 	if ( bPrintMessages ){
-		cout<<"The given Fib objects has: "<<endl;
-		cout<<"   "<< uiNumberOfAllFibElements <<" Fib elements "<<endl;
-		cout<<"   "<< uiNumberOfAllRootElements <<" rootelements "<<endl;
-		cout<<"   "<< uiNumberOfAllPointElements <<" point elements "<<endl;
-		cout<<"   "<< uiNumberOfAllPropertyElements <<" property elements "<<endl;
-		cout<<"   "<< uiNumberOfAllAreaElements <<" area elements "<<endl;
-		cout<<"   "<< uiNumberOfAllFunctionElements <<" function elements "<<endl;
-		cout<<"   "<< uiNumberOfAllIfElements <<" if elements "<<endl;
-		cout<<"   "<< uiNumberOfAllCommentElements <<" comment elements "<<endl;
-		cout<<"   "<< uiNumberOfAllListElements <<" list elements "<<endl;
-		cout<<"   "<< uiNumberOfAllExtObjectElements <<" external object elements "<<endl;
-		cout<<"   "<< uiNumberOfAllExtSubobjectElements <<" external subobject elements "<<endl;
-		cout<<"   "<< uiNumberOfAllSetElements <<" set elements "<<endl;
-		cout<<"   "<< uiNumberOfAllMatrixElements <<" matrix elements "<<endl;
-		cout<<"   "<< uiNumberOfAllMovePoints <<" movepoints "<<endl;
-		cout<<"   "<< uiNumberOfAllObjectPoints <<" objectpoins "<<endl;
+		cout<<"The given Fib objects has:"<<endl;
+		cout<<"   "<< uiNumberOfAllFibElements <<" Fib elements"<<endl;
+		cout<<"   "<< uiNumberOfAllRootElements <<" rootelements"<<endl;
+		cout<<"   "<< uiNumberOfAllPointElements <<" point elements"<<endl;
+		cout<<"   "<< uiNumberOfAllPropertyElements <<" property elements"<<endl;
+		cout<<"   "<< uiNumberOfAllAreaElements <<" area elements"<<endl;
+		cout<<"   "<< uiNumberOfAllFunctionElements <<" function elements"<<endl;
+		cout<<"   "<< uiNumberOfAllIfElements <<" if elements"<<endl;
+		cout<<"   "<< uiNumberOfAllCommentElements <<" comment elements"<<endl;
+		cout<<"   "<< uiNumberOfAllListElements <<" list elements"<<endl;
+		cout<<"   "<< uiNumberOfAllExtObjectElements <<" external object elements"<<endl;
+		cout<<"   "<< uiNumberOfAllExtSubobjectElements <<" external subobject elements"<<endl;
+		cout<<"   "<< uiNumberOfAllSetElements <<" set elements"<<endl;
+		cout<<"   "<< uiNumberOfAllMatrixElements <<" matrix elements"<<endl;
+		cout<<"   "<< uiNumberOfAllMovePoints <<" movepoints"<<endl;
+		cout<<"   "<< uiNumberOfAllObjectPoints <<" objectpoins"<<endl;
 	}
 	
 	if ( uiNumberOfAllFibElements == 0 ){
@@ -1902,8 +1917,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 				" (getFibElement() != getConstFibElement()) "<< endl;
 			iReturn++;
 		}
-
-
+		
 		liAbsolutNextFibElements.push_back( make_pair(
 			pNextNumberAbsoluteFibElement, uiNumberOfNextAbsoluteFib) );
 	}
@@ -4106,8 +4120,369 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 				"an leaf element, but that not true."<< endl;
 			iReturn++;
 		}
-
-	}
+		
+		
+		{//check the subobjects
+			const cFibElement * pConstFibElement = pActualFibElement;
+			
+			if ( pActualFibElement->isLeaf() ){
+				//test getNumberOfSubobjects()
+				if ( pConstFibElement->getNumberOfSubobjects() != 0 ){
+					cerr<<"Error: The Fib element is a leaf element, but returns it has "<<
+						pConstFibElement->getNumberOfSubobjects()<<" subobjects and not 0 ."<< endl;
+					iReturn++;
+				}
+				//test getSubobjects()
+				list< cFibElement * > liSubobjects = pActualFibElement->getSubobjects();
+				if ( liSubobjects.size() != 0 ){
+					cerr<<"Error: The Fib element is a leaf element, but returns "<<
+						liSubobjects.size()<<" subobjects and not non ."<< endl;
+					iReturn++;
+				}
+				const list< cFibElement * > liSubobjectsConst =
+					pConstFibElement->getSubobjects();
+				if ( liSubobjectsConst.size() != 0 ){
+					cerr<<"Error: The Fib element is a leaf element, but returns "<<
+						liSubobjectsConst.size()<<" subobjects (const) and not non ."<< endl;
+					iReturn++;
+				}
+				//test getSubobject()
+				if ( pActualFibElement->getSubobject( 0 ) != NULL ){
+					cerr<<"Error: The Fib element is a leaf element, but returns a 0'th "<<
+						pActualFibElement->getSubobject( 0 )<<" subobject "<<
+						"( pActualFibElement->getSubobject( 0 ) ) ."<< endl;
+					iReturn++;
+				}
+				if ( pConstFibElement->getSubobject( 0 ) != NULL ){
+					cerr<<"Error: The Fib element is a leaf element, but returns a 0'th "<<
+						pConstFibElement->getSubobject( 0 )<<" subobject (const) "<<
+						"( pConstFibElement->getSubobject( 0 ) ) ."<< endl;
+					iReturn++;
+				}
+				if ( pActualFibElement->getSubobject( 1 ) != NULL ){
+					cerr<<"Error: The Fib element is a leaf element, but returns a 1'th "<<
+						pActualFibElement->getSubobject( 1 )<<" subobject "<<
+						"( pActualFibElement->getSubobject( 1 ) ) ."<< endl;
+					iReturn++;
+				}
+				if ( pConstFibElement->getSubobject( 1 ) != NULL ){
+					cerr<<"Error: The Fib element is a leaf element, but returns a 1'th "<<
+						pConstFibElement->getSubobject( 1 )<<" subobject (const) "<<
+						"( pConstFibElement->getSubobject( 1 ) ) ."<< endl;
+					iReturn++;
+				}
+				if ( pActualFibElement->getSubobject() != NULL ){
+					cerr<<"Error: The Fib element is a leaf element, but returns default a "<<
+						pActualFibElement->getSubobject()<<" subobject "<<
+						"( pActualFibElement->getSubobject() ) ."<< endl;
+					iReturn++;
+				}
+				if ( pConstFibElement->getSubobject() != NULL ){
+					cerr<<"Error: The Fib element is a leaf element, but returns default a "<<
+						pConstFibElement->getSubobject()<<" subobject (const) "<<
+						"( pConstFibElement->getSubobject() ) ."<< endl;
+					iReturn++;
+				}
+				
+			}else if ( pActualFibElement->isLimb() ){
+				//test getNumberOfSubobjects()
+				if ( pConstFibElement->getNumberOfSubobjects() != 1 ){
+					cerr<<"Error: The Fib element is a limb element, but returns it has "<<
+						pConstFibElement->getNumberOfSubobjects()<<" subobjects and not 1 ."<< endl;
+					iReturn++;
+				}
+				//get correct subobject
+				cFibElement * pCorrectSubobject = pActualFibElement->getNextFibElement();
+				//test getSubobjects()
+				list< cFibElement * > liSubobjects = pActualFibElement->getSubobjects();
+				if ( liSubobjects.size() != 1 ){
+					cerr<<"Error: The Fib element is a limb element, but returns "<<
+						liSubobjects.size()<<" subobjects and not 1 ."<< endl;
+					iReturn++;
+				}else{
+					if ( liSubobjects.front() != pCorrectSubobject ){
+						cerr<<"Error: The Fib element is a limb element, it returns "<<
+							liSubobjects.front()<<" as its subobject and not "<<
+							pCorrectSubobject<<" ."<< endl;
+						iReturn++;
+					}
+				}
+				const list< cFibElement * > liSubobjectsConst =
+					pConstFibElement->getSubobjects();
+				if ( liSubobjectsConst.size() != 1 ){
+					cerr<<"Error: The Fib element is a limb element, but returns "<<
+						liSubobjectsConst.size()<<" subobjects (const) and not 1 ."<< endl;
+					iReturn++;
+				}else{
+					if ( liSubobjectsConst.front() != pCorrectSubobject ){
+						cerr<<"Error: The Fib element is a limb element, it returns "<<
+							liSubobjectsConst.front()<<" as its subobject (const) and not "<<
+							pCorrectSubobject<<" ."<< endl;
+						iReturn++;
+					}
+				}
+				//test getSubobject()
+				if ( pActualFibElement->getSubobject( 0 ) != NULL ){
+					cerr<<"Error: The Fib element is a limb element, but returns a 0'th "<<
+						pActualFibElement->getSubobject( 0 )<<" subobject "<<
+						"( pActualFibElement->getSubobject( 0 ) ) ."<< endl;
+					iReturn++;
+				}
+				if ( pConstFibElement->getSubobject( 0 ) != NULL ){
+					cerr<<"Error: The Fib element is a limb element, but returns a 0'th "<<
+						pConstFibElement->getSubobject( 0 )<<" subobject (const) "<<
+						"( pConstFibElement->getSubobject( 0 ) ) ."<< endl;
+					iReturn++;
+				}
+				if ( pActualFibElement->getSubobject( 1 ) != pCorrectSubobject ){
+					cerr<<"Error: The Fib element is a limb element, it returns "<<
+						pActualFibElement->getSubobject( 1 )<<" as its first subobject and not "<<
+						pCorrectSubobject<<" ( pActualFibElement->getSubobject( 1 ) )."<< endl;
+					iReturn++;
+				}
+				if ( pConstFibElement->getSubobject( 1 ) != pCorrectSubobject ){
+					cerr<<"Error: The Fib element is a limb element, it returns "<<
+						pConstFibElement->getSubobject( 1 )<<" as its first subobject (const) and not "<<
+						pCorrectSubobject<<" ( pConstFibElement->getSubobject( 1 ) )."<< endl;
+					iReturn++;
+				}
+				if ( pActualFibElement->getSubobject() != pCorrectSubobject ){
+					cerr<<"Error: The Fib element is a limb element, it returns "<<
+						pActualFibElement->getSubobject()<<" as its default subobject and not "<<
+						pCorrectSubobject<<" ( pActualFibElement->getSubobject() )."<< endl;
+					iReturn++;
+				}
+				if ( pConstFibElement->getSubobject() != pCorrectSubobject ){
+					cerr<<"Error: The Fib element is a limb element, it returns "<<
+						pConstFibElement->getSubobject()<<" as its default subobject (const) and not "<<
+						pCorrectSubobject<<" ( pConstFibElement->getSubobject() )."<< endl;
+					iReturn++;
+				}
+				if ( pActualFibElement->getSubobject( 2 ) != NULL ){
+					cerr<<"Error: The Fib element is a limb element, but returns a 2'th "<<
+						pActualFibElement->getSubobject( 2 )<<" subobject "<<
+						"( pActualFibElement->getSubobject( 2 ) ) ."<< endl;
+					iReturn++;
+				}
+				if ( pConstFibElement->getSubobject( 2 ) != NULL ){
+					cerr<<"Error: The Fib element is a limb element, but returns a 2'th "<<
+						pConstFibElement->getSubobject( 2 )<<" subobject (const) "<<
+						"( pConstFibElement->getSubobject( 2 ) ) ."<< endl;
+					iReturn++;
+				}
+			}else if ( pActualFibElement->isBranch() ){
+				
+				//evalue list with correct subobjects
+				list< cFibElement * > liCorrectSubobjects;
+				switch ( cTypeOfActualElement ){
+					case 'l':{//list element
+						liCorrectSubobjects = ((cList *)
+							pActualFibElement)->getUnderobjects();
+					}break;
+					case 'r':{//root element
+						cRoot * pActualRootElement =
+							((cRoot *)pActualFibElement);
+						
+						//add main Fib object
+						if ( 1 < pActualRootElement->getNumberOfElements() ){
+							//subobjects exists
+							cFibElement * pMainFibObject =
+								pActualRootElement->getNextFibElement();
+							liCorrectSubobjects.push_back( pMainFibObject );
+						}
+						//add all sub (root) objects
+						const unsignedIntFib uiNumberOfSubRootObjects =
+							pActualRootElement->getNumberOfSubRootObjects();
+						for ( unsigned int uiActualSubobject = 1;
+								uiActualSubobject <= uiNumberOfSubRootObjects;
+								uiActualSubobject++ ){
+							liCorrectSubobjects.push_back(
+								pActualRootElement->getSubRootObject(
+									uiActualSubobject ).second );
+						}//end for all sub root objects
+					}break;
+					case 'i':{//if object element
+						cIf * pActualIfElement = ((cIf *)pActualFibElement);
+						liCorrectSubobjects.push_back(
+							pActualIfElement->getTrueCase() );
+						liCorrectSubobjects.push_back(
+							pActualIfElement->getFalseCase() );
+					}break;
+					case 'o':{//external object element
+						//add all subobjects
+						cExtObject * pActualExtObject =
+							((cExtObject *)pActualFibElement);
+						const unsignedIntFib uiNumberOfSubobjects =
+							pActualExtObject->getNumberOfSubobjects();
+						for ( unsigned int uiActualSubobject = 1;
+								uiActualSubobject <= uiNumberOfSubobjects;
+								uiActualSubobject++ ){
+							liCorrectSubobjects.push_back(
+								pActualExtObject->getSubobject( uiActualSubobject ) );
+						}//end for all subobjects
+					}break;
+					
+					default:{//Error: unknown Fib element -> take first subobject (if existing)
+						if ( 1 < pActualFibElement->getNumberOfElements() ){
+							//subobjects exists
+							cFibElement * pNextFibElement =
+								pActualFibElement->getNextFibElement();
+							liCorrectSubobjects.push_back( pNextFibElement );
+						}
+					}break;
+				};
+				
+				//test getNumberOfSubobjects()
+				if ( pConstFibElement->getNumberOfSubobjects() != liCorrectSubobjects.size() ){
+					cerr<<"Error: The Fib element is a branch element, it returns it has "<<
+						pConstFibElement->getNumberOfSubobjects()<<
+						" subobjects and not "<<liCorrectSubobjects.size()<<" ."<< endl;
+					iReturn++;
+				}
+				
+				//test getSubobjects()
+				list< cFibElement * > liSubobjects = pActualFibElement->getSubobjects();
+				if ( liSubobjects.size() != liCorrectSubobjects.size() ){
+					cerr<<"Error: The Fib element is a branch element, it returns "<<
+						liSubobjects.size()<<" subobjects and not correctly "<<
+						liCorrectSubobjects.size()<<" ."<< endl;
+					iReturn++;
+				}else{
+					if ( liSubobjects != liCorrectSubobjects ){
+						cerr<<"Error: The Fib element is a branch element, "<<
+							"it returns the wrong subobjects."<< endl;
+						iReturn++;
+					}
+				}
+				const list< cFibElement * > liSubobjectsConst =
+					pConstFibElement->getSubobjects();
+				if ( liSubobjectsConst.size() != liCorrectSubobjects.size() ){
+					cerr<<"Error: The Fib element is a branch element, it returns "<<
+						liSubobjectsConst.size()<<" subobjects (const) and not correctly "<<
+						liCorrectSubobjects.size()<<" ."<< endl;
+					iReturn++;
+				}else{
+					if ( liSubobjectsConst != liCorrectSubobjects ){
+						cerr<<"Error: The Fib element is a branch element, "<<
+							"it returns the wrong subobjects (const)."<< endl;
+						iReturn++;
+					}
+				}
+				
+				//test getSubobject(): check values outside borders (not existing subobjects)
+				if ( pActualFibElement->getSubobject( 0 ) != NULL ){
+					cerr<<"Error: The Fib element is a branch element, but returns a 0'th "<<
+						pActualFibElement->getSubobject( 0 )<<" subobject "<<
+						"( pActualFibElement->getSubobject( 0 ) ) ."<< endl;
+					iReturn++;
+				}
+				if ( pConstFibElement->getSubobject( 0 ) != NULL ){
+					cerr<<"Error: The Fib element is a branch element, but returns a 0'th "<<
+						pConstFibElement->getSubobject( 0 )<<" subobject (const) "<<
+						"( pConstFibElement->getSubobject( 0 ) ) ."<< endl;
+					iReturn++;
+				}
+				const unsignedIntFib uiNotExistingSubobjectNumber =
+					liSubobjectsConst.size() + 1;
+				if ( pActualFibElement->getSubobject( uiNotExistingSubobjectNumber ) != NULL ){
+					cerr<<"Error: The Fib element is a branch element, it returns a "<<
+						uiNotExistingSubobjectNumber<<"'th "<<
+						pActualFibElement->getSubobject( uiNotExistingSubobjectNumber )<<" subobject "<<
+						"( pActualFibElement->getSubobject( "<<uiNotExistingSubobjectNumber<<" ) ) ."<< endl;
+					iReturn++;
+				}
+				if ( pConstFibElement->getSubobject( uiNotExistingSubobjectNumber ) != NULL ){
+					cerr<<"Error: The Fib element is a branch element, it returns a "<<
+						uiNotExistingSubobjectNumber<<"'th "<<
+						pConstFibElement->getSubobject( uiNotExistingSubobjectNumber )<<" subobject (const) "<<
+						"( pConstFibElement->getSubobject( "<<uiNotExistingSubobjectNumber<<" ) ) ."<< endl;
+					iReturn++;
+				}
+				if ( liSubobjectsConst.empty() ){
+					//no subobjects exists
+					if ( pActualFibElement->getSubobject() != NULL ){
+						cerr<<"Error: The Fib element is a branch element, it returns default a "<<
+							pActualFibElement->getSubobject()<<
+							" subobject, but should return NULL "<<
+							"( pActualFibElement->getSubobject() ) ."<< endl;
+						iReturn++;
+					}
+					if ( pConstFibElement->getSubobject() != NULL ){
+						cerr<<"Error: The Fib element is a branch element, it returns default a "<<
+							pConstFibElement->getSubobject()<<
+							" subobject (const), but should return NULL "<<
+							"( pConstFibElement->getSubobject() ) ."<< endl;
+						iReturn++;
+					}
+				}else{//subobjects exists
+					if ( pActualFibElement->getSubobject() != liSubobjectsConst.front() ){
+						cerr<<"Error: The Fib element is a branch element, it returns "<<
+							pActualFibElement->getSubobject()<<" as its default subobject and not "<<
+							liSubobjectsConst.front()<<" ( pActualFibElement->getSubobject() )."<< endl;
+						iReturn++;
+					}
+					if ( pConstFibElement->getSubobject() != liSubobjectsConst.front() ){
+						cerr<<"Error: The Fib element is a branch element, it returns "<<
+							pConstFibElement->getSubobject()<<" as its default subobject (const) and not "<<
+							liSubobjectsConst.front()<<" ( pConstFibElement->getSubobject() )."<< endl;
+						iReturn++;
+					}
+				}
+				//test getSubobject(): check existing subobjects
+				unsignedIntFib uiActualSubobject = 1;
+				for ( list< cFibElement * >::const_iterator
+						itrSubobject = liCorrectSubobjects.begin();
+						itrSubobject != liCorrectSubobjects.end();
+						itrSubobject++, uiActualSubobject++ ){
+					
+					if ( pActualFibElement->getSubobject( uiActualSubobject ) != (*itrSubobject) ){
+						cerr<<"Error: The Fib element is a branch element, it returns "<<
+							pActualFibElement->getSubobject( uiActualSubobject )<<" as its first subobject and not "<<
+							(*itrSubobject)<<" ( pActualFibElement->getSubobject( "<<uiActualSubobject<<" ) )."<< endl;
+						iReturn++;
+					}
+					if ( pConstFibElement->getSubobject( uiActualSubobject ) != (*itrSubobject) ){
+						cerr<<"Error: The Fib element is a branch element, it returns "<<
+							pConstFibElement->getSubobject( uiActualSubobject )<<" as its first subobject (const) and not "<<
+							(*itrSubobject)<<" ( pConstFibElement->getSubobject( "<<uiActualSubobject<<" ) )."<< endl;
+						iReturn++;
+					}
+				}//end for all correct subobjects
+			}//end if check Fib element structure type
+		}//end check subobjects
+		
+		
+		{//check getSuperiorRootElement()
+			//get the correct superior root element
+			cRoot * pCorrectSuperiorRoot = NULL;
+			for ( cFibElement * pActualSuperiorElement =
+						pActualFibElement->getSuperiorFibElement();
+					pActualSuperiorElement != NULL;
+					pActualSuperiorElement = pActualSuperiorElement->getSuperiorFibElement() ){
+				
+				if ( pActualSuperiorElement->getType() == 'r' ){
+					//next superior root element found
+					pCorrectSuperiorRoot = ((cRoot *)pActualSuperiorElement);
+					break;//done
+				}
+			}
+			if ( pActualFibElement->getSuperiorRootElement() != pCorrectSuperiorRoot ){
+				cerr<<"Error: The next superior root element should be "<<
+					pCorrectSuperiorRoot<<", but is "<<
+					pActualFibElement->getSuperiorRootElement()<<"."<<endl;
+				iReturn++;
+			}
+			const cFibElement * pConstFibElement = pActualFibElement;
+			if ( pConstFibElement->getSuperiorRootElement() != pCorrectSuperiorRoot ){
+				cerr<<"Error: The next const superior root element should be "<<
+					pCorrectSuperiorRoot<<", but is "<<
+					pConstFibElement->getSuperiorRootElement()<<"."<<endl;
+				iReturn++;
+			}
+		}//end check getSuperiorRootElement()
+		
+	}//end for check all Fib elements of Fib object
+	
 	//check if the number of all values are reached
 	if ( uiNumberOfAllFibElements != uiNumberOfActualFibElement ){
 		cerr<<"Error: Ther are different values for number of all Fib elements "<<
@@ -4376,7 +4751,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 
 /**
  * This function tests the methods for getting the number of, special or
- * not, Fib elements or points of a Fib object in an given Fib object.
+ * not, Fib elements or points of a Fib object in a given Fib object.
  * ATTENTION: The random number generator should to be initialisized with srand()
  *
  * methods tested:
@@ -4398,12 +4773,12 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
  * 	- cFibSet
  * 	- cFibMatrix
  *
- * @param fibObject a pointer to the Fib object to test
+ * @param pFibObject a pointer to the Fib object to test
  * @return the number of erros occured in the test
  */
 int testGetNumberOfCountOnObject( cFibElement * pFibObject ){
 
-	int iReturn = 0;//returnvalue of the test; the number of occured Errors
+	int iReturn = 0;//return value of the test; the number of occured errors
 	
 	if ( pFibObject == NULL ){
 		cerr<<"Error: No Fib object to check ."<<endl;
@@ -4680,7 +5055,7 @@ int checkIsConnectedTypeTree( list<cFibElement*> liClusterElements,
 		 char cType = 'u', cFibElement * pRootElement = NULL,
 		 cFibElement * pCentralNode = NULL, bool bRootInTree = true ){
 
-	int iReturn = 0;//returnvalue of the test; the number of occured Errors
+	int iReturn = 0;//return value of the test; the number of occured errors
 	
 	if ( liClusterElements.empty() ){
 		//no Fib elements could be wrong
@@ -4906,7 +5281,7 @@ int checkIsConnectedTypeTree( list<cFibElement*> liClusterElements,
 
 
 /**
- * This function tests the method getAllFibElements() on an given Fib object.
+ * This function tests the method getAllFibElements() on a given Fib object.
  * ATTENTION: The random number generator should to be initialisized with srand()
  *
  * methods tested:
@@ -4926,19 +5301,19 @@ int checkIsConnectedTypeTree( list<cFibElement*> liClusterElements,
  * 	- cFibSet
  * 	- cFibMatrix
  *
- * @param fibObject a pointer to the Fib object to test
+ * @param pFibObject a pointer to the Fib object to test
  * @return the number of erros occured in the test
  */
 int testGetAllFibElementsOnObject( cFibElement * pFibObject ){
 
-	int iReturn = 0;//returnvalue of the test; the number of occured Errors
+	int iReturn = 0;//return value of the test; the number of occured errors
 	
 	if ( pFibObject == NULL ){
 		cerr<<"Error: No Fib object to check ."<<endl;
 		iReturn++;
 		return iReturn;
 	}
-	cout<<"Checking getAllFibElements() "<<endl;
+	cout<<"Checking getAllFibElements()"<<endl;
 
 	/*choos some random Fib elements in the Fib object and test
 	getAllFibElements() from ther for the different directions;
@@ -6532,7 +6907,7 @@ int testGetAllFibElementsOnObject( cFibElement * pFibObject ){
 
 
 /**
- * This function tests the typeElementPointToElementPoint() method on an given Fib object.
+ * This function tests the typeElementPointToElementPoint() method on a given Fib object.
  * ATTENTION: The random number generator should to be initialisized with srand()
  *
  * methods tested:
@@ -6552,12 +6927,12 @@ int testGetAllFibElementsOnObject( cFibElement * pFibObject ){
  * 	- cFibSet
  * 	- cFibMatrix
  *
- * @param fibObject a pointer to the Fib object to test
+ * @param pFibObject a pointer to the Fib object to test
  * @return the number of erros occured in the test
  */
 int testTypeElementPointToElementPointOnObject( cFibElement * pFibObject ){
 
-	int iReturn = 0;//returnvalue of the test; the number of occured Errors
+	int iReturn = 0;//return value of the test; the number of occured errors
 	
 	if ( pFibObject == NULL ){
 		cerr<<"Error: No Fib object to check ."<<endl;
@@ -6565,7 +6940,7 @@ int testTypeElementPointToElementPointOnObject( cFibElement * pFibObject ){
 		return iReturn;
 	}
 	
-	cout<<"Checking typeElementPointToElementPoint() "<<endl;
+	cout<<"Checking typeElementPointToElementPoint()"<<endl;
 
 	const unsigned int uiNumberOfAllFibElements =
 		pFibObject->getNumberOfElements();
@@ -6816,7 +7191,7 @@ int testTypeElementPointToElementPointOnObject( cFibElement * pFibObject ){
 
 /**
  * This function tests the elementPointToObjectPoints() and
- * objectPointToElementPoint() methods on an given Fib object.
+ * objectPointToElementPoint() methods on a given Fib object.
  * ATTENTION: The random number generator should to be initialisized with srand()
  *
  * methods tested:
@@ -6825,12 +7200,12 @@ int testTypeElementPointToElementPointOnObject( cFibElement * pFibObject ){
  *
  * (Nothing to change for new Fib elements.)
  *
- * @param fibObject a pointer to the Fib object to test
+ * @param pFibObject a pointer to the Fib object to test
  * @return the number of erros occured in the test
  */
 int testObjectPointOnObject( cFibElement * pFibObject ){
 
-	int iReturn = 0;//returnvalue of the test; the number of occured Errors
+	int iReturn = 0;//return value of the test; the number of occured errors
 	
 	if ( pFibObject == NULL ){
 		cerr<<"Error: No Fib object to check ."<<endl;
@@ -6838,7 +7213,7 @@ int testObjectPointOnObject( cFibElement * pFibObject ){
 		return iReturn;
 	}
 
-	cout<<"Checking elementPointToObjectPoints() and objectPointToElementPoint() "<<endl;
+	cout<<"Checking elementPointToObjectPoints() and objectPointToElementPoint()"<<endl;
 
 	const unsigned int uiNumberOfAllFibElements =
 		pFibObject->getNumberOfElements();
@@ -7162,7 +7537,7 @@ int testObjectPointOnObject( cFibElement * pFibObject ){
 
 
 /**
- * This function tests the overwriteObjectWithObject() method for an given
+ * This function tests the overwriteObjectWithObject() method for a given
  * Fib object.
  * ATTENTION: The random number generator should to be initialisized with srand()
  *
@@ -7183,13 +7558,13 @@ int testObjectPointOnObject( cFibElement * pFibObject ){
  * 	- cFibSet
  * 	- cFibMatrix
  *
- * @param fibObject a pointer to the Fib object to test
+ * @param pFibObject a pointer to the Fib object to test
  * @param bDeleteOld the bDeleteOld for the removeObject() method
  * @return the number of erros occured in the test
  */
 int testOverwriteObjectWithObjectOnObject( cFibElement * pFibObject, bool bDeleteOld ){
 
-	int iReturn = 0;//returnvalue of the test; the number of occured Errors
+	int iReturn = 0;//return value of the test; the number of occured errors
 	
 	if ( pFibObject == NULL ){
 		cerr<<"Error: No Fib object to check ."<<endl;
@@ -7475,7 +7850,7 @@ int testOverwriteObjectWithObjectOnObject( cFibElement * pFibObject, bool bDelet
 		bCanOverwrite = false;
 	}
 	
-	//subtract the counts of the Fib partobject that will be overwritten
+	//subtract the counts of the Fib part object that will be overwritten
 	unsigned int uiNumberOfAllFibElementsOfResult   = 0;
 	unsigned int uiNumberOfRootElementsOfResult     = 0;
 	unsigned int uiNumberOfPointElementsOfResult    = 0;
@@ -7553,6 +7928,8 @@ int testOverwriteObjectWithObjectOnObject( cFibElement * pFibObject, bool bDelet
 		cout<<"The to overwrite object didn't exists."<<endl;
 		bCanOverwrite = false;
 	}
+	//clone to compare with if Fib object shouldn't be changed
+	cFibElement * pFibObjectClone = pFibObject->clone();
 	
 	cout<<"Calling overwriteObjectWithObject("<<
 		pFibObjectToInsert <<", "<< cTypeOverwriteObject<<", "<<
@@ -7594,7 +7971,7 @@ int testOverwriteObjectWithObjectOnObject( cFibElement * pFibObject, bool bDelet
 			iReturn++;
 			
 			if ( ( ! bDeleteOld ) && ( pToOverwriteObject != NULL ) ){
-				//delete the not deleted but removed partobject
+				//delete the not deleted but removed part object
 				cout<<flush;
 				cFibElement::deleteObject( pToOverwriteObject );
 			}
@@ -7608,9 +7985,16 @@ int testOverwriteObjectWithObjectOnObject( cFibElement * pFibObject, bool bDelet
 				pFibObjectToInsert->deleteObject();
 			}
 		}
-		//TODO check if the Fib object hasn't changed
+		//check if the Fib object hasn't changed
+		if ( ! pFibObject->equal( *pFibObjectClone ) ){
+			cerr<<"Error: The Fib object was changed."<<endl;
+			iReturn++;
+		}
+		pFibObjectClone->deleteObject();
 		return iReturn;
 	}
+	pFibObjectClone->deleteObject();
+	
 	if ( ! bOverwritten ){
 		cerr<<"Error: While calling overwriteObjectWithObject("<<
 			pFibObjectToInsert <<", "<< cTypeOverwriteObject<<", "<<
@@ -7630,7 +8014,7 @@ int testOverwriteObjectWithObjectOnObject( cFibElement * pFibObject, bool bDelet
 		cout<<"The object was correctly overwritten."<<endl;
 	}
 	if ( bOverwritten && ( ! bDeleteOld ) && ( pToOverwriteObject != NULL ) ){
-		//delete the not deleted but removed partobject
+		//delete the not deleted but removed part object
 		cout<<flush;
 		cFibElement::deleteObject( pToOverwriteObject );
 	}
@@ -7877,7 +8261,7 @@ int testOverwriteObjectWithObjectOnObject( cFibElement * pFibObject, bool bDelet
 
 
 /**
- * This function tests the overwriteObjectWithObject() method for an given
+ * This function tests the overwriteObjectWithObject() method for a given
  * Fib object.
  * ATTENTION: The random number generator should to be initialisized with srand()
  *
@@ -7898,13 +8282,13 @@ int testOverwriteObjectWithObjectOnObject( cFibElement * pFibObject, bool bDelet
  * 	- cFibSet
  * 	- cFibMatrix
  *
- * @param fibObject a pointer to the Fib object to test
+ * @param pFibObject a pointer to the Fib object to test
  * @param bDeleteOld the bDeleteOld for the removeObject() method
  * @return the number of erros occured in the test
  */
 int testOverwriteObjectWithObjectAbsoluteOnObject( cFibElement * pFibObject, bool bDeleteOld ){
 
-	int iReturn = 0;//returnvalue of the test; the number of occured Errors
+	int iReturn = 0;//return value of the test; the number of occured errors
 	
 	if ( pFibObject == NULL ){
 		cerr<<"Error: No Fib object to check ."<<endl;
@@ -8114,7 +8498,7 @@ int testOverwriteObjectWithObjectAbsoluteOnObject( cFibElement * pFibObject, boo
 		bCanOverwrite = false;
 	}
 	
-	//subtract the counts of the Fib partobject that will be overwritten
+	//subtract the counts of the Fib part object that will be overwritten
 	unsigned int uiNumberOfAllFibElementsOfResult   = 0;
 	unsigned int uiNumberOfRootElementsOfResult     = 0;
 	unsigned int uiNumberOfPointElementsOfResult    = 0;
@@ -8233,7 +8617,7 @@ int testOverwriteObjectWithObjectAbsoluteOnObject( cFibElement * pFibObject, boo
 			iReturn++;
 			
 			if ( ( ! bDeleteOld ) && ( pToOverwriteObject != NULL ) ){
-				//delete the not deleted but removed partobject
+				//delete the not deleted but removed part object
 				cout<<flush;
 				cFibElement::deleteObject( pToOverwriteObject );
 			}
@@ -8269,7 +8653,7 @@ int testOverwriteObjectWithObjectAbsoluteOnObject( cFibElement * pFibObject, boo
 		cout<<"The object was correctly overwritten."<<endl;
 	}
 	if ( bOverwritten && ( ! bDeleteOld ) && ( pToOverwriteObject != NULL ) ){
-		//delete the not deleted but removed partobject
+		//delete the not deleted but removed part object
 		cout<<flush;
 		cFibElement::deleteObject( pToOverwriteObject );
 	}
@@ -8517,7 +8901,7 @@ int testOverwriteObjectWithObjectAbsoluteOnObject( cFibElement * pFibObject, boo
 
 
 /**
- * This function tests the removeObject() method for an given Fib object.
+ * This function tests the removeObject() method for a given Fib object.
  * ATTENTION: The random number generator should to be initialisized with srand()
  *
  * methods tested:
@@ -8537,13 +8921,13 @@ int testOverwriteObjectWithObjectAbsoluteOnObject( cFibElement * pFibObject, boo
  * 	- cFibSet
  * 	- cFibMatrix
  *
- * @param fibObject a pointer to the Fib object to test
+ * @param pFibObject a pointer to the Fib object to test
  * @param bDeleteOld the bDeleteOld for the removeObject() method
  * @return the number of erros occured in the test
  */
 int testRemoveObjectOnObject( cFibElement * pFibObject, bool bDeleteOld ){
 
-	int iReturn = 0;//returnvalue of the test; the number of occured Errors
+	int iReturn = 0;//return value of the test; the number of occured errors
 	
 	if ( pFibObject == NULL ){
 		cerr<<"Error: No Fib object to check ."<<endl;
@@ -8633,9 +9017,9 @@ int testRemoveObjectOnObject( cFibElement * pFibObject, bool bDeleteOld ){
 		pCallingFibElement->getType()<<") of the "<<
 		"Fib object, has the superior Fib element with the number "<<
 		pSuperiorDefiningFibElement->getNumberOfElement()<<
-		" and type "<< pSuperiorDefiningFibElement->getType()<<" . "<<endl;
+		" and type "<< pSuperiorDefiningFibElement->getType()<<" ."<<endl;
 	cout<<"  Calling removeObject( "<<uiToRemoveObject<<", bDeleteOld="<<
-		(bDeleteOld ? "true" : "false") <<" ) from the calling element. "<<endl;
+		(bDeleteOld ? "true" : "false") <<" ) from the calling element."<<endl;
 	cout<<"  Removing "<< uiNumberOfAllObjectPointsDefining + 1 <<" objectpoints. "<<
 		" The Fib object has "<< uiNumberOfAllObjectPoints <<" objectpoints."<<endl;
 
@@ -8644,21 +9028,21 @@ int testRemoveObjectOnObject( cFibElement * pFibObject, bool bDeleteOld ){
 	
 	if ( isDeletebel ){
 		if ( ! bObjectRemoved ){
-			cerr<<"Error: Couldn't remove the partobject."<<endl;
+			cerr<<"Error: Couldn't remove the part object."<<endl;
 			iReturn++;
 		}else{
 			cout<<"Object correctly removed."<<endl;
 		}
 	}else{
 		if ( bObjectRemoved ){
-			cerr<<"Error: Could remove the partobject, but it shouldn't be removebel."<<endl;
+			cerr<<"Error: Could remove the part object, but it shouldn't be removebel."<<endl;
 			iReturn++;
 		}else{
 			cout<<"Object correctly not removed."<<endl;
 		}
 	}
 	if ( bObjectRemoved && (! bDeleteOld) ){
-		//delete the not deleted but removed partobject
+		//delete the not deleted but removed part object
 		cout<<flush;
 		cFibElement::deleteObject( pDefiningFibElement );
 	}
@@ -8692,7 +9076,7 @@ int testRemoveObjectOnObject( cFibElement * pFibObject, bool bDeleteOld ){
 
 
 /**
- * This function tests the removeObject() method for an given Fib object,
+ * This function tests the removeObject() method for a given Fib object,
  * with bAbsolute set to true.
  * ATTENTION: The random number generator should to be initialisized with srand()
  *
@@ -8713,13 +9097,13 @@ int testRemoveObjectOnObject( cFibElement * pFibObject, bool bDeleteOld ){
  * 	- cFibSet
  * 	- cFibMatrix
  *
- * @param fibObject a pointer to the Fib object to test
+ * @param pFibObject a pointer to the Fib object to test
  * @param bDeleteOld the bDeleteOld for the removeObject() method
  * @return the number of erros occured in the test
  */
 int testRemoveObjectAbsoluteOnObject( cFibElement * pFibObject, bool bDeleteOld ){
 
-	int iReturn = 0;//returnvalue of the test; the number of occured Errors
+	int iReturn = 0;//return value of the test; the number of occured errors
 	
 	if ( pFibObject == NULL ){
 		cerr<<"Error: No Fib object to check ."<<endl;
@@ -8804,9 +9188,9 @@ int testRemoveObjectAbsoluteOnObject( cFibElement * pFibObject, bool bDeleteOld 
 		pCallingFibElement->getNumberOfElement() <<") of the "<<
 		"Fib object, has the superior Fib element with the number "<<
 		pSuperiorDefiningFibElement->getNumberOfElement()<<
-		" and type "<< pSuperiorDefiningFibElement->getType()<<" . "<<endl;
+		" and type "<< pSuperiorDefiningFibElement->getType()<<" ."<<endl;
 	cout<<"  Calling removeObject( "<<uiToRemoveObject<<", bDeleteOld="<<
-		(bDeleteOld ? "true" : "false") <<", bAbsolut=true ) from the calling element. "<<endl;
+		(bDeleteOld ? "true" : "false") <<", bAbsolut=true ) from the calling element."<<endl;
 	cout<<"  Removing "<< uiNumberOfAllObjectPointsDefining + 1 <<" objectpoints. "<<
 		" The Fib object has "<< uiNumberOfAllObjectPoints <<" objectpoints."<<endl<<flush;
 
@@ -8814,16 +9198,16 @@ int testRemoveObjectAbsoluteOnObject( cFibElement * pFibObject, bool bDeleteOld 
 	bool bObjectRemoved = pCallingFibElement->removeObject( uiToRemoveObject, bDeleteOld, true );
 	
 	if ( isDeletebel && ! bObjectRemoved ){
-		cerr<<"Error: Couldn't remove the partobject."<<endl;
+		cerr<<"Error: Couldn't remove the part object."<<endl;
 		iReturn++;
 	}
 	if ( ! isDeletebel && bObjectRemoved ){
-		cerr<<"Error: Could remove the partobject, but it shouldn't be removebel."<<endl;
+		cerr<<"Error: Could remove the part object, but it shouldn't be removebel."<<endl;
 		iReturn++;
 	}
 	
 	if ( bObjectRemoved && ( ! bDeleteOld ) ){
-		//delete the not deleted but removed partobject
+		//delete the not deleted but removed part object
 		cFibElement::deleteObject( pDefiningFibElement );
 	}
 	
@@ -8857,7 +9241,7 @@ int testRemoveObjectAbsoluteOnObject( cFibElement * pFibObject, bool bDeleteOld 
 
 
 /**
- * This function tests the overwriteObjectWithObject() method for an given
+ * This function tests the overwriteObjectWithObject() method for a given
  * Fib object.
  * ATTENTION: The random number generator should to be initialisized with srand()
  *
@@ -8878,12 +9262,12 @@ int testRemoveObjectAbsoluteOnObject( cFibElement * pFibObject, bool bDeleteOld 
  * 	- cFibSet
  * 	- cFibMatrix
  *
- * @param fibObject a pointer to the Fib object to test
+ * @param pFibObject a pointer to the Fib object to test
  * @return the number of erros occured in the test
  */
 int testInsertObjectInElementObjectFirstOnObject( cFibElement * pFibObject ){
 
-	int iReturn = 0;//returnvalue of the test; the number of occured Errors
+	int iReturn = 0;//return value of the test; the number of occured errors
 	
 	if ( pFibObject == NULL ){
 		cerr<<"Error: No Fib object to check ."<<endl;
@@ -9134,7 +9518,7 @@ int testInsertObjectInElementObjectFirstOnObject( cFibElement * pFibObject ){
 		bCanInsert = false;
 	}
 	
-	//subtract the counts of the Fib partobject that will be overwritten
+	//subtract the counts of the Fib part object that will be overwritten
 	unsigned int uiNumberOfAllFibElementsOfResult =
 		uiNumberOfAllFibElements + uiNumberOfAllFibElementsInInsert;
 	const unsigned int uiNumberOfRootElementsOfResult =
@@ -9449,13 +9833,13 @@ int testInsertObjectInElementObjectFirstOnObject( cFibElement * pFibObject ){
 							"Fib object is the last in the list element."<<endl;
 						iReturn++;
 					}else{
-						cerr<<"Error: The inserted Fib object was not found in the superior list element. "<<endl;
+						cerr<<"Error: The inserted Fib object was not found in the superior list element."<<endl;
 						iReturn++;
 					}
 				}else{
 					if ( pInsertList->getUnderobject( uiActualListelement + 1 ) != pToInsertPositionObject ){
 						cerr<<"Error: After the inserted Fib object in the "<<
-							"superior list element isn't the positions Fib element. "<<endl;
+							"superior list element isn't the positions Fib element."<<endl;
 						iReturn++;
 					}
 				}
@@ -9483,14 +9867,14 @@ int testInsertObjectInElementObjectFirstOnObject( cFibElement * pFibObject ){
 							"Fib object is the last in the external object element."<<endl;
 						iReturn++;
 					}else{
-						cerr<<"Error: The inserted Fib object was not found in the superior external object element. "<<endl;
+						cerr<<"Error: The inserted Fib object was not found in the superior external object element."<<endl;
 						iReturn++;
 					}
 				}else{
 					if ( ( pToInsertPositionObject != NULL ) &&
 							( pInsertExtObject->getSubobject( uiActualSubobject + 1 ) != pToInsertPositionObject ) ){
 						cerr<<"Error: After the inserted Fib object in the "<<
-							"superior external object element isn't the positions Fib element. "<<endl;
+							"superior external object element isn't the positions Fib element."<<endl;
 						iReturn++;
 					}
 				}
@@ -9571,7 +9955,7 @@ int testInsertObjectInElementObjectFirstOnObject( cFibElement * pFibObject ){
 
 
 /**
- * This function tests the overwriteObjectWithObject() method for an given
+ * This function tests the overwriteObjectWithObject() method for a given
  * Fib object.
  * ATTENTION: The random number generator should to be initialisized with srand()
  *
@@ -9592,12 +9976,12 @@ int testInsertObjectInElementObjectFirstOnObject( cFibElement * pFibObject ){
  * 	- cFibSet
  * 	- cFibMatrix
  *
- * @param fibObject a pointer to the Fib object to test
+ * @param pFibObject a pointer to the Fib object to test
  * @return the number of erros occured in the test
  */
 int testInsertObjectInElementObjectFirstAbsoluteOnObject( cFibElement * pFibObject ){
 
-	int iReturn = 0;//returnvalue of the test; the number of occured Errors
+	int iReturn = 0;//return value of the test; the number of occured errors
 	
 	if ( pFibObject == NULL ){
 		cerr<<"Error: No Fib object to check ."<<endl;
@@ -9850,7 +10234,7 @@ int testInsertObjectInElementObjectFirstAbsoluteOnObject( cFibElement * pFibObje
 		bCanInsert = false;
 	}
 	
-	//subtract the counts of the Fib partobject that will be overwritten
+	//subtract the counts of the Fib part object that will be overwritten
 	unsigned int uiNumberOfAllFibElementsOfResult =
 		uiNumberOfAllFibElements + uiNumberOfAllFibElementsInInsert;
 	const unsigned int uiNumberOfRootElementsOfResult =
@@ -10164,13 +10548,13 @@ int testInsertObjectInElementObjectFirstAbsoluteOnObject( cFibElement * pFibObje
 							"Fib object is the last in the list element."<<endl;
 						iReturn++;
 					}else{
-						cerr<<"Error: The inserted Fib object was not found in the superior list element. "<<endl;
+						cerr<<"Error: The inserted Fib object was not found in the superior list element."<<endl;
 						iReturn++;
 					}
 				}else{
 					if ( pInsertList->getUnderobject( uiActualListelement + 1 ) != pToInsertPositionObject ){
 						cerr<<"Error: After the inserted Fib object in the "<<
-							"superior list element isn't the positions Fib element. "<<endl;
+							"superior list element isn't the positions Fib element."<<endl;
 						iReturn++;
 					}
 				}
@@ -10198,14 +10582,14 @@ int testInsertObjectInElementObjectFirstAbsoluteOnObject( cFibElement * pFibObje
 							"Fib object is the last in the external object element."<<endl;
 						iReturn++;
 					}else{
-						cerr<<"Error: The inserted Fib object was not found in the superior external object element. "<<endl;
+						cerr<<"Error: The inserted Fib object was not found in the superior external object element."<<endl;
 						iReturn++;
 					}
 				}else{
 					if ( ( pToInsertPositionObject != NULL ) &&
 							( pInsertExtObject->getSubobject( uiActualSubobject + 1 ) != pToInsertPositionObject ) ){
 						cerr<<"Error: After the inserted Fib object in the "<<
-							"superior external object element isn't the positions Fib element. "<<endl;
+							"superior external object element isn't the positions Fib element."<<endl;
 						iReturn++;
 					}
 				}
@@ -10286,7 +10670,7 @@ int testInsertObjectInElementObjectFirstAbsoluteOnObject( cFibElement * pFibObje
 
 
 /**
- * This function tests the overwriteObjectWithObject() method for an given
+ * This function tests the overwriteObjectWithObject() method for a given
  * Fib object.
  * ATTENTION: The random number generator should to be initialisized with srand()
  *
@@ -10304,12 +10688,12 @@ int testInsertObjectInElementObjectFirstAbsoluteOnObject( cFibElement * pFibObje
  * 	- cComment
  * 	- cExtObject
  *
- * @param fibObject a pointer to the Fib object to test
+ * @param pFibObject a pointer to the Fib object to test
  * @return the number of erros occured in the test
  */
 int testInsertObjectInElementObjectSecondOnObject( cFibElement * pFibObject ){
 
-	int iReturn = 0;//returnvalue of the test; the number of occured Errors
+	int iReturn = 0;//return value of the test; the number of occured errors
 	
 	if ( pFibObject == NULL ){
 		cerr<<"Error: No Fib object to check ."<<endl;
@@ -10559,7 +10943,7 @@ int testInsertObjectInElementObjectSecondOnObject( cFibElement * pFibObject ){
 		bCanInsert = false;
 	}
 	
-	//subtract the counts of the Fib partobject that will be overwritten
+	//subtract the counts of the Fib part object that will be overwritten
 	unsigned int uiNumberOfAllFibElementsOfResult =
 		uiNumberOfAllFibElements + uiNumberOfAllFibElementsInInsert;
 	const unsigned int uiNumberOfRootElementsOfResult =
@@ -10881,17 +11265,17 @@ int testInsertObjectInElementObjectSecondOnObject( cFibElement * pFibObject ){
 							"Fib object is the first in the list element."<<endl;
 						iReturn++;
 					}else{
-						cerr<<"Error: The inserted Fib object was not found in the superior list element. "<<endl;
+						cerr<<"Error: The inserted Fib object was not found in the superior list element."<<endl;
 						iReturn++;
 					}
 				}else{
 					if ( pInsertList->getUnderobject( uiActualListelement ) != pFibObjectToInsert ){
-						cerr<<"Error: The inserted Fib object was not found in the superior list element. "<<endl;
+						cerr<<"Error: The inserted Fib object was not found in the superior list element."<<endl;
 						iReturn++;
 					}
 					if ( pInsertList->getUnderobject( uiActualListelement - 1 ) != pToInsertPositionObject ){
 						cerr<<"Error: Befor the inserted Fib object in the "<<
-							"superior list element isn't the positions Fib element. "<<endl;
+							"superior list element isn't the positions Fib element."<<endl;
 						iReturn++;
 					}
 				}
@@ -10919,18 +11303,18 @@ int testInsertObjectInElementObjectSecondOnObject( cFibElement * pFibObject ){
 								"Fib object is the first in the external object element."<<endl;
 							iReturn++;
 						}else{
-							cerr<<"Error: The inserted Fib object was not found in the superior external object element. "<<endl;
+							cerr<<"Error: The inserted Fib object was not found in the superior external object element."<<endl;
 							iReturn++;
 						}
 					}
 				}else{
 					if ( pInsertExtObject->getSubobject( uiActualSubobject ) != pFibObjectToInsert ){
-						cerr<<"Error: The inserted Fib object was not found in the superior external object element. "<<endl;
+						cerr<<"Error: The inserted Fib object was not found in the superior external object element."<<endl;
 						iReturn++;
 					}
 					if ( pInsertExtObject->getSubobject( uiActualSubobject - 1 ) != pToInsertPositionObject ){
 						cerr<<"Error: Befor the inserted Fib object in the "<<
-							"superior external object element isn't the positions Fib element. "<<endl;
+							"superior external object element isn't the positions Fib element."<<endl;
 						iReturn++;
 					}
 				}
@@ -11013,7 +11397,7 @@ int testInsertObjectInElementObjectSecondOnObject( cFibElement * pFibObject ){
 
 
 /**
- * This function tests the overwriteObjectWithObject() method for an given
+ * This function tests the overwriteObjectWithObject() method for a given
  * Fib object.
  * ATTENTION: The random number generator should to be initialisized with srand()
  *
@@ -11034,12 +11418,12 @@ int testInsertObjectInElementObjectSecondOnObject( cFibElement * pFibObject ){
  * 	- cFibSet
  * 	- cFibMatrix
  *
- * @param fibObject a pointer to the Fib object to test
+ * @param pFibObject a pointer to the Fib object to test
  * @return the number of erros occured in the test
  */
 int testInsertObjectInElementObjectSecondAbsoluteOnObject( cFibElement * pFibObject ){
 
-	int iReturn = 0;//returnvalue of the test; the number of occured Errors
+	int iReturn = 0;//return value of the test; the number of occured errors
 	
 	if ( pFibObject == NULL ){
 		cerr<<"Error: No Fib object to check ."<<endl;
@@ -11289,7 +11673,7 @@ int testInsertObjectInElementObjectSecondAbsoluteOnObject( cFibElement * pFibObj
 		bCanInsert = false;
 	}
 	
-	//subtract the counts of the Fib partobject that will be overwritten
+	//subtract the counts of the Fib part object that will be overwritten
 	unsigned int uiNumberOfAllFibElementsOfResult =
 		uiNumberOfAllFibElements + uiNumberOfAllFibElementsInInsert;
 	const unsigned int uiNumberOfRootElementsOfResult =
@@ -11613,17 +11997,17 @@ int testInsertObjectInElementObjectSecondAbsoluteOnObject( cFibElement * pFibObj
 							"Fib object is the first in the list element."<<endl;
 						iReturn++;
 					}else{
-						cerr<<"Error: The inserted Fib object was not found in the superior list element. "<<endl;
+						cerr<<"Error: The inserted Fib object was not found in the superior list element."<<endl;
 						iReturn++;
 					}
 				}else{
 					if ( pInsertList->getUnderobject( uiActualListelement ) != pFibObjectToInsert ){
-						cerr<<"Error: The inserted Fib object was not found in the superior list element. "<<endl;
+						cerr<<"Error: The inserted Fib object was not found in the superior list element."<<endl;
 						iReturn++;
 					}
 					if ( pInsertList->getUnderobject( uiActualListelement - 1 ) != pToInsertPositionObject ){
 						cerr<<"Error: Befor the inserted Fib object in the "<<
-							"superior list element isn't the positions Fib element. "<<endl;
+							"superior list element isn't the positions Fib element."<<endl;
 						iReturn++;
 					}
 				}
@@ -11651,18 +12035,18 @@ int testInsertObjectInElementObjectSecondAbsoluteOnObject( cFibElement * pFibObj
 								"Fib object is the first in the external object element."<<endl;
 							iReturn++;
 						}else{
-							cerr<<"Error: The inserted Fib object was not found in the superior external object element. "<<endl;
+							cerr<<"Error: The inserted Fib object was not found in the superior external object element."<<endl;
 							iReturn++;
 						}
 					}
 				}else{
 					if ( pInsertExtObject->getSubobject( uiActualSubobject ) != pFibObjectToInsert ){
-						cerr<<"Error: The inserted Fib object was not found in the superior external object element. "<<endl;
+						cerr<<"Error: The inserted Fib object was not found in the superior external object element."<<endl;
 						iReturn++;
 					}
 					if ( pInsertExtObject->getSubobject( uiActualSubobject - 1 ) != pToInsertPositionObject ){
 						cerr<<"Error: Befor the inserted Fib object in the "<<
-							"superior external object element isn't the positions Fib element. "<<endl;
+							"superior external object element isn't the positions Fib element."<<endl;
 						iReturn++;
 					}
 				}
@@ -11746,7 +12130,7 @@ int testInsertObjectInElementObjectSecondAbsoluteOnObject( cFibElement * pFibObj
 
 
 /**
- * This function tests the hasUnderAllObjects() method for an given
+ * This function tests the hasUnderAllObjects() method for a given
  * Fib object.
  * ATTENTION: The random number generator should to be initialisized with srand()
  *
@@ -11767,12 +12151,12 @@ int testInsertObjectInElementObjectSecondAbsoluteOnObject( cFibElement * pFibObj
  * 	- cFibSet
  * 	- cFibMatrix
  *
- * @param fibObject a pointer to the Fib object to test
+ * @param pFibObject a pointer to the Fib object to test
  * @return the number of erros occured in the test
  */
 int testHasUnderAllObjectsForLimbOnObject( cFibElement * pFibObject ){
 
-	int iReturn = 0;//returnvalue of the test; the number of occured Errors
+	int iReturn = 0;//return value of the test; the number of occured errors
 	
 	if ( pFibObject == NULL ){
 		cerr<<"Error: No Fib object to check ."<<endl;
@@ -11938,7 +12322,7 @@ int testHasUnderAllObjectsForLimbOnObject( cFibElement * pFibObject ){
 
 
 /**
- * This function tests the insertElement() method for an given Fib object.
+ * This function tests the insertElement() method for a given Fib object.
  * ATTENTION: The random number generator should to be initialisized with srand()
  *
  * methods tested:
@@ -11958,14 +12342,14 @@ int testHasUnderAllObjectsForLimbOnObject( cFibElement * pFibObject ){
  * 	- cFibSet
  * 	- cFibMatrix
  *
- * @param fibObject a pointer to the Fib object to test
+ * @param pFibObject a pointer to the Fib object to test
  * @param bCheckVariables if the variable check should be performed, befor
  * 	removing the Fib element
  * @return the number of erros occured in the test
  */
 int testInsertElementOnObject( cFibElement * pFibObject, bool bCheckVariables ){
 
-	int iReturn = 0;//returnvalue of the test; the number of occured Errors
+	int iReturn = 0;//return value of the test; the number of occured errors
 	
 	if ( pFibObject == NULL ){
 		cerr<<"Error: No Fib object to check ."<<endl;
@@ -12093,7 +12477,7 @@ int testInsertElementOnObject( cFibElement * pFibObject, bool bCheckVariables ){
 	
 	bool bCanInsert = true;
 	
-	//subtract the counts of the Fib partobject that will be overwritten
+	//subtract the counts of the Fib part object that will be overwritten
 	unsigned int uiNumberOfAllFibElementsOfResult = uiNumberOfAllFibElements;
 	unsigned int uiNumberOfRootElementsOfResult   = uiNumberOfRootElements;
 	unsigned int uiNumberOfPointElementsOfResult  = uiNumberOfPointElements;
@@ -12496,7 +12880,7 @@ int testInsertElementOnObject( cFibElement * pFibObject, bool bCheckVariables ){
 
 
 /**
- * This function tests the insertElement() method for an given Fib object.
+ * This function tests the insertElement() method for a given Fib object.
  * ATTENTION: The random number generator should to be initialisized with srand()
  *
  * methods tested:
@@ -12516,14 +12900,14 @@ int testInsertElementOnObject( cFibElement * pFibObject, bool bCheckVariables ){
  * 	- cFibSet
  * 	- cFibMatrix
  *
- * @param fibObject a pointer to the Fib object to test
+ * @param pFibObject a pointer to the Fib object to test
  * @param bCheckVariables if the variable check should be performed, befor
  * 	removing the Fib element
  * @return the number of erros occured in the test
  */
 int testInsertElementAbsoluteOnObject( cFibElement * pFibObject, bool bCheckVariables ){
 
-	int iReturn = 0;//returnvalue of the test; the number of occured Errors
+	int iReturn = 0;//return value of the test; the number of occured errors
 	
 	if ( pFibObject == NULL ){
 		cerr<<"Error: No Fib object to check ."<<endl;
@@ -12681,7 +13065,7 @@ int testInsertElementAbsoluteOnObject( cFibElement * pFibObject, bool bCheckVari
 	
 	bool bCanInsert = true;
 	
-	//subtract the counts of the Fib partobject that will be overwritten
+	//subtract the counts of the Fib part object that will be overwritten
 	unsigned int uiNumberOfAllFibElementsOfResult = uiNumberOfAllFibElements;
 	unsigned int uiNumberOfRootElementsOfResult   = uiNumberOfRootElements;
 	unsigned int uiNumberOfPointElementsOfResult  = uiNumberOfPointElements;
@@ -13084,7 +13468,7 @@ int testInsertElementAbsoluteOnObject( cFibElement * pFibObject, bool bCheckVari
 
 
 /**
- * This function tests the insertElement() method for an given Fib object.
+ * This function tests the insertElement() method for a given Fib object.
  * The subobject to overwrite will be NULL.
  * ATTENTION: The random number generator should to be initialisized with srand()
  *
@@ -13105,14 +13489,14 @@ int testInsertElementAbsoluteOnObject( cFibElement * pFibObject, bool bCheckVari
  * 	- cFibSet
  * 	- cFibMatrix
  *
- * @param fibObject a pointer to the Fib object to test
+ * @param pFibObject a pointer to the Fib object to test
  * @param bCheckVariables if the variable check should be performed, befor
  * 	removing the Fib element
  * @return the number of erros occured in the test
  */
 int testInsertElementNullOnObject( cFibElement * pFibObject, bool bCheckVariables ){
 
-	int iReturn = 0;//returnvalue of the test; the number of occured Errors
+	int iReturn = 0;//return value of the test; the number of occured errors
 	
 	if ( pFibObject == NULL ){
 		cerr<<"Error: No Fib object to check ."<<endl;
@@ -13219,7 +13603,7 @@ int testInsertElementNullOnObject( cFibElement * pFibObject, bool bCheckVariable
 	}//else check when return is false when pFibObjectToInsert==NULL
 
 	
-	//subtract the counts of the Fib partobject that will be overwritten
+	//subtract the counts of the Fib part object that will be overwritten
 	unsigned int uiNumberOfAllFibElementsOfResult = uiNumberOfAllFibElements;
 	unsigned int uiNumberOfRootElementsOfResult   = uiNumberOfRootElements;
 	unsigned int uiNumberOfPointElementsOfResult  = uiNumberOfPointElements;
@@ -13550,7 +13934,7 @@ int testInsertElementNullOnObject( cFibElement * pFibObject, bool bCheckVariable
 
 /**
  * This function tests the methods for removing or cutting a Fib element
- * from an given Fib object.
+ * from a given Fib object.
  * ATTENTION: The random number generator should to be initialisized with srand()
  *
  * methods tested:
@@ -13572,7 +13956,7 @@ int testInsertElementNullOnObject( cFibElement * pFibObject, bool bCheckVariable
  * 	- cFibSet
  * 	- cFibMatrix
  *
- * @param fibObject a pointer to the Fib object to test
+ * @param pFibObject a pointer to the Fib object to test
  * @param bCut if true the cutElement() method will be tested, else the
  * 	removeElement() method
  * @param bCheckVariables if the variable check should be performed, befor
@@ -13581,7 +13965,7 @@ int testInsertElementNullOnObject( cFibElement * pFibObject, bool bCheckVariable
  */
 int testRemoveElementOnObject( cFibElement * pFibObject, bool bCut, bool bCheckVariables ){
 
-	int iReturn = 0;//returnvalue of the test; the number of occured Errors
+	int iReturn = 0;//return value of the test; the number of occured errors
 	
 	if ( pFibObject == NULL ){
 		cerr<<"Error: No Fib object to check ."<<endl;
@@ -13685,7 +14069,7 @@ int testRemoveElementOnObject( cFibElement * pFibObject, bool bCut, bool bCheckV
 	}
 	unsigned int uiNumberOfToRemoveElement = 0;
 	
-	//subtract the counts of the Fib partobject that will be overwritten
+	//subtract the counts of the Fib part object that will be overwritten
 	unsigned int uiNumberOfAllFibElementsOfResult = uiNumberOfAllFibElements;
 	unsigned int uiNumberOfRootElementsOfResult   = uiNumberOfRootElements;
 	unsigned int uiNumberOfPointElementsOfResult  = uiNumberOfPointElements;
@@ -14109,7 +14493,7 @@ int testRemoveElementOnObject( cFibElement * pFibObject, bool bCut, bool bCheckV
 
 /**
  * This function tests the methods for removing or cutting a Fib element
- * from an given Fib object.
+ * from a given Fib object.
  * ATTENTION: The random number generator should to be initialisized with srand()
  *
  * methods tested:
@@ -14131,7 +14515,7 @@ int testRemoveElementOnObject( cFibElement * pFibObject, bool bCut, bool bCheckV
  * 	- cFibSet
  * 	- cFibMatrix
  *
- * @param fibObject a pointer to the Fib object to test
+ * @param pFibObject a pointer to the Fib object to test
  * @param bCut if true the cutElement() method will be tested, else the
  * 	removeElement() method
  * @param bCheckVariables if the variable check should be performed, befor
@@ -14140,7 +14524,7 @@ int testRemoveElementOnObject( cFibElement * pFibObject, bool bCut, bool bCheckV
  */
 int testRemoveElementAbsoluteOnObject( cFibElement * pFibObject, bool bCut, bool bCheckVariables ){
 
-	int iReturn = 0;//returnvalue of the test; the number of occured Errors
+	int iReturn = 0;//return value of the test; the number of occured errors
 	
 	if ( pFibObject == NULL ){
 		cerr<<"Error: No Fib object to check ."<<endl;
@@ -14275,7 +14659,7 @@ int testRemoveElementAbsoluteOnObject( cFibElement * pFibObject, bool bCut, bool
 	}
 	
 	unsigned int uiNumberOfToRemoveElement = 0;
-	//subtract the counts of the Fib partobject that will be overwritten
+	//subtract the counts of the Fib part object that will be overwritten
 	unsigned int uiNumberOfAllFibElementsOfResult = uiNumberOfAllFibElements;
 	unsigned int uiNumberOfRootElementsOfResult   = uiNumberOfRootElements;
 	unsigned int uiNumberOfPointElementsOfResult  = uiNumberOfPointElements;
@@ -14765,7 +15149,7 @@ int testEqualOnTwoObject( cFibElement * pFibObject1, cFibElement * pFibObject2 )
 		
 		if ( ! pFibElementToCompare1->equal( *pFibElementToCompare2 ) ){
 			cerr<<"Error: Fib object 1 not equal to Fib object 2 . "<<
-				"The choosen Fib element point is "<< uiChoosenFibElementNumber <<" . "<<endl;
+				"The choosen Fib element point is "<< uiChoosenFibElementNumber <<" ."<<endl;
 			iReturn++;
 			uiNotEqualNotCorrect++;
 		}else{
@@ -14776,10 +15160,10 @@ int testEqualOnTwoObject( cFibElement * pFibObject1, cFibElement * pFibObject2 )
 	}
 	if ( iReturn != 0 ){
 		//Error: occured -> stop evaluation
-		cout<<"Equal Method tested:"<<endl;
+		cout<<"Equal method tested:"<<endl;
 		cout<<"   correctly equal        : "<< uiEqualCorrect <<endl;
 		cout<<"   not correctly not equal: "<< uiNotEqualNotCorrect <<endl;
-		cout<<"   equal Method called    : "<< uiEqualCorrect + uiNotEqualNotCorrect <<endl;
+		cout<<"   equal method called    : "<< uiEqualCorrect + uiNotEqualNotCorrect <<endl;
 		return iReturn;
 	}
 	
@@ -14846,12 +15230,12 @@ int testEqualOnTwoObject( cFibElement * pFibObject1, cFibElement * pFibObject2 )
 					if ( ! pSuperior1->equal( *pSuperior2 ) ){
 						cerr<<"Error: Fib object 1 not equal to Fib object 2 . "<<
 							"The choosen Fib element point is "<<
-							pSuperior1->getNumberOfElement() <<" . "<<endl;
+							pSuperior1->getNumberOfElement() <<" ."<<endl;
 						iReturn++;
 						uiEqualNotCorrect++;
 					}else{
 						/*cout<<"   superior of to remove: "<< pSuperior1->getNumberOfElement() <<"'th Fib element of type "<<
-							pSuperior1->getType()<<" "<<endl;*/
+							pSuperior1->getType()<<""<<endl;*/
 						uiEqualCorrect++;
 						setNotEqualFibElements.insert(
 							make_pair( pSuperior1 , pSuperior2 ) );
@@ -14874,7 +15258,7 @@ int testEqualOnTwoObject( cFibElement * pFibObject1, cFibElement * pFibObject2 )
 					}
 				}
 			}break;
-			case 1:{//remove a random partobject
+			case 1:{//remove a random part object
 				//remove a random Fib element
 				unsigned int uiNumberOfObjectPoints = pFibObject1->getNumberOfObjectPoints();
 				if ( uiNumberOfObjectPoints <= 2 ){
@@ -14885,7 +15269,7 @@ int testEqualOnTwoObject( cFibElement * pFibObject1, cFibElement * pFibObject2 )
 				unsigned int uiDefiningFibElement = pFibObject1->
 					objectPointToElementPoint( uiToRemoveObject );
 				
-				//evalue Fib elements that are not equal after removing the partobject
+				//evalue Fib elements that are not equal after removing the part object
 				pToRemoveFibElement1 =
 					pFibObject1->getFibElement( uiDefiningFibElement );
 				pToRemoveFibElement2 =
@@ -14901,7 +15285,7 @@ int testEqualOnTwoObject( cFibElement * pFibObject1, cFibElement * pFibObject2 )
 					cTypeSuperiorToRemove2 = pSuperiorToRemove2->getType();
 				}
 				
-				cout<< "Try to remove the "<< uiToRemoveObject <<"'th partobject. "<<
+				cout<< "Try to remove the "<< uiToRemoveObject <<"'th part object. "<<
 					"With defining element "<<uiDefiningFibElement<<" of type "<<flush<<
 					pToRemoveFibElement1->getType()<<", superior ";
 				if ( pToRemoveFibElement1->getSuperiorFibElement() != NULL ){
@@ -14924,7 +15308,7 @@ int testEqualOnTwoObject( cFibElement * pFibObject1, cFibElement * pFibObject2 )
 					
 					if ( pSuperior1->equal( *pSuperior2 ) ){
 						/*cout<<"   superior of to remove: "<< pSuperior1->getNumberOfElement() <<"'th Fib element of type "<<
-							pSuperior1->getType()<<" "<<endl;*/
+							pSuperior1->getType()<<""<<endl;*/
 						uiEqualCorrect++;
 						setNotEqualFibElements.insert(
 							make_pair( pSuperior1 , pSuperior2 ) );
@@ -14939,13 +15323,47 @@ int testEqualOnTwoObject( cFibElement * pFibObject1, cFibElement * pFibObject2 )
 				}
 				pNextRoot = pToRemoveFibElement1->getSuperiorRootElement();
 				
-				//remove all Fib elements of the to remove partobject from the equal list
+				//remove all Fib elements of the to remove part object from the equal list
 				setEqualFibElements.erase(
 					make_pair( pToRemoveFibElement1->getSuperiorFibElement(),
 						pToRemoveFibElement2->getSuperiorFibElement() ) );
 				
 				unsigned int uiToRemoveFibElements =
 					pToRemoveFibElement1->getNumberOfElements();
+				
+				if ( ( pToRemoveFibElement1->getSuperiorFibElement() != NULL ) &&
+						( pToRemoveFibElement1->getSuperiorFibElement()->getType() == 'o' ) ){
+					/*If the superior element is an external object element
+					 remove also all subobjects of the superior external object,
+					 which are after the removed subobject. Because if subobject
+					 is moved (one step to the front) its variables (the output
+					 variables for the subobject) won't be equal anymore.*/
+					cExtObject * pSuperiorExtObject = ((cExtObject*)
+						pToRemoveFibElement1->getSuperiorFibElement());
+					
+					const unsignedIntFib uiNumberOfSubobjects =
+						pSuperiorExtObject->getNumberOfSubobjects();
+					//find the subobject of the external object to remove
+					unsignedIntFib uiActualSubobject = 1;
+					for ( ; uiActualSubobject <= uiNumberOfSubobjects;
+							uiActualSubobject++ ){
+						if ( pSuperiorExtObject->getSubobject( uiActualSubobject ) ==
+								pToRemoveFibElement1 ){
+							//subobject to remove found
+							break;
+						}
+					}
+					/*mark the Fib elements in the subobjects after and the to
+					 remove subobject as to remove in the equal list*/
+					uiToRemoveFibElements = 0;
+					for ( ; uiActualSubobject <= uiNumberOfSubobjects;
+							uiActualSubobject++ ){
+						//mark Fib elements in the subobject as not equal
+						uiToRemoveFibElements += pSuperiorExtObject->
+							getSubobject( uiActualSubobject )->getNumberOfElements();
+					}
+				}//end if superior element is an external object element
+				
 				cFibElement * pContainedInToRemove1 = pToRemoveFibElement1;
 				cFibElement * pContainedInToRemove2 = pToRemoveFibElement2;
 				for ( unsigned int uiActualFibElement = 1;
@@ -14964,7 +15382,7 @@ int testEqualOnTwoObject( cFibElement * pFibObject1, cFibElement * pFibObject2 )
 					//nothing changed
 					setNotEqualFibElements.clear();
 				}else{
-					cout<< "The "<< uiToRemoveObject <<"'th partobject was removed."<<endl;
+					cout<< "The "<< uiToRemoveObject <<"'th part object was removed."<<endl;
 					if ( pChoosenObject == pFibObject1 ){
 						pToRemoveFibElement1 = NULL;
 					}else{
@@ -15001,7 +15419,7 @@ int testEqualOnTwoObject( cFibElement * pFibObject1, cFibElement * pFibObject2 )
 			if ( uiNumberOfSubobjects1 != (uiNumberOfSubobjects2 + 1) ){
 				//should not happen
 				cerr<<"Error: Superior external objects have not correct number of subobjects 1 "<<
-					"(1 has "<<uiNumberOfSubobjects1<<", 2 has "<<uiNumberOfSubobjects2<<" subobjects). "<<endl;
+					"(1 has "<<uiNumberOfSubobjects1<<", 2 has "<<uiNumberOfSubobjects2<<" subobjects)."<<endl;
 				iReturn++;
 				return iReturn;
 			}
@@ -15017,7 +15435,7 @@ int testEqualOnTwoObject( cFibElement * pFibObject1, cFibElement * pFibObject2 )
 				//should not happen
 				cerr<<"Error: Removed subobject (number "<<pToRemoveFibElement1->getNumberOfElement()<<
 					" type "<<pToRemoveFibElement1->getType()<<") of external object 1 not found (it has "<<
-					uiNumberOfSubobjects1<<" subobjects). "<<endl;
+					uiNumberOfSubobjects1<<" subobjects)."<<endl;
 				iReturn++;
 				return iReturn;
 			}
@@ -15027,7 +15445,7 @@ int testEqualOnTwoObject( cFibElement * pFibObject1, cFibElement * pFibObject2 )
 			if ( (uiNumberOfSubobjects1 + 1) != uiNumberOfSubobjects2 ){
 				//should not happen
 				cerr<<"Error: Superior external objects have not correct number of subobjects 2 "<<
-					"(1 has "<<uiNumberOfSubobjects1<<", 2 has "<<uiNumberOfSubobjects2<<" subobjects). "<<endl;
+					"(1 has "<<uiNumberOfSubobjects1<<", 2 has "<<uiNumberOfSubobjects2<<" subobjects)."<<endl;
 				iReturn++;
 				return iReturn;
 			}
@@ -15043,7 +15461,7 @@ int testEqualOnTwoObject( cFibElement * pFibObject1, cFibElement * pFibObject2 )
 				//should not happen
 				cerr<<"Error: Removed subobject (number "<<pToRemoveFibElement2->getNumberOfElement()<<
 					" type "<<pToRemoveFibElement2->getType()<<") of external object 2 not found (it has "<<
-					uiNumberOfSubobjects2<<" subobjects). "<<endl;
+					uiNumberOfSubobjects2<<" subobjects)."<<endl;
 				iReturn++;
 				return iReturn;
 			}
@@ -15318,7 +15736,7 @@ int testEqualOnTwoObject( cFibElement * pFibObject1, cFibElement * pFibObject2 )
 			cerr<<"Error: Fib object 1 is equal to Fib object 2 . "<<
 				"The choosen Fib element point is "<<
 				(itrActualNotEqualPair->first)->getNumberOfElement() <<" of type "<<
-				(itrActualNotEqualPair->first)->getType()<<" . "<<endl;
+				(itrActualNotEqualPair->first)->getType()<<" ."<<endl;
 			iReturn++;
 			uiEqualNotCorrect++;
 		}else{
@@ -15334,7 +15752,9 @@ int testEqualOnTwoObject( cFibElement * pFibObject1, cFibElement * pFibObject2 )
 			cerr<<"Error: Fib object 1 not equal to Fib object 2 . "<<
 				"The choosen Fib element point is "<<
 				(itrActualEqualPair->first)->getNumberOfElement() <<" of type "<<
-				(itrActualEqualPair->first)->getType()<<" . "<<endl;
+				(itrActualEqualPair->first)->getType()<<" (compare with Fib element "<<
+				(itrActualEqualPair->second)->getNumberOfElement() <<" of type "<<
+				(itrActualEqualPair->second)->getType()<<")."<<endl;
 			iReturn++;
 			uiNotEqualNotCorrect++;
 		}else{
@@ -15342,14 +15762,14 @@ int testEqualOnTwoObject( cFibElement * pFibObject1, cFibElement * pFibObject2 )
 		}
 	}
 	
-	cout<<"Equal Method tested:"<<endl;
+	cout<<"Equal method tested:"<<endl;
 	cout<<"   correctly equal        : "<< uiEqualCorrect <<endl;
 	cout<<"   correctly not equal    : "<< uiNotEqualCorrect <<endl;
 	cout<<"   correctly              : "<< uiEqualCorrect + uiNotEqualCorrect <<endl;
 	cout<<"   not correctly equal    : "<< uiEqualNotCorrect <<endl;
 	cout<<"   not correctly not equal: "<< uiNotEqualNotCorrect <<endl;
 	cout<<"   not correct            : "<< uiEqualNotCorrect + uiNotEqualNotCorrect <<endl;
-	cout<<"   equal Method called    : "<< uiEqualCorrect +
+	cout<<"   equal method called    : "<< uiEqualCorrect +
 		uiNotEqualCorrect + uiEqualNotCorrect + uiNotEqualNotCorrect <<endl;
 	
 	return iReturn;
@@ -15358,7 +15778,7 @@ int testEqualOnTwoObject( cFibElement * pFibObject1, cFibElement * pFibObject2 )
 
 
 /**
- * This function tests the moveLimbElement() method for an given Fib object.
+ * This function tests the moveLimbElement() method for a given Fib object.
  * It trys to move a non limbelement with random parameters.
  * ATTENTION: The random number generator should to be initialisized with srand()
  *
@@ -15382,12 +15802,11 @@ int testEqualOnTwoObject( cFibElement * pFibObject1, cFibElement * pFibObject2 )
  * @param pFibObject1 a pointer to the first Fib object to test
  * @param pFibObject2 a pointer to the second Fib object to test,
  * 	which is equal to pFibObject1
- * @param bDeleteOld the bDeleteOld for the removeObject() method
  * @return the number of erros occured in the test
  */
 int testMoveLimbElementOnNonMovebelOnObject( cFibElement * pFibObject1, cFibElement * pFibObject2 ){
 
-	int iReturn = 0;//returnvalue of the test; the number of occured Errors
+	int iReturn = 0;//return value of the test; the number of occured errors
 	
 	if ( (pFibObject1 == NULL) || (pFibObject2 == NULL) ){
 		cerr<<"Error: No Fib objects to check ."<<endl;
@@ -15500,18 +15919,18 @@ int testMoveLimbElementOnNonMovebelOnObject( cFibElement * pFibObject1, cFibElem
 			elementPoint <<", iHowfar="<< iHowfar <<", bAbsolute="<<
 			(bAbsolute?"true":"false") <<") from the "<< uiNumberOfAllFibElements <<
 			" Fib element with the type "<<
-			pCallingFibElement->getType() <<" in the Fib object. "<<endl;
+			pCallingFibElement->getType() <<" in the Fib object."<<endl;
 		
 		const intFib iElementsMovedOver = pCallingFibElement->moveLimbElement(
 			cType, elementPoint, iHowfar, bAbsolute );
 		
 		if ( iElementsMovedOver != 0 ){
-			cerr<<"Error: The Fib element was moved . "<<endl;
+			cerr<<"Error: The Fib element was moved ."<<endl;
 			iReturn++;
 		}
 		
 		if ( ! pFibObject1->equal( *pFibObject2 ) ){
-			cerr<<"Error: The Fib object changed . "<<endl;
+			cerr<<"Error: The Fib object changed ."<<endl;
 			iReturn++;
 			break;
 		}
@@ -15523,7 +15942,7 @@ int testMoveLimbElementOnNonMovebelOnObject( cFibElement * pFibObject1, cFibElem
 
 
 /**
- * This function tests the moveLimbElement() method for an given Fib object.
+ * This function tests the moveLimbElement() method for a given Fib object.
  * It trys to move a limbelement in direction higher.
  * ATTENTION: The random number generator should to be initialisized with srand()
  *
@@ -15544,13 +15963,13 @@ int testMoveLimbElementOnNonMovebelOnObject( cFibElement * pFibObject1, cFibElem
  * 	- cFibSet
  * 	- cFibMatrix
  *
- * @param fibObject a pointer to the Fib object to test
+ * @param pFibObject a pointer to the Fib object to test
  * @param bAbsolute the bAbsolute value for moveLimbElement()
  * @return the number of erros occured in the test
  */
 int testMoveLimbElementUpOnObject( cFibElement * pFibObject, bool bAbsolute ){
 
-	int iReturn = 0;//returnvalue of the test; the number of occured Errors
+	int iReturn = 0;//return value of the test; the number of occured errors
 	
 	if ( (pFibObject == NULL) || (pFibObject->getType() != 'r' ) ){
 		cerr<<"Error: No Fib object to check ."<<endl;
@@ -15701,7 +16120,7 @@ int testMoveLimbElementUpOnObject( cFibElement * pFibObject, bool bAbsolute ){
 			
 			pChoosenMatrixElement->getArea( 1 )->setVariable( 1, pVariableMarker );
 		}break;
-		//TODO more limbelements
+		//TODO more limb elements
 		default:{
 			cerr<<"Error: Unknown Fib limb element type "<<cTypeOfFibElementToMove<<"to move."<<endl;
 			iReturn++;
@@ -15723,7 +16142,7 @@ int testMoveLimbElementUpOnObject( cFibElement * pFibObject, bool bAbsolute ){
 		" Fib element with the type "<<
 		pCallingFibElement->getType() <<" in the Fib object,"<<
 		"to move the "<< uiNumberOfToMoveElement << "'th Fib element of type "<<
-		cTypeOfFibElementToMove<<". "<<endl;
+		cTypeOfFibElementToMove<<"."<<endl;
 	
 	const intFib iElementsMovedOver = pCallingFibElement->moveLimbElement(
 		cType, uiElementPoint, iHowfar, bAbsolute );
@@ -15823,7 +16242,7 @@ int testMoveLimbElementUpOnObject( cFibElement * pFibObject, bool bAbsolute ){
 		cerr<<"Error: The number of list elements "<<
 			pFibObject->getNumberOfElements( 'l' ) <<
 			" isn't correct ("<< uiNumberOfListElements<<
-			") in the created Fib object. "<<endl;
+			") in the created Fib object."<<endl;
 		iReturn++;
 	}
 	if ( uiNumberOfPropertyElements !=
@@ -15831,7 +16250,7 @@ int testMoveLimbElementUpOnObject( cFibElement * pFibObject, bool bAbsolute ){
 		cerr<<"Error: The number of property elements "<<
 			pFibObject->getNumberOfElements( 'y' ) <<
 			" isn't correct ("<< uiNumberOfPropertyElements<<
-			") in the created Fib object. "<<endl;
+			") in the created Fib object."<<endl;
 		iReturn++;
 	}
 	if ( uiNumberOfAreaElements !=
@@ -15839,7 +16258,7 @@ int testMoveLimbElementUpOnObject( cFibElement * pFibObject, bool bAbsolute ){
 		cerr<<"Error: The number of area elements "<<
 			pFibObject->getNumberOfElements( 'a' ) <<
 			" isn't correct ("<< uiNumberOfAreaElements<<
-			") in the created Fib object. "<<endl;
+			") in the created Fib object."<<endl;
 		iReturn++;
 	}
 	if ( uiNumberOfFunctionElements !=
@@ -15847,7 +16266,7 @@ int testMoveLimbElementUpOnObject( cFibElement * pFibObject, bool bAbsolute ){
 		cerr<<"Error: The number of function elements "<<
 			pFibObject->getNumberOfElements( 'f' ) <<
 			" isn't correct ("<< uiNumberOfFunctionElements<<
-			") in the created Fib object. "<<endl;
+			") in the created Fib object."<<endl;
 		iReturn++;
 	}
 	if ( uiNumberOfIfElements !=
@@ -15855,7 +16274,7 @@ int testMoveLimbElementUpOnObject( cFibElement * pFibObject, bool bAbsolute ){
 		cerr<<"Error: The number of if-elements "<<
 			pFibObject->getNumberOfElements( 'i' ) <<
 			" isn't correct ("<< uiNumberOfIfElements<<
-			") in the created Fib object. "<<endl;
+			") in the created Fib object."<<endl;
 		iReturn++;
 	}
 	if ( uiNumberOfCommentElements !=
@@ -15863,7 +16282,7 @@ int testMoveLimbElementUpOnObject( cFibElement * pFibObject, bool bAbsolute ){
 		cerr<<"Error: The number of comment elements "<<
 			pFibObject->getNumberOfElements( 'c' ) <<
 			" isn't correct ("<< uiNumberOfCommentElements<<
-			") in the created Fib object. "<<endl;
+			") in the created Fib object."<<endl;
 		iReturn++;
 	}
 	if ( uiNumberOfExtObjectElements !=
@@ -15871,7 +16290,7 @@ int testMoveLimbElementUpOnObject( cFibElement * pFibObject, bool bAbsolute ){
 		cerr<<"Error: The number of external object elements "<<
 			pFibObject->getNumberOfElements( 'o' ) <<
 			" isn't correct ("<< uiNumberOfExtObjectElements<<
-			") in the created Fib object. "<<endl;
+			") in the created Fib object."<<endl;
 		iReturn++;
 	}
 	if ( uiNumberOfExtSubobjectElements !=
@@ -15879,7 +16298,7 @@ int testMoveLimbElementUpOnObject( cFibElement * pFibObject, bool bAbsolute ){
 		cerr<<"Error: The number of external subobject elements "<<
 			pFibObject->getNumberOfElements( 's' ) <<
 			" isn't correct ("<< uiNumberOfExtSubobjectElements<<
-			") in the created Fib object. "<<endl;
+			") in the created Fib object."<<endl;
 		iReturn++;
 	}
 	if ( uiNumberOfSetElements !=
@@ -15887,7 +16306,7 @@ int testMoveLimbElementUpOnObject( cFibElement * pFibObject, bool bAbsolute ){
 		cerr<<"Error: The number of set elements "<<
 			pFibObject->getNumberOfElements( 'v' ) <<
 			" isn't correct ("<< uiNumberOfSetElements<<
-			") in the created Fib object. "<<endl;
+			") in the created Fib object."<<endl;
 		iReturn++;
 	}
 	if ( uiNumberOfMatrixElements !=
@@ -15895,7 +16314,7 @@ int testMoveLimbElementUpOnObject( cFibElement * pFibObject, bool bAbsolute ){
 		cerr<<"Error: The number of matrix elements "<<
 			pFibObject->getNumberOfElements( 'm' ) <<
 			" isn't correct ("<< uiNumberOfMatrixElements<<
-			") in the created Fib object. "<<endl;
+			") in the created Fib object."<<endl;
 		iReturn++;
 	}
 	
@@ -15911,7 +16330,7 @@ int testMoveLimbElementUpOnObject( cFibElement * pFibObject, bool bAbsolute ){
 
 
 /**
- * This function tests the moveLimbElement() method for an given Fib object.
+ * This function tests the moveLimbElement() method for a given Fib object.
  * It trys to move a limbelement in direction lower.
  * ATTENTION: The random number generator should to be initialisized with srand()
  *
@@ -15932,13 +16351,13 @@ int testMoveLimbElementUpOnObject( cFibElement * pFibObject, bool bAbsolute ){
  * 	- cFibSet
  * 	- cFibMatrix
  *
- * @param fibObject a pointer to the Fib object to test
+ * @param pFibObject a pointer to the Fib object to test
  * @param bAbsolute the bAbsolute value for moveLimbElement()
  * @return the number of erros occured in the test
  */
 int testMoveLimbElementDownOnObject( cFibElement * pFibObject, bool bAbsolute ){
 
-	int iReturn = 0;//returnvalue of the test; the number of occured Errors
+	int iReturn = 0;//return value of the test; the number of occured errors
 	
 	if ( (pFibObject == NULL) || (pFibObject->getType() != 'r' ) ){
 		cerr<<"Error: No Fib object to check ."<<endl;
@@ -16104,7 +16523,7 @@ int testMoveLimbElementDownOnObject( cFibElement * pFibObject, bool bAbsolute ){
 			
 			pChoosenMatrixElement->getArea( 1 )->setVariable( 1, pVariableMarker );
 		}break;
-		//TODO more limbelements
+		//TODO more limb elements
 	}
 	
 	//choose howfar to move the Fib element
@@ -16133,7 +16552,7 @@ int testMoveLimbElementDownOnObject( cFibElement * pFibObject, bool bAbsolute ){
 		(bAbsolute?"true":"false") <<") from the "<< pCallingFibElement->getNumberOfElement() <<
 		" Fib element with the type "<<
 		pCallingFibElement->getType() <<" in the Fib object,"<<
-		"to move the "<< uiNumberOfToMoveElement <<"'th Fib element. "<<endl;
+		"to move the "<< uiNumberOfToMoveElement <<"'th Fib element."<<endl;
 	
 	const intFib iElementsMovedOver = pCallingFibElement->moveLimbElement(
 		cType, uiElementPoint, iHowfar, bAbsolute );
@@ -16344,7 +16763,7 @@ int testMoveLimbElementDownOnObject( cFibElement * pFibObject, bool bAbsolute ){
 		cerr<<"Error: The number of list elements "<<
 			pFibObject->getNumberOfElements( 'l' ) <<
 			" isn't correct ("<< uiNumberOfListElements<<
-			") in the created Fib object. "<<endl;
+			") in the created Fib object."<<endl;
 		iReturn++;
 	}
 	if ( uiNumberOfPropertyElementsInResult !=
@@ -16352,7 +16771,7 @@ int testMoveLimbElementDownOnObject( cFibElement * pFibObject, bool bAbsolute ){
 		cerr<<"Error: The number of property elements "<<
 			pFibObject->getNumberOfElements( 'y' ) <<
 			" isn't correct ("<< uiNumberOfPropertyElementsInResult<<
-			") in the created Fib object. "<<endl;
+			") in the created Fib object."<<endl;
 		iReturn++;
 	}
 	if ( uiNumberOfAreaElementsInResult !=
@@ -16360,7 +16779,7 @@ int testMoveLimbElementDownOnObject( cFibElement * pFibObject, bool bAbsolute ){
 		cerr<<"Error: The number of area elements "<<
 			pFibObject->getNumberOfElements( 'a' ) <<
 			" isn't correct ("<< uiNumberOfAreaElementsInResult<<
-			") in the created Fib object. "<<endl;
+			") in the created Fib object."<<endl;
 		iReturn++;
 	}
 	if ( uiNumberOfFunctionElementsInResult !=
@@ -16368,7 +16787,7 @@ int testMoveLimbElementDownOnObject( cFibElement * pFibObject, bool bAbsolute ){
 		cerr<<"Error: The number of function elements "<<
 			pFibObject->getNumberOfElements( 'f' ) <<
 			" isn't correct ("<< uiNumberOfFunctionElementsInResult<<
-			") in the created Fib object. "<<endl;
+			") in the created Fib object."<<endl;
 		iReturn++;
 	}
 	if ( uiNumberOfIfElements !=
@@ -16376,7 +16795,7 @@ int testMoveLimbElementDownOnObject( cFibElement * pFibObject, bool bAbsolute ){
 		cerr<<"Error: The number of if-elements "<<
 			pFibObject->getNumberOfElements( 'i' ) <<
 			" isn't correct ("<< uiNumberOfIfElements<<
-			") in the created Fib object. "<<endl;
+			") in the created Fib object."<<endl;
 		iReturn++;
 	}
 	if ( uiNumberOfCommentElementsInResult !=
@@ -16384,7 +16803,7 @@ int testMoveLimbElementDownOnObject( cFibElement * pFibObject, bool bAbsolute ){
 		cerr<<"Error: The number of comment elements "<<
 			pFibObject->getNumberOfElements( 'c' ) <<
 			" isn't correct ("<< uiNumberOfCommentElementsInResult<<
-			") in the created Fib object. "<<endl;
+			") in the created Fib object."<<endl;
 		iReturn++;
 	}
 	if ( uiNumberOfExtObjectElements !=
@@ -16392,7 +16811,7 @@ int testMoveLimbElementDownOnObject( cFibElement * pFibObject, bool bAbsolute ){
 		cerr<<"Error: The number of external object elements "<<
 			pFibObject->getNumberOfElements( 'o' ) <<
 			" isn't correct ("<< uiNumberOfExtObjectElements<<
-			") in the created Fib object. "<<endl;
+			") in the created Fib object."<<endl;
 		iReturn++;
 	}
 	if ( uiNumberOfExtSubobjectElements !=
@@ -16400,7 +16819,7 @@ int testMoveLimbElementDownOnObject( cFibElement * pFibObject, bool bAbsolute ){
 		cerr<<"Error: The number of external subobject elements "<<
 			pFibObject->getNumberOfElements( 's' ) <<
 			" isn't correct ("<< uiNumberOfExtSubobjectElements<<
-			") in the created Fib object. "<<endl;
+			") in the created Fib object."<<endl;
 		iReturn++;
 	}
 	if ( uiNumberOfSetElementsInResult !=
@@ -16408,7 +16827,7 @@ int testMoveLimbElementDownOnObject( cFibElement * pFibObject, bool bAbsolute ){
 		cerr<<"Error: The number of set elements "<<
 			pFibObject->getNumberOfElements( 'v' ) <<
 			" isn't correct ("<< uiNumberOfSetElementsInResult<<
-			") in the created Fib object. "<<endl;
+			") in the created Fib object."<<endl;
 		iReturn++;
 	}
 	if ( uiNumberOfMatrixElementsInResult !=
@@ -16416,7 +16835,7 @@ int testMoveLimbElementDownOnObject( cFibElement * pFibObject, bool bAbsolute ){
 		cerr<<"Error: The number of matrix elements "<<
 			pFibObject->getNumberOfElements( 'm' ) <<
 			" isn't correct ("<< uiNumberOfMatrixElementsInResult<<
-			") in the created Fib object. "<<endl;
+			") in the created Fib object."<<endl;
 		iReturn++;
 	}
 	
@@ -16432,7 +16851,7 @@ int testMoveLimbElementDownOnObject( cFibElement * pFibObject, bool bAbsolute ){
 
 
 /**
- * This function tests the clone() method for an given Fib object.
+ * This function tests the clone() method for a given Fib object.
  * ATTENTION: The random number generator should to be initialisized with srand()
  *
  * methods tested:
@@ -16443,12 +16862,11 @@ int testMoveLimbElementDownOnObject( cFibElement * pFibObject, bool bAbsolute ){
  * @param pFibObject1 a pointer to the first Fib object to test
  * @param pFibObject2 a pointer to the second Fib object to test,
  * 	which is equal to pFibObject1
- * @param bDeleteOld the bDeleteOld for the removeObject() method
  * @return the number of erros occured in the test
  */
 int testCloneOnObject( cFibElement * pFibObject1, cFibElement * pFibObject2 ){
 
-	int iReturn = 0;//returnvalue of the test; the number of occured Errors
+	int iReturn = 0;//return value of the test; the number of occured errors
 	
 	if ( (pFibObject1 == NULL) || (pFibObject2 == NULL) ){
 		cerr<<"Error: No Fib objects to check ."<<endl;
@@ -16473,7 +16891,7 @@ int testCloneOnObject( cFibElement * pFibObject1, cFibElement * pFibObject2 ){
 	
 	cout<<"Calling clone() from the "<< uiNumberOfAllFibElements <<
 		" Fib element with the type "<<
-		pCallingFibElement->getType() <<" in the Fib object. "<<endl;
+		pCallingFibElement->getType() <<" in the Fib object."<<endl;
 	
 	cFibElement * pFibObjectClone = pCallingFibElement->clone();
 	
@@ -16520,12 +16938,12 @@ int testCloneOnObject( cFibElement * pFibObject1, cFibElement * pFibObject2 ){
  */
 int testNotConnectedFibElement( const cFibElement &fibObject1 ){
 	
-	int iReturn=0;//returnvalue of the test; the number of occured Errors
+	int iReturn=0;//return value of the test; the number of occured errors
 	
 	//check the getNextFibElement() methode from cPoint
 	if ( const_cast<cFibElement*>(&fibObject1)->getNumberOfElements() == 1 ){
 	
-		cout<<"The Fib object includes just one Fib element. "<<endl;
+		cout<<"The Fib object includes just one Fib element."<<endl;
 	}else{
 		cerr<<"Error: The Fib object includes just not one Fib element, but "<<
 			const_cast<cFibElement*>(&fibObject1)->getNumberOfElements() <<" ."<<endl;
@@ -16535,7 +16953,7 @@ int testNotConnectedFibElement( const cFibElement &fibObject1 ){
 	//check the getNextFibElement() methode from cPoint
 	if ( const_cast<cFibElement*>(&fibObject1)->getNextFibElement() == NULL ){
 	
-		cout<<"The next/ main Fib element pointer for the Fib elements is correctly NULL. "<<endl;
+		cout<<"The next/ main Fib element pointer for the Fib elements is correctly NULL."<<endl;
 	}else{
 		cerr<<"Error: The next/ main Fib element pointer for the Fib elements is not NULL."<<endl;
 		iReturn++;
@@ -16543,7 +16961,7 @@ int testNotConnectedFibElement( const cFibElement &fibObject1 ){
 	//check the getFibElement() methode from cPoint
 	if ( const_cast<cFibElement*>(&fibObject1)->getFibElement( -1 ) == NULL ){
 	
-		cout<<"The previous Fib element pointer for the Fib elements is correctly NULL. "<<endl;
+		cout<<"The previous Fib element pointer for the Fib elements is correctly NULL."<<endl;
 	}else{
 		cerr<<"Error: The previous Fib element pointer for the Fib elements is not NULL."<<endl;
 		iReturn++;
@@ -16552,7 +16970,7 @@ int testNotConnectedFibElement( const cFibElement &fibObject1 ){
 	//check the getSuperiorFibElement() methode from cPoint
 	if ( const_cast<cFibElement*>(&fibObject1)->getSuperiorFibElement() == NULL ){
 	
-		cout<<"The superior Fib element pointer for the Fib elements is correctly NULL. "<<endl;
+		cout<<"The superior Fib element pointer for the Fib elements is correctly NULL."<<endl;
 	}else{
 		cerr<<"Error: The superior Fib element pointer for the Fib elements is not NULL."<<endl;
 		iReturn++;
@@ -16563,7 +16981,7 @@ int testNotConnectedFibElement( const cFibElement &fibObject1 ){
 
 
 /**
- * This function tests the copyElement() method for an given Fib object.
+ * This function tests the copyElement() method for a given Fib object.
  * ATTENTION: The random number generator should to be initialisized with srand()
  *
  * methods tested:
@@ -16583,13 +17001,13 @@ int testNotConnectedFibElement( const cFibElement &fibObject1 ){
  * 	- cFibSet
  * 	- cFibMatrix
  *
- * @param fibObject a pointer to the Fib object to test
+ * @param pFibObject a pointer to the Fib object to test
  * @param bAbsolute the bAbsolute value for moveLimbElement()
  * @return the number of erros occured in the test
  */
 int testCopyElementOnObject( cFibElement * pFibObject, bool bAbsolute ){
 
-	int iReturn = 0;//returnvalue of the test; the number of occured Errors
+	int iReturn = 0;//return value of the test; the number of occured errors
 	
 	if ( (pFibObject == NULL) || (pFibObject->getType() != 'r' ) ){
 		cerr<<"Error: No Fib object to check ."<<endl;
@@ -16747,7 +17165,7 @@ int testCopyElementOnObject( cFibElement * pFibObject, bool bAbsolute ){
 
 
 /**
- * This function tests the copy() method for an given Fib object.
+ * This function tests the copy() method for a given Fib object.
  * ATTENTION: The random number generator should to be initialisized with srand()
  *
  * methods tested:
@@ -16767,13 +17185,12 @@ int testCopyElementOnObject( cFibElement * pFibObject, bool bAbsolute ){
  * 	- cFibSet
  * 	- cFibMatrix
  *
- * @param fibObject a pointer to the Fib object to test
- * @param bAbsolute the bAbsolute value for moveLimbElement()
+ * @param pFibObject a pointer to the Fib object to test
  * @return the number of erros occured in the test
  */
 int testCopyOnObject( cFibElement * pFibObject ){
 
-	int iReturn = 0;//returnvalue of the test; the number of occured Errors
+	int iReturn = 0;//return value of the test; the number of occured errors
 	
 	if ( pFibObject == NULL ){
 		cerr<<"Error: No Fib object to check ."<<endl;
@@ -16819,7 +17236,7 @@ int testCopyOnObject( cFibElement * pFibObject ){
 	cout<<"Calling copy( "<< uiObjectPoint <<" ) from the "<<
 		pCallingFibElement->getNumberOfElement()<<"'th Fib element "<<
 		"(which is of type "<< pCallingFibElement->getType() <<"), "<<
-		"to copy the partobject which is defined with the "<<
+		"to copy the part object which is defined with the "<<
 		uiNumberOfDefiningElement <<"'th Fib element of type ("<<
 		((pDefiningFibElement != NULL) ? pDefiningFibElement->getType() : '_')<<") . "<< endl;
 
@@ -17035,9 +17452,9 @@ int testCopyOnObject( cFibElement * pFibObject ){
 							cerr<<"Error: The external object elements have not the same input variables."<<endl;
 							cerr<<" number of copy external object element: "<< pActualElementCopy->getNumberOfElement() <<
 								"; number of original external object element: "<<pActualElementOriginal->getNumberOfElement()<<endl;
-							cerr<<"input values of copy external object element: "<<endl;
+							cerr<<"input values of copy external object element:"<<endl;
 							pActualExtObjCopy->getInputVector()->storeXml( cerr );
-							cerr<<"input values of original external object element: "<<endl;
+							cerr<<"input values of original external object element:"<<endl;
 							pActualExtObjOriginal->getInputVector()->storeXml( cerr );
 							iReturn++;
 						}
@@ -17139,7 +17556,7 @@ int testCopyOnObject( cFibElement * pFibObject ){
 		}
 	}
 	
-	//check the partobject under the defining elements
+	//check the part object under the defining elements
 	if ( pDefiningInCopy ){
 		//compare the Fib objects without the links to external objects
 		if ( ! pDefiningInCopy->equal( *pDefiningFibElement, false ) ){
@@ -17167,13 +17584,6 @@ int testCopyOnObject( cFibElement * pFibObject ){
 				cerr<<"Error: Storing the data of the generated Fib object to the file \""<< szFileNameBuffer <<"\" failed."<<endl;
 				iReturn++;
 			}
-			
-			//TODO weg for ddd
-			pDefiningInCopy->equal( *pDefiningFibElement, false );
-			pDefiningInCopy->equal( *pDefiningFibElement, false );
-			pDefiningInCopy->equal( *pDefiningFibElement, false );
-			pDefiningInCopy->equal( *pDefiningFibElement, false );
-			
 		}
 	}
 	
@@ -17184,9 +17594,502 @@ int testCopyOnObject( cFibElement * pFibObject ){
 
 
 
+/**
+ * This function tests the assignValues() methods for a given Fib object.
+ * ATTENTION: The random number generator should to be initialisized with srand()
+ *
+ * methods tested:
+ * 	- bool assignValues( const cFibElement & fibElement );
+ *
+ * Fib elements tested:
+ * 	- cRoot
+ * 	- cList
+ * 	- cPoint
+ * 	- cProperty
+ * 	- cArea
+ * 	- cFunction
+ * 	- cIf
+ * 	- cComment
+ * 	- cExtObject
+ * 	- cExtSubobject
+ * 	- cFibSet
+ * 	- cFibMatrix
+ *
+ * @param pFibObject a pointer to the Fib object to test
+ * @return the number of erros occured in the test
+ */
+int testAssignValues( cFibElement * pFibObject ){
 
+	int iReturn = 0;//return value of the test; the number of occured errors
+	
+	if ( pFibObject == NULL ){
+		cerr<<"Error: No Fib object to check ."<<endl;
+		iReturn++;
+		return iReturn;
+	}
+	//evalue the count values of the given Fib object
+	const unsigned int uiNumberOfAllFibElements =
+		pFibObject->getNumberOfElements();
+	const unsigned int uiNumberOfRootElements =
+		pFibObject->getNumberOfElements( 'r' );
+	const unsigned int uiNumberOfPointElements =
+		pFibObject->getNumberOfElements( 'p' );
+	const unsigned int uiNumberOfListElements =
+		pFibObject->getNumberOfElements( 'l' );
+	const unsigned int uiNumberOfPropertyElements =
+		pFibObject->getNumberOfElements( 'y' );
+	const unsigned int uiNumberOfAreaElements =
+		pFibObject->getNumberOfElements( 'a' );
+	const unsigned int uiNumberOfFunctionElements =
+		pFibObject->getNumberOfElements( 'f' );
+	const unsigned int uiNumberOfIfElements =
+		pFibObject->getNumberOfElements( 'i' );
+	const unsigned int uiNumberOfCommentElements =
+		pFibObject->getNumberOfElements( 'c' );
+	const unsigned int uiNumberOfExtObjectElements =
+		pFibObject->getNumberOfElements( 'o' );
+	const unsigned int uiNumberOfExtSubobjectElements =
+		pFibObject->getNumberOfElements( 's' );
+	const unsigned int uiNumberOfSetElements =
+		pFibObject->getNumberOfElements( 'v' );
+	const unsigned int uiNumberOfMatrixElements =
+		pFibObject->getNumberOfElements( 'm' );
 
-
+	
+	//choos random Fib element to assign
+	char cType;
+	unsigned int uiNumberOfElementsOfType = 0;
+	unsignedIntFib uiElementPoint = 0;
+	
+	while ( uiNumberOfElementsOfType == 0 ){
+		cType = choosRandomType();
+		switch ( cType ){
+			case 'u':uiNumberOfElementsOfType = uiNumberOfAllFibElements;
+			break;
+			case 'r':uiNumberOfElementsOfType = uiNumberOfRootElements;
+			break;
+			case 'p':uiNumberOfElementsOfType = uiNumberOfPointElements;
+			break;
+			case 'l':uiNumberOfElementsOfType = uiNumberOfListElements;
+			break;
+			case 'y':uiNumberOfElementsOfType = uiNumberOfPropertyElements;
+			break;
+			case 'a':uiNumberOfElementsOfType = uiNumberOfAreaElements;
+			break;
+			case 'f':uiNumberOfElementsOfType = uiNumberOfFunctionElements;
+			break;
+			case 'i':uiNumberOfElementsOfType = uiNumberOfIfElements;
+			break;
+			case 'c':uiNumberOfElementsOfType = uiNumberOfCommentElements;
+			break;
+			case 'o':uiNumberOfElementsOfType = uiNumberOfExtObjectElements;
+			break;
+			case 's':uiNumberOfElementsOfType = uiNumberOfExtSubobjectElements;
+			break;
+			case 'v':uiNumberOfElementsOfType = uiNumberOfSetElements;
+			break;
+			case 'm':uiNumberOfElementsOfType = uiNumberOfMatrixElements;
+			break;
+		}
+	}//end while choose element
+	uiElementPoint = 1 + rand() % uiNumberOfElementsOfType;
+	
+	cFibElement * pToAssignFibElement =
+		(const_cast<cFibElement*>(pFibObject))->
+			getFibElement( cType, uiElementPoint );
+	
+	if ( pToAssignFibElement == NULL ){
+		cerr<<"Error: Could not choose to assign from Fib element."<<endl;
+		iReturn++;
+		return iReturn;
+	}
+	const unsigned int uiNumberOfToAssignElement =
+		pToAssignFibElement->getNumberOfElement();
+	const char cTypeToAssign = pToAssignFibElement->getType();
+	
+	uiNumberOfElementsOfType = 0;
+	while ( uiNumberOfElementsOfType == 0 ){
+		
+		if ( ( rand() % 3 ) != 0 ){
+			//choos random Fib element to assign to
+			cType = choosRandomType();
+		}//else choose Fib element of the same type
+		switch ( cType ){
+			case 'u':uiNumberOfElementsOfType = uiNumberOfAllFibElements;
+			break;
+			case 'r':uiNumberOfElementsOfType = uiNumberOfRootElements;
+			break;
+			case 'p':uiNumberOfElementsOfType = uiNumberOfPointElements;
+			break;
+			case 'l':uiNumberOfElementsOfType = uiNumberOfListElements;
+			break;
+			case 'y':uiNumberOfElementsOfType = uiNumberOfPropertyElements;
+			break;
+			case 'a':uiNumberOfElementsOfType = uiNumberOfAreaElements;
+			break;
+			case 'f':uiNumberOfElementsOfType = uiNumberOfFunctionElements;
+			break;
+			case 'i':uiNumberOfElementsOfType = uiNumberOfIfElements;
+			break;
+			case 'c':uiNumberOfElementsOfType = uiNumberOfCommentElements;
+			break;
+			case 'o':uiNumberOfElementsOfType = uiNumberOfExtObjectElements;
+			break;
+			case 's':uiNumberOfElementsOfType = uiNumberOfExtSubobjectElements;
+			break;
+			case 'v':uiNumberOfElementsOfType = uiNumberOfSetElements;
+			break;
+			case 'm':uiNumberOfElementsOfType = uiNumberOfMatrixElements;
+			break;
+		}
+	}//end while choose element
+	uiElementPoint = 1 + rand() % uiNumberOfElementsOfType;
+	
+	cFibElement * pToAssignToFibElement =
+		(const_cast<cFibElement*>(pFibObject))->
+			getFibElement( cType, uiElementPoint );
+	if ( pToAssignToFibElement == NULL ){
+		cerr<<"Error: Could not choose to assign to Fib element."<<endl;
+		iReturn++;
+		return iReturn;
+	}
+	
+	const unsigned int uiNumberOfToAssignToElement =
+		pToAssignToFibElement->getNumberOfElement();
+	const char cTypeToAssignTo = pToAssignToFibElement->getType();
+	
+	
+	//evalue if the element values can be assigned
+	bool bValuesCanBeAssigned = true;
+	//check if Fib elements of same type
+	if ( cTypeToAssign != cTypeToAssignTo ){
+		//Fib elements not of same type -> can not assign values
+		bValuesCanBeAssigned = false;
+	}
+	if ( bValuesCanBeAssigned ){
+		/*check if all used variables in the to assign from Fib element
+		 have equal defined variables above the to assign to Fib element*/
+		set<cFibVariable*> setUsedVariablesToAssign =
+			pToAssignFibElement->getUsedVariables( ED_POSITION );
+		
+		list<cFibVariable*> liDefinedVariablesAboveToAssignTo =
+			pToAssignToFibElement->getDefinedVariables( ED_HIGHER );
+		for ( list<cFibVariable*>::iterator
+				itrDefVariable = liDefinedVariablesAboveToAssignTo.begin();
+				itrDefVariable != liDefinedVariablesAboveToAssignTo.end();
+				itrDefVariable++ ){
+			
+			for ( set<cFibVariable*>::iterator
+					itrUsedVariable = setUsedVariablesToAssign.begin();
+					itrUsedVariable != setUsedVariablesToAssign.end();
+					itrUsedVariable++ ){
+				if ( (*itrDefVariable)->equal( **itrUsedVariable ) ){
+					//equal variable defined above
+					setUsedVariablesToAssign.erase( itrUsedVariable );
+					break;//check next defined variable
+				}
+			}//for all used variables
+		}//end for all defined variables
+		if ( ! setUsedVariablesToAssign.empty() ){
+			/*some variables used in the to assign Fib element have not
+			equal defined above the to assign to Fib element*/
+			bValuesCanBeAssigned = false;
+		}
+	}
+	//if not a list element -> check if number of subobjects is the same
+	if ( bValuesCanBeAssigned && ( cTypeToAssign != 'l' ) ){
+		
+		if ( pToAssignFibElement->getNumberOfSubobjects() !=
+				pToAssignToFibElement->getNumberOfSubobjects() ){
+			//can't assign values
+			bValuesCanBeAssigned = false;
+		}
+	}
+	if ( bValuesCanBeAssigned ){
+		//check if a defined variable should be removed which is needed below
+		if ( cTypeToAssignTo != 'o' ){
+			//if not an external object element
+			const list<cFibVariable*> liDefVarsToAssign =
+				pToAssignFibElement->getDefinedVariables( ED_POSITION );
+			const list<cFibVariable*> liDefVarsToAssignTo =
+				pToAssignToFibElement->getDefinedVariables( ED_POSITION );
+			if ( liDefVarsToAssign.size() < liDefVarsToAssignTo.size() ){
+				//check if the to much defined variables can be deleted
+				//go to first to delete variable
+				list<cFibVariable*>::const_iterator
+					itrDefVarToAssignTo = liDefVarsToAssignTo.begin();
+				for ( list<cFibVariable*>::const_iterator
+						itrDefVarToAssign = liDefVarsToAssign.begin();
+						itrDefVarToAssign != liDefVarsToAssign.end();
+						itrDefVarToAssign++, itrDefVarToAssignTo++ ){
+					//nothing to do
+				}//itrDefVarToAssignTo is the first defined variable to delete
+				for ( ; itrDefVarToAssignTo != liDefVarsToAssignTo.end();
+						itrDefVarToAssignTo++ ){
+				
+					if ( 0 < (*itrDefVarToAssignTo)->getNumberOfUsingElements() ){
+						/*defined variable is used below
+						-> defined variable can not be deleted
+						-> values can't be assigned*/
+						bValuesCanBeAssigned = false;
+						break;
+					}
+				}
+			}
+		}else{//if an external object element
+			//for every subobject: check if the to much defined variables can be deleted
+			cExtObject * pToAssignExtObject =
+				((cExtObject*)pToAssignFibElement);
+			cExtObject * pToAssignToExtObject =
+				((cExtObject*)pToAssignToFibElement);
+			const unsignedIntFib uiNumberOfSubobjects =
+				pToAssignToExtObject->getNumberOfSubobjects();
+			
+			for ( unsignedIntFib uiActualSubobject = 1;
+					uiActualSubobject <= uiNumberOfSubobjects; uiActualSubobject++ ){
+				
+				const vector<cFibVariable*> vecDefVarsToAssign =
+					pToAssignExtObject->getOutputVariables( uiActualSubobject );
+				const vector<cFibVariable*> vecDefVarsToAssignTo =
+					pToAssignToExtObject->getOutputVariables( uiActualSubobject );
+				if ( vecDefVarsToAssign.size() < vecDefVarsToAssignTo.size() ){
+					//check if the to much defined variables can be deleted
+					//go to first to delete variable
+					vector<cFibVariable*>::const_iterator
+						itrDefVarToAssignTo = vecDefVarsToAssignTo.begin();
+					for ( vector<cFibVariable*>::const_iterator
+							itrDefVarToAssign = vecDefVarsToAssign.begin();
+							itrDefVarToAssign != vecDefVarsToAssign.end();
+							itrDefVarToAssign++, itrDefVarToAssignTo++ ){
+						//nothing to do
+					}//itrDefVarToAssignTo is the first defined variable to delete
+					for ( ; itrDefVarToAssignTo != vecDefVarsToAssignTo.end();
+							itrDefVarToAssignTo++ ){
+					
+						if ( 0 < (*itrDefVarToAssignTo)->getNumberOfUsingElements() ){
+							/*defined variable is used below
+							-> defined variable can not be deleted
+							-> values can't be assigned*/
+							bValuesCanBeAssigned = false;
+							break;
+						}
+					}
+				}
+			}//end for all subobjects
+		}//end if not external subobject
+	}//end check if a variable should be removed which is needed above
+	
+	//copy original Fib object, so it can be used to check the result
+	cFibElement * pFibObjectCopy = pFibObject->clone();
+	
+	cFibElement * pToAssignToFibElementCopy =
+		pFibObjectCopy->getFibElement( uiNumberOfToAssignToElement );
+	
+	//try to assign the element values
+	cout<<"Calling assignValues() from the "<<uiNumberOfToAssignToElement<<
+		" Fib element of type "<<cTypeToAssignTo<<" to assign the values of the "<<
+			uiNumberOfToAssignToElement<<" Fib element of type "<<cTypeToAssignTo<<
+			" (to assign the values should be "<<
+			( bValuesCanBeAssigned ? "possible)" : "not possible)" )<<endl;
+	
+	const bool bAssignResult = pToAssignToFibElement->assignValues( *pToAssignFibElement );
+	cout<<"   returned "<<(bAssignResult?"true":"false")<<endl;
+	
+	if ( bAssignResult != bValuesCanBeAssigned ){
+		cerr<<"Error: assignValues() returned "<<( bAssignResult ? "true" : "false")<<
+			", but should return "<<( bValuesCanBeAssigned ? "true" : "false")<<" ."<<endl;
+	}
+	
+	
+	//check the assigned to Fib element is equal to the assigned from Fib element
+	cout<<"Checking assigned Fib element:"<<endl;
+	if ( bAssignResult ){
+		if( ! pToAssignFibElement->equalElement( *pToAssignToFibElement, false ) ){
+			cerr<<"Error: assignValues() returned true, but the assigned to "<<
+				"and assigned from Fib element are not equal."<<endl;
+			iReturn++;
+		}
+	}else{//assignValues() returned false
+		if( pToAssignFibElement->equalElement( *pToAssignToFibElement, false ) ){
+			cerr<<"Error: assignValues() returned false, but the assigned to "<<
+				"and assigned from Fib element are equal."<<endl;
+			iReturn++;
+		}
+		if( ! pToAssignToFibElement->equalElement( *pToAssignToFibElementCopy, false ) ){
+			cerr<<"Error: assignValues() returned false, but the assigned to "<<
+				"Fib element was changed."<<endl;
+			iReturn++;
+		}
+	}
+	
+	//check if the Fib object hasn't changed except for the assigned to Fib element
+	/*adapt above assigned to Fib element, because variables values could be changed
+	 -> replace all used variables above assigned Fib element with dummy
+	 variable (in both changed and copy, so the values set to it dosn't
+	 matter) and check elements with equalElement() */
+	cFibVariable varDummy( NULL );
+	if ( bAssignResult &&
+			( 0 < pToAssignToFibElement->getNumberOfSubobjects() ) ){
+		/*if values where assigned, replace all used variables above assigned
+		 *Fib element (in both changed and copy) with dummy variable*/
+		
+		cFibElement * pToAssignToFibElementNext =
+			pToAssignToFibElement->getNextFibElement();
+		set<cFibVariable*> setUsedVariables =
+			pToAssignToFibElementNext->getUsedVariables( ED_BELOW_EQUAL );
+		for ( set<cFibVariable*>::iterator
+				itrUsedVariable = setUsedVariables.begin();
+				itrUsedVariable != setUsedVariables.end(); itrUsedVariable++ ){
+			//replace used variable with dummy variable
+			pToAssignToFibElementNext->replaceVariable( *itrUsedVariable, &varDummy );
+		}
+		
+		cFibElement * pToAssignToFibElementCopyNext =
+			pToAssignToFibElementCopy->getNextFibElement();
+		setUsedVariables =
+			pToAssignToFibElementCopyNext->getUsedVariables( ED_BELOW_EQUAL );
+		for ( set<cFibVariable*>::iterator
+				itrUsedVariable = setUsedVariables.begin();
+				itrUsedVariable != setUsedVariables.end(); itrUsedVariable++ ){
+			//replace used variable with dummy variable
+			pToAssignToFibElementCopyNext->replaceVariable( *itrUsedVariable, &varDummy );
+		}
+	}
+	//compare all Fib elements except the Fib element to which the values where assigned
+	cFibElement * pActualElement = pFibObject;
+	cFibElement * pActualElementCopy = pFibObjectCopy;
+	while ( ( pActualElement != NULL ) && ( pActualElementCopy != NULL ) ){
+		if ( bAssignResult && ( pActualElement == pToAssignToFibElement ) ){
+			if ( cTypeToAssignTo != 'r' ){
+				//skip to assign to Fib element
+				pActualElement = pActualElement->getNextFibElement();
+				pActualElementCopy = pActualElementCopy->getNextFibElement();
+			}else{/*to assign to Fib element is root element
+				 *-> skip all its subroots (because assignValue()
+				 * maybe changed the order of the sub roots)*/
+				const unsignedIntFib uiFibElementsToSkip =
+					pToAssignToFibElement->getNumberOfElement() + 1;
+				pActualElement = pToAssignToFibElement->getFibElement(
+					uiFibElementsToSkip );
+				pActualElementCopy = pToAssignToFibElementCopy->getFibElement(
+					uiFibElementsToSkip );
+			}
+			continue;
+		}
+		if ( ! pActualElement->equalElement( *pActualElementCopy, false ) ){
+			cerr<<"Error: The "<<pActualElement->getNumberOfElement()<<
+				" Fib element (of type "<<pActualElement->getType()<<
+				") is not equal to its copy."<<endl;
+			iReturn++;
+		}
+		//check next Fib element
+		pActualElement = pActualElement->getNextFibElement();
+		pActualElementCopy = pActualElementCopy->getNextFibElement();
+	}
+	if ( pActualElement != NULL ){
+		cerr<<"Error: The "<<pActualElement->getNumberOfElement()<<
+			" Fib element (of type "<<pActualElement->getType()<<
+			") is not equal to its copy (which is NULL="<<pActualElementCopy<<")."<<endl;
+		iReturn++;
+	}
+	if ( pActualElementCopy != NULL ){
+		cerr<<"Error: The "<<pActualElementCopy->getNumberOfElement()<<
+			" Fib element (of type "<<pActualElementCopy->getType()<<
+			") is not equal to its original (which is NULL="<<pActualElement<<")."<<endl;
+		iReturn++;
+	}
+	
+	if ( cTypeToAssignTo == 'r' ){
+		/* if to assign to Fib element is root element
+		 * -> check if all sub root objects exists (beware assignValue()
+		 * maybe changed the order of the sub roots)*/
+		list< cFibElement * > liToAssignToSubobjects =
+			pToAssignToFibElement->getSubobjects();
+		list< cFibElement * > liToAssignToCopySubobjects =
+			pToAssignToFibElementCopy->getSubobjects();
+		
+		//check if main Fib objects are equal (equal element)
+		pActualElement = liToAssignToSubobjects.front();
+		pActualElementCopy = liToAssignToCopySubobjects.front();
+		//remove main Fib object
+		liToAssignToSubobjects.pop_front();
+		liToAssignToCopySubobjects.pop_front();
+		cFibElement * pStopAtElement = liToAssignToCopySubobjects.front();
+		cFibElement * pStopAtElementCopy = liToAssignToCopySubobjects.front();
+		
+		while ( ( pActualElement != NULL ) && ( pActualElementCopy != NULL ) &&
+			//stop at the first sub root element
+			( pActualElement != pStopAtElement ) &&
+			( pActualElementCopy != pStopAtElementCopy ) ){
+			
+			if ( ! pActualElement->equalElement( *pActualElementCopy, false ) ){
+				cerr<<"Error: The "<<pActualElement->getNumberOfElement()<<
+					" Fib element (of type "<<pActualElement->getType()<<
+					") is not equal to its copy."<<endl;
+				iReturn++;
+			}
+			//check next Fib element
+			pActualElement = pActualElement->getNextFibElement();
+			pActualElementCopy = pActualElementCopy->getNextFibElement();
+		}
+		if ( ( pActualElementCopy == NULL ) && ( pActualElement != NULL ) ){
+			cerr<<"Error: The "<<pActualElement->getNumberOfElement()<<
+				" Fib element (of type "<<pActualElement->getType()<<
+				") is not equal to its copy (which is NULL="<<pActualElementCopy<<")."<<endl;
+			iReturn++;
+		}
+		if ( ( pActualElement == NULL ) && ( pActualElementCopy != NULL ) ){
+			cerr<<"Error: The "<<pActualElementCopy->getNumberOfElement()<<
+				" Fib element (of type "<<pActualElementCopy->getType()<<
+				") is not equal to its original (which is NULL="<<pActualElement<<")."<<endl;
+			iReturn++;
+		}
+		
+		//check if all subroot objects exists
+		list< cFibElement * >::iterator itrActualSubRootCopy;
+		list< cFibElement * >::iterator itrNextSubRoot;
+		for ( list< cFibElement * >::iterator
+				itrActualSubRoot = liToAssignToSubobjects.begin();
+				itrActualSubRoot != liToAssignToSubobjects.end(); ){
+			//try to find the sub root element in the copy
+			for ( itrActualSubRootCopy = liToAssignToCopySubobjects.begin();
+					itrActualSubRootCopy != liToAssignToCopySubobjects.end();
+					itrActualSubRootCopy++ ){
+				if ( (*itrActualSubRoot)->equal( **itrActualSubRootCopy, false ) ){
+					//equal sub root elements found -> mark it as found (erase it)
+					itrNextSubRoot = itrActualSubRoot;
+					itrNextSubRoot++;
+					liToAssignToSubobjects.erase( itrActualSubRoot );
+					itrActualSubRoot = itrNextSubRoot;
+					liToAssignToCopySubobjects.erase( itrActualSubRootCopy );
+					break;
+				}
+			}
+			if ( itrActualSubRootCopy == liToAssignToSubobjects.end() ){
+				//equal sub root elements not found
+				itrActualSubRoot++;
+			}
+		}
+		if ( ! liToAssignToSubobjects.empty() ){
+			cerr<<"Error: There where subroot objects missing in the "<<
+				"assigned to root element."<<endl;
+			iReturn++;
+		}
+	}//end check if the assigned to Fib element is a root element
+	
+	//check if the assigned from Fib element hasn't changed
+	cFibElement * pToAssignFibElementCopy =
+		pFibObjectCopy->getFibElement( uiNumberOfToAssignElement );
+	if ( ! pToAssignFibElement->equalElement( *pToAssignFibElementCopy, false ) ){
+		cerr<<"Error: The assigned from Fib element has changed."<<endl;
+		iReturn++;
+	}
+	
+	//delete Fib object copy
+	pFibObjectCopy->deleteObject();
+	
+	return iReturn;
+}
 
 
 

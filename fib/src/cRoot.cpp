@@ -69,6 +69,8 @@ History:
 30.12.2012  Oesterholz  DEBUG_EVALUE: debugging evalue will print first
 	optional part entry
 12.05.2013  Oesterholz  getDigits() andling changed (now version for integers)
+30.07.2013  Oesterholz  method assignValues() added;
+	FEATURE_EXT_SUBOBJECT_INPUT_VECTOR as default (not case removed)
 */
 
 
@@ -234,11 +236,7 @@ cRoot::cRoot( const cRoot & rootElement ):
 		optionalPart( rootElement.optionalPart ),
 		domains( rootElement.domains ),
 		valueDomains( rootElement.valueDomains ),
-		pChecksum( NULL )
-#ifndef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-		,liExternSubobjects( rootElement.liExternSubobjects )
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-		{
+		pChecksum( NULL ){
 
 	fibUnderObjects.push_back( NULL );
 	
@@ -312,9 +310,6 @@ cRoot::cRoot( const TiXmlElement * pXmlRootElement, intFib & outStatus,
 	bool bValueDomainsRestored   = false;
 	bool bInputVariablesRestored = false;
 	bool bSubRootObjectsRestored = false;
-#ifndef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	bool bExternUnderObjectsRestored = false;
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	
 	unsignedIntFib uiVariablenCount = 0;
 	//set the defined variables to ther store value
@@ -432,41 +427,6 @@ cRoot::cRoot( const TiXmlElement * pXmlRootElement, intFib & outStatus,
 					}else{//Warning: can't restore two inputvariables
 						outStatus = 2;
 					}
-#ifndef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-				}else if ( szElementType == "output_variables" ){
-					//restore the output variables
-					if ( ! bExternUnderObjectsRestored ){
-						
-						const TiXmlElement * pXmlElementObject = NULL;
-						if ( pXmlElement->FirstChild("object") ){
-							
-							pXmlElementObject = pXmlElement->FirstChild("object")->ToElement();
-						}
-						int iActualObject = 1;
-						for( iActualObject = 1; pXmlElementObject != NULL;
-								pXmlElementObject = pXmlElementObject->NextSiblingElement("object"),
-								iActualObject++ ){
-
-							int iNumberOfObject = 0;
-							const char * szXmlObjectNumber = pXmlElementObject->Attribute( "number", & iNumberOfObject );
-							int iVariableCount  = 0;
-							const char * szXmlVariableCount  = pXmlElementObject->Attribute( "variable_count", & iVariableCount );
-							
-							if ( (szXmlObjectNumber == NULL) || (iNumberOfObject != iActualObject) ){
-								//Warning: no correct externobjectnumber
-								outStatus = 2;
-							}
-							if ( szXmlVariableCount == NULL ){
-								//Warning: no correct de
-								outStatus = 2;
-							}
-							liExternSubobjects.push_back( iVariableCount );
-						}
-						bExternUnderObjectsRestored = true;
-					}else{//Warning: can't restore two extern subobjectlists
-						outStatus = 2;
-					}
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 				}else if ( szElementType == "database_identifiers" ){
 					//restore the identifiers of used database objects
 					
@@ -782,12 +742,6 @@ cRoot::cRoot( cReadBits & iBitStream, intFib & outStatus, cRoot * pNextRoot ):
 	if ( cOptionalInformationBits[0] & 0x10 ){
 		bInputVariablesStored = true;
 	}
-#ifndef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	bool bOutputVariablesStored = false;
-	if ( cOptionalInformationBits[0] & 0x08 ){
-		bOutputVariablesStored = true;
-	}
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	bool bSubRootsStored = false;
 	if ( cOptionalInformationBits[0] & 0x04 ){
 		bSubRootsStored = true;
@@ -883,23 +837,6 @@ cRoot::cRoot( cReadBits & iBitStream, intFib & outStatus, cRoot * pNextRoot ):
 			return;
 		}
 	}
-#ifndef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	unsignedLongFib ulOffsetOutputVariables = 0;
-	if ( bOutputVariablesStored ){
-		//read offset wher the output variables begin
-		uiBitsRead = iBitStream.readBits( ulOffsetOutputVariables, 64 );
-		if ( ! iBitStream.getStream()->good() ){
-			DEBUG_OUT_EL2(<<"Error: stream not good"<<endl);
-			outStatus = -2;
-			return;
-		}
-		if ( uiBitsRead != 64 ){
-			DEBUG_OUT_EL2(<<"Error offset output variables: 64 bits to read, but "<<uiBitsRead<<" bits readed"<<endl);
-			outStatus = -2;
-			return;
-		}
-	}
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	//read offset wher the main -Fib-object begins
 	unsignedLongFib ulOffsetMainFibObject = 0;
 	uiBitsRead = iBitStream.readBits( ulOffsetMainFibObject, 64 );
@@ -1050,7 +987,7 @@ cRoot::cRoot( cReadBits & iBitStream, intFib & outStatus, cRoot * pNextRoot ):
 	}
 	cDomains validDomains = getValidValueDomains();
 	
-	/*create the propertytypelist, with the propertytypes in the order
+	/*create the propertytypelist, with the property types in the order
 	they will be counted when restored;
 	create after the domains are restored and befor a subobject is restored*/
 	createStorePropertyOrder();
@@ -1131,64 +1068,6 @@ cRoot::cRoot( cReadBits & iBitStream, intFib & outStatus, cRoot * pNextRoot ):
 		}
 		liDefinedVariables = getInputVariables();
 	}
-#ifndef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	/*restore output variables*/
-	if ( bOutputVariablesStored ){
-		DEBUG_OUT_L1(<<"Restoring output variables; offset: "<<(iBitStream.getBitReadedCount() - ulRootStartBit)<<endl);
-		iBitStream.readTillNextFullByte();
-		
-		if ( (iBitStream.getBitReadedCount() - ulRootStartBit) !=
-				ulOffsetOutputVariables * 8 ){
-			DEBUG_OUT_L2(<<"Warning: offset of the extern -objects is incorrect "<<endl);
-			DEBUG_OUT_L2(<<"   is: "<<(iBitStream.getBitReadedCount() - ulRootStartBit)<< " should be: "<<ulOffsetOutputVariables * 8<<endl);
-			outStatus = 2;
-		}
-		//read the count of extern objects
-		unsignedLongFib ulCountOfExtObj = 0;
-		uiBitsRead = iBitStream.readBits( ulCountOfExtObj, 64 );
-		if ( ! iBitStream.getStream()->good() ){
-			DEBUG_OUT_EL2(<<"Error: stream not good"<<endl);
-			outStatus = -2;
-			return;
-		}
-		if ( uiBitsRead != 64 ){
-			outStatus = -2;
-			return;
-		}
-		
-		const bool bCountExternObjectsSet =
-			setNumberOfExternSubobjects( ulCountOfExtObj );
-		if ( ! bCountExternObjectsSet ){
-			outStatus = 2;
-		}
-		//read the bits for the counts of the output variables per extern object
-		cDomainNaturalNumberBit domainNaturalNumberBit8( 8 );
-		
-		unsignedIntFib uiBitsPerCountOutVar = domainNaturalNumberBit8.
-			restoreIntegerValue( iBitStream, outStatus );
-		if ( outStatus < 0 ){
-			return;
-		}
-		cDomainNaturalNumberBit domainNatNumOutVar( uiBitsPerCountOutVar );
-
-		//read the counts of the output variables
-		for ( unsignedIntFib uiActualExtObj = 1;
-				uiActualExtObj <= ulCountOfExtObj; uiActualExtObj++ ){
-		
-			//read the count for ther output variables
-			unsignedIntFib uiCountOutVars = domainNatNumOutVar.
-				restoreIntegerValue( iBitStream, outStatus );
-			if ( outStatus < 0 ){
-				return;
-			}
-			const bool bCountOutVarsSet =
-				setNumberOfOutputVariables( uiActualExtObj, uiCountOutVars );
-			if ( ! bCountOutVarsSet ){
-				outStatus = 2;
-			}
-		}
-	}
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	
 	//restore the main -Fib-object
 	iBitStream.readTillNextFullByte();
@@ -1850,7 +1729,7 @@ unsignedLongFib cRoot::getCompressedSize( bool bWriteOptionalPart ) const{
 		const_cast<cDomains*>(&domains)->addDomain( typeVariable, domainVariables );
 	}
 	
-	/*create the propertytypelist, with the propertytypes in the order
+	/*create the propertytypelist, with the property types in the order
 	they will be counted when stored, for propertyelements to evalue ther size*/
 	const_cast<cRoot*>(this)->createStorePropertyOrder();
 	
@@ -1952,41 +1831,6 @@ unsignedLongFib cRoot::getCompressedSize( bool bWriteOptionalPart ) const{
 		ulCompressedSize += ulCompressedInputVariablesSize;
 	}
 	
-#ifndef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	//output variables
-	if ( ! liExternSubobjects.empty() ){
-		//add the bits for the output variables
-		unsignedLongFib ulCompressedOutputVariablesSize = 64;//offset;
-		ulCompressedOutputVariablesSize += 64;//output variables count
-		ulCompressedOutputVariablesSize += 8;//bits for output variable
-
-		//evalue the bits per output variable
-		unsigned int uiBitPerOutputVariable = 0;
-		
-		for ( list< unsignedIntFib >::const_iterator itrActualVariable =
-					liExternSubobjects.begin();
-				itrActualVariable != liExternSubobjects.end();
-				itrActualVariable++ ){
-				
-			if ( uiBitPerOutputVariable <
-					getDigits( *itrActualVariable ) ){
-				
-				uiBitPerOutputVariable =
-					getDigits( *itrActualVariable );
-			}
-				
-		}
-		//add bits for the outputvariable list
-		ulCompressedOutputVariablesSize +=
-			uiBitPerOutputVariable * liExternSubobjects.size();
-
-		//round up to a full byte
-		uiBitPerOutputVariable = roundUpToFullByte( uiBitPerOutputVariable );
-		
-		ulCompressedSize += ulCompressedOutputVariablesSize;
-	}
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-
 	//sum compressed size of main fib object
 	if ( pMainFibObject != NULL ){
 	
@@ -2125,6 +1969,195 @@ cFibElement *cRoot::copyElement( const char cType, const unsignedIntFib
 		return ( pFibElementToCopy->copyElement( 'u', 0 ) );
 	}//else
 	return NULL;
+}
+
+
+
+/**
+ * This method assigns / copies the values from the given Fib element
+ * fibElement to this Fib element. This means, it will copy everything
+ * of the Fib element fibElement except pointers to other Fib elements
+ * (e. g. for subobjects), these will remain the same.
+ * For that both Fib elements have to be of the same type.
+ * Note: The variables used in this Fib element should be equal some
+ * 	variables defined above.
+ * 	@see cFibVariable::equal( const cFibVariable &variable, false )
+ *
+ * @see getType()
+ * @param fibElement the Fib element, from which to assign / copy the values
+ * @return true if the values could be copied from the given Fib element
+ * 	fibElement, else false
+ */
+bool cRoot::assignValues( const cFibElement & fibElement ){
+	
+	if ( fibElement.getType() != getType() ){
+		//both Fib elements not of the same type -> can't assign values
+		return false;
+	}
+	if ( equalElement( fibElement, false ) ){
+		//elements already equal -> don't need to assign anything
+		return true;
+	}
+	const cRoot * pOtherRoot =
+		((const cRoot *)(&fibElement));
+	
+	const list< pair< longFib, cRoot * > > & liOtherSubRoots =
+		pOtherRoot->liSubRootObjects;
+	if ( liSubRootObjects.size() != liOtherSubRoots.size() ){
+		/* not the same number of sub root objects -> can't assign values
+		 * (identifier of sub root objects can't be adapted, because don't
+		 * change sub roots (= don't change subobjects) but adapt identifiers)*/
+		return false;
+	}
+	
+	//try to match used variables of vectors of to copy
+	cVectorChecksum * pOtherVecChecksum =
+		(const_cast<cRoot*>(pOtherRoot))->pChecksum;
+	//get all used variables
+	const set< cFibVariable* > setUsedVariables = ( pOtherVecChecksum != NULL ) ?
+		pOtherVecChecksum->getUsedVariables() : set< cFibVariable* >();
+	
+	/* The list with the variables to replace:
+	 * 	first: the original used variable to replace
+	 * 	second: the new variable to replace the original variable
+	 */
+	list< pair< cFibVariable * ,cFibVariable * > > liVariablesToReplace;
+	
+	if ( ! getVariablesToReplace( setUsedVariables, liVariablesToReplace ) ){
+		//not all variables can be replaced with for this Fib element defined variables
+		return false;
+	}
+	
+	//check if the defined variables for the subobjects can be adopted
+	const list< pair< cFibVariable *, doubleFib > > & liOtherInVars =
+		pOtherRoot->liInputVariables;
+	
+	const unsignedIntFib uiNumberOfVariables = liInputVariables.size();
+	const unsignedIntFib uiNumberOfVariablesOther = liOtherInVars.size();
+	
+	if ( uiNumberOfVariablesOther < uiNumberOfVariables ){
+		//check if to much variables can be removed
+		list< pair< cFibVariable *, doubleFib > >::const_reverse_iterator
+			itrToRemoveDefinedVariable = liInputVariables.rbegin();
+		
+		for ( unsignedIntFib uiNumberOfVariable = uiNumberOfVariablesOther;
+				uiNumberOfVariable < uiNumberOfVariables;
+				uiNumberOfVariable++, itrToRemoveDefinedVariable++ ){
+			
+			if ( itrToRemoveDefinedVariable->first->getNumberOfUsingElements() != 0 ){
+				//variable is used -> can't remove variable -> can't assign values
+				return false;
+			}
+		}//else all to much defined variables can be removed
+		
+	}//else don't need to check number of defined variables
+	//all values can be assigned
+	/* assign the values for:
+	 * - liSubRootObjects (identifiers)
+	 * - multimediaInfo
+	 * - optionalPart
+	 * - domains
+	 * - valueDomains
+	 * - liInputVariables (check if needed as defined variables)
+	 * - setDatabaseIdentifiers
+	 * - pChecksum
+	 */
+	
+	//copy identifier number of subroots
+	list< pair< longFib, cRoot * > > liOldSubRootObjects =
+		liSubRootObjects;
+	liSubRootObjects.clear();
+	list< pair< longFib, cRoot * > >::iterator itrActualSubRoot;
+	bool bSubRootObjectFound;
+	for ( list< pair< longFib, cRoot * > >::const_iterator
+			itrOtherActualSubRoot = liOtherSubRoots.begin();
+			itrOtherActualSubRoot != liOtherSubRoots.end();
+			itrOtherActualSubRoot++ ){
+		//try to find equal sub root object
+		bSubRootObjectFound = false;
+		for ( itrActualSubRoot = liOldSubRootObjects.begin();
+				itrActualSubRoot != liOldSubRootObjects.end();
+				itrActualSubRoot++ ){
+			
+			if ( itrActualSubRoot->second->equal( *(itrOtherActualSubRoot->second) ) ){
+				/*equal sub root object found
+				-> take found subroot object and identifier from sub root object
+				of the other root element*/
+				liSubRootObjects.push_back( pair< longFib, cRoot * >(
+					itrOtherActualSubRoot->first, itrActualSubRoot->second ) );
+				//don't use found sub root object again
+				liOldSubRootObjects.erase( itrActualSubRoot );
+				bSubRootObjectFound = true;
+				break;
+			}
+		}//end for try to find equal sub root object
+		if ( ! bSubRootObjectFound ){
+			/*no equal sub root object found
+			 -> take first old remaining subroot object and identifer from
+			 sub root object of the other root element*/
+			liSubRootObjects.push_back( pair< longFib, cRoot * >(
+				itrOtherActualSubRoot->first, liOldSubRootObjects.front().second ) );
+			//don't use used sub root object again
+			liOldSubRootObjects.pop_front();
+		}
+	}//end for all sub root objects of other root element
+	
+	//adapt defined input variables for subobjects
+	if ( uiNumberOfVariablesOther != uiNumberOfVariables ){
+		//adapt the number of defined variables
+		setNumberOfInputVariables( uiNumberOfVariablesOther );
+	}//else number of input variables is already equal
+	
+	//adapt default values of the input variables
+	list< pair< cFibVariable *, doubleFib > >::const_iterator
+		 itrOtherInputVariable = liOtherInVars.begin();
+	for ( list< pair< cFibVariable *, doubleFib > >::iterator
+			itrInputVariable = liInputVariables.begin();
+			itrInputVariable != liInputVariables.end();
+			itrInputVariable++, itrOtherInputVariable++ ){
+		
+		itrInputVariable->second = itrOtherInputVariable->second;
+	}
+	
+	//assign the multimedia information
+	multimediaInfo.assignValues( pOtherRoot->multimediaInfo );
+	//assign the optional information
+	optionalPart = pOtherRoot->optionalPart;
+
+	//copy domains
+	domains = pOtherRoot->domains;
+	valueDomains = pOtherRoot->valueDomains;
+	//copy used database identifiers
+	setDatabaseIdentifiers = pOtherRoot->setDatabaseIdentifiers;
+	
+	//copy to checksum vector of other external object
+	if ( pChecksum ){
+		//delete old checksum vector
+		delete pChecksum;
+	}
+	if ( pOtherVecChecksum ){
+		//checksum vector in other root element exists -> copy other checksum vector
+		pChecksum = new cVectorChecksum( *pOtherVecChecksum, this );
+		
+		if ( ! liVariablesToReplace.empty() ){
+			//replace variables to replace
+			for ( list< pair< cFibVariable * ,cFibVariable * > >::iterator
+					itrActualVariable = liVariablesToReplace.begin();
+					itrActualVariable != liVariablesToReplace.end(); itrActualVariable++ ){
+				
+				//replace variable in vector
+				if ( ! pChecksum->replaceVariable(
+						itrActualVariable->first, itrActualVariable->second ) ){
+					//Error: should not appen
+					return false;
+				}
+			}//end for all variables to replace
+		}//end if variables to replace
+	}else{//pOtherVecChecksum == NULL
+		pChecksum = NULL;
+	}
+	
+	return true;
 }
 
 
@@ -2324,13 +2357,6 @@ bool cRoot::equalElementInternal( const cFibElement & fibElement,
 			return false;
 		}
 	}
-
-#ifndef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	//compare the extern object numbers of output variables
-	if ( liExternSubobjects != pRootElement->liExternSubobjects ){
-		return false;
-	}
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	
 	return true;
 }
@@ -2541,13 +2567,6 @@ bool cRoot::equalElement( const cFibElement & fibElement ) const{
 			return false;
 		}
 	}
-
-#ifndef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	//compare the extern object numbers of output variables
-	if ( liExternSubobjects != pRootElement->liExternSubobjects ){
-		return false;
-	}
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	
 	return true;
 }
@@ -2749,23 +2768,6 @@ bool cRoot::storeXml( ostream & stream ) const{
 		}
 		stream<<"</input_variables>"<<endl;
 	}
-	
-#ifndef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	//write output variables
-	if ( getNumberOfExternSubobjects() > 0 ){
-	
-		stream<<"<output_variables>"<<endl;
-		for( unsignedIntFib uiNumberOfOutputVariable = 1;
-			uiNumberOfOutputVariable <= getNumberOfExternSubobjects();
-			uiNumberOfOutputVariable++ ){
-		
-			stream<<"<object number=\""<< uiNumberOfOutputVariable <<"\" ";
-			stream<<"variable_count=\""<< getNumberOfOutputVariables(
-				uiNumberOfOutputVariable ) <<"\"/>"<<endl;
-		}
-		stream<<"</output_variables>"<<endl;
-	}
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	
 	//write the main -Fib-object
 	if ( pMainFibObject ){
@@ -3757,12 +3759,7 @@ void cRoot::generateNeededDomains( const bool bAddAllValueDomains ){
 	//extern subobject element
 	list< longFib > liValuesInExtSubobjCountOutVars;
 	/*evalue and correct output variable counts for the subobjects*/
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	map< unsignedLongFib, list< cFibVector * > > mapExtSubobjectOutputVectors;
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	vector< longFib > vecExtSubobjCountOutVars;
-	unsignedLongFib ulMaxSubobjectNumber = 0;
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	
 	//cFibSet
 	map< unsignedIntFib, list< longFib > > mapSetNumberOfDefVar;
@@ -3942,37 +3939,8 @@ void cRoot::generateNeededDomains( const bool bAddAllValueDomains ){
 			
 			const unsignedIntFib uiNumberSubobject =
 				pExtSubobject->getNumberSubobject();
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 			mapExtSubobjectOutputVectors[ uiNumberSubobject ].push_back(
-					pExtSubobject->getOutputVector() );
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-			const unsignedIntFib uiNumberOfOutputVariables =
-				pExtSubobject->getNumberOfOutputVariables();
-			
-			liValuesInExtSubobjCountOutVars.push_back(
-				uiNumberOfOutputVariables );
-			
-			DEBUG_OUT_L3(<<"   number of subobject "<<uiNumberSubobject<<"; number of output variables "<<uiNumberOfOutputVariables<<endl<<flush);
-			if ( ulMaxSubobjectNumber < uiNumberSubobject ){
-				//new maximal / greatest subobject number
-				DEBUG_OUT_L3(<<"   setting new maximal / greatest subobject number"<<endl<<flush);
-				ulMaxSubobjectNumber = uiNumberSubobject;
-			}
-			if ( ( vecExtSubobjCountOutVars.size() < uiNumberSubobject ) &&
-					( uiNumberSubobject < MAX_SUBOBJECTS ) ){
-				
-				vecExtSubobjCountOutVars.resize( uiNumberSubobject, 0 );
-			}//else to much subobjects to set
-			if ( ( 0 < uiNumberSubobject ) &&
-					( uiNumberSubobject <= vecExtSubobjCountOutVars.size() ) ){
-				if ( vecExtSubobjCountOutVars[ uiNumberSubobject - 1 ] < uiNumberOfOutputVariables ){
-					//store number of maximal output variables for the subobject
-					DEBUG_OUT_L4(<<"   setting number of output variables of the subobject "<<uiNumberSubobject<<" to the number "<<uiNumberOfOutputVariables<<endl<<flush);
-					vecExtSubobjCountOutVars[ uiNumberSubobject - 1 ] =
-						uiNumberOfOutputVariables;
-				}//else number of output variables correct
-			}
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
+				pExtSubobject->getOutputVector() );
 		}else if ( cActualType == 'v' ){
 			//set-element cFibSet
 			DEBUG_OUT_L3(<<"cRoot("<<this<<")::generateNeededDomains() found set-element"<<endl<<flush);
@@ -4457,7 +4425,6 @@ void cRoot::generateNeededDomains( const bool bAddAllValueDomains ){
 #endif //FEATURE_GENERATE_NEEDED_DOMAINS
 
 	//generate needed domains for external subobject elements
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	if ( ! mapExtSubobjectOutputVectors.empty() ){
 		//check domains for all external subobject numbers
 		for ( map< unsignedLongFib, list< cFibVector * > >::iterator
@@ -4511,61 +4478,6 @@ void cRoot::generateNeededDomains( const bool bAddAllValueDomains ){
 			}
 		}//end for all subobjects
 	}
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	if ( ! liValuesInExtSubobjCountOutVars.empty() ){
-		//external subobject elements exists
-		//check if values are in existing needed domains
-		DEBUG_OUT_L3(<<"generating domains for external subobject elements"<<endl<<flush);
-		const cTypeExtSubobject typeExtSubobject;
-		cDomainIntegerBasis * pDomainExtSubobject = (cDomainIntegerBasis*)
-			validDomains.getDomainForElement( typeExtSubobject );
-		bool bAddNewDomain = true;
-		if ( pDomainExtSubobject != NULL ){
-			bAddNewDomain = false;
-			for ( list< longFib >::const_iterator
-					itrValue = liValuesInExtSubobjCountOutVars.begin();
-					itrValue != liValuesInExtSubobjCountOutVars.end(); itrValue++ ){
-				
-				if ( ! pDomainExtSubobject->isElement( *itrValue ) ){
-					//number not in existing valid domain -> create a new domain
-					bAddNewDomain = true;
-					break;
-				}
-			}
-		}//else no domain exists yet -> add one
-
-		if ( bAddNewDomain ){
-			//create and add the external subobject domain
-			cDomainIntegerBasis * pDomainExtSubobjectNew =
-				cDomainIntegerBasis::createGoodDomain( liValuesInExtSubobjCountOutVars );
-			
-			getDomains()->addDomain( typeExtSubobject, *pDomainExtSubobjectNew );
-			delete pDomainExtSubobjectNew;
-		}
-		//check external subobject number
-		const unsignedIntFib uiNumberSubobjectCounts =
-			vecExtSubobjCountOutVars.size();
-		if ( getNumberOfExternSubobjects() < uiNumberSubobjectCounts ){
-			/*actual number of external subobjects to low
-			-> set it to the maximal / greates external subobject number*/
-			setNumberOfExternSubobjects( uiNumberSubobjectCounts );
-		}
-		//check number of output variables for the subobjects
-		for ( unsignedIntFib uiNumberOfSubobject = 1;
-				uiNumberOfSubobject <= uiNumberSubobjectCounts;
-				uiNumberOfSubobject++ ){
-			
-			if ( vecExtSubobjCountOutVars[ uiNumberOfSubobject - 1 ] <
-					getNumberOfOutputVariables( uiNumberOfSubobject ) ){
-				/*correct the number of output variables of the subobject to
-				the correct value*/
-				setNumberOfOutputVariables( uiNumberOfSubobject,
-					vecExtSubobjCountOutVars[ uiNumberOfSubobject - 1 ] );
-			}//number of output variables for the subobject correct
-		}
-		DEBUG_OUT_L3(<<"domains for external subobject elements generated"<<endl<<flush);
-	}
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	//set-element
 	if ( ! mapSetNumberOfDefVar.empty() ){
 		//check for all existing domain numbers
@@ -5126,7 +5038,6 @@ bool cRoot::setStandardValueOfInputVariable(
 	return bReturnValue;
 }
 
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 
 
 /**
@@ -5454,404 +5365,6 @@ unsignedIntFib cRoot::generateExternSubobjectsDefinitions(
 	DEBUG_OUT_L2(<<"cRoot::generateExternSubobjectsDefinitions() done"<<endl<<flush);
 	return uiFirstNotCorrectSubobject;
 }
-
-
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-
-
-/**
- * @return the count of extern subobjects this root-object has
- */
-unsignedIntFib cRoot::getNumberOfExternSubobjects() const{
-	return (unsignedIntFib)( liExternSubobjects.size() );
-}
-
-
-/**
- * This method sets the number of the extern subobjects this 
- * root-object has to the given value uiNumberOfExternUnderObjects.
- * It automaticly creates or delets extern subobjects to or from the
- * end of the extern subobjectslist, till uiNumberOfExternUnderObjects
- * subobjects exsists or the operation is not possible.
- * Underobjects wich are still in use/ still exists in the main -fib
- * -object of this root-object can't be deleted.
- * The number of output variables of the created subobjects will be
- * set to 0.
- *
- * @param uiNumberOfExternUnderObjects the number of extern
- * 	subobjects this root-object should have
- * @return true if the number of extern subobjects is set to
- * 	uiNumberOfExternUnderObjects, else false
- */
-bool cRoot::setNumberOfExternSubobjects(
-		unsignedIntFib uiNumberOfExternUnderObjects ){
-	
-	bool bReturn = true;
-	if ( liExternSubobjects.size() < uiNumberOfExternUnderObjects ){
-		
-		if ( MAX_SUBOBJECTS < uiNumberOfExternUnderObjects ){
-			//to much subobjects to set
-			bReturn = false;
-			uiNumberOfExternUnderObjects = MAX_SUBOBJECTS;
-		}
-		while ( liExternSubobjects.size() < uiNumberOfExternUnderObjects ){
-			liExternSubobjects.push_back( (unsignedIntFib)( 0 ) );
-		}
-	}else if ( uiNumberOfExternUnderObjects < liExternSubobjects.size() ){
-		//get biggest subobject number of an used subobject
-		unsignedIntFib uiBiggestSubobjectNumber = 0;
-		if ( pMainFibObject != NULL ){
-			//beware to yust search in the main -Fib-object of this root-object
-			unsignedLongFib uiElementsToCheck =
-				pMainFibObject->getNumberOfElements( 's' );
-			for ( cExtSubobject * pActualSubobject =
-						(cExtSubobject*)(pMainFibObject->getNextFibElement( 's' ));
-					( pActualSubobject != NULL ) && ( 0 < uiElementsToCheck );
-					pActualSubobject = (cExtSubobject*)(pActualSubobject->getNextFibElement( 's' )),
-					uiElementsToCheck-- ){
-				
-				const unsignedIntFib uiActualSubObjectNumber =
-					pActualSubobject->getNumberSubobject();
-				if ( uiBiggestSubobjectNumber < uiActualSubObjectNumber ){
-					uiBiggestSubobjectNumber = uiActualSubObjectNumber;
-				}
-			}
-		}
-		
-		while ( uiNumberOfExternUnderObjects < liExternSubobjects.size() ){
-			if ( liExternSubobjects.size() <= uiBiggestSubobjectNumber ){
-				//this subobject is still in use -> can't delete anymore
-				return false;
-			}//else the subobject cn be deleted
-			liExternSubobjects.pop_back();
-		}
-	}//else the count of extern subobjects is correct
-	
-	return bReturn;
-}
-
-
-/**
- * This method returns the number of output variables of the
- * uiNumberOfUnderObject extern subobject in this root-object, or
- * 0 if the subobject dosn't exists.
- *
- * @param uiNumberOfUnderObject the number of the subobject for which
- * 	the number of output variables is to be returned
- * @return the count of output variables of the uiNumberOfUnderObject
- * 	extern subobject in this root-object, or 0 if the
- * 	subobject dosn't exists
- */
-unsignedIntFib cRoot::getNumberOfOutputVariables(
-		unsignedIntFib uiNumberOfUnderObject ) const{
-	
-	if ( ( uiNumberOfUnderObject < 1 ) ||
-			( getNumberOfExternSubobjects() < uiNumberOfUnderObject ) ){
-		//no such extern object
-		return (unsignedIntFib)(0);
-	}
-	//find the correct extern object
-	list< unsignedIntFib >::const_iterator itrActualExternObject;
-	for ( itrActualExternObject = liExternSubobjects.begin();
-			itrActualExternObject != liExternSubobjects.end() &&
-			uiNumberOfUnderObject != 1;
-			itrActualExternObject++, uiNumberOfUnderObject-- ){
-		//nothing to do
-	}
-	if ( uiNumberOfUnderObject == 1 ){
-		//return the number of output variables of the extern object
-		return (*itrActualExternObject);
-	}
-	return (unsignedIntFib)(0);
-}
-
-
-/**
- * This method sets the number of output variables of the
- * uiNumberOfUnderObject extern subobject in this root-object to
- * the given value uiNumberOfVariables.
- *
- * @param uiNumberOfUnderObject the number of the subobject for which
- * 	the number of output variables is to be set
- * @param uiNumberOfVariables the number of output variables the
- * 	uiNumberOfUnderObject subobject of this root-object should have
- * @return true if the number of output variables of the
- * 	uiNumberOfUnderObject subobject was set to uiNumberOfVariables,
- * 	else false
- */
-bool cRoot::setNumberOfOutputVariables(
-		unsignedIntFib uiNumberOfUnderObject,
-		unsignedIntFib uiNumberOfVariables ){
-	
-	if ( ( uiNumberOfUnderObject < 1 ) ||
-			( getNumberOfExternSubobjects() < uiNumberOfUnderObject ) ){
-		//no such extern object
-		return false;
-	}
-	//find the correct extern object
-	list< unsignedIntFib >::iterator itrActualExternObject;
-	for ( itrActualExternObject = liExternSubobjects.begin();
-			itrActualExternObject != liExternSubobjects.end() &&
-			uiNumberOfUnderObject != 1;
-			itrActualExternObject++, uiNumberOfUnderObject-- ){
-		//nothing to do
-	}
-	if ( uiNumberOfUnderObject == 1 ){
-		//return the number of output variables of the extern object
-		(*itrActualExternObject) = uiNumberOfVariables;
-		return true;
-	}
-	return false;
-}
-
-
-/**
- * This method checks the extern subobject of this root-object.
- * It is checked if:
- * 	- every subobject in main -Fib-object of this root-object
- * 	is also defined in the root-object
- * 	- the number of output variables in the definition and the
- * 	subobject Fib element(s) are the same
- * 	- ever subobject which is defined in this root-object is used
- * 	somewhere in the main -Fib-object
- *
- * @param iErrorNumber a pointer to an integerfild, wher an errornumber
- * 	can be stored; or NULL (standardvalue) if no errornumber should
- * 	be given back
- * 	possible errornumbers:
- * 		- 0 no error, everithing is OK
- * 		- -1 no main -Fib-object
- * 		- -10 an subobject definition is missing
- * 		- -11 different number of output variables
- * 		- -12 not every defined subobject is used
- * 		- -13 the numbers of the subobjects dosn't go from 1 till n
- * @return the number of the first not correct extern subobject in
- * 	this root-object or 0 if every subobject is OK
- */
-unsignedIntFib cRoot::checkExternSubobjects(
-		intFib * iErrorNumber ){
-	//implement when cExtSubobject is implemented
-	DEBUG_OUT_L2(<<"cRoot("<<this<<")::checkExternUnderObjects() started"<<endl<<flush);
-	
-	if ( pMainFibObject == NULL ){
-		DEBUG_OUT_L2(<<"cRoot("<<this<<")::checkExternUnderObjects() done no main Fib object -> no external subobjects"<<endl<<flush);
-		if ( iErrorNumber != NULL ){
-			(*iErrorNumber) = -1;
-		}
-		return 0;
-	}
-	
-	/*evalue and correct output variable counts for the subobjects*/
-	vector< longFib > vecExtSubobjCountOutVars;
-	unsignedLongFib ulMaxSubobjectNumber = 0;
-	
-	unsignedLongFib uiElementsToCheck = pMainFibObject->getNumberOfElements( 's' );
-	//for every Fib element in the Fib-object
-	for ( cExtSubobject * pActualSubobject = ((cExtSubobject*)(pMainFibObject->getNextFibElement( 's' )));
-			( pActualSubobject != NULL ) && ( 0 < uiElementsToCheck );
-			pActualSubobject = ((cExtSubobject*)(pActualSubobject->getNextFibElement( 's' ))),
-			uiElementsToCheck-- ){
-		
-		//extern subobject element
-		const unsignedIntFib uiNumberOfOutputVariables =
-			pActualSubobject->getNumberOfOutputVariables();
-			
-		const unsignedIntFib uiNumberSubobject =
-			pActualSubobject->getNumberSubobject();
-		DEBUG_OUT_L3(<<"   number of subobject "<<uiNumberSubobject<<"; number of output variables "<<uiNumberOfOutputVariables<<endl<<flush);
-		if ( ulMaxSubobjectNumber < uiNumberSubobject ){
-			//new maximal / greatest subobject number
-			DEBUG_OUT_L3(<<"   setting new maximal / greatest subobject number"<<endl<<flush);
-			ulMaxSubobjectNumber = uiNumberSubobject;
-		}
-		if ( vecExtSubobjCountOutVars.size() < uiNumberSubobject ){
-			if ( uiNumberSubobject < MAX_SUBOBJECTS ){
-				
-				vecExtSubobjCountOutVars.resize( uiNumberSubobject, -1 );
-			}else{//MAX_SUBOBJECTS < uiNumberSubobject -> to much subobjects
-				//the actual subobject is the first not correct subobject
-				if ( iErrorNumber != NULL ){
-					(*iErrorNumber) = -13;
-				}
-				return pActualSubobject->getNumberOfElement();
-			}
-		}//enought subobjects in root definition exists
-		if ( uiNumberSubobject == 0 ){
-			//wrong subobject number
-			//the actual subobject is the first not correct subobject
-			if ( iErrorNumber != NULL ){
-				(*iErrorNumber) = -13;
-			}
-			return pActualSubobject->getNumberOfElement();
-		}
-		if ( ( 0 < uiNumberSubobject ) &&
-				( uiNumberSubobject <= vecExtSubobjCountOutVars.size() ) ){
-			
-			if ( vecExtSubobjCountOutVars[ uiNumberSubobject - 1 ] != uiNumberOfOutputVariables ){
-				if ( vecExtSubobjCountOutVars[ uiNumberSubobject - 1 ] != -1 ){
-					//set different number of subobjects
-					//the actual subobject is the first not correct subobject
-					if ( iErrorNumber != NULL ){
-						(*iErrorNumber) = -11;
-					}
-					return pActualSubobject->getNumberOfElement();
-				}
-				if ( vecExtSubobjCountOutVars[ uiNumberSubobject - 1 ] < uiNumberOfOutputVariables ){
-					//store number of maximal output variables for the subobject
-					DEBUG_OUT_L4(<<"   setting number of output variables of the subobject "<<uiNumberSubobject<<" to the number "<<uiNumberOfOutputVariables<<endl<<flush);
-					vecExtSubobjCountOutVars[ uiNumberSubobject - 1 ] =
-						uiNumberOfOutputVariables;
-				}
-			}//else number of output variables correct
-		}
-	}
-	
-	DEBUG_OUT_L2(<<"cRoot::checkExternUnderObjects() done"<<endl<<flush);
-	return 0;
-}
-
-
-/**
- * This method generates the extern subobject definitions for this
- * root-object.
- * possible errors which aborts the generation process:
- * 	- the number of output variables in the the subobject
- *		Fib elements are not the same
- * 	-the numbers of the subobjects dosn't go from 1 till n
- *
- * @param iErrorNumber a pointer to an integerfild, wher an errornumber
- * 	can be stored; or NULL (standardvalue) if no errornumber should
- * 	be given back
- * 	possible errornumbers:
- * 		- 0 no error, everithing is OK
- * 		- -1 no main -Fib-object
- * 		- -11 different number of output variables
- * 		- -13 the numbers of the subobjects dosn't go from 1 till n
- * @return the number of the first not correct extern subobject in
- * 	this root-object or 0 if every subobject is OK
- */
-unsignedIntFib cRoot::generateExternSubobjectsDefinitions(
-		intFib * iErrorNumber ){
-	//implement when cExtSubobject is implemented
-	DEBUG_OUT_L2(<<"cRoot("<<this<<")::checkExternUnderObjects() started"<<endl<<flush);
-	
-	if ( pMainFibObject == NULL ){
-		DEBUG_OUT_L2(<<"cRoot("<<this<<")::checkExternUnderObjects() done no main Fib object -> no external subobjects"<<endl<<flush);
-		if ( iErrorNumber != NULL ){
-			(*iErrorNumber) = -1;
-		}
-		return 0;
-	}
-	unsignedIntFib uiFirstNotCorrectSubobject = 0;
-	
-	/*evalue and correct output variable counts for the subobjects*/
-	vector< longFib > vecExtSubobjCountOutVars;
-	unsignedLongFib ulMaxSubobjectNumber = 0;
-	
-	unsignedLongFib uiElementsToCheck = pMainFibObject->getNumberOfElements( 's' );
-	//for every Fib element in the Fib-object
-	for ( cExtSubobject * pActualSubobject = ((cExtSubobject*)(pMainFibObject->getNextFibElement( 's' )));
-			( pActualSubobject != NULL ) && ( 0 < uiElementsToCheck );
-			pActualSubobject = ((cExtSubobject*)(pActualSubobject->getNextFibElement( 's' ))),
-			uiElementsToCheck-- ){
-		
-		//extern subobject element
-		const unsignedIntFib uiNumberOfOutputVariables =
-			pActualSubobject->getNumberOfOutputVariables();
-			
-		const unsignedIntFib uiNumberSubobject =
-			pActualSubobject->getNumberSubobject();
-		DEBUG_OUT_L3(<<"   number of subobject "<<uiNumberSubobject<<"; number of output variables "<<uiNumberOfOutputVariables<<endl<<flush);
-		if ( ulMaxSubobjectNumber < uiNumberSubobject ){
-			//new maximal / greatest subobject number
-			DEBUG_OUT_L3(<<"   setting new maximal / greatest subobject number"<<endl<<flush);
-			ulMaxSubobjectNumber = uiNumberSubobject;
-		}
-		if ( vecExtSubobjCountOutVars.size() < uiNumberSubobject ){
-			if ( uiNumberSubobject < MAX_SUBOBJECTS ){
-				
-				vecExtSubobjCountOutVars.resize( uiNumberSubobject, -1 );
-			}else{//MAX_SUBOBJECTS < uiNumberSubobject -> to much subobjects
-				if ( uiFirstNotCorrectSubobject == 0 ){
-					//the actual subobject is the first not correct subobject
-					uiFirstNotCorrectSubobject = pActualSubobject->getNumberOfElement();
-					if ( iErrorNumber != NULL ){
-						(*iErrorNumber) = -13;
-					}
-				}
-			}
-		}//enought subobjects in root definition exists
-		if ( uiNumberSubobject == 0 ){
-			//wrong subobject number
-			if ( uiFirstNotCorrectSubobject == 0 ){
-				//the actual subobject is the first not correct subobject
-				uiFirstNotCorrectSubobject = pActualSubobject->getNumberOfElement();
-				if ( iErrorNumber != NULL ){
-					(*iErrorNumber) = -13;
-				}
-			}
-		}
-		if ( ( 0 < uiNumberSubobject ) &&
-				( uiNumberSubobject <= vecExtSubobjCountOutVars.size() ) ){
-			
-			if ( vecExtSubobjCountOutVars[ uiNumberSubobject - 1 ] != uiNumberOfOutputVariables ){
-				if ( vecExtSubobjCountOutVars[ uiNumberSubobject - 1 ] != -1 ){
-					//set different number of subobjects
-					if ( uiFirstNotCorrectSubobject == 0 ){
-						//the actual subobject is the first not correct subobject
-						uiFirstNotCorrectSubobject = pActualSubobject->getNumberOfElement();
-						if ( iErrorNumber != NULL ){
-							(*iErrorNumber) = -11;
-						}
-					}
-				}
-				if ( vecExtSubobjCountOutVars[ uiNumberSubobject - 1 ] < uiNumberOfOutputVariables ){
-					//store number of maximal output variables for the subobject
-					DEBUG_OUT_L4(<<"   setting number of output variables of the subobject "<<uiNumberSubobject<<" to the number "<<uiNumberOfOutputVariables<<endl<<flush);
-					vecExtSubobjCountOutVars[ uiNumberSubobject - 1 ] =
-						uiNumberOfOutputVariables;
-				}
-			}//else number of output variables correct
-		}
-	}
-	
-	//generate needed definitions for external subobject elements
-	if ( ! vecExtSubobjCountOutVars.empty() ){
-		//external subobject elements exists
-
-		//check external subobject number
-		const unsignedIntFib uiNumberSubobjectCounts =
-			vecExtSubobjCountOutVars.size();
-		if ( getNumberOfExternSubobjects() < uiNumberSubobjectCounts ){
-			/*actual number of external subobjects to low
-			-> set it to the maximal / greates external subobject number*/
-			setNumberOfExternSubobjects( uiNumberSubobjectCounts );
-		}
-		//check number of output variables for the subobjects
-		for ( unsignedIntFib uiNumberOfSubobject = 1;
-				uiNumberOfSubobject <= uiNumberSubobjectCounts;
-				uiNumberOfSubobject++ ){
-			
-			if ( vecExtSubobjCountOutVars[ uiNumberOfSubobject - 1 ] == -1 ){
-				//no such external subobject found
-				continue;
-			}
-			if ( vecExtSubobjCountOutVars[ uiNumberOfSubobject - 1 ] <
-					getNumberOfOutputVariables( uiNumberOfSubobject ) ){
-				/*correct the number of output variables of the subobject to
-				the correct value*/
-				setNumberOfOutputVariables( uiNumberOfSubobject,
-					vecExtSubobjCountOutVars[ uiNumberOfSubobject - 1 ] );
-			}//number of output variables for the subobject correct
-		}
-		DEBUG_OUT_L3(<<"domains for external subobject elements generated"<<endl<<flush);
-	}
-	
-	DEBUG_OUT_L2(<<"cRoot::checkExternUnderObjects() done"<<endl<<flush);
-	return uiFirstNotCorrectSubobject;
-}
-
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 
 
 /**
@@ -6282,7 +5795,7 @@ bool cRoot::storeBit( ostream & stream, char & cRestBits,
 		const_cast<cDomains*>(&domains)->addDomain( typeVariable, domainVariables );
 	}
 	
-	/*create the propertytypelist, with the propertytypes in the order
+	/*create the propertytypelist, with the property types in the order
 	they will be counted when stored*/
 	const_cast<cRoot*>(this)->createStorePropertyOrder();
 	
@@ -6345,14 +5858,6 @@ bool cRoot::storeBit( ostream & stream, char & cRestBits,
 		cOptionalInformationBits[0] |= 0x10;
 	}
 	
-#ifndef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	//check if the output variables should be written
-	if ( getNumberOfExternSubobjects() > 0 ){
-		//write the output variables
-		cOptionalInformationBits[0] |= 0x08;
-	}
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-
 	//check if the sub-root-objects should be written
 	if ( getNumberOfSubRootObjects() > 0 ){
 		//write the output variables
@@ -6518,48 +6023,6 @@ bool cRoot::storeBit( ostream & stream, char & cRestBits,
 		ulOffset += roundUpToFullByte( ulBitSizeOfStandardValues ) / 8;
 	}
 	
-#ifndef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	//output variables
-	//bits per output variable
-	unsigned int uiBitPerOutputVariable = 0;
-	
-	if ( cOptionalInformationBits[0] & 0x08 ){
-		/*if the output variables should be written
-		-> write ther offset*/
-		const bool bOffsetExtObjectsStored = nBitStream::store(
-			stream, cRestBits, uiRestBitPosition, ulOffset, 64 );
-		if ( ! bOffsetExtObjectsStored ){
-			(const_cast<cRoot*>(this))->backupVariablesValues( false );
-			if ( optionalPartFull ){
-				delete optionalPartFull;
-			}
-			return false;
-		}
-
-		//add the bits for the output variables to the offset
-		
-		//ulOffset = output variables count + number of bits for output variable
-		ulOffset += 8 + 1;
-
-		//evalue the bits per output variable
-		for ( list< unsignedIntFib >::const_iterator itrActualVariable =
-					liExternSubobjects.begin();
-				itrActualVariable != liExternSubobjects.end();
-				itrActualVariable++ ){
-				
-			if ( uiBitPerOutputVariable <
-					getDigits( *itrActualVariable ) ){
-				
-				uiBitPerOutputVariable =
-					getDigits( *itrActualVariable );
-			}
-				
-		}
-		//add byts to offset for the outputvariable list
-		ulOffset += roundUpToFullByte( uiBitPerOutputVariable *
-			liExternSubobjects.size() ) / 8;
-	}
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	//sum compressed size of main -Fib-object
 	if ( pMainFibObject != NULL ){
 		/*write the offset for the  main -Fib-object*/
@@ -6797,77 +6260,6 @@ bool cRoot::storeBit( ostream & stream, char & cRestBits,
 			uiRestBitPosition = 0;
 		}
 	}
-#ifndef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	//outputvariable
-	if ( cOptionalInformationBits[0] & 0x08 ){
-		
-		//write the number of extern subobjects with output variables
-		unsignedLongFib ulNumberOfExternUnderObjects = getNumberOfExternSubobjects();
-		const bool bCountOfExtObjectsStored = nBitStream::store(
-			stream, cRestBits, uiRestBitPosition, ulNumberOfExternUnderObjects, 64 );
-		if ( ! bCountOfExtObjectsStored ){
-			(const_cast<cRoot*>(this))->backupVariablesValues( false );
-			if ( optionalPartFull ){
-				delete optionalPartFull;
-			}
-			return false;
-		}
-		
-		//evalue the bits per output variable
-		unsigned int uiBitPerOutputVariable = 0;
-		
-		for ( list< unsignedIntFib >::const_iterator itrActualVariable =
-					liExternSubobjects.begin();
-				itrActualVariable != liExternSubobjects.end();
-				itrActualVariable++ ){
-				
-			if ( uiBitPerOutputVariable <
-					getDigits( *itrActualVariable ) ){
-				
-				uiBitPerOutputVariable =
-					getDigits( *itrActualVariable );
-			}
-				
-		}
-		const bool bBitPerOutVarStored = nBitStream::store(
-			stream, cRestBits, uiRestBitPosition, uiBitPerOutputVariable, 8 );
-		if ( ! bBitPerOutVarStored ){
-			(const_cast<cRoot*>(this))->backupVariablesValues( false );
-			if ( optionalPartFull ){
-				delete optionalPartFull;
-			}
-			return false;
-		}
-
-		//store the counts of the output variables for the extern subobjects
-		for ( list< unsignedIntFib >::const_iterator itrActualVariable =
-					liExternSubobjects.begin();
-				itrActualVariable != liExternSubobjects.end();
-				itrActualVariable++ ){
-			
-			unsignedLongFib ulCountActualOutputVariables = (*itrActualVariable);
-			
-			bool bCountOfOutputVariablesStored = nBitStream::store( stream,
-				cRestBits, uiRestBitPosition,
-				ulCountActualOutputVariables, uiBitPerOutputVariable );
-			if ( ! bCountOfOutputVariablesStored ){
-				//restore the values of the variables
-				(const_cast<cRoot*>(this))->backupVariablesValues( false );
-				if ( optionalPartFull ){
-					delete optionalPartFull;
-				}
-				return false;
-			}
-		}
-		
-		//fill up to full byte
-		if ( uiRestBitPosition != 0 ){
-			stream.write( &cRestBits, 1 );
-			cRestBits = 0x00;
-			uiRestBitPosition = 0;
-		}
-	}
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 
 	//store the main -Fib-object
 	if ( pMainFibObject != NULL ){
@@ -7400,7 +6792,7 @@ cRoot * cRoot::getAccessibleRootObject( longFib lIdentifier, const cRoot *pRoot 
 
 
 /**
- * This method creates the propertytypelist, with the propertytypes in the
+ * This method creates the propertytypelist, with the property types in the
  * order they will be counted when stored.
  *
  * @see storeBit()

@@ -39,6 +39,7 @@
  * 	- bool evalueMinVersionsNumbers();
  * 	- bool equal( const cMultimediaInfo &multimediaInfo ) const;
  * 	- bool operator==( const cMultimediaInfo & multimediaInfo) const;
+ * 	- bool assignValues( const cMultimediaInfo & multimediaInfo );
  * 	- bool storeXml( ostream & ostream ) const;
  *
  */
@@ -46,6 +47,7 @@
 History:
 25.06.2009  Oesterholz  created
 17.11.2009  Oesterholz  storeXml() tested
+02.08.2013  Oesterholz  assignValues() tested
 */
 
 #include "version.h"
@@ -68,17 +70,24 @@ History:
 using namespace fib;
 using namespace std;
 
-int testCostructor( unsigned long &ulTestphase );
-int testEvalueMinVersionsNumbers( unsigned long &ulTestphase );
-int testSetVersion( unsigned long &ulTestphase );
-int testClone( unsigned long &ulTestphase );
-int testEqual( unsigned long &ulTestphase );
-int testStoreXml( unsigned long &ulTestphase );
+int testCostructor( unsigned long & ulTestphase );
+int testEvalueMinVersionsNumbers( unsigned long & ulTestphase );
+int testSetVersion( unsigned long & ulTestphase );
+int testClone( unsigned long & ulTestphase );
+int testEqual( unsigned long & ulTestphase );
+int testStoreXml( unsigned long & ulTestphase );
+int testAssignValue( unsigned long & ulTestphase );
+
+
+unsigned long MAX_ITERATION = 64;
+
 
 int main(int argc, char* argv[]){
 
-	unsigned long ulTestphase=0;//actual phase of the test 
-	int iReturn=0;//returnvalue of the test; the number of occured Errors
+	unsigned long ulTestphase = 0;//actual phase of the test 
+	int iReturn = 0;//returnvalue of the test; the number of occured Errors
+	
+	srand( time( NULL ) );
 	
 	cout<<endl<<"Running Test for cMultimediaInfo methods"<<endl;
 	cout<<      "========================================"<<endl;
@@ -89,6 +98,7 @@ int main(int argc, char* argv[]){
 	iReturn += testClone( ulTestphase );
 	iReturn += testEqual( ulTestphase );
 	iReturn += testStoreXml( ulTestphase );
+	iReturn += testAssignValue( ulTestphase );
 
 
 	if ( iReturn==0 ){
@@ -109,7 +119,7 @@ int main(int argc, char* argv[]){
  * @param ulTestphase a reference to the number for the testphase
  * @return the number of erros occured in the test
  */
-int testCostructor( unsigned long &ulTestphase ){
+int testCostructor( unsigned long & ulTestphase ){
 
 	int iReturn=0;//returnvalue of the test; the number of occured Errors
 
@@ -155,7 +165,7 @@ int testCostructor( unsigned long &ulTestphase ){
  * @param ulTestphase a reference to the number for the testphase
  * @return the number of erros occured in the test
  */
-int testEvalueMinVersionsNumbers( unsigned long &ulTestphase ){
+int testEvalueMinVersionsNumbers( unsigned long & ulTestphase ){
 
 	int iReturn=0;//returnvalue of the test; the number of occured Errors
 
@@ -211,7 +221,7 @@ int testEvalueMinVersionsNumbers( unsigned long &ulTestphase ){
  * @param ulTestphase a reference to the number for the testphase
  * @return the number of erros occured in the test
  */
-int testSetVersion( unsigned long &ulTestphase ){
+int testSetVersion( unsigned long & ulTestphase ){
 
 	int iReturn=0;//returnvalue of the test; the number of occured Errors
 
@@ -267,7 +277,7 @@ int testSetVersion( unsigned long &ulTestphase ){
  * @param ulTestphase a reference to the number for the testphase
  * @return the number of erros occured in the test
  */
-int testClone( unsigned long &ulTestphase ){
+int testClone( unsigned long & ulTestphase ){
 
 	int iReturn=0;//returnvalue of the test; the number of occured Errors
 
@@ -423,7 +433,7 @@ int testCompareTwoNotEqualMultimediaInfo( const cMultimediaInfo &multimediaInfo1
  * @param ulTestphase a reference to the number for the testphase
  * @return the number of erros occured in the test
  */
-int testEqual( unsigned long &ulTestphase ){
+int testEqual( unsigned long & ulTestphase ){
 
 	int iReturn=0;//returnvalue of the test; the number of occured Errors
 
@@ -548,7 +558,7 @@ int testEqual( unsigned long &ulTestphase ){
 
 
 /**
- * This method tests a in the xml -format stored cFibVector.
+ * This method tests a in the xml -format stored cMultimediaInfo.
  *
  * <multimedia_info fib_version="1" db_version="0"/>
  *
@@ -562,8 +572,8 @@ int testXmlVector( const string szFilename, int iFibVersion, int iDbVersion ){
 	
 	cout<<endl<<"Checking stored vector:"<<endl;
 	
-	TiXmlDocument xmlDocVectorChecksum( szFilename );
-	bool loadOkay = xmlDocVectorChecksum.LoadFile();
+	TiXmlDocument xmlDocMultimediaInfo( szFilename );
+	bool loadOkay = xmlDocMultimediaInfo.LoadFile();
 	if ( loadOkay ){
 		cout<<"The data of the multimediainfo was loaded successfull from the file \""<< szFilename <<"\". "<<endl;
 	}else{
@@ -571,7 +581,7 @@ int testXmlVector( const string szFilename, int iFibVersion, int iDbVersion ){
 		iReturn++;
 	}
 
-	TiXmlHandle xmlHandle( &xmlDocVectorChecksum );
+	TiXmlHandle xmlHandle( &xmlDocMultimediaInfo );
 	TiXmlElement * pXmlElement;
 	TiXmlHandle xmlHandleRoot(0);
 
@@ -627,7 +637,7 @@ int testXmlVector( const string szFilename, int iFibVersion, int iDbVersion ){
 
 
 /**
- * This method tests the storeXml() method of the cVectorChecksum class.
+ * This method tests the storeXml() method of the cMultimediaInfo class.
  *
  * methods tested:
  * 	- storeXml()
@@ -635,7 +645,7 @@ int testXmlVector( const string szFilename, int iFibVersion, int iDbVersion ){
  * @param ulTestphase a reference to the number for the testphase
  * @return the number of errors occured in the test
  */
-int testStoreXml( unsigned long &ulTestphase ){
+int testStoreXml( unsigned long & ulTestphase ){
 
 	unsigned int iReturn = 0;
 
@@ -728,12 +738,58 @@ int testStoreXml( unsigned long &ulTestphase ){
 	iReturn += testXmlVector( pFileName, 54, 3 );
 
 
-
-
 	return iReturn;
 }
 
 
+/**
+ * This method tests the assignValues() method of the cMultimediaInfo class.
+ *
+ * methods tested:
+ * 	- bool assignValues( const cMultimediaInfo & multimediaInfo );
+ *
+ * @param ulTestphase a reference to the number for the testphase
+ * @return the number of errors occured in the test
+ */
+int testAssignValue( unsigned long & ulTestphase ){
+
+	unsigned int iReturn = 0;
+
+	ulTestphase++;
+	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the assignValues() method"<<endl;
+	
+	cout<<"cRoot root1;"<<flush<<endl;
+	cRoot root1;
+	
+	cout<<"cMultimediaInfo multimediainfo( &root1 );"<<endl;
+	cMultimediaInfo multimediainfo( &root1 );
+	
+	cout<<"cRoot root2;"<<flush<<endl;
+	cRoot root2;
+	
+	cout<<"cMultimediaInfo multimediainfoToSet( &root2 );"<<endl;
+	cMultimediaInfo multimediainfoToSet( &root2 );
+	
+	for ( unsigned int iteraton = 0; iteraton < MAX_ITERATION; iteraton++ ){
+		
+		multimediainfoToSet.setFibVersion( rand() );
+		multimediainfoToSet.setDatabaseVersion( rand() );
+		cout<<"changing multimediainfoToSet to version="<<
+			multimediainfoToSet.getFibVersion()<<" database version="<<
+			multimediainfoToSet.getDatabaseVersion()<<endl;
+		cout<<"multimediainfo.assignValues( multimediainfoToSet );"<<endl;
+		multimediainfo.assignValues( multimediainfoToSet );
+		
+		if ( ! ( multimediainfo == multimediainfoToSet ) ){
+			
+			cerr<<"Error: The multimediainfo is not equal to multimediainfoToSet."<<endl;
+			iReturn++;
+		}
+		
+	}
+	
+	return iReturn;
+}
 
 
 

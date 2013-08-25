@@ -34,6 +34,7 @@ History:
 29.01.2012  Oesterholz  created
 17.02.2013  Oesterholz FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE implemented
 16.03.2013  Oesterholz  clone() method added
+01.08.2013  Oesterholz  FEATURE_EXT_SUBOBJECT_INPUT_VECTOR as default (not case removed)
 */
 
 
@@ -225,7 +226,6 @@ cTypeElement * cVectorExtSubobject::getElementType() const{
 	
 	DEBUG_OUT_L3(<<this<<"->cVectorExtSubobject::getElementType()"<<endl);
 	
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	//the type is external subobject type
 	if ( pDefiningFibElement != NULL ){
 		//try to evalue type with the help of the defining Fib element
@@ -238,7 +238,6 @@ cTypeElement * cVectorExtSubobject::getElementType() const{
 			((cExtSubobject*)pDefiningFibElement)->getNumberSubobject();
 		return new cTypeExtSubobject( uiNumberOfExtSubobject );
 	}//else no type found -> return the standard type 
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 
 	return new cTypeExtSubobject( 0 );
 }

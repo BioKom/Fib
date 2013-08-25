@@ -57,6 +57,7 @@ History:
 16.01.2013  Oesterholz  FEATURE_FIB_ELEMENT_CHECKS_DATABASE_FOR_EXTERNAL_OBJECTS
 	implemented: if no root object exists to retrieve external objects
 	-> search the Fib database
+16.08.2013  Oesterholz  method getVariablesToReplace() added
 */
 
 
@@ -230,7 +231,7 @@ string cFibElement::getTypeName( char cType ){
 	switch ( cType ){
 		case 'u': return "unknown";
 		case 'p': return "point";
-		case 'l': return "listelement";
+		case 'l': return "list element";
 		case 'y': return "property";
 		case 'c': return "comment";
 		case 'a': return "area";
@@ -2768,11 +2769,81 @@ cFibElement * cFibElement::getMasterRoot() const{
 }
 
 
-
-
-
-
-
+/**
+ * This method will evalue if the needed variables can be replaced with
+ * equal variables, which are defined for this Fib element.
+ * If possible it will return a list (liOutVariablesToReplace) of
+ * variable pairs, which have to be replaced.
+ *
+ * @see assignValues()
+ * @see cFibVariable::equal()
+ * @param setNeededVariables a set with the variables needed for this
+ * 	Fib element
+ * @param liOutVariablesToReplace a list to output the variables to replace:
+ * 		first: the original needed variable to replace
+ * 		second: the new variable to replace the original variable with
+ * 	(Fib variables already defined for this Fib element won't be added
+ * 	to this list.)
+ * @return true if all variables can be replaced with for this Fib element
+ * 	defined variables, else false
+ */
+bool cFibElement::getVariablesToReplace(
+		const set< cFibVariable* > & setNeededVariables,
+		list< pair< cFibVariable * ,cFibVariable * > > & liOutVariablesToReplace ){
+	
+	
+	if ( setNeededVariables.empty() ){
+		//no variables needed -> don't need to replace anything
+		return true;
+	}//else needed variables exists
+	list< cFibVariable* > liDefinedVariables = getDefinedVariables( ED_HIGHER );
+	set< cFibVariable* > setDefinedVariables(
+		liDefinedVariables.begin(), liDefinedVariables.end() );
+	
+	/*for every needed variable in the given Fib element:
+	- check if it is not defined above
+	- for all needed but not defined above variables:
+	-- try to find equivalent defined variable in Fib element above
+		check with equal( const cFibVariable &variable, false )
+	*/
+	list< cFibVariable* > liVariablesNeededButNotDefined;
+	for ( set< cFibVariable* >::const_iterator
+			itrUsedVariable = setNeededVariables.begin();
+			itrUsedVariable != setNeededVariables.end(); itrUsedVariable++ ){
+		
+		if ( setDefinedVariables.find( *itrUsedVariable ) ==
+				setDefinedVariables.end() ){
+			//variable needed but not defined above
+			liVariablesNeededButNotDefined.push_back( *itrUsedVariable );
+		}
+	}//end for find all needed but not defined above variables
+	
+	list< cFibVariable* >::const_reverse_iterator itrDefVariable;
+	for ( list< cFibVariable* >::const_iterator
+			itrUsedVariable = liVariablesNeededButNotDefined.begin();
+			itrUsedVariable != liVariablesNeededButNotDefined.end();
+			itrUsedVariable++ ){
+		
+		for ( itrDefVariable = liDefinedVariables.rbegin();
+				itrDefVariable != liDefinedVariables.rend();
+				itrDefVariable++ ){
+			if ( (*itrUsedVariable)->equal( **itrDefVariable ) ){
+				//equal defined variable found -> add pair
+				liOutVariablesToReplace.push_back(
+					pair< cFibVariable * ,cFibVariable * >(
+						*itrUsedVariable, *itrDefVariable ) );
+				break;
+			}
+			
+		}//end for all defined variables
+		if ( itrDefVariable == liDefinedVariables.rend() ){
+			/*can't find equivalent defined variable for needed variable above
+			 -> can't assign values*/
+			return false;
+		}
+	}//end for all needed but not defined above variables
+	return true;
+}
 
 
 

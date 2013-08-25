@@ -41,7 +41,6 @@ History:
 
 using namespace fib;
 
-//TODO check
 
 /**
  * This function evalues the digits needed to store a value as an
@@ -561,7 +560,6 @@ doubleFib fib::composeDoubleFib(
 	return dReturnValue;
 }
 
-//TODO check end
 
 /**
  * This function rounds the given number of bits ulNumberOfBits up

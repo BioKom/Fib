@@ -7,7 +7,9 @@
  *
  * System: C++
  *
- * This class represents the optionalpart of an root -element.
+ * This class represents the optional part of an root element.
+ *
+ *
  * Copyright (C) @c LGPL3 2009 Betti Oesterholz
  *
  * This program is free software: you can redistribute it and/or modify
@@ -24,8 +26,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * This class represents the optionalpart for an root -element.
- * The optionalpart consists of an list of key -value -pairs.
+ * This class represents the optional part for an root element.
+ * The optional part consists of an list of key value pairs.
  *
  */
 /*
@@ -34,6 +36,7 @@ History:
 10.07.2011  Oesterholz  changes for compressed storing
 18.04.2012  Oesterholz  Bugfix: replace FirstChild()->ToElement() with
 	FirstChildElement()
+01.08.2013  Oesterholz  method operator=() added
 */
 
 //TODO weg
@@ -59,7 +62,7 @@ using namespace fib;
 
 
 /**
- * The constructor for the optionalpart.
+ * The constructor for the optional part.
  */
 cOptionalPart::cOptionalPart():ulVersion( 1 ), uiCompressionType( 1 ),
 		pCompressedData( NULL ), uiCompressedDataSize( 0 ),
@@ -68,7 +71,7 @@ cOptionalPart::cOptionalPart():ulVersion( 1 ), uiCompressionType( 1 ),
 }
 
 /**
- * The desstructor for the optionalpart.
+ * The desstructor for the optional part.
  */
 cOptionalPart::~cOptionalPart(){
 	
@@ -77,8 +80,9 @@ cOptionalPart::~cOptionalPart(){
 	}
 }
 
+
 /**
- * This Method clones this object.
+ * This method clones this object.
  *
  * @return a clone of this object
  */
@@ -162,7 +166,7 @@ pair< string, string > cOptionalPart::getEntry(
  * @param bFullBegin if true (the standardvalue) the given key szKey
  * 	is the complete key to be found, else the key szKey is just the
  * 	beginning of the key to be found
- * @return a list with the key -value -pairs for the given key szKey;
+ * @return a list with the key value pairs for the given key szKey;
  * 	the returned pairs are an (key, value)  -pairs
  */
 list< pair<string,string> > cOptionalPart::getEntries( string szKey,
@@ -199,7 +203,7 @@ list< pair<string,string> > cOptionalPart::getEntries( string szKey,
  *
  * @param szKeyPart the part of the keys for which the entries are to
  * 	be return
- * @return a list with the key -value -pairs with szKeyPart as part of
+ * @return a list with the key value pairs with szKeyPart as part of
  * 	ther key; the returned pairs are an (key, value)  -pairs
  */
 list< pair<string,string> > cOptionalPart::findKeyPart( string szKeyPart ) const{
@@ -223,7 +227,7 @@ list< pair<string,string> > cOptionalPart::findKeyPart( string szKeyPart ) const
 
 /**
  * This method ads the given key szKey and value szValue pair to the
- * optionalpart list.
+ * optional part list.
  *
  * @param szKey the key of the entry to add
  * @param szValue the value of the entry to add
@@ -350,7 +354,7 @@ unsignedLongFib cOptionalPart::deleteEntries( string szKey, bool bFullBegin ){
 
 
 /**
- * This method stores this optionalpart in the XML -format into the
+ * This method stores this optional part in the XML format into the
  * given stream.
  * example:
  * <optionalpart>
@@ -358,8 +362,8 @@ unsignedLongFib cOptionalPart::deleteEntries( string szKey, bool bFullBegin ){
  * 	<pair key="type" value="die Berliner Mauer"/>
  * </optionalpart>
  *
- * @param ostream the stream where this optionalpart should be stored to
- * @return true if this optionalpart is stored, else false
+ * @param ostream the stream where this optional part should be stored to
+ * @return true if this optional part is stored, else false
  */
 bool cOptionalPart::storeXml( ostream & ostream ) const{
 	
@@ -379,10 +383,10 @@ bool cOptionalPart::storeXml( ostream & ostream ) const{
 
 
 /**
- * This method restores the optionalpart in the XML -format from an
+ * This method restores the optional part in the XML format from an
  * an TinyXml element.
  *
- * @param pXmlNode a pointer to the TinyXml node wher the optionalpart is stored in
+ * @param pXmlNode a pointer to the TinyXml node wher the optional part is stored in
  * @return an integervalue with the errorvalue
  * 	possible errorvalues are:
  * 		- 0  loading successful
@@ -408,7 +412,7 @@ intFib cOptionalPart::restoreXml( const TiXmlElement * pXmlElement ){
 	
 	optionalInformation.clear();
 
-	//restore the elements of the optionalpart
+	//restore the elements of the optional part
 	const TiXmlElement * pXmlElementPair = NULL;
 	if ( pXmlElement->FirstChild() ){
 		
@@ -424,7 +428,7 @@ intFib cOptionalPart::restoreXml( const TiXmlElement * pXmlElement ){
 			const char * szXmlValue = pXmlElementPair->Attribute( "value" );
 			
 			if ( (szXmlKey == NULL) || (szXmlValue == NULL) ){
-				//Warning: The optionalpart pair isn't correct
+				//Warning: The optional part pair isn't correct
 				iReturnValue = 2;
 			}else{
 				addEntry( string( szXmlKey ), string( szXmlValue ) );
@@ -442,7 +446,7 @@ intFib cOptionalPart::restoreXml( const TiXmlElement * pXmlElement ){
 
 
 /**
- * This method evaluades the size of the optionalpart in bits in the
+ * This method evaluades the size of the optional part in bits in the
  * compressed file form.
  *
  * @see store()
@@ -451,7 +455,7 @@ intFib cOptionalPart::restoreXml( const TiXmlElement * pXmlElement ){
  * @see uiCompressionType
  * @see actualizeCompressData()
  * @see cFibElement::getCompressedSize()
- * @return the size of the optionalpart in bits in the compressed form
+ * @return the size of the optional part in bits in the compressed form
  */
 unsignedLongFib cOptionalPart::getCompressedSize() const{
 	
@@ -463,7 +467,7 @@ unsignedLongFib cOptionalPart::getCompressedSize() const{
 
 
 /**
- * This method stores this optionalpart in the compressed fib-format
+ * This method stores this optional part in the compressed Fib format
  * (with the deflate -algorithmus) into the given stream.
  *
  * @see restore()
@@ -471,8 +475,8 @@ unsignedLongFib cOptionalPart::getCompressedSize() const{
  * @see uiCompressionType
  * @see actualizeCompressData()
  * @see cFibElement::store()
- * @param stream the stream where this optionalpart should be stored to
- * @return true if the optionalpart are stored, else false
+ * @param stream the stream where this optional part should be stored to
+ * @return true if the optional part are stored, else false
  */
 bool cOptionalPart::store( ostream & stream ) const{
 	
@@ -491,15 +495,15 @@ bool cOptionalPart::store( ostream & stream ) const{
 
 
 /**
- * This method restores the optionalpart from a bitstream, wher it is
- * stored in the compressed fib-format with the set compression type.
+ * This method restores the optional part from a bitstream, wher it is
+ * stored in the compressed Fib format with the set compression type.
  *
  * @see store()
  * @see setCompressionType()
  * @see uiCompressionType
  * @see actualizeCompressData()
  * @see cFibElement::store()
- * @param iBitStream the stream where this optionalpart is stored to in,
+ * @param iBitStream the stream where this optional part is stored to in,
  * 	because this stream is an cReadBits, any number of bits can be
  * 	readed from it
  * @param ulBytsToRead the nuber of byts the optional part is long,
@@ -901,14 +905,14 @@ bool cOptionalPart::setCompressionType( unsignedIntFib uiInCompressionType ){
 
 
 /**
- * This Method checks if the given optionalpart is equal to this
- * optionalpart.
- * Two optionalpart are equal, if they have the same entries in the
+ * This method checks if the given optional part is equal to this
+ * optional part.
+ * Two optional part are equal, if they have the same entries in the
  * same order.
  *
- * @param optionalPart the optionalpart to compare with this
- * @return true if the given optionalpart is equal to this
- * 	optionalpart, else false
+ * @param optionalPart the optional part to compare with this
+ * @return true if the given optional part is equal to this
+ * 	optional part, else false
  */
 bool cOptionalPart::equal( const cOptionalPart & optionalPart ) const{
 	
@@ -917,20 +921,54 @@ bool cOptionalPart::equal( const cOptionalPart & optionalPart ) const{
 
 
 /**
- * This Method checks if the given optionalpart is equal to this
- * optionalpart.
- * Two optionalpart are equal, if they have the same entries in the
+ * This method checks if the given optional part is equal to this
+ * optional part.
+ * Two optional part are equal, if they have the same entries in the
  * same order.
  *
- * @param optionalPart the optionalpart to compare with this
- * @return true if the given optionalpart is equal to this
- * 	optionalpart, else false
+ * @param optionalPart the optional part to compare with this
+ * @return true if the given optional part is equal to this
+ * 	optional part, else false
  */
 bool cOptionalPart::operator==( const cOptionalPart &optionalPart ) const{
 	
 	return (optionalInformation == optionalPart.optionalInformation);
 }
 
+
+/**
+ * This method assigns the values of the given optional part to this
+ * optional part.
+ * After calling this operator, this optional part will be equal to
+ * the given optional part.
+ *
+ * @see equal()
+ * @param optionalPart the optional part to copy
+ */
+cOptionalPart & cOptionalPart::operator=( const cOptionalPart & optionalPart ){
+	
+	optionalInformation = optionalPart.optionalInformation;
+	ulVersion = optionalPart.ulVersion;
+	uiCompressionType = optionalPart.uiCompressionType;
+	
+	if ( pCompressedData ){
+		//delete old compressed data
+		delete pCompressedData;
+		pCompressedData = NULL;
+	}
+	
+	//copy the compressed data
+	uiCompressedDataSize = optionalPart.uiCompressedDataSize;
+	if ( optionalPart.pCompressedData != NULL ){
+		//copy the existing compressed optional data
+		pCompressedData = ((char*)(malloc( uiCompressedDataSize + 1 )));
+		memcpy( pCompressedData, optionalPart.pCompressedData,
+			uiCompressedDataSize );
+	}
+	ulCompressedDataVersion = optionalPart.ulCompressedDataVersion;
+	
+	return *this;
+}
 
 //protected:
 

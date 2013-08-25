@@ -47,7 +47,9 @@ History:
 18.04.2012  Oesterholz  Bugfix: replace FirstChild()->ToElement() with
 	FirstChildElement()
 18.04.2012  Oesterholz  speed up for lowerVector() with retrieving size once
-17.02.2013  Oesterholz FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE implemented
+17.02.2013  Oesterholz  FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE implemented
+17.02.2013  Oesterholz  Bugfix: XML restore: check if pcValue is NULL
+22.08.2013  Oesterholz  pow() replaced by composeDoubleFib()
 */
 
 
@@ -218,6 +220,12 @@ cFibVector::cFibVector( const TiXmlElement * pXmlElementVector, intFib &outStatu
 		
 		if ( szElementName == "value" ){
 			const char * pcValue = pXmlElement->GetText();
+			
+			if ( pcValue == NULL ){
+				DEBUG_OUT_EL2(<<"Warning: No value given"<<endl);
+				outStatus = 2;
+				continue;
+			}
 			//converting value to double
 			double dValue = 0.0;
 			
@@ -225,14 +233,14 @@ cFibVector::cFibVector( const TiXmlElement * pXmlElementVector, intFib &outStatu
 			long long lExponent = 0;
 			const unsigned int uiReadedItems =
 #ifdef WINDOWS
-				sscanf( pcValue, "%I64d * 2^(%I64d", & lMantissa, & lExponent );
+			sscanf( pcValue, "%I64d * 2^(%I64d", & lMantissa, & lExponent );
 #else //WINDOWS
-				sscanf( pcValue, "%lld * 2^(%lld", & lMantissa, & lExponent );
+			sscanf( pcValue, "%lld * 2^(%lld", & lMantissa, & lExponent );
 #endif //WINDOWS
 			
 			if ( uiReadedItems == 2 ){
 				//mantissa and exponent readed
-				dValue = ((doubleFib)lMantissa) * pow( 2.0, (doubleFib)lExponent );
+				dValue = composeDoubleFib( lMantissa, lExponent );
 			}else{
 				//try to read double directly
 				const int iReadValues = sscanf( pcValue, "%lf", & dValue );
@@ -247,6 +255,12 @@ cFibVector::cFibVector( const TiXmlElement * pXmlElementVector, intFib &outStatu
 		}else if ( szElementName == "variable" ){
 		
 			const char * pcValue = pXmlElement->GetText();
+			
+			if ( pcValue == NULL ){
+				DEBUG_OUT_EL2(<<"Warning: No variable value given"<<endl);
+				outStatus = 2;
+				continue;
+			}
 			long lValue;
 			const int iReadValues = sscanf( pcValue, "%ld", & lValue );
 			if ( iReadValues != 1){
@@ -1402,7 +1416,7 @@ bool cFibVector::storeXml( ostream &stream ) const{
 #ifdef FEATURE_EQUAL_FIB_OBJECT
 
 /**
- * This Method checks if the given vector is equal to this vector.
+ * This method checks if the given vector is equal to this vector.
  *
  * @param vector the vector to compare with this vector
  * @param bCheckExternalObjects if true the external objects of
@@ -1421,7 +1435,7 @@ bool cFibVector::equal( const cFibVector &vector,
 
 
 /**
- * This Method checks if the given vector is equal to this vector.
+ * This method checks if the given vector is equal to this vector.
  *
  * @param vector the vector to compare with this vector
  * @return true if the given vector is equal to this vector, else false
@@ -1437,7 +1451,7 @@ bool cFibVector::operator==( const cFibVector &vector ) const{
 
 
 /**
- * This Method checks if the given vector is not equal to this vector.
+ * This method checks if the given vector is not equal to this vector.
  *
  * @param vector the vector to compare with this vector
  * @return true if the given vector is not equal to this vector, else false
@@ -1453,7 +1467,7 @@ bool cFibVector::operator!=( const cFibVector &vector ) const{
 
 
 /**
- * This Method checks if the given variable is equal to this variable.
+ * This method checks if the given variable is equal to this variable.
  *
  * @param vector the vector to compare with this vector
  * @param mapEqualRootObjects the root objects of this object that wher
@@ -1527,7 +1541,7 @@ bool cFibVector::equalInternal( const cFibVector &vector,
 #else //FEATURE_EQUAL_FIB_OBJECT
 
 /**
- * This Method checks if the given vector is equal to this vector.
+ * This method checks if the given vector is equal to this vector.
  *
  * @param vector the vector to compare with this vector
  * @return true if the given vector is equal to this vector, else false
@@ -1541,7 +1555,7 @@ bool cFibVector::equal( const cFibVector &vector ) const{
 
 
 /**
- * This Method checks if the given vector is equal to this vector.
+ * This method checks if the given vector is equal to this vector.
  *
  * @param vector the vector to compare with this vector
  * @return true if the given vector is equal to this vector, else false
@@ -1593,7 +1607,7 @@ bool cFibVector::operator==( const cFibVector &vector ) const{
 
 
 /**
- * This Method checks if the given vector is not equal to this vector.
+ * This method checks if the given vector is not equal to this vector.
  *
  * @param vector the vector to compare with this vector
  * @return true if the given vector is not equal to this vector, else false
@@ -1609,7 +1623,7 @@ bool cFibVector::operator!=( const cFibVector &vector ) const{
 
 
 /**
- * This Method makes this vector elements equal to the correspondending
+ * This method makes this vector elements equal to the correspondending
  * vector elements of the given vector.
  * The type of the vector won't be changed.
  *

@@ -39,6 +39,7 @@ History:
 	the input values are now a vector of values
 31.01.2012  Oesterholz  isInherited() method added
 12.02.2012  Oesterholz  restoreXml*() without restoring domain possible
+01.08.2013  Oesterholz  FEATURE_EXT_SUBOBJECT_INPUT_VECTOR as default (not case removed)
 */
 
 #ifndef ___C_TYPE_EXT_SUBOBJECT_H__
@@ -55,17 +56,13 @@ class cTypeExtSubobject: public cTypeElement{
 
 protected:
 	
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	/**
 	 * The number of the subobject for which the type is.
 	 */
 	unsignedIntFib uiNumberExtSubobject;
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	
 	
 public:
-
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 
 	/**
 	 * Standardconstructor for the external subobjects type.
@@ -74,15 +71,6 @@ public:
 	 * 	the type is @see uiNumberExtSubobject
 	 */
 	cTypeExtSubobject( const unsignedIntFib uiInNumberExtSubobject );
-
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTO
-	
-	/**
-	 * Standardconstructor for the external subobjects type.
-	 */
-	cTypeExtSubobject();
-	
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 
 	/**
 	 * Copy constructor for the external subobjects type.
@@ -232,14 +220,11 @@ public:
 	 */
 	virtual bool isInherited() const;
 	
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	/**
 	 * @return the number of the subobject for which the type is
 	 * @see uiNumberExtSubobject;
 	 */
 	unsignedIntFib getNumberOfExtSubobject() const;
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-
 
 };//end class cTypeExtSubobject
 

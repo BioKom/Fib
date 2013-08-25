@@ -95,6 +95,9 @@ History:
 29.01.2012  Oesterholz  FEATURE_EXT_SUBOBJECT_INPUT_VECTOR implemented:
 	the input values are now a vector of values
 04.03.2012  Oesterholz  FEATURE_GENERATED_LIST_OBJECT implemented: speed up
+01.08.2013  Oesterholz  FEATURE_EXT_SUBOBJECT_INPUT_VECTOR as default (not case removed)
+18.08.2013  Oesterholz  generation of dSmalestUnit improved
+	( see evalueSmalestUnit() )
 */
 
 //TODO weg
@@ -393,6 +396,20 @@ list< pair< cFibElement*, unsigned long> >::iterator choosFibElement(
 
 
 /**
+ * This function evalues a value for the smallest unit of a vector element.
+ *
+ * @param uiMaxVectorElementNumber the maximum number for a vector element
+ * @return a value for the smallest unit of a vector element
+ */
+doubleFib evalueSmalestUnit( unsigned long uiMaxVectorElementNumber ){
+	/* 1 / 2^( log( uiMaxVectorElementNumber ) / 2 )
+	 -> about half the bits befor the point*/
+	return 1.0 / ((doubleFib) (((long long)0x01) <<
+		((unsigned int)log( uiMaxVectorElementNumber)) / 2 ));
+}
+
+
+/**
  * This function generates a subfunction with around uiSize
  * contained subfunctions.
  * The propability of each subfunction type, except the 0 ary, will be
@@ -427,7 +444,7 @@ list< pair< cFibElement*, unsigned long> >::iterator choosFibElement(
  * @param dMinValueElementNumber the minimal number for a value,
  * 	the number in value subfunctions will vary from
  * 	dMinValueElementNumber till dMaxVectorElementNumber
- * @param dSmalestUnit the smalest unit for value subfunction
+ * @param dSmalestUnit the smallest unit for value subfunction
  * @return the generated subfunction or NULL, if no subfunction
  * 	could be generated
  */
@@ -838,7 +855,7 @@ cUnderFunction * replaceUnderFunctionValuesWithVariables( cUnderFunction * pUnde
  * @param dMinValueElementNumber the minimal number for a value,
  * 	the number in value subconditions will vary from
  * 	dMinValueElementNumber till dMaxVectorElementNumber
- * @param dSmalestUnit the smalest unit for value subcondition
+ * @param dSmalestUnit the smallest unit for value subcondition
  * @return the generated condition or NULL, if no condition could be generated
  */
 cCondition * generateCondition( unsigned int uiSize,
@@ -1735,7 +1752,8 @@ list< pair< cFibElement*, unsigned long> > generateFibObjects(
 						rand() % (1 + rand() % 64) + 1;
 					pFibSet->setDomainNr( uiDomainNumber );
 				}
-				const doubleFib dSmalestUnit = (1.0 / log( uiMaxVectorElementNumber) );
+				const doubleFib dSmalestUnit =
+					evalueSmalestUnit( uiMaxVectorElementNumber );
 				const longFib lMaxVectorElementNumber = ((longFib)(
 					((longFib)uiMaxVectorElementNumber) / dSmalestUnit )) %
 						((longFib)RAND_MAX);
@@ -1884,7 +1902,8 @@ list< pair< cFibElement*, unsigned long> > generateFibObjects(
 						rand() % (1 + rand() % 64) + 1;
 					pFibMatrix->setDomainNr( uiDomainNumber );
 				}
-				const doubleFib dSmalestUnit = (1.0 / log( uiMaxVectorElementNumber) );
+				const doubleFib dSmalestUnit =
+					evalueSmalestUnit( uiMaxVectorElementNumber );
 				const longFib lMaxVectorElementNumber = ((longFib)(
 					((longFib)uiMaxVectorElementNumber) / dSmalestUnit )) %
 						((longFib)RAND_MAX);
@@ -1922,7 +1941,6 @@ list< pair< cFibElement*, unsigned long> > generateFibObjects(
 }//end generateFibObjects()
 
 
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 
 /**
  * 
@@ -1996,7 +2014,8 @@ cFibElement * adaptSubobjects( cFibElement * pFibObject,
 			
 			pVectorExtSubobject->resize( uiOutputValuesToSet );
 			
-			const doubleFib dSmalestUnit = (1.0 / log( uiMaxVectorElementNumber) );
+			const doubleFib dSmalestUnit =
+				evalueSmalestUnit( uiMaxVectorElementNumber );
 			const longFib lMaxVectorElementNumber = ((longFib)(
 				((longFib)uiMaxVectorElementNumber) / dSmalestUnit )) %
 					((longFib)RAND_MAX);
@@ -2028,7 +2047,6 @@ cFibElement * adaptSubobjects( cFibElement * pFibObject,
 	return pFibObject;
 }
 
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 
 
 /**
@@ -2154,7 +2172,6 @@ cFibElement * generateFibObject( unsigned int uiSize, unsigned long ulMaximalEva
 	list< cRoot* > liAllGeneratedRoots = liGeneratedRoots;
 	DEBUG_OUT_L2(<<"roots generated = "<<liGeneratedRoots.size()<<endl<<flush);
 	
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	//adapt external subobjects
 	for ( list< cRoot* >::iterator itrFibObject = liGeneratedRoots.begin();
 			itrFibObject != liGeneratedRoots.end(); itrFibObject++ ){
@@ -2203,7 +2220,6 @@ cFibElement * generateFibObject( unsigned int uiSize, unsigned long ulMaximalEva
 		//generate domains for the external subobjects
 		pActualFibObject->generateExternSubobjectsDefinitions();
 	}
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	
 	//add root -objects as sub -root -objects till one root -element remains
 	cRoot * pMasterRoot = liGeneratedRoots.back();
@@ -2274,127 +2290,6 @@ cFibElement * generateFibObject( unsigned int uiSize, unsigned long ulMaximalEva
 	}
 	
 	
-#ifndef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	//change and adapt the cExtSubobject
-	cRoot * pActualRootElement = NULL;
-	unsignedIntFib uiMaxSubobjects;
-	set< unsignedIntFib > setNotUsedSubobjectNumbers;
-	for ( cFibElement * pActualFibElement = pMasterRoot; pActualFibElement != NULL;
-			pActualFibElement = pActualFibElement->getNextFibElement() ){
-		
-		const char cActualType = pActualFibElement->getType();
-		if ( cActualType == 'r' ){
-			//new root element reached
-			pActualRootElement = (cRoot*)(pActualFibElement);
-			cFibElement * pActualMainFibObject =
-				pActualRootElement->getNextFibElement();
-			const unsignedIntFib uiNumberOfExternalObjectElements =
-				pActualMainFibObject->getNumberOfElements( 's' );
-			if ( uiNumberOfExternalObjectElements == 0 ){
-				//no external object elements -> check next root element
-				pActualFibElement = pActualFibElement->getNextFibElement( 'r' );
-				if ( pActualFibElement == NULL ){
-					break;
-				}
-				//go back one element because the for loop increase it
-				pActualFibElement = pActualFibElement->getFibElement( -1 );
-				continue;
-			}
-			//adapt the root element
-			if ( uiNumberOfExternalObjectElements < 16 ){
-				uiMaxSubobjects = 1 + rand() %  ( 1 + rand() %
-					( uiNumberOfExternalObjectElements + 1 ) );
-			}else if ( uiNumberOfExternalObjectElements < 64 ){
-				uiMaxSubobjects = 1 + rand() %  ( 1 + rand() %  ( 1 + rand() %
-					( uiNumberOfExternalObjectElements + 4 ) ) );
-			}else{//big number of external subobject elements
-				uiMaxSubobjects = 1 + rand() %  ( 1 + rand() %  ( 1 + rand() % ( 1 + rand() %
-					( uiNumberOfExternalObjectElements + 32 ) ) ) );
-			}
-			pActualRootElement->setNumberOfExternSubobjects( uiMaxSubobjects );
-			//evalue number of output variables for the subobjects
-			DEBUG_OUT_L2(<<"adapting root element for external subobject element "<<pActualRootElement<<" with number "<<flush<<pActualRootElement->getNumberOfElement()<<", max subobjects "<<uiMaxSubobjects<<endl<<flush);
-			for ( unsigned int uiActualSubobject = 1;
-					uiActualSubobject <= uiMaxSubobjects; uiActualSubobject++ ){
-				
-				const unsignedIntFib uiNumberOfOutputVariables = rand() %
-					( 4 + rand() % ( 1 + rand() % ( ((unsigned int)log(
-						pActualMainFibObject->getNumberOfElements() )) + 8 ) ) );
-				
-				pActualRootElement->setNumberOfOutputVariables(
-					uiActualSubobject, uiNumberOfOutputVariables );
-					
-				setNotUsedSubobjectNumbers.insert( uiActualSubobject );
-				DEBUG_OUT_L3(<<"   subobject "<<uiActualSubobject<<" has "<<uiNumberOfOutputVariables<<" output variables"<<endl<<flush);
-			}
-			continue;
-		}
-		if ( cActualType != 's' ){
-			//not an external subobject element -> check next element
-			continue;
-		}//else external subobject element
-		
-		cExtSubobject * pExtSubobjElement = (cExtSubobject*)(pActualFibElement);
-		
-		DEBUG_OUT_L2(<<"adapting external subobject element "<<pExtSubobjElement<<" with number "<<flush<<pExtSubobjElement->getNumberOfElement()<<endl<<flush);
-		//identifiers to set -> set one
-		longFib lSubobjectNumber = 0;
-		if ( setNotUsedSubobjectNumbers.empty() || ( rand() % 8 == 0 ) ){
-			//choose a random number as subobject number
-			if ( (rand() % 128) != 0 ){
-				
-				lSubobjectNumber = 1 + rand() % uiMaxSubobjects;
-			}else{//take random identifier
-				lSubobjectNumber = 1 + ((longFib)(rand() % 256));
-			}
-		}else{//use a not used subobject number
-			lSubobjectNumber = rand() % setNotUsedSubobjectNumbers.size();
-			set< unsignedIntFib >::iterator itrSubObjectNumber =
-				setNotUsedSubobjectNumbers.begin();
-			for ( ; 0 < lSubobjectNumber ; itrSubObjectNumber++, lSubobjectNumber-- ){
-				//nothing to do
-			}
-			lSubobjectNumber = (*itrSubObjectNumber);
-			setNotUsedSubobjectNumbers.erase( itrSubObjectNumber );
-		}
-		DEBUG_OUT_L2(<<"setting subobject number "<<lSubobjectNumber<<" for external subobject element "<<endl<<flush);
-		
-		pExtSubobjElement->setNumberSubobject( lSubobjectNumber );
-		
-		//set output variables
-		
-		//insert variables for external object
-		unsignedIntFib uiOutputVariablesToSet =
-			pActualRootElement->getNumberOfOutputVariables( lSubobjectNumber );
-		
-		if ( (rand() % 64) == 0 ){
-			//set wrong number of input variables
-			uiOutputVariablesToSet = rand() % ( rand() % (uiOutputVariablesToSet + 32) + 1 );
-		}
-		if ( 0 < uiOutputVariablesToSet ){
-			//evalue possible/ defined variables for the element
-			DEBUG_OUT_L2(<<"try set "<<uiOutputVariablesToSet<<" output variables for external object element "<<endl<<flush);
-			list<cFibVariable*> liDefinedVariables =
-				pExtSubobjElement->getDefinedVariables( ED_HIGHER );
-			if ( ! liDefinedVariables.empty() ){
-				//variables defined for the external object element -> set some
-				for ( unsignedIntFib uiActualOutputVariable = 1;
-						uiActualOutputVariable <= uiOutputVariablesToSet;
-						uiActualOutputVariable++ ){
-					//choose input variable to set
-					unsigned int uiChoosenVariable = rand() % liDefinedVariables.size();
-					list<cFibVariable*>::iterator itrChoosenVariable = liDefinedVariables.begin();
-					while ( uiChoosenVariable != 0){
-						itrChoosenVariable++;
-						uiChoosenVariable--;
-					}
-					pExtSubobjElement->setOutputVariable( uiActualOutputVariable, (*itrChoosenVariable) );
-				}
-			}
-		}//else set no input variables
-	}
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	
 	//change and adapt the cExtObject
 	cExtObject * pExtObjectElement = (cExtObject*)(pMasterRoot->getNextFibElement( 'o' ));
 	while ( pExtObjectElement != NULL ){
@@ -2452,7 +2347,8 @@ cFibElement * generateFibObject( unsigned int uiSize, unsigned long ulMaximalEva
 			cVectorExtObject * pVectorExtObject =
 				pExtObjectElement->getInputVector();
 			
-			const doubleFib dSmalestUnit = (1.0 / log( uiMaxVectorElementNumber) );
+			const doubleFib dSmalestUnit =
+				evalueSmalestUnit( uiMaxVectorElementNumber );
 			const longFib lMaxVectorElementNumber = ((longFib)(
 				((longFib)uiMaxVectorElementNumber) / dSmalestUnit )) %
 					((longFib)RAND_MAX);
@@ -2530,7 +2426,6 @@ cFibElement * generateFibObject( unsigned int uiSize, unsigned long ulMaximalEva
 				DEBUG_OUT_L3(<<" "<<liExtSubobject.size()<<" subobject(s) -> done"<<endl<<flush);
 				//insert generated subobject
 				if ( ! liExtSubobject.empty() ){
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 					//adapt external subobjects
 					cRoot * pSuperiorRoot = pExtObjectElement->getSuperiorRootElement();
 					if ( pSuperiorRoot != NULL ){
@@ -2561,7 +2456,6 @@ cFibElement * generateFibObject( unsigned int uiSize, unsigned long ulMaximalEva
 							pSuperiorRoot->generateExternSubobjectsDefinitions();
 						}
 					}//end if adapt external subobjects
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 					
 					DEBUG_OUT_L3(<<"   adding to the external object element the subobject "<<liExtSubobject.front().first<<" as the "<<uiActualSubobject<<"'th subobject"<<endl<<flush);
 					

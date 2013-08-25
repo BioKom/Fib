@@ -66,6 +66,7 @@ History:
 	the input values are now a vector of values
 07.05.2013  Oesterholz  "average byts per element" added
 11.05.2013  Oesterholz  bits per different external object added
+01.08.2013  Oesterholz  FEATURE_EXT_SUBOBJECT_INPUT_VECTOR as default (not case removed)
 */
 
 #include "version.h"
@@ -284,14 +285,6 @@ int main(int argc, char* argv[]){
 			//use the standard domain
 			pVariableDomain = (cDomainSingle*)typeVariable.getStandardDomain();
 		}
-#ifndef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-		//TODO: comment in if needed for variables
-		const unsignedLongFib ulBitsForVariables =
-			pVariableDomain->getCompressedSizeForValue();
-		if ( bStandardVariableDomainUsed ){
-			delete pVariableDomain;
-		}
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 		
 		//output multimediaobject dimensions
 		cTypeDimension typeDimension;
@@ -366,7 +359,6 @@ int main(int argc, char* argv[]){
 		if ( bStandardExtObjDomainUsed ){
 			delete pExtObjDomain;
 		}
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 		//get the domain for the external subobject number
 		cDomainNaturalNumber * pDomainNumberOfSubobjects;
 		if ( pActualFibElement->getType() == 'r' ){
@@ -382,36 +374,6 @@ int main(int argc, char* argv[]){
 		const unsignedLongFib ulBitsForExtSubobjCounts =
 			pDomainNumberOfSubobjects->getCompressedSizeForValue();
 		delete pDomainNumberOfSubobjects;
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-		//return the cExtSubobject domain
-		cTypeExtSubobject typeExtSubobject;
-		cDomainIntegerBasis * pExtSubobjDomain = (cDomainIntegerBasis*)
-			validDomains.getDomainForElement( typeExtSubobject );
-		const bool bStandardExtSubobjDomainUsed = (pExtSubobjDomain == NULL);
-		if ( bStandardExtSubobjDomainUsed ){
-			//use the standard domain
-			pExtSubobjDomain = (cDomainIntegerBasis*)typeExtSubobject.getStandardDomain();
-		}
-		//get the domain for the external subobject number
-		cDomainNaturalNumber * pDomainNumberOfSubobjects;
-		if ( pActualFibElement->getType() == 'r' ){
-			//actual Fib element is an root element
-			pDomainNumberOfSubobjects = new cDomainNaturalNumber(
-				((cRoot*)(pActualFibElement))->getNumberOfExternSubobjects() );
-		}else{
-			pDomainNumberOfSubobjects = new cDomainNaturalNumber(
-				(pActualFibElement->getSuperiorRootElement())->
-					getNumberOfExternSubobjects() );
-		}
-		//evalue bits for counts of output variables of cExtSubobject
-		const unsignedLongFib ulBitsForExtSubobjCounts =
-			(pExtSubobjDomain->getCompressedSizeForValue()) +
-			pDomainNumberOfSubobjects->getCompressedSizeForValue();
-		if ( bStandardExtSubobjDomainUsed ){
-			delete pExtSubobjDomain;
-		}
-		delete pDomainNumberOfSubobjects;
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 		
 		for ( ; pActualFibElement != NULL;
 				pActualFibElement = pActualFibElement->getNextFibElement() ){
@@ -532,15 +494,9 @@ int main(int argc, char* argv[]){
 					cExtSubobject * pActualExtSubobject = ((cExtSubobject*)(pActualFibElement));
 					//add bits for identifier, count of subobjects and count of input variables
 					uiBitsForExtSubobjects += 4 + ulBitsForExtSubobjCounts;
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 					//add bits for output values
 					uiBitsForExtObjects +=
 						pActualExtSubobject->getOutputVector()->getCompressedSize();
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-					//add bits for input variables
-					uiBitsForExtSubobjects += ulBitsForVariables *
-						pActualExtSubobject->getNumberOfOutputVariables();
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 				}break;
 				case 'v':{//set-element
 					uiNumberOfFibSets++;

@@ -38,6 +38,7 @@ History:
 30.12.2012  Oesterholz  debugging evalue will print number of input variables
 03.03.2013  Oesterholz  Bugfix?: if an subobject is deleted, change it's
 	superior just if it (the superior) is this object
+01.08.2013  Oesterholz  method assignValues() added
 */
 
 
@@ -1336,6 +1337,180 @@ cFibElement * cExtObject::copyElement( const char cType,
 	}//else
 	return NULL;
 }
+
+
+/**
+ * This method assigns / copies the values from the given Fib element
+ * fibElement to this Fib element. This means, it will copy everything
+ * of the Fib element fibElement except pointers to other Fib elements
+ * (e. g. for subobjects), these will remain the same.
+ * For that both Fib elements have to be of the same type.
+ * Note: The variables used in this Fib element should be equal some
+ * 	variables defined above.
+ * 	@see cFibVariable::equal( const cFibVariable &variable, false )
+ *
+ * @see getType()
+ * @param fibElement the Fib element, from which to assign / copy the values
+ * @return true if the values could be copied from the given Fib element
+ * 	fibElement, else false
+ */
+bool cExtObject::assignValues( const cFibElement & fibElement ){
+	
+	if ( fibElement.getType() != getType() ){
+		//both Fib elements not of the same type -> can't assign values
+		return false;
+	}
+	if ( equalElement( fibElement, false ) ){
+		//elements already equal -> don't need to assign anything
+		return true;
+	}
+	const cExtObject * pOtherExtObject =
+		((const cExtObject *)(&fibElement));
+	
+#ifdef FEATURE_C_EXT_OBJECT_USE_LIST
+	const list< pair< cFibElement * , list< cFibVariable * > > > &
+		vecOtherSubobjects = pOtherExtObject->vecSubobjects;
+#else //FEATURE_C_EXT_OBJECT_USE_LIST
+	const vector< pair< cFibElement * , vector< cFibVariable * > > > &
+		vecOtherSubobjects = pOtherExtObject->vecSubobjects;
+#endif //FEATURE_C_EXT_OBJECT_USE_LIST
+	if ( vecSubobjects.size() != vecOtherSubobjects.size() ){
+		/*not the same number of subobjects -> can't assign values
+		 *(number of defined variables for subobjects can't be adapted)*/
+		return false;
+	}
+	
+	//try to match used variables of input vectors of to copy
+	cVectorExtObject & vecOtherInputValues =
+		(const_cast<cExtObject*>(pOtherExtObject))->vecInputValues;
+	//get all used variables 
+	const set< cFibVariable* > setUsedVariables =
+		vecOtherInputValues.getUsedVariables();
+	
+	/* The list with the variables to replace:
+	 * 	first: the original used variable to replace
+	 * 	second: the new variable to replace the original variable
+	 */
+	list< pair< cFibVariable * ,cFibVariable * > > liVariablesToReplace;
+	
+	if ( ! getVariablesToReplace( setUsedVariables, liVariablesToReplace ) ){
+		//not all variables can be replaced with for this Fib element defined variables
+		return false;
+	}
+	//assign the values
+	
+	//check if the defined variables for the subobjects can be adopted
+#ifdef FEATURE_C_EXT_OBJECT_USE_LIST
+	list< pair< cFibElement * , list< cFibVariable * > > >::const_iterator
+		itrActualOtherSubobject = vecOtherSubobjects.begin();
+	for ( list< pair< cFibElement * , list< cFibVariable * > > >::const_iterator
+			itrActualSubobject = vecSubobjects.begin();
+			( itrActualSubobject != vecSubobjects.end() ) &&
+			( itrActualOtherSubobject != vecOtherSubobjects.end() );
+			itrActualSubobject++, itrActualOtherSubobject++ ){
+		
+		const list< cFibVariable * > & vecVariablesDefined =
+			itrActualSubobject->second;
+#else //FEATURE_C_EXT_OBJECT_USE_LIST
+	vector< pair< cFibElement * , vector< cFibVariable * > > >::const_iterator
+		itrActualOtherSubobject = vecOtherSubobjects.begin();
+	for ( vector< pair< cFibElement * , vector< cFibVariable * > > >::const_iterator
+			itrActualSubobject = vecSubobjects.begin();
+			( itrActualSubobject != vecSubobjects.end() ) &&
+			( itrActualOtherSubobject != vecOtherSubobjects.end() );
+			itrActualSubobject++, itrActualOtherSubobject++ ){
+		
+		const vector< cFibVariable * > & vecVariablesDefined =
+			itrActualSubobject->second;
+#endif //FEATURE_C_EXT_OBJECT_USE_LIST
+		
+		const unsignedIntFib uiNumberOfVariables = vecVariablesDefined.size();
+		const unsignedIntFib uiNumberOfVariablesOther =
+			itrActualOtherSubobject->second.size();
+		
+		if ( uiNumberOfVariablesOther < uiNumberOfVariables ){
+			//check if to much variables can be removed
+			vector< cFibVariable * >::const_reverse_iterator
+				itrToRemoveDefinedVariable = vecVariablesDefined.rbegin();
+			
+			for ( unsignedIntFib uiNumberOfVariable = uiNumberOfVariablesOther;
+					uiNumberOfVariable < uiNumberOfVariables;
+					uiNumberOfVariable++, itrToRemoveDefinedVariable++ ){
+				
+				if ( (*itrToRemoveDefinedVariable)->getNumberOfUsingElements() != 0 ){
+					//variable is used -> can't remove variable -> can't assign values
+					return false;
+				}
+			}//else all to much defined variables can be removed
+			
+		}//else don't need to check number of defined variables
+	}//end for all subobjects
+	//adapt defined variables for subobjects
+	itrActualOtherSubobject = vecOtherSubobjects.begin();
+#ifdef FEATURE_C_EXT_OBJECT_USE_LIST
+	for ( list< pair< cFibElement * , list< cFibVariable * > > >::iterator
+			itrActualSubobject = vecSubobjects.begin();
+			( itrActualSubobject != vecSubobjects.end() ) &&
+			( itrActualOtherSubobject != vecOtherSubobjects.end() );
+			itrActualSubobject++ ){
+		
+		list< cFibVariable * > & vecVariablesDefined =
+			itrActualSubobject->second;
+#else //FEATURE_C_EXT_OBJECT_USE_LIST
+	for ( vector< pair< cFibElement * , vector< cFibVariable * > > >::iterator
+			itrActualSubobject = vecSubobjects.begin();
+			( itrActualSubobject != vecSubobjects.end() ) &&
+			( itrActualOtherSubobject != vecOtherSubobjects.end() );
+			itrActualSubobject++ ){
+		
+		vector< cFibVariable * > & vecVariablesDefined =
+			itrActualSubobject->second;
+#endif //FEATURE_C_EXT_OBJECT_USE_LIST
+		
+		const unsignedIntFib uiNumberOfVariables = vecVariablesDefined.size();
+		const unsignedIntFib uiNumberOfVariablesOther =
+			itrActualOtherSubobject->second.size();
+		
+		if ( uiNumberOfVariablesOther < uiNumberOfVariables ){
+			//reduce the number of defined variables
+			vecVariablesDefined.resize( uiNumberOfVariablesOther );
+			
+		}else if ( uiNumberOfVariables < uiNumberOfVariablesOther ){
+			//add defined variables till it matches that of the other
+			for ( unsignedIntFib uiNumberOfVariable = uiNumberOfVariables;
+					uiNumberOfVariable < uiNumberOfVariablesOther; uiNumberOfVariable++ ){
+				
+				vecVariablesDefined.push_back( new cFibVariable( this ) );
+			}
+		}//else don't need to change number of defined variables
+	}//end for all subobjects
+	
+	//copy identifier number
+	lIdentifier = pOtherExtObject->lIdentifier;
+	
+	//copy to input vector of other external object
+	//assign the values
+	vecInputValues = vecOtherInputValues;
+	vecInputValues.setDefiningFibElement( this, false );
+	
+	if ( ! liVariablesToReplace.empty() ){
+		//replace variables to replace
+		for ( list< pair< cFibVariable * ,cFibVariable * > >::iterator
+				itrActualVariable = liVariablesToReplace.begin();
+				itrActualVariable != liVariablesToReplace.end(); itrActualVariable++ ){
+			
+			//replace variable in vector
+			if ( ! vecInputValues.replaceVariable(
+					itrActualVariable->first, itrActualVariable->second ) ){
+				//Error: should not appen
+				return false;
+			}
+		}//end for all variables to replace
+	}//end if variables to replace
+	
+	return true;
+}
+
 
 
 #ifdef FEATURE_EQUAL_FIB_OBJECT
