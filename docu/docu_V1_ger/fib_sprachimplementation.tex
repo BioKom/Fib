@@ -102,14 +102,14 @@ Die Fib-Elementklassen werden Klassen untergeordnet, welche ihre Struktur beschr
  \item \verb|cFibLimb|: f"ur Fib-Elementklassen die (gerade) Zweige sind, also genau ein Unterobjekt enthalten; die abgeleitete Klassen sind:
  \begin{itemize}
   \item \verb|cProperty|
-  \item \verb|cFibList|
+  \item \verb|cList|
   \item \verb|cComment|
   \item \verb|cArea|
   \item \verb|cFunction|
  \end{itemize}
  \item \verb|cFibBranch|: f"ur Fib-Elementklassen die Verzweigungen darstellen, also mehrere Unterobjekte haben k"onnen; die abgeleitete Klassen sind:
  \begin{itemize}
-  \item \verb|cFibList|
+  \item \verb|cList|
   \item \verb|cIf|
   \item \verb|cRoot|
   \item \verb|cExtObject|
@@ -405,7 +405,7 @@ In Tabelle \ref{tabTimeNeed} sind die Formeln f"ur die ben"otigten Zeiten f"ur d
 
 	\verb|cPoint|    & $T(Obj)= 1 + E_V$ & $E_V$ ist die Anzahl der Elemente des Positionsvektors \\\hline
 	\verb|cProperty| & $T(Obj)= 1 + E_V + T(Obj_1)$ & $E_V$ ist die Anzahl der Elemente des Eigenschaftsvektor; $T(Obj_1)$ die Auswertungszeit des enthaltenden Fib-Objekts $Obj_1$\\\hline
-	\verb|cFibList|  & $T(Obj)= 1 + \sum^{n}_{i=1} T(Obj_i)$ & $T(Obj_i)$ sind die Auswertungszeiten der enthaltenden Fib-Unterobjekte $Obj_i$; $n$ ist die Anzahl der enthaltenden Fib-Unterobjekte\\\hline
+	\verb|cList|  & $T(Obj)= 1 + \sum^{n}_{i=1} T(Obj_i)$ & $T(Obj_i)$ sind die Auswertungszeiten der enthaltenden Fib-Unterobjekte $Obj_i$; $n$ ist die Anzahl der enthaltenden Fib-Unterobjekte\\\hline
 	\verb|cComment|: & $T(Obj)= 1 + T(Obj_1)$ & $T(Obj_1)$ ist die Auswertungszeit des enthaltenden Fib-Objekts $Obj_1$\\\hline
 	\verb|cArea|: & $T(Obj)= 1 + \sum_{W \in B_1 \ldots B_n} T( Obj_1(W) )$ & $B_i$ sind die Unterbereiche des Bereichs, mit $n$ der Anzahl der Unterbereiche; $W$ sind dann die einzelnen Werte der Bereiche; $T( Obj_1(W) )$ ist die Auswertungszeit des enthaltenden Fib-Objekts $Obj_1$, wenn die Variable des Bereichselements auf $W$ gesetzt wurde \\\hline
 	\verb|cFunction| & $T(Obj)= T(UF) + T( Obj_1(W) )$ & $T(UF)$ ist die Zeit, welche zu Berechnen der Unterfunktion ben"otigt wird;  $T( Obj_1(W) )$ ist die Auswertungszeit des enthaltenden Fib-Objekts $Obj_1$, wenn die Variable des Funktionselements auf $W$, den Wert der Funktion, gesetzt wurde \\\hline
@@ -1386,7 +1386,7 @@ Die Klasse \verb|cFibLimb| ist die Elternklasse f"ur alle Fib-Elementklassen die
 Die Abgeleiteten Klassen sind:
 \begin{itemize}
  \item \verb|cProperty|
- \item \verb|cFibList|
+ \item \verb|cList|
  \item \verb|cComment|
  \item \verb|cArea|
  \item \verb|cFunction|
