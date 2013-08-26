@@ -40,6 +40,7 @@ History:
 19.10.2011  Oesterholz  FEATURE_EQUAL_FIB_OBJECT implemented
 21.02.2013  Oesterholz  Bugfix in overwriteObjectWithObject() old
 	pUnderObject could be NULL
+10.07.2013  Oesterholz  subobject methods added
 */
 
 //TODO weg
@@ -398,6 +399,82 @@ cFibElement * cFibLimb::getConstFibElementUp( const cFibElement * pLastFibElemen
 }
 
 #endif //FEATURE_FAST_UPDATE
+
+
+
+/**
+ * This method returns the number of subobjects in this Fib element.
+ * (e. g. limb elements have one subobject)
+ *
+ * @see getSubobject()
+ * @see getSubobjects()
+ * @return the number of subobjects in this Fib element
+ */
+unsignedIntFib cFibLimb::getNumberOfSubobjects() const{
+	
+	return 1;
+}
+
+
+/**
+ * This method returns the uiNumberOfSubobject'th subobject of this
+ * Fib element.
+ *
+ * @see getNumberOfSubobjects()
+ * @see getSubobjects()
+ * @param uiNumberOfSubobject the number of the subobject to return
+ * @return a pointer to the uiNumberOfSubobject'th subobject of this
+ * 	Fib element, or the null pointer NULL if non exists
+ */
+cFibElement * cFibLimb::getSubobject( const unsignedIntFib uiNumberOfSubobject ){
+	
+	return (uiNumberOfSubobject == 1) ? pUnderObject : NULL;
+}
+
+
+/**
+ * This method returns the uiNumberOfSubobject'th subobject of this
+ * Fib element.
+ *
+ * @see getNumberOfSubobjects()
+ * @see getSubobjects()
+ * @param uiNumberOfSubobject the number of the subobject to return
+ * @return a pointer to the uiNumberOfSubobject'th subobject of this
+ * 	Fib element, or the null pointer NULL if non exists
+ */
+const cFibElement * cFibLimb::getSubobject(
+	const unsignedIntFib uiNumberOfSubobject ) const{
+	
+	
+	return (uiNumberOfSubobject == 1) ? pUnderObject : NULL;
+}
+
+
+/**
+ * This method returns all subobjects of this Fib element.
+ *
+ * @see getNumberOfSubobjects()
+ * @see getSubobject()
+ * @return a list with all the subobjects of this Fib element
+ */
+list< cFibElement * > cFibLimb::getSubobjects(){
+	
+	return list< cFibElement * >( 1, pUnderObject );
+}
+
+
+/**
+ * This method returns all subobjects of this Fib element.
+ *
+ * @see getNumberOfSubobjects()
+ * @see getSubobject()
+ * @return a list with all the subobjects of this Fib element
+ */
+const list< cFibElement * > cFibLimb::getSubobjects() const{
+	
+	return list< cFibElement * >( 1, pUnderObject );
+}
+
 
 
 /**

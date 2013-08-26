@@ -45,6 +45,7 @@ History:
 16.01.2013  Oesterholz  FEATURE_FIB_ELEMENT_CHECKS_DATABASE_FOR_EXTERNAL_OBJECTS added
 17.02.2013  Oesterholz  FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE added
 09.05.2013  Oesterholz  SWITCH_JUST_STORE_AND_EVALUE added
+31.07.2013  Oesterholz  FEATURE_EXT_SUBOBJECT_INPUT_VECTOR removed
 */
 
 
@@ -58,8 +59,8 @@ History:
 **************************************/
 
 //versions information for the Fib multimedia language
-#define FIB_VERSION          6
-#define FIB_VERSION_NAME     V1.2.3
+#define FIB_VERSION          7
+#define FIB_VERSION_NAME     V1.2.4
 
 //versions information for the Fib database
 #define FIB_DB_VERSION      5
@@ -290,24 +291,6 @@ History:
 History:
 */
 #define FEATURE_EVALUE_ALL_PROPERTIES_IN_C_PROPERTY
-
-
-
-/**
- * With this feature the external subobject element @see cExtSubobject
- * will use a vector for its input values.
- * (@see cFibDatabase::loadFibObject() ).
- *
- * @see cExtSubobject
- * @see cVectorExtSubobject
- * @see cTypeExtSubobject
- * created: 29.01.2012 Betti Oesterholz
- * status:  running and tested(29.01.2012)
- * (deprecated: not FEATURE_EXT_SUBOBJECT_INPUT_VECTOR)
- *//*
-History:
-*/
-#define FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 
 
 /**

@@ -302,7 +302,7 @@ int testStructurRandom( unsigned long &ulTestphase, unsigned int uiMaxSize,
 			" uiAverageSubRootsDepth="<< uiAverageSubRootsDepth <<
 			" uiNumberOfAverageInputVariables="<< uiNumberOfAverageInputVariables<<
 			" uiFractionsOfUsedVariables="<< uiFractionsOfUsedVariables <<
-			" uiMaxVectorElementNumber="<<uiMaxVectorElementNumber<<" . "<<endl<<flush;
+			" uiMaxVectorElementNumber="<<uiMaxVectorElementNumber<<" ."<<endl<<flush;
 		
 		cout<<"And the properties: ";
 		for ( list< cTypeProperty >::iterator itrProperty = liPossiblePropertytyps.begin();
@@ -390,7 +390,7 @@ int testStructurRandom( unsigned long &ulTestphase, unsigned int uiMaxSize,
 				" uiAverageSubRootsDepth="<< uiAverageSubRootsDepth <<
 				" uiNumberOfAverageInputVariables="<< uiNumberOfAverageInputVariables<<
 				" uiFractionsOfUsedVariables="<< uiFractionsOfUsedVariables <<
-				" uiMaxVectorElementNumber="<<uiMaxVectorElementNumber<<" . "<<flush;
+				" uiMaxVectorElementNumber="<<uiMaxVectorElementNumber<<" ."<<flush;
 			iReturn++;
 			
 			continue;
@@ -409,7 +409,7 @@ int testStructurRandom( unsigned long &ulTestphase, unsigned int uiMaxSize,
 		iReturn += uiErrorsInTests;
 
 		if ( uiErrorsInTests != 0 ){
-			//write Fib-object wher orror occured to folder
+			//write Fib-object where orror occured to folder
 			char szFileNameBuffer[256];
 			sprintf ( szFileNameBuffer, "%s%sS%uD%uSR%uSRD%uIV%uVF%uMV%uR%uTT%u%s",
 				DIR_OUTPUT, "storeErrorOrg", uiSize,
@@ -417,7 +417,7 @@ int testStructurRandom( unsigned long &ulTestphase, unsigned int uiMaxSize,
 				uiNumberOfAverageInputVariables, uiFractionsOfUsedVariables,
 				uiMaxVectorElementNumber, uiIteration, uiTestType ,".xml" );
 			
-			cerr<<"Error: The Fib-object wher the error occured will be writen to the file \""<< szFileNameBuffer <<"\" ."<<endl;
+			cerr<<"Error: The Fib-object where the error occured will be writen to the file \""<< szFileNameBuffer <<"\" ."<<endl;
 			
 			ofstream * pFile = new ofstream( szFileNameBuffer );
 			
@@ -478,7 +478,7 @@ int testStoreXmlOnObject( cFibElement * pFibObject ){
 	
 	ofstream * pOutFile = new ofstream( szFileNameBuffer );
 	
-	cout<<"Storing Fib-object in the Xml-format to the file "<< szFileNameBuffer <<" . ";
+	cout<<"Storing Fib-object in the Xml-format to the file "<< szFileNameBuffer <<" .";
 	
 	bool bStoreSuccesfull = pFibObject->storeXml( *pOutFile );
 	delete pOutFile;
@@ -498,7 +498,7 @@ int testStoreXmlOnObject( cFibElement * pFibObject ){
 	
 	if ( outStatus == 0 ){
 		cout<<"Restoring Fib-object in the Xml-format from the file "<<
-			szFileNameBuffer <<" successfull. "<<endl;
+			szFileNameBuffer <<" successfull."<<endl;
 	}else{
 		cerr<<"Error: Restoring Fib-object in the Xml-format from the file "<<
 			szFileNameBuffer <<" not successfull. (return status="<< outStatus <<")"<<endl;
@@ -513,7 +513,7 @@ int testStoreXmlOnObject( cFibElement * pFibObject ){
 			static unsigned int uiRestoreIteration = 1;
 			sprintf ( szFileNameBuffer, "%s%s%u%s%s", DIR_OUTPUT, "storeXml", uiRestoreIteration, "Error" ,".xml" );
 			pOutFile = new ofstream( szFileNameBuffer );
-			cout<<"Storing restored Fib-object in the Xml-format to the file "<< szFileNameBuffer <<" . "<<endl;
+			cout<<"Storing restored Fib-object in the Xml-format to the file "<< szFileNameBuffer <<" ."<<endl;
 			pRestoredFibObject->storeXml( *pOutFile );
 			delete pOutFile;
 			uiRestoreIteration++;
@@ -579,7 +579,7 @@ int testStoreOnObject( cFibElement * pFibObject ){
 	
 	ofstream * pOutFile = new ofstream( szFileNameBuffer, ios_base::out | ios_base::binary );
 	
-	cout<<"Storing Fib-object in the compressed Fib-format to the file "<< szFileNameBuffer <<" . ";
+	cout<<"Storing Fib-object in the compressed Fib-format to the file "<< szFileNameBuffer <<" .";
 
 	bool bStoreSuccesfull = pFibObject->store( *pOutFile );
 	delete pOutFile;
@@ -599,7 +599,7 @@ int testStoreOnObject( cFibElement * pFibObject ){
 	
 	if ( outStatus == 0 ){
 		cout<<"Restoring Fib-object in the compressed Fib-format from the file "<<
-			szFileNameBuffer <<" successfull. "<<endl;
+			szFileNameBuffer <<" successfull."<<endl;
 	}else{
 		cerr<<"Error: Restoring Fib-object in the compressed Fib-format from the file "<<
 			szFileNameBuffer <<" not successfull. (return status="<< outStatus <<")"<<endl;
@@ -614,7 +614,7 @@ int testStoreOnObject( cFibElement * pFibObject ){
 			static unsigned int uiRestoreIteration = 1;
 			sprintf ( szFileNameBuffer, "%s%s%u%s%s", DIR_OUTPUT, "store", uiRestoreIteration, "Error" ,".xml" );
 			ofstream * pOutFileXml = new ofstream( szFileNameBuffer );
-			cout<<"Storing restored Fib-object in the Xml-format to the file "<< szFileNameBuffer <<" . "<<endl;
+			cout<<"Storing restored Fib-object in the Xml-format to the file "<< szFileNameBuffer <<" ."<<endl;
 			pRestoredFibObject->storeXml( *pOutFileXml );
 			delete pOutFileXml;
 			uiRestoreIteration++;

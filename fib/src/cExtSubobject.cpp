@@ -37,6 +37,8 @@ History:
 22.11.2012  Oesterholz  Bugfix: a root element can be called more than one
 	time by external objects
 29.12.2012  Oesterholz  debugging evalue will print number of input variables
+31.07.2013  Oesterholz  method assignValues() added;
+	FEATURE_EXT_SUBOBJECT_INPUT_VECTOR as default (not case removed)
 */
 
 //TODO debugging switches
@@ -57,7 +59,6 @@ History:
 using namespace fib;
 
 
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 
 /**
  * parameterconstructor
@@ -117,65 +118,6 @@ cExtSubobject::cExtSubobject( const cExtSubobject & extObjectElement ):
 	//nothing to do
 }
 
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-
-/**
- * parameterconstructor
- *
- * @param uiInNumberOfSubobject the number of the subobject to call
- * @param vecInOutputVariables the vector with the output variables
- * 	of the subobject to call
- * @param pInSuperiorElement the Fib element in which this
- * 	external object element is an subobject
- */
-cExtSubobject::cExtSubobject( unsignedIntFib uiInNumberOfSubobject,
-		vector< cFibVariable* > vecInOutputVariables,
-		cFibElement * pInSuperiorElement ):
-		cFibLeaf( pInSuperiorElement ),
-		uiNumberOfSubobject( uiInNumberOfSubobject ),
-		vecOutputValues( vecInOutputVariables ){
-	
-	if ( pInSuperiorElement ){
-		pInSuperiorElement->insertObjectInElement( this );
-	}
-	for ( vector< cFibVariable * >::iterator
-			itrOutVar = vecOutputValues.begin();
-			itrOutVar != vecOutputValues.end(); itrOutVar++ ){
-		
-		if ( *itrOutVar ){
-			//register this using element at the output variables
-			(*itrOutVar)->registerUsingElement( this );
-		}
-	}
-}
-
-
-/**
- * copyconstructor
- * This copyconstructor constructs a copy of the given external object element.
- * It dosn't copy other Fib elements than the given.
- *
- * @param extObjectElement the external object element to copy
- */
-cExtSubobject::cExtSubobject( const cExtSubobject & extObjectElement ):
-		cFibLeaf( extObjectElement ),
-		uiNumberOfSubobject( extObjectElement.uiNumberOfSubobject ),
-		vecOutputValues( extObjectElement.vecOutputValues ){
-	
-	for ( vector< cFibVariable * >::iterator
-			itrOutVar = vecOutputValues.begin();
-			itrOutVar != vecOutputValues.end(); itrOutVar++ ){
-		
-		if ( *itrOutVar ){
-			//register this using element at the output variables
-			(*itrOutVar)->registerUsingElement( this );
-		}
-	}
-}
-
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-
-
 
 /**
  * The constructor for restoring a external object element from an TinyXml element.
@@ -196,10 +138,7 @@ cExtSubobject::cExtSubobject( const cExtSubobject & extObjectElement ):
  */
 cExtSubobject::cExtSubobject( const TiXmlElement * pXmlElement, intFib & outStatus,
 		list<cFibVariable*> & liDefinedVariables ): uiNumberOfSubobject( 0 ),
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-		vecOutputValues( 0 )
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-		{
+		vecOutputValues( 0 ){
 	
 	if ( pXmlElement == NULL ){
 		//noting to restore
@@ -239,8 +178,6 @@ cExtSubobject::cExtSubobject( const TiXmlElement * pXmlElement, intFib & outStat
 				}
 				const string szElementType( pXmlElement->Value() );
 				
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-				
 				if ( szElementType == "vector" ){
 					//element for the output values
 					if ( ! bOutputValuesRestored ){
@@ -264,84 +201,6 @@ cExtSubobject::cExtSubobject( const TiXmlElement * pXmlElement, intFib & outStat
 							return;
 						}
 					}
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-				if ( szElementType == "output_variables" ){
-					//element for the output variables
-					if ( ! bOutputValuesRestored ){
-						//restore the output variables
-						const TiXmlElement * pXmlElementVariable = NULL;
-						if ( pXmlElement->FirstChild("variable") ){
-							
-							pXmlElementVariable = pXmlElement->FirstChild("variable")->ToElement();
-						}
-						int iNumberOfVariableLoaded = 0;
-						for( int iActualVariable = 1; pXmlElementVariable != NULL;
-								pXmlElementVariable = pXmlElementVariable->NextSiblingElement("variable"),
-								iActualVariable++ ){
-
-							if ( pXmlElementVariable->Attribute( "number", & iNumberOfVariableLoaded ) ){
-								//could read an optional number attribute
-								if ( iNumberOfVariableLoaded < 1 ){
-									//Warning: Ther couldn't be a 0'th output variable.
-									outStatus = 2;
-								}else if ( iNumberOfVariableLoaded != iActualVariable ){
-									//Warning: no correct variable number
-									outStatus = 2;
-									iActualVariable = iNumberOfVariableLoaded;
-								}
-							}
-							//search for output variable in the defined variables
-							const char * pcValue = pXmlElementVariable->GetText();
-							if ( pcValue == NULL ){
-								//Warning: The element text is not existing.
-								outStatus = 2;
-								continue;
-							}
-							long lValue;
-							const int iReadValues = sscanf( pcValue, "%ld", & lValue );
-							if ( iReadValues != 1){
-								//Warning: The element text is not a number.
-								outStatus = 2;
-								continue;
-							}
-							//search for the apropirate variable in the given variable list
-							cFibVariable * pCorrectVariable = NULL;
-							
-							for ( list< cFibVariable* >::iterator itrVariable = liDefinedVariables.begin();
-									itrVariable != liDefinedVariables.end(); itrVariable++ ){
-								
-								if ( (*itrVariable)->getIntegerValue() == lValue ){
-									//correct variable to insert as the vector element found
-									pCorrectVariable = *itrVariable;
-									break;
-								}
-							}
-							if ( pCorrectVariable == NULL ){
-								//Warning: No such variable -> read next variable
-								outStatus = 2;
-								continue;
-							}
-							
-							//add output variable
-							if ( vecOutputValues.size() == (unsigned int)(iActualVariable - 1) ){
-								//add output variable to the back
-								vecOutputValues.push_back( pCorrectVariable );
-								pCorrectVariable->registerUsingElement( this );
-							}else{
-								if ( vecOutputValues.size() < (unsigned int)iActualVariable ){
-									//resize the vector so it has a place for the new element
-									vecOutputValues.resize( iActualVariable, NULL );
-								}
-								//set the output variable
-								vecOutputValues[ iActualVariable - 1 ] = pCorrectVariable;
-								pCorrectVariable->registerUsingElement( this );
-							}
-						}
-						bOutputValuesRestored = true;
-					}else{//Warning: can't restore two outputvariables
-						outStatus = 2;
-					}
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 				}else{//no correct subelement for a external subobject element
 					outStatus = 2;
 					continue;
@@ -398,11 +257,7 @@ cExtSubobject::cExtSubobject( const TiXmlElement * pXmlElement, intFib & outStat
  */
 cExtSubobject::cExtSubobject( cReadBits & iBitStream, intFib & outStatus,
 		list<cFibVariable*> & liDefinedVariables, const cDomains & validDomains,
-		cRoot * pNextRoot ): uiNumberOfSubobject( 0 ),
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-		vecOutputValues( 0 )
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-		{
+		cRoot * pNextRoot ): uiNumberOfSubobject( 0 ), vecOutputValues( 0 ){
 	
 	DEBUG_OUT_L2(<<"Running compressed restore extern subobject constructor"<<endl);
 	
@@ -439,8 +294,6 @@ cExtSubobject::cExtSubobject( cReadBits & iBitStream, intFib & outStatus,
 		pDomainVariable = (cDomainIntegerBasis*)typeVariable.getStandardDomain();
 	}
 	//restore output values
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-
 	cTypeExtSubobject typeExtSubobject( uiNumberOfSubobject );
 	
 	//return the extern subobject element domain for the number of output variables
@@ -481,70 +334,6 @@ cExtSubobject::cExtSubobject( cReadBits & iBitStream, intFib & outStatus,
 		outStatus = -2;
 		return;
 	}
-
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	cTypeExtSubobject typeExtSubobject;
-	
-	//return the extern subobject element domain for the number of output variables
-	cDomainIntegerBasis * pDomainExtSubobject = (cDomainIntegerBasis*)
-		validDomains.getDomainForElement( typeExtSubobject );
-	const bool bStandardDomainExtSubobject = ( pDomainExtSubobject == NULL );
-	if ( bStandardDomainExtSubobject ){
-		//use the standard domain
-		pDomainExtSubobject = (cDomainIntegerBasis*)typeExtSubobject.getStandardDomain();
-	}
-	//restore the count of output variables
-	const unsignedIntFib uiNumberOfOutputVariables =
-		pDomainExtSubobject->restoreIntegerValue( iBitStream, outStatus );
-	if ( outStatus < 0 ){
-		if ( bStandardDomainExtSubobject ){
-			delete pDomainExtSubobject;
-		}
-		if ( bStandardDomainVariable ){
-			delete pDomainVariable;
-		}
-		return;
-	}
-	//restore the output variables
-	for ( unsignedIntFib uiActualOutputVariable = 0;
-			uiActualOutputVariable < uiNumberOfOutputVariables ;
-			uiActualOutputVariable++ ){
-		
-		//restore the identifer of the output variable
-		const longFib lVariableIdentifier =
-			pDomainVariable->restoreIntegerValue( iBitStream, outStatus );
-		if ( outStatus < 0 ){
-			if ( bStandardDomainExtSubobject ){
-				delete pDomainExtSubobject;
-			}
-			if ( bStandardDomainVariable ){
-				delete pDomainVariable;
-			}
-			return;
-		}
-		//search for the apropirate variable in the given variable list
-		cFibVariable * pCorrectVariable = NULL;
-		
-		for ( list<cFibVariable*>::iterator itrVariable = liDefinedVariables.begin();
-				itrVariable != liDefinedVariables.end(); itrVariable++ ){
-			
-			if ( (*itrVariable)->getIntegerValue() == lVariableIdentifier ){
-				//correct variable to insert as the vector element found
-				pCorrectVariable = *itrVariable;
-				break;
-			}
-		}
-		if ( pCorrectVariable == NULL ){
-			//Warning: No such variable
-			outStatus = 2;
-			continue;
-		}
-		
-		//add output variable to the back
-		vecOutputValues.push_back( pCorrectVariable );
-		pCorrectVariable->registerUsingElement( this );
-	}
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	
 	if ( bStandardDomainExtSubobject ){
 		delete pDomainExtSubobject;
@@ -561,18 +350,7 @@ cExtSubobject::cExtSubobject( cReadBits & iBitStream, intFib & outStatus,
  * destructor
  */
 cExtSubobject::~cExtSubobject(){
-	
-#ifndef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	for ( vector< cFibVariable * >::iterator
-			itrOutVar = vecOutputValues.begin();
-			itrOutVar != vecOutputValues.end(); itrOutVar++ ){
-		
-		if ( *itrOutVar ){
-			//unregister the this using element at the output variables
-			(*itrOutVar)->unregisterUsingElement( this );
-		}
-	}
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
+	//nothing to do
 }
 
 
@@ -701,7 +479,6 @@ bool cExtSubobject::evalueObject( iEvaluePosition & evaluePosition,
 	printf( " and %u input values:", uiNumberInputValues );
 #endif //DEBUG_EVALUE
 	
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	for ( unsignedIntFib uiActualElement = 1;
 			itrInVar != vecInputVariables.end();
 			uiActualElement++, itrInVar++ ){
@@ -715,34 +492,8 @@ bool cExtSubobject::evalueObject( iEvaluePosition & evaluePosition,
 		}//else no input variable to set
 	}
 #ifdef DEBUG_EVALUE
-		printf( "\n" );
+	printf( "\n" );
 #endif//DEBUG_EVALUE
-
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	for ( vector< cFibVariable* >::const_iterator
-			itrOutVar = vecOutputValues.begin();
-			( itrOutVar != vecOutputValues.end() ) &&
-			( itrInVar != vecInputVariables.end() );
-			itrOutVar++, itrInVar++ ){
-		
-		if ( *itrInVar ){
-			if ( *itrOutVar ){
-				//set input variable value to output variable value
-				(*itrInVar)->setValue( (*itrOutVar)->getValue() );
-			}else{//no output variable -> set input variable to 0
-				(*itrInVar)->setIntegerValue( 0 );
-			}
-		}//else no input variable to set
-	}
-	//if output variables are missing set input variables for them to 0
-	for ( ; itrInVar != vecInputVariables.end(); itrInVar++ ){
-		
-		if ( *itrInVar ){
-			(*itrInVar)->setIntegerValue( 0 );
-		}//else no input variable to set
-	}
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	
 	//evalue the subobject
 	return pSubobjectToEvalue->evalueObject( evaluePosition, 0, liVecProperties );
 }
@@ -816,7 +567,6 @@ bool cExtSubobject::evalueObject( iEvalueFibElement & evalueFibElement,
 	
 	vector< cFibVariable* >::iterator itrInVar = vecInputVariables.begin();
 	
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	for ( unsignedIntFib uiActualElement = 1;
 			itrInVar != vecInputVariables.end();
 			uiActualElement++, itrInVar++ ){
@@ -825,30 +575,6 @@ bool cExtSubobject::evalueObject( iEvalueFibElement & evalueFibElement,
 			(*itrInVar)->setValue( vecOutputValues.getValue( uiActualElement ) );
 		}//else no input variable to set
 	}
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	for ( vector< cFibVariable* >::const_iterator
-			itrOutVar = vecOutputValues.begin();
-			( itrOutVar != vecOutputValues.end() ) &&
-			( itrInVar != vecInputVariables.end() );
-			itrOutVar++, itrInVar++ ){
-		
-		if ( *itrInVar ){
-			if ( *itrOutVar ){
-				//set input variable value to output variable value
-				(*itrInVar)->setValue( (*itrOutVar)->getValue() );
-			}else{//no output variable -> set input variable to 0
-				(*itrInVar)->setIntegerValue( 0 );
-			}
-		}//else no input variable to set
-	}
-	//if output variables are missing set input variables for them to 0
-	for ( ; itrInVar != vecInputVariables.end(); itrInVar++ ){
-		
-		if ( *itrInVar ){
-			(*itrInVar)->setIntegerValue( 0 );
-		}//else no input variable to set
-	}
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	
 	//evalue the subobject
 	return pSubobjectToEvalue->evalueObject( evalueFibElement, 0,
@@ -905,7 +631,6 @@ unsignedLongFib cExtSubobject::getTimeNeed( unsignedLongFib lMaxTime ) const{
 	
 	vector< cFibVariable* >::iterator itrInVar = vecInputVariables.begin();
 	
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	for ( unsignedIntFib uiActualElement = 1;
 			itrInVar != vecInputVariables.end();
 			uiActualElement++, itrInVar++ ){
@@ -914,30 +639,6 @@ unsignedLongFib cExtSubobject::getTimeNeed( unsignedLongFib lMaxTime ) const{
 			(*itrInVar)->setValue( vecOutputValues.getValue( uiActualElement ) );
 		}//else no input variable to set
 	}
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	for ( vector< cFibVariable* >::const_iterator
-			itrOutVar = vecOutputValues.begin();
-			( itrOutVar != vecOutputValues.end() ) &&
-			( itrInVar != vecInputVariables.end() );
-			itrOutVar++, itrInVar++ ){
-		
-		if ( *itrInVar ){
-			if ( *itrOutVar ){
-				//set input variable value to output variable value
-				(*itrInVar)->setValue( (*itrOutVar)->getValue() );
-			}else{//no output variable -> set input variable to 0
-				(*itrInVar)->setIntegerValue( 0 );
-			}
-		}//else no input variable to set
-	}
-	//if output variables are missing set input variables for them to 0
-	for ( ; itrInVar != vecInputVariables.end(); itrInVar++ ){
-		
-		if ( *itrInVar ){
-			(*itrInVar)->setIntegerValue( 0 );
-		}//else no input variable to set
-	}
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	
 	if ( lMaxTime != 0 ){
 		lMaxTime -= 2;
@@ -967,43 +668,8 @@ unsignedLongFib cExtSubobject::getCompressedSize() const{
 	}
 	
 	cDomains validDomains = getValidValueDomains();
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	//add bits for the output values
 	ulCompressedSize += vecOutputValues.getCompressedSize();
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	//add bits for the output variable counter
-	cTypeExtSubobject typeExtSubobject;
-	//return the extern subobject element domain
-	cDomainIntegerBasis * pDomainExtSubobject = (cDomainIntegerBasis*)
-		validDomains.getDomainForElement( typeExtSubobject );
-	const bool bStandardDomainExtObject = ( pDomainExtSubobject == NULL );
-	if ( bStandardDomainExtObject ){
-		//use the standard domain
-		pDomainExtSubobject = (cDomainIntegerBasis*)typeExtSubobject.getStandardDomain();
-	}
-	ulCompressedSize += pDomainExtSubobject->getCompressedSizeForValue();
-	
-	if ( bStandardDomainExtObject ){
-		delete pDomainExtSubobject;
-	}
-	
-	//add bits for the output variables
-	cTypeVariable typeVariable;
-	//return the variable domain
-	cDomainIntegerBasis * pDomainVariable = (cDomainIntegerBasis*)
-		validDomains.getDomainForElement( typeVariable );
-	const bool bStandardDomainVariable = ( pDomainVariable == NULL );
-	if ( bStandardDomainVariable ){
-		//use the standard domain
-		pDomainVariable = (cDomainIntegerBasis*)typeVariable.getStandardDomain();
-	}
-	ulCompressedSize += vecOutputValues.size() *
-		pDomainVariable->getCompressedSizeForValue();
-
-	if ( bStandardDomainVariable ){
-		delete pDomainVariable;
-	}
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	
 	return ulCompressedSize;
 }
@@ -1027,21 +693,10 @@ bool cExtSubobject::isUsedVariable( const cFibVariable * pVariable ,
 	if ( (direction == ED_POSITION) || (direction == ED_ALL) ||
 			(direction == ED_BELOW_EQUAL) || (direction == ED_HIGHER_EQUAL) ){
 		//check this Fib element
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 		
 		if ( vecOutputValues.isUsedVariable( pVariable ) ){
 			return true;
 		}
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-		for ( vector< cFibVariable * >::const_iterator
-				itrVariable = vecOutputValues.begin();
-				itrVariable != vecOutputValues.end(); itrVariable++ ){
-		
-			if ( (*itrVariable) == pVariable ){
-				return true;
-			}
-		}
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	}
 	if ( (direction == ED_ALL) ||
 			(direction == ED_HIGHER) || (direction == ED_HIGHER_EQUAL) ){
@@ -1077,21 +732,12 @@ set<cFibVariable*> cExtSubobject::getUsedVariables( edDirection direction ){
 			(direction == ED_BELOW_EQUAL) || (direction == ED_HIGHER_EQUAL) ){
 		
 		//search this Fib element -> insert output variables
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-		
 		set<cFibVariable*> vecOutputVariables =
 			vecOutputValues.getUsedVariables();
 		
 		setUsedVariables.insert( vecOutputVariables.begin(),
 			vecOutputVariables.end() );
 	}//all possible direction searched
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-		setUsedVariables.insert( vecOutputValues.begin(),
-			vecOutputValues.end() );
-	}//all possible direction searched
-	//erase NULL pointers
-	setUsedVariables.erase( ((cFibVariable*)(NULL)) );
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 
 	return setUsedVariables;
 }
@@ -1118,24 +764,8 @@ bool cExtSubobject::replaceVariable( cFibVariable * pVariableOld,
 		return false;
 	}
 	//check output variables
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	//check output values
 	return vecOutputValues.replaceVariable( pVariableOld, pVariableNew );
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	//check output variables
-	for ( vector< cFibVariable * >::iterator itrVariable = vecOutputValues.begin();
-			itrVariable != vecOutputValues.end(); itrVariable++ ){
-	
-		if ( (*itrVariable) == pVariableOld ){
-			//replace the variable
-			(*itrVariable) = pVariableNew;
-			pVariableOld->unregisterUsingElement( this );
-			pVariableNew->registerUsingElement( this );
-		}
-	}
-	//this is a leaf -> all variables replaced
-	return true;
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 }
 
 
@@ -1165,6 +795,73 @@ cFibElement * cExtSubobject::copyElement( const char cType, const unsignedIntFib
 		return ( pFibElementToCopy->copyElement( 'u', 0 ) );
 	}//else
 	return NULL;
+}
+
+
+/**
+ * This method assigns / copies the values from the given Fib element
+ * fibElement to this Fib element. This means, it will copy everything
+ * of the Fib element fibElement except pointers to other Fib elements
+ * (e. g. for subobjects), these will remain the same.
+ * For that both Fib elements have to be of the same type.
+ * Note: The variables used in this Fib element should be equal some
+ * 	variables defined above.
+ * 	@see cFibVariable::equal( const cFibVariable &variable, false )
+ *
+ * @see getType()
+ * @param fibElement the Fib element, from which to assign / copy the values
+ * @return true if the values could be copied from the given Fib element
+ * 	fibElement, else false
+ */
+bool cExtSubobject::assignValues( const cFibElement & fibElement ){
+	
+	if ( fibElement.getType() != getType() ){
+		//both Fib elements not of the same type -> can't assign values
+		return false;
+	}
+	if ( equalElement( fibElement, false ) ){
+		//elements already equal -> don't need to assign anything
+		return true;
+	}
+	const cExtSubobject * pOtherExtSubobject = ((const cExtSubobject*)(&fibElement));
+	const cVectorExtSubobject * pOtherOutputValues =
+		&(pOtherExtSubobject->vecOutputValues);
+	
+	//try to match used variables
+	const set< cFibVariable* > setUsedVariables = (const_cast< cVectorExtSubobject * >(
+		pOtherOutputValues))->getUsedVariables();
+	/* The list with the variables to replace:
+	 * 	first: the original used variable to replace
+	 * 	second: the new variable to replace the original variable
+	 */
+	list< pair< cFibVariable * ,cFibVariable * > > liVariablesToReplace;
+	
+	if ( ! getVariablesToReplace( setUsedVariables, liVariablesToReplace ) ){
+		//not all variables can be replaced with for this Fib element defined variables
+		return false;
+	}
+	//assign the values
+	uiNumberOfSubobject = pOtherExtSubobject->uiNumberOfSubobject;
+	//copy external subobject vector of other external subobject
+	vecOutputValues = *pOtherOutputValues;
+	vecOutputValues.setDefiningFibElement( this, false );
+	
+	if ( ! liVariablesToReplace.empty() ){
+		//replace variables to replace
+		for ( list< pair< cFibVariable * ,cFibVariable * > >::iterator
+				itrActualVariable = liVariablesToReplace.begin();
+				itrActualVariable != liVariablesToReplace.end(); itrActualVariable++ ){
+			
+			//replace variable in areavector
+			if ( ! vecOutputValues.replaceVariable(
+					itrActualVariable->first, itrActualVariable->second ) ){
+				//Error: should not happen
+				return false;
+			}
+		}//end for all variables to replace
+	}//end if variables to replace
+	
+	return true;
 }
 
 
@@ -1252,34 +949,11 @@ bool cExtSubobject::equalElementInternal( const cFibElement & fibElement,
 		//not the same subobject number
 		return false;
 	}//else
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	//compare output values vector
 	if ( ! vecOutputValues.equalInternal( pExtSubobject->vecOutputValues,
 			mapEqualRootObjects, mapEqualDefinedVariables, bCheckExternalObjects ) ){
 		return false;
 	}
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	//compare output variables
-	if ( vecOutputValues.size() != pExtSubobject->vecOutputValues.size() ){
-		return false;
-	}
-	vector< cFibVariable * >::const_iterator itrVariableOther =
-		pExtSubobject->vecOutputValues.begin();
-	for ( vector< cFibVariable * >::const_iterator itrVariable = vecOutputValues.begin();
-			itrVariable != vecOutputValues.end(); itrVariable++, itrVariableOther++ ){
-		
-		if ( ( *itrVariable == NULL ) || ( *itrVariableOther == NULL ) ){
-			//one output fariable is NULL
-			if ( ( *itrVariable != NULL ) || ( *itrVariableOther != NULL ) ){
-				//not both output variables are NULL
-				return false;
-			}//else bouth output variables are NULL
-		}else if ( ! ( (*itrVariable)->equalInternal( **itrVariableOther,
-				mapEqualRootObjects, mapEqualDefinedVariables, bCheckExternalObjects ) ) ){
-			return false;
-		}//else actual output variable equal
-	}//end for compare all output variables -> else all output variables equal
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	
 	return true;
 }
@@ -1302,31 +976,8 @@ bool cExtSubobject::storeXml( ostream &stream ) const{
 	stream<<"<subobject number=\""<<uiNumberOfSubobject<<"\">"<<endl;
 #endif //FEATURE_OUTPUT_ELEMENT_NUMBER_XML
 
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	//store output value vector
 	vecOutputValues.storeXml( stream );
-	
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	
-	//store output variables
-	if ( vecOutputValues.empty() ){
-		//no output variables
-		stream<<"<output_variables/>"<<endl;
-	}else{//write output variable elements
-		stream<<"<output_variables>"<<endl;
-		for ( vector< cFibVariable * >::const_iterator
-				itrVariable = vecOutputValues.begin();
-				itrVariable != vecOutputValues.end(); itrVariable++ ){
-		
-			if ( (*itrVariable) ){
-				stream<<"<variable>"<<(*itrVariable)->getValue()<<"</variable>"<<endl;
-			}else{//error: no output variable to write
-				bReturnValue = false;
-			}
-		}
-		stream<<"</output_variables>"<<endl;
-	}
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	
 	stream<<"</subobject>"<<endl;
 	return bReturnValue;
@@ -1358,8 +1009,6 @@ bool cExtSubobject::setNumberSubobject(
 }
 
 
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-
 /**
  * @return the vector with the output values of this external subobject element
  * @see vecOutputValues
@@ -1378,152 +1027,6 @@ const cVectorExtSubobject * cExtSubobject::getOutputVector() const{
 	
 	return &vecOutputValues;
 }
-
-
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-
-/**
- * @return the number of output variables of this object respectively
- * 	the input variables for the external subobject to call
- * 	@see vecOutputValues
- */
-unsignedIntFib cExtSubobject::getNumberOfOutputVariables() const{
-
-	return vecOutputValues.size();
-}
-
-
-/**
- * @return the vector with the output variables of this object
- * 	respectively the input variables for the external subobject to
- * 	call @see vecOutputValues
- */
-vector< cFibVariable * > cExtSubobject::getOutputVariables(){
-
-	return vecOutputValues;
-}
-
-
-/**
- * This method sets the vector with the output variables of this object
- * (@see vecOutputValues).
- *
- * @param vecInOutputVariables the vector with the output variables of
- * 	this object (@see vecOutputValues)
- * @return if the vector with the output variables was set true, else false
- */
-bool cExtSubobject::setOutputVariables( vector< cFibVariable * > vecInOutputVariables ){
-	
-	//unregister this using element at old variables
-	for ( vector< cFibVariable * >::iterator
-			itrOutVar = vecOutputValues.begin();
-			itrOutVar != vecOutputValues.end(); itrOutVar++ ){
-		
-		if ( *itrOutVar ){
-			//unregister the this using element at the output variables
-			(*itrOutVar)->unregisterUsingElement( this );
-		}
-	}
-	vecOutputValues = vecInOutputVariables;
-	//register this using element at new variables
-	for ( vector< cFibVariable * >::iterator
-			itrOutVar = vecOutputValues.begin();
-			itrOutVar != vecOutputValues.end(); itrOutVar++ ){
-		
-		if ( *itrOutVar ){
-			//unregister the this using element at the output variables
-			(*itrOutVar)->registerUsingElement( this );
-		}
-	}
-	return true;
-}
-
-
-/**
- * This method returns the uiVariableNumber'th output variable of the
- * vector with the output variables of this object respectively the
- * input variables for the external subobject to call
- * @see vecOutputValues or NULL if non exists.
- *
- * @param uiVariableNumber the number of the output variable to get
- * @return the uiVariableNumber'th output variable of the vector with
- * 	the output variables of this object respectively the input
- * 	variables for the external subobject to call
- * 	@see vecOutputValues or NULL if non exists
- */
-cFibVariable * cExtSubobject::getOutputVariable(
-		const unsignedIntFib uiVariableNumber ){
-	
-	if ( ( uiVariableNumber < 1 ) || ( vecOutputValues.size() < uiVariableNumber )){
-		//no such output variable
-		return NULL;
-	}
-	//return the correct variable
-	return vecOutputValues[ uiVariableNumber - 1 ];
-}
-
-
-/**
- * This method sets the uiVariableNumber'th output variable of the
- * vector with the output variables of this object @see vecOutputValues.
- * It will create a new variable if ther are one less than
- * uiVariableNumber output variables.
- *
- * @param uiVariableNumber the number of the output variable to set
- * @param pOutputVariable the uiVariableNumber'th output variable of
- * 	the vector with the output variables @see vecOutputValues to set
- * @return true if the uiVariableNumber'th output variables was set
- * 	else false
- */
-bool cExtSubobject::setOutputVariable( const unsignedIntFib uiVariableNumber,
-		cFibVariable * pOutputVariable ){
-	
-	if ( ( uiVariableNumber < 1 ) ||
-			( (vecOutputValues.size() + 1) < uiVariableNumber ) ){
-		//no such output variable
-		return false;
-	}
-	if ( pOutputVariable == NULL ){
-		//no variable to set
-		return false;
-	}
-	if ( (vecOutputValues.size() + 1) == uiVariableNumber ){
-		//append output variable to the end
-		vecOutputValues.push_back( pOutputVariable );
-		pOutputVariable->registerUsingElement( this );
-		return true;
-	}//else don't append output variable to end
-	//set output variable
-	cFibVariable * pOldVariable =
-		vecOutputValues[ uiVariableNumber - 1 ];
-	vecOutputValues[ uiVariableNumber - 1 ] = pOutputVariable;
-	//unregister old variable
-	if ( pOldVariable != NULL ){
-		
-		//search if the variables is used by this Fib element elsewhere
-		bool bVariablesNotUsedByThis = true;
-		for ( vector< cFibVariable* >::const_iterator
-				itrVariable = vecOutputValues.begin();
-				itrVariable != vecOutputValues.end(); itrVariable++ ){
-			
-			if ( pOldVariable == (*itrVariable) ){
-				bVariablesNotUsedByThis = false;
-				break;
-			}
-		}
-		
-		if ( bVariablesNotUsedByThis ){
-			//unregister variables
-			pOldVariable->unregisterUsingElement( this );
-		}
-	}
-	//set the correct variable
-	pOutputVariable->registerUsingElement( this );
-
-	return true;
-}
-
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 
 
 
@@ -1567,80 +1070,8 @@ bool cExtSubobject::storeBit( ostream & stream, char & cRestBits,
 		//error: number of subobject not stored
 		return false;
 	}
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	
 	return vecOutputValues.store( stream, cRestBits, uiRestBitPosition );
-	
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	
-	bool bReturnValue = true;
-
-	/*get the value domain for variables*/
-	cDomains validDomains = getValidValueDomains();
-	//get the domain for the variables
-	cTypeVariable typeVariable;
-	//return the variable domain
-	cDomainIntegerBasis * pVariableDomain = (cDomainIntegerBasis*)
-		validDomains.getDomainForElement( typeVariable );
-	const bool bStandardVariableDomainUsed = (pVariableDomain == NULL);
-	if ( bStandardVariableDomainUsed ){
-		//use the standard domain
-		pVariableDomain = (cDomainIntegerBasis*)typeVariable.getStandardDomain();
-	}
-	//get the domain for the external object element
-	cTypeExtSubobject typeExtSubobject;
-	//return the external object element domain
-	cDomainIntegerBasis * pDomainSubobject = (cDomainIntegerBasis*)
-		validDomains.getDomainForElement( typeExtSubobject );
-	const bool bStandardSubobjDomainUsed = (pDomainSubobject == NULL);
-	if ( bStandardSubobjDomainUsed ){
-		//use the standard domain
-		pDomainSubobject = (cDomainIntegerBasis*)typeExtSubobject.getStandardDomain();
-	}
-	//store number of output variables
-	const unsignedIntFib uiNumberOfOutputVariables = vecOutputValues.size();
-	
-	const bool bCountOutVarStored = pDomainSubobject->storeUnscaledValue(
-		uiNumberOfOutputVariables, stream, cRestBits, uiRestBitPosition );
-	if ( ! bCountOutVarStored ){
-		//error: output variable count not stored
-		if ( bStandardVariableDomainUsed ){
-			delete pVariableDomain;
-		}
-		if ( bStandardSubobjDomainUsed ){
-			delete pDomainSubobject;
-		}
-		return false;
-	}
-	//store the output variables
-	for ( vector< cFibVariable * >::const_iterator
-			itrOutVar = vecOutputValues.begin();
-			itrOutVar != vecOutputValues.end(); itrOutVar++ ){
-		
-		//store the identifer of the output variable
-		const bool bOutVarStored = pVariableDomain->storeUnscaledValue(
-			(*itrOutVar)->getIntegerValue(),
-			stream, cRestBits, uiRestBitPosition );
-		if ( ! bOutVarStored ){
-			//error output variable not stored
-			if ( bStandardVariableDomainUsed ){
-				delete pVariableDomain;
-			}
-			if ( bStandardSubobjDomainUsed ){
-				delete pDomainSubobject;
-			}
-			return false;
-		}
-	}
-	
-	if ( bStandardVariableDomainUsed ){
-		delete pVariableDomain;
-	}
-	if ( bStandardSubobjDomainUsed ){
-		delete pDomainSubobject;
-	}
-	return bReturnValue;
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 }
 
 
@@ -1666,55 +1097,6 @@ cFibElement * cExtSubobject::copyInternal( const unsignedIntFib iObjectPoint ) c
 	}//else no object point to copy
 	return NULL;
 }
-
-
-#ifndef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-
-/**
- * @return the Fib element which uses the variables of this element
- */
-cFibElement * cExtSubobject::getVariableUsingFibElement() const{
-	
-	DEBUG_OUT_L3(<<this<<"->cExtSubobject::getVariableUsingFibElement()"<<endl);
-	return const_cast< cExtSubobject * >( this );
-}
-
-
-/**
- * This method deletes all occurencies of the given variable from this
- * element. So the variable is not used anymore by this element.
- * Beware: This element has to be unregistered (call
- * unregisterUsingElement() ) at the pVariable seperatly. Do this directly
- * befor or after calling this method.
- *
- * @param pVariable the variable which is to delete from this element
- * @return true if the variable dosn't occure anymore in this element,
- * 	else false
- */
-bool cExtSubobject::deleteVariable( cFibVariable * pVariable ){
-
-	DEBUG_OUT_L3(<<this<<"->cExtSubobject::deleteVariable( "<<pVariable<<" )"<<endl);
-	
-	if ( pVariable == NULL ){
-		//no variable to delete
-		return false;
-	}
-	for ( vector< cFibVariable* >::iterator
-			itrVariable = vecOutputValues.begin();
-			itrVariable != vecOutputValues.end();  ){
-		
-		if ( (*itrVariable) == pVariable ){
-			//delete the variable
-			
-			itrVariable = vecOutputValues.erase( itrVariable );
-		}else{//check next input variable
-			itrVariable++;
-		}
-	}
-	return true;
-}
-
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 
 
 

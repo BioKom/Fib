@@ -57,10 +57,6 @@
  * 	- bool equalValuesSet( const cFibVariable * variableOwn, const cFibElement & fibElement, const cFibVariable * variable ) const;
  * 	- unsignedIntFib getNumberOfExternSubobjects() const;
  * 	- unsignedIntFib getNumberOfOutputVariables( unsignedIntFib uiNumberOfUnderObject ) const;
-#ifndef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
- * 	- bool setNumberOfExternSubobjects( unsignedIntFib uiNumberOfExternSubobjects );
- * 	- bool setNumberOfOutputVariables( unsignedIntFib uiNumberOfUnderObject, unsignedIntFib uiNumberOfVariables );
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
  * 	- unsignedIntFib getNumberOfSubRootObjects() const;
  * 	- pair<longFib, cRoot*> getSubRootObject( unsignedIntFib uiNumberOfUnderObject );
  * 	- unsignedIntFib getSubRootObjectNumber( longFib lIdentifier ) const;
@@ -104,6 +100,7 @@ History:
 30.11.2011  Oesterholz  cFibDatabase changes added
 02.02.2012  Oesterholz  FEATURE_EXT_SUBOBJECT_INPUT_VECTOR implemented
 28.01.2013  Oesterholz  COLOR_SW changed to COLOR_GRAYSCALE
+01.08.2013  Oesterholz  FEATURE_EXT_SUBOBJECT_INPUT_VECTOR as default (not case removed)
 */
 
 #include "version.h"
@@ -2626,10 +2623,6 @@ int testInputVariables( unsigned long &ulTestphase ){
  * methods tested:
  * 	- unsignedIntFib getNumberOfExternSubobjects() const;
  * 	- unsignedIntFib getNumberOfOutputVariables( unsignedIntFib uiNumberOfUnderObject ) const;
-#ifndef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
- * 	- bool setNumberOfExternSubobjects( unsignedIntFib uiNumberOfExternSubobjects );
- * 	- bool setNumberOfOutputVariables( unsignedIntFib uiNumberOfUnderObject, unsignedIntFib uiNumberOfVariables );
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
  *
  * @param ulTestphase a reference to the number for the testphase
  * @return the number of erros occured in the test
@@ -2658,7 +2651,6 @@ int testExternSubobjects( unsigned long &ulTestphase ){
 	unsignedIntFib aUiNumberOfOutputVariables[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 	
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	//set domain for 5'th external subobject
 	cout<<"cTypeExtSubobject typeExtSubobject5( 5 );"<<endl;
 	cTypeExtSubobject typeExtSubobject5( 5 );
@@ -2670,19 +2662,6 @@ int testExternSubobjects( unsigned long &ulTestphase ){
 	
 	cout<<"root1.getDomains()->addDomain( typeExtSubobject5, domVectorE0 );"<<endl;
 	root1.getDomains()->addDomain( typeExtSubobject5, domVectorE0 );
-	
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	cout<<"root1.setNumberOfExternSubobjects( uiExternSubobjects );"<<endl;
-	bool bExtUnderobjSet = root1.setNumberOfExternSubobjects( uiExternSubobjects );
-
-	if ( bExtUnderobjSet ){
-	
-		cout<<"The root1 has correctly set the extern underobjects. "<<endl;
-	}else{
-		cerr<<"Error: The root1 couldn't set the extern underobjects."<<endl;
-		iReturn++;
-	}
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	
 	//test getNumberOfExternSubobjects()
 	if ( root1.getNumberOfExternSubobjects() == uiExternSubobjects ){
@@ -2740,7 +2719,6 @@ int testExternSubobjects( unsigned long &ulTestphase ){
 	}
 
 	aUiNumberOfOutputVariables[ 2 ] = 3;
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	//set domain for 3'th external subobject
 	cout<<"cTypeExtSubobject typeExtSubobject3( 3 );"<<endl;
 	cTypeExtSubobject typeExtSubobject3( 3 );
@@ -2761,17 +2739,6 @@ int testExternSubobjects( unsigned long &ulTestphase ){
 	cout<<"root1.getDomains()->addDomain( typeExtSubobject3, domVectorE3 );"<<endl;
 	root1.getDomains()->addDomain( typeExtSubobject3, domVectorE3 );
 	
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	cout<<"root1.setNumberOfOutputVariables( 3, 3 );"<<endl;
-	bool bExtUnderobjVariablesSet = root1.setNumberOfOutputVariables( 3, 3 );
-	if ( bExtUnderobjVariablesSet ){
-	
-		cout<<"The root1 has correctly set the extern underobject output variables. "<<endl;
-	}else{
-		cerr<<"Error: The root1 couldn't set the extern underobject output variables."<<endl;
-		iReturn++;
-	}
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	//test getNumberOfOutputVariables()
 	for ( unsignedIntFib actualUnderobject = 1;
 			actualUnderobject <= uiExternSubobjects; actualUnderobject++ ){
@@ -2819,7 +2786,6 @@ int testExternSubobjects( unsigned long &ulTestphase ){
 
 	aUiNumberOfOutputVariables[ 0 ] = 1;
 	aUiNumberOfOutputVariables[ 4 ] = 5;
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	//set domain for 1'th external subobject
 	cout<<"cTypeExtSubobject typeExtSubobject1( 1 );"<<endl;
 	cTypeExtSubobject typeExtSubobject1( 1 );
@@ -2857,27 +2823,6 @@ int testExternSubobjects( unsigned long &ulTestphase ){
 	cout<<"root1.getDomains()->addDomain( typeExtSubobject5, domVectorE5 );"<<endl;
 	root1.getDomains()->addDomain( typeExtSubobject5, domVectorE5 );
 	
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	
-	cout<<"root1.setNumberOfOutputVariables( 1, 1 );"<<endl;
-	bExtUnderobjVariablesSet = root1.setNumberOfOutputVariables( 1, 1 );
-	if ( bExtUnderobjVariablesSet ){
-	
-		cout<<"The root1 has correctly set the extern underobject output variables. "<<endl;
-	}else{
-		cerr<<"Error: The root1 couldn't set the extern underobject output variables."<<endl;
-		iReturn++;
-	}
-	cout<<"root1.setNumberOfOutputVariables( 5, 5 );"<<endl;
-	bExtUnderobjVariablesSet = root1.setNumberOfOutputVariables( 5, 5 );
-	if ( bExtUnderobjVariablesSet ){
-	
-		cout<<"The root1 has correctly set the extern underobject output variables. "<<endl;
-	}else{
-		cerr<<"Error: The root1 couldn't set the extern underobject output variables."<<endl;
-		iReturn++;
-	}
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	//test getNumberOfOutputVariables()
 	for ( unsignedIntFib actualUnderobject = 1;
 			actualUnderobject <= uiExternSubobjects; actualUnderobject++ ){
@@ -2922,79 +2867,12 @@ int testExternSubobjects( unsigned long &ulTestphase ){
 			" output variables, but should have 0 output variables. "<<endl;
 		iReturn++;
 	}
-#ifndef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	
-	cout<<"root1.setNumberOfOutputVariables( 0, 1 );"<<endl;
-	bExtUnderobjVariablesSet = root1.setNumberOfOutputVariables( 0, 1 );
-	if ( ! bExtUnderobjVariablesSet ){
-	
-		cout<<"The root1 has correctly not set the extern underobject output variables. "<<endl;
-	}else{
-		cerr<<"Error: The root1 could set the extern underobject output variables."<<endl;
-		iReturn++;
-	}
-	cout<<"root1.setNumberOfOutputVariables( 6, 6 );"<<endl;
-	bExtUnderobjVariablesSet = root1.setNumberOfOutputVariables( 6, 6 );
-	if ( ! bExtUnderobjVariablesSet ){
-	
-		cout<<"The root1 has correctly not set the extern underobject output variables. "<<endl;
-	}else{
-		cerr<<"Error: The root1 could set the extern underobject output variables."<<endl;
-		iReturn++;
-	}
-	
-	//test getNumberOfOutputVariables()
-	for ( unsignedIntFib actualUnderobject = 1;
-			actualUnderobject <= uiExternSubobjects; actualUnderobject++ ){
-		
-		if ( root1.getNumberOfOutputVariables( actualUnderobject ) ==
-				aUiNumberOfOutputVariables[ actualUnderobject - 1 ] ){
-		
-			cout<<"The root1 has correctly for the "<< actualUnderobject
-				<<"'th extern underobject "<<
-				aUiNumberOfOutputVariables[ actualUnderobject - 1 ] <<
-				" output variables. "<<endl;
-		}else{
-			cerr<<"Error: The root1 has for the "<< actualUnderobject
-				<<"'th extern underobject "<<
-				root1.getNumberOfOutputVariables( actualUnderobject )<<
-				" output variables, but should have "<<
-				aUiNumberOfOutputVariables[ actualUnderobject - 1 ] <<
-				" output variables. "<<endl;
-			iReturn++;
-		}
-	}
-	//check getNumberOfOutputVariables() returnvalues if the number is out of bouderies
-	if ( root1.getNumberOfOutputVariables( 0 ) == 0 ){
-	
-		cout<<"The root1 has correctly for the 0'th extern underobject"<<
-			" 0 output variables. "<<endl;
-	}else{
-		cerr<<"Error: The root1 has for the 0'th extern underobject "<<
-			root1.getNumberOfOutputVariables( 0 )<<
-			" output variables, but should have 0 output variables. "<<endl;
-		iReturn++;
-	}
-	if ( root1.getNumberOfOutputVariables( uiExternSubobjects + 1 ) == 0 ){
-	
-		cout<<"The root1 has correctly for the "<<
-			uiExternSubobjects + 1 <<"'th extern underobject"<<
-			" 0 output variables. "<<endl;
-	}else{
-		cerr<<"Error: The root1 has for the "<<
-			uiExternSubobjects + 1 <<"'th extern underobject "<<
-			root1.getNumberOfOutputVariables( uiExternSubobjects + 1 )<<
-			" output variables, but should have 0 output variables. "<<endl;
-		iReturn++;
-	}
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 
 	aUiNumberOfOutputVariables[ 0 ] = 5;
 	aUiNumberOfOutputVariables[ 1 ] = 4;
 	aUiNumberOfOutputVariables[ 2 ] = 13;
 	aUiNumberOfOutputVariables[ 3 ] = 2;
 	aUiNumberOfOutputVariables[ 4 ] = 1;
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	//set domain for 1'th external subobject
 	cout<<"root1.getDomains()->addDomain( typeExtSubobject1, domVectorE5 );"<<endl;
 	root1.getDomains()->addDomain( typeExtSubobject1, domVectorE5 );
@@ -3082,56 +2960,6 @@ int testExternSubobjects( unsigned long &ulTestphase ){
 	cout<<"root1.getDomains()->addDomain( typeExtSubobject5, domVectorE1 );"<<endl;
 	root1.getDomains()->addDomain( typeExtSubobject5, domVectorE1 );
 	
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	
-	cout<<"root1.setNumberOfOutputVariables( 1, 5 );"<<endl;
-	bExtUnderobjVariablesSet = root1.setNumberOfOutputVariables( 1, 5 );
-	if ( bExtUnderobjVariablesSet ){
-	
-		cout<<"The root1 has correctly set the extern underobject output variables. "<<endl;
-	}else{
-		cerr<<"Error: The root1 couldn't set the extern underobject output variables."<<endl;
-		iReturn++;
-	}
-	
-	
-	cout<<"root1.setNumberOfOutputVariables( 2, 4 );"<<endl;
-	bExtUnderobjVariablesSet = root1.setNumberOfOutputVariables( 2, 4 );
-	if ( bExtUnderobjVariablesSet ){
-	
-		cout<<"The root1 has correctly set the extern underobject output variables. "<<endl;
-	}else{
-		cerr<<"Error: The root1 couldn't set the extern underobject output variables."<<endl;
-		iReturn++;
-	}
-	cout<<"root1.setNumberOfOutputVariables( 3, 13 );"<<endl;
-	bExtUnderobjVariablesSet = root1.setNumberOfOutputVariables( 3, 13 );
-	if ( bExtUnderobjVariablesSet ){
-	
-		cout<<"The root1 has correctly set the extern underobject output variables. "<<endl;
-	}else{
-		cerr<<"Error: The root1 couldn't set the extern underobject output variables."<<endl;
-		iReturn++;
-	}
-	cout<<"root1.setNumberOfOutputVariables( 4, 2 );"<<endl;
-	bExtUnderobjVariablesSet = root1.setNumberOfOutputVariables( 4, 2 );
-	if ( bExtUnderobjVariablesSet ){
-	
-		cout<<"The root1 has correctly set the extern underobject output variables. "<<endl;
-	}else{
-		cerr<<"Error: The root1 couldn't set the extern underobject output variables."<<endl;
-		iReturn++;
-	}
-	cout<<"root1.setNumberOfOutputVariables( 5, 1 );"<<endl;
-	bExtUnderobjVariablesSet = root1.setNumberOfOutputVariables( 5, 1 );
-	if ( bExtUnderobjVariablesSet ){
-	
-		cout<<"The root1 has correctly set the extern underobject output variables. "<<endl;
-	}else{
-		cerr<<"Error: The root1 couldn't set the extern underobject output variables."<<endl;
-		iReturn++;
-	}
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	//test getNumberOfOutputVariables()
 	for ( unsignedIntFib actualUnderobject = 1;
 			actualUnderobject <= uiExternSubobjects; actualUnderobject++ ){
@@ -3182,24 +3010,12 @@ int testExternSubobjects( unsigned long &ulTestphase ){
 	uiExternSubobjects = 3;
 	aUiNumberOfOutputVariables[ 3 ] = 0;
 	aUiNumberOfOutputVariables[ 4 ] = 0;
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	
 	cout<<"root1.getDomains()->deleteDomain( typeExtSubobject4 );"<<endl;
 	root1.getDomains()->deleteDomain( typeExtSubobject4 );
 	cout<<"root1.getDomains()->deleteDomain( typeExtSubobject5 );"<<endl;
 	root1.getDomains()->deleteDomain( typeExtSubobject5 );
 	
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	cout<<"root1.setNumberOfExternSubobjects( uiExternSubobjects );"<<endl;
-	bExtUnderobjSet = root1.setNumberOfExternSubobjects( uiExternSubobjects );
-	if ( bExtUnderobjSet ){
-	
-		cout<<"The root1 has correctly set the extern underobjects. "<<endl;
-	}else{
-		cerr<<"Error: The root1 couldn't set the extern underobjects."<<endl;
-		iReturn++;
-	}
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	//test getNumberOfExternSubobjects()
 	if ( root1.getNumberOfExternSubobjects() == uiExternSubobjects ){
 	
@@ -3257,7 +3073,6 @@ int testExternSubobjects( unsigned long &ulTestphase ){
 
 	//test setNumberOfExternSubobjects()
 	uiExternSubobjects = 10;
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	//set domain for 5'th external subobject
 	cout<<"cTypeExtSubobject typeExtSubobject10( 10 );"<<endl;
 	cTypeExtSubobject typeExtSubobject10( 10 );
@@ -3265,17 +3080,6 @@ int testExternSubobjects( unsigned long &ulTestphase ){
 	cout<<"root1.getDomains()->addDomain( typeExtSubobject10, domVectorE0 );"<<endl;
 	root1.getDomains()->addDomain( typeExtSubobject10, domVectorE0 );
 	
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	cout<<"root1.setNumberOfExternSubobjects( uiExternSubobjects );"<<endl;
-	bExtUnderobjSet = root1.setNumberOfExternSubobjects( uiExternSubobjects );
-	if ( bExtUnderobjSet ){
-	
-		cout<<"The root1 has correctly set the extern underobjects. "<<endl;
-	}else{
-		cerr<<"Error: The root1 couldn't set the extern underobjects."<<endl;
-		iReturn++;
-	}
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	//test getNumberOfExternSubobjects()
 	if ( root1.getNumberOfExternSubobjects() == uiExternSubobjects ){
 	
@@ -5571,7 +5375,6 @@ int testEqual( unsigned long &ulTestphase ){
 	cout<<"cRoot rootExtObj1;"<<endl;
 	cRoot rootExtObj1;
 	
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	//set domain for 1'th external subobject
 	cout<<"cTypeExtSubobject typeExtSubobject1( 1 );"<<endl;
 	cTypeExtSubobject typeExtSubobject1( 1 );
@@ -5584,15 +5387,9 @@ int testEqual( unsigned long &ulTestphase ){
 	cout<<"rootExtObj1.getDomains()->addDomain( typeExtSubobject1, domVectorE0 );"<<endl;
 	rootExtObj1.getDomains()->addDomain( typeExtSubobject1, domVectorE0 );
 	
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	
-	cout<<"rootExtObj1.setNumberOfExternSubobjects( 1 );"<<endl;
-	rootExtObj1.setNumberOfExternSubobjects( 1 );
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 
 	cout<<"cRoot rootExtObj2;"<<endl;
 	cRoot rootExtObj2;
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	//set domain for 2'th external subobject
 	cout<<"cTypeExtSubobject typeExtSubobject2( 2 );"<<endl;
 	cTypeExtSubobject typeExtSubobject2( 2 );
@@ -5600,15 +5397,10 @@ int testEqual( unsigned long &ulTestphase ){
 	cout<<"rootExtObj2.getDomains()->addDomain( typeExtSubobject2, domVectorE0 );"<<endl;
 	rootExtObj2.getDomains()->addDomain( typeExtSubobject2, domVectorE0 );
 	
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	cout<<"rootExtObj2.setNumberOfExternSubobjects( 2 );"<<endl;
-	rootExtObj2.setNumberOfExternSubobjects( 2 );
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 
 	//roots with extern objects with output values
 	cout<<"cRoot rootExtObj1V1g1;"<<endl;
 	cRoot rootExtObj1V1g1;
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	//set domain for 1'th external subobject
 	cout<<"vector<cDomain*> vecDomainE1( 1 );"<<endl;
 	vector<cDomain*> vecDomainE1( 1 );
@@ -5622,17 +5414,9 @@ int testEqual( unsigned long &ulTestphase ){
 	cout<<"rootExtObj1V1g1.getDomains()->addDomain( typeExtSubobject1, domVectorE1 );"<<endl;
 	rootExtObj1V1g1.getDomains()->addDomain( typeExtSubobject1, domVectorE1 );
 	
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	
-	cout<<"rootExtObj1V1g1.setNumberOfExternSubobjects( 1 );"<<endl;
-	rootExtObj1V1g1.setNumberOfExternSubobjects( 1 );
-	cout<<"rootExtObj1V1g1.setNumberOfOutputVariables( 1, 1 );"<<endl;
-	rootExtObj1V1g1.setNumberOfOutputVariables( 1, 1  );
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 
 	cout<<"cRoot rootExtObj1V1g2;"<<endl;
 	cRoot rootExtObj1V1g2;
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	//set domain for 1'th external subobject
 	cout<<"vector<cDomain*> vecDomainE2( 2 );"<<endl;
 	vector<cDomain*> vecDomainE2( 2 );
@@ -5648,30 +5432,16 @@ int testEqual( unsigned long &ulTestphase ){
 	cout<<"rootExtObj1V1g2.getDomains()->addDomain( typeExtSubobject1, domVectorE2 );"<<endl;
 	rootExtObj1V1g2.getDomains()->addDomain( typeExtSubobject1, domVectorE2 );
 	
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	cout<<"rootExtObj1V1g2.setNumberOfExternSubobjects( 1 );"<<endl;
-	rootExtObj1V1g2.setNumberOfExternSubobjects( 1 );
-	cout<<"rootExtObj1V1g2.setNumberOfOutputVariables( 1, 2 );"<<endl;
-	rootExtObj1V1g2.setNumberOfOutputVariables( 1, 2  );
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 
 	cout<<"cRoot rootExtObj2V2g2;"<<endl;
 	cRoot rootExtObj2V2g2;
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	//set domain for 2'th external subobject
 	cout<<"rootExtObj2V2g2.getDomains()->addDomain( typeExtSubobject2, domVectorE2 );"<<endl;
 	rootExtObj2V2g2.getDomains()->addDomain( typeExtSubobject2, domVectorE2 );
 	
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	cout<<"rootExtObj2V2g2.setNumberOfExternSubobjects( 2 );"<<endl;
-	rootExtObj2V2g2.setNumberOfExternSubobjects( 2 );
-	cout<<"rootExtObj2V2g2.setNumberOfOutputVariables( 2, 2 );"<<endl;
-	rootExtObj2V2g2.setNumberOfOutputVariables( 2, 2  );
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 
 	cout<<"cRoot rootExtObj2V1g1;"<<endl;
 	cRoot rootExtObj2V1g1;
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	//set domain for 2'th external subobject
 	cout<<"rootExtObj2V1g1.getDomains()->addDomain( typeExtSubobject2, domVectorE0 );"<<endl;
 	rootExtObj2V1g1.getDomains()->addDomain( typeExtSubobject2, domVectorE0 );
@@ -5679,12 +5449,6 @@ int testEqual( unsigned long &ulTestphase ){
 	cout<<"rootExtObj2V1g1.getDomains()->addDomain( typeExtSubobject1, domVectorE1 );"<<endl;
 	rootExtObj2V1g1.getDomains()->addDomain( typeExtSubobject1, domVectorE1 );
 	
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	cout<<"rootExtObj2V1g1.setNumberOfExternSubobjects( 2 );"<<endl;
-	rootExtObj2V1g1.setNumberOfExternSubobjects( 2 );
-	cout<<"rootExtObj2V1g1.setNumberOfOutputVariables( 1, 1 );"<<endl;
-	rootExtObj2V1g1.setNumberOfOutputVariables( 1, 1  );
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 
 	//roots with sub -root -objects
 	cout<<"cRoot rootSubRoot1;"<<endl;
@@ -5706,14 +5470,9 @@ int testEqual( unsigned long &ulTestphase ){
 	cout<<"cRoot rootSubRoot3_1;"<<endl;
 	cRoot rootSubRoot3_1;
 	
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	//set domain for 1'th external subobject
 	cout<<"rootSubRoot3_1.getDomains()->addDomain( typeExtSubobject1, domVectorE0 );"<<endl;
 	rootSubRoot3_1.getDomains()->addDomain( typeExtSubobject1, domVectorE0 );
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	cout<<"rootSubRoot3_1.setNumberOfExternSubobjects( 1 );"<<endl;
-	rootSubRoot3_1.setNumberOfExternSubobjects( 1 );
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	
 	cout<<"rootSubRoot3.addSubRootObject( 1, &rootSubRoot3_1 );"<<endl;
 	rootSubRoot3.addSubRootObject( 1, &rootSubRoot3_1 );
@@ -7596,7 +7355,6 @@ int testCopyElement( unsigned long &ulTestphase ){
 	rootInputVar1.setStandardValueOfInputVariable( 2, 2.0 );
 	
 	
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	//set domain for 1'th external subobject
 	cout<<"cTypeExtSubobject typeExtSubobject1( 1 );"<<endl;
 	cTypeExtSubobject typeExtSubobject1( 1 );
@@ -7631,15 +7389,6 @@ int testCopyElement( unsigned long &ulTestphase ){
 	cout<<"root1.getDomains()->addDomain( typeExtSubobject2, domVectorE2 );"<<endl;
 	root1.getDomains()->addDomain( typeExtSubobject2, domVectorE2 );
 	
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	cout<<"rootInputVar1.setNumberOfExternSubobjects( 2 );"<<endl;
-	rootInputVar1.setNumberOfExternSubobjects( 2 );
-	cout<<"rootInputVar1.setNumberOfOutputVariables( 2, 2 );"<<endl;
-	rootInputVar1.setNumberOfOutputVariables( 2, 2  );
-	cout<<"rootInputVar1.setNumberOfOutputVariables( 1, 1 );"<<endl;
-	rootInputVar1.setNumberOfOutputVariables( 1, 1  );
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-
 	//test copyconstructor
 	cout<<"cRoot rootInputVar1Copy( rootInputVar1 );"<<endl;
 	cRoot rootInputVar1Copy( rootInputVar1 );

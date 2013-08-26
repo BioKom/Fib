@@ -43,6 +43,7 @@ History:
 07.08.2011  Oesterholz  isDefinedVariable() and getDefinedVariables() with
 	pCallingFibElement
 19.10.2011  Oesterholz  FEATURE_EQUAL_FIB_OBJECT implemented
+10.07.2013  Oesterholz  subobject methods added
 */
 
 
@@ -79,7 +80,10 @@ class cFibLimb: public cFibElement{
 protected:
 
 friend class cFibBranch;
-
+	
+	/**
+	 * The subobject of this limb element.
+	 */
 	cFibElement * pUnderObject;
 
 #ifdef FEATURE_SIMPLE_CONSTRUCTOR
@@ -189,7 +193,62 @@ public:
 		bool bAbsolute=false ) const;
 
 #endif
-
+	
+	/**
+	 * This method returns the number of subobjects in this Fib element.
+	 * (e. g. limb elements have one subobject)
+	 *
+	 * @see getSubobject()
+	 * @see getSubobjects()
+	 * @return the number of subobjects in this Fib element
+	 */
+	virtual unsignedIntFib getNumberOfSubobjects() const;
+	
+	/**
+	 * This method returns the uiNumberOfSubobject'th subobject of this
+	 * Fib element.
+	 *
+	 * @see getNumberOfSubobjects()
+	 * @see getSubobjects()
+	 * @param uiNumberOfSubobject the number of the subobject to return
+	 * @return a pointer to the uiNumberOfSubobject'th subobject of this
+	 * 	Fib element, or the null pointer NULL if non exists
+	 */
+	virtual cFibElement * getSubobject(
+		const unsignedIntFib uiNumberOfSubobject = 1 );
+	
+	/**
+	 * This method returns the uiNumberOfSubobject'th subobject of this
+	 * Fib element.
+	 *
+	 * @see getNumberOfSubobjects()
+	 * @see getSubobjects()
+	 * @param uiNumberOfSubobject the number of the subobject to return
+	 * @return a pointer to the uiNumberOfSubobject'th subobject of this
+	 * 	Fib element, or the null pointer NULL if non exists
+	 */
+	virtual const cFibElement * getSubobject(
+		const unsignedIntFib uiNumberOfSubobject = 1 ) const;
+	
+	/**
+	 * This method returns all subobjects of this Fib element.
+	 *
+	 * @see getNumberOfSubobjects()
+	 * @see getSubobject()
+	 * @return a list with all the subobjects of this Fib element
+	 */
+	virtual list< cFibElement * > getSubobjects();
+	
+	/**
+	 * This method returns all subobjects of this Fib element.
+	 *
+	 * @see getNumberOfSubobjects()
+	 * @see getSubobject()
+	 * @return a list with all the subobjects of this Fib element 
+	 */
+	virtual const list< cFibElement * > getSubobjects() const;
+	
+	
 	/**
 	 * This method checks if the given variable is used in the given
 	 * direction from this Fib-element.
@@ -481,7 +540,6 @@ public:
 	 */
 	virtual intFib moveLimbElement( const char cType='u', const unsignedIntFib 
 		elementPoint=0, const intFib iHowfar=1, bool bAbsolute=false );
-
 
 #ifndef FEATURE_EQUAL_FIB_OBJECT
 	/**

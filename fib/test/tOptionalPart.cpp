@@ -42,6 +42,7 @@
  * 	- unsignedLongFib deleteEntries( string szKey, bool bFullBegin=true );
  * 	- bool equal( const cOptionalPart &optionalPart ) const;
  * 	- bool operator==( const cOptionalPart &optionalPart ) const;
+ * 	- cOptionalPart & operator=( const cOptionalPart & optionalPart );
  * 	- bool storeXml( ostream & ostream ) const;
  * 	- unsignedLongFib getCompressedSize() const;
  * 	- bool store( ostream & stream ) const;
@@ -53,7 +54,8 @@
 History:
 01.07.2009  Oesterholz  created
 16.11.2009  Oesterholz  equal comparrissons and storeXml() tested
-15.07.2011  Oesterholz  methods for compressed storing tested (@see testStore() )
+15.07.2011  Oesterholz  functions for compressed storing tested (@see testStore() )
+02.08.2013  Oesterholz  test for operator==() added
 */
 
 #include "version.h"
@@ -87,6 +89,7 @@ int testClone( unsigned long &ulTestphase );
 int testEqual( unsigned long &ulTestphase );
 int testStoreXml( unsigned long &ulTestphase );
 int testStore( unsigned long &ulTestphase );
+int testAssign( unsigned long &ulTestphase );
 
 
 
@@ -136,6 +139,7 @@ int main(int argc, char* argv[]){
 	iReturn += testEqual( ulTestphase );
 	iReturn += testStoreXml( ulTestphase );
 	iReturn += testStore( ulTestphase );
+	iReturn += testAssign( ulTestphase );
 
 	if ( iReturn == 0 ){
 	
@@ -150,7 +154,7 @@ int main(int argc, char* argv[]){
 
 
 /**
- * This method tests the getNumberOfEntries(), getEntry() and addEntry()
+ * This function tests the getNumberOfEntries(), getEntry() and addEntry()
  * methods of the cOptionalPart class.
  *
  * @param ulTestphase a reference to the number for the testphase
@@ -746,7 +750,7 @@ int testGetAddEntry( unsigned long &ulTestphase ){
 
 
 /**
- * This method tests the getEntries() methods of the cOptionalPart class.
+ * This function tests the getEntries() methods of the cOptionalPart class.
  *
  * @param ulTestphase a reference to the number for the testphase
  * @return the number of erros occured in the test
@@ -986,7 +990,7 @@ int testGetEntries( unsigned long &ulTestphase ){
 
 
 /**
- * This method tests the findKeyPart() method of the cOptionalPart class.
+ * This function tests the findKeyPart() method of the cOptionalPart class.
  *
  * @param ulTestphase a reference to the number for the testphase
  * @return the number of erros occured in the test
@@ -1188,7 +1192,7 @@ int testFindKeyPart( unsigned long &ulTestphase ){
 
 
 /**
- * This method tests the deleteEntry() method of the cOptionalPart class.
+ * This function tests the deleteEntry() method of the cOptionalPart class.
  *
  * @param ulTestphase a reference to the number for the testphase
  * @return the number of erros occured in the test
@@ -1674,7 +1678,7 @@ int testDeleteEntry( unsigned long &ulTestphase ){
 
 
 /**
- * This method tests the deleteEntries() method of the cOptionalPart class.
+ * This function tests the deleteEntries() method of the cOptionalPart class.
  *
  * @param ulTestphase a reference to the number for the testphase
  * @return the number of erros occured in the test
@@ -2235,7 +2239,7 @@ int testDeleteEntries( unsigned long &ulTestphase ){
 
 
 /**
- * This method tests the getNumberOfEntries(), getEntry() and addEntry()
+ * This function tests the getNumberOfEntries(), getEntry() and addEntry()
  * methods of the cOptionalPart class.
  *
  * @param ulTestphase a reference to the number for the testphase
@@ -2506,7 +2510,7 @@ ostream& operator<<( ostream &ostream, const pair< string ,string > &stringPair 
 
 
 /**
- * This method tests the equal() method and the operator== of two given
+ * This function tests the equal() method and the operator== of two given
  * cOptionalPart objects which are equal.
  *
  * @param optPart1 the first optional part to compare
@@ -2542,7 +2546,7 @@ int testCompareTwoEqualOptParts( const cOptionalPart & optPart1, const string & 
 }
 
 /**
- * This method tests the equal() method and the operator== of two given
+ * This function tests the equal() method and the operator== of two given
  * cOptionalPart objects which are not equal.
  *
  * @param optPart1 the first optional part to compare
@@ -2580,7 +2584,7 @@ int testCompareTwoNotEqualOptParts( const cOptionalPart & optPart1, const string
 
 
 /**
- * This method tests the equal() method and the operator== of the class.
+ * This function tests the equal() method and the operator== of the class.
  *
  * @param ulTestphase a reference to the number for the testphase
  * @return the number of errors occured in the test
@@ -3334,7 +3338,7 @@ int testEqual( unsigned long &ulTestphase ){
 
 
 /**
- * This method tests a in the xml-format stored cOptionalPart.
+ * This function tests a in the xml-format stored cOptionalPart.
  *
  * @param szFilename the name of the file wher the cFibVector is stored
  * @param liPaOptionalInformation the list with the pairs for the optional
@@ -3455,7 +3459,7 @@ int testXmlOptPart( const string szFilename,
 
 
 /**
- * This method tests the storeXml() method of the cVectorProperty class.
+ * This function tests the storeXml() method cOptionalPart class.
  *
  * methods tested:
  * 	- storeXml()
@@ -3637,7 +3641,7 @@ int testStoreXml( unsigned long &ulTestphase ){
 
 
 /**
- * This method tests the storeXml() method of the cVectorProperty class.
+ * This function tests the storeXml() method cOptionalPart class.
  *
  * methods tested:
  * 	- unsignedLongFib getCompressedSize() const;
@@ -3847,10 +3851,88 @@ int testStore( unsigned long &ulTestphase ){
 
 
 
+/**
+ * This function tests the assign operator cOptionalPart class.
+ *
+ * methods tested:
+ * 	- cOptionalPart & operator=( const cOptionalPart & optionalPart );
+ *
+ * @param ulTestphase a reference to the number for the testphase
+ * @return the number of errors occured in the test
+ */
+int testAssign( unsigned long &ulTestphase ){
 
+	unsigned int iReturn = 0;
 
+	ulTestphase++;
+	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the assign operator for the optional part"<<endl;
+	
+	
+	for ( unsigned long uiIteration = 0; uiIteration < MAX_RAND_TEST_SIZE;
+			uiIteration++ ){
+		
+		cout<<endl<<endl;
+		//generate random optional part
+		cout<<"cOptionalPart optionalpart1={";
+		cOptionalPart optionalpart1;
+		
+		unsigned long uiNumberOfEntries =
+			( rand() % ( rand() % (rand() % MAX_RAND_TEST_SIZE + 1 ) + 1 ));
+		
+		for ( unsigned long uiActualEntry = 0;
+				uiActualEntry < uiNumberOfEntries; uiActualEntry++ ){
+			const size_t iKey = rand() % vecRandStrings.size();
+			const size_t iValue = rand() % vecRandStrings.size();
+			
+//			cout<<"optionalpart1.addEntry( szKey=\""<<vecRandStrings[ iKey ]<<
+//				"\", szValue=\""<<vecRandStrings[ iValue ]<<"\" ); "<<endl;
+			optionalpart1.addEntry(
+				vecRandStrings[ iKey ], vecRandStrings[ iValue ] );
+			cout<<"   ( \""<<vecRandStrings[ iKey ]<<"\" , \""<<
+				vecRandStrings[ iValue ]<<"\" ),";
+		}
+		cout<<"}=#"<<uiNumberOfEntries<<";"<<endl;
+		
+		
+		cout<<"cOptionalPart optionalpart2={";
+		cOptionalPart optionalpart2;
+		
+		uiNumberOfEntries = ( rand() % ( rand() % (rand() % MAX_RAND_TEST_SIZE + 1 ) + 1 ));
+		
+		for ( unsigned long uiActualEntry = 0;
+				uiActualEntry < uiNumberOfEntries; uiActualEntry++ ){
+			const size_t iKey = rand() % vecRandStrings.size();
+			const size_t iValue = rand() % vecRandStrings.size();
+			
+//			cout<<"optionalpart2.addEntry( szKey=\""<<vecRandStrings[ iKey ]<<
+//				"\", szValue=\""<<vecRandStrings[ iValue ]<<"\" ); "<<endl;
+			optionalpart2.addEntry(
+				vecRandStrings[ iKey ], vecRandStrings[ iValue ] );
+			cout<<"   ( \""<<vecRandStrings[ iKey ]<<"\" , \""<<
+				vecRandStrings[ iValue ]<<"\" ),";
+		}
+		cout<<"}=#"<<uiNumberOfEntries<<";"<<endl<<endl;
+		
+		
+		cout<<"cOptionalPart & optionalpart1Ref = (optionalpart1 = optionalpart2);";
+		cOptionalPart & optionalpart1Ref = (optionalpart1 = optionalpart2);
+		
+		if ( ! ( optionalpart1 == optionalpart2 ) ){
+			cout<<" Error"<<endl;
+			cerr<<"Error: The optionalpart1 is not equal to optionalpart2. "<<endl;
+			iReturn++;
+		}else{
+			cout<<" OK"<<endl;
+		}
+		if ( (&optionalpart1Ref) != (&optionalpart1) ){
+			cerr<<"Error: The optionalpart1Ref and optionalpart1 are not the same object. "<<endl;
+			iReturn++;
+		}
+		
+	}//end for iterations
 
-
+	return iReturn;
+}
 
 
 
