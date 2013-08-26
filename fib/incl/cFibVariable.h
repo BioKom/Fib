@@ -210,7 +210,7 @@ public:
 #ifdef FEATURE_EQUAL_FIB_OBJECT
 	
 	/**
-	 * This Method checks if the given variable is equal to this variable.
+	 * This method checks if the given variable is equal to this variable.
 	 *
 	 * @param variable the variable to compare with this variable
 	 * @param bCheckExternalObjects if true the external objects of
@@ -223,7 +223,7 @@ public:
 #else //FEATURE_EQUAL_FIB_OBJECT
 	
 	/**
-	 * This Method checks if the given variable is equal to this variable.
+	 * This method checks if the given variable is equal to this variable.
 	 *
 	 * @param variable the variable to compare with this variable
 	 * @return true if the given variable is equal to this variable, else false
@@ -233,7 +233,7 @@ public:
 #endif//FEATURE_EQUAL_FIB_OBJECT
 
 	/**
-	 * This Method checks if the given variable is equal to this variable.
+	 * This method checks if the given variable is equal to this variable.
 	 *
 	 * @param variable the variable to compare with this variable
 	 * @return true if the given variable is equal to this variable, else false
@@ -241,7 +241,7 @@ public:
 	virtual bool operator==( const cFibVariable &variable ) const;
 
 	/**
-	 * This Method makes this variable equal to the given variable.
+	 * This method makes this variable equal to the given variable.
 	 *
 	 * @param variable the variable to copy
 	 */
@@ -273,7 +273,7 @@ public: //make the following constructor and methods public for the test
 #ifdef FEATURE_EQUAL_FIB_OBJECT
 	
 	/**
-	 * This Method checks if the given variable is equal to this variable.
+	 * This method checks if the given variable is equal to this variable.
 	 *
 	 * @param variable the variable to compare with this variable
 	 * @param mapEqualRootObjects the root objects of this object that wher

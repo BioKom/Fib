@@ -35,6 +35,7 @@ History:
 	an object is given to evalue the data
 08.03.2011  Oesterholz  method for const getProperty() added
 19.10.2011  Oesterholz  FEATURE_EQUAL_FIB_OBJECT implemented
+30.07.2013  Oesterholz  method assignValues() added
 */
 
 #ifndef ___C_PROPERTY_H__
@@ -320,6 +321,20 @@ public:
 	 */
 	virtual cFibElement *copyElement( const char cType='u', const unsignedIntFib
 		elementPoint=0, bool bAbsolute=false ) const;
+
+	/**
+	 * This method asigns / copies the values from the given Fib element
+	 * fibElement to this Fib element. This means, it will copy everything
+	 * of the Fib element fibElement except pointers to other Fib elements
+	 * (e. g. for subobjects), these will remain the same.
+	 * For that both Fib elements have to be of the same type.
+	 *
+	 * @see getType()
+	 * @param fibElement the Fib element, from which to assign / copy the values
+	 * @return true if the values could be copied from the given Fib element
+	 * 	fibElement, else false
+	 */
+	virtual bool assignValues( const cFibElement & fibElement );
 
 #ifndef FEATURE_EQUAL_FIB_OBJECT
 	

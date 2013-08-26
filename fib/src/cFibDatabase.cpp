@@ -114,8 +114,8 @@ namespace fib{
 	public:
 		
 		/**
-		* destructor which deletes the Fib database if not allready deleted
-		*/
+		 * destructor which deletes the Fib database if not allready deleted
+		 */
 		~cFibDatabaseDeleter(){
 			
 			if ( cFibDatabase::pFibDbInstance != NULL ){

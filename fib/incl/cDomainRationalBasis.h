@@ -143,8 +143,19 @@ public:
 	 * @return the restored value
 	 */
 	virtual doubleFib restoreValue( cReadBits & iBitStream, intFib & outStatus ) const = 0;
-
-
+	
+	/**
+	 * @return a pointer to the mantissa domain of this rational domain
+	 * 	@see pDomainMantissa
+	 */
+	const cDomainIntegerBasis * getMantissaDomain() const;
+	
+	/**
+	 * @return a pointer to the exponent domain of this rational domain
+	 * 	@see pDomainExponent
+	 */
+	const cDomainIntegerBasis * getExponentDomain() const;
+	
 };//end class cDomainRationalBasis
 
 

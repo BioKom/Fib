@@ -40,6 +40,7 @@ History:
 25.08.2011  Oesterholz  underarea to subarea
 19.10.2011  Oesterholz  FEATURE_EQUAL_FIB_OBJECT implemented
 03.06.2013  Oesterholz  SWITCH_JUST_STORE_AND_EVALUE implemented
+30.07.2013  Oesterholz  method assignValues() added
 */
 
 #ifndef ___C_AREA_H__
@@ -332,7 +333,21 @@ public:
 		elementPoint=0, bool bAbsolute=false ) const;
 
 #ifndef SWITCH_JUST_STORE_AND_EVALUE
-		
+	
+	/**
+	 * This method assignss / copies the values from the given Fib element
+	 * fibElement to this Fib element. This means, it will copy everything
+	 * of the Fib element fibElement except pointers to other Fib elements
+	 * (e. g. for subobjects), these will remain the same.
+	 * For that both Fib elements have to be of the same type.
+	 *
+	 * @see getType()
+	 * @param fibElement the Fib element, from which to assign / copy the values
+	 * @return true if the values could be copied from the given Fib element
+	 * 	fibElement, else false
+	 */
+	virtual bool assignValues( const cFibElement & fibElement );
+
 #ifndef FEATURE_EQUAL_FIB_OBJECT
 	
 	/**

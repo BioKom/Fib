@@ -40,7 +40,8 @@ History:
 31.01.2012  Oesterholz  isInherited() method added
 12.02.2012  Oesterholz  restoreXml*() without restoring domain possible
 18.04.2012  Oesterholz  Bugfix: replace FirstChild()->ToElement() with
-	FirstChildElement()
+	FirstChildElement();
+01.08.2013  Oesterholz  FEATURE_EXT_SUBOBJECT_INPUT_VECTOR as default (not case removed)
 */
 
 
@@ -54,7 +55,6 @@ History:
 using namespace fib;
 
 
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 
 /**
  * Standardconstructor for the external subobjects type.
@@ -77,27 +77,6 @@ cTypeExtSubobject::cTypeExtSubobject( const cTypeExtSubobject & typeExtSubobject
 		uiNumberExtSubobject( typeExtSubobject.uiNumberExtSubobject ){
 	//nothing to do
 }
-
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-
-/**
- * Standardconstructor for the external subobjects type.
- */
-cTypeExtSubobject::cTypeExtSubobject(){
-	//nothing to do
-}
-
-
-/**
- * Copy constructor for the external subobjects type.
- * 
- * @param typeExtSubobject the cTypeExtSubobject to copy
- */
-cTypeExtSubobject::cTypeExtSubobject( const cTypeExtSubobject & typeExtSubobject ){
-	//nothing to do
-}
-
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 
 
 /**
@@ -134,7 +113,6 @@ unsignedIntFib cTypeExtSubobject::getType() const{
  */
 bool cTypeExtSubobject::isCompatible( const cDomain &domain ) const{
 
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	if ( ! domain.isVector() ){
 		//not an vector domain -> it is not compatible
 		return false;
@@ -159,14 +137,6 @@ bool cTypeExtSubobject::isCompatible( const cDomain &domain ) const{
 		}
 	}//else all subdomains are all scalars -> domain is compatible
 	return true;
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	//this type is compatible to conter domains
-	if ( isCounterDomain( &domain ) ){
-		//subdomain is not a counter domain
-		return true;
-	}//else not compatible
-	return false;
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 }
 
 
@@ -179,7 +149,6 @@ bool cTypeExtSubobject::isCompatible( const cDomain &domain ) const{
  */
 cDomain * cTypeExtSubobject::getStandardDomain() const{
 	
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	//construct the vector domain for the type: vector( 0 )
 	vector<cDomain*> vecDomainE0( 0 );
 	
@@ -188,9 +157,6 @@ cDomain * cTypeExtSubobject::getStandardDomain() const{
 	
 	return pVectorDomain;
 
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	return new cDomainNaturalNumberBit( 4 );
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 }
 
 
@@ -201,18 +167,12 @@ cDomain * cTypeExtSubobject::getStandardDomain() const{
  */
 bool cTypeExtSubobject::operator==( const cTypeElement & typeElement ) const{
 	
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	if ( getType() != typeElement.getType() ){
 		return false;
 	}
 	
 	return ( getNumberOfExtSubobject() ==
 		((cTypeExtSubobject*)(&typeElement))->getNumberOfExtSubobject() );
-
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	
-	return (getType() == typeElement.getType());
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 }
 
 
@@ -235,8 +195,6 @@ cTypeExtSubobject * cTypeExtSubobject::clone() const{
  */
 unsignedLongFib cTypeExtSubobject::getCompressedSize() const{
 
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-
 	if ( getNumberOfExtSubobject() == 0 ){
 		//no external subobjec -> no parameter
 		return 8;
@@ -246,11 +204,6 @@ unsignedLongFib cTypeExtSubobject::getCompressedSize() const{
 		return 8 + 8;
 	}//else long external subobjec number -> 64 bit parameter
 	return 8 + 64;
-	
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-
-	return 8;
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 }
 
 /**
@@ -266,12 +219,7 @@ unsignedLongFib cTypeExtSubobject::getCompressedSize() const{
 bool cTypeExtSubobject::storeXml( ostream & ostream,
 		const cDomain * domain ) const{
 	
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	
 	ostream<<"<externSubobject number=\""<<getNumberOfExtSubobject()<<"\"";
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	ostream<<"<externSubobject";
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	
 	//if given write the domain to the stream
 	if ( domain != NULL ){
@@ -324,7 +272,6 @@ cDomain * cTypeExtSubobject::restoreXmlWithDomain( const TiXmlElement * pXmlElem
 		return NULL;
 	}
 	
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	int iExtSubobjectNumber = 0;
 	const char * szXmlExtSubobjectNumber = pXmlElement->Attribute(
 		"number", &iExtSubobjectNumber );
@@ -332,7 +279,6 @@ cDomain * cTypeExtSubobject::restoreXmlWithDomain( const TiXmlElement * pXmlElem
 		//external subobject number readed
 		uiNumberExtSubobject = iExtSubobjectNumber;
 	}
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	
 	if ( bRestoreDomain ){
 		//restore the domain
@@ -392,7 +338,6 @@ bool cTypeExtSubobject::store( ostream & stream, char & cRestBits,
 		return false;
 	}
 	
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	char cExtObjectName = 0xC8; //the name "externSubobject"
 
 	if ( uiNumberExtSubobject == 0 ){
@@ -434,18 +379,6 @@ bool cTypeExtSubobject::store( ostream & stream, char & cRestBits,
 			return false;
 		}
 	}
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-
-	char cExtObjectName = 0xC8; //the name "externSubobject"
-
-	bool bNameStored = nBitStream::store( stream, cRestBits, uiRestBitPosition,
-		&cExtObjectName, 8 );
-	if ( ! bNameStored ){
-		return false;
-	}
-
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-
 	return true;
 }
 
@@ -484,7 +417,6 @@ intFib cTypeExtSubobject::restore( cReadBits & iBitStream ){
 	if ( uiBitsRead != 8 ){
 		return -2;
 	}
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 
 	if ( (cTypeName & 0xF8) != 0xC8 ){
 		//Error: wrong type
@@ -522,13 +454,6 @@ intFib cTypeExtSubobject::restore( cReadBits & iBitStream ){
 		return -2;
 	}
 	
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	if ( cTypeName != 0xC8 ){
-		//warning: wrong type
-		return 2;
-	}
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-
 	return 0;
 }
 
@@ -542,7 +467,6 @@ bool cTypeExtSubobject::isInherited() const{
 }
 
 
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 /**
  * @return the number of the subobject for which the type is
  * @see uiNumberExtSubobject;
@@ -551,7 +475,6 @@ unsignedIntFib cTypeExtSubobject::getNumberOfExtSubobject() const{
 	
 	return uiNumberExtSubobject;
 }
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 
 
 

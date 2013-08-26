@@ -40,6 +40,7 @@ History:
 02.12.2011  Oesterholz  XML format: the "value" can also loaded as a
 	XML element
 03.06.2013  Oesterholz  SWITCH_JUST_STORE_AND_EVALUE implemented
+30.07.2013  Oesterholz  method assignValues() added
 */
 
 
@@ -509,6 +510,34 @@ cFibElement *cComment::copyElement( const char cType, const unsignedIntFib
 }
 
 #ifndef SWITCH_JUST_STORE_AND_EVALUE
+
+/**
+ * This method assigns / copies the values from the given Fib element
+ * fibElement to this Fib element. This means, it will copy everything
+ * of the Fib element fibElement except pointers to other Fib elements
+ * (e. g. for subobjects), these will remain the same.
+ * For that both Fib elements have to be of the same type.
+ *
+ * @see getType()
+ * @param fibElement the Fib element, from which to assign / copy the values
+ * @return true if the values could be copied from the given Fib element
+ * 	fibElement, else false
+ */
+bool cComment::assignValues( const cFibElement & fibElement ){
+	
+	if ( fibElement.getType() != getType() ){
+		//both Fib elements not of the same type -> can't assign values
+		return false;
+	}
+	//copy key and value
+	cComment * pOtherComment = ((cComment*)(&fibElement));
+	
+	szKey   = pOtherComment->szKey;
+	szValue = pOtherComment->szValue;
+	
+	return true;
+}
+
 
 #ifdef FEATURE_EQUAL_FIB_OBJECT
 

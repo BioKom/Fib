@@ -66,7 +66,7 @@ cDomainSingle * cDomainSingle::createGoodDomain( list< doubleFib > & liValues ){
 	bool bUseIntegerDomain = true;
 	
 	/*evalue:
-	- the minimum, maximum value 
+	- the minimum, maximum value
 	- the scaling factor
 	- evalue maximum bits for the mantissa bM and exponent bE for rational numbers*/
 	//evalue the values for an integer domain
@@ -99,7 +99,8 @@ cDomainSingle * cDomainSingle::createGoodDomain( list< doubleFib > & liValues ){
 			// (maximum - minimum) / dScalingFactor + 1 = numbers of values in integer domain = #I
 			const unsigned long long ulNumbersInDomain =
 				(unsigned long long)( ( dMaximum - dMinimum ) / dScalingFactor) + 1;
-			if ( (((doubleFib)ulNumbersInDomain - 1)) * dScalingFactor < ( dMaximum - dMinimum )  ){
+			if ( (((doubleFib)ulNumbersInDomain - 1)) * dScalingFactor <
+					( dMaximum - dMinimum )  ){
 				//domain can't be represented by an integer domain
 				bUseIntegerDomain = false;
 				break;

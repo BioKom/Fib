@@ -39,6 +39,8 @@ History:
 	FirstChildElement()
 17.05.2013  Oesterholz  replaced (m*pow(2,e)) with composeDoubleFib() and
 	m*2 with m<<1 and m72 with m>>1
+22.08.2013  Oesterholz  minor changes: some const added and adding source
+	namespaces for decomposeDoubleFib()
 */
 
 
@@ -175,7 +177,7 @@ doubleFib cDomainRational::round( const doubleFib dValue ) const{
 	//check if the value is outside the domain bounds
 	longFib lMantissa;
 	longFib lExponent;
-	decomposeDoubleFib( dValue, lMantissa, lExponent );
+	cDomainRational::decomposeDoubleFib( dValue, lMantissa, lExponent );
 
 	return composeDoubleFib( lMantissa, lExponent );
 }
@@ -526,7 +528,7 @@ bool cDomainRational::storeValue( doubleFib dValue, ostream & stream,
 	}
 	longFib lMantissa;
 	longFib lExponent;
-	decomposeDoubleFib( dValue, lMantissa, lExponent );
+	cDomainRational::decomposeDoubleFib( dValue, lMantissa, lExponent );
 	//store mantissa
 	const bool bMantissaStored = pDomainMantissa->storeUnscaledValue(
 		lMantissa, stream, cRestBits, uiRestBitPosition );
@@ -575,7 +577,7 @@ doubleFib cDomainRational::restoreValue( cReadBits & iBitStream,
 		return 0.0;
 	}
 	//restore mantissa
-	longFib lMantissa = pDomainMantissa->restoreIntegerValue(
+	const longFib lMantissa = pDomainMantissa->restoreIntegerValue(
 		iBitStream, outStatus );
 	if ( outStatus < 0 ){
 		//error
@@ -583,7 +585,7 @@ doubleFib cDomainRational::restoreValue( cReadBits & iBitStream,
 	}
 	
 	//restore exponent
-	longFib lExponent = pDomainExponent->restoreIntegerValue(
+	const longFib lExponent = pDomainExponent->restoreIntegerValue(
 		iBitStream, outStatus );
 	if ( outStatus < 0 ){
 		//error

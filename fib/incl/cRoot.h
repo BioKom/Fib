@@ -8,6 +8,8 @@
  * System: C++
  *
  * This class represents the root-Fib-element.
+ *
+ *
  * Copyright (C) @c LGPL3 2009 Betti Oesterholz
  *
  * This program is free software: you can redistribute it and/or modify
@@ -48,6 +50,8 @@ History:
 	getValidDomains() + getValidPureValueDomains() bInherit added
 22.11.2012  Oesterholz  Bugfix: a root element can be called more than one
 	time by external objects
+30.07.2013  Oesterholz  method assignValues() added;
+	FEATURE_EXT_SUBOBJECT_INPUT_VECTOR as default (not case removed)
 */
 
 #ifndef ___C_ROOT_H__
@@ -136,20 +140,10 @@ private:
 	/**
 	 * This list contains the input variables of the root-element.
 	 * The first value of an entry pair ist the Variable and the secound
-	 * is the standardvalue for the variable.
+	 * is the standard value for the variable.
 	 */
 	list< pair< cFibVariable *, doubleFib > > liInputVariables;
 	
-#ifndef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-//TODO remove
-	/**
-	 * This is the list for extern subobjects.
-	 * The list entries are the number of output varaibles for the extern
-	 * subobjects.
-	 */
-	list< unsignedIntFib > liExternSubobjects;
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-
 	/**
 	 * This set contains the identifiers of used database objects.
 	 */
@@ -158,7 +152,7 @@ private:
 //the next filed are for intern evaluation
 
 	/**
-	 * The propertytypes, in the order they will be counted when stored.
+	 * The property types, in the order they will be counted when stored.
 	 * This list will be created when storeBit() is called, so the
 	 * properties can be stored.
 	 * This is not real class data, but helpdata for storing. (const
@@ -454,6 +448,20 @@ public:
 	virtual cFibElement *copyElement( const char cType='u', const unsignedIntFib
 		elementPoint=0, bool bAbsolute=false ) const;
 
+	/**
+	 * This method asigns / copies the values from the given Fib element
+	 * fibElement to this Fib element. This means, it will copy everything
+	 * of the Fib element fibElement except pointers to other Fib elements
+	 * (e. g. for subobjects), these will remain the same.
+	 * For that both Fib elements have to be of the same type.
+	 *
+	 * @see getType()
+	 * @param fibElement the Fib element, from which to assign / copy the values
+	 * @return true if the values could be copied from the given Fib element
+	 * 	fibElement, else false
+	 */
+	virtual bool assignValues( const cFibElement & fibElement );
+
 #ifndef FEATURE_EQUAL_FIB_OBJECT
 	
 	/**
@@ -529,7 +537,7 @@ public:
 	 * @param fibElement the Fib-element to insert
 	 * @param bAbsolute if the lNumber is an absolute value for the wool
 	 * 	Fib object
-	 * @param bCheckVariables if true (standardvalue) it will be checked if
+	 * @param bCheckVariables if true (standard value) it will be checked if
 	 * 	the variables the Fib-element defines are needed, else the 
 	 * 	Fib-element will be removed even if its variables are needed elsewher
 	 * @return true if the Fib-element fibElement was inserted, else false
@@ -603,7 +611,7 @@ public:
 	 * 	Fib-elements of the given type cType, to cut
 	 * @param bAbsolute if the elementPoint is an absolute value for the wool
 	 * 	Fib object
-	 * @param bCheckVariables if true (standardvalue) it will be checked if
+	 * @param bCheckVariables if true (standard value) it will be checked if
 	 * 	the variables the Fib element defines are needed, else the 
 	 * 	Fib element will be removed even if its variables are needed elsewher
 	 * @return the pointer to the cuted Fib-element or NULL, if the Fib
@@ -841,8 +849,8 @@ public:
 	 * of this root-object should have, to the given number. It will
 	 * create or delete variables as necessary.
 	 * Standardvalue of new varibles is the nullvalue of the standarddomain
-	 * for input variables. Variables which are still in use can't be 
-	 * deleted. The delete process will beginn on the end of the input 
+	 * for input variables. Variables which are still in use can't be
+	 * deleted. The delete process will beginn on the end of the input
 	 * variablen list and stop if enght variables are deleted or an
 	 * variable can't be deleted.
 	 * 
@@ -867,21 +875,21 @@ public:
 
 	/**
 	 * @param uiNumberOfInputVariable the number of the input variable for
-	 * 	which the standardvalue is to be return
-	 * @return the standardvalue of the uiNumberOfInputVariable
+	 * 	which the standard value is to be return
+	 * @return the standard value of the uiNumberOfInputVariable
 	 * 	input variable of this root-object
 	 */
 	doubleFib getStandardValueOfInputVariable(
 		unsignedIntFib uiNumberOfInputVariable ) const;
 
 	/**
-	 * This Method sets the standardvalue of uiNumberOfInputVariable
+	 * This Method sets the standard value of uiNumberOfInputVariable
 	 * input variable.
 	 *
 	 * @param uiNumberOfInputVariable the number of the input variable for
-	 * 	which the standardvalue is to be set
-	 * @param dValue the value to which the standardvalue is to be set
-	 * @return true if the standardvalue of the uiNumberOfInputVariable
+	 * 	which the standard value is to be set
+	 * @param dValue the value to which the standard value is to be set
+	 * @return true if the standard value of the uiNumberOfInputVariable
 	 * 	input variable of this root-object is set do dValue,
 	 * 	else false
 	 */
@@ -909,45 +917,6 @@ public:
 	unsignedIntFib getNumberOfOutputVariables(
 		unsignedIntFib uiNumberOfExtSubobject ) const;
 
-#ifndef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-
-	/**
-	 * This method sets the number of the extern subobjects this 
-	 * root-object has to the given value uiNumberOfExternUnderObjects.
-	 * It automaticly creates or delets extern subobjects to or from the
-	 * end of the extern subobjectslist, till uiNumberOfExternUnderObjects
-	 * subobjects exsists or the operation is not possible.
-	 * Underobjects wich are still in use/ still exists in the main -fib
-	 * -object of this root-object can't be deleted.
-	 * The number of output variables of the created subobjects will be
-	 * set to 0.
-	 *
-	 * @param uiNumberOfExternUnderObjects the number of extern
-	 * 	subobjects this root-object should have
-	 * @return true if the number of extern subobjects is set to
-	 * 	uiNumberOfExternUnderObjects, else false
-	 */
-	bool setNumberOfExternSubobjects(
-		unsignedIntFib uiNumberOfExternUnderObjects );
-
-	/**
-	 * This method sets the number of output variables of the
-	 * uiNumberOfUnderObject extern subobject in this root-object to 
-	 * the given value uiNumberOfVariables.
-	 *
-	 * @param uiNumberOfUnderObject the number of the subobject for which
-	 * 	the number of output variables is to be set
-	 * @param uiNumberOfVariables the number of output variables the
-	 * 	uiNumberOfUnderObject subobject of this root-object should have
-	 * @return true if the number of output variables of the
-	 * 	uiNumberOfUnderObject subobject was set to uiNumberOfVariables,
-	 * 	else false
-	 */
-	bool setNumberOfOutputVariables(
-		unsignedIntFib uiNumberOfUnderObject,
-		unsignedIntFib uiNumberOfVariables );
-
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 
 	/**
 	 * This method checks the extern subobject of this root-object.
@@ -960,7 +929,7 @@ public:
 	 * 	somewhere in the main -Fib object
 	 *
 	 * @param iErrorNumber a pointer to an integerfild, wher an errornumber
-	 * 	can be stored; or NULL (standardvalue) if no errornumber should
+	 * 	can be stored; or NULL (standard value) if no errornumber should
 	 * 	be given back
 	 * 	possible errornumbers:
 	 * 		- 0 no error, everything is OK
@@ -984,7 +953,7 @@ public:
 	 * 	-the numbers of the subobjects dosn't go from 1 till n
 	 *
 	 * @param iErrorNumber a pointer to an integerfild, wher an errornumber
-	 * 	can be stored; or NULL (standardvalue) if no errornumber should
+	 * 	can be stored; or NULL (standard value) if no errornumber should
 	 * 	be given back
 	 * 	possible errornumbers:
 	 * 		- 0 no error, everything is OK
@@ -1123,7 +1092,7 @@ public:
 	 * property for this root-element is disabled.
 	 *
 	 * @param checksum the checksumvektor this root-element should have;
-	 * 	if NULL (standardvalue ) the checksum will be disabled for this
+	 * 	if NULL (standard value ) the checksum will be disabled for this
 	 * 	root-element
 	 */
 	void setChecksum( const cVectorChecksum * checksum = NULL);
@@ -1248,7 +1217,7 @@ protected:
 
 
 	/**
-	 * This method creates the propertytypelist, with the propertytypes in the
+	 * This method creates the propertytypelist, with the property types in the
 	 * order they will be counted when stored.
 	 *
 	 * @see storeBit()
@@ -1357,7 +1326,7 @@ protected:
 	 * @see isUsedVariable()
 	 * @param pVariable the variable to check if it is defined
 	 * @param direction the direction from this Fib-element, in which the
-	 * 	variable should be defined; standardvalue is ED_POSITION so yust
+	 * 	variable should be defined; standard value is ED_POSITION so yust
 	 * 	this Fib-element will be checked
 	 * @param pCallingFibElement the Fib-Element which called this method
 	 * @return true if the variable is used, else false
@@ -1376,7 +1345,7 @@ protected:
 	 * @see getUsedVariables()
 	 * @see isDefinedVariable()
 	 * @param direction the direction from this Fib-element, in which the
-	 * 	variable should be used; standardvalue is ED_POSITION so yust
+	 * 	variable should be used; standard value is ED_POSITION so yust
 	 * 	this Fib-element will be checked
 	 * @param pCallingFibElement the Fib-Element which called this method
 	 * @return the set with all variables used in the given direction from

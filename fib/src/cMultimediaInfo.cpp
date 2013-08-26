@@ -7,7 +7,9 @@
  *
  * System: C++
  *
- * This class represents the multimediainfo of an root -element.
+ * This class represents the multimedia information of an root element.
+ *
+ *
  * Copyright (C) @c LGPL3 2009 Betti Oesterholz
  *
  * This program is free software: you can redistribute it and/or modify
@@ -24,14 +26,15 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * This class represents the multimediainfo for an root -element.
- * This includes the versionsnumbers of Fib and the Fib -Database.
+ * This class represents the multimedia information for an root element.
+ * This includes the version numbers of Fib and the Fib database.
  *
  */
 /*
 History:
 24.06.2009  Oesterholz  created
 21.12.2012  Oesterholz  virtual destructor added
+01.08.2013  Oesterholz  method assignValues() added
 */
 
 #include "cMultimediaInfo.h"
@@ -42,19 +45,19 @@ using namespace fib;
 
 
 /**
- * The constructor for the multimediainfo.
- * The defaultmapping for the dimension i is the mappingvalue i.
+ * The constructor for the multimedia information.
+ * The defaultmapping for the dimension i is the mapping value i.
  *
- * @param root the root -element this multimediainfo stands in/for
+ * @param root the root element this multimedia information stands in/for
  */
-cMultimediaInfo::cMultimediaInfo( cRoot * root) :
+cMultimediaInfo::cMultimediaInfo( cRoot * root ) :
 		ulFibVersion( FIB_VERSION ), ulFibDbVersion( FIB_DB_VERSION ),
 		masterRoot( root ){
 //nothing to do
 }
 
 /**
- * The destructor for the multimediainfo.
+ * The destructor for the multimedia information.
  */
 cMultimediaInfo::~cMultimediaInfo(){
 	//nothing to do
@@ -63,25 +66,25 @@ cMultimediaInfo::~cMultimediaInfo(){
 
 
 /**
- * This Method clones this object.
+ * This method clones this object.
  *
  * @return a clone of this object
  */
 cMultimediaInfo *cMultimediaInfo::clone() const{
 
-	cMultimediaInfo *multimediainfoClone=new cMultimediaInfo( masterRoot );
+	cMultimediaInfo *pMultimediaInformationClone =
+		new cMultimediaInfo( masterRoot );
 
+	pMultimediaInformationClone->setFibVersion( getFibVersion() );
+	pMultimediaInformationClone->setDatabaseVersion( getDatabaseVersion() );
 
-	multimediainfoClone->setFibVersion( getFibVersion() );
-	multimediainfoClone->setDatabaseVersion( getDatabaseVersion() );
-
-	return multimediainfoClone;
+	return pMultimediaInformationClone;
 }
 
 
 /**
- * @return the version of the Fib -multimedialanguage needed for the
- * 	Fib -multimediaobject
+ * @return the version of the Fib multimedia language needed for the
+ * 	Fib multimedia object
  */
 unsignedLongFib cMultimediaInfo::getFibVersion() const{
 
@@ -90,7 +93,7 @@ unsignedLongFib cMultimediaInfo::getFibVersion() const{
 
 
 /**
- * @param ulFibVersion the version of the Fib -multimedialanguage to set
+ * @param ulFibVersion the version of the Fib multimedia language to set
  */
 void cMultimediaInfo::setFibVersion( unsignedLongFib ulFibVersion ){
 	this->ulFibVersion=ulFibVersion;
@@ -98,8 +101,8 @@ void cMultimediaInfo::setFibVersion( unsignedLongFib ulFibVersion ){
 
 
 /**
- * @return the version of the Fib -database needed for the
- * 	Fib -multimediaobject
+ * @return the version of the Fib database needed for the
+ * 	Fib multimedia object
  */
 unsignedLongFib cMultimediaInfo::getDatabaseVersion() const{
 	return ulFibDbVersion;
@@ -107,7 +110,7 @@ unsignedLongFib cMultimediaInfo::getDatabaseVersion() const{
 
 
 /**
- * @param ulFibVersion the version of the Fib -database to set
+ * @param ulFibVersion the version of the Fib database to set
  */
 void cMultimediaInfo::setDatabaseVersion( unsignedLongFib ulFibDbVersion ){
 
@@ -116,10 +119,10 @@ void cMultimediaInfo::setDatabaseVersion( unsignedLongFib ulFibDbVersion ){
 
 
 /**
- * This method evalues and sets the Fib -multimedialanguage and
- * Fib -database versionnumbers, which are needed for the Fib -object.
+ * This method evalues and sets the Fib multimedia language and
+ * Fib database version numbers, which are needed for the Fib -object.
  *
- * @return true if the versionsnumbers where evalued and set
+ * @return true if the version numbers where evalued and set
  */
 bool cMultimediaInfo::evalueMinVersionsNumbers(){
 
@@ -130,13 +133,13 @@ bool cMultimediaInfo::evalueMinVersionsNumbers(){
 }
 
 /**
- * This Method checks if the given multimedianfo is equal to this
- * multimedianfo.
+ * This method checks if the given multimedia information is equal to this
+ * multimedia information.
  *
- * @param multimediaInfo the multimedianfo which should be equal to this
- * 	multimedianfo
- * @return true if the given multimedianfo is equal to this
- * 	multimedianfo, else false
+ * @param multimediaInfo the multimedia information which should be equal
+ * 	to this multimedia information
+ * @return true if the given multimedia information is equal to this
+ * 	multimedia information, else false
  */
 bool cMultimediaInfo::equal( const cMultimediaInfo & multimediaInfo ) const{
 	return ((*this)==multimediaInfo);
@@ -144,13 +147,13 @@ bool cMultimediaInfo::equal( const cMultimediaInfo & multimediaInfo ) const{
 
 
 /**
- * This Method checks if the given multimedianfo is equal to this
- * multimedianfo.
+ * This method checks if the given multimedia information is equal to this
+ * multimedia information.
  *
- * @param multimediaInfo the multimedianfo which should be equal to this
- * 	multimedianfo
- * @return true if the given multimedianfo is equal to this
- * 	multimedianfo, else false
+ * @param multimediaInfo the multimedia information which should be equal
+ * 	to this multimedia information
+ * @return true if the given multimedia information is equal to this
+ * 	multimedia information, else false
  */
 bool cMultimediaInfo::operator==( const cMultimediaInfo & multimediaInfo) const{
 	
@@ -165,12 +168,32 @@ bool cMultimediaInfo::operator==( const cMultimediaInfo & multimediaInfo) const{
 
 
 /**
- * This method stores this multimediainfo in the XML -format into the
+ * This method asigns / copies the values from the given multimedia
+ * information to rmation. This means, it will copy
+ * everything of the rmation multimediaInfo except pointers to Fib
+ * elements (e. g. the master root element), these will remain the same.
+ *
+ * @see equal()
+ * @param multimediaInfo the multimedia information, from which to
+ * 	assign / copy the values
+ * @return true if the values could be copied from the given multimedia
+ * 	information multimediaInfo, else false
+ */
+bool cMultimediaInfo::assignValues( const cMultimediaInfo & multimediaInfo ){
+	
+	ulFibVersion   = multimediaInfo.ulFibVersion;
+	ulFibDbVersion = multimediaInfo.ulFibDbVersion;
+	return true;
+}
+
+
+/**
+ * This method stores this multimedia information in the XML -format into the
  * given stream.
  * example: <multimedia_info fib_version="1" db_version="0"/>
  *
- * @param ostream the stream where thismultimediainfo should be stored to
- * @return true if this multimediainfo is stored, else false
+ * @param ostream the stream where thismultimedia information should be stored to
+ * @return true if this multimedia information is stored, else false
  */
 bool cMultimediaInfo::storeXml( ostream & ostream ) const{
 	
@@ -182,7 +205,7 @@ bool cMultimediaInfo::storeXml( ostream & ostream ) const{
 
 
 /**
- * This method restores this multimediainfo in the XML -format from an
+ * This method restores this multimedia information in the XML -format from an
  * an TinyXml element.
  *
  * @param pXmlNode a pointer to the TinyXml node the fib -object is stored in
@@ -213,7 +236,7 @@ intFib cMultimediaInfo::restoreXml( const TiXmlElement * pXmlElement ){
 	const char * szXmlFibVersion = pXmlElement->Attribute( "fib_version", &iLoadedFibVersion );
 	
 	if ( szXmlFibVersion == NULL ){
-		//Warning: The multimediainfo has no fib -versionsnumber.
+		//Warning: The multimedia information has no fib -versionsnumber.
 		iReturnValue = 2;
 	}else{
 		setFibVersion( iLoadedFibVersion );
@@ -223,7 +246,7 @@ intFib cMultimediaInfo::restoreXml( const TiXmlElement * pXmlElement ){
 	const char * szXmlDbVersion = pXmlElement->Attribute( "db_version", &iLoadedDbVersion );
 	
 	if ( szXmlDbVersion == NULL ){
-		//Warning: The multimediainfo has no fib -databaseversionsnumber.
+		//Warning: The multimedia information has no fib -databaseversionsnumber.
 		iReturnValue = 2;
 	}else{
 		setDatabaseVersion( iLoadedDbVersion );

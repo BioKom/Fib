@@ -129,5 +129,24 @@ bool cDomainRationalBasis::operator==( const cDomain &domain ) const{
 }
 
 
+/**
+ * @return a pointer to the mantissa domain of this rational domain
+ * 	@see pDomainMantissa
+ */
+const cDomainIntegerBasis * cDomainRationalBasis::getMantissaDomain() const{
+	
+	return pDomainMantissa;
+}
+
+
+/**
+ * @return a pointer to the exponent domain of this rational domain
+ * 	@see pDomainExponent
+ */
+const cDomainIntegerBasis * cDomainRationalBasis::getExponentDomain() const{
+	
+	return pDomainExponent;
+}
+
 
 
