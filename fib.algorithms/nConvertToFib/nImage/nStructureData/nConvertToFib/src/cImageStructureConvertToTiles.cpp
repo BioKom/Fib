@@ -78,17 +78,6 @@ History:
 
 
 /**
- * With this feature the new external object for antialised tiles is used.
- *
- * created: 11.03.2013  Betti Oesterholz
- * status:  running and tested(03.2013)
- * (deprecated: not FEATURE_USE_ADAPTED_ANTIALISED_EXT_OBJECT)
- *//*
-History:
-*/
-#define FEATURE_USE_ADAPTED_ANTIALISED_EXT_OBJECT
-
-/**
  * With this feature the size of the straight lines will be the number of
  * points in the area to the straight line.
  *
@@ -3866,15 +3855,12 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 			double dMaxOtherBorderArea = 0;
 			bUseRectangle = true;
 #endif //FEATURE_USE_RECTANGLE_EXT_OBJECT
-			
-			//TODO check
-			
 			{//check first part line for border
 				map< longFib, nImageStructureConvertToTiles::cLine >::const_iterator
 					itrActualLine = bordersDimToSearchIn.find( lStartPoint );
 				
 				if ( itrActualLine != bordersDimToSearchIn.end() ){
-					//end if first part line for border found
+					//if first part line for border found
 					const nImageStructureConvertToTiles::cLine::tLineParts &
 						actualLine = itrActualLine->second.lineParts;
 					//find the line part for the straight line border point
@@ -3892,7 +3878,7 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 							dMaxOtherBorderArea = itrActualPartLine->second.maxY;
 #endif //FEATURE_USE_RECTANGLE_EXT_OBJECT
 							break;
-						}
+						}//else
 						if ( ( itrActualPartLine->second.minY <= dMinBorderArea ) &&
 								( dMaxBorderArea <= itrActualPartLine->second.maxY ) ){
 							//line part for border found
@@ -3903,8 +3889,8 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 							dMaxOtherBorderArea = itrActualPartLine->first.minY;
 #endif //FEATURE_USE_RECTANGLE_EXT_OBJECT
 							break;
-						}
-					}//for find the line part for the straight line border point
+						}//else check next part line
+					}//end for find the line part for the straight line border point
 				}//end if first part line for border found
 			}//end check first part line for border
 			
@@ -3934,9 +3920,9 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 						if ( ( itrActualPartLine->first.maxY <= dMinBorderArea ) &&
 								( dMaxBorderArea <= itrActualPartLine->first.minY ) ){
 							//line part for border found
+#ifdef FEATURE_C_IMAGE_STRUCTURE_CONVERT_TO_TILES_USE_INNER_LINE
 							const double dMinY = itrActualPartLine->second.minY;
 							const double dMaxY = itrActualPartLine->second.maxY;
-#ifdef FEATURE_C_IMAGE_STRUCTURE_CONVERT_TO_TILES_USE_INNER_LINE
 							vecSplineRanges.push_back(
 								fib::algorithms::nD1::cDataPointRangeWithWeights< long, double >(
 									lActualPoint, dMinY, dMaxY, 1.0, 1.0 ) );
@@ -3954,8 +3940,15 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 #ifdef FEATURE_USE_RECTANGLE_EXT_OBJECT
 							if ( bUseRectangle ){
 								//evalue the minimal and maximal values for the other side
+#ifdef FEATURE_C_IMAGE_STRUCTURE_CONVERT_TO_TILES_USE_INNER_LINE
 								dMinOtherBorderArea = max( dMinOtherBorderArea, dMinY );
 								dMaxOtherBorderArea = min( dMaxOtherBorderArea, dMaxY );
+#else //FEATURE_C_IMAGE_STRUCTURE_CONVERT_TO_TILES_USE_INNER_LINE
+								dMinOtherBorderArea = max( dMinOtherBorderArea,
+									itrActualPartLine->second.minY );
+								dMaxOtherBorderArea = min( dMaxOtherBorderArea,
+									itrActualPartLine->second.maxY );
+#endif //FEATURE_C_IMAGE_STRUCTURE_CONVERT_TO_TILES_USE_INNER_LINE
 								bUseRectangle &= ( dMinOtherBorderArea < dMaxOtherBorderArea );
 							}
 #endif //FEATURE_USE_RECTANGLE_EXT_OBJECT
@@ -3994,16 +3987,15 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 							bNoNextLineFound = false;
 							
 							DEBUG_OUT_L4(<<"Part line first point added on "<<lActualPoint<<" from ("<<itrActualPartLine->first.maxY<<", "<<itrActualPartLine->first.minY<<") to ("<<itrActualPartLine->second.minY<<", "<<itrActualPartLine->second.maxY<<")"<<endl<<flush);
-							
 							break;
 						}
-					}//for find the line part for the straight line border point
+					}//end for find the line part for the straight line border point
 					if ( bNoNextLineFound ){
 						//gap in line
 						DEBUG_OUT_EL2(<<"Error: gap in best line (min to max) found, because no next line was found"<<endl<<flush);
 						break;
 					}
-				}//for all lines in area
+				}//end for all lines in area
 			
 				/* if first other border points to the right -> minimize area
 					outside the to convert area (betwean min max or overlapt points)
@@ -4106,13 +4098,13 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 							DEBUG_OUT_L4(<<"Part line second point added on "<<lActualPoint<<" from ("<<itrActualPartLine->first.maxY<<", "<<itrActualPartLine->first.minY<<") to ("<<itrActualPartLine->second.minY<<", "<<itrActualPartLine->second.maxY<<")"<<endl<<flush);
 							break;
 						}
-					}//for find the line part for the straight line border point
+					}//end for find the line part for the straight line border point
 					if ( bNoNextLineFound ){
 						//gap in line
 						DEBUG_OUT_EL2(<<"Error: gap in best line (min to max) found, because no next line was found"<<endl<<flush);
 						break;
 					}
-				}//for all lines in area
+				}//end for all lines in area
 			
 				/* if first other border points to the left -> minimize area
 					outside the to convert area (betwean min max or overlapt points)
@@ -4134,11 +4126,14 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 			//check on which side of the straigt line the area should go
 			double dStraightBorderMaxToMax;
 			bool bAreaToTheLeft = true;
+			const double dMinBorderArea = pBestLineBorderLine->areaForLine.first;
 			const double dMaxBorderArea = pBestLineBorderLine->areaForLine.second;
 			//enlarge check value because of rounding errors
+			const double dMinBorderAreaUpper = dMinBorderArea + 0.001;
 			const double dMaxBorderAreaLower = dMaxBorderArea - 0.001;
 			const double dMaxBorderAreaUpper = dMaxBorderArea + 0.001;
-			{
+			
+			{//check on which side of the straight line border the area should lay
 				map< longFib, nImageStructureConvertToTiles::cLine >::const_iterator
 					itrActualLine = bordersDimToSearchIn.find( lStartPoint );
 				if ( itrActualLine == bordersDimToSearchIn.end() ){
@@ -4153,20 +4148,20 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 					itrActualPartLine = actualLine.begin();
 				for (  ; itrActualPartLine != actualLine.end(); itrActualPartLine++ ){
 					
-					if ( ( itrActualPartLine->first.maxY <= dMaxBorderAreaUpper ) &&
+					if ( ( itrActualPartLine->first.maxY <= dMinBorderAreaUpper ) &&
 							( dMaxBorderAreaLower <= itrActualPartLine->second.maxY ) ){
 						//line part for border found -> check upper minY value
 						if ( dMaxBorderAreaUpper < itrActualPartLine->first.minY ){
 							/* the min area of the line part of the first line
 							 * begins after the straight line border to use
-							 * -> create area for other side*/
+							 * -> create area for other (=right) side*/
 							bAreaToTheLeft = false;
 						}
 						
 						DEBUG_OUT_L2(<<"The max max area object will be created on the "<<(bAreaToTheLeft?"left":"right")<<" side of the straight line"<<endl<<flush);
 						break;
-					}
-				}//for find the line part for the straight line border point
+					}//end if line part found
+				}//end for find the line part for the straight line border point
 			}
 			
 			if ( bAreaToTheLeft ){
@@ -4193,11 +4188,8 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 					bool bNoNextLineFound = true;
 					for (  ; itrActualPartLine != actualLine.end(); itrActualPartLine++ ){
 						
-						if ( ( itrActualPartLine->first.maxY <= dMaxBorderAreaUpper ) &&
-								( dMaxBorderAreaLower <= itrActualPartLine->second.maxY )
-								/* not needed: &&
-								( itrActualPartLine->first.maxY <= dMaxBorderArea ) &&
-								( dMaxBorderArea <= itrActualPartLine->second.maxY )*/ ){
+						if ( ( itrActualPartLine->first.maxY <= dMinBorderAreaUpper ) &&
+								( dMaxBorderAreaLower <= itrActualPartLine->second.maxY ) ){
 							//line part for border found -> add left line part border
 #ifdef FEATURE_C_IMAGE_STRUCTURE_CONVERT_TO_TILES_USE_INNER_LINE
 							const double dMinY = itrActualPartLine->first.maxY;
@@ -4234,19 +4226,15 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 							DEBUG_OUT_L4(<<"Part line first point added on "<<lActualPoint<<" from ("<<itrActualPartLine->first.maxY<<", "<<itrActualPartLine->first.minY<<") to ("<<itrActualPartLine->second.minY<<", "<<itrActualPartLine->second.maxY<<" and size "<<pBestLineBorderLine->size<<")"<<endl<<flush);
 
 							break;
-						}
-					}//for find the line part for the straight line border point
+						}//end if part line found
+					}//end for find the line part for the straight line border point
 					if ( bNoNextLineFound ){
 						//gap in line
 						DEBUG_OUT_EL2(<<"Error: gap in best line (max to max) found, because no next line was found"<<endl<<flush);
 						break;
 					}
-				}//for all lines in area
+				}//end for all lines in area
 			}else{//create area on the right side
-				const double dMinBorderArea = pBestLineBorderLine->areaForLine.first;
-				//enlarge check value because of rounding errors
-				const double dMinBorderAreaLower = dMinBorderArea - 0.001;
-				const double dMinBorderAreaUpper = dMinBorderArea + 0.001;
 				
 				dStraightBorderMaxToMax = dMinBorderArea;
 				
@@ -4272,7 +4260,7 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 					for (  ; itrActualPartLine != actualLine.end(); itrActualPartLine++ ){
 						
 						if ( ( itrActualPartLine->first.maxY <= dMinBorderAreaUpper ) &&
-								( dMinBorderAreaLower <= itrActualPartLine->second.maxY ) ){
+								( dMaxBorderAreaLower <= itrActualPartLine->second.maxY ) ){
 							//line part for border found -> add left line part border
 #ifdef FEATURE_C_IMAGE_STRUCTURE_CONVERT_TO_TILES_USE_INNER_LINE
 							const double dMinY = itrActualPartLine->second.minY;
@@ -4308,14 +4296,14 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 							bNoNextLineFound = false;
 							DEBUG_OUT_L4(<<"Part line first point added on "<<lActualPoint<<" from ("<<itrActualPartLine->first.maxY<<", "<<itrActualPartLine->first.minY<<") to ("<<itrActualPartLine->second.minY<<", "<<itrActualPartLine->second.maxY<<")"<<endl<<flush);
 							break;
-						}
-					}//for find the line part for the straight line border point
+						}//end if part line found
+					}//end for find the line part for the straight line border point
 					if ( bNoNextLineFound ){
 						//gap in line
 						DEBUG_OUT_EL2(<<"Error: gap in best line (max to max) found, because no next line was found"<<endl<<flush);
 						break;
 					}
-				}//for all lines in area
+				}//end for all lines in area
 			}
 			
 			lGoodStraightBorderPoint = roundToLongFib( dStraightBorderMaxToMax );
@@ -4369,34 +4357,33 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 				map< longFib, nImageStructureConvertToTiles::cLine >::const_iterator
 					itrActualLine = bordersDimToSearchIn.find( lStartPoint );
 				if ( itrActualLine == bordersDimToSearchIn.end() ){
-					//gap in line
-					DEBUG_OUT_EL2(<<"Error: First line for best straight line could not be found"<<endl<<flush);
-					break;
-				}
-				const nImageStructureConvertToTiles::cLine::tLineParts &
-					actualLine = itrActualLine->second.lineParts;
-				//find the line part for the straight line border point
-				nImageStructureConvertToTiles::cLine::tLineParts::const_iterator
-					itrActualPartLine = actualLine.begin();
-				
-				for (  ; itrActualPartLine != actualLine.end(); itrActualPartLine++ ){
+					DEBUG_OUT_EL2(<<"Error: First line for best straight line could not be found."<<endl<<flush);
+				}else{//first line for best straight line found
+					const nImageStructureConvertToTiles::cLine::tLineParts &
+						actualLine = itrActualLine->second.lineParts;
+					//find the line part for the straight line border point
+					nImageStructureConvertToTiles::cLine::tLineParts::const_iterator
+						itrActualPartLine = actualLine.begin();
 					
-					if ( ( bStraightBorderLineFromMinToMax && (
-							( ( itrActualPartLine->second.minY <= dMinBorderAreaUpper ) &&
-								( dMinBorderAreaLower <= itrActualPartLine->second.maxY ) ) ||
-							( ( itrActualPartLine->first.maxY <= dMinBorderAreaUpper ) &&
-								( dMinBorderAreaLower <= itrActualPartLine->first.minY ) ) )
-							) || ( ( ! bStraightBorderLineFromMinToMax ) &&
+					for (  ; itrActualPartLine != actualLine.end(); itrActualPartLine++ ){
+						
+						if ( ( bStraightBorderLineFromMinToMax && (
+								( ( itrActualPartLine->second.minY <= dMinBorderAreaUpper ) &&
+									( dMinBorderAreaLower <= itrActualPartLine->second.maxY ) ) ||
 								( ( itrActualPartLine->first.maxY <= dMinBorderAreaUpper ) &&
-									( dMinBorderAreaLower <= itrActualPartLine->second.maxY ) ) ) ){
-						//line part for border found -> check upper minY value
-						lPartLineStartPoint = roundToLongFib( itrActualPartLine->first.minY );
-						lPartLineEndPoint   = roundToLongFib( itrActualPartLine->second.minY );
-						bPartLineFound = true;
-						DEBUG_OUT_L2(<<"The only part line of the straight line on "<<lStartPoint<<" found it goes from "<<lPartLineStartPoint<<" to "<<lPartLineEndPoint<<endl<<flush);
-						break;
-					}
-				}//for find the line part for the straight line border point
+									( dMinBorderAreaLower <= itrActualPartLine->first.minY ) ) )
+								) || ( ( ! bStraightBorderLineFromMinToMax ) &&
+									( ( itrActualPartLine->first.maxY <= dMinBorderAreaUpper ) &&
+										( dMinBorderAreaLower <= itrActualPartLine->second.maxY ) ) ) ){
+							//line part for border found -> check upper minY value
+							lPartLineStartPoint = roundToLongFib( itrActualPartLine->first.minY );
+							lPartLineEndPoint   = roundToLongFib( itrActualPartLine->second.minY );
+							bPartLineFound = true;
+							DEBUG_OUT_L2(<<"The only part line of the straight line on "<<lStartPoint<<" found it goes from "<<lPartLineStartPoint<<" to "<<lPartLineEndPoint<<endl<<flush);
+							break;
+						}
+					}//for find the line part for the straight line border point
+				}//end if first line for best straight line found
 			}
 			if ( ! bPartLineFound ){
 				DEBUG_OUT_EL2(<<"Error: Line part of first line for best straight line could not be found -> stop evaluation to prevent infinite loops"<<endl<<flush);
@@ -4413,7 +4400,7 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 					lPartLineStartPoint );
 				
 				pNewExtObject = new cExtObject( -2, vecPointExtObjectInputValues );
-			}else{//create line
+			}else{//create line ( lPartLineStartPoint < lPartLineEndPoint )
 				// use area elements if just one line wher found
 				cVectorExtObject vecLineExtObjectInputValues( 3 );
 				/* parameters for horizontal line (id -23) :
@@ -4464,7 +4451,7 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 				DEBUG_OUT_EL2(<<"Error: spline for next tile not found (no lines in spline)"<<endl<<flush);
 				break;
 			}
-
+			
 #ifdef FEATURE_USE_RECTANGLE_EXT_OBJECT
 		//check if a quadrangle could be used for data points in the found spline
 		if ( ulNumberOfPointsInSpline < vecSplineRanges.size() ){
@@ -4488,7 +4475,7 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 				dMinOtherBorderAreaTmp = max( dMinOtherBorderArea, itrActualDataPoint->minY );
 				dMaxOtherBorderAreaTmp = min( dMaxOtherBorderArea, itrActualDataPoint->maxY );
 				if ( dMaxOtherBorderAreaTmp < dMinOtherBorderAreaTmp ){
-					//the actual data point is not other side of the rectangle
+					//no straight line can be used instead of polynom, with this point
 					break;
 				}
 				dMinOtherBorderArea = dMinOtherBorderAreaTmp;
@@ -4559,6 +4546,7 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 					* inVar4 : parameter a_0 of the line function f
 					* inVar5 : parameter a_1 of the line function f
 					* inVar6 : parameter a_2 of the line function f
+					* ...
 				*/
 				//position start point
 				
@@ -4601,86 +4589,8 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 				
 				if ( bIsAntialised ){
 					//change values for antialising
-#ifdef FEATURE_USE_ADAPTED_ANTIALISED_EXT_OBJECT
 					pNewExtObject->setIdentifier( bStraightBorderLineInDim1 ?
 						IDENTIFIER_SPLINE_OBJECT_AA_XY : IDENTIFIER_SPLINE_OBJECT_AA_YX );
-#else //FEATURE_USE_ADAPTED_ANTIALISED_EXT_OBJECT
-					pNewExtObject->setIdentifier( bStraightBorderLineInDim1 ? -80 : -81 );
-					
-					cVectorExtObject * pVecExtObject = pNewExtObject->getInputVector();
-					
-					/* The antialised border goes for a pixle line from f( x ) till
-					* f( x + 1 ) (and not just f( x ) like in the not antialised case).
-					* The area end pixle line e should not be outside f( e ) (instead of
-					* f( e + 1 ) ). So the line needs to be stretched, so that f( e ) is
-					* at the position (e + 1) .
-					* - l is the length of the (tile) area ( ulNumberOfLinesInTile = e - s )
-					* - s is the start point of the (tile) area
-					* 	( pBestLineBorderLine->areaForLine.second )
-					* - w = (l + 1) / l
-					* - x' = x - s (move the area start to the 0 on the x achsis)
-					* - x'' = w * x' (stretch area so that f( e' ) is at (e + 1)' )
-					* - x''' = x'' + s (move the area back to the tile start)
-					* - x''' = s + w * (x - s) = s + w * x - w * s
-					*        = s * ( 1 - w ) + w * x
-					* - x = ( x''' - s * ( 1 - w ) ) / w
-					*     = x''' / w - s * ( 1 / w - 1 )
-					*     = x''' * ( l / (l + 1) ) - s * ( l / (l + 1) - 1 )
-					* - t = l / (l + 1) = 1 / w
-					* - f( x ) = a_0 + a_1 * x + a_2 * x^2
-					* - f( x''' ) = a_0 +
-					*  	a_1 * ( x''' * t - s * ( t - 1 ) ) +
-					*  	a_2 * ( x''' * t - s * ( t - 1 ) )^2
-					*  	= a_0 +
-					*  	a_1 * x''' * t - a_1 * s * ( t - 1 ) +
-					*  	a_2 * ( ( x''' * t )^2 - 2 * x''' * t * s * ( t - 1 ) + ( s * ( t - 1 ) )^2 )
-					*  	= a_0 - a_1 * s * ( t - 1 ) +
-					*  	   a_2 * ( s * ( t - 1 ) )^2 +
-					*  	x''' * ( a_1 * t - a_2 * 2 * t * s * ( t - 1 ) ) +
-					*  	x'''^2 * ( a_2 * t^2 )
-					* 
-					* - a_0' = a_0 - a_1 * s * ( t - 1 ) +
-					*  	   a_2 * ( s * ( t - 1 ) )^2
-					* - a_1' = a_1 * t - a_2 * 2 * t * s * ( t - 1 )
-					* - a_2' = a_2 * t^2
-					* or
-					* - g = s * ( t - 1 )
-					* - a_0' = a_0 - a_1 * g + a_2 * g^2
-					* - a_1' = a_1 * t - a_2 * 2 * t * g
-					*  	= t * ( a_1 - a_2 * 2 * g )
-					* - a_2' = a_2 * t^2
-					*/
-					if ( ! splineForBorder.vecFactors.empty() ){
-						//t = l / (l + 1)
-						const double dStretchFactor =
-							((double)(ulNumberOfLinesInTile)) /
-								((double)( ulNumberOfLinesInTile + 1 ));
-						//g = s * ( t - 1 )
-						const double dTranslationFactor =
-							((double)(lStartPoint)) * ( dStretchFactor - 1.0 );
-						//correct the tile spline factors
-						//a_0' = a_0 - a_1 * g + a_2 * g^2
-						pVecExtObject->setValue( 4,
-							splineForBorder.vecFactors[ 0 ] -
-							splineForBorder.vecFactors[ 1 ] * dTranslationFactor +
-							splineForBorder.vecFactors[ 2 ] *
-								dTranslationFactor * dTranslationFactor );
-						
-						if ( 2 <= splineForBorder.vecFactors.size() ){
-							//a_1' = t * ( a_1 - a_2 * 2 * g )
-							pVecExtObject->setValue( 5, dStretchFactor * (
-								splineForBorder.vecFactors[ 1 ] -
-								2.0 * splineForBorder.vecFactors[ 2 ] * dTranslationFactor ) );
-							
-							if ( 3 <= splineForBorder.vecFactors.size() ){
-								//a_2' = a_2 * t^2
-								pVecExtObject->setValue( 6,
-									splineForBorder.vecFactors[ 2 ] *
-										dStretchFactor * dStretchFactor );
-							}
-						}
-					}//end set tile spline factors
-#endif //FEATURE_USE_ADAPTED_ANTIALISED_EXT_OBJECT
 					
 					//create subobject with point and transparecy property
 					cVectorPosition vecPosition( 2 );
@@ -4707,11 +4617,11 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 					pNewExtObject->storeXml( cout );
 					cout<<endl;
 #endif //DEBUG
-				}
+				}//end if antialised
 #ifdef FEATURE_USE_RECTANGLE_EXT_OBJECT
-			}
+			}//end if create tile external object
 		}//end if create external subobjects
-		if ( (pNewExtObject == NULL) && bUseRectangle ){
+		if ( ( pNewExtObject == NULL ) && bUseRectangle ){
 			DEBUG_OUT_L2(<<"Use the rectangle object for the area"<<endl<<flush);
 			
 			cVectorExtObject vecRectangleExtObjectInputValues( 4 );
@@ -4743,7 +4653,6 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 #else //FEATURE_USE_RECTANGLE_EXT_OBJECT
 		}//end if create external subobjects
 #endif //FEATURE_USE_RECTANGLE_EXT_OBJECT
-		
 		
 #ifdef DEBUG
 		cout<<"Points in external object (tile):"<<fixed<<endl;
@@ -4781,6 +4690,11 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 #endif //DEBUG_OUTPUT_GENERATED_AREA_DATA_FILE
 		
 #endif //DEBUG_OUTPUT_GENERATED_AREA_DATA
+		
+		if ( pNewExtObject == NULL ){
+			DEBUG_OUT_EL2(<<endl<<"Error: No external object generated -> stop evaluation to prevent infinite loop"<<endl<<endl<<flush);
+			break;
+		}
 		if ( pointsInTile.liEvaluedPositionData.empty() ){
 			DEBUG_OUT_EL2(<<"Error: no points evalued for the tile -> no change -> stop evaluation (beware infinit loop)"<<endl<<flush);
 #ifdef DEBUG
@@ -4819,7 +4733,7 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 				itrActualLineDim1 = bordersDim1.find( lDim1Coordinate );
 			}
 			if ( itrActualLineDim1 != bordersDim1.end() ){
-				
+				//line part for point in first dimension found -> remove point
 				nImageStructureConvertToTiles::cLine & lineDim1 =
 					itrActualLineDim1->second;
 #ifdef FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
@@ -4848,7 +4762,7 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 			}
 			
 			if ( itrActualLineDim2 != bordersDim2.end() ){
-				
+				//line part for point in second dimension found -> remove point
 				nImageStructureConvertToTiles::cLine & lineDim2 =
 					itrActualLineDim2->second;
 				lineDim2.removePoint( lDim1Coordinate );
@@ -4886,11 +4800,8 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 			
 		}//end remove all points from tile
 #ifdef FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
-		if ( pNewExtObject == NULL ){
-			DEBUG_OUT_EL2(<<endl<<"Error: No external object generated -> stop evaluation to prevent infinite loop"<<endl<<endl<<flush);
-		}
-		if ( 0 == ulNumberOfAreaPointsInTile ){
-			//should not occure
+		if ( ulNumberOfAreaPointsInTile == 0 ){
+			//no points deleted from area (should not occure)
 			pNewExtObject->deleteObject();
 			
 			DEBUG_OUT_EL2(<<endl<<"Error: No points removed -> stop evaluation to prevent infinite loops"<<endl<<endl<<flush);
@@ -4901,7 +4812,7 @@ list< cExtObject * > cImageStructureConvertToTiles::convertToExtObjects(
 		
 #else //FEATURE_STRAIGHT_LINE_SIZE_IS_AREA_SIZE
 		if ( ! bPointsRemoved ){
-			//should not occure
+			//no points deleted from area (should not occure)
 			pNewExtObject->deleteObject();
 			
 			DEBUG_OUT_EL2(<<endl<<"Error: No points removed -> stop evaluation to prevent infinite loops"<<endl<<endl<<flush);

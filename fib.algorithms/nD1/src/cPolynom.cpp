@@ -1434,6 +1434,11 @@ template<class tX, class tY> unsigned long fib::algorithms::nD1::cPolynom<tX, tY
 				&&
 				( ( iProblemStatus == GLP_OPT ) || //optimal solution found
 					( iProblemStatus == GLP_FEAS )  //check non optimal solution also
+#ifdef FEATURE_C_POLSNOM_EVALUE_SPLINE_GLPK_CHECK_ALL_SOLUTIONS
+					|| ( iProblemStatus == GLP_INFEAS ) || //check is infeasible solution also
+					( iProblemStatus == GLP_NOFEAS ) ||//check no feasible solution also
+					( iProblemStatus == GLP_UNBND ) //check unbounded solution also
+#endif //FEATURE_C_POLSNOM_EVALUE_SPLINE_GLPK_CHECK_ALL_SOLUTIONS
 				) ){
 			//The LP problem instance has been successfully solved or limit reached.
 			/*GLP_EITLIM: The search was prematurely terminated, because the
@@ -2028,7 +2033,7 @@ template<class tX, class tY> unsigned long fib::algorithms::nD1::cPolynom<tX, tY
 			case GLP_FEAS:   cout<<"solution is feasible"<<endl;break;
 			case GLP_INFEAS: cout<<"solution is infeasible"<<endl;break;
 			case GLP_NOFEAS: cout<<"problem has no feasible solution"<<endl;break;
-			case GLP_UNBND:  cout<<"problem has unbounded solutionl"<<endl;break;
+			case GLP_UNBND:  cout<<"problem has unbounded solution"<<endl;break;
 			case GLP_UNDEF:  cout<<"solution is undefined"<<endl;break;
 			default: cout<<"problem status unknown"<<endl;break;
 		}
@@ -2040,6 +2045,11 @@ template<class tX, class tY> unsigned long fib::algorithms::nD1::cPolynom<tX, tY
 				&&
 				( ( iProblemStatus == GLP_OPT ) || //optimal solution found
 					( iProblemStatus == GLP_FEAS )  //check non optimal solution also
+#ifdef FEATURE_C_POLSNOM_EVALUE_SPLINE_GLPK_CHECK_ALL_SOLUTIONS
+					|| ( iProblemStatus == GLP_INFEAS ) || //check is infeasible solution also
+					( iProblemStatus == GLP_NOFEAS ) ||//check no feasible solution also
+					( iProblemStatus == GLP_UNBND ) //check unbounded solution also
+#endif //FEATURE_C_POLSNOM_EVALUE_SPLINE_GLPK_CHECK_ALL_SOLUTIONS
 				) ){
 			//The LP problem instance has been successfully solved or limit reached.
 			/*GLP_EITLIM: The search was prematurely terminated, because the

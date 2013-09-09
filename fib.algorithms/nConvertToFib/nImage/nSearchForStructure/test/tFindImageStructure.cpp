@@ -1,6 +1,3 @@
-
-//TODO check
-
 /**
  * @file tFindImageStructure
  * file name: tFindImageStructure.cpp
@@ -42,6 +39,7 @@
  * Every testcase consists of one files with the image structure data.
  *
  * The names of these files will be loaded from the test case file.
+ * @see getActualClassTestCaseFile()
  * Every line of this file is for one testcase. It contains the name of the
  * file for the testcase image structure.
  * The image structure is leaoded with the iFindImageStructure::restoreXml()
@@ -55,7 +53,7 @@
  * 		The path wher the testdata could be found. The standard folder is
  * 		"testObjects/".
  * 	MAX_ITERATION
- * 		The number of iterators for the random tests (test with given
+ * 		The number of iterations for the random tests (test with given
  * 		parameters for convertToTiles()).
  * 		Just works with the DIR_TESTDATA parameter given.
  */
@@ -115,10 +113,11 @@ using namespace std;
 
 
 const char * pDirTestObjects = DIR_TESTOBJECTS_NIMAGE;
-unsigned long MAX_ITERATION = 256;
+unsigned long MAX_ITERATION  = 256;
 
 
-enum tActualClass { C_FIND_IMAGE_AREA_SAME_COLOR_SIMPLE = 0,
+enum tActualClass {
+	C_FIND_IMAGE_AREA_SAME_COLOR_SIMPLE = 0,
 	C_FIND_IMAGE_AREA_LINEAR_COLOR_SIMPLE = 1
 } actualClass;
 
@@ -134,19 +133,19 @@ unsigned int testFindImageStructureGiven(
 
 
 
-list< string > loadTestFileList( const string szFilePath );
+list< string > loadTestFileList( const string & szFilePath );
 void createPath( const char * path );
 
 
 int main(int argc, char* argv[]){
 
 	unsigned long ulTestphase = 1;//actual phase of the test
-	int iReturn = 0;//return value of the test; the number of occured Errors
+	int iReturn = 0;//return value of the test; the number of occured errors
 	
 	srand( time(NULL) );
 	
 	
-	cout<<endl<<"Running Test for the iFindImageStructure methods"<<endl;
+	cout<<endl<<"Running test for the iFindImageStructure methods"<<endl;
 	cout<<      "================================================"<<endl;
 	cout<<      "================================================"<<endl;
 	
@@ -180,8 +179,8 @@ int main(int argc, char* argv[]){
 		}
 		
 		
-		cout<<endl<<"Running Test for the "<<getActualClassName()<<" methods"<<endl;
-		cout<<      "=============================================="<<endl;
+		cout<<endl<<"Running test for the "<<getActualClassName()<<" methods"<<endl;
+		cout<<      "================================================"<<endl;
 		
 		//test the iConvertImageStructureToFib::convertToFib()
 		const unsigned int iReturnTestCase = testFindImageStructure( ulTestphase );
@@ -203,7 +202,6 @@ int main(int argc, char* argv[]){
 	}else{
 		cerr<<endl<<endl<<"Test failed: "<<iReturn<<" errors occoured"<<endl;
 	}
-
 	
 	return iReturn;
 }
@@ -250,48 +248,53 @@ const char * getActualClassTestCaseFile(){
 	return ((const char *)(""));
 }
 
+
 /**
- * This method prints the given points to the given stream.
+ * This method prints the given vector to the given stream.
  *
- * @param streamToPrintTo the points to print the points to
- * @param setPoints the points to print
+ * @param streamToPrintTo the stream to print the vector to
+ * @param pVector a pointer to the vector to print
  */
 void printVector( ostream & streamToPrintTo,
 		const cFibVector * pVector ){
 	
 	if ( pVector == NULL ){
-		streamToPrintTo<<" no vector"<<endl;
+		streamToPrintTo<<" no vector (NULL);"<<endl;
+		return;
 	}
 	const unsigned int uiNumberOfElements =
 		pVector->getNumberOfElements();
 	
 	streamToPrintTo<<" (";
-	for ( unsigned int uiActualElement = 1;
+	if ( 1 <= uiNumberOfElements ){
+		//print the first vector element
+		streamToPrintTo<<(pVector->getValue( 1 ));
+	}
+	for ( unsigned int uiActualElement = 2;
 			uiActualElement <= uiNumberOfElements; uiActualElement++ ){
 		
-		streamToPrintTo<<(pVector->getValue( uiActualElement ))<<", ";
+		streamToPrintTo<<", "<<(pVector->getValue( uiActualElement ));
 	}
 	streamToPrintTo<<");"<<endl;
 }
 
+
 /**
  * This method prints the given points to the given stream.
  *
- * @param streamToPrintTo the points to print the points to
+ * @param streamToPrintTo the stream to print the points to
  * @param setPoints the points to print
  */
 void printPoints( ostream & streamToPrintTo,
-		set< pair< unsigned int, unsigned int> > setPoints ){
+		const set< pair< unsigned int, unsigned int> > & setPoints ){
 	
-	for ( set< pair< unsigned int, unsigned int> >::iterator
+	for ( set< pair< unsigned int, unsigned int> >::const_iterator
 			itrPoint = setPoints.begin();
 			itrPoint != setPoints.end(); itrPoint++ ){
 		
 		streamToPrintTo<<" ("<<itrPoint->first<<", "<<itrPoint->second<<");";
 	}
-	if ( ! setPoints.empty() ){
-		streamToPrintTo<<endl;
-	}
+	streamToPrintTo<<endl;
 }
 
 
@@ -362,7 +365,7 @@ unsigned int comparePoints(
 
 
 /**
- * This functions evalue a number of points in an area.
+ * This functions generates a number of points in an area.
  * All points coordinates are bigger equal 0 .
  *
  * @param uiSizeX the size of the area in the first / x dimension;
@@ -382,11 +385,16 @@ set< pair< unsigned int, unsigned int> > generateRandomArea(
 	
 	set< pair< unsigned int, unsigned int> > setRandomStructurePoints;
 	
+	if ( uiNumberOfSeedPoints == 0 ){
+		//no points to generate
+		return setRandomStructurePoints;
+	}
+	
 	pair< unsigned int, unsigned int> randomStructurePoint;
 	for ( unsigned int uiActualSeedPoint = 0;
 			uiActualSeedPoint < uiNumberOfSeedPoints; uiActualSeedPoint++ ){
 		//generate and add seed point
-		randomStructurePoint.first = rand() % uiSizeX;
+		randomStructurePoint.first  = rand() % uiSizeX;
 		randomStructurePoint.second = rand() % uiSizeY;
 		
 		setRandomStructurePoints.insert( randomStructurePoint );
@@ -410,7 +418,7 @@ set< pair< unsigned int, unsigned int> > generateRandomArea(
 			continue;
 		}
 		//generate some of its neighbours
-		if ( (itrActualPoint->first < uiSizeX ) && ( rand() % 2 ) ){
+		if ( ( ( itrActualPoint->first + 1 ) < uiSizeX ) && ( rand() % 2 ) ){
 			randomStructurePoint = (*itrActualPoint);
 			randomStructurePoint.first++;
 			setRandomStructurePoints.insert( randomStructurePoint );
@@ -420,7 +428,7 @@ set< pair< unsigned int, unsigned int> > generateRandomArea(
 			randomStructurePoint.first--;
 			setRandomStructurePoints.insert( randomStructurePoint );
 		}
-		if ( (itrActualPoint->second < uiSizeY ) && ( rand() % 2 ) ){
+		if ( ( ( itrActualPoint->second + 1 ) < uiSizeY ) && ( rand() % 2 ) ){
 			randomStructurePoint = (*itrActualPoint);
 			randomStructurePoint.second++;
 			setRandomStructurePoints.insert( randomStructurePoint );
@@ -442,25 +450,24 @@ set< pair< unsigned int, unsigned int> > generateRandomArea(
  */
 double randDouble( const double & maxValue){
 	
-	return ( ((double)rand()) - RAND_MAX / 2 ) /
-		((double)((RAND_MAX - 1) / 2 + 1)) * maxValue;
+	return ( ( ((double)rand()) - ( RAND_MAX / 2 ) ) /
+		((double)((RAND_MAX - 1) / 2 + 1)) ) * maxValue;
 }
 
 
 /**
  * This function evalues the maximal coordinate values of the given points.
  *
- * @param setSetOfPoints the set with the points of which to evalue the
+ * @param setSetOfPoints the set with the points, of which to evalue the
  * 	maximal coordinate value (all coordinate values have to be positiv)
- * @return a poir with the maximal coordinate values;
+ * @return a pair with the maximal coordinate values;
  * 	if no maximal value could be evalued -1 is returned
  */
 pair< longFib, longFib > evalueMaxCoordinates(
 		const set< cVectorPosition > & setSetOfPoints ){
-	//evalue the maximum dimension values
+	//evalue the maximum dimension coordinate values
 	
-	//dertermine image higth and width
-	//evalue max points
+	//default if no point exists
 	longFib lMaxX = -1;
 	longFib lMaxY = -1;
 	for ( set<cVectorPosition>::const_iterator
@@ -479,17 +486,16 @@ pair< longFib, longFib > evalueMaxCoordinates(
 /**
  * This function evalues the maximal coordinate values of the given points.
  *
- * @param setSetOfPoints the set with the points of which to evalue the
+ * @param setSetOfPoints the set with the points, of which to evalue the
  * 	maximal coordinate value (all coordinate values have to be positiv)
- * @return a poir with the maximal coordinate values;
+ * @return a pair with the maximal coordinate values;
  * 	if no maximal value could be evalued -1 is returned
  */
 pair< longFib, longFib > evalueMaxCoordinates(
 		const set< pair< unsigned int, unsigned int> > & setSetOfPoints ){
-	//evalue the maximum dimension values
+	//evalue the maximum dimension coordinate values
 	
-	//dertermine image higth and width
-	//evalue max points
+	//default if no point exists
 	longFib lMaxX = -1;
 	longFib lMaxY = -1;
 	for ( set< pair< unsigned int, unsigned int> >::const_iterator
@@ -509,6 +515,7 @@ pair< longFib, longFib > evalueMaxCoordinates(
  * @param setStructurePoints the points from which to evalue the border points
  * @param pImageSearchData the search data for evaluing the border points;
  * 	every border point should have a not found and not overlapped neighbour
+ * 	(if NULL a search structure will be evalued)
  * @return all border points of the given points
  */
 set< pair< unsigned int, unsigned int> > evalueBorderPoints(
@@ -519,7 +526,7 @@ set< pair< unsigned int, unsigned int> > evalueBorderPoints(
 	bool bOwnSearchData = false;
 	if ( pImageSearchData == NULL ){
 		//evalue image search data
-		pair< longFib, longFib > paMaxCoordinates =
+		const pair< longFib, longFib > paMaxCoordinates =
 			evalueMaxCoordinates( setStructurePoints );
 		
 		if ( ( paMaxCoordinates.first < 0 ) ||
@@ -532,7 +539,10 @@ set< pair< unsigned int, unsigned int> > evalueBorderPoints(
 			paMaxCoordinates.first + 2, paMaxCoordinates.second + 2 );
 		bOwnSearchData = true;
 	}
-	
+	/*note: It would be faster to mark all points setStructurePoints in the
+		 image structure pImageSearchData as found and then just check if
+		 they have not found neighbours. But the test code should be
+		 different to the source code.*/
 	for ( set< pair< unsigned int, unsigned int> >::const_iterator
 			itrActualPoint = setStructurePoints.begin();
 			itrActualPoint != setStructurePoints.end(); itrActualPoint++ ){
@@ -553,9 +563,10 @@ set< pair< unsigned int, unsigned int> > evalueBorderPoints(
 				setBorderStructurePoints.insert( *itrActualPoint );
 				break;//check next point
 			}
-		}
-	}
+		}//end for all neighbour points
+	}//end for all structure points
 	if ( bOwnSearchData ){
+		//delete created image data
 		delete pImageSearchData;
 	}
 	return setBorderStructurePoints;
@@ -569,7 +580,7 @@ set< pair< unsigned int, unsigned int> > evalueBorderPoints(
  * the given structure points.
  *
  * @param setStructurePoints the points from which to choose the border points
- * @param uiBorderPointsToGenerate the number of border points to choose (if possble)
+ * @param uiBorderPointsToGenerate the number of border points to choose (if possible)
  * @param pImageSearchData the search data for evaluing the border points;
  * 	every border point should have a not found and not overlapped neighbour;
  * 	(if NULL a search structure will be evalued)
@@ -585,28 +596,10 @@ set< pair< unsigned int, unsigned int> > chooseRandomBorderPoints(
 		//nothing to choose
 		return setRandomBorderPoints;
 	}
-	bool bOwnSearchData = false;
-	if ( pImageSearchData == NULL ){
-		//evalue image search data
-		pair< longFib, longFib > paMaxCoordinates =
-			evalueMaxCoordinates( setStructurePoints );
-		
-		if ( ( paMaxCoordinates.first < 0 ) ||
-				( paMaxCoordinates.second < 0 ) ){
-			//can't choose border points
-			return setRandomBorderPoints;
-		}
-		//create image data
-		pImageSearchData = new cImageSearchData(
-			paMaxCoordinates.first + 2, paMaxCoordinates.second + 2 );
-		bOwnSearchData = true;
-	}
 	set< pair< unsigned int, unsigned int> > setBorderPoints =
 		evalueBorderPoints( setStructurePoints, pImageSearchData );
-	if ( bOwnSearchData ){
-		delete pImageSearchData;
-	}
-	if ( setBorderPoints.size() < uiBorderPointsToGenerate ){
+	
+	if ( setBorderPoints.size() <= uiBorderPointsToGenerate ){
 		//choose all border points
 		return setBorderPoints;
 	}
@@ -617,7 +610,7 @@ set< pair< unsigned int, unsigned int> > chooseRandomBorderPoints(
 		const unsigned int uiPointChoosen =
 			rand() % setBorderPoints.size();
 		
-		set< pair< unsigned int, unsigned int> >::const_iterator
+		set< pair< unsigned int, unsigned int> >::iterator
 			itrActualPoint = setBorderPoints.begin();
 		for ( unsigned int uiActualPoint = 0; uiActualPoint < uiPointChoosen;
 				uiActualPoint++, itrActualPoint++ ){
@@ -626,6 +619,12 @@ set< pair< unsigned int, unsigned int> > chooseRandomBorderPoints(
 		if ( itrActualPoint != setBorderPoints.end() ){
 			
 			setRandomBorderPoints.insert( *itrActualPoint );
+			setBorderPoints.erase( itrActualPoint );
+			
+			if ( setBorderPoints.empty() ){
+				//no more border points to choose
+				break;
+			}
 		}else{
 			cerr<<"Error: No structure border point to choosen as border point."<<endl;
 			continue;
@@ -665,7 +664,7 @@ set< pair< unsigned int, unsigned int> > overlappBorderNeighbours(
 	if ( ( paMaxCoordinates.first < 0 ) ||
 			( paMaxCoordinates.second < 0 ) ){
 		//can't choose border points
-		return setNeighbourPoints;
+		return set< pair< unsigned int, unsigned int> >();
 	}
 	//create image data
 	cImageSearchData imageSearchData(
@@ -729,28 +728,28 @@ set< pair< unsigned int, unsigned int> > overlappBorderNeighbours(
 int testFindImageStructure( unsigned long &ulTestphase ){
 	
 	list< string > setErrorsInTestCase;
-	int iReturn = 0;//return value of the test; the number of occured Errors
+	int iReturn = 0;//return value of the test; the number of occured errors
 	
-	cout<<endl<<"Running Test for the tFindImageStructure::convertToTiles() method"<<endl;
+	cout<<endl<<"Running test for the tFindImageStructure::convertToTiles() method"<<endl;
 	cout<<      "================================================================="<<endl;
 	
-	//load the test folder list
+	//load the test file list
 	const string szFilePath = string( pDirTestObjects ) + getActualClassTestCaseFile();
 	
-	list< string > liTestFolders = loadTestFileList( szFilePath );
+	list< string > liTestFiles = loadTestFileList( szFilePath );
 
-	if ( ! liTestFolders.empty() ){
-		//for each test folder
-		for ( list< string >::iterator itrTestCase = liTestFolders.begin();
-				itrTestCase != liTestFolders.end(); itrTestCase++ ){
+	if ( ! liTestFiles.empty() ){
+		//for each test file
+		for ( list< string >::iterator itrTestCase = liTestFiles.begin();
+				itrTestCase != liTestFiles.end(); itrTestCase++ ){
 			
 			ulTestphase++;
 			cout<<endl<<"TESTPHASE "<<ulTestphase<<" : Testing for finding an image structure for \""<<
 				(*itrTestCase) <<"\""<<endl;
 			
 			//create path to test file
-			const string szActualImageStructureDataPath = string( pDirTestObjects ) +
-				(*itrTestCase);
+			const string szActualImageStructureDataPath =
+				string( pDirTestObjects ) + (*itrTestCase);
 			//load to use image structure
 			ifstream inFile( szActualImageStructureDataPath.c_str() );
 			
@@ -768,13 +767,14 @@ int testFindImageStructure( unsigned long &ulTestphase ){
 				if ( pImageStructure != NULL ){
 					delete pImageStructure;
 				}
+				//skip test case
 				continue;
 			}
 			const set<cVectorPosition> & setStructureBorderPoints =
 				pImageStructure->getStructureBorderPointsConst();
 			if ( setStructureBorderPoints.empty() ){
 				//no border points -> add some random border point
-				cout<<"no border points -> add some random structure point as border point"<<endl;
+				cout<<"no border points -> add some random structure points as border points"<<endl;
 				set< pair< unsigned int, unsigned int> > setRandomBorderPoints =
 					chooseRandomBorderPoints(
 						pImageStructure->getStructurePointsPair(), 3 );
@@ -782,7 +782,7 @@ int testFindImageStructure( unsigned long &ulTestphase ){
 				if ( ! setRandomBorderPoints.empty() ){
 					pImageStructure->addStructureBorderPoints( setRandomBorderPoints );
 				}else{
-					cerr<<"Error: No structure point choosen as border point."<<endl;
+					cerr<<"Error: No structure points choosen as border poinst."<<endl;
 					iReturn++;
 					continue;
 				}
@@ -798,7 +798,6 @@ int testFindImageStructure( unsigned long &ulTestphase ){
 			cout<<endl<<flush;
 			cout<<"Points which are marked as overlapped:"<<endl<<flush;
 			printPoints( cout, setOverlappedPoints );
-			
 			
 			
 			//test for the given image structure
@@ -822,10 +821,10 @@ int testFindImageStructure( unsigned long &ulTestphase ){
 			delete pImageStructure;
 		}//end for all test cases
 		
-	}else{//if test folder don't exists
-		cerr<<"Error: No test folders to test."<<endl;
+	}else{//if test file don't exists
+		cerr<<"Error: No test files to test."<<endl;
 		iReturn++;
-	}//if test folder exists
+	}//end if test file exists
 	
 	for ( unsigned long iteration = 0; iteration < MAX_ITERATION; iteration++ ){
 		/*test for random generated image structure:
@@ -1006,14 +1005,15 @@ int testFindImageStructure( unsigned long &ulTestphase ){
  * @param pImageData the image data for the propertys (to evalue the
  * 	minimal distance of properties)
  * @param bWarning if true a to great distance is not an error, but an warning
- * @return if the distance of the points is lower equal dMaxDistance, else false
+ * @return true if the distance of the vectors is lower equal dMaxDistance,
+ * 	else false
  */
 bool checkDistance( const cVectorProperty * pVector1, const cVectorProperty * pVector2,
 		const double dMaxDistance, iImageData * pImageData, bool bWarning = false ){
 	
 	const unsigned int uiNumberOfElements = pVector1->getNumberOfElements();
 	if ( uiNumberOfElements != pVector2->getNumberOfElements() ){
-		//points don't have equal number of elements
+		//vectors don't have equal number of elements
 		cerr<<"Error: Can't evalue distance, not equal number of elements."<<endl;
 		return false;
 	}
@@ -1068,32 +1068,6 @@ bool checkDistance( const cVectorProperty * pVector1, const cVectorProperty * pV
 			bDistanceOk = false;
 		}
 	}
-/*
-	if ( ! bDistanceOk ){
-		//check minimal distance of points
-		const unsigned int uiPropertyType = pVector1->getPropertyType();
-		
-		const vector< unsigned int > vecIndexDim3 =
-			pImageData->getDimension3IndexesForPropertyType( uiPropertyType );
-		unsigned int uiActualElement = 1;
-		bDistanceOk = true;
-		for ( vector< unsigned int >::const_iterator
-				itrActualIndex = vecIndexDim3.begin();
-				itrActualIndex != vecIndexDim3.end();
-				itrActualIndex++, uiActualElement++ ){
-			
-			const doubleFib dMinDistanceHalf = pImageData->getMinDifference(
-				0, 0, (*itrActualIndex) ) / 2.0;
-			
-			const doubleFib dValue1 = pVector1->getValue( uiActualElement );
-			const doubleFib dValue2 = pVector2->getValue( uiActualElement );
-			
-			if ( dMinDistanceHalf < abs( dValue1 - dValue2 ) ){
-				bDistanceOk = false;
-				break;
-			}
-		}
-	}*/
 	
 	if ( ! bDistanceOk ){
 		//distance to great
@@ -1109,7 +1083,7 @@ bool checkDistance( const cVectorProperty * pVector1, const cVectorProperty * pV
 
 
 /**
- * This function checks the distance of two vectors is to great.
+ * This function checks if the distance of two vectors is to great.
  *
  * @param pVector1 a pointer to the first vector to check
  * @param pVector2 a pointer to the second vector to check
@@ -1117,7 +1091,8 @@ bool checkDistance( const cVectorProperty * pVector1, const cVectorProperty * pV
  * @param pImageData the image data for the propertys (to evalue the
  * 	minimal distance of properties)
  * @param bWarning if true a to low distance is not an error, but an warning
- * @return if the distance of the points is lower equal dMaxDistance, else false
+ * @return true if the distance of the vectors is lower equal dMaxDistance,
+ * 	else false
  */
 bool checkDistanceToGreat( const cVectorProperty * pVector1, const cVectorProperty * pVector2,
 		const double dMaxDistance, iImageData * pImageData, bool bWarning = false ){
@@ -1147,7 +1122,7 @@ bool checkDistanceToGreat( const cVectorProperty * pVector1, const cVectorProper
 	
 	//check evalued distance
 	if ( dDistance < dMaxDistance ){
-		//distance to great
+		//distance not big enough
 		bDistanceOk = false;
 	}
 	if ( ! bDistanceOk ){
@@ -1170,10 +1145,11 @@ bool checkDistanceToGreat( const cVectorProperty * pVector1, const cVectorProper
 			const doubleFib dValue2 = pVector2->getValue( uiActualElement );
 			
 			if ( abs( dValue1 - dValue2 ) < dMinDistanceHalf ){
+				//distance smaaler than the half min distance -> distance not big enough
 				bDistanceOk = false;
 				break;
 			}
-		}
+		}//end for all dimension 3 index
 	}
 	
 	if ( ! bDistanceOk ){
@@ -1211,9 +1187,7 @@ public:
 	 * This method is for converting the image data to a Fib object.
 	 *
 	 * @pattern Factory Method
-	 * @return a Fib object which represents the the image data of this object
-	 * 	or NULL if non could be generated
-	 * 	Beware: You have to delete the returned Fib object after usage.
+	 * @return NULL (this object is a dummy)
 	 */
 	virtual cRoot * convertToFib(){
 		//do nothing
@@ -1238,7 +1212,7 @@ unsigned int testFindImageStructureGiven(
 		const double maxErrorPerValue,
 		const set< pair< unsigned int, unsigned int> > setOverlappedPoints ){
 	
-	unsigned int iReturn = 0;//return value of the test; the number of occured Errors
+	unsigned int iReturn = 0;//return value of the test; the number of occured errors
 	cout<<endl;
 	
 	if ( pImageStructureToUse == NULL ){
@@ -1294,6 +1268,8 @@ unsigned int testFindImageStructureGiven(
 		//for all structur points
 		const set< pair< unsigned int, unsigned int> > setStructureData =
 			pImageStructureToUse->getStructurePointsPair();
+		const unsigned int uiMaxIndex = imageDataCorrect.getMaxIndex( 2 );
+		
 		for ( set< pair< unsigned int, unsigned int> >::const_iterator
 				itrActualPoint = setStructureData.begin();
 				itrActualPoint != setStructureData.end(); itrActualPoint++ ){
@@ -1304,33 +1280,35 @@ unsigned int testFindImageStructureGiven(
 			const unsigned int & uiX = itrActualPoint->first;
 			const unsigned int & uiY = itrActualPoint->second;
 			
-			for ( unsigned int uiActualIndex = 1;
-					( uiActualIndex < 4 ) && ( MIN_DISTANCE / 2.0 < dRemainingErrorValue );
+			for ( unsigned int uiActualIndex = 0;
+					( uiActualIndex <= uiMaxIndex ) &&
+					( MIN_DISTANCE / 2.0 < dRemainingErrorValue );
 					uiActualIndex++ ){
 				
-				if ( ( rand() % 2 )  ){
+				if ( ( rand() % 2 ) == 0 ){
 					//don't change value
 					continue;
 				}
 				const double dErrorValue = randDouble( dRemainingErrorValue );
 				dRemainingErrorValue -= abs( dErrorValue );
 				
-				double dNewValue = imageDataCorrect.getValue(
+				const double dNewValue = imageDataCorrect.getValue(
 					uiX, uiY, uiActualIndex );
 				imageDataCorrect.setValue( dNewValue + dErrorValue,
 					uiX, uiY, uiActualIndex );
 			}//end for all property elements
 		}//end for all structure points
 	}//end if maximal error given
+	
 	bool bIsAntialised = pImageStructureToUse->isAntialised();
-	unsigned long ulAntialisedPoints   = 0;
+	unsigned long ulAntialisedPoints    = 0;
 	unsigned long ulNotAntialisedPoints = 0;
 	if ( bIsAntialised ){
 		//antialise the border of area
 		//evalue border point
 		set< pair< unsigned int, unsigned int> > setStructurePoints =
 			pImageStructureToUse->getStructurePointsPair();
-		set< pair< unsigned int, unsigned int> > setBorderStructurePoints =
+		const set< pair< unsigned int, unsigned int> > setBorderStructurePoints =
 			evalueBorderPoints( setStructurePoints, pImageSearchData );
 		cout<<"Antialising the "<<setBorderStructurePoints.size()<<" border points."<<flush;
 		/*set for the border points a property betwean area and its neighbour
@@ -1361,9 +1339,10 @@ unsigned int testFindImageStructureGiven(
 				const unsigned int uiActualValue = imageDataCorrect.getValueUInt(
 					itrBorderPoint->first, itrBorderPoint->second, uiActualElement );
 				
-				if ( uiActualValue == 1 ){
+				if ( uiActualValue < 2 ){
+					//no values betwean uiActualValue and 0
 					continue;
-				}
+				}//else evaluate new value betwean 0 and uiActualValue
 				const longFib lNewValue = rand() % ( uiActualValue - 1 ) + 1;
 				lErrorInBorderPoint += uiActualValue - lNewValue;
 				
@@ -1376,19 +1355,10 @@ unsigned int testFindImageStructureGiven(
 			}else{//error of point to low -> point is not antialised
 				ulNotAntialisedPoints++;
 			}
-			//lMaxErrorInBorder = std::max( lMaxErrorInBorder, lErrorInBorderPoint );
 		}//end for change all border points
-		//cout<<" (maximal error in evalued antialised border is "<<lMaxErrorInBorder<<")"<<endl;
 		cout<<" ("<<ulAntialisedPoints<<" antialised points and "<<
 			ulNotAntialisedPoints<<" not antialised points)"<<endl;
-		
-		/*if ( ((double)lMaxErrorInBorder) <= maxErrorPerValue ){
-			//structure will not be antialised -> maximal possible error to great
-			cout<<"Structure will not be antialised -> maximal possible error "<<
-				"to great (maximal error in evalued antialised border is "<<lMaxErrorInBorder<<")"<<endl;
-			bIsAntialised = false;
-		}*/
-	}
+	}//end if create antialising
 	
 	
 	const unsigned int uiPropertyType = cTypeProperty::COLOR_RGB;
@@ -1480,7 +1450,7 @@ unsigned int testFindImageStructureGiven(
 			}
 		}
 	}
-	cout<<"pGeneratedImageStructure = pFindImageStructure->findImageStructure( "<<
+	cout<<endl<<"pGeneratedImageStructure = pFindImageStructure->findImageStructure( "<<
 		"paStartPoint=("<<paStartPoint.first<<", "<<paStartPoint.second<<"), "<<
 		"&convertImageToFibDummy );"<<endl<<flush;
 	cImageStructure * pGeneratedImageStructure =
@@ -1531,7 +1501,7 @@ unsigned int testFindImageStructureGiven(
 	
 	if ( bIsAntialised ){
 		//antialised
-		if ( ! pGeneratedImageStructure->isAntialised() ){
+		if ( ! bGenStructureIsAntialised ){
 			/* check if the border neighbour points of the generated structure can be antialised
 			 * - neighbour points property in original image betwean neighbour
 			 *   property for gernerated structure and property in original
@@ -1581,43 +1551,40 @@ unsigned int testFindImageStructureGiven(
 				}else{//neighbour is not antialised
 					ulNotAntialisedPointsGen++;
 				}
-			}
-			//values not equal
-			if ( ( ulNotAntialisedPointsGen * 32) < ulAntialisedPointsGen ){
+			}//end for check all generated neighbour points if antialised
+			
+			if ( ( ulNotAntialisedPointsGen * 32 ) < ulAntialisedPointsGen ){
 				//if 32 times more points are antialised then not -> create Error
-				cerr<<"Error: The generated Fib object is "<<
-					((pGeneratedImageStructure->isAntialised())?"antialised":"not antialised")<<
-					", but should be "<<(bIsAntialised?"antialised":"not antialised")<<
-					" ("<<ulAntialisedPointsGen<<" antialised points and "<<
-					ulNotAntialisedPointsGen<<" not antialised points; in orginal "
-					<<ulAntialisedPoints<<" antialised points and "<<
+				cerr<<"Error: The generated Fib object is not antialised"<<
+					", but should be antialised "<<
+					"("<<ulAntialisedPointsGen<<" antialised points and "<<
+					ulNotAntialisedPointsGen<<" not antialised points; in orginal "<<
+					ulAntialisedPoints<<" antialised points and "<<
 					ulNotAntialisedPoints<<" not antialised points)."<<endl;
 				iReturn++;
 			}else{
-				if ( (ulNotAntialisedPointsGen * 10) < ulAntialisedPointsGen ){
-					//if 10 times more points are antialised then not -> create Error
-					cout<<"Warning: The generated Fib object is "<<
-						((pGeneratedImageStructure->isAntialised())?"antialised":"not antialised")<<
-						", but should be "<<(bIsAntialised?"antialised":"not antialised")<<
-						" ("<<ulAntialisedPointsGen<<" antialised points and "<<
-						ulNotAntialisedPointsGen<<" not antialised points; in orginal "
-						<<ulAntialisedPoints<<" antialised points and "<<
+				if ( ((ulNotAntialisedPointsGen + 1) * 10) < ulAntialisedPointsGen ){
+					//if 10 times more points are antialised then not -> create warning
+					cout<<"Warning: The generated Fib object is not antialised"<<
+						", but should be antialised"<<
+						"("<<ulAntialisedPointsGen<<" antialised points and "<<
+						ulNotAntialisedPointsGen<<" not antialised points; in orginal "<<
+						ulAntialisedPoints<<" antialised points and "<<
 						ulNotAntialisedPoints<<" not antialised points)."<<endl;
 				}
 			}
 			bIsAntialised = pGeneratedImageStructure->isAntialised();
 		}
 	}else{//not antialised
-		if ( pGeneratedImageStructure->isAntialised() ){
-			cerr<<"Error: The generated Fib object is "<<
-				((pGeneratedImageStructure->isAntialised())?"antialised":"not antialised")<<
-				", but should be "<<(bIsAntialised?"antialised":"not antialised")<<"."<<endl;
+		if ( bGenStructureIsAntialised ){
+			cerr<<"Error: The generated Fib object is antialised"<<
+				", but should be not antialised."<<endl;
 			iReturn++;
 			bIsAntialised = pGeneratedImageStructure->isAntialised();
 		}
 	}
-		
-		
+	
+	
 	//check if structure points are markted as found and not overlapped
 	unsigned int uiErrorsInStructureMarkedCorrect = 0;
 	for ( set< pair< unsigned int, unsigned int> >::const_iterator
@@ -1725,20 +1692,12 @@ unsigned int testFindImageStructureGiven(
 			const bool bPointInStructurePoints =
 				( itrFoundPoint != setGenStructurePoints.end() );
 			
-			if ( bPointInBorderPoints ){
-				if ( ! bPointInStructurePoints ){
-					cerr<<"Error: The found point ("<<itrActualPoint->first<<", "<<
-						itrActualPoint->second<<") of the image search structure "<<
-						"was not in the generated structure points, but in the structure border points."<<endl;
-					uiErrorsMarkedCorrectInStructure++;
-				}
-			}else{//if ( ! bPointInBorderPoints )
-				if ( ! bPointInStructurePoints ){
-					cerr<<"Error: The found point ("<<itrActualPoint->first<<", "<<
-						itrActualPoint->second<<") of the image search structure "<<
-						"was not in the generated structure points."<<endl;
-					uiErrorsMarkedCorrectInStructure++;
-				}
+			if ( ! bPointInStructurePoints ){
+				cerr<<"Error: The found point ("<<itrActualPoint->first<<", "<<
+					itrActualPoint->second<<") of the image search structure "<<
+					"was not in the generated structure points"<<
+					( bPointInBorderPoints ? ", but in the structure border points." : ".")<<endl;
+				uiErrorsMarkedCorrectInStructure++;
 			}
 		}//else if found structure is antialised and point in border points -> it is OK
 	}
@@ -1810,7 +1769,7 @@ unsigned int testFindImageStructureGiven(
 			imageDataCorrect.getProperty( *itrActualPoint, uiPropertyType );
 		const cVectorProperty vecGeneratedProperty =
 			pGeneratedImageStructure->getProperty( *itrActualPoint, uiPropertyType );
-		//exlude paStartPoint
+		//exclude paStartPoint
 		const bool bWarning = ( paStartPoint.first == itrActualPoint->first ) &&
 			( paStartPoint.second == itrActualPoint->second ) &&
 			( 1 < setGenStructurePoints.size() );
@@ -1834,7 +1793,7 @@ unsigned int testFindImageStructureGiven(
 				imageDataCorrect.getProperty( *itrActualPoint, uiPropertyType );
 			const cVectorProperty vecGeneratedProperty =
 				pGeneratedImageStructure->getProperty( *itrActualPoint, uiPropertyType );
-			//exlude paStartPoint
+			//exclude paStartPoint
 			const bool bWarning = ( paStartPoint.first == itrActualPoint->first ) &&
 				( paStartPoint.second == itrActualPoint->second ) &&
 				( 1 < setGenStructurePoints.size() );
@@ -1867,8 +1826,7 @@ unsigned int testFindImageStructureGiven(
 				iReturn++;
 			}
 		}
-	}else{
-		//if bIsAntialised the error of border points should be greater than max error
+	}else{//if bIsAntialised the error of border points should be greater than max error
 		/*for all neighbour points of generated area: check if there error
 		is greater than maxErrorPerValue*/
 		cout<<"checking generated antialised structure border points:"<<endl;
@@ -1882,7 +1840,7 @@ unsigned int testFindImageStructureGiven(
 			const cVectorProperty vecGeneratedProperty =
 				pGeneratedImageStructure->getProperty(
 					*itrActualPoint, uiPropertyType, true );
-			//exlude paStartPoint
+			//exclude paStartPoint
 			const bool bWarning = ( paStartPoint.first == itrActualPoint->first ) &&
 				( paStartPoint.second == itrActualPoint->second ) &&
 				( 1 < setGenStructurePoints.size() );
@@ -1897,8 +1855,77 @@ unsigned int testFindImageStructureGiven(
 			}
 		}
 		
-		//TODO check if the border points are antialised points
-			//border points with no neighbours can't be checked
+		//check if the border points are antialised points
+		unsigned long ulAntialisedPointsGen = 0;
+		unsigned long ulNotAntialisedPointsGen = 0;
+		for ( set< pair< unsigned int, unsigned int> >::const_iterator
+				itrBorderPoint = setGenStructureBorderPoints.begin();
+				itrBorderPoint != setGenStructureBorderPoints.end();
+				itrBorderPoint++ ){
+			
+			const set< pair< unsigned int, unsigned int> > setBorderPointNeigh =
+				pGenImageSearchData->getNotFoundNotOverlappedNeighbours( *itrBorderPoint );
+			if ( setBorderPointNeigh.empty() ){
+				//border points with no neighbours can't be checked
+				continue;
+			}
+			const pair< unsigned int, unsigned int> & paBorderNeigh =
+				*(setBorderPointNeigh.begin());
+			
+			const cVectorProperty vecBorder      =
+				pGeneratedImageStructure->getProperty( *itrBorderPoint, uiPropertyType, true );
+			const cVectorProperty vecBorderOrg   =
+				imageDataCorrect.getProperty( *itrBorderPoint, uiPropertyType );
+			const cVectorProperty vecBorderNeigh =
+				imageDataCorrect.getProperty( paBorderNeigh, uiPropertyType );
+			
+			const unsignedIntFib uiNumberOfElements =
+				vecBorder.getNumberOfElements();
+			
+			bool bOneDirection = true;
+			for ( unsignedIntFib uiActualElement = 1;
+					uiActualElement <= uiNumberOfElements; uiActualElement++ ){
+				
+				if ( ( vecBorder.getValue( uiActualElement ) < vecBorderOrg.getValue( uiActualElement ) ) ==
+						( vecBorderNeigh.getValue( uiActualElement ) < vecBorderOrg.getValue( uiActualElement ) ) ){
+					
+					if ( ( vecBorderOrg.getValue( uiActualElement ) != vecBorder.getValue( uiActualElement ) ) &&
+							( vecBorderOrg.getValue( uiActualElement ) != vecBorderNeigh.getValue( uiActualElement ) ) ){
+						bOneDirection = false;
+						break;
+					}
+				}
+			}
+			if ( bOneDirection ){
+				//border point is antialised
+				ulAntialisedPointsGen++;
+			}else{//border point is not antialised
+				ulNotAntialisedPointsGen++;
+			}
+		}//end for check all generated border point points if antialised
+		if ( 0 < ulNotAntialisedPointsGen ){
+			//if not antialised points exists
+			if ( ulAntialisedPointsGen < ( ulNotAntialisedPointsGen * 4 ) ){
+				//if the antialised points are less than 4 times the not antialised points -> create Error
+				cerr<<"Error: The generated Fib object is antialised"<<
+					", but should be not antialised "<<
+					"("<<ulAntialisedPointsGen<<" antialised points and "<<
+					ulNotAntialisedPointsGen<<" not antialised points; in orginal "<<
+					ulAntialisedPoints<<" antialised points and "<<
+					ulNotAntialisedPoints<<" not antialised points)."<<endl;
+				iReturn++;
+			}else{
+				if ( ulAntialisedPointsGen < ( ( ulNotAntialisedPointsGen - 1) * 10) ){
+					//if the antialised points are less than 10 times the not antialised points -> create warning
+					cout<<"Warning: The generated Fib object is not antialised"<<
+						", but should be not antialised "<<
+						"("<<ulAntialisedPointsGen<<" antialised points and "<<
+						ulNotAntialisedPointsGen<<" not antialised points; in orginal "<<
+						ulAntialisedPoints<<" antialised points and "<<
+						ulNotAntialisedPoints<<" not antialised points)."<<endl;
+				}
+			}
+		}
 		
 		
 	}
@@ -1950,21 +1977,33 @@ unsigned int testFindImageStructureGiven(
 	cout<<"Check structure border points:"<<endl;
 	if ( ! bIsAntialised ){
 		if ( comparePoints( setBorderPoints, setGenStructureBorderPoints ) != 0 ){
-			cerr<<"Border points the image structure should have (named originial):"<<endl;
+			cerr<<"Border points the image structure should have:"<<endl;
 			printPoints( cerr, setBorderPoints );
-			cerr<<"Generated structure border points (named generated):"<<endl;
+			cerr<<"Generated structure border points:"<<endl;
 			printPoints( cerr, setGenStructureBorderPoints );
 			iReturn++;
 		}
-	}else{//TODO if antialised border points can be in the area without neighbours outside
-		
-		
+	}else{//if antialised border points can be in the area without neighbours outside
+		//check if all found border points are in the generated structure
+		for ( set< pair< unsigned int, unsigned int> >::const_iterator
+				itrActualPoint = setGenStructureBorderPoints.begin();
+				itrActualPoint != setGenStructureBorderPoints.end(); itrActualPoint++ ){
+			
+			setBorderPoints.erase( *itrActualPoint );
+		}
+		if ( ! setBorderPoints.empty() ){
+			cerr<<"Error: There are border points which are not in the "<<
+				"antialised image structure."<<endl;
+			cerr<<"border points which are not in the antialised image structure:"<<endl;
+			printPoints( cerr, setBorderPoints );
+			iReturn++;
+		}
 	}
 	cout<<"Check structure neighbour points:"<<endl;
 	if ( comparePoints( setNeighbourPoints, setGenStructureNeighbourPoints ) != 0 ){
-		cerr<<"Neighbour points the image structure should have (named originial):"<<endl;
+		cerr<<"Neighbour points the image structure should have:"<<endl;
 		printPoints( cerr, setNeighbourPoints );
-		cerr<<"Generated structure neighbour points (named generated):"<<endl;
+		cerr<<"Generated structure neighbour points:"<<endl;
 		printPoints( cerr, setGenStructureNeighbourPoints );
 		iReturn++;
 	}
@@ -1989,19 +2028,13 @@ unsigned int testFindImageStructureGiven(
 
 /**
  * This function reads the given file and returns a list with its lines.
- * The lines in the files should be the two semicolon ';' seperated data
- * files to check.
- * The two file names are seperated by a semicolon ';'. The first file name
- * of a line contains the data of the area and the second the data for the
- * overlaped points.
+ * Every line of this file is for one testcase. It contains the name of the
+ * file for the testcase image structure.
  *
  * @param szFilePath the path wher the file list to check is stored
  * @return a list with the files to check
- * 	pair elements:
- * 		first: the name for the file with the data of the area to convert
- * 		second: the name for the file with the data for the overlaped points
  */
-list< string > loadTestFileList( const string szFilePath ){
+list< string > loadTestFileList( const string & szFilePath ){
 
 	list< string > liFiles;
 	
@@ -2033,7 +2066,7 @@ list< string > loadTestFileList( const string szFilePath ){
 
 
 
-/** @def PATH_SEPERATOR the operatingsystem dependent seperator in filepath */
+/** @def PATH_SEPERATOR the operating system dependent seperator in a filepath */
 #ifdef linux
 	#define PATH_SEPERATOR      '/'
 	#define NOT_PATH_SEPERATOR  '\\'
@@ -2044,63 +2077,68 @@ list< string > loadTestFileList( const string szFilePath ){
 
 
 /**
- * checks if a file for the given path exists and can be opened
+ * This function checks if a file for the given path exists and can be opened.
+ *
  * @param path a string for the path to be cheked
  * @return true if the path exists, else false
  */
-bool checkPath( char* path ){
+bool checkPath( const char* szPath ){
 
-	if  ( path==NULL ){
+	if  ( szPath == NULL ){
+		//no path given
 		return false;
 	}
-	ifstream test( path );
-	if( test ){
-		test.close();
+	ifstream testFile( szPath );
+	if( testFile ){
+		//test file exists
+		testFile.close();
 		return true;
-	}
+	}//else test file dos not exists
 	return false;
 }
 
 
 /**
- * if the path folders are not existing, this function creats them
- * @param path the string of the path that should be existing
+ * If the path folders are not existing, this function creats them.
+ *
+ * @param szPath the string of the path that should be existing
  */
-void createPath( const char* path ){
-
-	unsigned long maxC=0,count=0,count2=0;//maxC= maximal chars to read; to avoid infinity loops
-	if  ( path==NULL ){
+void createPath( const char * szPath ){
+	//maxC = maximal chars to read; to avoid infinity loops
+	unsigned long maxC  = 0;
+	unsigned long count = 0;
+	if  ( szPath == NULL ){
 		return;
 	}
 	//begin with the first folder, check if the folder exists and if not creat it
-	char folder[1000],mkDir[1020];
-	for ( ; (maxC<100000) && (path[count]!=0) ; maxC++ ){
-		//check next folder
-		for ( ; (maxC<100000) && (path[count]!=0) ; maxC++ ){
-			//read folder from path
-			if ( path[count]==PATH_SEPERATOR){
-			
-				folder[count2]=PATH_SEPERATOR;
+	char szFolder[ 1024 ];
+	char mkDir[ 1024 ];
+	for ( ; ( maxC < 100000 ) && ( szPath[ count ] != 0x0 ) ; maxC++ ){
+		//check next szFolder
+		for ( ; ( maxC < 100000 ) && ( szPath[ count ] != 0x0 ) ; maxC++ ){
+			//read szFolder from szPath
+			if ( szPath[ count ] == PATH_SEPERATOR ){
+				
+				szFolder[ count ] = PATH_SEPERATOR;
 				count++;
-				count2++;
 				break;
 			}else{
-				folder[count2]=path[count];
+				szFolder[ count ] = szPath[ count ];
 				count++;
-				count2++;
 			}
 		}
-		folder[count2]=0;
-		if ( (count2!=0) &&
-				!( (count2==1) && (folder[0]==PATH_SEPERATOR) ) &&
-				!( (count2==2) && (folder[0]=='.') && (folder[1]==PATH_SEPERATOR) )
-				&& !(checkPath(folder)) 
+		szFolder[ count ] = 0;
+		if ( ( count != 0 ) &&
+				! ( ( count == 1 ) && ( szFolder[0] == PATH_SEPERATOR ) ) &&
+				! ( ( count == 2) && (szFolder[0] == '.' ) &&
+					( szFolder[1] == PATH_SEPERATOR ) ) &&
+				! ( checkPath( szFolder ) )
 				){
-			// if in folder stands a valid path
-			sprintf( mkDir, "mkdir %s ", folder );
+			// if in szFolder is a valid path
+			sprintf( mkDir, "mkdir %s ", szFolder );
 			system( mkDir );
 		}
-		if ( path[count]==0 ){
+		if ( szPath[ count ] == 0 ){
 			return;
 		}
 	}

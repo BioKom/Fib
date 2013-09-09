@@ -85,6 +85,10 @@
  * 						-opErode or -opE
  * 							erode operator: all border of the found part areas
  * 								are deleted from the found part areas
+ * 						TODO (implement):
+ * 						-areaBorderSplineParameters=NUMBER or -absp=NUMBER
+ * 							Possible values for NUMBER are: 2, 3, 4
+ * 							
  * 			if compress: the multimedia data will be compressed, by
  * 				building Fib under objects for areas with the same color
  * 				and evaluating the background color (see option "-bg=")

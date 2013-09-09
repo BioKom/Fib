@@ -40,6 +40,7 @@ History:
 09.04.2011  Oesterholz  FEATURE_HYPERPLANE_BODY_ADD_INEQUIATIONS_SAVE_ON_BIG_NUMBERS added
 11.04.2011  Oesterholz  FEATURE_NCLUSTER_CLUSTER_IN_ONE_STEP added
 17.04.2011  Oesterholz  FEATURE_HYPERPLANE_BODY_SIMPLE_ADD_INEQUIATIONS_NO_DOUBLE_POINTS added
+17.04.2011  Oesterholz  FEATURE_C_POLSNOM_EVALUE_SPLINE_GLPK_CHECK_ALL_SOLUTIONS added
 */
 
 
@@ -199,7 +200,7 @@ History:
  * With this feature the glp library (extern package) linear solver will be
  * used to find a spline for a vector of range data points.
  *
- * @see fib::algorithms::nD1::cSpline<tX, tY>::evalueSpline()
+ * @see fib::algorithms::nD1::cSpline<tX, tY>::evalueSplineIterativFast()
  *
  * created: 16.09.2012  Betti Oesterholz
  * Status:  implemened and tested(13.10.2012)
@@ -217,7 +218,7 @@ History:
  *
  * @see mutexGlpkSolver.inc
  * @see FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
- * @see fib::algorithms::nD1::cSpline<tX, tY>::evalueSpline()
+ * @see fib::algorithms::nD1::cSpline<tX, tY>::evalueSplineIterativFast()
  *
  * created: 26.09.2012  Betti Oesterholz
  * Status:  implemened and tested(13.10.2012)
@@ -226,6 +227,22 @@ History:
 */
 #define FEATURE_GLPK_USE_MUTEX_LINAR_PROBLEM_SOLVING
 
+
+/**
+ * With this feature all (defined) solutions will be checked (even
+ * infeasible, no feasible and unbounded).
+ * If the glp linear solver returns a not feasible solution, its error
+ * could be still OK.
+ *
+ * @see FEATURE_C_SPLINE_USE_GLP_LIB_LINAR_PROBLEM_SOLVING
+ * @see fib::algorithms::nD1::cSpline<tX, tY>::evalueSplineIterativFast()
+ *
+ * created: 28.06.2013  Betti Oesterholz
+ * Status:  implemened (28.06.2013 don't know if usefull)
+ *//*
+History:
+*/
+//#define FEATURE_C_POLSNOM_EVALUE_SPLINE_GLPK_CHECK_ALL_SOLUTIONS
 
 
 

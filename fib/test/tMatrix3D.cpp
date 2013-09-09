@@ -1,6 +1,3 @@
-
-//TODO check
-
 /**
  * @file tMatrix3D
  * file name: tMatrix3D.cpp
@@ -11,6 +8,7 @@
  * System: C++
  *
  * This test is for testing the iMatrix3D methods.
+ *
  *
  * Copyright (C) @c GPL3 2013 Betti Oesterholz
  *
@@ -28,24 +26,15 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * This test is for testing mainly the convertToFib() method of the child
- * classes of iMatrix3D.
- * It will test if the iConvertMatrixToFib::convertToFib()
- * method converts given areas into a  equivalent Fib object.
- * @see iConvertMatrixToFib::convertToFib()
- * It will also test the iMatrix3D methods.
- * @see iMatrix3D
- *
  * This test is for testing the iMatrix3D methods.
+ * @see iMatrix3D
  *
  *
  * call: tMatrix3D [MAX_ITERATION]
  *
  * parameters:
  * 	MAX_ITERATION
- * 		The number of iterators for the random tests (test with given
- * 		parameters for convertToTiles()).
- * 		Just works with the DIR_TESTDATA parameter given.
+ * 		The number of iterations for the random tests.
  *
  *
  * Methods tested:
@@ -118,11 +107,11 @@ int main(int argc, char* argv[]){
 	srand( time(NULL) );
 	
 	cout<<endl<<"Running Test for the iMatrix3D methods"<<endl;
-	cout<<      "============================================"<<endl;
-	cout<<      "============================================"<<endl;
+	cout<<      "======================================"<<endl;
+	cout<<      "======================================"<<endl;
 	
 	if ( 1 < argc ){
-		//two parameters given; read parameter iterators
+		//one parameter given; read parameter iterators
 		MAX_ITERATION = atol( argv[1] );
 		if ( MAX_ITERATION < 1 ){
 			MAX_ITERATION = 1;
@@ -174,7 +163,6 @@ int main(int argc, char* argv[]){
 	}else{
 		cerr<<endl<<endl<<"Test failed: "<<iReturn<<" errors occoured"<<endl;
 	}
-
 	
 	return iReturn;
 }
@@ -186,16 +174,13 @@ int main(int argc, char* argv[]){
  *
  * @param uiMaxIndexX the maximal index for the first (1. or x)
  * 	dimension; All index values in the first (1. or x) dimension are
- * 	positiv  (including 0) natural numbers lower equal uiMaxIndexX .
- * 	@see uiBorderIndexX
+ * 	positiv (including 0) natural numbers lower equal uiMaxIndexX .
  * @param uiMaxIndexY the maximal index for the second (2. or y)
- * 	dimension; All index values in the first (1. or x) dimension are
- * 	positiv  (including 0) natural numbers lower equal uiMaxIndexY .
- * 	@see uiBorderIndexY
+ * 	dimension; All index values in the first (2. or y) dimension are
+ * 	positiv (including 0) natural numbers lower equal uiMaxIndexY .
  * @param uiMaxIndexZ the maximal index for the third (3. or z)
- * 	dimension; All index values in the first (1. or x) dimension are
- * 	positiv  (including 0) natural numbers lower equal uiMaxIndexZ .
- * 	@see uiBorderIndexZ
+ * 	dimension; All index values in the first (3. or z) dimension are
+ * 	positiv (including 0) natural numbers lower equal uiMaxIndexZ .
  * @return pointer to the actual class to test
  * 	Beware: You have to delete the class after usage.
  */
@@ -225,15 +210,15 @@ iMatrix3D * getActualClass( const unsigned int uiMaxIndexX,
 		break;
 	}
 	
-	return new cMatrix3DInteger( uiMaxIndexX, uiMaxIndexY, uiMaxIndexZ, 8);
+	return new cMatrix3DInteger( uiMaxIndexX, uiMaxIndexY, uiMaxIndexZ, 8 );
 }
 
 
 /**
  * This functions returns a pointer to a copy of the given object.
- * The object should have the type of the actual class.
+ * The object should have the type of the actual class. @see actualClass
  *
- * @param pMatrixToCopy the class to copy
+ * @param pMatrixToCopy a pointer to the object to copy
  * @return pointer to the copy of the given object
  * 	Beware: You have to delete the class after usage.
  */
@@ -288,9 +273,9 @@ string getActualClassName(){
 
 
 /**
- * @param pMatrix a pointer to the matix for which to return the minimum
+ * @param pMatrix a pointer to the matix, for which to return the minimum
  * 	number
- * @return the minimum long value for the actual matrix
+ * @return the minimum long value for a value in the actual matrix
  */
 longFib getMinLongValue( iMatrix3D * pMatrix ){
 	
@@ -310,9 +295,9 @@ longFib getMinLongValue( iMatrix3D * pMatrix ){
 
 
 /**
- * @param pMatrix a pointer to the matix for which to return the maximum
+ * @param pMatrix a pointer to the matix, for which to return the maximum
  * 	number
- * @return the maximum long value for the actual matrix
+ * @return the maximum long value for a value in the actual matrix
  */
 longFib getMaxLongValue( iMatrix3D * pMatrix ){
 	
@@ -332,9 +317,9 @@ longFib getMaxLongValue( iMatrix3D * pMatrix ){
 
 
 /**
- * @param pMatrix a pointer to the matix for which to return the minimum
+ * @param pMatrix a pointer to the matix, for which to return the minimum
  * 	number
- * @return the minimum value for the actual matrix
+ * @return the minimum value for a value in the actual matrix
  */
 doubleFib getMinValue( iMatrix3D * pMatrix ){
 	
@@ -343,9 +328,9 @@ doubleFib getMinValue( iMatrix3D * pMatrix ){
 
 
 /**
- * @param pMatrix a pointer to the matix for which to return the maximum
+ * @param pMatrix a pointer to the matix, for which to return the maximum
  * 	number
- * @return the maximum value for the actual matrix
+ * @return the maximum value for a value in the actual matrix
  */
 doubleFib getMaxValue( iMatrix3D * pMatrix ){
 	
@@ -355,7 +340,8 @@ doubleFib getMaxValue( iMatrix3D * pMatrix ){
 
 /**
  * @param pMatrix a pointer to the matix for which to generate the number
- * @return generates a random long number
+ * @return generates a random long number, which is valid to set for the
+ * 	given matrix pMatrix
  */
 longFib generateRandLongNumber( iMatrix3D * pMatrix ){
 	
@@ -366,7 +352,8 @@ longFib generateRandLongNumber( iMatrix3D * pMatrix ){
 
 /**
  * @param pMatrix a pointer to the matix for which to generate the number
- * @return generates a random double number
+ * @return generates a random double number, which is valid to set for the
+ * 	given matrix pMatrix
  */
 doubleFib generateRandDoubleNumber( iMatrix3D * pMatrix ){
 	
@@ -377,9 +364,9 @@ doubleFib generateRandDoubleNumber( iMatrix3D * pMatrix ){
 
 
 /**
- * This method prints the matrix to the given stream.
+ * This method prints the matrix to the given stream in a readebel form.
  *
- * @param streamToPrintTo the stream where to print the matrix to
+ * @param streamToPrintTo the stream, where to print the matrix to
  * @param pMatrix a pointer to the matrix to print
  */
 void printMatrix( ostream & streamToPrintTo, iMatrix3D * pMatrix ){
@@ -396,7 +383,7 @@ void printMatrix( ostream & streamToPrintTo, iMatrix3D * pMatrix ){
 			streamToPrintTo<<"(";
 			for ( unsigned int indexZ = 0; indexZ <= uiMaxIndexZ; indexZ++ ){
 		
-				streamToPrintTo<<(pMatrix->getValue( indexX, indexY, indexZ ))<<",";
+				streamToPrintTo<<( pMatrix->getValue( indexX, indexY, indexZ ) )<<",";
 			}//end for index z
 			streamToPrintTo<<"), ";
 		}//end for index y
@@ -409,8 +396,9 @@ void printMatrix( ostream & streamToPrintTo, iMatrix3D * pMatrix ){
  * @param dValue the value to check
  * @return true if the value is not a number, else false
  */
-inline bool own_isnan( doubleFib dValue ){
-    return dValue != dValue;
+inline bool checkIsNotANumber( const doubleFib dValue ){
+	
+	return ( dValue != dValue );
 }
 
 
@@ -418,8 +406,9 @@ inline bool own_isnan( doubleFib dValue ){
  * @param dValue the value to check
  * @return true if the value is infinity, else false
  */
-inline bool own_isinf( doubleFib dValue ){
-    return ( ( dValue == INFINITY ) || ( dValue == -INFINITY ) );
+inline bool checkIsInf( const doubleFib dValue ){
+	
+	return ( ( dValue == INFINITY ) || ( dValue == -INFINITY ) );
 }
 
 
@@ -428,20 +417,22 @@ inline bool own_isinf( doubleFib dValue ){
  *
  * @param dValue1 the first value to compare
  * @param dValue2 the second value to compare
- * @return true if the values are very simular
+ * @return true if the values are very similar
  */
-bool isEqual( doubleFib dValue1, doubleFib dValue2 ){
+bool isEqual( const doubleFib dValue1, const doubleFib dValue2 ){
 
-	if ( own_isnan( dValue1 ) || own_isnan( dValue2 ) ){
-		if ( own_isnan( dValue1 ) && own_isnan( dValue2 ) ){
+	if ( checkIsNotANumber( dValue1 ) || checkIsNotANumber( dValue2 ) ){
+		if ( checkIsNotANumber( dValue1 ) && checkIsNotANumber( dValue2 ) ){
+			//both values not a number -> values equal
 			return true;
-		}
+		}//else one value a number, but the other not -> values not equal
 		return false;
 	}
-	if ( own_isinf( dValue1 ) || own_isinf( dValue2 ) ){
-		if ( own_isinf( dValue1 ) && own_isinf( dValue2 ) ){
+	if ( checkIsInf( dValue1 ) || checkIsInf( dValue2 ) ){
+		if ( checkIsInf( dValue1 ) && checkIsInf( dValue2 ) ){
+			//both values infinit -> values equal
 			return true;
-		}
+		}//else one value finit, but the other not -> values not equal
 		return false;
 	}
 	
@@ -451,17 +442,22 @@ bool isEqual( doubleFib dValue1, doubleFib dValue2 ){
 	
 	if ( ( dValue1 - dSaveBoundery <= dValue2 ) &&
 			( dValue2 <= dValue1 + dSaveBoundery ) ){
+		//values similar enough
 		return true;
-	}
+	}//else values not similar enough
 	return false;
 }
 
 
 /**
- * This method prints the matrix to the given stream.
+ * This method checks the given matrix pMatrix.
  *
- * @param pMatrix a pointer to the matrix to print
- * @return 
+ * @param pMatrix a pointer to the matrix to check
+ * @param uiMaxIndexX the maximal index of the matrix in dimension 1 / x
+ * @param uiMaxIndexY the maximal index of the matrix in dimension 2 / y
+ * @param uiMaxIndexZ the maximal index of the matrix in dimension 3 / z
+ * @param vecElements a container for the correct values for the matrix pMatrix
+ * @return the number of error occured in this test
  */
 unsigned int compareMatrixPoints( iMatrix3D * pMatrix,
 		const unsigned int uiMaxIndexX,
@@ -498,7 +494,7 @@ unsigned int compareMatrixPoints( iMatrix3D * pMatrix,
 						indexX<<", "<<indexY<<", "<<indexZ<<
 						") is "<<pMatrix->getValue( indexX, indexY, indexZ )<<
 						", but should be "<<
-						vecElements[ indexX ][ indexY ][ indexZ ]<<endl;
+						vecElements[ indexX ][ indexY ][ indexZ ]<<" ."<<endl;
 					uiErrors++;
 				}
 			}//end for index z
@@ -608,8 +604,10 @@ int testMatrix3DMethods( unsigned long &ulTestphase ){
 	
 	int iReturn = 0;//return value of the test; the number of occured errors
 	
-	unsigned int uiMaxIndexX = rand() % 64;
-	unsigned int uiMaxIndexY = rand() % 64;
+	unsigned int uiMaxIndexX =
+		rand() % ( 16 * (((unsigned int )log( MAX_ITERATION + 1 )) + 1) );
+	unsigned int uiMaxIndexY =
+		rand() % ( 16 * (((unsigned int )log( MAX_ITERATION + 1 )) + 1) );
 	unsigned int uiMaxIndexZ = 3;
 	
 	iMatrix3D * pMatrix = getActualClass( uiMaxIndexX, uiMaxIndexY, uiMaxIndexZ );
@@ -618,6 +616,11 @@ int testMatrix3DMethods( unsigned long &ulTestphase ){
 	vector< vector< vector< longFib > > > vecCorrectValues( uiMaxIndexX + 1,
 		vector< vector< longFib > >( uiMaxIndexY + 1, vector< longFib >(
 			uiMaxIndexZ + 1, 0 ) ) );
+	
+	cout<<endl<<"create matrix with maximum index: ("<<
+		" uiMaxIndexX="<<uiMaxIndexX<<
+		", uiMaxIndexY="<<uiMaxIndexY<<
+		", uiMaxIndexZ="<<uiMaxIndexZ<<" );"<<endl;
 	
 	{
 		if( compareMatrixPoints( pMatrix,
@@ -633,40 +636,21 @@ int testMatrix3DMethods( unsigned long &ulTestphase ){
 		}else{
 			cerr<<"Error: The matrix class name is \""<<
 				pMatrixConst->getName()<<"\", but should be \""<<
-				getActualClassName()<<"\""<<endl;
-			iReturn++;
-		}
-		//check getMaxIndex()
-		if ( uiMaxIndexX != pMatrixConst->getMaxIndex( 0 ) ){
-			cerr<<"Error: The matrix has as the maximum index \""<<
-				pMatrixConst->getMaxIndex( 0 )<<"\", but should be \""<<
-				uiMaxIndexX<<"\""<<endl;
-			iReturn++;
-		}
-		if ( uiMaxIndexY != pMatrixConst->getMaxIndex( 1 ) ){
-			cerr<<"Error: The matrix has as the maximum index \""<<
-				pMatrixConst->getMaxIndex( 1 )<<"\", but should be \""<<
-				uiMaxIndexY<<"\""<<endl;
-			iReturn++;
-		}
-		if ( uiMaxIndexZ != pMatrixConst->getMaxIndex( 2 ) ){
-			cerr<<"Error: The matrix has as the maximum index \""<<
-				pMatrixConst->getMaxIndex( 2 )<<"\", but should be \""<<
-				uiMaxIndexZ<<"\""<<endl;
+				getActualClassName()<<"\"."<<endl;
 			iReturn++;
 		}
 		//check getMinValue()
 		if ( pMatrixConst->getMinValue() < getMinValue( pMatrix ) ){
-			cerr<<"Error: The returned minimum value ("<<
-				pMatrixConst->getMinValue()<<") is lower as correct minimum value"<<
-				getMinValue( pMatrix )<<endl;
+			cerr<<"Error: The returned minimum value "<<
+				pMatrixConst->getMinValue()<<" is lower as correct minimum value "<<
+				getMinValue( pMatrix )<<" ."<<endl;
 			iReturn++;
 		}
 		//check getMaxValue()
 		if ( getMaxValue( pMatrix ) < pMatrixConst->getMaxValue() ){
-			cerr<<"Error: The returned maximum value ("<<
-				pMatrixConst->getMaxValue()<<") is bigger as correct maximum value"<<
-				getMaxValue( pMatrix )<<endl;
+			cerr<<"Error: The returned maximum value "<<
+				pMatrixConst->getMaxValue()<<" is bigger as correct maximum value "<<
+				getMaxValue( pMatrix )<<" ."<<endl;
 			iReturn++;
 		}
 	}
@@ -676,7 +660,7 @@ int testMatrix3DMethods( unsigned long &ulTestphase ){
 		cout<<endl;
 		//call random change method
 		
-		if ( rand() % 32 != 0 ){
+		if ( ( rand() % 32 ) != 0 ){
 			//call more probable method
 			const unsigned int uiChangeMethod = rand() % 6;
 			
@@ -703,13 +687,12 @@ int testMatrix3DMethods( unsigned long &ulTestphase ){
 							errorValue<<")."<<endl;
 						iReturn++;
 					}
-					cout<<"Compare pMatrix with the original."<<endl;
 					if ( ! isEqual( dValueToSet,
 							vecCorrectValues[uiPositionX][uiPositionY][uiPositionZ] ) ){
-						//a different value set as befor
+						//a different value set as before
 						cout<<"Compare pMatrix with the original (not equal)."<<endl;
 						testCompareNotEqual( pMatrix, pMatrixClone );
-					}else{ //the same value set as befor
+					}else{ //the same value set as before
 						cout<<"Compare pMatrix with the original (equal)."<<endl;
 						testCompareEqual( pMatrix, pMatrixClone );
 					}
@@ -744,10 +727,10 @@ int testMatrix3DMethods( unsigned long &ulTestphase ){
 					}
 					if ( lValueToSet !=
 							vecCorrectValues[uiPositionX][uiPositionY][uiPositionZ] ){
-						//a different value set as befor
+						//a different value set as before
 						cout<<"Compare pMatrix with the original (not equal)."<<endl;
 						testCompareNotEqual( pMatrix, pMatrixClone );
-					}else{ //the same value set as befor
+					}else{ //the same value set as before
 						cout<<"Compare pMatrix with the original (equal)."<<endl;
 						testCompareEqual( pMatrix, pMatrixClone );
 					}
@@ -774,8 +757,8 @@ int testMatrix3DMethods( unsigned long &ulTestphase ){
 						", uiPositionX="<<uiPositionX<<
 						", uiPositionY="<<uiPositionY<<
 						", uiPositionZ="<<uiPositionZ<<" ); (incorrect value)"<<endl;
-					const iMatrix3D::tErrorValue errorValue = pMatrix->setValue( dValueToSet,
-						uiPositionX, uiPositionY, uiPositionZ );
+					const iMatrix3D::tErrorValue errorValue = pMatrix->setValue(
+						dValueToSet, uiPositionX, uiPositionY, uiPositionZ );
 					
 					if ( bLowerMin ){
 						if ( errorValue == iMatrix3D::ERROR_LOWER_MIN_VALUE ){
@@ -799,7 +782,7 @@ int testMatrix3DMethods( unsigned long &ulTestphase ){
 						}
 					}
 					cout<<"Compare pMatrix with the original."<<endl;
-					//a different value set as befor
+					//a different value set as before
 					testCompareEqual( pMatrix, pMatrixClone );
 					
 					delete pMatrixClone;
@@ -819,8 +802,8 @@ int testMatrix3DMethods( unsigned long &ulTestphase ){
 						", uiPositionX="<<uiPositionX<<
 						", uiPositionY="<<uiPositionY<<
 						", uiPositionZ="<<uiPositionZ<<" ); (incorrect value)"<<endl;
-					const iMatrix3D::tErrorValue errorValue = pMatrix->setValue( lValueToSet,
-						uiPositionX, uiPositionY, uiPositionZ );
+					const iMatrix3D::tErrorValue errorValue = pMatrix->setValue(
+						lValueToSet, uiPositionX, uiPositionY, uiPositionZ );
 					
 					if ( bLowerMin ){
 						if ( errorValue == iMatrix3D::ERROR_LOWER_MIN_VALUE ){
@@ -844,7 +827,7 @@ int testMatrix3DMethods( unsigned long &ulTestphase ){
 						}
 					}
 					cout<<"Compare pMatrix with the original."<<endl;
-					//a different value set as befor
+					//a different value set as before
 					testCompareEqual( pMatrix, pMatrixClone );
 					
 					delete pMatrixClone;
@@ -859,9 +842,9 @@ int testMatrix3DMethods( unsigned long &ulTestphase ){
 					const unsigned int uiPositionX = bDim1IndexToGreat ?
 						( uiMaxIndexX + 1 ) : ( rand() % ( uiMaxIndexX + 1 ) );
 					const unsigned int uiPositionY = bDim2IndexToGreat ?
-						( uiMaxIndexY + 1 ) :  ( rand() % ( uiMaxIndexY + 1 ) );
+						( uiMaxIndexY + 1 ) : ( rand() % ( uiMaxIndexY + 1 ) );
 					const unsigned int uiPositionZ = bDim3IndexToGreat ?
-						( uiMaxIndexZ + 1 ) :  ( rand() % ( uiMaxIndexZ + 1 ) );
+						( uiMaxIndexZ + 1 ) : ( rand() % ( uiMaxIndexZ + 1 ) );
 					
 					iMatrix3D * pMatrixClone = pMatrix->clone();
 					
@@ -869,17 +852,17 @@ int testMatrix3DMethods( unsigned long &ulTestphase ){
 						", uiPositionX="<<uiPositionX<<
 						", uiPositionY="<<uiPositionY<<
 						", uiPositionZ="<<uiPositionZ<<" ); (outside borders)"<<endl;
-					const iMatrix3D::tErrorValue errorValue = pMatrix->setValue( dValueToSet,
-						uiPositionX, uiPositionY, uiPositionZ );
+					const iMatrix3D::tErrorValue errorValue = pMatrix->setValue(
+						dValueToSet, uiPositionX, uiPositionY, uiPositionZ );
 					
 					if ( bDim1IndexToGreat &&
-							(errorValue == iMatrix3D::ERROR_OUTSIDE_INDEX_DIMENSION_1 ) ){
+							( errorValue == iMatrix3D::ERROR_OUTSIDE_INDEX_DIMENSION_1 ) ){
 						cout<<"The value was correctly not set, because the index in dimension 1 is to great."<<endl;
 					}else if ( bDim2IndexToGreat &&
-							(errorValue == iMatrix3D::ERROR_OUTSIDE_INDEX_DIMENSION_2 ) ){
+							( errorValue == iMatrix3D::ERROR_OUTSIDE_INDEX_DIMENSION_2 ) ){
 						cout<<"The value was correctly not set, because the index in dimension 2 is to great."<<endl;
 					}else if ( bDim3IndexToGreat &&
-							(errorValue == iMatrix3D::ERROR_OUTSIDE_INDEX_DIMENSION_3 ) ){
+							( errorValue == iMatrix3D::ERROR_OUTSIDE_INDEX_DIMENSION_3 ) ){
 						cout<<"The value was correctly not set, because the index in dimension 3 is to great."<<endl;
 					}else{
 						cerr<<"Error: The value was "<<
@@ -890,7 +873,7 @@ int testMatrix3DMethods( unsigned long &ulTestphase ){
 					}
 					
 					cout<<"Compare pMatrix with the original."<<endl;
-					//a different value set as befor
+					//a different value set as before
 					testCompareEqual( pMatrix, pMatrixClone );
 					
 					delete pMatrixClone;
@@ -904,9 +887,9 @@ int testMatrix3DMethods( unsigned long &ulTestphase ){
 					const unsigned int uiPositionX = bDim1IndexToGreat ?
 						( uiMaxIndexX + 1 ) : ( rand() % ( uiMaxIndexX + 1 ) );
 					const unsigned int uiPositionY = bDim2IndexToGreat ?
-						( uiMaxIndexY + 1 ) :  ( rand() % ( uiMaxIndexY + 1 ) );
+						( uiMaxIndexY + 1 ) : ( rand() % ( uiMaxIndexY + 1 ) );
 					const unsigned int uiPositionZ = bDim3IndexToGreat ?
-						( uiMaxIndexZ + 1 ) :  ( rand() % ( uiMaxIndexZ + 1 ) );
+						( uiMaxIndexZ + 1 ) : ( rand() % ( uiMaxIndexZ + 1 ) );
 					
 					iMatrix3D * pMatrixClone = pMatrix->clone();
 					
@@ -914,17 +897,17 @@ int testMatrix3DMethods( unsigned long &ulTestphase ){
 						", uiPositionX="<<uiPositionX<<
 						", uiPositionY="<<uiPositionY<<
 						", uiPositionZ="<<uiPositionZ<<" ); (outside borders)"<<endl;
-					const iMatrix3D::tErrorValue errorValue = pMatrix->setValue( lValueToSet,
-						uiPositionX, uiPositionY, uiPositionZ );
+					const iMatrix3D::tErrorValue errorValue = pMatrix->setValue(
+						lValueToSet, uiPositionX, uiPositionY, uiPositionZ );
 					
 					if ( bDim1IndexToGreat &&
-							(errorValue == iMatrix3D::ERROR_OUTSIDE_INDEX_DIMENSION_1 ) ){
+							( errorValue == iMatrix3D::ERROR_OUTSIDE_INDEX_DIMENSION_1 ) ){
 						cout<<"The value was correctly not set, because the index in dimension 1 is to great."<<endl;
 					}else if ( bDim2IndexToGreat &&
-							(errorValue == iMatrix3D::ERROR_OUTSIDE_INDEX_DIMENSION_2 ) ){
+							( errorValue == iMatrix3D::ERROR_OUTSIDE_INDEX_DIMENSION_2 ) ){
 						cout<<"The value was correctly not set, because the index in dimension 2 is to great."<<endl;
 					}else if ( bDim3IndexToGreat &&
-							(errorValue == iMatrix3D::ERROR_OUTSIDE_INDEX_DIMENSION_3 ) ){
+							( errorValue == iMatrix3D::ERROR_OUTSIDE_INDEX_DIMENSION_3 ) ){
 						cout<<"The value was correctly not set, because the index in dimension 3 is to great."<<endl;
 					}else{
 						cerr<<"Error: The value was "<<
@@ -935,7 +918,7 @@ int testMatrix3DMethods( unsigned long &ulTestphase ){
 					}
 					
 					cout<<"Compare pMatrix with the original."<<endl;
-					//a different value set as befor
+					//a different value set as before
 					testCompareEqual( pMatrix, pMatrixClone );
 					
 					delete pMatrixClone;
@@ -944,7 +927,7 @@ int testMatrix3DMethods( unsigned long &ulTestphase ){
 			}//end switch
 			
 		}else{//call rare method
-			const unsigned int uiChangeMethod = rand() % 5;
+			const unsigned int uiChangeMethod = rand() % 6;
 			
 			switch ( uiChangeMethod ){
 				case 0:{//test clone()
@@ -953,19 +936,20 @@ int testMatrix3DMethods( unsigned long &ulTestphase ){
 					
 					cout<<"Compare pMatrix with pMatrixClone."<<endl;
 					iReturn = testCompareEqual( pMatrix, pMatrixClone );
-					
+					//delete old matrix
 					delete pMatrix;
 					
 					pMatrix = pMatrixClone;
 					pMatrixConst = pMatrixClone;
 				}break;
 				case 1:{//test copy constructor
-					cout<<"pMatrixCopy = new copyConstructor( pMatrix );"<<endl;
+					cout<<"pMatrixCopy = new "<<pMatrix->getName()<<
+						"( pMatrix ); //copyConstructor"<<endl;
 					iMatrix3D * pMatrixCopy = copyMatrix( pMatrix );
 					
 					cout<<"Compare pMatrix with pMatrixCopy."<<endl;
 					iReturn = testCompareEqual( pMatrix, pMatrixCopy );
-					
+					//delete old matrix
 					delete pMatrix;
 					
 					pMatrix = pMatrixCopy;
@@ -1001,19 +985,19 @@ int testMatrix3DMethods( unsigned long &ulTestphase ){
 						if ( uiMaxDerivateIndexX != pDerivateMatrix->getMaxIndex( 0 ) ){
 							cerr<<"Error: The derivate matrix has as the maximum index \""<<
 								pDerivateMatrix->getMaxIndex( 0 )<<"\" in direction 0, but should be \""<<
-								uiMaxDerivateIndexX<<"\""<<endl;
+								uiMaxDerivateIndexX<<"\" ."<<endl;
 							iReturn++;
 						}
 						if ( uiMaxDerivateIndexY != pDerivateMatrix->getMaxIndex( 1 ) ){
 							cerr<<"Error: The derivate matrix has as the maximum index \""<<
 								pDerivateMatrix->getMaxIndex( 1 )<<"\" in direction 1, but should be \""<<
-								uiMaxDerivateIndexY<<"\""<<endl;
+								uiMaxDerivateIndexY<<"\" ."<<endl;
 							iReturn++;
 						}
 						if ( uiMaxDerivateIndexZ != pDerivateMatrix->getMaxIndex( 2 ) ){
 							cerr<<"Error: The derivate matrix has as the maximum index \""<<
 								pDerivateMatrix->getMaxIndex( 2 )<<"\" in direction 2, but should be \""<<
-								uiMaxDerivateIndexZ<<"\""<<endl;
+								uiMaxDerivateIndexZ<<"\" ."<<endl;
 							iReturn++;
 						}
 						
@@ -1043,7 +1027,7 @@ int testMatrix3DMethods( unsigned long &ulTestphase ){
 								}//end for index z
 							}//end for index y
 						}//end for index x
-	
+						//delete derivate matrix
 						delete pDerivateMatrix;
 					}else{
 						if ( ( 0 < uiMaxIndexX ) && ( 0 < uiMaxIndexY ) &&
@@ -1051,8 +1035,8 @@ int testMatrix3DMethods( unsigned long &ulTestphase ){
 							cerr<<"Error: No derivation matrix was returned."<<endl;
 							iReturn++;
 						}else{
-							cout<<"Correctly no derivation matrix created, because"<<
-								"one dimension has less than two indeses."<<endl;
+							cout<<"Correctly no derivation matrix created, because "<<
+								"one dimension has less than two index."<<endl;
 						}
 					}
 				}break;
@@ -1064,16 +1048,25 @@ int testMatrix3DMethods( unsigned long &ulTestphase ){
 						cerr<<"Error: A derivate matrix was returned for the "<<
 							"derivation in direction 3, which is not pssoble (matrix is 3 dimensional)."<<endl;
 						iReturn++;
+						//delete created derivate matrix
 						delete pDerivateMatrix;
 					}
 				}break;
 				case 5:{//create new matrix
+					cout<<"delete old matrix"<<endl;
 					delete pMatrix;
 					
-					uiMaxIndexX = rand() % 64;
-					uiMaxIndexY = rand() % 64;
+					uiMaxIndexX = rand() %
+						( 16 * (((unsigned int )log( MAX_ITERATION + 1 )) + 1) );
+					uiMaxIndexY = rand() %
+						( 16 * (((unsigned int )log( MAX_ITERATION + 1 )) + 1) );
 					uiMaxIndexZ = 3;
 					
+					cout<<endl<<"create "<<getActualClassName()<<
+						" matrix with maximum index: ("<<
+						" uiMaxIndexX="<<uiMaxIndexX<<
+						", uiMaxIndexY="<<uiMaxIndexY<<
+						", uiMaxIndexZ="<<uiMaxIndexZ<<" );"<<endl;
 					pMatrix = getActualClass( uiMaxIndexX, uiMaxIndexY, uiMaxIndexZ );
 					pMatrixConst = pMatrix;
 					
@@ -1094,46 +1087,24 @@ int testMatrix3DMethods( unsigned long &ulTestphase ){
 			iReturn++;
 		}
 		//check getName()
-		if ( getActualClassName() == pMatrixConst->getName() ){
-			cout<<"The matrix class name is correctly \""<<
-				getActualClassName()<<"\"."<<endl;
-		}else{
+		if ( getActualClassName() != pMatrixConst->getName() ){
 			cerr<<"Error: The matrix class name is \""<<
 				pMatrixConst->getName()<<"\", but should be \""<<
-				getActualClassName()<<"\""<<endl;
-			iReturn++;
-		}
-		//check getMaxIndex()
-		if ( uiMaxIndexX != pMatrixConst->getMaxIndex( 0 ) ){
-			cerr<<"Error: The matrix has as the maximum index \""<<
-				pMatrixConst->getMaxIndex( 0 )<<"\", but should be \""<<
-				uiMaxIndexX<<"\""<<endl;
-			iReturn++;
-		}
-		if ( uiMaxIndexY != pMatrixConst->getMaxIndex( 1 ) ){
-			cerr<<"Error: The matrix has as the maximum index \""<<
-				pMatrixConst->getMaxIndex( 1 )<<"\", but should be \""<<
-				uiMaxIndexY<<"\""<<endl;
-			iReturn++;
-		}
-		if ( uiMaxIndexZ != pMatrixConst->getMaxIndex( 2 ) ){
-			cerr<<"Error: The matrix has as the maximum index \""<<
-				pMatrixConst->getMaxIndex( 2 )<<"\", but should be \""<<
-				uiMaxIndexZ<<"\""<<endl;
+				getActualClassName()<<"\"."<<endl;
 			iReturn++;
 		}
 		//check getMinValue()
 		if ( pMatrixConst->getMinValue() < getMinValue( pMatrix ) ){
-			cerr<<"Error: The returned minimum value ("<<
-				pMatrixConst->getMinValue()<<") is lower as correct minimum value"<<
-				getMinValue( pMatrix )<<endl;
+			cerr<<"Error: The returned minimum value "<<
+				pMatrixConst->getMinValue()<<" is lower as correct minimum value "<<
+				getMinValue( pMatrix )<<" ."<<endl;
 			iReturn++;
 		}
 		//check getMaxValue()
 		if ( getMaxValue( pMatrix ) < pMatrixConst->getMaxValue() ){
-			cerr<<"Error: The returned maximum value ("<<
-				pMatrixConst->getMaxValue()<<") is bigger as correct maximum value"<<
-				getMaxValue( pMatrix )<<endl;
+			cerr<<"Error: The returned maximum value "<<
+				pMatrixConst->getMaxValue()<<" is bigger as correct maximum value "<<
+				getMaxValue( pMatrix )<<" ."<<endl;
 			iReturn++;
 		}
 		

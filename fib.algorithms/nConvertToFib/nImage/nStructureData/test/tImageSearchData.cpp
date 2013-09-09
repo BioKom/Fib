@@ -1,6 +1,3 @@
-
-//TODO check
-
 /**
  * @file tImageSearchData
  * file name: tImageSearchData.cpp
@@ -11,6 +8,7 @@
  * System: C++
  *
  * This test is for the class cImageSearchData.
+ *
  *
  * Copyright (C) @c GPL3 2013 Betti Oesterholz
  *
@@ -143,11 +141,6 @@ int main(int argc, char* argv[]){
 	
 	srand( time(NULL) );
 	
-	
-	cout<<endl<<"Running Test for the cImageStructure methods"<<endl;
-	cout<<      "============================================"<<endl;
-	cout<<      "============================================"<<endl;
-	
 	if ( 1 < argc ){
 		//two parameters given; read parameter iterators
 		MAX_ITERATION = atol( argv[ 1 ] );
@@ -155,23 +148,13 @@ int main(int argc, char* argv[]){
 			MAX_ITERATION = 1;
 		}
 	}
-	cout<<endl<<"Number of maximal iterators is "<<MAX_ITERATION<<endl;
-	
 	cout<<endl<<"Running Test for the cImageSearchData methods"<<endl;
 	cout<<      "============================================="<<endl;
 	
-	//test the cImageStructure methods
-	unsigned int iReturnTestCase = testMethodsRandom( ulTestphase );
+	cout<<endl<<"Number of maximal iterators is "<<MAX_ITERATION<<endl;
 	
-	
-	if ( iReturnTestCase == 0 ){
-	
-		cout<<endl<<endl<<"Test for cImageSearchData successfull: no errors occoured"<<endl;
-	}else{
-		cerr<<endl<<endl<<"Test for cImageSearchData failed: "<<
-			iReturnTestCase<<" errors occoured"<<endl;
-		iReturn += iReturnTestCase;
-	}
+	//test the cImageSearchData methods random
+	iReturn += testMethodsRandom( ulTestphase );
 	
 	if ( iReturn == 0 ){
 	
@@ -179,7 +162,6 @@ int main(int argc, char* argv[]){
 	}else{
 		cerr<<endl<<endl<<"Test failed: "<<iReturn<<" errors occoured"<<endl;
 	}
-
 	
 	return iReturn;
 }
@@ -200,7 +182,7 @@ cVectorPosition generateRandomPoint( unsigned int uiBorderX, unsigned int uiBord
 	double dValueY = ( uiBorderY != 0 ) ? ( rand() % uiBorderY ) : 0;
 	
 	if ( rand() % 4 == 0 ){
-		//add random after point part
+		//add random number on position after decimal point
 		dValueX += ((double)(rand() % 160 - 80)) / 81.0;
 		dValueY += ((double)(rand() % 160 - 80)) / 81.0;
 	}
@@ -260,8 +242,8 @@ pair< unsigned int, unsigned int > toPair(
 		const cVectorPosition & vecPoint ){
 	
 	return pair< unsigned int, unsigned int >(
-		roundToLongFib( vecPoint.getValue( 1 ) ),
-		roundToLongFib( vecPoint.getValue( 2 ) ) );
+		( ( 0.0 < vecPoint.getValue( 1 )) ? roundToLongFib( vecPoint.getValue( 1 ) ) : 0 ),
+		( ( 0.0 < vecPoint.getValue( 2 )) ? roundToLongFib( vecPoint.getValue( 2 ) ) : 0 ) );
 }
 
 
@@ -277,9 +259,7 @@ set< pair< unsigned int, unsigned int > > toPair(
 	for ( set< cVectorPosition >::const_iterator
 			itrPoint = setPoints.begin(); itrPoint != setPoints.end(); itrPoint++ ){
 		
-		setPointPairs.insert( pair< unsigned int, unsigned int >(
-			roundToLongFib( itrPoint->getValue( 1 ) ),
-			roundToLongFib( itrPoint->getValue( 2 ) ) ) );
+		setPointPairs.insert( toPair( *itrPoint ) );
 	}
 	return setPointPairs;
 }
@@ -351,7 +331,7 @@ bool checkPoint( const pair< long, long > & vecPointToCheck,
 /**
  * This method prints the given points to the given stream.
  *
- * @param streamToPrintTo the points to print the points to
+ * @param streamToPrintTo the stream to print the points to
  * @param setPoints the points to print
  */
 void printPoints( ostream & streamToPrintTo, set<cVectorPosition> setPoints ){
@@ -367,7 +347,7 @@ void printPoints( ostream & streamToPrintTo, set<cVectorPosition> setPoints ){
 /**
  * This method prints the given points to the given stream.
  *
- * @param streamToPrintTo the points to print the points to
+ * @param streamToPrintTo the stream to print the points to
  * @param setPoints the points to print
  */
 void printPoints( ostream & streamToPrintTo,
@@ -513,7 +493,7 @@ bool pointsEqual( const cVectorPosition & point1, const cVectorPosition & point2
 			return false;
 		}
 		
-	}
+	}//end for all point vector elements
 	return true;
 }
 
@@ -620,10 +600,10 @@ unsigned int checkSearchStructureValues(
 		setNotFoundPoints;
 	//delete overlapped points
 	for ( set< pair< unsigned int, unsigned int > >::const_iterator
-			itrOverlappedPoints = setOverlappedPoints.begin();
-			itrOverlappedPoints != setOverlappedPoints.end(); itrOverlappedPoints++ ){
+			itrOverlappedPoint = setOverlappedPoints.begin();
+			itrOverlappedPoint != setOverlappedPoints.end(); itrOverlappedPoint++ ){
 		
-		setNotFoundNotOverlappedPoints.erase( *itrOverlappedPoints );
+		setNotFoundNotOverlappedPoints.erase( *itrOverlappedPoint );
 	}
 	set< pair< unsigned int, unsigned int > >
 		setBorderPoints;
@@ -637,7 +617,7 @@ unsigned int checkSearchStructureValues(
 		pair< unsigned int, unsigned int > paActualPoint( 0, 0 );
 		paActualPoint.second = uiHeight;
 		for ( paActualPoint.first = 0;
-				paActualPoint.first < uiWidth; paActualPoint.first++ ){
+				paActualPoint.first <= uiWidth; paActualPoint.first++ ){
 			//border point
 			setBorderPoints.insert( paActualPoint );
 			//point not found
@@ -684,23 +664,23 @@ unsigned int checkSearchStructureValues(
 	}
 	//check not isIn() const
 	for ( set< pair< unsigned int, unsigned int > >::const_iterator
-			itrNotFoundPoints = setBorderPoints.begin();
-			itrNotFoundPoints != setBorderPoints.end(); itrNotFoundPoints++ ){
+			itrBorderPoint = setBorderPoints.begin();
+			itrBorderPoint != setBorderPoints.end(); itrBorderPoint++ ){
 		
-		if ( pImageSearchStrToTest->isIn( toVector( *itrNotFoundPoints ) ) ){
-			cerr<<"Error: The point ("<<itrNotFoundPoints->first<<", "<<
-				itrNotFoundPoints->second<<") is not in the image, but marked as in. "<<
+		if ( pImageSearchStrToTest->isIn( toVector( *itrBorderPoint ) ) ){
+			cerr<<"Error: The point ("<<itrBorderPoint->first<<", "<<
+				itrBorderPoint->second<<") is not in the image, but marked as in. "<<
 				"( isIn( const cVectorPosition ) )"<<endl;
 			uiErrors++;
 		}
 	}
 	for ( set< pair< unsigned int, unsigned int > >::const_iterator
-			itrNotFoundPoints = setBorderPoints.begin();
-			itrNotFoundPoints != setBorderPoints.end(); itrNotFoundPoints++ ){
+			itrBorderPoint = setBorderPoints.begin();
+			itrBorderPoint != setBorderPoints.end(); itrBorderPoint++ ){
 		
-		if ( pImageSearchStrToTest->isIn( *itrNotFoundPoints ) ){
-			cerr<<"Error: The point ("<<itrNotFoundPoints->first<<", "<<
-				itrNotFoundPoints->second<<") is not in the image, but marked as in. "<<
+		if ( pImageSearchStrToTest->isIn( *itrBorderPoint ) ){
+			cerr<<"Error: The point ("<<itrBorderPoint->first<<", "<<
+				itrBorderPoint->second<<") is not in the image, but marked as in. "<<
 				"( isIn( pair< unsigned int, unsigned int > ) )"<<endl;
 			uiErrors++;
 		}
@@ -787,7 +767,7 @@ unsigned int checkSearchStructureValues(
 		
 		if ( ! pImageSearchStrToTest->isOverlapped( toVector( *itrOverlappedPoints ) ) ){
 			cerr<<"Error: The point ("<<itrOverlappedPoints->first<<", "<<
-				itrOverlappedPoints->second<<") is found but not marked as found. "<<
+				itrOverlappedPoints->second<<") is overlapped but not marked as overlapped. "<<
 				"( isOverlapped( const cVectorPosition ) )"<<endl;
 			uiErrors++;
 		}
@@ -798,7 +778,7 @@ unsigned int checkSearchStructureValues(
 		
 		if ( pImageSearchStrToTest->isOverlapped( toVector( *itrNotOverlappedPoints ) ) ){
 			cerr<<"Error: The point ("<<itrNotOverlappedPoints->first<<", "<<
-				itrNotOverlappedPoints->second<<") is not found but marked as found. "<<
+				itrNotOverlappedPoints->second<<") is not overlapped but marked as overlapped. "<<
 				"( ! isOverlapped( const cVectorPosition ) )"<<endl;
 			uiErrors++;
 		}
@@ -811,7 +791,7 @@ unsigned int checkSearchStructureValues(
 		if ( ! pImageSearchStrToTest->isOverlapped( itrOverlappedPoints->first,
 				itrOverlappedPoints->second ) ){
 			cerr<<"Error: The point ("<<itrOverlappedPoints->first<<", "<<
-				itrOverlappedPoints->second<<") is found but not marked as found. "<<
+				itrOverlappedPoints->second<<") is overlapped but not marked as overlapped. "<<
 				"( isOverlapped( const unsigned long lX, const unsigned long lY ) )"<<endl;
 			uiErrors++;
 		}
@@ -823,7 +803,7 @@ unsigned int checkSearchStructureValues(
 		if ( pImageSearchStrToTest->isOverlapped( itrNotOverlappedPoints->first,
 				itrNotOverlappedPoints->second ) ){
 			cerr<<"Error: The point ("<<itrNotOverlappedPoints->first<<", "<<
-				itrNotOverlappedPoints->second<<") is not found but marked as found. "<<
+				itrNotOverlappedPoints->second<<") is not overlapped but marked as overlapped. "<<
 				"( ! isOverlapped( const unsigned long lX, const unsigned long lY ) )"<<endl;
 			uiErrors++;
 		}
@@ -835,7 +815,7 @@ unsigned int checkSearchStructureValues(
 		
 		if ( ! pImageSearchStrToTest->isOverlapped( *itrOverlappedPoints ) ){
 			cerr<<"Error: The point ("<<itrOverlappedPoints->first<<", "<<
-				itrOverlappedPoints->second<<") is found but not marked as found. "<<
+				itrOverlappedPoints->second<<") is overlapped but not marked as overlapped. "<<
 				"( isOverlapped( pair< unsigned int, unsigned int > ) )"<<endl;
 			uiErrors++;
 		}
@@ -846,7 +826,7 @@ unsigned int checkSearchStructureValues(
 		
 		if ( pImageSearchStrToTest->isOverlapped( *itrNotOverlappedPoints ) ){
 			cerr<<"Error: The point ("<<itrNotOverlappedPoints->first<<", "<<
-				itrNotOverlappedPoints->second<<") is not found but marked as found. "<<
+				itrNotOverlappedPoints->second<<") is not overlapped but marked as overlapped. "<<
 				"( ! isOverlapped( pair< unsigned int, unsigned int > ) )"<<endl;
 			uiErrors++;
 		}
@@ -970,6 +950,8 @@ unsigned int checkSearchStructureValues(
 			cerr<<"Error: in setFoundPointsStr = pImageSearchStrToTest->getFoundPoints();"<<endl;
 			cerr<<"returned points: ";
 			printPoints( cerr, setFoundPointsStr );
+			cerr<<endl<<"correct points: ";
+			printPoints( cerr, setFoundPoints );
 			uiErrors++;
 		}
 	}
@@ -978,9 +960,11 @@ unsigned int checkSearchStructureValues(
 			pImageSearchStrToTest->getFoundPointsAsPair();
 		
 		if ( comparePoints( setFoundPoints, setFoundPointsStr ) != 0 ){
-			cerr<<"Error: in setFoundPointsStr = pImageSearchStrToTest->getFoundPoints();"<<endl;
+			cerr<<"Error: in setFoundPointsStr = pImageSearchStrToTest->getFoundPointsAsPair();"<<endl;
 			cerr<<"returned points: ";
 			printPoints( cerr, setFoundPointsStr );
+			cerr<<endl<<"correct points: ";
+			printPoints( cerr, setFoundPoints );
 			uiErrors++;
 		}
 	}
@@ -992,6 +976,8 @@ unsigned int checkSearchStructureValues(
 			cerr<<"Error: in setNotFoundPointsStr = pImageSearchStrToTest->getNotFoundPoints();"<<endl;
 			cerr<<"returned points: ";
 			printPoints( cerr, setNotFoundPointsStr );
+			cerr<<endl<<"correct points: ";
+			printPoints( cerr, setNotFoundPoints );
 			uiErrors++;
 		}
 	}
@@ -1003,6 +989,8 @@ unsigned int checkSearchStructureValues(
 			cerr<<"Error: in setNotFoundPointsStr = pImageSearchStrToTest->getNotFoundPointsAsPair();"<<endl;
 			cerr<<"returned points: ";
 			printPoints( cerr, setNotFoundPointsStr );
+			cerr<<endl<<"correct points: ";
+			printPoints( cerr, setNotFoundPoints );
 			uiErrors++;
 		}
 	}
@@ -1015,6 +1003,8 @@ unsigned int checkSearchStructureValues(
 			cerr<<"Error: in setOverlappedPointsStr = pImageSearchStrToTest->getOverlappedPoints();"<<endl;
 			cerr<<"returned points: ";
 			printPoints( cerr, setOverlappedPointsStr );
+			cerr<<endl<<"correct points: ";
+			printPoints( cerr, setOverlappedPoints );
 			uiErrors++;
 		}
 	}
@@ -1023,9 +1013,11 @@ unsigned int checkSearchStructureValues(
 			pImageSearchStrToTest->getOverlappedPointsAsPair();
 		
 		if ( comparePoints( setOverlappedPoints, setOverlappedPointsStr ) != 0 ){
-			cerr<<"Error: in setOverlappedPointsStr = pImageSearchStrToTest->getOverlappedPoints();"<<endl;
+			cerr<<"Error: in setOverlappedPointsStr = pImageSearchStrToTest->getOverlappedPointsAsPair();"<<endl;
 			cerr<<"returned points: ";
 			printPoints( cerr, setOverlappedPointsStr );
+			cerr<<endl<<"correct points: ";
+			printPoints( cerr, setOverlappedPoints );
 			uiErrors++;
 		}
 	}
@@ -1037,6 +1029,8 @@ unsigned int checkSearchStructureValues(
 			cerr<<"Error: in setNotOverlappedPointsStr = pImageSearchStrToTest->getNotOverlappedPoints();"<<endl;
 			cerr<<"returned points: ";
 			printPoints( cerr, setNotOverlappedPointsStr );
+			cerr<<endl<<"correct points: ";
+			printPoints( cerr, setNotOverlappedPoints );
 			uiErrors++;
 		}
 	}
@@ -1048,6 +1042,8 @@ unsigned int checkSearchStructureValues(
 			cerr<<"Error: in setNotOverlappedPointsStr = pImageSearchStrToTest->getNotOverlappedPointsAsPair();"<<endl;
 			cerr<<"returned points: ";
 			printPoints( cerr, setNotOverlappedPointsStr );
+			cerr<<endl<<"correct points: ";
+			printPoints( cerr, setNotOverlappedPoints );
 			uiErrors++;
 		}
 	}
@@ -1266,7 +1262,7 @@ unsigned int checkSearchStructureValues(
 							paPoint.first<<", "<<paPoint.second<<") )"<<endl;
 						uiErrors++;
 					}else if ( bPointFound ){
-						//point was not found but returned as found
+						//point was found but returned as not found
 						cerr<<"Error: The point ("<<itrPoint->first<<","<<itrPoint->second<<
 							") is found, but was given back as not found neighbour of point ("<<
 							paPoint.first<<", "<<paPoint.second<<") )"<<endl;
@@ -1315,7 +1311,7 @@ unsigned int checkSearchStructureValues(
 							paPoint.first<<", "<<paPoint.second<<") )"<<endl;
 						uiErrors++;
 					}else if ( bPointFound ){
-						//point was not found but returned as found
+						//point was found but returned as not found
 						cerr<<"Error: The pair point ("<<itrPoint->first<<","<<itrPoint->second<<
 							") is found, but was given back as not found neighbour of point ("<<
 							paPoint.first<<", "<<paPoint.second<<") )"<<endl;
@@ -1464,7 +1460,7 @@ unsigned int checkSearchStructureValues(
 							paPoint.first<<", "<<paPoint.second<<") )"<<endl;
 						uiErrors++;
 					}else if ( bPointOverlapped ){
-						//point was not overlapped but returned as overlapped
+						//point was overlapped but returned as not overlapped
 						cerr<<"Error: The point ("<<itrPoint->first<<","<<itrPoint->second<<
 							") is overlapped, but was given back as not overlapped neighbour of point ("<<
 							paPoint.first<<", "<<paPoint.second<<") )"<<endl;
@@ -1513,7 +1509,7 @@ unsigned int checkSearchStructureValues(
 							paPoint.first<<", "<<paPoint.second<<") )"<<endl;
 						uiErrors++;
 					}else if ( bPointOverlapped ){
-						//point was not overlapped but returned as overlapped
+						//point was overlapped but returned as not overlapped
 						cerr<<"Error: The pair point ("<<itrPoint->first<<","<<itrPoint->second<<
 							") is overlapped, but was given back as not overlapped neighbour of point ("<<
 							paPoint.first<<", "<<paPoint.second<<") )"<<endl;
@@ -1577,9 +1573,8 @@ unsigned int checkSearchStructureValues(
 							paPoint.first<<", "<<paPoint.second<<") )"<<endl;
 						uiErrors++;
 					}else if ( ! bPointNotFoundAndNotOverlapped ){
-						//point was not overlapped but returned as overlapped
 						cerr<<"Error: The point ("<<itrPoint->first<<","<<itrPoint->second<<
-							") is overlapped, but was given back as not found and not overlapped neighbour of point ("<<
+							") is found or overlapped, but was given back as not found and not overlapped neighbour of point ("<<
 							paPoint.first<<", "<<paPoint.second<<") )"<<endl;
 						uiErrors++;
 					}
@@ -1640,7 +1635,7 @@ unsigned int checkSearchStructureValues(
 					}else if ( ! bPointNotFoundAndNotOverlapped ){
 						//point was not overlapped but returned as overlapped
 						cerr<<"Error: The pair point ("<<itrPoint->first<<","<<itrPoint->second<<
-							") is overlapped, but was given back as not found and not overlapped neighbour of point ("<<
+							") is found or overlapped, but was given back as not found and not overlapped neighbour of point ("<<
 							paPoint.first<<", "<<paPoint.second<<") )"<<endl;
 						uiErrors++;
 					}
@@ -1730,6 +1725,7 @@ unsigned int checkSearchStructureValues(
  * 	- bool registerOverlapped( const pair< unsigned int, unsigned int> & overlappedPoint, const bool bOverlapped=true );
  * 	- unsigned long registerOverlapped( const set< pair< unsigned int, unsigned int> > & setOverlappedPoints, const bool bOverlapped=true );
  *
+ * It uses the function: @see checkSearchStructureValues()
  * @param ulTestphase a reference to the number for the test phase
  * @return the number of errors occured in the test
  */
@@ -1769,13 +1765,13 @@ int testMethodsRandom( unsigned long &ulTestphase ){
 		}
 	}
 	
-	const unsigned long ulIntervallRarlyMethods =
+	const unsigned long ulIntervalRarlyMethods =
 		MAX_ITERATION / log( ((double)(MAX_ITERATION)) ) + 2;
 	for ( unsigned long uiActualIteration = 0;
 			uiActualIteration < MAX_ITERATION; uiActualIteration++ ){
 		cout<<endl;
 		//call random change method
-		const unsigned int uiChangeType = rand() % ulIntervallRarlyMethods;
+		const unsigned int uiChangeType = rand() % ulIntervalRarlyMethods;
 		
 		if ( uiChangeType == 0 ){
 			//call rarely
@@ -1922,7 +1918,7 @@ int testMethodsRandom( unsigned long &ulTestphase ){
 					
 					if ( bPointRegistered != checkPoint( vecGeneratedPoint, uiWidth, uiHeight ) ){
 						cerr<<"Error: The point was "<<(bPointRegistered?"":"not ")<<
-							"registered as found, but should "<<(bPointRegistered?"not ":"")<<"be."<<endl;
+							"registered as not found, but should "<<(bPointRegistered?"not ":"")<<"be."<<endl;
 						iReturn++;
 					}
 					setFoundPoints.erase( toPair( vecGeneratedPoint ) );
@@ -1938,7 +1934,7 @@ int testMethodsRandom( unsigned long &ulTestphase ){
 					
 					if ( bPointRegistered != checkPoint( vecChoosenPoint, uiWidth, uiHeight ) ){
 						cerr<<"Error: The point was "<<(bPointRegistered?"":"not ")<<
-							"registered as found, but should "<<(bPointRegistered?"not ":"")<<"be."<<endl;
+							"registered as not found, but should "<<(bPointRegistered?"not ":"")<<"be."<<endl;
 						iReturn++;
 					}
 					setFoundPoints.erase( toPair( vecChoosenPoint ) );
@@ -1980,7 +1976,7 @@ int testMethodsRandom( unsigned long &ulTestphase ){
 						setFoundPoints.insert( vecGeneratedPointPair );
 					}
 				}break;
-				case 6:{//bool registerFound( const pair< unsigned int, unsigned int> & foundPoint, const bool bFound=true );
+				case 6:{//bool registerFound( const pair< unsigned int, unsigned int> & foundPoint, const bool bFound=false );
 					const pair< unsigned int, unsigned int> vecGeneratedPointPair =
 						generateRandomPointPair( uiWidth + 2, uiHeight + 2 );
 					cout<<"pImageSearchData->registerFound( vecGeneratedPointPair=("<<
@@ -1991,12 +1987,12 @@ int testMethodsRandom( unsigned long &ulTestphase ){
 					
 					if ( bPointRegistered != checkPoint( vecGeneratedPointPair, uiWidth, uiHeight ) ){
 						cerr<<"Error: The point was "<<(bPointRegistered?"":"not ")<<
-							"registered as found, but should "<<(bPointRegistered?"not ":"")<<"be."<<endl;
+							"registered as not found, but should "<<(bPointRegistered?"not ":"")<<"be."<<endl;
 						iReturn++;
 					}
 					setFoundPoints.erase( vecGeneratedPointPair );
 				}break;
-				case 7:{//bool registerFound( const pair< unsigned int, unsigned int> & foundPoint, const bool bFound=true );
+				case 7:{//bool registerFound( const pair< unsigned int, unsigned int> & foundPoint, const bool bFound=false );
 					const pair< unsigned int, unsigned int> vecChoosenPoint =
 						chooseRandomPoint( setFoundPoints );
 					cout<<"pImageSearchData->registerFound( vecChoosenPoint=("<<
@@ -2007,7 +2003,7 @@ int testMethodsRandom( unsigned long &ulTestphase ){
 					
 					if ( bPointRegistered != checkPoint( vecChoosenPoint, uiWidth, uiHeight ) ){
 						cerr<<"Error: The point was "<<(bPointRegistered?"":"not ")<<
-							"registered as found, but should "<<(bPointRegistered?"not ":"")<<"be."<<endl;
+							"registered as not found, but should "<<(bPointRegistered?"not ":"")<<"be."<<endl;
 						iReturn++;
 					}
 					setFoundPoints.erase( vecChoosenPoint );
@@ -2015,7 +2011,7 @@ int testMethodsRandom( unsigned long &ulTestphase ){
 				
 				case 8:{//bool registerFound( const set<cVectorPosition> & setFoundPoints );
 					set< cVectorPosition > setGeneratedPoints;
-					unsigned int uiNumberOfPointsToGenerate = rand() %
+					const unsigned int uiNumberOfPointsToGenerate = rand() %
 						( uiWidth + uiHeight + 1 );
 					unsigned int uiValidPoints = 0;
 					cout<<"pImageSearchData->registerFound( setGeneratedPoints={";
@@ -2038,18 +2034,18 @@ int testMethodsRandom( unsigned long &ulTestphase ){
 						}
 					}
 					cout<<"} );"<<endl;
-					const unsigned int uiPointRegistered =
+					const unsigned int uiPointsRegistered =
 						pImageSearchData->registerFound( setGeneratedPoints );
 					
-					if ( uiPointRegistered != uiValidPoints ){
-						cerr<<"Error: There where "<<uiPointRegistered<<" points "<<
+					if ( uiPointsRegistered != uiValidPoints ){
+						cerr<<"Error: There were "<<uiPointsRegistered<<" points "<<
 							"registered as found, but it should be "<<uiValidPoints<<" ."<<endl;
 						iReturn++;
 					}
 				}break;
 				case 9:{//bool registerFound( const set<cVectorPosition> & setFoundPoints, true );
 					set< cVectorPosition > setGeneratedPoints;
-					unsigned int uiNumberOfPointsToGenerate = rand() %
+					const unsigned int uiNumberOfPointsToGenerate = rand() %
 						( uiWidth + uiHeight + 1 );
 					unsigned int uiValidPoints = 0;
 					cout<<"pImageSearchData->registerFound( setGeneratedPoints={";
@@ -2072,18 +2068,18 @@ int testMethodsRandom( unsigned long &ulTestphase ){
 						}
 					}
 					cout<<"}, true );"<<endl;
-					const unsigned int uiPointRegistered =
+					const unsigned int uiPointsRegistered =
 						pImageSearchData->registerFound( setGeneratedPoints, true );
 					
-					if ( uiPointRegistered != uiValidPoints ){
-						cerr<<"Error: There where "<<uiPointRegistered<<" points "<<
+					if ( uiPointsRegistered != uiValidPoints ){
+						cerr<<"Error: There were "<<uiPointsRegistered<<" points "<<
 							"registered as found, but it should be "<<uiValidPoints<<" ."<<endl;
 						iReturn++;
 					}
 				}break;
 				case 10:{//bool registerFound( const set<cVectorPosition> & setFoundPoints, false );
 					set< cVectorPosition > setGeneratedPoints;
-					unsigned int uiNumberOfPointsToGenerate = rand() %
+					const unsigned int uiNumberOfPointsToGenerate = rand() %
 						( uiWidth + uiHeight + 1 );
 					unsigned int uiValidPoints = 0;
 					cout<<"pImageSearchData->registerFound( setGeneratedPoints={";
@@ -2106,11 +2102,11 @@ int testMethodsRandom( unsigned long &ulTestphase ){
 						}
 					}
 					cout<<"}, false );"<<endl;
-					const unsigned int uiPointRegistered =
+					const unsigned int uiPointsRegistered =
 						pImageSearchData->registerFound( setGeneratedPoints, false );
 					
-					if ( uiPointRegistered != uiValidPoints ){
-						cerr<<"Error: There where "<<uiPointRegistered<<" points "<<
+					if ( uiPointsRegistered != uiValidPoints ){
+						cerr<<"Error: There were "<<uiPointsRegistered<<" points "<<
 							"registered as not found, but it should be "<<uiValidPoints<<" ."<<endl;
 						iReturn++;
 					}
@@ -2118,7 +2114,7 @@ int testMethodsRandom( unsigned long &ulTestphase ){
 				case 11:{//bool registerFound( const set<cVectorPosition> & setFoundPoints, false );
 					set< cVectorPosition > setChoosenPoints;
 					cout<<"pImageSearchData->registerFound( setChoosenPoints={";
-					unsigned int uiNumberOfPointsToGenerate = rand() %
+					const unsigned int uiNumberOfPointsToGenerate = rand() %
 						( uiWidth + uiHeight + 1 );
 					unsigned int uiValidPoints = 0;
 					for ( unsigned long uiIteration = 0;
@@ -2141,11 +2137,11 @@ int testMethodsRandom( unsigned long &ulTestphase ){
 						}
 					}
 					cout<<"}, false );"<<endl;
-					const unsigned int uiPointRegistered =
+					const unsigned int uiPointsRegistered =
 						pImageSearchData->registerFound( setChoosenPoints, false );
 					
-					if ( uiPointRegistered != uiValidPoints ){
-						cerr<<"Error: There where "<<uiPointRegistered<<" points "<<
+					if ( uiPointsRegistered != uiValidPoints ){
+						cerr<<"Error: There were "<<uiPointsRegistered<<" points "<<
 							"registered as not found, but it should be "<<uiValidPoints<<" ."<<endl;
 						iReturn++;
 					}
@@ -2154,7 +2150,7 @@ int testMethodsRandom( unsigned long &ulTestphase ){
 				
 				case 12:{//bool registerFound( const cImageStructure * pImageStrFoundPoints );
 					set< cVectorPosition > setGeneratedPoints;
-					unsigned int uiNumberOfPointsToGenerate = rand() %
+					const unsigned int uiNumberOfPointsToGenerate = rand() %
 						( uiWidth + uiHeight + 1 );
 					unsigned int uiValidPoints = 0;
 					cout<<"pImageSearchData->registerFound( &imageStrFoundPoints={";
@@ -2168,7 +2164,7 @@ int testMethodsRandom( unsigned long &ulTestphase ){
 						if ( ! paPointInsert.second ){
 							continue;
 						}
-					
+						
 						cout<<"("<< vecGeneratedPoint.getValue( 1 )<<", "<<
 							vecGeneratedPoint.getValue( 2 )<<"); ";
 						if ( checkPoint( vecGeneratedPoint, uiWidth, uiHeight ) ){
@@ -2184,20 +2180,20 @@ int testMethodsRandom( unsigned long &ulTestphase ){
 					imageStrFoundPoints.setStructureBorderPoints( setStructureBorderPoints );
 					set< cVectorPosition > setStructureNeighbourPoints =
 						generateRandomPoints( uiWidth + uiHeight + 1, uiWidth + 2, uiHeight + 2 );
-					imageStrFoundPoints.setStructureBorderPoints( setStructureNeighbourPoints );
+					imageStrFoundPoints.setStructureNeighbourPoints( setStructureNeighbourPoints );
 					
-					const unsigned int uiPointRegistered =
+					const unsigned int uiPointsRegistered =
 						pImageSearchData->registerFound( &imageStrFoundPoints );
 					
-					if ( uiPointRegistered != uiValidPoints ){
-						cerr<<"Error: There where "<<uiPointRegistered<<" points "<<
+					if ( uiPointsRegistered != uiValidPoints ){
+						cerr<<"Error: There were "<<uiPointsRegistered<<" points "<<
 							"registered as found, but it should be "<<uiValidPoints<<" ."<<endl;
 						iReturn++;
 					}
 				}break;
 				case 13:{//bool registerFound( const cImageStructure * pImageStrFoundPoints, true );
 					set< cVectorPosition > setGeneratedPoints;
-					unsigned int uiNumberOfPointsToGenerate = rand() %
+					const unsigned int uiNumberOfPointsToGenerate = rand() %
 						( uiWidth + uiHeight + 1 );
 					unsigned int uiValidPoints = 0;
 					cout<<"pImageSearchData->registerFound( &imageStrFoundPoints={";
@@ -2227,20 +2223,20 @@ int testMethodsRandom( unsigned long &ulTestphase ){
 					imageStrFoundPoints.setStructureBorderPoints( setStructureBorderPoints );
 					set< cVectorPosition > setStructureNeighbourPoints =
 						generateRandomPoints( uiWidth + uiHeight + 1, uiWidth + 2, uiHeight + 2 );
-					imageStrFoundPoints.setStructureBorderPoints( setStructureNeighbourPoints );
+					imageStrFoundPoints.setStructureNeighbourPoints( setStructureNeighbourPoints );
 					
-					const unsigned int uiPointRegistered =
+					const unsigned int uiPointsRegistered =
 						pImageSearchData->registerFound( &imageStrFoundPoints, true );
 					
-					if ( uiPointRegistered != uiValidPoints ){
-						cerr<<"Error: There where "<<uiPointRegistered<<" points "<<
+					if ( uiPointsRegistered != uiValidPoints ){
+						cerr<<"Error: There were "<<uiPointsRegistered<<" points "<<
 							"registered as found, but it should be "<<uiValidPoints<<" ."<<endl;
 						iReturn++;
 					}
 				}break;
 				case 14:{//bool registerFound( const cImageStructure * pImageStrFoundPoints, false );
 					set< cVectorPosition > setGeneratedPoints;
-					unsigned int uiNumberOfPointsToGenerate = rand() %
+					const unsigned int uiNumberOfPointsToGenerate = rand() %
 						( uiWidth + uiHeight + 1 );
 					unsigned int uiValidPoints = 0;
 					cout<<"pImageSearchData->registerFound( &imageStrFoundPoints={";
@@ -2270,13 +2266,13 @@ int testMethodsRandom( unsigned long &ulTestphase ){
 					imageStrFoundPoints.setStructureBorderPoints( setStructureBorderPoints );
 					set< cVectorPosition > setStructureNeighbourPoints =
 						generateRandomPoints( uiWidth + uiHeight + 1, uiWidth + 2, uiHeight + 2 );
-					imageStrFoundPoints.setStructureBorderPoints( setStructureNeighbourPoints );
+					imageStrFoundPoints.setStructureNeighbourPoints( setStructureNeighbourPoints );
 					
-					const unsigned int uiPointRegistered =
+					const unsigned int uiPointsRegistered =
 						pImageSearchData->registerFound( &imageStrFoundPoints, false );
 					
-					if ( uiPointRegistered != uiValidPoints ){
-						cerr<<"Error: There where "<<uiPointRegistered<<" points "<<
+					if ( uiPointsRegistered != uiValidPoints ){
+						cerr<<"Error: There were "<<uiPointsRegistered<<" points "<<
 							"registered as not found, but it should be "<<uiValidPoints<<" ."<<endl;
 						iReturn++;
 					}
@@ -2284,7 +2280,7 @@ int testMethodsRandom( unsigned long &ulTestphase ){
 				case 15:{//bool registerFound( const cImageStructure * pImageStrFoundPoints, false );
 					set< cVectorPosition > setChoosenPoints;
 					cout<<"pImageSearchData->registerFound( &imageStrFoundPoints={";
-					unsigned int uiNumberOfPointsToGenerate = rand() %
+					const unsigned int uiNumberOfPointsToGenerate = rand() %
 						( uiWidth + uiHeight + 1 );
 					unsigned int uiValidPoints = 0;
 					for ( unsigned long uiIteration = 0;
@@ -2314,13 +2310,13 @@ int testMethodsRandom( unsigned long &ulTestphase ){
 					imageStrFoundPoints.setStructureBorderPoints( setStructureBorderPoints );
 					set< cVectorPosition > setStructureNeighbourPoints =
 						generateRandomPoints( uiWidth + uiHeight + 1, uiWidth + 2, uiHeight + 2 );
-					imageStrFoundPoints.setStructureBorderPoints( setStructureNeighbourPoints );
+					imageStrFoundPoints.setStructureNeighbourPoints( setStructureNeighbourPoints );
 					
-					const unsigned int uiPointRegistered =
+					const unsigned int uiPointsRegistered =
 						pImageSearchData->registerFound( &imageStrFoundPoints, false );
 					
-					if ( uiPointRegistered != uiValidPoints ){
-						cerr<<"Error: There where "<<uiPointRegistered<<" points "<<
+					if ( uiPointsRegistered != uiValidPoints ){
+						cerr<<"Error: There were "<<uiPointsRegistered<<" points "<<
 							"registered as not found, but it should be "<<uiValidPoints<<" ."<<endl;
 						iReturn++;
 					}
@@ -2329,7 +2325,7 @@ int testMethodsRandom( unsigned long &ulTestphase ){
 				
 				case 16:{//bool registerFound( const set< pair< unsigned int, unsigned int> > & setFoundPoints );
 					set< pair< unsigned int, unsigned int> > setGeneratedPoints;
-					unsigned int uiNumberOfPointsToGenerate = rand() %
+					const unsigned int uiNumberOfPointsToGenerate = rand() %
 						( uiWidth + uiHeight + 1 );
 					unsigned int uiValidPoints = 0;
 					cout<<"pImageSearchData->registerFound( setGeneratedPointsPair={";
@@ -2352,18 +2348,18 @@ int testMethodsRandom( unsigned long &ulTestphase ){
 						}
 					}
 					cout<<"} );"<<endl;
-					const unsigned int uiPointRegistered =
+					const unsigned int uiPointsRegistered =
 						pImageSearchData->registerFound( setGeneratedPoints );
 					
-					if ( uiPointRegistered != uiValidPoints ){
-						cerr<<"Error: There where "<<uiPointRegistered<<" points "<<
+					if ( uiPointsRegistered != uiValidPoints ){
+						cerr<<"Error: There were "<<uiPointsRegistered<<" points "<<
 							"registered as found, but it should be "<<uiValidPoints<<" ."<<endl;
 						iReturn++;
 					}
 				}break;
 				case 17:{//bool registerFound( const set< pair< unsigned int, unsigned int> > & setFoundPoints, true );
 					set< pair< unsigned int, unsigned int> > setGeneratedPoints;
-					unsigned int uiNumberOfPointsToGenerate = rand() %
+					const unsigned int uiNumberOfPointsToGenerate = rand() %
 						( uiWidth + uiHeight + 1 );
 					unsigned int uiValidPoints = 0;
 					cout<<"pImageSearchData->registerFound( setGeneratedPointsPair={";
@@ -2386,18 +2382,18 @@ int testMethodsRandom( unsigned long &ulTestphase ){
 						}
 					}
 					cout<<"}, true );"<<endl;
-					const unsigned int uiPointRegistered =
+					const unsigned int uiPointsRegistered =
 						pImageSearchData->registerFound( setGeneratedPoints, true );
 					
-					if ( uiPointRegistered != uiValidPoints ){
-						cerr<<"Error: There where "<<uiPointRegistered<<" points "<<
+					if ( uiPointsRegistered != uiValidPoints ){
+						cerr<<"Error: There were "<<uiPointsRegistered<<" points "<<
 							"registered as found, but it should be "<<uiValidPoints<<" ."<<endl;
 						iReturn++;
 					}
 				}break;
 				case 18:{//bool registerFound( const set< pair< unsigned int, unsigned int> > & setFoundPoints, false );
 					set< pair< unsigned int, unsigned int> > setGeneratedPoints;
-					unsigned int uiNumberOfPointsToGenerate = rand() %
+					const unsigned int uiNumberOfPointsToGenerate = rand() %
 						( uiWidth + uiHeight + 1 );
 					unsigned int uiValidPoints = 0;
 					cout<<"pImageSearchData->registerFound( setGeneratedPointsPair={";
@@ -2420,11 +2416,11 @@ int testMethodsRandom( unsigned long &ulTestphase ){
 						}
 					}
 					cout<<"}, false );"<<endl;
-					const unsigned int uiPointRegistered =
+					const unsigned int uiPointsRegistered =
 						pImageSearchData->registerFound( setGeneratedPoints, false );
 					
-					if ( uiPointRegistered != uiValidPoints ){
-						cerr<<"Error: There where "<<uiPointRegistered<<" points "<<
+					if ( uiPointsRegistered != uiValidPoints ){
+						cerr<<"Error: There were "<<uiPointsRegistered<<" points "<<
 							"registered as not found, but it should be "<<uiValidPoints<<" ."<<endl;
 						iReturn++;
 					}
@@ -2432,7 +2428,7 @@ int testMethodsRandom( unsigned long &ulTestphase ){
 				case 19:{//bool registerFound( const set< pair< unsigned int, unsigned int> > & setFoundPoints, false );
 					set< pair< unsigned int, unsigned int> > setChoosenPoints;
 					cout<<"pImageSearchData->registerFound( setChoosenPointsPair={";
-					unsigned int uiNumberOfPointsToGenerate = rand() %
+					const unsigned int uiNumberOfPointsToGenerate = rand() %
 						( uiWidth + uiHeight + 1 );
 					unsigned int uiValidPoints = 0;
 					for ( unsigned long uiIteration = 0;
@@ -2445,7 +2441,6 @@ int testMethodsRandom( unsigned long &ulTestphase ){
 						if ( ! paPointInsert.second ){
 							continue;
 						}
-					
 						cout<<"("<< vecChoosenPoint.first<<", "<<
 							vecChoosenPoint.second<<"); ";
 						
@@ -2455,16 +2450,15 @@ int testMethodsRandom( unsigned long &ulTestphase ){
 						}
 					}
 					cout<<"}, false );"<<endl;
-					const unsigned int uiPointRegistered =
+					const unsigned int uiPointsRegistered =
 						pImageSearchData->registerFound( setChoosenPoints, false );
 					
-					if ( uiPointRegistered != uiValidPoints ){
-						cerr<<"Error: There where "<<uiPointRegistered<<" points "<<
+					if ( uiPointsRegistered != uiValidPoints ){
+						cerr<<"Error: There were "<<uiPointsRegistered<<" points "<<
 							"registered as not found, but it should be "<<uiValidPoints<<" ."<<endl;
 						iReturn++;
 					}
 				}break;
-				
 				
 				
 				
@@ -2515,7 +2509,7 @@ int testMethodsRandom( unsigned long &ulTestphase ){
 					
 					if ( bPointRegistered != checkPoint( vecGeneratedPoint, uiWidth, uiHeight ) ){
 						cerr<<"Error: The point was "<<(bPointRegistered?"":"not ")<<
-							"registered as overlapped, but should "<<(bPointRegistered?"not ":"")<<"be."<<endl;
+							"registered as not overlapped, but should "<<(bPointRegistered?"not ":"")<<"be."<<endl;
 						iReturn++;
 					}
 					setOverlappedPoints.erase( toPair( vecGeneratedPoint ) );
@@ -2531,7 +2525,7 @@ int testMethodsRandom( unsigned long &ulTestphase ){
 					
 					if ( bPointRegistered != checkPoint( vecChoosenPoint, uiWidth, uiHeight ) ){
 						cerr<<"Error: The point was "<<(bPointRegistered?"":"not ")<<
-							"registered as overlapped, but should "<<(bPointRegistered?"not ":"")<<"be."<<endl;
+							"registered as not overlapped, but should "<<(bPointRegistered?"not ":"")<<"be."<<endl;
 						iReturn++;
 					}
 					setOverlappedPoints.erase( toPair( vecChoosenPoint ) );
@@ -2573,7 +2567,7 @@ int testMethodsRandom( unsigned long &ulTestphase ){
 						setOverlappedPoints.insert( vecGeneratedPointPair );
 					}
 				}break;
-				case 26:{//bool registerOverlapped( const pair< unsigned int, unsigned int> & overlappedPoint, const bool bOverlapped=true );
+				case 26:{//bool registerOverlapped( const pair< unsigned int, unsigned int> & overlappedPoint, false );
 					const pair< unsigned int, unsigned int> vecGeneratedPointPair =
 						generateRandomPointPair( uiWidth + 2, uiHeight + 2 );
 					cout<<"pImageSearchData->registerOverlapped( vecGeneratedPointPair=("<<
@@ -2584,12 +2578,12 @@ int testMethodsRandom( unsigned long &ulTestphase ){
 					
 					if ( bPointRegistered != checkPoint( vecGeneratedPointPair, uiWidth, uiHeight ) ){
 						cerr<<"Error: The point was "<<(bPointRegistered?"":"not ")<<
-							"registered as overlapped, but should "<<(bPointRegistered?"not ":"")<<"be."<<endl;
+							"registered as not overlapped, but should "<<(bPointRegistered?"not ":"")<<"be."<<endl;
 						iReturn++;
 					}
 					setOverlappedPoints.erase( vecGeneratedPointPair );
 				}break;
-				case 27:{//bool registerOverlapped( const pair< unsigned int, unsigned int> & overlappedPoint, const bool bOverlapped=true );
+				case 27:{//bool registerOverlapped( const pair< unsigned int, unsigned int> & overlappedPoint, false );
 					const pair< unsigned int, unsigned int> vecChoosenPoint =
 						chooseRandomPoint( setOverlappedPoints );
 					cout<<"pImageSearchData->registerOverlapped( vecChoosenPoint=("<<
@@ -2600,7 +2594,7 @@ int testMethodsRandom( unsigned long &ulTestphase ){
 					
 					if ( bPointRegistered != checkPoint( vecChoosenPoint, uiWidth, uiHeight ) ){
 						cerr<<"Error: The point was "<<(bPointRegistered?"":"not ")<<
-							"registered as overlapped, but should "<<(bPointRegistered?"not ":"")<<"be."<<endl;
+							"registered as not overlapped, but should "<<(bPointRegistered?"not ":"")<<"be."<<endl;
 						iReturn++;
 					}
 					setOverlappedPoints.erase( vecChoosenPoint );
@@ -2631,11 +2625,11 @@ int testMethodsRandom( unsigned long &ulTestphase ){
 						}
 					}
 					cout<<"} );"<<endl;
-					const unsigned int uiPointRegistered =
+					const unsigned int uiPointsRegistered =
 						pImageSearchData->registerOverlapped( setGeneratedPoints );
 					
-					if ( uiPointRegistered != uiValidPoints ){
-						cerr<<"Error: There where "<<uiPointRegistered<<" points "<<
+					if ( uiPointsRegistered != uiValidPoints ){
+						cerr<<"Error: There were "<<uiPointsRegistered<<" points "<<
 							"registered as overlapped, but it should be "<<uiValidPoints<<" ."<<endl;
 						iReturn++;
 					}
@@ -2665,11 +2659,11 @@ int testMethodsRandom( unsigned long &ulTestphase ){
 						}
 					}
 					cout<<"}, true );"<<endl;
-					const unsigned int uiPointRegistered =
+					const unsigned int uiPointsRegistered =
 						pImageSearchData->registerOverlapped( setGeneratedPoints, true );
 					
-					if ( uiPointRegistered != uiValidPoints ){
-						cerr<<"Error: There where "<<uiPointRegistered<<" points "<<
+					if ( uiPointsRegistered != uiValidPoints ){
+						cerr<<"Error: There were "<<uiPointsRegistered<<" points "<<
 							"registered as overlapped, but it should be "<<uiValidPoints<<" ."<<endl;
 						iReturn++;
 					}
@@ -2699,11 +2693,11 @@ int testMethodsRandom( unsigned long &ulTestphase ){
 						}
 					}
 					cout<<"}, false );"<<endl;
-					const unsigned int uiPointRegistered =
+					const unsigned int uiPointsRegistered =
 						pImageSearchData->registerOverlapped( setGeneratedPoints, false );
 					
-					if ( uiPointRegistered != uiValidPoints ){
-						cerr<<"Error: There where "<<uiPointRegistered<<" points "<<
+					if ( uiPointsRegistered != uiValidPoints ){
+						cerr<<"Error: There were "<<uiPointsRegistered<<" points "<<
 							"registered as not overlapped, but it should be "<<uiValidPoints<<" ."<<endl;
 						iReturn++;
 					}
@@ -2734,11 +2728,11 @@ int testMethodsRandom( unsigned long &ulTestphase ){
 						}
 					}
 					cout<<"}, false );"<<endl;
-					const unsigned int uiPointRegistered =
+					const unsigned int uiPointsRegistered =
 						pImageSearchData->registerOverlapped( setChoosenPoints, false );
 					
-					if ( uiPointRegistered != uiValidPoints ){
-						cerr<<"Error: There where "<<uiPointRegistered<<" points "<<
+					if ( uiPointsRegistered != uiValidPoints ){
+						cerr<<"Error: There were "<<uiPointsRegistered<<" points "<<
 							"registered as not overlapped, but it should be "<<uiValidPoints<<" ."<<endl;
 						iReturn++;
 					}
@@ -2777,13 +2771,13 @@ int testMethodsRandom( unsigned long &ulTestphase ){
 					imageStrOverlappedPoints.setStructureBorderPoints( setStructureBorderPoints );
 					set< cVectorPosition > setStructureNeighbourPoints =
 						generateRandomPoints( uiWidth + uiHeight + 1, uiWidth + 2, uiHeight + 2 );
-					imageStrOverlappedPoints.setStructureBorderPoints( setStructureNeighbourPoints );
+					imageStrOverlappedPoints.setStructureNeighbourPoints( setStructureNeighbourPoints );
 					
-					const unsigned int uiPointRegistered =
+					const unsigned int uiPointsRegistered =
 						pImageSearchData->registerOverlapped( &imageStrOverlappedPoints );
 					
-					if ( uiPointRegistered != uiValidPoints ){
-						cerr<<"Error: There where "<<uiPointRegistered<<" points "<<
+					if ( uiPointsRegistered != uiValidPoints ){
+						cerr<<"Error: There were "<<uiPointsRegistered<<" points "<<
 							"registered as overlapped, but it should be "<<uiValidPoints<<" ."<<endl;
 						iReturn++;
 					}
@@ -2820,13 +2814,13 @@ int testMethodsRandom( unsigned long &ulTestphase ){
 					imageStrOverlappedPoints.setStructureBorderPoints( setStructureBorderPoints );
 					set< cVectorPosition > setStructureNeighbourPoints =
 						generateRandomPoints( uiWidth + uiHeight + 1, uiWidth + 2, uiHeight + 2 );
-					imageStrOverlappedPoints.setStructureBorderPoints( setStructureNeighbourPoints );
+					imageStrOverlappedPoints.setStructureNeighbourPoints( setStructureNeighbourPoints );
 					
-					const unsigned int uiPointRegistered =
+					const unsigned int uiPointsRegistered =
 						pImageSearchData->registerOverlapped( &imageStrOverlappedPoints, true );
 					
-					if ( uiPointRegistered != uiValidPoints ){
-						cerr<<"Error: There where "<<uiPointRegistered<<" points "<<
+					if ( uiPointsRegistered != uiValidPoints ){
+						cerr<<"Error: There were "<<uiPointsRegistered<<" points "<<
 							"registered as overlapped, but it should be "<<uiValidPoints<<" ."<<endl;
 						iReturn++;
 					}
@@ -2863,13 +2857,13 @@ int testMethodsRandom( unsigned long &ulTestphase ){
 					imageStrOverlappedPoints.setStructureBorderPoints( setStructureBorderPoints );
 					set< cVectorPosition > setStructureNeighbourPoints =
 						generateRandomPoints( uiWidth + uiHeight + 1, uiWidth + 2, uiHeight + 2 );
-					imageStrOverlappedPoints.setStructureBorderPoints( setStructureNeighbourPoints );
+					imageStrOverlappedPoints.setStructureNeighbourPoints( setStructureNeighbourPoints );
 					
-					const unsigned int uiPointRegistered =
+					const unsigned int uiPointsRegistered =
 						pImageSearchData->registerOverlapped( &imageStrOverlappedPoints, false );
 					
-					if ( uiPointRegistered != uiValidPoints ){
-						cerr<<"Error: There where "<<uiPointRegistered<<" points "<<
+					if ( uiPointsRegistered != uiValidPoints ){
+						cerr<<"Error: There were "<<uiPointsRegistered<<" points "<<
 							"registered as not overlapped, but it should be "<<uiValidPoints<<" ."<<endl;
 						iReturn++;
 					}
@@ -2907,13 +2901,13 @@ int testMethodsRandom( unsigned long &ulTestphase ){
 					imageStrOverlappedPoints.setStructureBorderPoints( setStructureBorderPoints );
 					set< cVectorPosition > setStructureNeighbourPoints =
 						generateRandomPoints( uiWidth + uiHeight + 1, uiWidth + 2, uiHeight + 2 );
-					imageStrOverlappedPoints.setStructureBorderPoints( setStructureNeighbourPoints );
+					imageStrOverlappedPoints.setStructureNeighbourPoints( setStructureNeighbourPoints );
 					
-					const unsigned int uiPointRegistered =
+					const unsigned int uiPointsRegistered =
 						pImageSearchData->registerOverlapped( &imageStrOverlappedPoints, false );
 					
-					if ( uiPointRegistered != uiValidPoints ){
-						cerr<<"Error: There where "<<uiPointRegistered<<" points "<<
+					if ( uiPointsRegistered != uiValidPoints ){
+						cerr<<"Error: There were "<<uiPointsRegistered<<" points "<<
 							"registered as not overlapped, but it should be "<<uiValidPoints<<" ."<<endl;
 						iReturn++;
 					}
@@ -2945,11 +2939,11 @@ int testMethodsRandom( unsigned long &ulTestphase ){
 						}
 					}
 					cout<<"} );"<<endl;
-					const unsigned int uiPointRegistered =
+					const unsigned int uiPointsRegistered =
 						pImageSearchData->registerOverlapped( setGeneratedPoints );
 					
-					if ( uiPointRegistered != uiValidPoints ){
-						cerr<<"Error: There where "<<uiPointRegistered<<" points "<<
+					if ( uiPointsRegistered != uiValidPoints ){
+						cerr<<"Error: There were "<<uiPointsRegistered<<" points "<<
 							"registered as overlapped, but it should be "<<uiValidPoints<<" ."<<endl;
 						iReturn++;
 					}
@@ -2979,11 +2973,11 @@ int testMethodsRandom( unsigned long &ulTestphase ){
 						}
 					}
 					cout<<"}, true );"<<endl;
-					const unsigned int uiPointRegistered =
+					const unsigned int uiPointsRegistered =
 						pImageSearchData->registerOverlapped( setGeneratedPoints, true );
 					
-					if ( uiPointRegistered != uiValidPoints ){
-						cerr<<"Error: There where "<<uiPointRegistered<<" points "<<
+					if ( uiPointsRegistered != uiValidPoints ){
+						cerr<<"Error: There were "<<uiPointsRegistered<<" points "<<
 							"registered as overlapped, but it should be "<<uiValidPoints<<" ."<<endl;
 						iReturn++;
 					}
@@ -3013,11 +3007,11 @@ int testMethodsRandom( unsigned long &ulTestphase ){
 						}
 					}
 					cout<<"}, false );"<<endl;
-					const unsigned int uiPointRegistered =
+					const unsigned int uiPointsRegistered =
 						pImageSearchData->registerOverlapped( setGeneratedPoints, false );
 					
-					if ( uiPointRegistered != uiValidPoints ){
-						cerr<<"Error: There where "<<uiPointRegistered<<" points "<<
+					if ( uiPointsRegistered != uiValidPoints ){
+						cerr<<"Error: There were "<<uiPointsRegistered<<" points "<<
 							"registered as not overlapped, but it should be "<<uiValidPoints<<" ."<<endl;
 						iReturn++;
 					}
@@ -3048,19 +3042,18 @@ int testMethodsRandom( unsigned long &ulTestphase ){
 						}
 					}
 					cout<<"}, false );"<<endl;
-					const unsigned int uiPointRegistered =
+					const unsigned int uiPointsRegistered =
 						pImageSearchData->registerOverlapped( setChoosenPoints, false );
 					
-					if ( uiPointRegistered != uiValidPoints ){
-						cerr<<"Error: There where "<<uiPointRegistered<<" points "<<
+					if ( uiPointsRegistered != uiValidPoints ){
+						cerr<<"Error: There were "<<uiPointsRegistered<<" points "<<
 							"registered as not overlapped, but it should be "<<uiValidPoints<<" ."<<endl;
 						iReturn++;
 					}
 				}break;
 				
-				
-			}
-		}
+			}//end switch choose more commen change method
+		}//end if choose if sparse or more commen change method should be used
 		
 		
 		//test the members of the class
