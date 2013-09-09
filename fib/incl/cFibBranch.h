@@ -45,6 +45,8 @@ History:
 07.08.2011  Oesterholz  isDefinedVariable() and getDefinedVariables() with
 	pCallingFibElement
 19.10.2011  Oesterholz  FEATURE_EQUAL_FIB_OBJECT implemented
+19.05.2013  Oesterholz  SWITCH_JUST_STORE_AND_EVALUE implemented
+10.07.2013  Oesterholz  subobject methods added
 */
 
 
@@ -205,8 +207,64 @@ public:
 	virtual cFibElement *getConstFibElement( char cType, longFib lNumber,
 		bool bAbsolute=false ) const;
 
-#endif
+#endif //FEATURE_FAST_UPDATE
 
+
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
+	
+	/**
+	 * This method returns the number of subobjects in this Fib element.
+	 * (e. g. limb elements have one subobject)
+	 *
+	 * @see getSubobject()
+	 * @see getSubobjects()
+	 * @return the number of subobjects in this Fib element
+	 */
+	virtual unsignedIntFib getNumberOfSubobjects() const;
+	
+	/**
+	 * This method returns the uiNumberOfSubobject'th subobject of this
+	 * Fib element.
+	 *
+	 * @see getNumberOfSubobjects()
+	 * @see getSubobjects()
+	 * @param uiNumberOfSubobject the number of the subobject to return
+	 * @return a pointer to the uiNumberOfSubobject'th subobject of this
+	 * 	Fib element, or the null pointer NULL if non exists
+	 */
+	virtual cFibElement * getSubobject( const unsignedIntFib uiNumberOfSubobject = 1 );
+	
+	/**
+	 * This method returns the uiNumberOfSubobject'th subobject of this
+	 * Fib element.
+	 *
+	 * @see getNumberOfSubobjects()
+	 * @see getSubobjects()
+	 * @param uiNumberOfSubobject the number of the subobject to return
+	 * @return a pointer to the uiNumberOfSubobject'th subobject of this
+	 * 	Fib element, or the null pointer NULL if non exists
+	 */
+	virtual const cFibElement * getSubobject(
+		const unsignedIntFib uiNumberOfSubobject = 1 ) const;
+	
+	/**
+	 * This method returns all subobjects of this Fib element.
+	 *
+	 * @see getNumberOfSubobjects()
+	 * @see getSubobject()
+	 * @return a list with all the subobjects of this Fib element
+	 */
+	virtual list< cFibElement * > getSubobjects();
+	
+	/**
+	 * This method returns all subobjects of this Fib element.
+	 *
+	 * @see getNumberOfSubobjects()
+	 * @see getSubobject()
+	 * @return a list with all the subobjects of this Fib element
+	 */
+	virtual const list< cFibElement * > getSubobjects() const;
+	
 	/**
 	 * This method checks if the given variable is used in the given
 	 * direction from this Fib-element.
@@ -237,6 +295,8 @@ public:
 	 */
 	virtual set<cFibVariable*> getUsedVariables( edDirection direction=ED_POSITION );
 
+#endif //SWITCH_JUST_STORE_AND_EVALUE
+	
 	/**
 	 * This method replace the variable variableOld with the variable
 	 * variableNew in the object.
@@ -304,6 +364,7 @@ public:
 	 */
 	virtual unsignedIntFib getNumberOfMovePoints() const;
 
+	
 	/**
 	 * This method returns the number of object points in this Fib-object.
 	 *
@@ -312,6 +373,8 @@ public:
 	 */
 	virtual unsignedIntFib getNumberOfObjectPoints() const;
 
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
+	
 	/**
 	 * This method returns the number of the Fib-element over wich the
 	 * objectPoint object point is defined.
@@ -356,6 +419,8 @@ public:
 		const unsignedIntFib elementPoint=0, bool bAbsolute=false,
 		bool bCheckVariables=true );
 
+#endif //SWITCH_JUST_STORE_AND_EVALUE
+	
 	/**
 	 * This method inserts the given Fib-object fibObject on the
 	 * specified position. On the specified position a listelement will
@@ -382,6 +447,8 @@ public:
 		const unsignedIntFib elementPoint=0, bool first=true, 
 		bool bAbsolute=false );
 
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
+	
 	/**
 	 * This method overwrites the Fib-object on specified position with
 	 * the given Fib-object fibObject. The Fib-object on specified
@@ -424,6 +491,8 @@ public:
 	virtual bool removeObject( const unsignedIntFib objectPoint,
 		bool bDeleteOld=true, bool bAbsolute=false );
 
+#endif //SWITCH_JUST_STORE_AND_EVALUE
+
 	/**
 	 * This method checks, if all Fib-elements of this Fib-object
 	 * have the underobjects they need to be correct.
@@ -432,6 +501,8 @@ public:
 	 * 	underobjects they need to be correct, else false
 	 */
 	virtual bool hasUnderAllObjects( ) const;
+
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
 
 	/**
 	 * This method checks, if the Fib-element on the specified position
@@ -477,6 +548,8 @@ public:
 	virtual cFibElement *cutElement( const char cType='u', const unsignedIntFib
 		elementPoint=0, bool bAbsolute=false, bool bCheckVariables=true );
 
+#endif //SWITCH_JUST_STORE_AND_EVALUE
+	
 #ifdef FEATURE_FAST_UPDATE
 	/**
 	 * This method deletes this given Fib-object with all the fib
@@ -486,6 +559,8 @@ public:
 	virtual void deleteObject();
 #endif //FEATURE_FAST_UPDATE
 
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
+	
 	/**
 	 * This method moves a Fib-limb -element (cFibLimb) on the specified
 	 * position over iHowfar Fib-elements.
@@ -515,7 +590,6 @@ public:
 	virtual intFib moveLimbElement( const char cType='u', const unsignedIntFib 
 		elementPoint=0, const intFib iHowfar=1, bool bAbsolute=false );
 
-
 #ifndef FEATURE_EQUAL_FIB_OBJECT
 	
 	/**
@@ -538,6 +612,8 @@ public:
 	 * 	branchelement, alse false
 	 */
 	bool isBranch() const;
+	
+#endif //SWITCH_JUST_STORE_AND_EVALUE
 
 protected:
 #ifdef FEATURE_FAST_UPDATE
@@ -739,6 +815,8 @@ protected:
 	virtual unsignedIntFib getNumberOfObjectPointUp(
 		const cFibElement * pLastFibElement ) const;;
 
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
+	
 	/**
 	 * This method returns the numbers of all object points that contain the
 	 * elementPoint Fib-element.
@@ -758,6 +836,8 @@ protected:
 	virtual list<unsignedIntFib> elementPointToObjectPointsUp(
 		const cFibElement * pLastFibElement,
 		const cFibElement * pFirstFibElement ) const;
+		
+#endif //SWITCH_JUST_STORE_AND_EVALUE
 
 #else //FEATURE_FAST_UPDATE
 
@@ -806,6 +886,8 @@ protected:
 	virtual unsignedIntFib getNumberOfObjectPoint(
 		unsignedIntFib uINumberOfStartFibElement ) const;
 
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
+		
 	/**
 	 * This method returns the numbers of all object points that contain the
 	 * elementPoint Fib-element.
@@ -826,6 +908,8 @@ protected:
 	virtual list<unsignedIntFib> elementPointToObjectPoints(
 			const cFibElement *referenceFibObject,
 			const unsignedIntFib uiLastObjectPoint  ) const;
+		
+#endif //SWITCH_JUST_STORE_AND_EVALUE
 
 #endif //FEATURE_FAST_UPDATE
 
@@ -844,6 +928,8 @@ protected:
 	virtual unsignedIntFib enumerateVariablesForStoring(
 		unsignedIntFib uiLastVariableNumber = 0 );
 
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
+	
 	/**
 	 * This method returns a number of (lNumberOfMaxReturnedElements)
 	 * Fib-elements beginning from the actual Fib-element in the
@@ -936,6 +1022,8 @@ protected:
 		const bool bCheckExternalObjects ) const;
 	
 #endif //FEATURE_EQUAL_FIB_OBJECT
+	
+#endif //SWITCH_JUST_STORE_AND_EVALUE
 
 };//end class cFibBranch
 

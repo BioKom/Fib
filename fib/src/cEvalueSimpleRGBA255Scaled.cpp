@@ -426,10 +426,6 @@ iMatrix3D::tErrorValue cEvalueSimpleRGBA255Scaled::setValueUInt(
 		//no such property
 		return ERROR_OUTSIDE_INDEX_DIMENSION_3;
 	}
-	if ( uiValue < 0 ){
-		//value outside range
-		return ERROR_LOWER_MIN_VALUE;
-	}
 	if ( 255 < uiValue ){
 		//value outside range
 		return ERROR_GREATER_MAX_VALUE;

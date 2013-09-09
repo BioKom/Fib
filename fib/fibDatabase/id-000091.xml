@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fib_object
+			  xmlns:xsd="http://www.w3.org/2001/XMLSchema-instance"
+			  xmlns="http://www.fib-development.org/"
+			  xsd:schemaLocation="http://www.fib-development.org/fib.xsd">
+	<root>
+		<multimedia_info fib_version="6" db_version="5"/>
+		<optionalpart>
+			<pair key="name" value="evalue end point"/>
+			<pair key="description" value="This object evalues the end point from a start point, angle and length."/>
+			<pair key="inVar1::name" value="x"/>
+			<pair key="inVar1::description" value="the position in the first (x) direction / dimension of the start point x_s"/>
+			<pair key="inVar2::name" value="y"/>
+			<pair key="inVar2::description" value="the position in the second (y) direction / dimension of the start point y_s"/>
+			<pair key="inVar3::name" value="angle"/>
+			<pair key="inVar3::description" value="the clockwise angle alpha (in radian) betwean the y dimension axis (angle 0 is up from the start point)"/>
+			<pair key="inVar4::name" value="distance"/>
+			<pair key="inVar4::description" value="the distance (in points) betwean the start and end point l"/>
+			
+			<pair key="subObj1::description" value="the position of the end point"/>
+			<pair key="subObj1::outVar1::name" value="x_e"/>
+			<pair key="subObj1::outVar1::description" value="the position in the first (x) direction / dimension of the end point x_e"/>
+			<pair key="subObj1::outVar2::name" value="y_e"/>
+			<pair key="subObj1::outVar2::description" value="the position in the second (y) direction / dimension of the end point y_e"/>
+			
+			<pair key="author" value="Betti Oesterholz"/>
+			<pair key="author::email" value="Oesterholz@Fib-Development.org"/>
+			<pair key="copyright" value="LGPL3 (see Fib database object with identifier -12)"/>
+		</optionalpart>
+		<input_variables>
+			<variable number="1" default="0"/>
+			<variable number="2" default="0"/>
+			<variable number="3" default="0"/>
+			<variable number="4" default="0"/>
+		</input_variables>
+		<domains>
+			<inVar number="1">
+				<domainReference subdomain="1">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="2">
+				<domainReference subdomain="2">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="3">
+				<naturalNumber scalingfactor="0.00000001" max="632000000"/>
+			</inVar>
+			<!-- <inVar number="4">: distance -->
+			
+			<externSubobject number="1">
+				<vector elements="2">
+					<!--actually any number is possible;
+						the next line is just a space holder-->
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+				</vector>
+			</externSubobject>
+			<subfunction>
+				<naturalNumber scalingfactor="0.00001" max="15708"/>
+			</subfunction>
+		</domains>
+		<main_fib_object>
+			<function define_variable="5">
+				<subfunction><!-- evalue x position of the end point -->
+					<add><!-- x_e = x_s + l * sin( alpha ) -->
+						<variable>1</variable>
+						<mult>
+							<variable>4</variable>
+							<sin>
+								<variable>3</variable>
+							</sin>
+						</mult>
+					</add>
+				</subfunction>
+				<function define_variable="6">
+					<subfunction><!-- evalue y position of the end point -->
+						<add><!-- y_e = y_s + l * cos( alpha ) -->
+							<variable>2</variable>
+							<mult>
+								<variable>4</variable>
+								<sin>
+									<add>
+										<variable>3</variable>
+										<value>1.5708</value>
+									</add>
+								</sin>
+							</mult>
+						</add>
+					</subfunction>
+					<subobject number="1">
+						<vector type="externSubobject">
+							<variable>5</variable>
+							<variable>6</variable>
+						</vector>
+					</subobject>
+				</function>
+			</function>
+		</main_fib_object>
+	</root>
+</fib_object>

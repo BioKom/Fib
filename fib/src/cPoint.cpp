@@ -39,6 +39,7 @@ History:
 08.03.2011  Oesterholz  method for const getPosition() added
 17.10.2011  Oesterholz  FEATURE_OUTPUT_ELEMENT_NUMBER_XML implemented
 19.10.2011  Oesterholz  FEATURE_EQUAL_FIB_OBJECT implemented
+30.07.2013  Oesterholz  method assignValues() added
 */
 
 
@@ -583,6 +584,84 @@ cFibElement * cPoint::copyElement( const char cType, const unsignedIntFib
 	}//else
 	return NULL;
 }
+
+
+
+/**
+ * This method assigns / copies the values from the given Fib element
+ * fibElement to this Fib element. This means, it will copy everything
+ * of the Fib element fibElement except pointers to other Fib elements
+ * (e. g. for subobjects), these will remain the same.
+ * For that both Fib elements have to be of the same type.
+ * Note: The variables used in this Fib element should be equal some
+ * 	variables defined above.
+ * 	@see cFibVariable::equal( const cFibVariable &variable, false )
+ *
+ * @see getType()
+ * @param fibElement the Fib element, from which to assign / copy the values
+ * @return true if the values could be copied from the given Fib element
+ * 	fibElement, else false
+ */
+bool cPoint::assignValues( const cFibElement & fibElement ){
+	
+	if ( fibElement.getType() != getType() ){
+		//both Fib elements not of the same type -> can't assign values
+		return false;
+	}
+	if ( equalElement( fibElement, false ) ){
+		//elements already equal -> don't need to assign anything
+		return true;
+	}
+	const cPoint * pOtherPoint = ((const cPoint*)(&fibElement));
+	const cVectorPosition * pOtherVectorPosition =
+		pOtherPoint->pVectorPosition;
+	if ( pOtherVectorPosition == NULL ){
+		//set the positions vector of this point to NULL
+		if ( pVectorPosition ){
+			//delete old position vector
+			delete pVectorPosition;
+			pVectorPosition = NULL;
+		}
+		return true;
+	}
+	
+	//try to match used variables
+	const set< cFibVariable* > setUsedVariables = (const_cast< cVectorPosition * >(
+		pOtherVectorPosition))->getUsedVariables();
+	/* The list with the variables to replace:
+	 * 	first: the original used variable to replace
+	 * 	second: the new variable to replace the original variable
+	 */
+	list< pair< cFibVariable * ,cFibVariable * > > liVariablesToReplace;
+	
+	if ( ! getVariablesToReplace( setUsedVariables, liVariablesToReplace ) ){
+		//not all variables can be replaced with for this Fib element defined variables
+		return false;
+	}
+	//copy position vector of other point
+	//assign the values
+	if ( pVectorPosition ){
+		delete pVectorPosition;
+	}
+	pVectorPosition = new cVectorPosition( *pOtherVectorPosition, this );
+	
+	if ( ! liVariablesToReplace.empty() ){
+		//replace variables to replace
+		for ( list< pair< cFibVariable * ,cFibVariable * > >::iterator
+				itrActualVariable = liVariablesToReplace.begin();
+				itrActualVariable != liVariablesToReplace.end(); itrActualVariable++ ){
+			
+			//replace variable in areavector
+			if ( ! pVectorPosition->replaceVariable(
+					itrActualVariable->first, itrActualVariable->second ) ){
+				return false;
+			}
+		}//end for all variables to replace
+	}//end if variables to replace
+	
+	return true;
+}
+
 
 #ifdef FEATURE_EQUAL_FIB_OBJECT
 

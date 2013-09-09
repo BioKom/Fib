@@ -34,6 +34,8 @@ History:
 06.11.2011  Oesterholz  created
 29.01.2011  Oesterholz  FEATURE_EXT_SUBOBJECT_INPUT_VECTOR implemented:
 	the input values are now a vector of values
+30.07.2013  Oesterholz  method assignValues() added;
+	FEATURE_EXT_SUBOBJECT_INPUT_VECTOR as default (not case removed)
 */
 
 #ifndef ___C_EXT_SUBOBJECT_H__
@@ -49,23 +51,14 @@ History:
 #include "cFibVariable.h"
 
 
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	#include "cVectorExtSubobject.h"
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
+#include "cVectorExtSubobject.h"
 
 
 namespace fib{
 
 
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 
 class cExtSubobject: public cFibLeaf{
-
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-
-class cExtSubobject: public cFibLeaf, public iVariableUser{
-
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 
 friend class cFibElement;
 
@@ -78,21 +71,13 @@ private:
 	 */
 	unsignedIntFib uiNumberOfSubobject;
 	
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	/**
 	 * The vector with the output variables for the subobject to call.
 	 */
 	cVectorExtSubobject vecOutputValues;
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	/**
-	 * The vector with the output variables for the subobject to call.
-	 */
-	vector< cFibVariable * > vecOutputValues;
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 
 public:
 	
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 
 	/**
 	 * parameterconstructor
@@ -119,23 +104,6 @@ public:
 	cExtSubobject( unsignedIntFib uiInNumberOfSubobject,
 		unsignedIntFib uiNumberOfOutputVariables=0,
 		cFibElement * pInSuperiorElement = NULL );
-
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	
-	/**
-	 * parameterconstructor
-	 *
-	 * @param uiInNumberOfSubobject the number of the subobject to call
-	 * @param vecInOutputVariables the vector with the output variables 
-	 * 	or the subobject to call
-	 * @param pInSuperiorElement the Fib element in which this
-	 * 	external object element is an subobject
-	 */
-	cExtSubobject( unsignedIntFib uiInNumberOfSubobject,
-		vector< cFibVariable* > vecInOutputVariables=vector< cFibVariable* >(),
-		cFibElement * pInSuperiorElement = NULL );
-	
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 
 	/**
 	 * copyconstructor
@@ -364,6 +332,20 @@ public:
 		elementPoint=0, bool bAbsolute=false ) const;
 
 	/**
+	 * This method asigns / copies the values from the given Fib element
+	 * fibElement to this Fib element. This means, it will copy everything
+	 * of the Fib element fibElement except pointers to other Fib elements
+	 * (e. g. for subobjects), these will remain the same.
+	 * For that both Fib elements have to be of the same type.
+	 *
+	 * @see getType()
+	 * @param fibElement the Fib element, from which to assign / copy the values
+	 * @return true if the values could be copied from the given Fib element
+	 * 	fibElement, else false
+	 */
+	virtual bool assignValues( const cFibElement & fibElement );
+
+	/**
 	 * This method stores this Fib object in the XML -format into the
 	 * given stream.
 	 *
@@ -392,7 +374,6 @@ public:
 	 */
 	bool setNumberSubobject( const unsignedIntFib iInSubobjectNumber );
 	
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 
 	/**
 	 * @return the vector with the output values of this external subobject
@@ -408,67 +389,6 @@ public:
 	 */
 	const cVectorExtSubobject * getOutputVector() const;
 	
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	/**
-	 * @return the number of output variables of this object respectively
-	 * 	the input variables for the external subobject to call
-	 * 	@see vecOutputValues
-	 */
-	unsignedIntFib getNumberOfOutputVariables() const;
-	
-	/**
-	 * @return the vector with the output variables of this object
-	 * 	respectively the input variables for the external subobject to
-	 * 	call @see vecOutputValues
-	 */
-	vector< cFibVariable * > getOutputVariables();
-	
-	/**
-	 * This method sets the vector with the output variables of this object
-	 * respectively the input variables for the external subobject to
-	 * call (@see vecOutputValues).
-	 *
-	 * @param vecOutputValues the vector with the output variables of
-	 * 	this object respectively the input variables for the external
-	 * 	subobject to call (@see vecOutputValues)
-	 * @return if the vector with the output variables was set true, else false
-	 */
-	bool setOutputVariables( vector< cFibVariable * > vecOutputValues );
-	
-	/**
-	 * This method returns the uiVariableNumber'th output variable of the
-	 * vector with the output variables of this object respectively the
-	 * input variables for the external subobject to call
-	 * @see vecOutputValues or NULL if non exists.
-	 *
-	 * @param uiVariableNumber the number of the output variable to set
-	 * @return the uiVariableNumber'th output variable of the vector with
-	 * 	the output variables of this object respectively the input
-	 * 	variables for the external subobject to call
-	 * 	@see vecOutputValues or NULL if non exists
-	 */
-	cFibVariable * getOutputVariable( const unsignedIntFib uiVariableNumber );
-	
-	/**
-	 * This method sets the uiVariableNumber'th output variable of the
-	 * vector with the output variables of this object respectively the
-	 * input variables for the external subobject to call
-	 * @see vecOutputValues. 
-	 * It will create a new variable if ther are one less than
-	 * uiVariableNumber output variables.
-	 *
-	 * @param uiVariableNumber the number of the output variable to set
-	 * @param pOutputVariable the uiVariableNumber'th output variable of
-	 * 	the vector with the output variables @see vecOutputValues to set
-	 * @return true if the uiVariableNumber'th output variables was set
-	 * 	else false
-	 */
-	bool setOutputVariable( const unsignedIntFib uiVariableNumber,
-		cFibVariable * pOutputVariable );
-
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-
-
 protected:
 
 	/**
@@ -570,28 +490,6 @@ protected:
 		map< const cRoot *, const cRoot * > & mapEqualRootObjects,
 		map< const cFibElement *, const cFibElement * > & mapEqualDefinedVariables,
 		const bool bCheckExternalObjects ) const;
-
-#ifndef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-
-	/**
-	 * @return the Fib element which uses the variables of this element
-	 */
-	virtual cFibElement * getVariableUsingFibElement() const;
-	
-	/**
-	 * This method deletes all occurencies of the given variable from this
-	 * element. So the variable is not used anymore by this element.
-	 * Beware: This element has to be unregistered (call
-	 * unregisterUsingElement() ) at the pVariable seperatly. Do this directly
-	 * befor or after calling this method.
-	 *
-	 * @param pVariable the variable which is to delete from this element
-	 * @return true if the variable dosn't occure anymore in this element,
-	 * 	else false
-	 */
-	virtual bool deleteVariable( cFibVariable * pVariable );
-	
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 
 };
 }//namespace fib

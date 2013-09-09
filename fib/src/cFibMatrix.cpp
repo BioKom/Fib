@@ -25,12 +25,12 @@
  *
  *
  * This class represents the matrix element of the Fib multimedia language.
- * 
+ *
  * An matrix element represents a d dimensional matrix. For every dimension
  * ther is an area (Startvalue_h to Endvalue_h) for its possible index values.
  * Furthermore ther is a list ( (W_{1.1}, ..., W_{i.1}), ... ,
  * (W_{1.k}, ..., W_{i.k}) with vectors for the elements of the matrix.
- * 
+ *
  * In the evaluation of the matrix element each dimension/counter/index
  * variable (Variable_1, ..., Variable_d) goes through all integers of
  * the corresponding area (Startvalue_h to Endvalue_h). For each integer
@@ -43,7 +43,7 @@
  * set of values (W_{1.k+1}, ... , W_{i.k+1}). If an element W_{a.b} is a 
  * variable, so the Variable_{d+a} will be assigned according to the value
  * of the variable W_{a.b}.
- * 
+ *
  * If there are no value variables (i=0), just all the values of the
  * dimension variables (Variable_1, ..., Variable_d) will be set and the
  * sets of values will be ignored.
@@ -52,6 +52,7 @@
 /*
 History:
 02.01.2012  Oesterholz  created
+31.07.2013  Oesterholz  method assignValues() added
 */
 
 
@@ -1778,6 +1779,214 @@ cFibElement * cFibMatrix::copyElement( const char cType, const unsignedIntFib
 		return ( pFibElementToCopy->copyElement( 'u', 0 ) );
 	}//else pFibElementToCopy == NULL
 	return NULL;
+}
+
+
+/**
+ * This method assigns / copies the values from the given Fib element
+ * fibElement to this Fib element. This means, it will copy everything
+ * of the Fib element fibElement except pointers to other Fib elements
+ * (e. g. for subobjects), these will remain the same.
+ * For that both Fib elements have to be of the same type.
+ * Note: The variables used in this Fib element should be equal some
+ * 	variables defined above.
+ * 	@see cFibVariable::equal( const cFibVariable &variable, false )
+ *
+ * @see getType()
+ * @param fibElement the Fib element, from which to assign / copy the values
+ * @return true if the values could be copied from the given Fib element
+ * 	fibElement, else false
+ */
+bool cFibMatrix::assignValues( const cFibElement & fibElement ){
+	
+	if ( fibElement.getType() != getType() ){
+		//both Fib elements not of the same type -> can't assign values
+		return false;
+	}
+	if ( equalElement( fibElement, false ) ){
+		//elements already equal -> don't need to assign anything
+		return true;
+	}
+	const cFibMatrix * pOtherFibMatrix =
+		((const cFibMatrix *)(&fibElement));
+	//try to match used variables of vectors to copy
+	list<cVectorFibMatrix> & liOtherFibMatrixSubFibMatrixs =
+		(const_cast<cFibMatrix*>(pOtherFibMatrix))->liFibMatrix;
+	vector< cVectorArea * > & vecOtherFibMatrixSubFibAreas =
+		(const_cast<cFibMatrix*>(pOtherFibMatrix))->vecMatrixDimensionAreas;
+	//find used variables for every vector seperatly (to speed up)
+	set< cFibVariable* > setUsedVariables;
+	/* a map with the subarea index numbers for the variables
+	 * 	key: a pointer to the variable
+	 * 	value:
+	 * 		first: if true the index is for a vector in liFibMatrix
+	 * 			else it is for a vector in vecMatrixDimensionAreas
+	 * 		second: a list with the index numbers (counting starts with 0)
+	 * 			of the subvectors, where the key variable are used
+	 */
+	map< cFibVariable *, list< pair< bool, unsigned int > > > mapSubsetForVariables;
+	unsigned int uiIndexActualVector = 0;
+	for ( list< cVectorFibMatrix >::iterator
+			itrSubFibMatrix = liOtherFibMatrixSubFibMatrixs.begin();
+			itrSubFibMatrix != liOtherFibMatrixSubFibMatrixs.end();
+			itrSubFibMatrix++, uiIndexActualVector++ ){
+		
+		set< cFibVariable* > setUsedVariablesInSubset =
+			itrSubFibMatrix->getUsedVariables();
+		
+		setUsedVariables.insert(
+			setUsedVariablesInSubset.begin(), setUsedVariablesInSubset.end() );
+		
+		//add used variables to mapSubsetForVariables
+		for ( set<cFibVariable*>::iterator
+				itrActualUsedVariable = setUsedVariablesInSubset.begin();
+				itrActualUsedVariable != setUsedVariablesInSubset.end();
+				itrActualUsedVariable++ ){
+			
+			mapSubsetForVariables[ *itrActualUsedVariable ].push_back(
+				pair< bool, unsigned int >( true, uiIndexActualVector ) );
+		}
+	}//end for all other subsets
+	uiIndexActualVector = 0;
+	for ( vector< cVectorArea * >::iterator
+			itrSubArea = vecOtherFibMatrixSubFibAreas.begin();
+			itrSubArea != vecOtherFibMatrixSubFibAreas.end();
+			itrSubArea++, uiIndexActualVector++ ){
+		
+		set< cFibVariable* > setUsedVariablesInSubarea =
+			(*itrSubArea)->getUsedVariables();
+		
+		setUsedVariables.insert(
+			setUsedVariablesInSubarea.begin(), setUsedVariablesInSubarea.end() );
+		
+		//add used variables to mapSubsetForVariables
+		for ( set<cFibVariable*>::iterator
+				itrActualUsedVariable = setUsedVariablesInSubarea.begin();
+				itrActualUsedVariable != setUsedVariablesInSubarea.end();
+				itrActualUsedVariable++ ){
+			
+			mapSubsetForVariables[ *itrActualUsedVariable ].push_back(
+				pair< bool, unsigned int >( false, uiIndexActualVector )  );
+		}
+	}//end for all other areas
+	
+	/* The list with the variables to replace:
+	 * 	first: the original used variable to replace
+	 * 	second: the new variable to replace the original variable
+	 */
+	list< pair< cFibVariable * ,cFibVariable * > > liVariablesToReplace;
+	
+	if ( ! getVariablesToReplace( setUsedVariables, liVariablesToReplace ) ){
+		//not all variables can be replaced with for this Fib element defined variables
+		return false;
+	}
+	
+	//assign the values
+	//check if the defined variables can be adopted
+	const unsignedIntFib uiNumberOfVariables = vecVariablesDefined.size();
+	const unsignedIntFib uiNumberOfVariablesOther =
+		pOtherFibMatrix->vecVariablesDefined.size();
+	
+	if ( uiNumberOfVariablesOther < uiNumberOfVariables ){
+		//check if to much variables can be removed
+		vector< cFibVariable * >::const_reverse_iterator
+			itrToRemoveDefinedVariable = vecVariablesDefined.rbegin();
+		
+		for ( unsignedIntFib uiNumberOfVariable = uiNumberOfVariablesOther;
+				uiNumberOfVariable < uiNumberOfVariables;
+				uiNumberOfVariable++, itrToRemoveDefinedVariable++ ){
+			
+			if ( (*itrToRemoveDefinedVariable)->getNumberOfUsingElements() != 0 ){
+				//variable is used -> can't remove variable -> can't assign values
+				return false;
+			}
+		}//else all to much defined variables can be removed
+		//reduce the number of defined variables
+		vecVariablesDefined.resize( uiNumberOfVariablesOther );
+		
+	}else if ( uiNumberOfVariables < uiNumberOfVariablesOther ){
+		//add defined variables till it matches that of the other
+		for ( unsignedIntFib uiNumberOfVariable = uiNumberOfVariables;
+				uiNumberOfVariable < uiNumberOfVariablesOther; uiNumberOfVariable++ ){
+			
+			vecVariablesDefined.push_back( new cFibVariable( this ) );
+		}
+	}//else don't need to change number of defined variables
+	//copy domain number
+	uiDomainNr = pOtherFibMatrix->uiDomainNr;
+	
+	//copy to set vectors of other Fib matrix
+	liFibMatrix.clear();
+	cVectorFibMatrix * arSubset[ liOtherFibMatrixSubFibMatrixs.size() ];
+	uiIndexActualVector = 0;
+	for ( list<cVectorFibMatrix>::const_iterator
+			itrSubFibMatrix = liOtherFibMatrixSubFibMatrixs.begin();
+			itrSubFibMatrix != liOtherFibMatrixSubFibMatrixs.end();
+			itrSubFibMatrix++, uiIndexActualVector++ ){
+		
+		liFibMatrix.push_back( cVectorFibMatrix( *itrSubFibMatrix, this ) );
+		
+		arSubset[ uiIndexActualVector ] = &(liFibMatrix.back());
+	}//end for all to set vectors
+	//delete old area vectors
+	for ( vector< cVectorArea * >::iterator
+			itrSubArea = vecMatrixDimensionAreas.begin();
+			itrSubArea != vecMatrixDimensionAreas.end(); itrSubArea++ ){
+		
+		delete (*itrSubArea);
+	}
+	vecMatrixDimensionAreas.clear();
+	//copy area vectors
+	cVectorArea * arSubarea[ vecOtherFibMatrixSubFibAreas.size() ];
+	uiIndexActualVector = 0;
+	for ( vector< cVectorArea * >::const_iterator
+			itrSubFibMatrix = vecOtherFibMatrixSubFibAreas.begin();
+			itrSubFibMatrix != vecOtherFibMatrixSubFibAreas.end();
+			itrSubFibMatrix++, uiIndexActualVector++ ){
+		
+		vecMatrixDimensionAreas.push_back( new cVectorArea( **itrSubFibMatrix, this ) );
+		
+		arSubarea[ uiIndexActualVector ] = vecMatrixDimensionAreas.back();
+	}//end for all subsets
+	
+	
+	if ( ! liVariablesToReplace.empty() ){
+		//replace variables to replace
+		cFibVariable * pOrgVariable = NULL;
+		cFibVariable * pNewVariable = NULL;
+		for ( list< pair< cFibVariable * ,cFibVariable * > >::iterator
+				itrActualVariable = liVariablesToReplace.begin();
+				itrActualVariable != liVariablesToReplace.end(); itrActualVariable++ ){
+			
+			pOrgVariable = itrActualVariable->first;
+			pNewVariable = itrActualVariable->second;
+			
+			list< pair< bool, unsigned int > > & liToAdaptSubset =
+				mapSubsetForVariables[ pOrgVariable ];
+			
+			for ( list< pair< bool, unsigned int > >::const_iterator
+					itrSubVector = liToAdaptSubset.begin();
+					itrSubVector != liToAdaptSubset.end(); itrSubVector++ ){
+				
+				if ( itrSubVector->first ){
+					//replace variable in vector
+					if ( ! arSubset[ itrSubVector->second ]->replaceVariable(
+							pOrgVariable, pNewVariable ) ){
+						//Error: should not happen
+						return false;
+					}
+				}else{//replace variable in area vector
+					if ( ! arSubarea[ itrSubVector->second ]->replaceVariable(
+							pOrgVariable, pNewVariable ) ){
+						//Error: should not happen
+						return false;
+					}
+				}
+			}//end for all subsets
+		}//end for all variables to replace
+	}//end if variables to replace
+	
+	return true;
 }
 
 

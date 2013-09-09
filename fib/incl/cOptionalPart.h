@@ -7,7 +7,9 @@
  *
  * System: C++
  *
- * This class represents the optionalpart of an root -element.
+ * This class represents the optional part of an root element.
+ *
+ *
  * Copyright (C) @c LGPL3 2009 Betti Oesterholz
  *
  * This program is free software: you can redistribute it and/or modify
@@ -24,8 +26,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * This class represents the optionalpart for an root -element.
- * The optionalpart consists of an list of key -value -pairs.
+ * This class represents the optional part for an root element.
+ * The optional part consists of an list of key value pairs.
  *
  */
 /*
@@ -33,6 +35,7 @@ History:
 29.06.2009  Oesterholz  created
 10.07.2011  Oesterholz  changes for compressed storing
 23.09.2012  Oesterholz  Warning removed: virtual destructor added
+01.08.2013  Oesterholz  method operator=() added
 */
 
 #ifndef ___C_OPTIONAL_PART_H__
@@ -70,7 +73,7 @@ protected:
 
 
 	/**
-	 * the list with the key -value -pairs of optional information
+	 * the list with the key value pairs of optional information
 	 */
 	list< pair<string,string> > optionalInformation;
 
@@ -120,18 +123,18 @@ public: //make the following constructor public for the test
 #endif
 
 	/**
-	 * The constructor for the optionalpart.
+	 * The constructor for the optional part.
 	 */
 	cOptionalPart();
 
 	/**
-	 * The destructor for the optionalpart.
+	 * The destructor for the optional part.
 	 */
 	virtual ~cOptionalPart();
 
 	
 	/**
-	 * This Method clones this object.
+	 * This method clones this object.
 	 *
 	 * @return a clone of this object
 	 */
@@ -171,7 +174,7 @@ public:
 	 * @param bFullBegin if true (the standardvalue) the given key szKey
 	 * 	is the complete key to be found, else the key szKey is just the
 	 * 	beginning of the key to be found
-	 * @return a list with the key -value -pairs for the given key szKey;
+	 * @return a list with the key value pairs for the given key szKey;
 	 * 	the returned pairs are an (key, value)  -pairs
 	 */
 	list< pair<string,string> > getEntries( string szKey,
@@ -184,7 +187,7 @@ public:
 	 *
 	 * @param szKeyPart the part of the keys for which the entries are to
 	 * 	be return
-	 * @return a list with the key -value -pairs with szKeyPart as part of
+	 * @return a list with the key value pairs with szKeyPart as part of
 	 * 	ther key; the returned pairs are an (key, value)  -pairs
 	 */
 	list< pair<string,string> > findKeyPart( string szKeyPart ) const;
@@ -192,7 +195,7 @@ public:
 
 	/**
 	 * This method ads the given key szKey and value szValue pair to the
-	 * optionalpart list.
+	 * optional part list.
 	 *
 	 * @param szKey the key of the entry to add
 	 * @param szValue the value of the entry to add
@@ -233,24 +236,24 @@ public:
 
 	
 	/**
-	 * This method stores this optionalpart in the XML -format into the
+	 * This method stores this optional part in the XML format into the
 	 * given stream.
 	 * example:
-	 * <optionalpart>
+	 * <optional part>
 	 * 	<pair key="copyright" value="GNU GPL 3"/>
 	 * 	<pair key="type" value="die Berliner Mauer"/>
-	 * </optionalpart>
+	 * </optional part>
 	 *
-	 * @param ostream the stream where this optionalpart should be stored to
-	 * @return true if this optionalpart is stored, else false
+	 * @param ostream the stream where this optional part should be stored to
+	 * @return true if this optional part is stored, else false
 	 */
 	virtual bool storeXml( ostream & ostream ) const;
 	
 	/**
-	 * This method restores this optionalpart in the XML-format from an
+	 * This method restores this optional part in the XML-format from an
 	 * an TinyXml element.
 	 *
-	 * @param pXmlNode a pointer to the TinyXml node wher the optionalpart is stored in
+	 * @param pXmlNode a pointer to the TinyXml node wher the optional part is stored in
 	 * @return an integervalue with the errorvalue
 	 * 	possible errorvalues are:
 	 * 		- 0  loading successful
@@ -263,7 +266,7 @@ public:
 	virtual intFib restoreXml( const TiXmlElement * pXmlElement );
 
 	/**
-	 * This method evaluades the size of the optionalpart in bits in the
+	 * This method evaluades the size of the optional part in bits in the
 	 * compressed file form.
 	 *
 	 * @see store()
@@ -272,12 +275,12 @@ public:
 	 * @see uiCompressionType
 	 * @see actualizeCompressData()
 	 * @see cFibElement::getCompressedSize()
-	 * @return the size of the optionalpart in bits in the compressed form
+	 * @return the size of the optional part in bits in the compressed form
 	 */
 	virtual unsignedLongFib getCompressedSize() const;
 
 	/**
-	 * This method stores this optionalpart in the compressed fib-format
+	 * This method stores this optional part in the compressed Fib format
 	 * (with the deflate -algorithmus) into the given stream.
 	 *
 	 * @see restore()
@@ -285,21 +288,21 @@ public:
 	 * @see uiCompressionType
 	 * @see actualizeCompressData()
 	 * @see cFibElement::store()
-	 * @param stream the stream where this optionalpart should be stored to
-	 * @return true if the optionalpart are stored, else false
+	 * @param stream the stream where this optional part should be stored to
+	 * @return true if the optional part are stored, else false
 	 */
 	virtual bool store( ostream & stream ) const;
 
 	/**
-	 * This method restores the optionalpart from a bitstream, wher it is
-	 * stored in the compressed fib-format with the set compression type.
+	 * This method restores the optional part from a bitstream, wher it is
+	 * stored in the compressed Fib format with the set compression type.
 	 *
 	 * @see store()
 	 * @see setCompressionType()
 	 * @see uiCompressionType
 	 * @see actualizeCompressData()
 	 * @see cFibElement::store()
-	 * @param iBitStream the stream where this optionalpart is stored to in,
+	 * @param iBitStream the stream where this optional part is stored to in,
 	 * 	because this stream is an cReadBits, any number of bits can be
 	 * 	readed from it
 	 * @param ulBytsToRead the nuber of byts the optional part is long,
@@ -336,30 +339,40 @@ public:
 	virtual bool setCompressionType( unsignedIntFib uiInCompressionType = 1 );
 
 	/**
-	 * This Method checks if the given optionalpart is equal to this
-	 * optionalpart.
-	 * Two optionalpart are equal, if they have the same entries in the
+	 * This method checks if the given optional part is equal to this
+	 * optional part.
+	 * Two optional part are equal, if they have the same entries in the
 	 * same order.
 	 *
-	 * @param optionalPart the optionalpart to compare with this
-	 * @return true if the given optionalpart is equal to this
-	 * 	optionalpart, else false
+	 * @param optionalPart the optional part to compare with this
+	 * @return true if the given optional part is equal to this
+	 * 	optional part, else false
 	 */
 	virtual bool equal( const cOptionalPart &optionalPart ) const;
 
 	/**
-	 * This Method checks if the given optionalpart is equal to this
-	 * optionalpart.
-	 * Two optionalpart are equal, if they have the same entries in the
+	 * This method checks if the given optional part is equal to this
+	 * optional part.
+	 * Two optional part are equal, if they have the same entries in the
 	 * same order.
 	 *
-	 * @param optionalPart the optionalpart to compare with this
-	 * @return true if the given optionalpart is equal to this
-	 * 	optionalpart, else false
+	 * @param optionalPart the optional part to compare with this
+	 * @return true if the given optional part is equal to this
+	 * 	optional part, else false
 	 */
 	virtual bool operator==( const cOptionalPart &optionalPart ) const;
 
-
+	/**
+	 * This method assigns the values of the given optional part to this
+	 * optional part.
+	 * After calling this operator, this optional part will be equal to
+	 * the given optional part.
+	 *
+	 * @see equal()
+	 * @param optionalPart the optional part to copy
+	 */
+	virtual cOptionalPart & operator=( const cOptionalPart & optionalPart );
+	
 
 protected:
 

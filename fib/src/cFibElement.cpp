@@ -8,6 +8,7 @@
  * System: C++
  *
  * This class represents a basic Fib element.
+ *
  * Copyright (C) @c LGPL3 2009 Betti Oesterholz
  *
  * This program is free software: you can redistribute it and/or modify
@@ -57,6 +58,8 @@ History:
 16.01.2013  Oesterholz  FEATURE_FIB_ELEMENT_CHECKS_DATABASE_FOR_EXTERNAL_OBJECTS
 	implemented: if no root object exists to retrieve external objects
 	-> search the Fib database
+19.05.2013  Oesterholz  SWITCH_JUST_STORE_AND_EVALUE implemented
+16.08.2013  Oesterholz  method getVariablesToReplace() added
 */
 
 
@@ -111,7 +114,7 @@ cFibElement::cFibElement( cFibElement * pInSuperiorElement ):
 #else //FEATURE_SIMPLE_CONSTRUCTOR
 
 /**
- * parameterconstructor
+ * parameter constructor
  *
  * @param pInSuperiorElement the Fib Element in which this Fib element
  * 	is the underobject
@@ -230,7 +233,7 @@ string cFibElement::getTypeName( char cType ){
 	switch ( cType ){
 		case 'u': return "unknown";
 		case 'p': return "point";
-		case 'l': return "listelement";
+		case 'l': return "list element";
 		case 'y': return "property";
 		case 'c': return "comment";
 		case 'a': return "area";
@@ -586,6 +589,8 @@ cFibElement * cFibElement::getFibElement( char cType, longFib lNumber,
 }
 
 
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
+
 /**
  * This method returns a number of (lNumberOfMaxReturnedElements)
  * Fib elements beginning from the reference Fib element in the
@@ -652,6 +657,7 @@ list<cFibElement*> cFibElement::getAllFibElements( char cTypeBasis,
 	return list<cFibElement*>();
 }
 
+#endif //SWITCH_JUST_STORE_AND_EVALUE
 
 /**
  * This method evaluades the Fib object.
@@ -701,6 +707,7 @@ bool cFibElement::evalueObjectSimple( iEvalueFibElement & evalueFibElement,
 		liCFibElementTyps );
 }
 
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
 
 /** This method checks if the given variable is defined in the given
  * direction from this Fib element.
@@ -778,6 +785,8 @@ bool cFibElement::variablesAreDefined( const set<cFibVariable*> & setVariable ,
 	return true;
 }
 
+#endif //SWITCH_JUST_STORE_AND_EVALUE
+
 
 #ifdef FEATURE_FAST_UPDATE
 
@@ -798,6 +807,7 @@ unsignedIntFib cFibElement::getNumberOfObjectPoint() const{
 }
 
 
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
 
 /**
  * This method converts the number of the elementPoint Fib element
@@ -921,6 +931,8 @@ list<unsignedIntFib> cFibElement::getObjectPointsForElement(
 	return list<unsignedIntFib>();
 }
 
+#endif //SWITCH_JUST_STORE_AND_EVALUE
+
 
 /**
  * This method deletes the whool given Fib object with all the Fib
@@ -1020,6 +1032,7 @@ unsignedIntFib cFibElement::getNumberOfObjectPoint() const{
 	return 0;
 }
 
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
 
 /**
  * This method converts the number of the elementPoint Fib element
@@ -1164,6 +1177,8 @@ list<unsignedIntFib> cFibElement::getObjectPointsForElement(
 	return list<unsignedIntFib>();
 }
 
+#endif //SWITCH_JUST_STORE_AND_EVALUE
+
 
 /**
  * This method deletes the whool given Fib object with all the Fib
@@ -1193,6 +1208,8 @@ void cFibElement::deleteObject( cFibElement * fibObject ){
 
 #endif //FEATURE_FAST_UPDATE
 
+
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
 
 /**
  * @return true if this Fib element is movebel else false
@@ -1285,6 +1302,7 @@ bool cFibElement::removeElement(  const char cType, const unsignedIntFib
 	return true;
 }
 
+#endif //SWITCH_JUST_STORE_AND_EVALUE
 
 /**
  * This method duplicates the whole Fib object, beginning with it's
@@ -1613,6 +1631,8 @@ cFibElement * cFibElement::restoreXmlInternal( const TiXmlNode * pXmlNode,
 				if ( pRestoredFibObject == NULL ){
 					printf( "Error: No Fib object restored (NULL)\n" );
 				}
+				printf( "Restoring element %s done, outStatus now: %i\n",
+					szElementType.c_str(), outStatus );
 #endif//DEBUG_RESTORE_XML
 				
 				return pRestoredFibObject;
@@ -2266,6 +2286,7 @@ unsignedIntFib cFibElement::getNumberOfObjectPoint(
 #endif //FEATURE_FAST_UPDATE
 
 
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
 
 #ifdef FEATURE_EQUAL_FIB_OBJECT
 
@@ -2420,8 +2441,12 @@ bool cFibElement::equalValuesSet( const cFibVariable * variableOwn,
 
 #endif //FEATURE_EQUAL_FIB_OBJECT
 
+#endif //SWITCH_JUST_STORE_AND_EVALUE
+
 
 #ifdef FEATURE_FAST_UPDATE
+
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
 
 /**
  * This method returns the numbers of all object points that contain the
@@ -2449,6 +2474,8 @@ list<unsignedIntFib> cFibElement::elementPointToObjectPointsUp(
 	}//else all object points found
 	return list<unsignedIntFib>();
 }
+
+#endif //SWITCH_JUST_STORE_AND_EVALUE
 
 
 /**
@@ -2490,6 +2517,8 @@ void cFibElement::cutConnectionsTo( const cFibElement * pFibElement ){
 
 #else //FEATURE_FAST_UPDATE
 
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
+
 /**
  * This method returns the numbers of all object points that contain the
  * elementPoint Fib element of the type cType.
@@ -2517,6 +2546,8 @@ list<unsignedIntFib> cFibElement::elementPointToObjectPoints(
 	}//else this==referenceFibObject or no pSuperiorElement -> all object points found
 	return list<unsignedIntFib>();
 }
+
+#endif //SWITCH_JUST_STORE_AND_EVALUE
 
 
 /**
@@ -2630,6 +2661,7 @@ void cFibElement::cutConnections( edDirection direction ){
 
 #endif //FEATURE_FAST_UPDATE
 
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
 
 /**
  * This method moves a Fib limb element (cFibLimb) on the specified
@@ -2737,6 +2769,8 @@ intFib cFibElement::moveLimbElementUp( const char cType, const unsignedIntFib
 	return uiHowfar - uiRemainingElementsToMoveUp;
 }
 
+#endif //SWITCH_JUST_STORE_AND_EVALUE
+
 
 /**
  * @return the highest Fib element in the wool Fib object this
@@ -2768,11 +2802,81 @@ cFibElement * cFibElement::getMasterRoot() const{
 }
 
 
-
-
-
-
-
+/**
+ * This method will evalue if the needed variables can be replaced with
+ * equal variables, which are defined for this Fib element.
+ * If possible it will return a list (liOutVariablesToReplace) of
+ * variable pairs, which have to be replaced.
+ *
+ * @see assignValues()
+ * @see cFibVariable::equal()
+ * @param setNeededVariables a set with the variables needed for this
+ * 	Fib element
+ * @param liOutVariablesToReplace a list to output the variables to replace:
+ * 		first: the original needed variable to replace
+ * 		second: the new variable to replace the original variable with
+ * 	(Fib variables already defined for this Fib element won't be added
+ * 	to this list.)
+ * @return true if all variables can be replaced with for this Fib element
+ * 	defined variables, else false
+ */
+bool cFibElement::getVariablesToReplace(
+		const set< cFibVariable* > & setNeededVariables,
+		list< pair< cFibVariable * ,cFibVariable * > > & liOutVariablesToReplace ){
+	
+	
+	if ( setNeededVariables.empty() ){
+		//no variables needed -> don't need to replace anything
+		return true;
+	}//else needed variables exists
+	list< cFibVariable* > liDefinedVariables = getDefinedVariables( ED_HIGHER );
+	set< cFibVariable* > setDefinedVariables(
+		liDefinedVariables.begin(), liDefinedVariables.end() );
+	
+	/*for every needed variable in the given Fib element:
+	- check if it is not defined above
+	- for all needed but not defined above variables:
+	-- try to find equivalent defined variable in Fib element above
+		check with equal( const cFibVariable &variable, false )
+	*/
+	list< cFibVariable* > liVariablesNeededButNotDefined;
+	for ( set< cFibVariable* >::const_iterator
+			itrUsedVariable = setNeededVariables.begin();
+			itrUsedVariable != setNeededVariables.end(); itrUsedVariable++ ){
+		
+		if ( setDefinedVariables.find( *itrUsedVariable ) ==
+				setDefinedVariables.end() ){
+			//variable needed but not defined above
+			liVariablesNeededButNotDefined.push_back( *itrUsedVariable );
+		}
+	}//end for find all needed but not defined above variables
+	
+	list< cFibVariable* >::const_reverse_iterator itrDefVariable;
+	for ( list< cFibVariable* >::const_iterator
+			itrUsedVariable = liVariablesNeededButNotDefined.begin();
+			itrUsedVariable != liVariablesNeededButNotDefined.end();
+			itrUsedVariable++ ){
+		
+		for ( itrDefVariable = liDefinedVariables.rbegin();
+				itrDefVariable != liDefinedVariables.rend();
+				itrDefVariable++ ){
+			if ( (*itrUsedVariable)->equal( **itrDefVariable ) ){
+				//equal defined variable found -> add pair
+				liOutVariablesToReplace.push_back(
+					pair< cFibVariable * ,cFibVariable * >(
+						*itrUsedVariable, *itrDefVariable ) );
+				break;
+			}
+			
+		}//end for all defined variables
+		if ( itrDefVariable == liDefinedVariables.rend() ){
+			/*can't find equivalent defined variable for needed variable above
+			 -> can't assign values*/
+			return false;
+		}
+	}//end for all needed but not defined above variables
+	return true;
+}
 
 
 

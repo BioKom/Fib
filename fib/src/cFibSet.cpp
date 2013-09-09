@@ -32,6 +32,7 @@
 /*
 History:
 10.12.2011  Oesterholz  created
+31.07.2013  Oesterholz  method assignValues() added
 */
 
 
@@ -1084,6 +1085,157 @@ cFibElement * cFibSet::copyElement( const char cType, const unsignedIntFib
 		return ( pFibElementToCopy->copyElement( 'u', 0 ) );
 	}//else
 	return NULL;
+}
+
+
+/**
+ * This method assigns / copies the values from the given Fib element
+ * fibElement to this Fib element. This means, it will copy everything
+ * of the Fib element fibElement except pointers to other Fib elements
+ * (e. g. for subobjects), these will remain the same.
+ * For that both Fib elements have to be of the same type.
+ * Note: The variables used in this Fib element should be equal some
+ * 	variables defined above.
+ * 	@see cFibVariable::equal( const cFibVariable &variable, false )
+ *
+ * @see getType()
+ * @param fibElement the Fib element, from which to assign / copy the values
+ * @return true if the values could be copied from the given Fib element
+ * 	fibElement, else false
+ */
+bool cFibSet::assignValues( const cFibElement & fibElement ){
+	
+	if ( fibElement.getType() != getType() ){
+		//both Fib elements not of the same type -> can't assign values
+		return false;
+	}
+	if ( equalElement( fibElement, false ) ){
+		//elements already equal -> don't need to assign anything
+		return true;
+	}
+	const cFibSet * pOtherFibSet =
+		((const cFibSet *)(&fibElement));
+	//try to match used variables of vectors to copy
+	list<cVectorFibSet> & liOtherFibSetSubFibSets =
+		(const_cast<cFibSet*>(pOtherFibSet))->liFibSets;
+	//find used variables for every vector seperatly (to speed up)
+	set< cFibVariable* > setUsedVariables;
+	/* a map with the vector index numbers for the variables
+	 * 	key: a pointer to the variable
+	 * 	value: a list with the index numbers (counting starts with 0)
+	 * 		of the vectors where the key variable are used
+	 */
+	map< cFibVariable *, list< unsigned int > > mapSubsetForVariables;
+	unsigned int uiIndexActualSubset = 0;
+	for ( list<cVectorFibSet>::iterator
+			itrSubFibSet = liOtherFibSetSubFibSets.begin();
+			itrSubFibSet != liOtherFibSetSubFibSets.end();
+			itrSubFibSet++, uiIndexActualSubset++ ){
+		
+		set< cFibVariable* > setUsedVariablesInSubset =
+			itrSubFibSet->getUsedVariables();
+		
+		setUsedVariables.insert(
+			setUsedVariablesInSubset.begin(), setUsedVariablesInSubset.end() );
+		
+		//add used variables to mapSubsetForVariables
+		for ( set<cFibVariable*>::iterator
+				itrActualUsedVariable = setUsedVariablesInSubset.begin();
+				itrActualUsedVariable != setUsedVariablesInSubset.end();
+				itrActualUsedVariable++ ){
+			
+			mapSubsetForVariables[ *itrActualUsedVariable ].push_back(
+				uiIndexActualSubset );
+		}
+	}//end for all other subsets
+	
+	/* The list with the variables to replace:
+	 * 	first: the original used variable to replace
+	 * 	second: the new variable to replace the original variable
+	 */
+	list< pair< cFibVariable * ,cFibVariable * > > liVariablesToReplace;
+	
+	if ( ! getVariablesToReplace( setUsedVariables, liVariablesToReplace ) ){
+		//not all variables can be replaced with for this Fib element defined variables
+		return false;
+	}
+	//assign the values
+	//check if the defined variables can be adopted
+	const unsignedIntFib uiNumberOfVariables = vecVariablesDefined.size();
+	const unsignedIntFib uiNumberOfVariablesOther =
+		pOtherFibSet->vecVariablesDefined.size();
+	
+	if ( uiNumberOfVariablesOther < uiNumberOfVariables ){
+		//check if to much variables can be removed
+		vector< cFibVariable * >::const_reverse_iterator
+			itrToRemoveDefinedVariable = vecVariablesDefined.rbegin();
+		
+		for ( unsignedIntFib uiNumberOfVariable = uiNumberOfVariablesOther;
+				uiNumberOfVariable < uiNumberOfVariables;
+				uiNumberOfVariable++, itrToRemoveDefinedVariable++ ){
+			
+			if ( (*itrToRemoveDefinedVariable)->getNumberOfUsingElements() != 0 ){
+				//variable is used -> can't remove variable -> can't assign values
+				return false;
+			}
+		}//else all to much defined variables can be removed
+		//reduce the number of defined variables
+		vecVariablesDefined.resize( uiNumberOfVariablesOther );
+		
+	}else if ( uiNumberOfVariables < uiNumberOfVariablesOther ){
+		//add defined variables till it matches that of the other
+		for ( unsignedIntFib uiNumberOfVariable = uiNumberOfVariables;
+				uiNumberOfVariable < uiNumberOfVariablesOther; uiNumberOfVariable++ ){
+			
+			vecVariablesDefined.push_back( new cFibVariable( this ) );
+		}
+	}//else don't need to change number of defined variables
+	//copy domain number
+	uiDomainNr = pOtherFibSet->uiDomainNr;
+	
+	//copy to set vectors of other Fib set
+	liFibSets.clear();
+	cVectorFibSet * arSubset[ liOtherFibSetSubFibSets.size() ];
+	uiIndexActualSubset = 0;
+	for ( list<cVectorFibSet>::const_iterator
+			itrSubFibSet = liOtherFibSetSubFibSets.begin();
+			itrSubFibSet != liOtherFibSetSubFibSets.end();
+			itrSubFibSet++, uiIndexActualSubset++ ){
+		
+		liFibSets.push_back( cVectorFibSet( *itrSubFibSet, this ) );
+		
+		arSubset[ uiIndexActualSubset ] = &(liFibSets.back());
+	}//end for all subsets
+	
+	if ( ! liVariablesToReplace.empty() ){
+		//replace variables to replace
+		cFibVariable * pOrgVariable = NULL;
+		cFibVariable * pNewVariable = NULL;
+		for ( list< pair< cFibVariable * ,cFibVariable * > >::iterator
+				itrActualVariable = liVariablesToReplace.begin();
+				itrActualVariable != liVariablesToReplace.end(); itrActualVariable++ ){
+			
+			pOrgVariable = itrActualVariable->first;
+			pNewVariable = itrActualVariable->second;
+			
+			list< unsigned int > & liToAdaptSubset =
+				mapSubsetForVariables[ pOrgVariable ];
+			
+			for ( list< unsigned int >::const_iterator
+					itrSubFibSet = liToAdaptSubset.begin();
+					itrSubFibSet != liToAdaptSubset.end(); itrSubFibSet++ ){
+				
+				//replace variable in vector
+				if ( ! arSubset[ *itrSubFibSet ]->replaceVariable(
+						pOrgVariable, pNewVariable ) ){
+					//Error: should not appen
+					return false;
+				}
+			}//end for all subsets
+		}//end for all variables to replace
+	}//end if variables to replace
+	
+	return true;
 }
 
 

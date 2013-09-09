@@ -54,6 +54,8 @@ History:
 15.12.2011  Oesterholz  cFibSet and cFibmatrix added to evalueCountersForObject()
 18.01.2012  Oesterholz  Bugfix: in insertElement() check variables above
 	the to replace element
+19.05.2013  Oesterholz  SWITCH_JUST_STORE_AND_EVALUE implemented
+10.07.2013  Oesterholz  subobject methods added
 */
 
 //TODO weg
@@ -725,6 +727,8 @@ bool lower_second_pair_element( const pair<size_t, size_t> &pairFirst,
 }
 
 
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
+
 /**
  * This method returns a number of (lNumberOfMaxReturnedElements)
  * Fib elements beginning from the actual Fib element in the
@@ -983,6 +987,87 @@ list<cFibElement*> cFibBranch::getAllFibElementsFromPosition(
 }
 
 
+
+/**
+ * This method returns the number of subobjects in this Fib element.
+ * (e. g. limb elements have one subobject)
+ *
+ * @see getSubobject()
+ * @see getSubobjects()
+ * @return the number of subobjects in this Fib element
+ */
+unsignedIntFib cFibBranch::getNumberOfSubobjects() const{
+	
+	return fibUnderObjects.size();
+}
+
+
+/**
+ * This method returns the uiNumberOfSubobject'th subobject of this
+ * Fib element.
+ *
+ * @see getNumberOfSubobjects()
+ * @see getSubobjects()
+ * @param uiNumberOfSubobject the number of the subobject to return
+ * @return a pointer to the uiNumberOfSubobject'th subobject of this
+ * 	Fib element, or the null pointer NULL if non exists
+ */
+cFibElement * cFibBranch::getSubobject( const unsignedIntFib uiNumberOfSubobject ){
+	
+	list< cFibElement * >::iterator itrFoundListElement =
+		getListElement( fibUnderObjects, uiNumberOfSubobject );
+	return ( itrFoundListElement != fibUnderObjects.end()) ?
+		(*itrFoundListElement) : NULL;
+}
+
+
+/**
+ * This method returns the uiNumberOfSubobject'th subobject of this
+ * Fib element.
+ *
+ * @see getNumberOfSubobjects()
+ * @see getSubobjects()
+ * @param uiNumberOfSubobject the number of the subobject to return
+ * @return a pointer to the uiNumberOfSubobject'th subobject of this
+ * 	Fib element, or the null pointer NULL if non exists
+ */
+const cFibElement * cFibBranch::getSubobject(
+	const unsignedIntFib uiNumberOfSubobject ) const{
+	
+	const list< cFibElement * >::const_iterator itrFoundListElement =
+		getListElement( fibUnderObjects, uiNumberOfSubobject );
+	return ( itrFoundListElement != fibUnderObjects.end()) ?
+		(*itrFoundListElement) : NULL;
+}
+
+
+/**
+ * This method returns all subobjects of this Fib element.
+ *
+ * @see getNumberOfSubobjects()
+ * @see getSubobject()
+ * @return a list with all the subobjects of this Fib element
+ */
+list< cFibElement * > cFibBranch::getSubobjects(){
+	
+	return fibUnderObjects;
+}
+
+
+/**
+ * This method returns all subobjects of this Fib element.
+ *
+ * @see getNumberOfSubobjects()
+ * @see getSubobject()
+ * @return a list with all the subobjects of this Fib element
+ */
+const list< cFibElement * > cFibBranch::getSubobjects() const{
+	
+	return fibUnderObjects;
+}
+
+
+
 /**
  * This method checks if the given variable is used in the given
  * direction from this Fib element.
@@ -1193,6 +1278,7 @@ list<cFibVariable*> cFibBranch::getDefinedVariablesInternal(
 	return liDefinedVariables;
 }
 
+#endif //SWITCH_JUST_STORE_AND_EVALUE
 
 /**
  * This method replace the variable variableOld with the variable
@@ -1481,6 +1567,8 @@ unsignedIntFib cFibBranch::getNumberOfObjectPoints() const{
 
 #endif //FEATURE_FAST_UPDATE
 
+
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
 
 /**
  * This method returns the number of the Fib element over wich the
@@ -2415,6 +2503,7 @@ bool cFibBranch::removeObject( const unsignedIntFib objectPoint,
 	return false;
 }
 
+#endif //SWITCH_JUST_STORE_AND_EVALUE
 
 /**
  * This method checks, if all Fib elements of this Fib object
@@ -2440,6 +2529,8 @@ bool cFibBranch::hasUnderAllObjects() const{
 	}
 	return true;
 }
+
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
 
 /**
  * This method checks, if the Fib element on the specified position
@@ -2625,6 +2716,8 @@ cFibElement *cFibBranch::cutElement( const char cType, const unsignedIntFib
 		false, bCheckVariables );
 }
 
+#endif //SWITCH_JUST_STORE_AND_EVALUE
+
 
 #ifdef FEATURE_FAST_UPDATE
 
@@ -2649,6 +2742,7 @@ void cFibBranch::deleteObject(){
 }
 #endif //FEATURE_FAST_UPDATE
 
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
 
 /**
  * This method moves a Fib limb -element (cFibLimb) on the specified
@@ -2838,6 +2932,7 @@ intFib cFibBranch::moveLimbElement( const char cType, const unsignedIntFib
 		pFibElementToMove->getNumberOfElement(), iHowfar, true );
 }
 
+
 #ifdef FEATURE_EQUAL_FIB_OBJECT
 
 /**
@@ -2974,6 +3069,8 @@ bool cFibBranch::equal( const cFibElement & fibObject ) const{
 bool cFibBranch::isBranch() const{
 	return true;
 }
+
+#endif //SWITCH_JUST_STORE_AND_EVALUE
 
 //protected methods
 
@@ -3408,6 +3505,7 @@ unsignedIntFib cFibBranch::getNumberOfObjectPointUp(
 	return uiNumberOfObjectPoint;
 }
 
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
 
 /**
  * This method returns the numbers of all object points that contain the
@@ -3469,6 +3567,7 @@ list<unsignedIntFib> cFibBranch::elementPointToObjectPointsUp(
 	return liObjectPoints;
 }
 
+#endif //SWITCH_JUST_STORE_AND_EVALUE
 
 #else //FEATURE_FAST_UPDATE
 

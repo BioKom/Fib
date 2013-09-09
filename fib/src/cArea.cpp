@@ -46,6 +46,8 @@ History:
 02.01.2012  Oesterholz  cTypeSubarea to cTypeArea
 06.01.2012  Oesterholz  DEBUG_RESTORE_XML: debugging information added for
 	restore from Xml
+03.06.2013  Oesterholz  SWITCH_JUST_STORE_AND_EVALUE implemented
+30.07.2013  Oesterholz  method assignValues() added
 */
 
 
@@ -883,6 +885,7 @@ unsignedLongFib cArea::getCompressedSize() const{
 	return ulCompressedSize;
 }
 
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
 
 /**
  * This method checks if the given variable is used in the given
@@ -1036,6 +1039,7 @@ list<cFibVariable*> cArea::getDefinedVariablesInternal(
 	return liDefinedVariables;
 }
 
+#endif //SWITCH_JUST_STORE_AND_EVALUE
 
 /**
  * This method replace the variable variableOld with the variable
@@ -1095,6 +1099,126 @@ cFibElement * cArea::copyElement( const char cType, const unsignedIntFib
 		return ( pFibElementToCopy->copyElement( 'u', 0 ) );
 	}//else
 	return NULL;
+}
+
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
+
+/**
+ * This method assigns / copies the values from the given Fib element
+ * fibElement to this Fib element. This means, it will copy everything
+ * of the Fib element fibElement except pointers to other Fib elements
+ * (e. g. for subobjects), these will remain the same.
+ * For that both Fib elements have to be of the same type.
+ * Note: The variables used in this Fib element should be equal some
+ * 	variables defined above.
+ * 	@see cFibVariable::equal( const cFibVariable &variable, false )
+ *
+ * @see getType()
+ * @param fibElement the Fib element, from which to assign / copy the values
+ * @return true if the values could be copied from the given Fib element
+ * 	fibElement, else false
+ */
+bool cArea::assignValues( const cFibElement & fibElement ){
+	
+	if ( fibElement.getType() != getType() ){
+		//both Fib elements not of the same type -> can't assign values
+		return false;
+	}
+	if ( equalElement( fibElement, false ) ){
+		//elements already equal -> don't need to assign anything
+		return true;
+	}
+	const cArea * pOtherArea =
+		((const cArea *)(&fibElement));
+	//try to match used variables of area vectors to copy
+	list<cVectorArea> & liOtherAreaSubAreas =
+		(const_cast<cArea*>(pOtherArea))->liSubAreas;
+	//find used variables for every vector seperatly (to speed up)
+	set< cFibVariable* > setUsedVariables;
+	/* a map with the subarea index numbers for the variables
+	 * 	key: a pointer to the variable
+	 * 	value: a list with the index numbers (counting starts with 0)
+	 * 		of the subareas where the key variable are used
+	 */
+	map< cFibVariable *, list< unsigned int > > mapSubareasForVariables;
+	unsigned int uiIndexActualSubarea = 0;
+	for ( list<cVectorArea>::iterator
+			itrSubArea = liOtherAreaSubAreas.begin();
+			itrSubArea != liOtherAreaSubAreas.end();
+			itrSubArea++, uiIndexActualSubarea++ ){
+		
+		set< cFibVariable* > setUsedVariablesInSubarea =
+			itrSubArea->getUsedVariables();
+		
+		setUsedVariables.insert(
+			setUsedVariablesInSubarea.begin(), setUsedVariablesInSubarea.end() );
+		
+		//add used variables to mapSubareasForVariables
+		for ( set<cFibVariable*>::iterator
+				itrActualUsedVariable = setUsedVariablesInSubarea.begin();
+				itrActualUsedVariable != setUsedVariablesInSubarea.end();
+				itrActualUsedVariable++ ){
+			
+			mapSubareasForVariables[ *itrActualUsedVariable ].push_back(
+				uiIndexActualSubarea );
+		}
+	}//end for all other subareas
+	
+	/* The list with the variables to replace:
+	 * 	first: the original used variable to replace
+	 * 	second: the new variable to replace the original variable
+	 */
+	list< pair< cFibVariable * ,cFibVariable * > > liVariablesToReplace;
+	
+	if ( ! getVariablesToReplace( setUsedVariables, liVariablesToReplace ) ){
+		//not all variables can be replaced with for this Fib element defined variables
+		return false;
+	}
+	
+	//copy area vectors of other area
+	//assign the values
+	liSubAreas.clear();
+	cVectorArea * arSubareas[ liOtherAreaSubAreas.size() ];
+	uiIndexActualSubarea = 0;
+	for ( list<cVectorArea>::const_iterator
+			itrSubArea = liOtherAreaSubAreas.begin();
+			itrSubArea != liOtherAreaSubAreas.end();
+			itrSubArea++, uiIndexActualSubarea++ ){
+		
+		liSubAreas.push_back( cVectorArea( *itrSubArea, this ) );
+		
+		arSubareas[ uiIndexActualSubarea ] = &(liSubAreas.back());
+	}//end for all subareas
+	
+	if ( ! liVariablesToReplace.empty() ){
+		//replace variables to replace
+		cFibVariable * pOrgVariable = NULL;
+		cFibVariable * pNewVariable = NULL;
+		for ( list< pair< cFibVariable * ,cFibVariable * > >::iterator
+				itrActualVariable = liVariablesToReplace.begin();
+				itrActualVariable != liVariablesToReplace.end(); itrActualVariable++ ){
+			
+			pOrgVariable = itrActualVariable->first;
+			pNewVariable = itrActualVariable->second;
+			
+			list< unsigned int > & liToAdaptSubareas =
+				mapSubareasForVariables[ pOrgVariable ];
+			
+			for ( list< unsigned int >::const_iterator
+					itrSubArea = liToAdaptSubareas.begin();
+					itrSubArea != liToAdaptSubareas.end(); itrSubArea++ ){
+				
+				//replace variable in areavector
+				if ( ! arSubareas[ *itrSubArea ]->replaceVariable(
+						pOrgVariable, pNewVariable ) ){
+					//Error: should not happen
+					return false;
+				}
+			}//end for all subareas
+		}//end for all variables to replace
+	}//end if variables to replace
+	
+	return true;
 }
 
 
@@ -1308,6 +1432,7 @@ bool cArea::equalElement( const cFibElement & fibElement ) const{
 
 #endif //FEATURE_EQUAL_FIB_OBJECT
 
+#endif //SWITCH_JUST_STORE_AND_EVALUE
 
 
 /**
@@ -1712,6 +1837,7 @@ unsignedIntFib cArea::enumerateVariablesForStoring(
 	
 	return cFibLimb::enumerateVariablesForStoring( uiLastVariableNumber );
 }
+
 
 
 /**

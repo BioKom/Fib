@@ -663,7 +663,7 @@ int testDatabasePath( unsigned long &ulTestphase ){
 	
 	cout<<"bPathSet = cFibDatabase::setDatabasePath( string( \"\" ) );"<<endl;
 	szDatabasePathToSet = "";
-	bPathSet = cFibDatabase::setDatabasePath( szDatabasePathToSet );
+	bPathSet = cFibDatabase::getInstance()->setDatabasePath( szDatabasePathToSet );
 	if ( ! bPathSet ){
 	
 		cout<<"The database path \"\" could correctly not set."<<endl;
@@ -685,7 +685,7 @@ int testDatabasePath( unsigned long &ulTestphase ){
 	
 	cout<<"bPathSet = cFibDatabase::setDatabasePath( string( \"x/1234/xx/1234/\" ) );"<<endl;
 	szDatabasePathToSet = string( "x/1234/xx/1234/" );
-	bPathSet = cFibDatabase::setDatabasePath( szDatabasePathToSet );
+	bPathSet = cFibDatabase::getInstance()->setDatabasePath( szDatabasePathToSet );
 	if ( ! bPathSet ){
 	
 		cout<<"The database path \"\" could correctly not set."<<endl;
@@ -731,8 +731,8 @@ int testDatabasePath( unsigned long &ulTestphase ){
 		iReturn++;
 	}
 	
-	cout<<"bPathSet = cFibDatabase::searchForDatabasePath();"<<endl;
-	bPathSet = cFibDatabase::searchForDatabasePath();
+	cout<<"bPathSet = cFibDatabase::getInstance()->searchForDatabasePath();"<<endl;
+	bPathSet = cFibDatabase::getInstance()->searchForDatabasePath();
 	if ( bPathSet ){
 	
 		cout<<"The database path \""<<pDirTestDatabase<<"\" could correctly be set."<<endl;
@@ -756,8 +756,8 @@ int testDatabasePath( unsigned long &ulTestphase ){
 	
 	
 	szDatabasePathToSet = string( pDirTestDatabase );
-	cout<<"bPathSet = cFibDatabase::setDatabasePath( (string)(\""<<pDirTestDatabase<<"\") );"<<endl;
-	bPathSet = cFibDatabase::setDatabasePath( szDatabasePathToSet );
+	cout<<"bPathSet = cFibDatabase::getInstance()->setDatabasePath( (string)(\""<<pDirTestDatabase<<"\") );"<<endl;
+	bPathSet = cFibDatabase::getInstance()->setDatabasePath( szDatabasePathToSet );
 	if ( bPathSet ){
 	
 		cout<<"The database path \""<<szDatabasePathToSet<<"\" could correctly be set."<<endl;
@@ -883,8 +883,8 @@ int testDatabasePath( unsigned long &ulTestphase ){
 		iReturn++;
 	}
 
-	cout<<"bPathSet = cFibDatabase::searchForDatabasePath();"<<endl;
-	bPathSet = cFibDatabase::searchForDatabasePath();
+	cout<<"bPathSet = cFibDatabase::getInstance()->searchForDatabasePath();"<<endl;
+	bPathSet = cFibDatabase::getInstance()->searchForDatabasePath();
 	if ( bPathSet ){
 	
 		cout<<"The database path \""<<pDirTestDatabase<<"\" could correctly be set."<<endl;

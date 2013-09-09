@@ -37,6 +37,7 @@ History:
 01.08.2009  Oesterholz  cDomainVectorOpenEnd included
 09.02.2012  Oesterholz  isReference() added
 25.02.2012  Oesterholz  cDomainReference included
+09.05.2013  Oesterholz  added debugging info: DEBUG_RESTORE_XML
 */
 
 #include "cDomain.h"
@@ -139,6 +140,10 @@ cDomain * cDomain::restoreXml( const TiXmlElement * pXmlElement, intFib & outSta
 	
 	string szElementType( pXmlElement->Value() );
 	
+#ifdef DEBUG_RESTORE_XML
+	//print debugging output
+	printf( "Restoring domain of type %s\n", szElementType.c_str() );
+#endif//DEBUG_RESTORE_XML
 	intFib iReturnValue = 0;
 	if ( szElementType == "naturalNumberB" ){
 		pDomainRestore = new cDomainNaturalNumberBit( 0 );
@@ -182,6 +187,12 @@ cDomain * cDomain::restoreXml( const TiXmlElement * pXmlElement, intFib & outSta
 	}else if ( (iReturnValue != 0) && (outStatus == 0) ){
 		outStatus = iReturnValue;
 	}
+#ifdef DEBUG_RESTORE_XML
+	//print debugging output
+	const int iOutStatus = outStatus;
+	printf( "Restoring domain of type %s done (output status is %i)\n", 
+		szElementType.c_str(), iOutStatus );
+#endif//DEBUG_RESTORE_XML
 	return pDomainRestore;
 }
 

@@ -32,6 +32,7 @@
 History:
 27.07.2011  Oesterholz  created
 23.01.2012  Oesterholz  input values changed to input vector
+30.07.2013  Oesterholz  method assignValues() added
 */
 
 #ifndef ___C_EXT_OBJECT_H__
@@ -316,6 +317,8 @@ public:
 	virtual bool replaceVariable( cFibVariable * pVariableOld,
 		cFibVariable * pVariableNew );
 	
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
+	
 	/**
 	 * This method checks if the given variable is used in the given
 	 * direction from this fib-element.
@@ -346,11 +349,13 @@ public:
 	 */
 	virtual set<cFibVariable*> getUsedVariables( edDirection direction=ED_POSITION );
 
+	
 	/**
 	 * @return true if this Fib-element is movebel else false
 	 */
 	virtual bool isMovable() const;
 
+#endif //SWITCH_JUST_STORE_AND_EVALUE
 
 	/**
 	 * This method copies the Fib-element on the specified position.
@@ -367,6 +372,22 @@ public:
 	 */
 	virtual cFibElement * copyElement( const char cType='u', const unsignedIntFib
 		elementPoint=0, bool bAbsolute=false ) const;
+
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
+		
+	/**
+	 * This method asigns / copies the values from the given Fib element
+	 * fibElement to this Fib element. This means, it will copy everything
+	 * of the Fib element fibElement except pointers to other Fib elements
+	 * (e. g. for subobjects), these will remain the same.
+	 * For that both Fib elements have to be of the same type.
+	 *
+	 * @see getType()
+	 * @param fibElement the Fib element, from which to assign / copy the values
+	 * @return true if the values could be copied from the given Fib element
+	 * 	fibElement, else false
+	 */
+	virtual bool assignValues( const cFibElement & fibElement );
 
 #ifndef FEATURE_EQUAL_FIB_OBJECT
 	
@@ -416,6 +437,7 @@ public:
 
 #endif //FEATURE_EQUAL_FIB_OBJECT
 	
+#endif //SWITCH_JUST_STORE_AND_EVALUE
 	/**
 	 * This method stores this Fib-object in the XML -format into the
 	 * given stream.
@@ -426,6 +448,8 @@ public:
 	virtual bool storeXml( ostream & stream ) const;
 
 
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
+	
 	/**
 	 * This method inserts the given Fib-element fibelement on the
 	 * specified position. The replaced Fib-element will be the subobject
@@ -555,6 +579,7 @@ public:
 	virtual intFib moveLimbElement( const char cType='u', const unsignedIntFib
 		elementPoint=0, const intFib iHowfar=1, bool bAbsolute=false );
 
+#endif //SWITCH_JUST_STORE_AND_EVALUE
 
 
 /*
@@ -881,6 +906,8 @@ protected:
 	 */
 	virtual cExtObject * copyInternal( const unsignedIntFib iObjectPoint = 0 ) const;
 
+#ifndef SWITCH_JUST_STORE_AND_EVALUE
+	
 	/**
 	 * This method checks if the given variable is defined in the given
 	 * direction from this Fib-element.
@@ -1029,6 +1056,9 @@ protected:
 		const bool bCheckExternalObjects ) const;
 
 #endif //FEATURE_EQUAL_FIB_OBJECT
+
+#endif //SWITCH_JUST_STORE_AND_EVALUE
+
 
 };//class cExtObject
 }//namespace fib

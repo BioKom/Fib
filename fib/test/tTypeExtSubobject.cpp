@@ -30,12 +30,8 @@
  *
  *
  *  What's tested of class cTypeExtSubobject:
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
  * 	- cTypeExtSubobject( const unsignedIntFib iInNumberExtSubobject )
  * 	- unsignedIntFib getNumberOfExtSubobject() const
-#else FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
- * 	- cTypeExtSubobject()
-#endif FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
  * 	- unsignedIntFib getType() const
  * 	- bool isCompatible( const cDomain &domain ) const
  * 	- cDomain *getStandardDomain( ) const
@@ -53,6 +49,7 @@ History:
 06.11.2011  Oesterholz  created
 02.02.2012  Oesterholz  FEATURE_EXT_SUBOBJECT_INPUT_VECTOR implemented
 17.09.2012  Oesterholz  Warning removed: "(char)" for char arrays added
+01.08.2013  Oesterholz  FEATURE_EXT_SUBOBJECT_INPUT_VECTOR as default (not case removed)
 */
 
 #include "version.h"
@@ -92,9 +89,7 @@ int testEqualElementType( unsigned long &ulTestphase );
 int testStoreXml( unsigned long &ulTestphase );
 int testStore( unsigned long &ulTestphase );
 
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 int testExtSubobjNumber( unsigned long &ulTestphase );
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 
 
 int main(int argc,char* argv[]){
@@ -113,9 +108,7 @@ int main(int argc,char* argv[]){
 	iReturn += testStoreXml( ulTestphase );
 	iReturn += testStore( ulTestphase );
 
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	iReturn += testExtSubobjNumber( ulTestphase );
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	
 	if ( iReturn == 0 ){
 	
@@ -142,13 +135,8 @@ int testCostructor( unsigned long &ulTestphase ){
 	ulTestphase++;
 	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing constructing simple cTypeExtSubobject"<<endl;
 
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	cout<<"cTypeExtSubobject typeExtSubobject( 0 );"<<endl;
 	cTypeExtSubobject typeExtSubobject( 0 );
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	cout<<"cTypeExtSubobject typeExtSubobject;"<<endl;
-	cTypeExtSubobject typeExtSubobject;
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 
 	//check the getType() methode from cTypeExtSubobject
 	if ( typeExtSubobject.getType() == (unsignedIntFib)(13) ){
@@ -159,7 +147,6 @@ int testCostructor( unsigned long &ulTestphase ){
 			typeExtSubobject.getType()<<" but should be 13 ."<<endl;
 		iReturn++;
 	}
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	//check the getNumberOfExtSubobject() methode from cTypeExtSubobject
 	if ( typeExtSubobject.getNumberOfExtSubobject() == (unsignedIntFib)(0) ){
 	
@@ -195,8 +182,6 @@ int testCostructor( unsigned long &ulTestphase ){
 		iReturn++;
 	}
 	
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-
 	return iReturn;
 }
 
@@ -216,13 +201,8 @@ int testIsCompatibleGetStandardDomain( unsigned long &ulTestphase ){
 	ulTestphase++;
 	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the global standard domain for the cTypeExtSubobject"<<endl;
 	
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	cout<<"cTypeExtSubobject typeExtSubobject( 0 );"<<endl;
 	cTypeExtSubobject typeExtSubobject( 0 );
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	cout<<"cTypeExtSubobject typeExtSubobject;"<<endl;
-	cTypeExtSubobject typeExtSubobject;
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 
 	//check the getType() methode from cTypeExtSubobject
 	if ( typeExtSubobject.getType() == (unsignedIntFib)(13) ){
@@ -238,7 +218,6 @@ int testIsCompatibleGetStandardDomain( unsigned long &ulTestphase ){
 	cout<<"domainInt = new cDomainNaturalNumberBit( 12 ); "<<endl;
 	cDomainSingle* domainInt = new cDomainNaturalNumberBit( 12 );
 	
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	//check the isCompatible() methode for integer domain
 	if ( ! typeExtSubobject.isCompatible( *domainInt ) ){
 	
@@ -359,136 +338,6 @@ int testIsCompatibleGetStandardDomain( unsigned long &ulTestphase ){
 		iReturn++;
 		delete pStandardDomain;
 	}
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	//check the isCompatible() methode for integer domain
-	if ( typeExtSubobject.isCompatible( *domainInt ) ){
-	
-		cout<<"The type is correctly compatible to the integer domain domainInt. "<<endl;
-	}else{
-		cerr<<"Error: The type is not compatible to the integer domain domainInt."<<endl;
-		iReturn++;
-	}
-	delete domainInt;
-	
-	//check compatible for integer domain
-	cout<<"domainInt =  cDomainInteger( 2, 10 ); "<<endl;
-	domainInt = new cDomainInteger( 2, 10 );
-	
-	//check the isCompatible() methode for integer domain
-	if ( typeExtSubobject.isCompatible( *domainInt ) ){
-	
-		cout<<"The type is correctly compatible to the integer domain domainInt. "<<endl;
-	}else{
-		cerr<<"Error: The type is not compatible to the integer domain domainInt."<<endl;
-		iReturn++;
-	}
-	delete domainInt;
-	
-	//check compatible for vector domain with zero elements
-	vector<cDomainSingle*> vecDomains0( 0 );
-	cDomainVector *vectorDomain = new cDomainVector( vecDomains0 );
-	
-	//check the isCompatible() methode for vectordomain with 0 elements
-	if ( ! typeExtSubobject.isCompatible( *vectorDomain ) ){
-	
-		cout<<"The type is correctly not compatible to the vector domain with 0 elements. "<<endl;
-	}else{
-		cerr<<"Error: The type is compatible to the vector domain with 0 elements."<<endl;
-		iReturn++;
-	}
-	delete vectorDomain;
-
-	//check compatible for vector domain with one elements
-	vector<cDomainSingle*> vecDomains1( 1 );
-	vecDomains1[ 0 ] = new cDomainNaturalNumberBit( 16 );
-	cDomainVector *vectorDomain1 = new cDomainVector( vecDomains1 );
-	
-	//check the isCompatible() methode for vectordomain with 1 elements
-	if ( ! typeExtSubobject.isCompatible( *vectorDomain1 ) ){
-	
-		cout<<"The type is correctly not compatible to the vector domain with 1 elements. "<<endl;
-	}else{
-		cerr<<"Error: The type is compatible to the vector domain with 1 elements."<<endl;
-		iReturn++;
-	}
-	delete vecDomains1[ 0 ];
-	delete vectorDomain1;
-
-	//check compatible for vector domain with two elements
-	vector<cDomainSingle*> vecDomains2( 2 );
-	vecDomains2[ 0 ] = new cDomainNaturalNumberBit( 8 );
-	vecDomains2[ 1 ] = new cDomainNaturalNumberBit( 16 );
-	vectorDomain = new cDomainVector( vecDomains2 );
-	
-	//check the isCompatible() methode for vectordomain with 2 elements
-	if ( ! typeExtSubobject.isCompatible( *vectorDomain ) ){
-	
-		cout<<"The type is correctly not compatible to the vector domain with 2 elements. "<<endl;
-	}else{
-		cerr<<"Error: The type is compatible to the vector domain with 2 elements."<<endl;
-		iReturn++;
-	}
-	delete vecDomains2[ 0 ];
-	delete vecDomains2[ 1 ];
-	delete vectorDomain;
-
-	//check compatible for vector domain with tree elements
-	vector<cDomainSingle*> vecDomains3( 3 );
-	vecDomains3[ 0 ] = new cDomainNaturalNumberBit( 24 );
-	vecDomains3[ 1 ] = new cDomainNaturalNumberBit( 16 );
-	vecDomains3[ 2 ] = new cDomainNaturalNumberBit( 8 );
-	vectorDomain = new cDomainVector( vecDomains3 );
-	
-	//check the isCompatible() methode for vectordomain with 3 elements
-	if ( ! typeExtSubobject.isCompatible( *vectorDomain ) ){
-	
-		cout<<"The type is correctly not compatible to the vector domain with 3 elements. "<<endl;
-	}else{
-		cerr<<"Error: The type is compatible to the vector domain with 3 elements."<<endl;
-		iReturn++;
-	}
-	delete vecDomains3[ 0 ];
-	delete vecDomains3[ 1 ];
-	delete vecDomains3[ 2 ];
-	delete vectorDomain;
-
-	//test the getStandardDomain() method of the property
-	cDomain *standardDomain = typeExtSubobject.getStandardDomain();
-	
-	if ( standardDomain == NULL ){
-	
-		cerr<<"Error: The standarddomain is not given back, but the Nullpointer NULL."<<endl;
-		iReturn++;
-		
-	} else if ( standardDomain->getType()=="DomainNaturalNumberBit" ){
-	
-		cDomainIntegerBasis *domainNaturalNumberBit=(cDomainIntegerBasis*)standardDomain;
-		
-		const doubleFib lowerBound = 0;
-		const doubleFib upperBound = 15;
-		
-		if ( (domainNaturalNumberBit->getMinimum()==lowerBound) &&
-				(domainNaturalNumberBit->getMaximum()==upperBound) ){
-		
-			cout<<"The domain goes correctly from "<<lowerBound<<
-				" to "<<upperBound<<". "<<endl;
-		}else{
-			cerr<<"Error: The domain goes correctly from "<<lowerBound<<
-				" to "<<upperBound<<", but it goes from "<<
-				domainNaturalNumberBit->getMinimum()<<" to "<< 
-				domainNaturalNumberBit->getMaximum()<<"."<<endl;
-			iReturn++;
-		}
-		
-		delete standardDomain;
-	}else{
-		cerr<<"Error: The standarddomain has the type "<<
-			standardDomain->getType()<<" and not the type cDomainNaturalNumberBit."<<endl;
-		iReturn++;
-		delete standardDomain;
-	}
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-
 
 	return iReturn;
 }
@@ -507,13 +356,8 @@ int testClone( unsigned long &ulTestphase ){
 	ulTestphase++;
 	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the clone() method"<<endl;
 
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	cout<<"cTypeExtSubobject typeExtSubobject( 0 );"<<endl;
 	cTypeExtSubobject typeExtSubobject( 0 );
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	cout<<"cTypeExtSubobject typeExtSubobject;"<<endl;
-	cTypeExtSubobject typeExtSubobject;
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 
 	cout<<"cTypeExtSubobject *typeExtSubobjectClone1 = typeExtSubobject.clone();"<<endl;
 	cTypeExtSubobject *typeExtSubobjectClone1 = typeExtSubobject.clone();
@@ -609,7 +453,6 @@ int testCompareTwoNotEqualTyps( const cTypeElement &typeElement1, const string &
 }
 
 
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 
 /**
  * This method tests the equal() method and the operator== of the class.
@@ -724,21 +567,12 @@ int testEqualElementType( unsigned long &ulTestphase ){
 	ulTestphase++;
 	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the equalElementType method "<<endl;
 
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	//create cTypeDimensions to compare
 	cout<<"cTypeExtSubobject typeExtSubobject1( 0 );"<<endl;
 	cTypeExtSubobject typeExtSubobject1( 0 );
 	
 	cout<<"cTypeExtSubobject typeExtSubobject2( 0 );"<<endl;
 	cTypeExtSubobject typeExtSubobject2( 0 );
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	//create cTypeDimensions to compare
-	cout<<"cTypeExtSubobject typeExtSubobject1;"<<endl;
-	cTypeExtSubobject typeExtSubobject1;
-	
-	cout<<"cTypeExtSubobject typeExtSubobject2;"<<endl;
-	cTypeExtSubobject typeExtSubobject2;
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 
 	cout<<"cTypeExtSubobject typeExtSubobjectNr1( 1 );"<<endl;
 	cTypeExtSubobject typeExtSubobjectNr1( 1 );
@@ -817,150 +651,6 @@ int testEqualElementType( unsigned long &ulTestphase ){
 
 	return iReturn;
 }
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-
-/**
- * This method tests the equal() method and the operator== of the class.
- *
- * @param ulTestphase a reference to the number for the testphase
- * @return the number of errors occured in the test
- */
-int testEqual( unsigned long &ulTestphase ){
-
-	int iReturn=0;//returnvalue of the test; the number of occured Errors
-
-	ulTestphase++;
-	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the equal method and the operator== "<<endl;
-
-	//create cTypeExtSubobjects to compare
-	cout<<"cTypeExtSubobject typeExtSubobject1;"<<endl;
-	cTypeExtSubobject typeExtSubobject1;
-	cout<<"cTypeExtSubobject typeExtSubobject2;"<<endl;
-	cTypeExtSubobject typeExtSubobject2;
-
-	cout<<"cTypeInVar typeInVar1N1( 1 );"<<endl;
-	cTypeInVar typeInVar1N1( 1 );
-
-	cout<<"cTypeProperty typeProperty( 1 );"<<endl;
-	cTypeProperty typeProperty( 1 );
-
-	cout<<endl<<"Beginning comparisson: "<<endl<<endl;
-
-	//compare with typeExtSubobject1
-	cTypeElement *actualType=&typeExtSubobject1;
-	string szActualTypeName="typeExtSubobject1";
-	iReturn += testCompareTwoEqualTyps( *actualType, szActualTypeName, typeExtSubobject1, "typeExtSubobject1" );
-	iReturn += testCompareTwoEqualTyps( *actualType, szActualTypeName, typeExtSubobject2, "typeExtSubobject2" );
-	iReturn += testCompareTwoNotEqualTyps( *actualType, szActualTypeName, typeInVar1N1, "typeInVar1N1" );
-	iReturn += testCompareTwoNotEqualTyps( *actualType, szActualTypeName, typeProperty, "typeProperty" );
-
-	//compare with typeExtSubobject2
-	actualType=&typeExtSubobject2;
-	szActualTypeName="typeExtSubobject2";
-	iReturn += testCompareTwoEqualTyps( *actualType, szActualTypeName, typeExtSubobject1, "typeExtSubobject1" );
-	iReturn += testCompareTwoEqualTyps( *actualType, szActualTypeName, typeExtSubobject2, "typeExtSubobject2" );
-	iReturn += testCompareTwoNotEqualTyps( *actualType, szActualTypeName, typeInVar1N1, "typeInVar1N1" );
-	iReturn += testCompareTwoNotEqualTyps( *actualType, szActualTypeName, typeProperty, "typeProperty" );
-
-	//compare with typeInVar1N1
-	actualType=&typeInVar1N1;
-	szActualTypeName="typeInVar1N1";
-	iReturn += testCompareTwoNotEqualTyps( *actualType, szActualTypeName, typeExtSubobject1, "typeExtSubobject1" );
-	iReturn += testCompareTwoNotEqualTyps( *actualType, szActualTypeName, typeExtSubobject2, "typeExtSubobject2" );
-	iReturn += testCompareTwoEqualTyps( *actualType, szActualTypeName, typeInVar1N1, "typeInVar1N1" );
-	iReturn += testCompareTwoNotEqualTyps( *actualType, szActualTypeName, typeProperty, "typeProperty" );
-
-	//compare with typeProperty
-	actualType=&typeProperty;
-	szActualTypeName="typeProperty";
-	iReturn += testCompareTwoNotEqualTyps( *actualType, szActualTypeName, typeExtSubobject1, "typeExtSubobject1" );
-	iReturn += testCompareTwoNotEqualTyps( *actualType, szActualTypeName, typeExtSubobject2, "typeExtSubobject2" );
-	iReturn += testCompareTwoNotEqualTyps( *actualType, szActualTypeName, typeInVar1N1, "typeInVar1N1" );
-	iReturn += testCompareTwoEqualTyps( *actualType, szActualTypeName, typeProperty, "typeProperty" );
-
-	return iReturn;
-}
-
-
-
-/**
- * This method tests the equalElementType() method of the class.
- *
- * methods tested:
- * 	- bool equalElementType( const cTypeElement & typeElement ) const
- *
- * @param ulTestphase a reference to the number for the testphase
- * @return the number of errors occured in the test
- */
-int testEqualElementType( unsigned long &ulTestphase ){
-
-	int iReturn=0;//returnvalue of the test; the number of occured Errors
-
-	ulTestphase++;
-	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the equalElementType method "<<endl;
-
-	//create cTypeDimensions to compare
-	cout<<"cTypeExtSubobject typeExtSubobject1;"<<endl;
-	cTypeExtSubobject typeExtSubobject1;
-	
-	cout<<"cTypeExtSubobject typeExtSubobject2;"<<endl;
-	cTypeExtSubobject typeExtSubobject2;
-
-	cout<<"cTypeInVar typeInVar1( 1 );"<<endl;
-	cTypeInVar typeInVar1( 1 );
-
-	cout<<"cTypeProperty typeProperty( 1 );"<<endl;
-	cTypeProperty typeProperty( 1 );
-
-	cout<<"cTypeDimension typeDimension1D3( 3 );"<<endl;
-	cTypeDimension typeDimension1D3( 3 );
-
-
-	cout<<endl<<"Beginning comparisson: "<<endl<<endl;
-
-	if ( typeExtSubobject1.equalElementType( typeExtSubobject1 ) ){
-	
-		cout<<"The typeExtSubobject1 is of the same type as typeExtSubobject1. "<<endl;
-	}else{
-		cerr<<"Error: The typeExtSubobject1 is not of the same type as typeExtSubobject1."<<endl;
-		iReturn++;
-	}
-	if ( typeExtSubobject1.equalElementType( typeExtSubobject2 ) ){
-	
-		cout<<"The typeExtSubobject1 is of the same type as typeExtSubobject2. "<<endl;
-	}else{
-		cerr<<"Error: The typeExtSubobject1 is not of the same type as typeExtSubobject2."<<endl;
-		iReturn++;
-	}
-	if ( ! typeExtSubobject1.equalElementType( typeInVar1 ) ){
-	
-		cout<<"The typeExtSubobject1 is not of the same type as typeInVar1. "<<endl;
-	}else{
-		cerr<<"Error: The typeExtSubobject1 is of the same type as typeInVar1."<<endl;
-		iReturn++;
-	}
-
-	if ( ! typeExtSubobject1.equalElementType( typeProperty ) ){
-	
-		cout<<"The typeExtSubobject1 is not of the same type as typeProperty. "<<endl;
-	}else{
-		cerr<<"Error: The typeExtSubobject1 is of the same type as typeProperty."<<endl;
-		iReturn++;
-	}
-
-	if ( ! typeExtSubobject1.equalElementType( typeDimension1D3 ) ){
-	
-		cout<<"The typeExtSubobject1 is not of the same type as typeDimension1D3. "<<endl;
-	}else{
-		cerr<<"Error: The typeExtSubobject1 is of the same type as typeDimension1D3."<<endl;
-		iReturn++;
-	}
-
-
-	return iReturn;
-}
-
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 
 
 
@@ -978,9 +668,7 @@ int testEqualElementType( unsigned long &ulTestphase ){
  * @return the number of errors occured in the test
  */
 int testXmlType( const string szFilename,
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 		const unsigned int uiNumberOfExtObject,
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 		bool bHasDomain, unsigned int uiBits, double dScalingfactor ){
 	
 	unsigned int iReturn = 0;
@@ -1014,7 +702,6 @@ int testXmlType( const string szFilename,
 			iReturn++;
 		}
 		
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 		int iNumberOfExtobjectLoaded = 0;
 		const char * pcAttributNumber = pXmlElement->Attribute( "number",
 			&iNumberOfExtobjectLoaded );
@@ -1030,7 +717,6 @@ int testXmlType( const string szFilename,
 				uiNumberOfExtObject <<"\"."<<endl;
 			iReturn++;
 		}
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 		
 	}else{// pXmlElement == NULL ->no root handle
 		cerr<<"Error: No root handle in \""<< szFilename <<"\"."<<endl;
@@ -1123,13 +809,8 @@ int testStoreXml( unsigned long &ulTestphase ){
 	ulTestphase++;
 	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing storing a simple external subobjects type"<<endl;
 
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	cout<<"cTypeExtSubobject typeExtSubobject1( 0 );"<<endl;
 	cTypeExtSubobject typeExtSubobject1( 0 );
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-	cout<<"cTypeExtSubobject typeExtSubobject1;"<<endl;
-	cTypeExtSubobject typeExtSubobject1;
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 
 	char szFileNameBuffer[128];
 	szFileNameBuffer[0] = 0;
@@ -1149,14 +830,9 @@ int testStoreXml( unsigned long &ulTestphase ){
 		iReturn++;
 	}
 	
-	iReturn += testXmlType( szFileNameBuffer,
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-		0,
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-		false, 0, 0.0 );
+	iReturn += testXmlType( szFileNameBuffer, 0, false, 0, 0.0 );
 	
 	
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 	ulTestphase++;
 	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing storing a external subobjects type with a different subobject number"<<endl;
 
@@ -1182,8 +858,6 @@ int testStoreXml( unsigned long &ulTestphase ){
 	
 	iReturn += testXmlType( szFileNameBuffer,
 		4, false, 0, 0.0 );
-
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 
 
 	ulTestphase++;
@@ -1212,9 +886,7 @@ int testStoreXml( unsigned long &ulTestphase ){
 	}
 	
 	iReturn += testXmlType( szFileNameBuffer,
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 		0,
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 		true, uiBits, dScalingfactor );
 
 
@@ -1222,8 +894,6 @@ int testStoreXml( unsigned long &ulTestphase ){
 }
 
 
-
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 
 /**
  * This method store() method of the class.
@@ -1508,135 +1178,6 @@ int testStore( unsigned long &ulTestphase ){
 }
 
 
-#else //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-
-/**
- * This method store() method of the class.
- *
- * methods tested:
- * 	- unsignedLongFib getCompressedSize() const;
- * 	- bool store( ostringstream & ostream ) const;
- *
- * @param ulTestphase a reference to the number for the testphase
- * @return the number of errors occured in the test
- */
-int testStore( unsigned long &ulTestphase ){
-
-	int iReturn = 0;//returnvalue of the test; the number of occured Errors
-
-	ulTestphase++;
-	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing storing a simple external subobjects type for external subobjects"<<endl;
-	
-	cout<<"cTypeExtSubobject typeExtSubobject1;"<<endl;
-	cTypeExtSubobject typeExtSubobject1;
-
-	//test get compressed size
-	unsigned int uiCompressedSize = 8;
-	if ( (unsigned int)(typeExtSubobject1.getCompressedSize()) == uiCompressedSize ){
-	
-		cout<<"The compressed size of the type is correctly "<<
-			uiCompressedSize <<" . "<<endl;
-	}else{
-		cerr<<"Error: The compressed size of the type is "<<
-			typeExtSubobject1.getCompressedSize() << ", but should be "<<
-			uiCompressedSize <<" . "<<endl;
-		iReturn++;
-	}
-	
-	char szFileNameBuffer[128];
-	szFileNameBuffer[0] = 0;
-	strcat( strcat( szFileNameBuffer,
-		(char*)DIR_OUTPUT ), "typeExtSubobject1.fib" );
-	ofstream * pFile = new ofstream( szFileNameBuffer, ios_base::out | ios_base::binary );
-	
-	char cRestBit = 0;
-	unsigned char cNumberOfRestBit = 0 ;
-	bool bStoreSuccesfull = typeExtSubobject1.store( *pFile, cRestBit, cNumberOfRestBit );
-	(*pFile) << cRestBit;
-	delete pFile;
-	
-	if ( bStoreSuccesfull ){
-	
-		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\". "<<endl;
-	}else{
-		cerr<<"Error: Storing the data to the file \""<< szFileNameBuffer <<"\" failed."<<endl;
-		iReturn++;
-	}
-	
-	if ( ( cRestBit == (char)0x00 ) && ( cNumberOfRestBit == 0 ) ){
-		cout<<"The restbit is \"(char)0x"<< hex << (unsigned short)cRestBit <<"\" the number of restbit is "<<
-			dec << (unsigned short)cNumberOfRestBit <<". "<<endl;
-	}else{
-		cerr<<"Error: The restbit is \"(char)0x"<< hex << (unsigned short)cRestBit <<"\" the number of restbit is "<<
-			dec << (unsigned short)cNumberOfRestBit <<
-			", but the restbit should be 0 and number of restbit should be 0. "<<endl;
-		iReturn++;
-	}
-
-	//test stored data
-	const char cTypeExtSubobject1[] = { (char)0xC8,
-		(char)0x00 }; //restbit
-	iReturn += compareBytsWithFile( szFileNameBuffer, cTypeExtSubobject1, 2 );
-
-
-
-	ulTestphase++;
-	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing storing a external subobjects type with 5 restbitsbits"<<endl;
-
-	//test get compressed size
-	uiCompressedSize = 8;
-	if ( (unsigned int)(typeExtSubobject1.getCompressedSize()) == uiCompressedSize ){
-	
-		cout<<"The compressed size of the type is correctly "<<
-			uiCompressedSize <<" . "<<endl;
-	}else{
-		cerr<<"Error: The compressed size of the type is "<<
-			typeExtSubobject1.getCompressedSize() << ", but should be "<<
-			uiCompressedSize <<" . "<<endl;
-		iReturn++;
-	}
-	
-	szFileNameBuffer[0] = 0;
-	strcat( strcat( szFileNameBuffer,
-		(char*)DIR_OUTPUT ), "typeExtSubobject1R5.fib" );
-	pFile = new ofstream( szFileNameBuffer, ios_base::out | ios_base::binary );
-	
-	cRestBit = (char)0x05;
-	cNumberOfRestBit = 5 ;
-	bStoreSuccesfull = typeExtSubobject1.store( *pFile, cRestBit, cNumberOfRestBit );
-	(*pFile) << cRestBit;
-	delete pFile;
-	
-	if ( bStoreSuccesfull ){
-	
-		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\". "<<endl;
-	}else{
-		cerr<<"Error: Storing the data to the file \""<< szFileNameBuffer <<"\" failed."<<endl;
-		iReturn++;
-	}
-	unsigned char ucRestBit = cRestBit;
-	if ( ( ucRestBit == (unsigned char)((char)0x19) ) && ( cNumberOfRestBit == 5 ) ){
-		cout<<"The restbit is \"(char)0x"<< hex << (unsigned short)cRestBit <<"\" the number of restbit is "<<
-			dec << (unsigned short)cNumberOfRestBit <<". "<<endl;
-	}else{
-		cerr<<"Error: The restbit is \"(char)0x"<< hex << (unsigned short)ucRestBit <<"\" the number of restbit is "<<
-			dec << (unsigned short)cNumberOfRestBit <<
-			", but the restbit should be (char)0x12 and number of restbit should be 5. "<<endl;
-		iReturn++;
-	}
-
-	//test stored data
-	const char cTypeExtSubobject5[] = { (char)0x05, (char)0x19 };
-	iReturn += compareBytsWithFile( szFileNameBuffer, cTypeExtSubobject5, 2 );
-
-	
-	return iReturn;
-}
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
-
-
-
-#ifdef FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
 
 /**
  * This method getNumberOfExtSubobject() method of the class.
@@ -1678,6 +1219,6 @@ int testExtSubobjNumber( unsigned long &ulTestphase ){
 	return iReturn;
 }
 
-#endif //FEATURE_EXT_SUBOBJECT_INPUT_VECTOR
+
 
 

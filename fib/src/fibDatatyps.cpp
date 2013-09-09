@@ -36,6 +36,9 @@ History:
 
 #include "fibDatatyps.h"
 
+#include <cmath>
+
+
 using namespace fib;
 
 
@@ -627,6 +630,24 @@ float fib::absF( const float & dValue ){
 double fib::absF( const double & dValue ){
 
 	return (0.0 <= dValue)? dValue : ( ((double)(0.0)) - dValue );
+}
+
+
+/**
+ * This function evalues the power function of integer values.
+ * Returns base raised to the power exponent.
+ *
+ * @param lBase the base for the power function
+ * @param lExponent the exponent for the power function
+ * @return the value lBase^lExponent
+ */
+double fib::powInt( const longFib lBase, const longFib lExponent ){
+	
+	if ( ( lBase == 2 ) && ( 0 <= lExponent ) ){
+		return ((longFib)(1)) << lExponent;
+	}
+	
+	return roundToLongFib( std::pow( (double(lBase)), (double(lExponent)) ) );
 }
 
 
