@@ -329,6 +329,24 @@ bool checkPoint( const pair< long, long > & vecPointToCheck,
 
 
 /**
+ * @param vecPointToCheck the point to check
+ * @param uiBorderX the border for the x or first dimension values,
+ * 	all x values will be lower as this value
+ * @param uiBorderY the border for the y or second dimension values,
+ * 	all y values will be lower as this value
+ * @return true if the given point is in the image search structur, else false
+ */
+bool checkPoint( const cVectorPosition & vecPointToCheck,
+		unsigned int uiBorderX, unsigned int uiBorderY ){
+	
+	return checkPoint( pair< long, long >(
+		roundToLongFib( vecPointToCheck.getValue( 1 ) ),
+		roundToLongFib( vecPointToCheck.getValue( 2 ) ) ),
+		uiBorderX, uiBorderY );
+}
+
+
+/**
  * This method prints the given points to the given stream.
  *
  * @param streamToPrintTo the stream to print the points to
@@ -360,21 +378,6 @@ void printPoints( ostream & streamToPrintTo,
 		streamToPrintTo<<" ("<<itrPoint->first<<", "<<itrPoint->second<<");";
 	}
 	streamToPrintTo<<endl;
-}
-
-
-/**
- * @param vecPointToCheck the point to check
- * @param uiBorderX the border for the x or first dimension values,
- * 	all x values will be lower as this value
- * @param uiBorderY the border for the y or second dimension values,
- * 	all y values will be lower as this value
- * @return true if the given point is in the image search structur, else false
- */
-bool checkPoint( const cVectorPosition & vecPointToCheck,
-		unsigned int uiBorderX, unsigned int uiBorderY ){
-	
-	return checkPoint( toPair( vecPointToCheck ), uiBorderX, uiBorderY );
 }
 
 
