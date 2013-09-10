@@ -34,6 +34,9 @@ History:
 30.09.2010  Oesterholz  xml storing and restoring full rational number
 30.04.2011  Oesterholz  scanf long for 64 bit and windows
 19.10.2011  Oesterholz  FEATURE_EQUAL_FIB_OBJECT implemented
+30.08.2013  Oesterholz  debugging information added (restore XML)
+03.09.2013  Oesterholz  using readDoubleFromFunction() and storeXmlDoubleFib()
+	for storing and restoring Fib double numbers in XML
 */
 
 
@@ -105,7 +108,9 @@ cFunctionValue::cFunctionValue( const TiXmlElement * pXmlElement, intFib & outSt
 		cUnderFunction( pInSuperiorFunction, pInDefiningFibElement ),
 		dValue( 0.0 ){
 	
-	DEBUG_OUT_L3(<<this<<"->cFunctionValue() rostore xml"<<endl);
+#ifdef DEBUG_RESTORE_XML
+	printf( "   cFunctionValue::cFunctionValue() restore xml started\n" );
+#endif //DEBUG_RESTORE_XML
 	
 	//check the vector type
 	if ( pXmlElement == NULL ){
@@ -122,30 +127,17 @@ cFunctionValue::cFunctionValue( const TiXmlElement * pXmlElement, intFib & outSt
 	//read the value
 	const char * pcValue = pXmlElement->GetText();
 	//converting value to double
-	double dValueLoaded = 0.0;
+	std::pair< bool, const char * > pairOutEvalueStatus;
+	dValue = readDoubleFromFunction( pcValue, &pairOutEvalueStatus );
 	
-	long long lMantissa = 0;
-	long long lExponent = 0;
-	const unsigned int uiReadedItems =
-#ifdef WINDOWS
-		sscanf( pcValue, "%I64d * 2^(%I64d", & lMantissa, & lExponent );
-#else //WINDOWS
-		sscanf( pcValue, "%lld * 2^(%lld", & lMantissa, & lExponent );
-#endif //WINDOWS
-	
-	if ( uiReadedItems == 2 ){
-		//mantissa and exponent readed
-		dValueLoaded = ((doubleFib)lMantissa) * pow( 2.0, (doubleFib)lExponent );
-	}else{
-		//try to read double directly
-		const int iReadValues = sscanf ( pcValue, "%lf", & dValueLoaded );
-		if ( iReadValues != 1){
-			//Warning: The element text is not a number.
-			outStatus = 2;
-		}
+	if ( ! pairOutEvalueStatus.second ){
+		//Warning: Error while reading the number
+		outStatus = 2;
 	}
-
-	dValue = dValueLoaded;
+#ifdef DEBUG_RESTORE_XML
+	const double dRestoredValue = dValue;
+	printf( "   cFunctionValue::cFunctionValue() restored value: %lf (%s)\n", dRestoredValue, pcValue );
+#endif //DEBUG_RESTORE_XML
 }
 
 
@@ -430,7 +422,7 @@ bool cFunctionValue::store( ostream & stream, char & cRestBits,
  * given stream.
  * Variables should have ther number as ther value.
  *
- * @param stream the stream where this underfunctionshould be
+ * @param stream the stream where this underfunction should be
  * 	stored to
  * @return true if this underfunction is stored, else false
  */
@@ -440,19 +432,8 @@ bool cFunctionValue::storeXml( ostream & stream ) const{
 	
 	//store the unserfunction
 	stream<<"<value>";
-	const doubleFib dValueToStore = getValue();
-	if ( ( -1000000 < dValue ) && ( dValue < 1000000 ) &&
-			(((doubleFib)((longFib)( dValue * 100.0 ))) / 100.0) == dValue ){
-		//number with no more than 6 digits befor and 2 digits after the point
-		stream<< dValueToStore <<"</value>"<<endl;
-	}else{
-		longFib lMantissa;
-		longFib lExponent;
-		
-		decomposeDoubleFib( dValueToStore, & lMantissa, & lExponent );
-		
-		stream<< lMantissa <<" * 2^("<< lExponent <<")</value>"<<endl;
-	}
+	storeXmlDoubleFib( stream, getValue() );
+	stream<<"</value>"<<endl;
 
 	return true;
 }

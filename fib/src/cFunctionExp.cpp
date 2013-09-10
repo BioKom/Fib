@@ -34,6 +34,7 @@
 History:
 08.05.2010  Oesterholz  created
 19.12.2012  Oesterholz  getValue(): check if valid number
+30.08.2013  Oesterholz  debugging information added ( getValue() )
 */
 
 
@@ -213,15 +214,30 @@ doubleFib cFunctionExp::getValue() const{
 	}
 	if ( (dValue1 == 0.0) && (dValue2 < 0.0) ){
 		//1/0 not defined -> 0
+#ifdef DEBUG_EVALUE
+		const double dConstValue1 = dValue1;
+		const double dConstValue2 = dValue2;
+		printf( "   cFunctionExp::getValue() (%lf)^(%lf) is like 1/0 not defined -> return 0\n", dConstValue1, dConstValue2 );
+#endif //DEBUG_EVALUE
 		return 0.0;
 	}
 	const doubleFib dResult = pow( dValue1, dValue2 );
 	
 	if ( ( dResult == INFINITY ) || ( dResult == -INFINITY ) ||
 			( dResult != dResult ) ){//if is nan
-		
+#ifdef DEBUG_EVALUE
+		const double dConstValue1 = dValue1;
+		const double dConstValue2 = dValue2;
+		printf( "   cFunctionExp::getValue() for (%lf)^(%lf)  result not defined -> return 0\n", dConstValue1, dConstValue2 );
+#endif //DEBUG_EVALUE
 		return 0;
 	}//else return result
+#ifdef DEBUG_EVALUE
+	const double dConstValue1 = dValue1;
+	const double dConstValue2 = dValue2;
+	const double dConstResult = dResult;
+	printf( "   cFunctionExp::getValue() return (%lf)^(%lf) = %lf\n", dConstValue1, dConstValue2, dConstResult );
+#endif //DEBUG_EVALUE
 	
 	return dResult;
 }

@@ -62,6 +62,7 @@ History:
 17.05.2010  Oesterholz  created
 30.03.2011  Oesterholz  storing to binary stream
 17.09.2012  Oesterholz  Warning removed: "(char)" for char arrays added
+03.09.2013  Oesterholz  reading scaling factor adapted
 */
 
 
@@ -169,7 +170,7 @@ int testConstructor( unsigned long &ulTestphase ){
 	//check the getType() methode
 	if ( testDomainIntegerBit1->getType() == "DomainIntegerBit" ){
 	
-		cout<<"The correct type \"DomainIntegerBit\" is given. "<<endl;
+		cout<<"The correct type \"DomainIntegerBit\" is given."<<endl;
 	}else{
 		cerr<<"Error: The type given is not \"DomainIntegerBit\" ; it is : "<<testDomainIntegerBit1->getType()<<endl;
 		iReturn++;
@@ -187,7 +188,7 @@ int testConstructor( unsigned long &ulTestphase ){
 	//check the getType() methode
 	if ( testDomainIntegerBit1->getType() == "DomainIntegerBit" ){
 	
-		cout<<"The correct type \"DomainIntegerBit\" is given. "<<endl;
+		cout<<"The correct type \"DomainIntegerBit\" is given."<<endl;
 	}else{
 		cerr<<"Error: The type given is not \"cDomainIntegerBit\" ; it is : "<<testDomainIntegerBit1->getType()<<endl;
 		iReturn++;
@@ -206,7 +207,7 @@ int testConstructor( unsigned long &ulTestphase ){
 	//check the getType() methode
 	if ( testDomainIntegerBit1->getType() == "DomainIntegerBit" ){
 	
-		cout<<"The correct type \"DomainIntegerBit\" is given. "<<endl;
+		cout<<"The correct type \"DomainIntegerBit\" is given."<<endl;
 	}else{
 		cerr<<"Error: The type given is not \"cDomainIntegerBit\" ; it is : "<<testDomainIntegerBit1->getType()<<endl;
 		iReturn++;
@@ -275,7 +276,7 @@ int testCompareTwoEqualDomains( const cDomain &domain1, const string &szNameDoma
 	
 	if ( domain1.equal( domain2 ) ){
 	
-		cout<<"The "<<szNameDomain1<<" is equal to "<<szNameDomain2<<". "<<endl;
+		cout<<"The "<<szNameDomain1<<" is equal to "<<szNameDomain2<<"."<<endl;
 	}else{
 		cerr<<"Error: The "<<szNameDomain1<<" is not equal to "<<
 			szNameDomain2<<"."<<endl;
@@ -284,7 +285,7 @@ int testCompareTwoEqualDomains( const cDomain &domain1, const string &szNameDoma
 	if ( domain1==domain2 ){
 	
 		cout<<"The "<<szNameDomain1<<" is equal (operator==) to "<<
-			szNameDomain2<<". "<<endl;
+			szNameDomain2<<"."<<endl;
 	}else{
 		cerr<<"Error: The "<<szNameDomain1<<" is not equal (operator==) to "<<
 			szNameDomain2<<"."<<endl;
@@ -312,7 +313,7 @@ int testCompareTwoNotEqualDomains( const cDomain &domain1, const string &szNameD
 	
 	if ( ! domain1.equal( domain2 ) ){
 	
-		cout<<"The "<<szNameDomain1<<" is not equal to "<<szNameDomain2<<". "<<endl;
+		cout<<"The "<<szNameDomain1<<" is not equal to "<<szNameDomain2<<"."<<endl;
 	}else{
 		cerr<<"Error: The "<<szNameDomain1<<" is equal to "<<
 			szNameDomain2<<"."<<endl;
@@ -321,7 +322,7 @@ int testCompareTwoNotEqualDomains( const cDomain &domain1, const string &szNameD
 	if ( ! (domain1==domain2) ){
 	
 		cout<<"The "<<szNameDomain1<<" is not equal (operator==) to "<<
-			szNameDomain2<<". "<<endl;
+			szNameDomain2<<"."<<endl;
 	}else{
 		cerr<<"Error: The "<<szNameDomain1<<" is equal (operator==) to "<<
 			szNameDomain2<<"."<<endl;
@@ -656,11 +657,11 @@ int testCopy( unsigned long &ulTestphase ){
  *
  * @param szFilename the name of the file wher the cDomainIntegerBit is stored
  * @param uiBits the number of bits the cDomainIntegerBit has
- * @param dScalingfactor the scalingfactor for the cDomainIntegerBit domain
+ * @param dScalingFactor the scalingfactor for the cDomainIntegerBit domain
  * @return the number of errors occured in the test
  */
 int testXmlDomain( const string szFilename, const unsigned int uiBits,
-		const double dScalingfactor ){
+		const double dScalingFactor ){
 	
 	unsigned int iReturn = 0;
 	
@@ -669,7 +670,7 @@ int testXmlDomain( const string szFilename, const unsigned int uiBits,
 	TiXmlDocument xmlDocVectorPosition( szFilename );
 	bool loadOkay = xmlDocVectorPosition.LoadFile();
 	if ( loadOkay ){
-		cout<<"The data of the vector was loaded successfull from the file \""<< szFilename <<"\". "<<endl;
+		cout<<"The data of the vector was loaded successfull from the file \""<< szFilename <<"\"."<<endl;
 	}else{
 		cerr<<"Error: Failed to load file \""<< szFilename <<"\""<<endl;
 		iReturn++;
@@ -684,7 +685,7 @@ int testXmlDomain( const string szFilename, const unsigned int uiBits,
 		string szElementName = pXmlElement->Value();
 
 		if ( szElementName == "integerB" ){
-			cout<<"The root element is correctly named \"integerB\". "<<endl;
+			cout<<"The root element is correctly named \"integerB\"."<<endl;
 		
 		}else{
 			cerr<<"Error: The name of the root element is "<< szElementName <<" and not \"integerB\"."<<endl;
@@ -698,49 +699,39 @@ int testXmlDomain( const string szFilename, const unsigned int uiBits,
 			cerr<<"Error: The domain has no attribute bit."<<endl;
 			iReturn++;
 		}else if ( iBitLoaded == (int)uiBits ) {
-			cout<<"The number of bits of the domain are correctly \""<< uiBits <<"\". "<<endl;
+			cout<<"The number of bits of the domain are correctly \""<< uiBits <<"\"."<<endl;
 		}else{
 			cerr<<"Error: The number of bits of the loaded domain are \""<< iBitLoaded
 				<<"\", but should be \""<< uiBits <<"\"."<<endl;
 			iReturn++;
 		}
 		
-		const char * pcAttributeScalingfactor =
+		const char * pcAttributeScalingFactor =
 			pXmlElement->Attribute( "scalingfactor" );
 		
-		longFib lfMantissa;
-		longFib lfExponent;
-		decomposeDoubleFib( dScalingfactor, & lfMantissa, & lfExponent );
-		
-		if ( ( dScalingfactor == 1.0 ) && ( pcAttributeScalingfactor == NULL ) ){
+		if ( ( dScalingFactor == 1.0 ) && ( pcAttributeScalingFactor == NULL ) ){
 			//no scalingfactor needed
-			cout<<"No scalingfactor attribut. This is correct because the scalingfactor is 1.0 . "<<endl;
+			cout<<"No scalingfactor attribut. This is correct because the scalingfactor is 1.0 ."<<endl;
 		}else{
-			if ( pcAttributeScalingfactor == NULL ){
+			if ( pcAttributeScalingFactor == NULL ){
 				cerr<<"Error: The domain has no attribute scalingfactor."<<endl;
 				iReturn++;
 			}else{
-				long long lMantissa = 0;
-				long long lExponent = 0;
-				// construct an istream containing a number
-				stringstream sinScalingfactor( pcAttributeScalingfactor );
-
-				// read the number -- the crucial bit
-				char c = 0;
-				sinScalingfactor >> lMantissa;
-				while ( (c != '(') && sinScalingfactor ){
-					sinScalingfactor >> c;
-				}
-				sinScalingfactor >> lExponent;
-
-				if ( ( lfMantissa == lMantissa ) &&  ( lfExponent == lExponent ) ) {
-					 cout<<"The scalingfactor of the domain is correctly \""<< pcAttributeScalingfactor <<"\". "<<endl;
-				}else{
-					 cerr<<"Error: The scalingfactor of the loaded domain is \""<< pcAttributeScalingfactor<<
-						"\" (=\""<<lMantissa <<" * 2^("<< lExponent <<")\") "<<
-						", but should be \""<< dScalingfactor <<"\" (=\""<<
-						lfMantissa <<" * 2^("<< lfExponent <<")\")."<<endl;
+				if ( pcAttributeScalingFactor == NULL ){
+					cerr<<"Error: The domain has no attribute scalingfactor."<<endl;
 					iReturn++;
+				}else{
+					const double dReadScalingFactor =
+						readDoubleFromFunction( pcAttributeScalingFactor );
+					
+					if ( dScalingFactor == dReadScalingFactor ) {
+						cout<<"The scaling factor of the domain is correctly \""<< pcAttributeScalingFactor <<"\"."<<endl;
+					}else{
+						cerr<<"Error: The scaling factor of the loaded domain is \""<<
+							pcAttributeScalingFactor<<"\"(="<<dReadScalingFactor<<
+							"), but should be \""<<dScalingFactor <<"\" ."<<endl;
+						iReturn++;
+					}
 				}
 			}
 		}
@@ -786,7 +777,7 @@ int testStoreXml( unsigned long &ulTestphase ){
 	
 	if ( bStoreSuccesfull ){
 	
-		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\". "<<endl;
+		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\"."<<endl;
 	}else{
 		cerr<<"Error: Storing the data to the file \""<< szFileNameBuffer <<"\" failed."<<endl;
 		iReturn++;
@@ -810,7 +801,7 @@ int testStoreXml( unsigned long &ulTestphase ){
 	
 	if ( bStoreSuccesfull ){
 	
-		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\". "<<endl;
+		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\"."<<endl;
 	}else{
 		cerr<<"Error: Storing the data to the file \""<< szFileNameBuffer <<"\" failed."<<endl;
 		iReturn++;
@@ -834,7 +825,7 @@ int testStoreXml( unsigned long &ulTestphase ){
 	
 	if ( bStoreSuccesfull ){
 	
-		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\". "<<endl;
+		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\"."<<endl;
 	}else{
 		cerr<<"Error: Storing the data to the file \""<< szFileNameBuffer <<"\" failed."<<endl;
 		iReturn++;
@@ -858,7 +849,7 @@ int testStoreXml( unsigned long &ulTestphase ){
 	
 	if ( bStoreSuccesfull ){
 	
-		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\". "<<endl;
+		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\"."<<endl;
 	}else{
 		cerr<<"Error: Storing the data to the file \""<< szFileNameBuffer <<"\" failed."<<endl;
 		iReturn++;
@@ -896,10 +887,10 @@ int testStore( unsigned long &ulTestphase ){
 	unsigned int uiCompressedSize = 8 + 8;
 	if ( domainIntegerBit4.getCompressedSize() == uiCompressedSize ){
 	
-		cout<<"The compressed size of the domain is correctly "<< uiCompressedSize <<" . "<<endl;
+		cout<<"The compressed size of the domain is correctly "<< uiCompressedSize <<" ."<<endl;
 	}else{
 		cerr<<"Error: The compressed size of the domain is "<<
-			domainIntegerBit4.getCompressedSize() << ", but should be "<< uiCompressedSize <<" . "<<endl;
+			domainIntegerBit4.getCompressedSize() << ", but should be "<< uiCompressedSize <<" ."<<endl;
 		iReturn++;
 	}
 	
@@ -917,7 +908,7 @@ int testStore( unsigned long &ulTestphase ){
 	
 	if ( bStoreSuccesfull ){
 	
-		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\". "<<endl;
+		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\"."<<endl;
 	}else{
 		cerr<<"Error: Storing the data to the file \""<< szFileNameBuffer <<"\" failed."<<endl;
 		iReturn++;
@@ -925,11 +916,11 @@ int testStore( unsigned long &ulTestphase ){
 	
 	if ( ( cRestBit == (char)0x00 ) && ( cNumberOfRestBit == 0 ) ){
 		cout<<"The restbit is \""<< hex << (unsigned short)cRestBit <<"\" the number of restbit is "<<
-			dec << (unsigned short)cNumberOfRestBit <<". "<<endl;
+			dec << (unsigned short)cNumberOfRestBit <<"."<<endl;
 	}else{
 		cerr<<"Error: The restbit is \""<< hex << (unsigned short)cRestBit <<"\" the number of restbit is "<<
 			dec << (unsigned short)cNumberOfRestBit <<
-			", but the restbit should be 0 and number of restbit should be 0. "<<endl;
+			", but the restbit should be 0 and number of restbit should be 0."<<endl;
 		iReturn++;
 	}
 
@@ -950,10 +941,10 @@ int testStore( unsigned long &ulTestphase ){
 	uiCompressedSize = 16 + 8 + 2 * 56;
 	if ( domainIntegerBit16S0p214.getCompressedSize() == uiCompressedSize ){
 	
-		cout<<"The compressed size of the domain is correctly "<< uiCompressedSize <<" . "<<endl;
+		cout<<"The compressed size of the domain is correctly "<< uiCompressedSize <<" ."<<endl;
 	}else{
 		cerr<<"Error: The compressed size of the domain is "<<
-			domainIntegerBit16S0p214.getCompressedSize() << ", but should be "<< uiCompressedSize <<" . "<<endl;
+			domainIntegerBit16S0p214.getCompressedSize() << ", but should be "<< uiCompressedSize <<" ."<<endl;
 		iReturn++;
 	}
 
@@ -970,7 +961,7 @@ int testStore( unsigned long &ulTestphase ){
 	
 	if ( bStoreSuccesfull ){
 	
-		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\". "<<endl;
+		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\"."<<endl;
 	}else{
 		cerr<<"Error: Storing the data to the file \""<< szFileNameBuffer <<"\" failed."<<endl;
 		iReturn++;
@@ -978,11 +969,11 @@ int testStore( unsigned long &ulTestphase ){
 
 	if ( ( cRestBit == (char)0x00 ) && ( cNumberOfRestBit == 0 ) ){
 		cout<<"The restbit is \""<< hex << (unsigned short)cRestBit <<"\" the number of restbit is "<<
-			dec << (unsigned short)cNumberOfRestBit <<". "<<endl;
+			dec << (unsigned short)cNumberOfRestBit <<"."<<endl;
 	}else{
 		cerr<<"Error: The restbit is \""<< hex << (unsigned short)cRestBit <<"\" the number of restbit is "<<
 			dec << (unsigned short)cNumberOfRestBit <<
-			", but the restbit should be 0 and number of restbit should be 0. "<<endl;
+			", but the restbit should be 0 and number of restbit should be 0."<<endl;
 		iReturn++;
 	}
 
@@ -1006,11 +997,11 @@ int testStore( unsigned long &ulTestphase ){
 	uiCompressedSize = 16 + 8 + 16 * 2;
 	if ( domainIntegerBit58S64p125.getCompressedSize() == uiCompressedSize ){
 	
-		cout<<"The compressed size of the domain is correctly "<< uiCompressedSize <<" . "<<endl;
+		cout<<"The compressed size of the domain is correctly "<< uiCompressedSize <<" ."<<endl;
 	}else{
 		cerr<<"Error: The compressed size of the domain is "<<
 			domainIntegerBit58S64p125.getCompressedSize() <<
-			", but should be "<< uiCompressedSize <<" . "<<endl;
+			", but should be "<< uiCompressedSize <<" ."<<endl;
 		iReturn++;
 	}
 	
@@ -1027,18 +1018,18 @@ int testStore( unsigned long &ulTestphase ){
 	
 	if ( bStoreSuccesfull ){
 	
-		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\". "<<endl;
+		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\"."<<endl;
 	}else{
 		cerr<<"Error: Storing the data to the file \""<< szFileNameBuffer <<"\" failed."<<endl;
 		iReturn++;
 	}
 	if ( ( cRestBit == (char)0x00 ) && ( cNumberOfRestBit == 0 ) ){
 		cout<<"The restbit is \""<< hex << (unsigned short)cRestBit <<"\" the number of restbit is "<<
-			dec << (unsigned short)cNumberOfRestBit <<". "<<endl;
+			dec << (unsigned short)cNumberOfRestBit <<"."<<endl;
 	}else{
 		cerr<<"Error: The restbit is \""<< hex << (unsigned short)cRestBit <<"\" the number of restbit is "<<
 			dec << (unsigned short)cNumberOfRestBit <<
-			", but the restbit should be 0 and number of restbit should be 0. "<<endl;
+			", but the restbit should be 0 and number of restbit should be 0."<<endl;
 		iReturn++;
 	}
 
@@ -1060,11 +1051,11 @@ int testStore( unsigned long &ulTestphase ){
 	uiCompressedSize = 8 + 8 + 8 + 16 * 2;
 	if ( domainIntegerBit3S64p125S4.getCompressedSize() == uiCompressedSize ){
 	
-		cout<<"The compressed size of the domain is correctly "<< uiCompressedSize <<" . "<<endl;
+		cout<<"The compressed size of the domain is correctly "<< uiCompressedSize <<" ."<<endl;
 	}else{
 		cerr<<"Error: The compressed size of the domain is "<<
 			domainIntegerBit3S64p125S4.getCompressedSize() <<
-			", but should be "<< uiCompressedSize <<" . "<<endl;
+			", but should be "<< uiCompressedSize <<" ."<<endl;
 		iReturn++;
 	}
 	
@@ -1081,7 +1072,7 @@ int testStore( unsigned long &ulTestphase ){
 	
 	if ( bStoreSuccesfull ){
 	
-		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\". "<<endl;
+		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\"."<<endl;
 	}else{
 		cerr<<"Error: Storing the data to the file \""<< szFileNameBuffer <<"\" failed."<<endl;
 		iReturn++;
@@ -1089,11 +1080,11 @@ int testStore( unsigned long &ulTestphase ){
 	unsigned char ucRestBit = (unsigned char)(cRestBit);
 	if ( ( ucRestBit == (char)0x0F ) && ( cNumberOfRestBit == 4 ) ){
 		cout<<"The restbit is \"(char)0x"<< hex << (unsigned short)ucRestBit <<"\" the number of restbit is "<<
-			dec << (unsigned short)cNumberOfRestBit <<". "<<endl;
+			dec << (unsigned short)cNumberOfRestBit <<"."<<endl;
 	}else{
 		cerr<<"Error: The restbit is \"(char)0x"<< hex << (unsigned short)ucRestBit <<"\" the number of restbit is "<<
 			dec << (unsigned short)cNumberOfRestBit <<
-			", but the restbit should be (char)0x0F and number of restbit should be 4 . "<<endl;
+			", but the restbit should be (char)0x0F and number of restbit should be 4 ."<<endl;
 		iReturn++;
 	}
 
@@ -1116,11 +1107,11 @@ int testStore( unsigned long &ulTestphase ){
 	uiCompressedSize = 16 + 8 + 8 * 2;
 	if ( domainIntegerBit0S174.getCompressedSize() == uiCompressedSize ){
 	
-		cout<<"The compressed size of the domain is correctly "<< uiCompressedSize <<" . "<<endl;
+		cout<<"The compressed size of the domain is correctly "<< uiCompressedSize <<" ."<<endl;
 	}else{
 		cerr<<"Error: The compressed size of the domain is "<<
 			domainIntegerBit0S174.getCompressedSize() <<
-			", but should be "<< uiCompressedSize <<" . "<<endl;
+			", but should be "<< uiCompressedSize <<" ."<<endl;
 		iReturn++;
 	}
 	
@@ -1137,18 +1128,18 @@ int testStore( unsigned long &ulTestphase ){
 	
 	if ( bStoreSuccesfull ){
 	
-		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\". "<<endl;
+		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\"."<<endl;
 	}else{
 		cerr<<"Error: Storing the data to the file \""<< szFileNameBuffer <<"\" failed."<<endl;
 		iReturn++;
 	}
 	if ( ( cRestBit == (char)0x00 ) && ( cNumberOfRestBit == 0 ) ){
 		cout<<"The restbit is \""<< hex << (unsigned short)cRestBit <<"\" the number of restbit is "<<
-			dec << (unsigned short)cNumberOfRestBit <<". "<<endl;
+			dec << (unsigned short)cNumberOfRestBit <<"."<<endl;
 	}else{
 		cerr<<"Error: The restbit is \""<< hex << (unsigned short)cRestBit <<"\" the number of restbit is "<<
 			dec << (unsigned short)cNumberOfRestBit <<
-			", but the restbit should be 0 and number of restbit should be 0. "<<endl;
+			", but the restbit should be 0 and number of restbit should be 0."<<endl;
 		iReturn++;
 	}
 
@@ -1207,11 +1198,11 @@ int testStoreValue( unsigned long &ulTestphase ){
 		if ( domInteger.getCompressedSizeForValue() == uiCompressedSizeForValue ){
 		
 			cout<<"The compressed size of the domain is correctly "<<
-				uiCompressedSizeForValue <<" . "<<endl;
+				uiCompressedSizeForValue <<" ."<<endl;
 		}else{
 			cerr<<"Error: The compressed size of the domain is "<<
 				domInteger.getCompressedSizeForValue() << ", but should be "<<
-				uiCompressedSizeForValue <<" . "<<endl;
+				uiCompressedSizeForValue <<" ."<<endl;
 			iReturn++;
 		}
 
@@ -1253,7 +1244,7 @@ int testStoreValue( unsigned long &ulTestphase ){
 			
 			if ( bStoreSuccesfull ){
 			
-				cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\". "<<endl;
+				cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\"."<<endl;
 			}else{
 				cerr<<"Error: Storing the data to the file \""<< szFileNameBuffer <<"\" failed."<<endl;
 				iReturn++;
@@ -1261,10 +1252,10 @@ int testStoreValue( unsigned long &ulTestphase ){
 			
 			unsigned char cNumberOfRestBitCorrect = (cNumberOfRestBitOrg + uiCompressedSizeForValue) % 8;
 			if ( cNumberOfRestBit == cNumberOfRestBitCorrect ){
-				cout<<"The number of restbit is "<< (unsigned short)cNumberOfRestBit <<". "<<endl;
+				cout<<"The number of restbit is "<< (unsigned short)cNumberOfRestBit <<"."<<endl;
 			}else{
 				cerr<<"Error: The number of restbit is "<< (unsigned short)cNumberOfRestBit <<
-					", but the number of restbit should be "<< (unsigned short)cNumberOfRestBitCorrect <<" . "<<endl;
+					", but the number of restbit should be "<< (unsigned short)cNumberOfRestBitCorrect <<" ."<<endl;
 				iReturn++;
 			}
 			
@@ -1289,7 +1280,7 @@ int testStoreValue( unsigned long &ulTestphase ){
 			
 			if ( outStatus == 0 ){
 			
-				cout<<"The data was loaded successfull. "<<endl;
+				cout<<"The data was loaded successfull."<<endl;
 			}else{
 				cerr<<"Error: While loading the data (outStatus="<< outStatus <<")."<<endl;
 				iReturn++;
@@ -1298,11 +1289,11 @@ int testStoreValue( unsigned long &ulTestphase ){
 			const doubleFib dValueRouded = domInteger.round( dValue );
 			
 			if ( dValueLoaded == dValueRouded ){
-				cout<<"The restored number is correctly "<< dValueLoaded <<" . "<<endl;
+				cout<<"The restored number is correctly "<< dValueLoaded <<" ."<<endl;
 
 			}else{
 				cerr<<"Error: The restored number is "<< dValueLoaded <<
-					" , but should be "<< dValueRouded <<" . "<<endl;
+					" , but should be "<< dValueRouded <<" ."<<endl;
 				iReturn++;
 			}
 			
@@ -1323,7 +1314,7 @@ int testStoreValue( unsigned long &ulTestphase ){
 			
 			if ( bStoreSuccesfull ){
 			
-				cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\". "<<endl;
+				cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\"."<<endl;
 			}else{
 				cerr<<"Error: Storing the data to the file \""<< szFileNameBuffer <<"\" failed."<<endl;
 				iReturn++;
@@ -1331,10 +1322,10 @@ int testStoreValue( unsigned long &ulTestphase ){
 			
 			cNumberOfRestBitCorrect = (cNumberOfRestBitOrg + uiCompressedSizeForValue) % 8;
 			if ( cNumberOfRestBit == cNumberOfRestBitCorrect ){
-				cout<<"The number of restbit is "<< (unsigned short)cNumberOfRestBit <<". "<<endl;
+				cout<<"The number of restbit is "<< (unsigned short)cNumberOfRestBit <<"."<<endl;
 			}else{
 				cerr<<"Error: The number of restbit is "<< (unsigned short)cNumberOfRestBit <<
-					", but the number of restbit should be "<< (unsigned short)cNumberOfRestBitCorrect <<" . "<<endl;
+					", but the number of restbit should be "<< (unsigned short)cNumberOfRestBitCorrect <<" ."<<endl;
 				iReturn++;
 			}
 			
@@ -1359,7 +1350,7 @@ int testStoreValue( unsigned long &ulTestphase ){
 			
 			if ( outStatus == 0 ){
 			
-				cout<<"The data was loaded successfull. "<<endl;
+				cout<<"The data was loaded successfull."<<endl;
 			}else{
 				cerr<<"Error: While loading the data (outStatus="<< outStatus <<")."<<endl;
 				iReturn++;
@@ -1368,11 +1359,11 @@ int testStoreValue( unsigned long &ulTestphase ){
 			const longFib lValueRouded = domInteger.roundUnscaled( lValue );
 			
 			if ( lValueLoaded == lValueRouded ){
-				cout<<"The restored number is correctly "<< lValueLoaded <<" . "<<endl;
+				cout<<"The restored number is correctly "<< lValueLoaded <<" ."<<endl;
 
 			}else{
 				cerr<<"Error: The restored number is "<< lValueLoaded <<
-					" , but should be "<< lValueRouded <<" . "<<endl;
+					" , but should be "<< lValueRouded <<" ."<<endl;
 				iReturn++;
 			}
 		}
@@ -1390,11 +1381,11 @@ int testStoreValue( unsigned long &ulTestphase ){
 	if ( domIntegerB8.getCompressedSizeForValue() == uiCompressedSizeForValue ){
 	
 		cout<<"The compressed size of the domain is correctly "<<
-			uiCompressedSizeForValue <<" . "<<endl;
+			uiCompressedSizeForValue <<" ."<<endl;
 	}else{
 		cerr<<"Error: The compressed size of the domain is "<<
 			domIntegerB8.getCompressedSizeForValue() << ", but should be "<<
-			uiCompressedSizeForValue <<" . "<<endl;
+			uiCompressedSizeForValue <<" ."<<endl;
 		iReturn++;
 	}
 
@@ -1417,17 +1408,17 @@ int testStoreValue( unsigned long &ulTestphase ){
 	
 	if ( bStoreSuccesfull ){
 	
-		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\". "<<endl;
+		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\"."<<endl;
 	}else{
 		cerr<<"Error: Storing the data to the file \""<< szFileNameBuffer <<"\" failed."<<endl;
 		iReturn++;
 	}
 	
 	if ( cNumberOfRestBit == 0 ){
-		cout<<"The number of restbit is "<< (unsigned short)cNumberOfRestBit <<". "<<endl;
+		cout<<"The number of restbit is "<< (unsigned short)cNumberOfRestBit <<"."<<endl;
 	}else{
 		cerr<<"Error: The number of restbit is "<< (unsigned short)cNumberOfRestBit <<
-			", but the number of restbit should be 0 . "<<endl;
+			", but the number of restbit should be 0 ."<<endl;
 		iReturn++;
 	}
 	
@@ -1448,11 +1439,11 @@ int testStoreValue( unsigned long &ulTestphase ){
 		iReturn++;
 	}
 	if ( dValueLoaded == 0.0 ){
-		cout<<"The restored number is correctly "<< dValueLoaded <<" . "<<endl;
+		cout<<"The restored number is correctly "<< dValueLoaded <<" ."<<endl;
 
 	}else{
 		cerr<<"Error: The restored number is "<< dValueLoaded <<
-			" , but should be "<< 0.0 <<" . "<<endl;
+			" , but should be "<< 0.0 <<" ."<<endl;
 		iReturn++;
 	}
 	

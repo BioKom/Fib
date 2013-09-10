@@ -52,6 +52,7 @@ History:
 09.07.2013  Oesterholz  subobject methods added
 29.07.2013  Oesterholz  method assignValues() added
 16.08.2013  Oesterholz  method getVariablesToReplace() added
+29.08.2013  Oesterholz  getMasterRoot() is now public
 */
 
 
@@ -1371,6 +1372,18 @@ public:
 	virtual const cRoot * getSuperiorRootElement() const;
 
 	/**
+	 * @return the highest Fib-element in the wool Fib-object this
+	 * 	Fib-element is part of
+	 */
+	cFibElement * getMasterRoot();
+
+	/**
+	 * @return the highest Fib-element in the wool Fib-object this
+	 * 	Fib-element is part of
+	 */
+	cFibElement * getMasterRoot() const;
+
+	/**
 	 * This method returns the identifiers of all root-objects of this
 	 * object.
 	 *
@@ -1911,22 +1924,6 @@ protected:
 	 */
 	virtual list<cFibElement*> getAllFibElementsFromPosition( char cType,
 		edDirection direction, unsignedLongFib lNumberOfMaxReturnedElements ) = 0;
-	
-#endif //SWITCH_JUST_STORE_AND_EVALUE
-	
-	/**
-	 * @return the highest Fib-element in the wool Fib-object this
-	 * 	Fib-element is part of
-	 */
-	cFibElement * getMasterRoot();
-
-	/**
-	 * @return the highest Fib-element in the wool Fib-object this
-	 * 	Fib-element is part of
-	 */
-	cFibElement * getMasterRoot() const;
-
-#ifndef SWITCH_JUST_STORE_AND_EVALUE
 	
 	/**
 	 * This method checks if the given variable is defined in the given

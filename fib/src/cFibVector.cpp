@@ -52,6 +52,8 @@ History:
 22.08.2013  Oesterholz  pow() replaced by composeDoubleFib()
 26.08.2013  Oesterholz  Bugfix: storeXml() precision was to low, numbers
 	got cut of, so that the restore result was not equal
+03.09.2013  Oesterholz  using readDoubleFromFunction() and storeXmlDoubleFib()
+	for storing and restoring Fib double numbers in XML
 */
 
 
@@ -229,30 +231,13 @@ cFibVector::cFibVector( const TiXmlElement * pXmlElementVector, intFib &outStatu
 				continue;
 			}
 			//converting value to double
-			double dValue = 0.0;
-			
-			long long lMantissa = 0;
-			long long lExponent = 0;
-			const unsigned int uiReadedItems =
-#ifdef WINDOWS
-			sscanf( pcValue, "%I64d * 2^(%I64d", & lMantissa, & lExponent );
-#else //WINDOWS
-			sscanf( pcValue, "%lld * 2^(%lld", & lMantissa, & lExponent );
-#endif //WINDOWS
-			
-			if ( uiReadedItems == 2 ){
-				//mantissa and exponent readed
-				dValue = composeDoubleFib( lMantissa, lExponent );
-			}else{
-				//try to read double directly
-				const int iReadValues = sscanf( pcValue, "%lf", & dValue );
-				if ( iReadValues != 1){
-					//Warning: The element text is not a number.
-					outStatus = 2;
-					continue;
-				}
+			std::pair< bool, const char * > pairOutEvalueStatus;
+			setValue( iNumberOfElement,
+				readDoubleFromFunction( pcValue, &pairOutEvalueStatus ) );
+			if ( ! pairOutEvalueStatus.second ){
+				//Warning: Error while reading the number
+				outStatus = 2;
 			}
-			setValue( iNumberOfElement, dValue );
 		
 		}else if ( szElementName == "variable" ){
 		
@@ -1347,21 +1332,9 @@ bool cFibVector::storeXml( ostream &stream ) const{
 		if ( liVectorType[uiActualElement] == VALUE ){
 			//store a value
 			stream<<"<value number=\""<< uiActualElement + 1 <<"\">";
-			const doubleFib dValue = liVectorValues[uiActualElement];
-			if ( ( -1000000 < dValue ) && ( dValue < 1000000 ) &&
-					(((doubleFib)((longFib)( dValue * 100.0 ))) / 100.0) == dValue ){
-				//number with no more than 6 digits befor and 2 digits after the point
-				stream.precision( 9 );
-				stream<< dValue <<"</value>"<<endl;
-			}else{
-				longFib lMantissa;
-				longFib lExponent;
-				
-				decomposeDoubleFib( dValue, & lMantissa, & lExponent );
-				
-				stream<< lMantissa <<" * 2^("<< lExponent <<")</value>"<<endl;
-			}
-	
+			storeXmlDoubleFib( stream, liVectorValues[uiActualElement] );
+			stream<<"</value>"<<endl;
+			
 		}else if ( liVectorType[uiActualElement] == VARIABLE ){
 			//store a variable
 			if ( liVectorVariable[uiActualElement]->isIntegerValue() ){

@@ -67,6 +67,10 @@
  * 	-(TODO) tDouble subFromFirst( tDouble & dValue1, const tDouble & dValue2 )
  * 	-(TODO) std::vector< tDouble > addToFirst( std::vector< tDouble > & vecValue1, const std::vector< tDouble > & vecValue2 )
  * 	-(TODO) std::vector< tDouble > multToFirst( std::vector< tDouble > & vecValue, const tDouble & dValue )
+ * 	- doubleFib readDouble( const char * strDouble );
+ * 	- pair< doubleFib, const char * > readDoubleReturnEnd( const char * strDouble );
+ * 	- doubleFib readDoubleFromFunction( const char * strDouble, std::pair< bool, const char * > * pPairOutEvalueStatus = NULL );
+ * 	- void fib::storeXmlDoubleFib( std::ostream & stream, const doubleFib & dValueToStore )
  *
  */
 /*
@@ -80,6 +84,7 @@ History:
 
 #include <cstdlib>
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <utility>
 #include <list>
@@ -99,6 +104,10 @@ unsigned long MAX_ITERATION = 1024;
 int testRoundToLongFibFunction( unsigned long &ulTestphase );
 int testGetDigitsFunction( unsigned long &ulTestphase );
 int testComposeDoubleFibFunctions( unsigned long &ulTestphase );
+int testReadDouble( unsigned long &ulTestphase );
+int testReadDoubleFromFunction( unsigned long &ulTestphase );
+int testReadDoubleFromFunctionOnRandString( unsigned long &ulTestphase );
+int testStoreXmlDoubleFib( unsigned long &ulTestphase );
 
 
 int main(int argc, char* argv[]){
@@ -125,12 +134,17 @@ int main(int argc, char* argv[]){
 	//test the fibDatatyps functions
 	
 	//TODO more test
-	
+	/*TODO comment in:
 	iReturn += testRoundToLongFibFunction( ulTestphase );
 	iReturn += testGetDigitsFunction( ulTestphase );
 	iReturn += testComposeDoubleFibFunctions( ulTestphase );
-	
-	
+	iReturn += testReadDouble( ulTestphase );
+	*/
+	iReturn += testReadDoubleFromFunction( ulTestphase );
+	iReturn += testReadDoubleFromFunctionOnRandString( ulTestphase );
+	/*TODO comment in:
+	iReturn += testStoreXmlDoubleFib( ulTestphase );
+	*/
 	
 	if ( iReturn == 0 ){
 	
@@ -777,11 +791,439 @@ int testComposeDoubleFibFunctions( unsigned long &ulTestphase ){
 
 
 
+/**
+ * This function tests the readDouble() and readDoubleReturnEnd() functions
+ * for the given values.
+ *
+ * Methods tested:
+ * 	- doubleFib readDouble( const char * strDouble );
+ * 	- pair< doubleFib, const char * > readDoubleReturnEnd( const char * strDouble );
+ *
+ * @param strNumber the string with the number to read
+ * @param dCorrectNumber the correct number which should be read
+ * @param uiNumberOfDigits the number of digits to red for the number
+ * 	(from the start of the string to the end of the number)
+ * @return the number of errors occured in the test
+ */
+int testReadDouble( const string strNumber, const doubleFib dCorrectNumber,
+		const unsigned int uiNumberOfDigits ){
+	
+	int iReturn = 0;//return value of the test; the number of occured errors
+	
+	cout<<"dResultNumber = readDouble( \""<<strNumber<<"\" );";
+	const doubleFib dReturnedNumber = readDouble( strNumber.c_str() );
+	
+	cout.precision( 32 );
+	if ( compareDouble( dCorrectNumber, dReturnedNumber ) ){
+		cout<<" OK"<<endl;
+	}else{
+		cout<<endl;
+		cerr<<"Error: It was "<<dReturnedNumber<<" returned, but the correct"<<
+			" number is \""<<strNumber<<"\""<<endl;
+		iReturn++;
+	}
+	
+	cout<<"paResult = readDoubleReturnEnd( \""<<strNumber<<"\" );";
+	const pair< doubleFib, const char * > paResult =
+		readDoubleReturnEnd( strNumber.c_str() );
+	
+	if ( compareDouble( dCorrectNumber, paResult.first ) ){
+		cout<<" OK"<<endl;
+	}else{
+		cout<<endl;
+		cerr<<"Error: It was "<<paResult.first<<" returned, but the correct"<<
+			" number is \""<<strNumber<<"\""<<endl;
+		iReturn++;
+	}
+	if ( paResult.second != ( strNumber.c_str() + uiNumberOfDigits ) ){
+		cerr<<"Error: The returned end pointer is "<<((unsigned long)(paResult.second))<<
+			", but it should be "<<( ((unsigned long)(strNumber.c_str())) + uiNumberOfDigits )<<endl;
+		iReturn++;
+	}
+
+	return iReturn;
+}
+
+
+
+/**
+ * This function tests the readDouble() and readDoubleReturnEnd() functions.
+ *
+ * Methods tested:
+ * 	- doubleFib readDouble( const char * strDouble );
+ * 	- pair< doubleFib, const char * > readDoubleReturnEnd( const char * strDouble );
+ *
+ * @param ulTestphase a reference to the number for the test phase
+ * @return the number of errors occured in the test
+ */
+int testReadDouble( unsigned long &ulTestphase ){
+	
+	int iReturn = 0;//return value of the test; the number of occured errors
+	
+	ulTestphase++;
+	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing readDouble() and readDoubleReturnEnd() functions"<<endl;
+	
+	iReturn += testReadDouble( "1", 1.0, 1 );
+	iReturn += testReadDouble( "  1234   ", 1234, 9 );
+	iReturn += testReadDouble( "	 1234f   ", 1234, 6 );
+	iReturn += testReadDouble( "-1234", -1234, 5 );
+	iReturn += testReadDouble( "12.34", 12.34, 5 );
+	iReturn += testReadDouble( ".34", 0.34, 3 );
+	iReturn += testReadDouble( "12,34", 12.34, 5 );
+	iReturn += testReadDouble( " 1,23.45", 123.45, 8 );
+	iReturn += testReadDouble( "12e3", 12000, 4 );
+	iReturn += testReadDouble( "12 e-2", 0.12, 6 );
+	iReturn += testReadDouble( "12 	 	E-2", 0.12, 9 );
+	iReturn += testReadDouble( "  	-56e4", -560000, 8 );
+	iReturn += testReadDouble( "9876E-3  ", 9.876, 7 );
+	iReturn += testReadDouble( "555e  ", 555, 6 );
+	
+	iReturn += testReadDouble( "-7.234e-5", -0.00007234, 9 );
+	iReturn += testReadDouble( "	34,25,34.14 ", 342534.14, 13 );
+	iReturn += testReadDouble( "34,25,34.14,52f   ", 342534.14, 11 );
+	iReturn += testReadDouble( "34.25.34,14 5", 342534.14, 12 );
+	iReturn += testReadDouble( "34.253.34,145.52", 3425334.14552, 16 );
+	iReturn += testReadDouble( "34.253.34,145.52 EeE", 3425334.14552, 18 );
+	iReturn += testReadDouble( "-34.253,34,145.52 EeE", -34.253, 7 );
+	
+	return iReturn;
+}
 
 
 
 
+/**
+ * This function tests the readDoubleFromFunction() function for the given
+ * functions.
+ *
+ * Methods tested:
+ * 	- doubleFib readDoubleFromFunction( const char * strDouble, std::pair< bool, const char * > * pPairOutEvalueStatus = NULL );
+ *
+ * @param strNumber the string with the number to read
+ * @param dCorrectNumber the correct number which should be read
+ * @param uiNumberOfDigits the number of digits to red for the number
+ * 	(from the start of the string to the end of the number)
+ * @return the number of errors occured in the test
+ */
+int testReadDoubleFromFunction( const string strNumber, const doubleFib dCorrectNumber,
+		const unsigned int uiNumberOfDigits, const bool bCanEvaluate=true ){
+	
+	int iReturn = 0;//return value of the test; the number of occured errors
+	
+	//use pairOutEvalueStatus
+	std::pair< bool, const char * > pairOutEvalueStatus;
+	
+	cout<<"dResultNumber = readDoubleFromFunction( \""<<strNumber<<"\" );";
+	const doubleFib dReturnedNumber = readDoubleFromFunction( strNumber.c_str(),
+		&pairOutEvalueStatus );
+	
+	cout.precision( 32 );
+	if ( compareDouble( dCorrectNumber, dReturnedNumber ) ){
+		cout<<" OK"<<endl;
+	}else{
+		cout<<endl;
+		cerr<<"Error: It was "<<dReturnedNumber<<" returned, but the correct"<<
+			" number is \""<<strNumber<<"\""<<endl;
+		iReturn++;
+	}
+	if ( pairOutEvalueStatus.first != bCanEvaluate ){
+		cerr<<"Error: It was "<<(pairOutEvalueStatus.first ? "true" : "false")<<
+			" returned as output status, but it should be "<<
+			(bCanEvaluate ? "true" : "false")<<"."<<endl;
+		iReturn++;
+	}
+	if ( pairOutEvalueStatus.second != ( strNumber.c_str() + uiNumberOfDigits ) ){
+		cerr<<"Error: The returned end pointer is "<<
+			((unsigned long)(pairOutEvalueStatus.second))<<", but it should be "<<
+			( ((unsigned long)(strNumber.c_str())) + uiNumberOfDigits )<<endl;
+		iReturn++;
+	}
+	
+	//call without pairOutEvalueStatus
+	const doubleFib dReturnedNumber2 = readDoubleFromFunction( strNumber.c_str() );
+	
+	if ( ! compareDouble( dCorrectNumber, dReturnedNumber2 ) ){
+		cout<<endl;
+		cerr<<"Error: It was "<<dReturnedNumber2<<" returned, but the correct"<<
+			" number is \""<<strNumber<<"\" (no pPairOutEvalueStatus given)."<<endl;
+		iReturn++;
+	}
+	
+	return iReturn;
+}
 
+
+
+/**
+ * This function tests the readDoubleFromFunction() functions.
+ *
+ * Methods tested:
+ * 	- doubleFib readDoubleFromFunction( const char * strDouble, std::pair< bool, const char * > * pPairOutEvalueStatus = NULL );
+ *
+ * @param ulTestphase a reference to the number for the test phase
+ * @return the number of errors occured in the test
+ */
+int testReadDoubleFromFunction( unsigned long &ulTestphase ){
+	
+	int iReturn = 0;//return value of the test; the number of occured errors
+	
+	ulTestphase++;
+	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing readDoubleFromFunction() function"<<endl;
+	
+	iReturn += testReadDoubleFromFunction( "1", 1.0, 1 );
+	iReturn += testReadDoubleFromFunction( "  1234   ", 1234, 9 );
+	iReturn += testReadDoubleFromFunction( "	 1234f   ", 1234, 7, false );
+	iReturn += testReadDoubleFromFunction( "-1234", -1234, 5 );
+	iReturn += testReadDoubleFromFunction( "12.34", 12.34, 5 );
+	iReturn += testReadDoubleFromFunction( ".34", 0.34, 3 );
+	iReturn += testReadDoubleFromFunction( "12,34", 12.34, 5 );
+	iReturn += testReadDoubleFromFunction( " 1,23.45", 123.45, 8 );
+	iReturn += testReadDoubleFromFunction( "12e3", 12000, 4 );
+	iReturn += testReadDoubleFromFunction( "12 e-2", 0.12, 6 );
+	iReturn += testReadDoubleFromFunction( "12 	 	E-2", 0.12, 9 );
+	iReturn += testReadDoubleFromFunction( "  	-56e4", -560000, 8 );
+	iReturn += testReadDoubleFromFunction( "9876E-3  ", 9.876, 9 );
+	iReturn += testReadDoubleFromFunction( "555e  ", 555, 6 );
+	
+	iReturn += testReadDoubleFromFunction( "-7.234e-5", -0.00007234, 9 );
+	iReturn += testReadDoubleFromFunction( "	34,25,34.14 ", 342534.14, 13 );
+	iReturn += testReadDoubleFromFunction( "34,25,34.14,52f   ", 342534.14, 15, false );
+	iReturn += testReadDoubleFromFunction( "34.25.34,14 5", 342534.14, 13, false );
+	iReturn += testReadDoubleFromFunction( "34.253.34,145.52", 3425334.14552, 16 );
+	iReturn += testReadDoubleFromFunction( "34.253.34,145.52 EeE", 3425334.14552, 20, false );
+	iReturn += testReadDoubleFromFunction( "-34.253,34,145.52 EeE", -34.253, 21, false );
+	//test simple functions
+	iReturn += testReadDoubleFromFunction( "1+2", 3.0, 3 );
+	iReturn += testReadDoubleFromFunction( "1 + 2", 3.0, 5 );
+	iReturn += testReadDoubleFromFunction( "1+ 2", 3.0, 4 );
+	iReturn += testReadDoubleFromFunction( "1 +2", 3.0, 4 );
+	iReturn += testReadDoubleFromFunction( "2*4", 8.0, 3 );
+	iReturn += testReadDoubleFromFunction( "6- 2", 4.0, 4 );
+	iReturn += testReadDoubleFromFunction( "7	/ 2", 3.5, 5 );
+	iReturn += testReadDoubleFromFunction( "9%	5", 4.0, 4 );
+	iReturn += testReadDoubleFromFunction( "++3", 4.0, 3 );
+	iReturn += testReadDoubleFromFunction( " --7", 6.0, 4 );
+	iReturn += testReadDoubleFromFunction( "+(-6)  ", 6.0, 7 );
+	iReturn += testReadDoubleFromFunction( "-( -(-12)", -12.0, 9 );
+	iReturn += testReadDoubleFromFunction( "abs( -9 )", 9.0, 9 );
+	iReturn += testReadDoubleFromFunction( "log( 56 )", log10( 56 ), 9 );
+	iReturn += testReadDoubleFromFunction( " 	 ln 36", log( 36 ), 8 );
+	iReturn += testReadDoubleFromFunction( "sqrt 9 )", 3.0, 8 );
+	iReturn += testReadDoubleFromFunction( "2^3", 8.0, 3 );
+	iReturn += testReadDoubleFromFunction( "pow -3 2", 9.0, 8 );
+	iReturn += testReadDoubleFromFunction( "pow( 4, 2)", 16.0, 10 );
+	iReturn += testReadDoubleFromFunction( "sin( 4	 )  ", sin( 4.0 ), 11 );
+	iReturn += testReadDoubleFromFunction( "cos( 4	 ", cos( 4.0 ), 8 );
+	iReturn += testReadDoubleFromFunction( "tan  2.6 ", tan( 2.6 ), 9 );
+	iReturn += testReadDoubleFromFunction( "PI", 3.141592653589793238462, 2 );
+	iReturn += testReadDoubleFromFunction( "e", 2.718281828459045235360, 1 );
+	iReturn += testReadDoubleFromFunction( "sqrt -9", 0.0, 7 );
+	iReturn += testReadDoubleFromFunction( "7	/ 0.0", 0, 7 );
+	
+	//test nested simple functions (test precedence)
+	iReturn += testReadDoubleFromFunction( "15 * 2^3", 120, 8 );
+	
+	iReturn += testReadDoubleFromFunction( "5 + 2 *  3 ", 11, 11 );
+	iReturn += testReadDoubleFromFunction( "( 5 + 2 )*  3 ", 21, 14 );
+	iReturn += testReadDoubleFromFunction( " 5 + (2 *  3)", 11, 13 );
+	iReturn += testReadDoubleFromFunction( "5 + 3 / 2 ", 6.5, 10 );
+	iReturn += testReadDoubleFromFunction( " 5 + 	 19 %  7 ", 10, 15 );
+	iReturn += testReadDoubleFromFunction( "5 + ++2 ", 8, 8 );
+	iReturn += testReadDoubleFromFunction( "5 + --11 ", 15, 9 );
+	iReturn += testReadDoubleFromFunction( "4 + --4 *  3 ", 13, 13 );
+	iReturn += testReadDoubleFromFunction( "6 + +(-2) *  3", 12, 14 );
+	iReturn += testReadDoubleFromFunction( " 5 + ln(2) *  3 ", (5+log(2)*3), 16 );
+	iReturn += testReadDoubleFromFunction( "++2 *  3 ", 9, 9 );
+	iReturn += testReadDoubleFromFunction( " 2 *  --3 ", 4, 10 );
+	iReturn += testReadDoubleFromFunction( " * 2 5", 10, 6 );
+	iReturn += testReadDoubleFromFunction( " / 2	  4", 0.5, 8 );
+	
+	
+	/*TODO
+	 * - some more precedence
+	 * - non valid formulars
+			iReturn += testReadDoubleFromFunction( " / 2 -5", -10, 6 );
+	 *
+	 * */
+	
+	
+	
+	return iReturn;
+}
+
+
+
+/**
+ * This function tests the readDoubleFromFunction() function on a random
+ * generated string.
+ * It just tests if the funcion works (e.g. for memory errors), but not its
+ * results.
+ *
+ * Methods tested:
+ * 	- doubleFib readDoubleFromFunction( const char * strDouble, std::pair< bool, const char * > * pPairOutEvalueStatus = NULL );
+ *
+ * @param ulTestphase a reference to the number for the test phase
+ * @return the number of errors occured in the test
+ */
+int testReadDoubleFromFunctionOnRandString( unsigned long &ulTestphase ){
+	
+	int iReturn = 0;//return value of the test; the number of occured errors
+	
+	//test on random generated string
+	ulTestphase++;
+	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing readDoubleFromFunction() function on random generated string"<<endl;
+	cout<<"(for memory errors, not for correct return values)"<<endl;
+	
+	const unsigned int uiMaxRandStringLength = 16 + log( MAX_ITERATION );
+	char strRand[ uiMaxRandStringLength + 1 ];
+	for ( unsigned int uiActualIteration = 0;
+			uiActualIteration < MAX_ITERATION; uiActualIteration++ ){
+		cout<<endl;
+		//generate random function string
+		const unsigned int uiRandStringLength =
+			( rand() % uiMaxRandStringLength ) + 1;
+		for ( unsigned int uiActualChar = 0;
+				uiActualChar < uiRandStringLength; uiActualChar++ ){
+			if ( (rand() % 256) != 0 ){
+				if ( ( rand() % 2 ) != 0 ){
+					//if ( iuChoosenChar = 0...9 ) -> use number
+					strRand[ uiActualChar ] = '0' + rand() % 10;
+				}else{
+					const unsigned int iuChoosenChar = rand() % 16;
+					switch ( iuChoosenChar ){
+						case 0: strRand[ uiActualChar ] = '.'; break;
+						case 1: strRand[ uiActualChar ] = ','; break;
+						case 2: strRand[ uiActualChar ] = ' '; break;
+						case 3: strRand[ uiActualChar ] = '	'; break;
+						case 4: strRand[ uiActualChar ] = '+'; break;
+						case 5: strRand[ uiActualChar ] = '-'; break;
+						case 6: strRand[ uiActualChar ] = '*'; break;
+						case 7: strRand[ uiActualChar ] = '/'; break;
+						case 8: strRand[ uiActualChar ] = '%'; break;
+						case 9: strRand[ uiActualChar ] = '^'; break;
+						case 10: strRand[ uiActualChar ] = 'e'; break;
+						case 11: strRand[ uiActualChar ] = '('; break;
+						case 12: strRand[ uiActualChar ] = ')'; break;
+						default://use string character
+							if ( ( rand() % 6 ) != 0 ){
+								//use lower key
+								strRand[ uiActualChar ] = 'a' + rand() % 26;
+							}else{//use upper key
+								strRand[ uiActualChar ] = 'A' + rand() % 26;
+							}
+						break;
+					};//end switch choose char
+				}
+			}else{//use less frequent char
+				strRand[ uiActualChar ] = ((char)(rand() % 256));
+			}
+		}//end if set chars of string
+		strRand[ uiRandStringLength ] = 0x0;//null terminated string
+		
+		//use pairOutEvalueStatus
+		std::pair< bool, const char * > pairOutEvalueStatus;
+		
+		cout<<"readDoubleFromFunction( \""<<strRand<<"\" );"<<endl;
+		readDoubleFromFunction( strRand, &pairOutEvalueStatus );
+		cout<<"readDoubleFromFunction( \""<<strRand<<"\" );"<<endl;
+		readDoubleFromFunction( strRand );
+	}
+	
+	return iReturn;
+}
+
+
+
+/**
+ * This function tests the storeXmlDoubleFib() function.
+ *
+ * Methods tested:
+ * 	- void fib::storeXmlDoubleFib( std::ostream & stream, const doubleFib & dValueToStore )
+ * 	- doubleFib readDoubleFromFunction( const char * strDouble );
+ *
+ * @param ulTestphase a reference to the number for the test phase
+ * @return the number of errors occured in the test
+ */
+int testStoreXmlDoubleFib( unsigned long &ulTestphase ){
+	
+	int iReturn = 0;//return value of the test; the number of occured errors
+	
+	ulTestphase++;
+	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing readDouble() and readDoubleReturnEnd() functions"<<endl;
+	
+	cout.precision( 12 );
+	cerr.precision( 12 );
+	
+	for ( unsigned int uiActualIteration = 0;
+			uiActualIteration < MAX_ITERATION; uiActualIteration++ ){
+		
+		const doubleFib dRandomDouble = (rand() % 100000000) / 100.0;
+		std::stringstream strNumberStream;
+	
+		cout<<"storeXmlDoubleFib( strNumberStream, dRandomDouble="<<
+			dRandomDouble<<" );"<<endl;
+		storeXmlDoubleFib( strNumberStream, dRandomDouble );
+		
+		std::pair< bool, const char * > pairOutEvalueStatus;
+		
+		cout<<"dReadedDouble = readDoubleFromFunction( strNumberStream.str().c_str()="<<
+			strNumberStream.str()<<", &pairOutEvalueStatus );"<<endl;
+		const doubleFib dReadedDouble =
+			readDoubleFromFunction( strNumberStream.str().c_str(),
+				&pairOutEvalueStatus );
+		
+		if ( dRandomDouble == dReadedDouble ){
+			cout<<"The readed number "<<dReadedDouble<<
+				" is equal the stored number "<<dRandomDouble<<" ."<<endl;
+		}else{
+			cerr<<"Error: The readed number "<<dReadedDouble<<
+				" is not equal the stored number "<<dRandomDouble<<
+				" (diff: "<<(dReadedDouble-dRandomDouble)<<
+				"= dReadedDouble - dRandomDouble )."<<endl;
+			iReturn++;
+		}
+		if ( ! pairOutEvalueStatus.first ){
+			cerr<<"Error: readDoubleFromFunction() returned an error while "<<
+				"reading (pairOutEvalueStatus.first == false)."<<endl;
+			iReturn++;
+		}
+	}
+	for ( unsigned int uiActualIteration = 0;
+			uiActualIteration < MAX_ITERATION; uiActualIteration++ ){
+		
+		const doubleFib dRandomDouble = generateRandomDouble();
+		std::stringstream strNumberStream;
+	
+		cout<<"storeXmlDoubleFib( strNumberStream, dRandomDouble="<<
+			dRandomDouble<<" );"<<endl;
+		storeXmlDoubleFib( strNumberStream, dRandomDouble );
+		
+		std::pair< bool, const char * > pairOutEvalueStatus;
+		
+		cout<<"dReadedDouble = readDoubleFromFunction( strNumberStream.str().c_str()="<<
+			strNumberStream.str()<<", &pairOutEvalueStatus );"<<endl;
+		const doubleFib dReadedDouble =
+			readDoubleFromFunction( strNumberStream.str().c_str(),
+				&pairOutEvalueStatus );
+		
+		if ( dRandomDouble == dReadedDouble ){
+			cout<<"The readed number "<<dReadedDouble<<
+				" is equal the stored number "<<dRandomDouble<<" ."<<endl;
+		}else{
+			cerr<<"Error: The readed number "<<dReadedDouble<<
+				" is not equal the stored number "<<dRandomDouble<<
+				" (diff: "<<(dReadedDouble-dRandomDouble)<<
+				"= dReadedDouble - dRandomDouble )."<<endl;
+			iReturn++;
+		}
+		if ( ! pairOutEvalueStatus.first ){
+			cerr<<"Error: readDoubleFromFunction() returned an error while "<<
+				"reading (pairOutEvalueStatus.first == false)."<<endl;
+			iReturn++;
+		}
+	}
+	return iReturn;
+}
 
 
 

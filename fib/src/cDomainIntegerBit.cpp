@@ -40,6 +40,8 @@ History:
 01.12.2011  Oesterholz  method isInBoundaries() added
 14.04.2013  Oesterholz  replacing pow with integer pow version
 01.05.2013  Oesterholz  Bugfix in restore(): iBits read buffer should not const
+03.09.2013  Oesterholz  using storeXmlDoubleFib() for storing  Fib double
+	numbers in XML (@see storeXml() )
 */
 
 
@@ -388,12 +390,9 @@ bool cDomainIntegerBit::storeXml( ostream & ostream ) const{
 	ostream<<"<integerB ";
 	if ( getScalingFactor() != 1.0 ){
 		//write scalingfactor
-		longFib lMantissa;
-		longFib lExponent;
-		
-		decomposeDoubleFib( getScalingFactor(), & lMantissa, & lExponent );
-		
-		ostream<<"scalingfactor=\""<< lMantissa <<" * 2^("<< lExponent <<")\" ";
+		ostream<<"scalingfactor=\"";
+		storeXmlDoubleFib( ostream, getScalingFactor() );
+		ostream<<"\" ";
 	}
 	ostream<<" bit=\""<< domainNaturalNumberBit.iBitsForDomainNumbers <<"\" />"<<endl;
 	

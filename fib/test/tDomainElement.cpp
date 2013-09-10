@@ -51,6 +51,7 @@ History:
 30.03.2011  Oesterholz  storing to binary stream
 17.09.2012  Oesterholz  Warning removed: "(char)" for char arrays added
 28.01.2013  Oesterholz  COLOR_SW changed to COLOR_GRAYSCALE
+03.09.2013  Oesterholz  reading scaling factor adapted
 */
 
 #include "version.h"
@@ -137,7 +138,7 @@ int testCostructorSetDomain( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for cDomainIntegerBasis domains
 	if ( *(domainElement1.getElementType()) == testTypeDimension ){
 	
-		cout<<"The type is correct cTypeDimension. "<<endl;
+		cout<<"The type is correct cTypeDimension."<<endl;
 	}else{
 		cerr<<"Error: The type is not correct."<<endl;
 		iReturn++;
@@ -149,7 +150,7 @@ int testCostructorSetDomain( unsigned long &ulTestphase ){
 	//check if the domainpointer points to the original domain
 	if ( domain == &vectorDomain1D2 ){
 	
-		cout<<"The domain is correctly the vectorDomain1D2 . "<<endl;
+		cout<<"The domain is correctly the vectorDomain1D2 ."<<endl;
 	}else{
 		cerr<<"Error: The domain is not the domain vectorDomain1D2  ."<<endl;
 		iReturn++;
@@ -162,7 +163,7 @@ int testCostructorSetDomain( unsigned long &ulTestphase ){
 		
 	} else if ( domain->getType()=="DomainVector" ){
 	
-		cout<<"The domain is correctly an cDomainVector domain. "<<endl;
+		cout<<"The domain is correctly an cDomainVector domain."<<endl;
 		
 		cDomainVector *domainVector=(cDomainVector*)domain;
 
@@ -171,7 +172,7 @@ int testCostructorSetDomain( unsigned long &ulTestphase ){
 		if ( domainVector->getNumberOfElements() == uiDomainVectorElements ){
 		
 			cout<<"The domainvector has correctly "<<
-				uiDomainVectorElements<<" element. "<<endl;
+				uiDomainVectorElements<<" element."<<endl;
 			
 			unsignedIntFib actualElement=1;
 			
@@ -185,7 +186,7 @@ int testCostructorSetDomain( unsigned long &ulTestphase ){
 				
 			} else if ( domainElement->getType()=="DomainNaturalNumberBit" ){
 			
-				cout<<"The "<<actualElement<<"'th element of the arddomain is correctly an cDomainIntegerBasis domain. "<<endl;
+				cout<<"The "<<actualElement<<"'th element of the arddomain is correctly an cDomainIntegerBasis domain."<<endl;
 				
 				cDomainIntegerBasis *domainNaturalNumberBit=(cDomainIntegerBasis*)domainElement;
 				
@@ -196,7 +197,7 @@ int testCostructorSetDomain( unsigned long &ulTestphase ){
 						(domainNaturalNumberBit->getMaximum()==upperBound) ){
 				
 					cout<<"The domain goes correctly from "<<lowerBound<<
-						" to "<<upperBound<<". "<<endl;
+						" to "<<upperBound<<"."<<endl;
 				}else{
 					cerr<<"Error: The domain goes correctly from "<<lowerBound<<
 						" to "<<upperBound<<", but it goes from "<<
@@ -221,7 +222,7 @@ int testCostructorSetDomain( unsigned long &ulTestphase ){
 				
 			} else if ( domainElement->getType()=="DomainNaturalNumberBit" ){
 			
-				cout<<"The "<<actualElement<<"'th element of the arddomain is correctly an cDomainIntegerBasis domain. "<<endl;
+				cout<<"The "<<actualElement<<"'th element of the arddomain is correctly an cDomainIntegerBasis domain."<<endl;
 				
 				cDomainIntegerBasis *domainNaturalNumberBit=(cDomainIntegerBasis*)domainElement;
 				
@@ -232,7 +233,7 @@ int testCostructorSetDomain( unsigned long &ulTestphase ){
 						(domainNaturalNumberBit->getMaximum()==upperBound) ){
 				
 					cout<<"The domain goes correctly from "<<lowerBound<<
-						" to "<<upperBound<<". "<<endl;
+						" to "<<upperBound<<"."<<endl;
 				}else{
 					cerr<<"Error: The domain goes correctly from "<<lowerBound<<
 						" to "<<upperBound<<", but it goes from "<<
@@ -282,7 +283,7 @@ int testCostructorSetDomain( unsigned long &ulTestphase ){
 	//check if the domainpointer points to the original domain
 	if ( domain == &vectorDomain3D2 ){
 	
-		cout<<"The domainpointer is correctly the vectorDomain3D2 domain . "<<endl;
+		cout<<"The domainpointer is correctly the vectorDomain3D2 domain ."<<endl;
 	}else{
 		cerr<<"Error: The domainpointer is not the domain vectorDomain3D2  ."<<endl;
 		iReturn++;
@@ -295,7 +296,7 @@ int testCostructorSetDomain( unsigned long &ulTestphase ){
 		
 	} else if ( domain->getType()=="DomainVector" ){
 	
-		cout<<"The domain is correctly an cDomainVector domain. "<<endl;
+		cout<<"The domain is correctly an cDomainVector domain."<<endl;
 		
 		cDomainVector *domainVector=(cDomainVector*)domain;
 
@@ -304,7 +305,7 @@ int testCostructorSetDomain( unsigned long &ulTestphase ){
 		if ( domainVector->getNumberOfElements() == uiDomainVectorElements ){
 		
 			cout<<"The domainvector has correctly "<<
-				uiDomainVectorElements<<" element. "<<endl;
+				uiDomainVectorElements<<" element."<<endl;
 			
 			unsignedIntFib actualElement=1;
 			
@@ -318,7 +319,7 @@ int testCostructorSetDomain( unsigned long &ulTestphase ){
 				
 			} else if ( domainElement->getType()=="DomainNaturalNumberBit" ){
 			
-				cout<<"The "<<actualElement<<"'th element of the arddomain is correctly an cDomainIntegerBasis domain. "<<endl;
+				cout<<"The "<<actualElement<<"'th element of the arddomain is correctly an cDomainIntegerBasis domain."<<endl;
 				
 				cDomainIntegerBasis *domainNaturalNumberBit=(cDomainIntegerBasis*)domainElement;
 				
@@ -329,7 +330,7 @@ int testCostructorSetDomain( unsigned long &ulTestphase ){
 						(domainNaturalNumberBit->getMaximum()==upperBound) ){
 				
 					cout<<"The domain goes correctly from "<<lowerBound<<
-						" to "<<upperBound<<". "<<endl;
+						" to "<<upperBound<<"."<<endl;
 				}else{
 					cerr<<"Error: The domain goes correctly from "<<lowerBound<<
 						" to "<<upperBound<<", but it goes from "<<
@@ -354,7 +355,7 @@ int testCostructorSetDomain( unsigned long &ulTestphase ){
 				
 			} else if ( domainElement->getType()=="DomainNaturalNumberBit" ){
 			
-				cout<<"The "<<actualElement<<"'th element of the arddomain is correctly an cDomainIntegerBasis domain. "<<endl;
+				cout<<"The "<<actualElement<<"'th element of the arddomain is correctly an cDomainIntegerBasis domain."<<endl;
 				
 				cDomainIntegerBasis *domainNaturalNumberBit=(cDomainIntegerBasis*)domainElement;
 				
@@ -365,7 +366,7 @@ int testCostructorSetDomain( unsigned long &ulTestphase ){
 						(domainNaturalNumberBit->getMaximum()==upperBound) ){
 				
 					cout<<"The domain goes correctly from "<<lowerBound<<
-						" to "<<upperBound<<". "<<endl;
+						" to "<<upperBound<<"."<<endl;
 				}else{
 					cerr<<"Error: The domain goes correctly from "<<lowerBound<<
 						" to "<<upperBound<<", but it goes from "<<
@@ -415,7 +416,7 @@ int testCostructorSetDomain( unsigned long &ulTestphase ){
 	//check if the domainpointer points to the original domain
 	if ( domain != &vectorDomain2D2 ){
 	
-		cout<<"The domainpointer is correctly not the vectorDomain2D2 domain . "<<endl;
+		cout<<"The domainpointer is correctly not the vectorDomain2D2 domain ."<<endl;
 	}else{
 		cerr<<"Error: The domainpointer is the domain vectorDomain2D2  ."<<endl;
 		iReturn++;
@@ -428,7 +429,7 @@ int testCostructorSetDomain( unsigned long &ulTestphase ){
 		
 	} else if ( domain->getType()=="DomainVector" ){
 	
-		cout<<"The domain is correctly an cDomainVector domain. "<<endl;
+		cout<<"The domain is correctly an cDomainVector domain."<<endl;
 		
 		cDomainVector *domainVector=(cDomainVector*)domain;
 
@@ -437,7 +438,7 @@ int testCostructorSetDomain( unsigned long &ulTestphase ){
 		if ( domainVector->getNumberOfElements() == uiDomainVectorElements ){
 		
 			cout<<"The domainvector has correctly "<<
-				uiDomainVectorElements<<" element. "<<endl;
+				uiDomainVectorElements<<" element."<<endl;
 			
 			unsignedIntFib actualElement=1;
 			
@@ -451,7 +452,7 @@ int testCostructorSetDomain( unsigned long &ulTestphase ){
 				
 			} else if ( domainElement->getType()=="DomainNaturalNumberBit" ){
 			
-				cout<<"The "<<actualElement<<"'th element of the arddomain is correctly an cDomainIntegerBasis domain. "<<endl;
+				cout<<"The "<<actualElement<<"'th element of the arddomain is correctly an cDomainIntegerBasis domain."<<endl;
 				
 				cDomainIntegerBasis *domainNaturalNumberBit=(cDomainIntegerBasis*)domainElement;
 				
@@ -462,7 +463,7 @@ int testCostructorSetDomain( unsigned long &ulTestphase ){
 						(domainNaturalNumberBit->getMaximum()==upperBound) ){
 				
 					cout<<"The domain goes correctly from "<<lowerBound<<
-						" to "<<upperBound<<". "<<endl;
+						" to "<<upperBound<<"."<<endl;
 				}else{
 					cerr<<"Error: The domain goes correctly from "<<lowerBound<<
 						" to "<<upperBound<<", but it goes from "<<
@@ -487,7 +488,7 @@ int testCostructorSetDomain( unsigned long &ulTestphase ){
 				
 			} else if ( domainElement->getType()=="DomainNaturalNumberBit" ){
 			
-				cout<<"The "<<actualElement<<"'th element of the arddomain is correctly an cDomainIntegerBasis domain. "<<endl;
+				cout<<"The "<<actualElement<<"'th element of the arddomain is correctly an cDomainIntegerBasis domain."<<endl;
 				
 				cDomainIntegerBasis *domainNaturalNumberBit=(cDomainIntegerBasis*)domainElement;
 				
@@ -498,7 +499,7 @@ int testCostructorSetDomain( unsigned long &ulTestphase ){
 						(domainNaturalNumberBit->getMaximum()==upperBound) ){
 				
 					cout<<"The domain goes correctly from "<<lowerBound<<
-						" to "<<upperBound<<". "<<endl;
+						" to "<<upperBound<<"."<<endl;
 				}else{
 					cerr<<"Error: The domain goes correctly from "<<lowerBound<<
 						" to "<<upperBound<<", but it goes from "<<
@@ -536,7 +537,7 @@ int testCostructorSetDomain( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for cDomainIntegerBasis domains
 	if ( *(domainElement2.getElementType())==testTypeDimension ){
 	
-		cout<<"The type is correct cTypeDimension. "<<endl;
+		cout<<"The type is correct cTypeDimension."<<endl;
 	}else{
 		cerr<<"Error: The type is not correct."<<endl;
 		iReturn++;
@@ -552,7 +553,7 @@ int testCostructorSetDomain( unsigned long &ulTestphase ){
 		
 	} else if ( domain->getType()=="DomainVector" ){
 	
-		cout<<"The domain is correctly an cDomainVector domain. "<<endl;
+		cout<<"The domain is correctly an cDomainVector domain."<<endl;
 		
 		cDomainVector *domainVector=(cDomainVector*)domain;
 
@@ -561,7 +562,7 @@ int testCostructorSetDomain( unsigned long &ulTestphase ){
 		if ( domainVector->getNumberOfElements() == uiDomainVectorElements ){
 		
 			cout<<"The domainvector has correctly "<<
-				uiDomainVectorElements<<" element. "<<endl;
+				uiDomainVectorElements<<" element."<<endl;
 			
 			unsignedIntFib actualElement=1;
 			
@@ -575,7 +576,7 @@ int testCostructorSetDomain( unsigned long &ulTestphase ){
 				
 			} else if ( domainElement->getType()=="DomainNaturalNumberBit" ){
 			
-				cout<<"The "<<actualElement<<"'th element of the arddomain is correctly an cDomainIntegerBasis domain. "<<endl;
+				cout<<"The "<<actualElement<<"'th element of the arddomain is correctly an cDomainIntegerBasis domain."<<endl;
 				
 				cDomainIntegerBasis *domainNaturalNumberBit=(cDomainIntegerBasis*)domainElement;
 				
@@ -586,7 +587,7 @@ int testCostructorSetDomain( unsigned long &ulTestphase ){
 						(domainNaturalNumberBit->getMaximum()==upperBound) ){
 				
 					cout<<"The domain goes correctly from "<<lowerBound<<
-						" to "<<upperBound<<". "<<endl;
+						" to "<<upperBound<<"."<<endl;
 				}else{
 					cerr<<"Error: The domain goes correctly from "<<lowerBound<<
 						" to "<<upperBound<<", but it goes from "<<
@@ -611,7 +612,7 @@ int testCostructorSetDomain( unsigned long &ulTestphase ){
 				
 			} else if ( domainElement->getType()=="DomainNaturalNumberBit" ){
 			
-				cout<<"The "<<actualElement<<"'th element of the arddomain is correctly an cDomainIntegerBasis domain. "<<endl;
+				cout<<"The "<<actualElement<<"'th element of the arddomain is correctly an cDomainIntegerBasis domain."<<endl;
 				
 				cDomainIntegerBasis *domainNaturalNumberBit=(cDomainIntegerBasis*)domainElement;
 				
@@ -622,7 +623,7 @@ int testCostructorSetDomain( unsigned long &ulTestphase ){
 						(domainNaturalNumberBit->getMaximum()==upperBound) ){
 				
 					cout<<"The domain goes correctly from "<<lowerBound<<
-						" to "<<upperBound<<". "<<endl;
+						" to "<<upperBound<<"."<<endl;
 				}else{
 					cerr<<"Error: The domain goes correctly from "<<lowerBound<<
 						" to "<<upperBound<<", but it goes from "<<
@@ -661,7 +662,7 @@ int testCostructorSetDomain( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for cDomainIntegerBasis domains
 	if ( *(domainElement3.getElementType())==testTypeDimension ){
 	
-		cout<<"The type is correct cTypeDimension. "<<endl;
+		cout<<"The type is correct cTypeDimension."<<endl;
 	}else{
 		cerr<<"Error: The type is not correct."<<endl;
 		iReturn++;
@@ -674,7 +675,7 @@ int testCostructorSetDomain( unsigned long &ulTestphase ){
 	//check if the domainpointer points to the original domain
 	if ( domain != &vectorDomain2D2 ){
 	
-		cout<<"The domainpointer is correctly not the vectorDomain2D2 domain . "<<endl;
+		cout<<"The domainpointer is correctly not the vectorDomain2D2 domain ."<<endl;
 	}else{
 		cerr<<"Error: The domainpointer is the domain vectorDomain2D2  ."<<endl;
 		iReturn++;
@@ -687,7 +688,7 @@ int testCostructorSetDomain( unsigned long &ulTestphase ){
 		
 	} else if ( domain->getType()=="DomainVector" ){
 	
-		cout<<"The domain is correctly an cDomainVector domain. "<<endl;
+		cout<<"The domain is correctly an cDomainVector domain."<<endl;
 		
 		cDomainVector *domainVector=(cDomainVector*)domain;
 
@@ -696,7 +697,7 @@ int testCostructorSetDomain( unsigned long &ulTestphase ){
 		if ( domainVector->getNumberOfElements() == uiDomainVectorElements ){
 		
 			cout<<"The domainvector has correctly "<<
-				uiDomainVectorElements<<" element. "<<endl;
+				uiDomainVectorElements<<" element."<<endl;
 			
 			unsignedIntFib actualElement=1;
 			
@@ -710,7 +711,7 @@ int testCostructorSetDomain( unsigned long &ulTestphase ){
 				
 			} else if ( domainElement->getType()=="DomainNaturalNumberBit" ){
 			
-				cout<<"The "<<actualElement<<"'th element of the arddomain is correctly an cDomainIntegerBasis domain. "<<endl;
+				cout<<"The "<<actualElement<<"'th element of the arddomain is correctly an cDomainIntegerBasis domain."<<endl;
 				
 				cDomainIntegerBasis *domainNaturalNumberBit=(cDomainIntegerBasis*)domainElement;
 				
@@ -721,7 +722,7 @@ int testCostructorSetDomain( unsigned long &ulTestphase ){
 						(domainNaturalNumberBit->getMaximum()==upperBound) ){
 				
 					cout<<"The domain goes correctly from "<<lowerBound<<
-						" to "<<upperBound<<". "<<endl;
+						" to "<<upperBound<<"."<<endl;
 				}else{
 					cerr<<"Error: The domain goes correctly from "<<lowerBound<<
 						" to "<<upperBound<<", but it goes from "<<
@@ -746,7 +747,7 @@ int testCostructorSetDomain( unsigned long &ulTestphase ){
 				
 			} else if ( domainElement->getType()=="DomainNaturalNumberBit" ){
 			
-				cout<<"The "<<actualElement<<"'th element of the arddomain is correctly an cDomainIntegerBasis domain. "<<endl;
+				cout<<"The "<<actualElement<<"'th element of the arddomain is correctly an cDomainIntegerBasis domain."<<endl;
 				
 				cDomainIntegerBasis *domainNaturalNumberBit=(cDomainIntegerBasis*)domainElement;
 				
@@ -757,7 +758,7 @@ int testCostructorSetDomain( unsigned long &ulTestphase ){
 						(domainNaturalNumberBit->getMaximum()==upperBound) ){
 				
 					cout<<"The domain goes correctly from "<<lowerBound<<
-						" to "<<upperBound<<". "<<endl;
+						" to "<<upperBound<<"."<<endl;
 				}else{
 					cerr<<"Error: The domain goes correctly from "<<lowerBound<<
 						" to "<<upperBound<<", but it goes from "<<
@@ -799,7 +800,7 @@ int testCostructorSetDomain( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for cDomainIntegerBasis domains
 	if ( *(domainElement4.getElementType())==testTypeDimension ){
 	
-		cout<<"The type is correct cTypeDimension. "<<endl;
+		cout<<"The type is correct cTypeDimension."<<endl;
 	}else{
 		cerr<<"Error: The type is not correct."<<endl;
 		iReturn++;
@@ -816,7 +817,7 @@ int testCostructorSetDomain( unsigned long &ulTestphase ){
 		
 	} else if ( domain->getType()=="DomainVector" ){
 	
-		cout<<"The domain is correctly an cDomainVector domain. "<<endl;
+		cout<<"The domain is correctly an cDomainVector domain."<<endl;
 		
 		cDomainVector *domainVector=(cDomainVector*)domain;
 
@@ -825,7 +826,7 @@ int testCostructorSetDomain( unsigned long &ulTestphase ){
 		if ( domainVector->getNumberOfElements() == uiDomainVectorElements ){
 		
 			cout<<"The domainvector has correctly "<<
-				uiDomainVectorElements<<" element. "<<endl;
+				uiDomainVectorElements<<" element."<<endl;
 			
 			unsignedIntFib actualElement=1;
 			
@@ -839,7 +840,7 @@ int testCostructorSetDomain( unsigned long &ulTestphase ){
 				
 			} else if ( domainElement->getType()=="DomainNaturalNumberBit" ){
 			
-				cout<<"The "<<actualElement<<"'th element of the arddomain is correctly an cDomainIntegerBasis domain. "<<endl;
+				cout<<"The "<<actualElement<<"'th element of the arddomain is correctly an cDomainIntegerBasis domain."<<endl;
 				
 				cDomainIntegerBasis *domainNaturalNumberBit=(cDomainIntegerBasis*)domainElement;
 				
@@ -850,7 +851,7 @@ int testCostructorSetDomain( unsigned long &ulTestphase ){
 						(domainNaturalNumberBit->getMaximum()==upperBound) ){
 				
 					cout<<"The domain goes correctly from "<<lowerBound<<
-						" to "<<upperBound<<". "<<endl;
+						" to "<<upperBound<<"."<<endl;
 				}else{
 					cerr<<"Error: The domain goes correctly from "<<lowerBound<<
 						" to "<<upperBound<<", but it goes from "<<
@@ -875,7 +876,7 @@ int testCostructorSetDomain( unsigned long &ulTestphase ){
 				
 			} else if ( domainElement->getType()=="DomainNaturalNumberBit" ){
 			
-				cout<<"The "<<actualElement<<"'th element of the arddomain is correctly an cDomainIntegerBasis domain. "<<endl;
+				cout<<"The "<<actualElement<<"'th element of the arddomain is correctly an cDomainIntegerBasis domain."<<endl;
 				
 				cDomainIntegerBasis *domainNaturalNumberBit=(cDomainIntegerBasis*)domainElement;
 				
@@ -886,7 +887,7 @@ int testCostructorSetDomain( unsigned long &ulTestphase ){
 						(domainNaturalNumberBit->getMaximum()==upperBound) ){
 				
 					cout<<"The domain goes correctly from "<<lowerBound<<
-						" to "<<upperBound<<". "<<endl;
+						" to "<<upperBound<<"."<<endl;
 				}else{
 					cerr<<"Error: The domain goes correctly from "<<lowerBound<<
 						" to "<<upperBound<<", but it goes from "<<
@@ -932,7 +933,7 @@ int testCostructorSetDomain( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for cDomainIntegerBasis domains
 	if ( *(domainElementD1N4.getElementType()) == testTypeProperty ){
 	
-		cout<<"The type is correct testTypeProperty. "<<endl;
+		cout<<"The type is correct testTypeProperty."<<endl;
 	}else{
 		cerr<<"Error: The type is not testTypeProperty."<<endl;
 		iReturn++;
@@ -944,7 +945,7 @@ int testCostructorSetDomain( unsigned long &ulTestphase ){
 	//check if the domainpointer points to the original domain
 	if ( domain == &vectorDomainD1N4 ){
 	
-		cout<<"The domain is correctly the vectorDomainD1N4 . "<<endl;
+		cout<<"The domain is correctly the vectorDomainD1N4 ."<<endl;
 	}else{
 		cerr<<"Error: The domain is not the domain vectorDomainD1N4  ."<<endl;
 		iReturn++;
@@ -957,7 +958,7 @@ int testCostructorSetDomain( unsigned long &ulTestphase ){
 		
 	} else if ( domain->getType()=="DomainVector" ){
 	
-		cout<<"The domain is correctly an cDomainVector domain. "<<endl;
+		cout<<"The domain is correctly an cDomainVector domain."<<endl;
 		
 		cDomainVector *domainVector=(cDomainVector*)domain;
 
@@ -966,7 +967,7 @@ int testCostructorSetDomain( unsigned long &ulTestphase ){
 		if ( domainVector->getNumberOfElements() == uiDomainVectorElements ){
 		
 			cout<<"The domainvector has correctly "<<
-				uiDomainVectorElements<<" element. "<<endl;
+				uiDomainVectorElements<<" element."<<endl;
 			
 			unsignedIntFib actualElement=1;
 			
@@ -980,7 +981,7 @@ int testCostructorSetDomain( unsigned long &ulTestphase ){
 				
 			} else if ( domainElement->getType()=="DomainNaturalNumberBit" ){
 			
-				cout<<"The "<<actualElement<<"'th element of the arddomain is correctly an cDomainIntegerBasis domain. "<<endl;
+				cout<<"The "<<actualElement<<"'th element of the arddomain is correctly an cDomainIntegerBasis domain."<<endl;
 				
 				cDomainIntegerBasis *domainNaturalNumberBit=(cDomainIntegerBasis*)domainElement;
 				
@@ -991,7 +992,7 @@ int testCostructorSetDomain( unsigned long &ulTestphase ){
 						(domainNaturalNumberBit->getMaximum()==upperBound) ){
 				
 					cout<<"The domain goes correctly from "<<lowerBound<<
-						" to "<<upperBound<<". "<<endl;
+						" to "<<upperBound<<"."<<endl;
 				}else{
 					cerr<<"Error: The domain goes correctly from "<<lowerBound<<
 						" to "<<upperBound<<", but it goes from "<<
@@ -1028,7 +1029,7 @@ int testCostructorSetDomain( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for cDomainIntegerBasis domains
 	if ( *(domainElementCopyD1N4.getElementType()) == testTypeProperty ){
 	
-		cout<<"The type is correct testTypeProperty. "<<endl;
+		cout<<"The type is correct testTypeProperty."<<endl;
 	}else{
 		cerr<<"Error: The type is not testTypeProperty."<<endl;
 		iReturn++;
@@ -1041,7 +1042,7 @@ int testCostructorSetDomain( unsigned long &ulTestphase ){
 	//check if the domainpointer points to the original domain
 	if ( domain == &vectorDomainD1N4 ){
 	
-		cout<<"The domainpointer is correctly the vectorDomainD1N4 domain . "<<endl;
+		cout<<"The domainpointer is correctly the vectorDomainD1N4 domain ."<<endl;
 	}else{
 		cerr<<"Error: The domainpointer is not the domain vectorDomainD1N4  ."<<endl;
 		iReturn++;
@@ -1054,7 +1055,7 @@ int testCostructorSetDomain( unsigned long &ulTestphase ){
 		
 	} else if ( domain->getType()=="DomainVector" ){
 	
-		cout<<"The domain is correctly an cDomainVector domain. "<<endl;
+		cout<<"The domain is correctly an cDomainVector domain."<<endl;
 		
 		cDomainVector *domainVector=(cDomainVector*)domain;
 
@@ -1063,7 +1064,7 @@ int testCostructorSetDomain( unsigned long &ulTestphase ){
 		if ( domainVector->getNumberOfElements() == uiDomainVectorElements ){
 		
 			cout<<"The domainvector has correctly "<<
-				uiDomainVectorElements<<" element. "<<endl;
+				uiDomainVectorElements<<" element."<<endl;
 			
 			unsignedIntFib actualElement=1;
 			
@@ -1077,7 +1078,7 @@ int testCostructorSetDomain( unsigned long &ulTestphase ){
 				
 			} else if ( domainElement->getType()=="DomainNaturalNumberBit" ){
 			
-				cout<<"The "<<actualElement<<"'th element of the arddomain is correctly an cDomainIntegerBasis domain. "<<endl;
+				cout<<"The "<<actualElement<<"'th element of the arddomain is correctly an cDomainIntegerBasis domain."<<endl;
 				
 				cDomainIntegerBasis *domainNaturalNumberBit=(cDomainIntegerBasis*)domainElement;
 				
@@ -1088,7 +1089,7 @@ int testCostructorSetDomain( unsigned long &ulTestphase ){
 						(domainNaturalNumberBit->getMaximum()==upperBound) ){
 				
 					cout<<"The domain goes correctly from "<<lowerBound<<
-						" to "<<upperBound<<". "<<endl;
+						" to "<<upperBound<<"."<<endl;
 				}else{
 					cerr<<"Error: The domain goes correctly from "<<lowerBound<<
 						" to "<<upperBound<<", but it goes from "<<
@@ -1148,7 +1149,7 @@ int testXmlType( const string szFilename, const unsigned int uiPropertyType,
 	TiXmlDocument xmlDocVectorPosition( szFilename );
 	bool loadOkay = xmlDocVectorPosition.LoadFile();
 	if ( loadOkay ){
-		cout<<"The data of the type was loaded successfull from the file \""<< szFilename <<"\". "<<endl;
+		cout<<"The data of the type was loaded successfull from the file \""<< szFilename <<"\"."<<endl;
 	}else{
 		cerr<<"Error: Failed to load file \""<< szFilename <<"\""<<endl;
 		iReturn++;
@@ -1165,7 +1166,7 @@ int testXmlType( const string szFilename, const unsigned int uiPropertyType,
 		string szElementName = pXmlElement->Value();
 
 		if ( szElementName == "property" ){
-			cout<<"The root element is correctly named \"property\". "<<endl;
+			cout<<"The root element is correctly named \"property\"."<<endl;
 		
 		}else{
 			cerr<<"Error: The name of the root element is "<< szElementName <<" and not \"property\"."<<endl;
@@ -1181,7 +1182,7 @@ int testXmlType( const string szFilename, const unsigned int uiPropertyType,
 			iReturn++;
 		}else if ( typeProperty.getNameOfProperty( ) == pcAttributElements ) {
 			cout<<"The propertyname of the type is correctly \""<<
-				typeProperty.getNameOfProperty() <<"\". "<<endl;
+				typeProperty.getNameOfProperty() <<"\"."<<endl;
 		}else{
 			cerr<<"Error: The propertyname of the loaded type is \""<<
 				pcAttributElements <<"\", but should be \""<<
@@ -1207,7 +1208,7 @@ int testXmlType( const string szFilename, const unsigned int uiPropertyType,
 			string szElementName = pXmlElement->Value();
 	
 			if ( szElementName == "vector" ){
-				cout<<"The root element is correctly named \"vector\". "<<endl;
+				cout<<"The root element is correctly named \"vector\"."<<endl;
 			
 			}else{
 				cerr<<"Error: The name of the root element is "<< szElementName <<" and not \"vector\"."<<endl;
@@ -1223,7 +1224,7 @@ int testXmlType( const string szFilename, const unsigned int uiPropertyType,
 				iReturn++;
 			}else if ( iNumberOfElementsLoaded == (int)uiNumberOfElements ) {
 				cout<<"The number of elements of the domain are correctly \""<<
-					uiNumberOfElements <<"\". "<<endl;
+					uiNumberOfElements <<"\"."<<endl;
 			}else{
 				cerr<<"Error: The number of elements of the loaded domain are \""<<
 					iNumberOfElementsLoaded <<"\", but should be \""<<
@@ -1247,13 +1248,13 @@ int testXmlType( const string szFilename, const unsigned int uiPropertyType,
 				pXmlElement = pXmlElement->NextSiblingElement(), uiActualDimension++ ){
 	
 			unsigned int uiBits = vecUiBits[ uiActualDimension ];
-			double dScalingfactor = vecScalingfactor[ uiActualDimension ];
+			double dScalingFactor = vecScalingfactor[ uiActualDimension ];
 		
 			// should always have a valid root but handle gracefully if it does
 			string szElementName = pXmlElement->Value();
 	
 			if ( szElementName == "naturalNumberB" ){
-				cout<<"The  element is correctly named \"naturalNumberB\". "<<endl;
+				cout<<"The  element is correctly named \"naturalNumberB\"."<<endl;
 			
 			}else{
 				cerr<<"Error: The name of the element is \""<< szElementName <<"\" and not \"naturalNumberB\"."<<endl;
@@ -1267,48 +1268,41 @@ int testXmlType( const string szFilename, const unsigned int uiPropertyType,
 				cerr<<"Error: The domain has no attribute bits."<<endl;
 				iReturn++;
 			}else if ( iBitsLoaded == (int)uiBits ) {
-				cout<<"The number of bits of the domain are correctly \""<< uiBits <<"\". "<<endl;
+				cout<<"The number of bits of the domain are correctly \""<< uiBits <<"\"."<<endl;
 			}else{
 				cerr<<"Error: The number of bits of the loaded domain are \""<< iBitsLoaded
 					<<"\", but should be \""<< uiBits <<"\"."<<endl;
 				iReturn++;
 			}
 	
-			const char * pcAttributeScalingfactor =
+			const char * pcAttributeScalingFactor =
 				pXmlElement->Attribute( "scalingfactor" );
 			
-			longFib lfMantissa;
-			longFib lfExponent;
-			decomposeDoubleFib( dScalingfactor, & lfMantissa, & lfExponent );
-			
-			long lMantissa = lfMantissa;
-			long lExponent = lfExponent;
-	
-			char szScalingfactorBuffer[128];
-			szScalingfactorBuffer[0] = 0;
-			sprintf ( szScalingfactorBuffer, "%li * 2^(%li)", lMantissa, lExponent );
-			
-			string szScalingfactor( szScalingfactorBuffer );
-			
-			if ( ( dScalingfactor == 1.0 ) && ( pcAttributeScalingfactor == NULL ) ){
+			if ( ( dScalingFactor == 1.0 ) && ( pcAttributeScalingFactor == NULL ) ){
 				//no scalingfactor needed
-				cout<<"No scalingfactor attribut. This is correct because the scalingfactor is 1.0 . "<<endl;
+				cout<<"No scalingfactor attribut. This is correct because the scalingfactor is 1.0 ."<<endl;
 			}else{
-				if ( pcAttributeScalingfactor == NULL ){
-					cerr<<"Error: The domain has no attribute scalingfactor."<<endl;
+				if ( pcAttributeScalingFactor == NULL ){
+					cerr<<"Error: The domain has no attribute scaling factor."<<endl;
 					iReturn++;
-				}else if ( szScalingfactor == pcAttributeScalingfactor ) {
-					cout<<"The scalingfactor of the domain is correctly \""<< pcAttributeScalingfactor <<"\". "<<endl;
 				}else{
-					cerr<<"Error: The scalingfactor of the loaded domain is \""<< pcAttributeScalingfactor
-						<<"\", but should be \""<< dScalingfactor <<"\" (=\""<< szScalingfactor <<"\")."<<endl;
-					iReturn++;
+					const double dReadScalingFactor =
+						readDoubleFromFunction( pcAttributeScalingFactor );
+					
+					if ( dScalingFactor == dReadScalingFactor ) {
+						cout<<"The scaling factor of the domain is correctly \""<< pcAttributeScalingFactor <<"\"."<<endl;
+					}else{
+						cerr<<"Error: The scaling factor of the loaded domain is \""<<
+							pcAttributeScalingFactor<<"\"(="<<dReadScalingFactor<<
+							"), but should be \""<<dScalingFactor <<"\" ."<<endl;
+						iReturn++;
+					}
 				}
 			}
 		}
 		
 		if ( uiActualDimension == uiNumberOfElements ){
-			cout<<"The number of subdomains is correct. "<<endl;
+			cout<<"The number of subdomains is correct."<<endl;
 		
 		}else{
 			cerr<<"Error: The number of subdomains is "<< uiActualDimension <<
@@ -1370,7 +1364,7 @@ int testStoreXml( unsigned long &ulTestphase ){
 	
 	if ( bStoreSuccesfull ){
 	
-		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\". "<<endl;
+		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\"."<<endl;
 	}else{
 		cerr<<"Error: Storing the data to the file \""<< szFileNameBuffer <<"\" failed."<<endl;
 		iReturn++;
@@ -1425,7 +1419,7 @@ int testStoreXml( unsigned long &ulTestphase ){
 	
 	if ( bStoreSuccesfull ){
 	
-		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\". "<<endl;
+		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\"."<<endl;
 	}else{
 		cerr<<"Error: Storing the data to the file \""<< szFileNameBuffer <<"\" failed."<<endl;
 		iReturn++;
@@ -1480,11 +1474,11 @@ int testStore( unsigned long &ulTestphase ){
 	if ( (unsigned int)(domainElement1.getCompressedSize()) == uiCompressedSize ){
 	
 		cout<<"The compressed size of the type is correctly "<<
-			uiCompressedSize <<" . "<<endl;
+			uiCompressedSize <<" ."<<endl;
 	}else{
 		cerr<<"Error: The compressed size of the type is "<<
 			domainElement1.getCompressedSize() << ", but should be "<<
-			uiCompressedSize <<" . "<<endl;
+			uiCompressedSize <<" ."<<endl;
 		iReturn++;
 	}
 	
@@ -1502,7 +1496,7 @@ int testStore( unsigned long &ulTestphase ){
 	
 	if ( bStoreSuccesfull ){
 	
-		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\". "<<endl;
+		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\"."<<endl;
 	}else{
 		cerr<<"Error: Storing the data to the file \""<< szFileNameBuffer <<"\" failed."<<endl;
 		iReturn++;
@@ -1511,11 +1505,11 @@ int testStore( unsigned long &ulTestphase ){
 	unsigned char ucRestBit = cRestBit;
 	if ( ( ucRestBit == (char)0x00 ) && ( cNumberOfRestBit == 0 ) ){
 		cout<<"The restbit is \"(char)0x"<< hex << (unsigned short)ucRestBit <<"\" the number of restbit is "<<
-			dec << (unsigned short)cNumberOfRestBit <<". "<<endl;
+			dec << (unsigned short)cNumberOfRestBit <<"."<<endl;
 	}else{
 		cerr<<"Error: The restbit is \"(char)0x"<< hex << (unsigned short)ucRestBit <<"\" the number of restbit is "<<
 			dec << (unsigned short)cNumberOfRestBit <<
-			", but the restbit should be 0 and number of restbit should be 0. "<<endl;
+			", but the restbit should be 0 and number of restbit should be 0."<<endl;
 		iReturn++;
 	}
 
@@ -1562,11 +1556,11 @@ int testStore( unsigned long &ulTestphase ){
 	if ( (unsigned int)(domainElement2.getCompressedSize()) == uiCompressedSize ){
 	
 		cout<<"The compressed size of the type is correctly "<<
-			uiCompressedSize <<" . "<<endl;
+			uiCompressedSize <<" ."<<endl;
 	}else{
 		cerr<<"Error: The compressed size of the type is "<<
 			domainElement2.getCompressedSize() << ", but should be "<<
-			uiCompressedSize <<" . "<<endl;
+			uiCompressedSize <<" ."<<endl;
 		iReturn++;
 	}
 	
@@ -1583,7 +1577,7 @@ int testStore( unsigned long &ulTestphase ){
 	
 	if ( bStoreSuccesfull ){
 	
-		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\". "<<endl;
+		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\"."<<endl;
 	}else{
 		cerr<<"Error: Storing the data to the file \""<< szFileNameBuffer <<"\" failed."<<endl;
 		iReturn++;
@@ -1591,11 +1585,11 @@ int testStore( unsigned long &ulTestphase ){
 	ucRestBit = cRestBit;
 	if ( ( ucRestBit == (char)0x00 ) && ( cNumberOfRestBit == 0 ) ){
 		cout<<"The restbit is \"(char)0x"<< hex << (unsigned short)ucRestBit <<"\" the number of restbit is "<<
-			dec << (unsigned short)cNumberOfRestBit <<". "<<endl;
+			dec << (unsigned short)cNumberOfRestBit <<"."<<endl;
 	}else{
 		cerr<<"Error: The restbit is \"(char)0x"<< hex << (unsigned short)ucRestBit <<"\" the number of restbit is "<<
 			dec << (unsigned short)cNumberOfRestBit <<
-			", but the restbit should be 0 and number of restbit should be 0. "<<endl;
+			", but the restbit should be 0 and number of restbit should be 0."<<endl;
 		iReturn++;
 	}
 
@@ -1627,11 +1621,11 @@ int testStore( unsigned long &ulTestphase ){
 	if ( (unsigned int)(domainElement3.getCompressedSize()) == uiCompressedSize ){
 	
 		cout<<"The compressed size of the type is correctly "<<
-			uiCompressedSize <<" . "<<endl;
+			uiCompressedSize <<" ."<<endl;
 	}else{
 		cerr<<"Error: The compressed size of the type is "<<
 			domainElement3.getCompressedSize() << ", but should be "<<
-			uiCompressedSize <<" . "<<endl;
+			uiCompressedSize <<" ."<<endl;
 		iReturn++;
 	}
 	
@@ -1648,7 +1642,7 @@ int testStore( unsigned long &ulTestphase ){
 	
 	if ( bStoreSuccesfull ){
 	
-		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\". "<<endl;
+		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\"."<<endl;
 	}else{
 		cerr<<"Error: Storing the data to the file \""<< szFileNameBuffer <<"\" failed."<<endl;
 		iReturn++;
@@ -1656,11 +1650,11 @@ int testStore( unsigned long &ulTestphase ){
 	ucRestBit = cRestBit;
 	if ( ( ucRestBit == (unsigned char)(char)0x00 ) && ( cNumberOfRestBit == 2 ) ){
 		cout<<"The restbit is \"(char)0x"<< hex << (unsigned short)ucRestBit <<"\" the number of restbit is "<<
-			dec << (unsigned short)cNumberOfRestBit <<". "<<endl;
+			dec << (unsigned short)cNumberOfRestBit <<"."<<endl;
 	}else{
 		cerr<<"Error: The restbit is \"(char)0x"<< hex << (unsigned short)ucRestBit <<"\" the number of restbit is "<<
 			dec << (unsigned short)cNumberOfRestBit <<
-			", but the restbit should be (char)0x00 and number of restbit should be 2. "<<endl;
+			", but the restbit should be (char)0x00 and number of restbit should be 2."<<endl;
 		iReturn++;
 	}
 

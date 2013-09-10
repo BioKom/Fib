@@ -66,6 +66,7 @@ History:
 30.03.2011  Oesterholz  storing to binary stream
 17.09.2012  Oesterholz  Warning removed: "(char)" for char arrays added
 12.05.2013  Oesterholz  getDigits() andling changed (now version for integers)
+03.09.2013  Oesterholz  reading scaling factor adapted
 */
 
 
@@ -750,11 +751,11 @@ int testCopy( unsigned long &ulTestphase ){
  * @param szFilename the name of the file wher the cDomainInteger is stored
  * @param uiMin the minimal number the cDomainInteger has
  * @param uiMax the maximal number the cDomainInteger has
- * @param dScalingfactor the scalingfactor for the cDomainInteger domain
+ * @param dScalingFactor the scalingfactor for the cDomainInteger domain
  * @return the number of errors occured in the test
  */
 int testXmlDomain( const string szFilename, const unsigned int uiMin,
-		const unsigned int uiMax, const double dScalingfactor ){
+		const unsigned int uiMax, const double dScalingFactor ){
 	
 	unsigned int iReturn = 0;
 	
@@ -813,41 +814,26 @@ int testXmlDomain( const string szFilename, const unsigned int uiMin,
 			iReturn++;
 		}
 
-		const char * pcAttributeScalingfactor =
+		const char * pcAttributeScalingFactor =
 			pXmlElement->Attribute( "scalingfactor" );
 		
-		longFib lfMantissa;
-		longFib lfExponent;
-		decomposeDoubleFib( dScalingfactor, & lfMantissa, & lfExponent );
-		
-		if ( ( dScalingfactor == 1.0 ) && ( pcAttributeScalingfactor == NULL ) ){
+		if ( ( dScalingFactor == 1.0 ) && ( pcAttributeScalingFactor == NULL ) ){
 			//no scalingfactor needed
 			cout<<"No scalingfactor attribut. This is correct because the scalingfactor is 1.0 ."<<endl;
 		}else{
-			if ( pcAttributeScalingfactor == NULL ){
-				cerr<<"Error: The domain has no attribute scalingfactor."<<endl;
+			if ( pcAttributeScalingFactor == NULL ){
+				cerr<<"Error: The domain has no attribute scaling factor."<<endl;
 				iReturn++;
 			}else{
-				long long lMantissa = 0;
-				long long lExponent = 0;
-				// construct an istream containing a number
-				stringstream sinScalingfactor( pcAttributeScalingfactor );
-
-				// read the number -- the crucial bit
-				char c = 0;
-				sinScalingfactor >> lMantissa;
-				while ( (c != '(') && sinScalingfactor ){
-					sinScalingfactor >> c;
-				}
-				sinScalingfactor >> lExponent;
-
-				if ( ( lfMantissa == lMantissa ) &&  ( lfExponent == lExponent ) ) {
-					 cout<<"The scalingfactor of the domain is correctly \""<< pcAttributeScalingfactor <<"\"."<<endl;
+				const double dReadScalingFactor =
+					readDoubleFromFunction( pcAttributeScalingFactor );
+				
+				if ( dScalingFactor == dReadScalingFactor ) {
+					cout<<"The scaling factor of the domain is correctly \""<< pcAttributeScalingFactor <<"\"."<<endl;
 				}else{
-					 cerr<<"Error: The scalingfactor of the loaded domain is \""<< pcAttributeScalingfactor<<
-						"\" (=\""<<lMantissa <<" * 2^("<< lExponent <<")\") "<<
-						", but should be \""<< dScalingfactor <<"\" (=\""<<
-						lfMantissa <<" * 2^("<< lfExponent <<")\")."<<endl;
+					cerr<<"Error: The scaling factor of the loaded domain is \""<<
+						pcAttributeScalingFactor<<"\"(="<<dReadScalingFactor<<
+						"), but should be \""<<dScalingFactor <<"\" ."<<endl;
 					iReturn++;
 				}
 			}

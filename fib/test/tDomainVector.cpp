@@ -52,6 +52,7 @@ History:
 13.05.2010  Oesterholz  the ordering of bit for the compressed storing corrected
 30.03.2011  Oesterholz  storing to binary stream
 17.09.2012  Oesterholz  Warning removed: "(char)" for char arrays added
+03.09.2013  Oesterholz  reading scaling factor adapted
 */
 
 //TODO check isCompatible() for more domains + comparrisson
@@ -145,7 +146,7 @@ int testConstructor( unsigned long &ulTestphase ){
 	//test the getType() method
 	if ( vectorDomain0.getType()=="DomainVector" ){
 	
-		cout<<"The type of vectorDomain0 is correctly \"DomainVector\". "<<endl;
+		cout<<"The type of vectorDomain0 is correctly \"DomainVector\"."<<endl;
 	}else{
 		cerr<<"Error: The type of vectorDomain0 is "<<vectorDomain0.getType() <<
 			" and not \"DomainVector\""<<endl;
@@ -154,7 +155,7 @@ int testConstructor( unsigned long &ulTestphase ){
 	//test the getNumberOfElements() method
 	if ( vectorDomain0.getNumberOfElements()==0 ){
 	
-		cout<<"The number of elements of vectorDomain0 is correctly 0. "<<endl;
+		cout<<"The number of elements of vectorDomain0 is correctly 0."<<endl;
 	}else{
 		cerr<<"Error: The number of elements of vectorDomain0 is "<<
 			vectorDomain0.getNumberOfElements() <<" and not 0 ."<<endl;
@@ -182,7 +183,7 @@ int testConstructor( unsigned long &ulTestphase ){
 	//test the getType() method
 	if ( vectorDomain3.getType()=="DomainVector" ){
 	
-		cout<<"The type of vectorDomain3 is correctly \"DomainVector\". "<<endl;
+		cout<<"The type of vectorDomain3 is correctly \"DomainVector\"."<<endl;
 	}else{
 		cerr<<"Error: The type of vectorDomain3 is "<<vectorDomain3.getType() <<
 			" and not \"DomainVector\""<<endl;
@@ -192,53 +193,53 @@ int testConstructor( unsigned long &ulTestphase ){
 	//test the getNumberOfElements() method
 	if ( vectorDomain3.getNumberOfElements()==3 ){
 	
-		cout<<"The number of elements of vectorDomain3 is correctly 3. "<<endl;
+		cout<<"The number of elements of vectorDomain3 is correctly 3."<<endl;
 		
 		//check domains of vector domain elements
 		
 		cDomainNaturalNumberBit domainNaturalNumberBit8=cDomainNaturalNumberBit( 8 );
 		if ( vectorDomain3.getElementDomain( 1 )==NULL ){
-			cerr<<"Error: The first element domain is NULL. "<<endl;
+			cerr<<"Error: The first element domain is NULL."<<endl;
 			iReturn++;
 		}else if ( (*(vectorDomain3.getElementDomain( 1 )))==domainNaturalNumberBit8 ){
 		
-			cout<<"The first element domain is correctly an cDomainNaturalNumberBit domain with 8 bits. "<<endl;
+			cout<<"The first element domain is correctly an cDomainNaturalNumberBit domain with 8 bits."<<endl;
 		}else{
-			cerr<<"Error: The first element domain is not an cDomainNaturalNumberBit domain with 8 bits. "<<endl;
+			cerr<<"Error: The first element domain is not an cDomainNaturalNumberBit domain with 8 bits."<<endl;
 			iReturn++;
 		}
 
 		cDomainNaturalNumberBit domainNaturalNumberBit16=cDomainNaturalNumberBit( 16 );
 		if ( vectorDomain3.getElementDomain( 2 )==NULL ){
-			cerr<<"Error: The secound element domain is NULL. "<<endl;
+			cerr<<"Error: The secound element domain is NULL."<<endl;
 			iReturn++;
 		}else if ( (*(vectorDomain3.getElementDomain( 2 )))==domainNaturalNumberBit16 ){
 		
-			cout<<"The secound element domain is correctly an cDomainNaturalNumberBit domain with 16 bits. "<<endl;
+			cout<<"The secound element domain is correctly an cDomainNaturalNumberBit domain with 16 bits."<<endl;
 		}else{
-			cerr<<"Error: The secound element domain is not an cDomainNaturalNumberBit domain with 16 bits. "<<endl;
+			cerr<<"Error: The secound element domain is not an cDomainNaturalNumberBit domain with 16 bits."<<endl;
 			iReturn++;
 		}
 
 		cDomainNaturalNumberBit domainNaturalNumberBit5=cDomainNaturalNumberBit( 5 );
 		
 		if ( vectorDomain3.getElementDomain( 3 )==NULL ){
-			cerr<<"Error: The third element domain is NULL. "<<endl;
+			cerr<<"Error: The third element domain is NULL."<<endl;
 			iReturn++;
 		}else if ( (*(vectorDomain3.getElementDomain( 3 )))==domainNaturalNumberBit5 ){
 		
-			cout<<"The third element domain is correctly an cDomainNaturalNumberBit domain with 5 bits. "<<endl;
+			cout<<"The third element domain is correctly an cDomainNaturalNumberBit domain with 5 bits."<<endl;
 		}else{
-			cerr<<"Error: The third element domain is not an cDomainNaturalNumberBit domain with 5 bits. "<<endl;
+			cerr<<"Error: The third element domain is not an cDomainNaturalNumberBit domain with 5 bits."<<endl;
 			iReturn++;
 		}
 
 		if ( vectorDomain3.getElementDomain( 3 )!=NULL ){
 			if ( !((*(vectorDomain3.getElementDomain( 3 )))==domainNaturalNumberBit16) ){
 			
-				cout<<"The third element domain is correctly not an cDomainNaturalNumberBit domain with 16 bits. "<<endl;
+				cout<<"The third element domain is correctly not an cDomainNaturalNumberBit domain with 16 bits."<<endl;
 			}else{
-				cerr<<"Error: The third element domain is an cDomainNaturalNumberBit domain with 16 bits. "<<endl;
+				cerr<<"Error: The third element domain is an cDomainNaturalNumberBit domain with 16 bits."<<endl;
 				iReturn++;
 			}
 		}
@@ -286,7 +287,7 @@ int testConstructor( unsigned long &ulTestphase ){
 	//test the getType() method
 	if ( vectorDomain5.getType()=="DomainVector" ){
 	
-		cout<<"The type of vectorDomain5 is correctly \"DomainVector\". "<<endl;
+		cout<<"The type of vectorDomain5 is correctly \"DomainVector\"."<<endl;
 	}else{
 		cerr<<"Error: The type of vectorDomain5 is "<<vectorDomain5.getType() <<
 			" and not \"DomainVector\""<<endl;
@@ -296,70 +297,70 @@ int testConstructor( unsigned long &ulTestphase ){
 	//test the getNumberOfElements() method
 	if ( vectorDomain5.getNumberOfElements()==5 ){
 	
-		cout<<"The number of elements of vectorDomain5 is correctly 5. "<<endl;
+		cout<<"The number of elements of vectorDomain5 is correctly 5."<<endl;
 		
 		//check domains of vector domain elements
 		
 		cDomainNaturalNumberBit domainNaturalNumberBit1=cDomainNaturalNumberBit( 1 );
 		if ( vectorDomain5.getElementDomain( 1 )==NULL ){
-			cerr<<"Error: The first element domain is NULL. "<<endl;
+			cerr<<"Error: The first element domain is NULL."<<endl;
 			iReturn++;
 		}else if ( (*(vectorDomain5.getElementDomain( 1 )))==domainNaturalNumberBit1 ){
 		
-			cout<<"The first element domain is correctly an cDomainNaturalNumberBit domain with 1 bits. "<<endl;
+			cout<<"The first element domain is correctly an cDomainNaturalNumberBit domain with 1 bits."<<endl;
 		}else{
-			cerr<<"Error: The first element domain is not an cDomainNaturalNumberBit domain with 1 bits. "<<endl;
+			cerr<<"Error: The first element domain is not an cDomainNaturalNumberBit domain with 1 bits."<<endl;
 			iReturn++;
 		}
 
 		cDomainNaturalNumberBit domainNaturalNumberBit2=cDomainNaturalNumberBit( 2 );
 		if ( vectorDomain5.getElementDomain( 2 )==NULL ){
-			cerr<<"Error: The secound element domain is NULL. "<<endl;
+			cerr<<"Error: The secound element domain is NULL."<<endl;
 			iReturn++;
 		}else if ( (*(vectorDomain5.getElementDomain( 2 )))==domainNaturalNumberBit2 ){
 		
-			cout<<"The secound element domain is correctly an cDomainNaturalNumberBit domain with 2 bits. "<<endl;
+			cout<<"The secound element domain is correctly an cDomainNaturalNumberBit domain with 2 bits."<<endl;
 		}else{
-			cerr<<"Error: The secound element domain is not an cDomainNaturalNumberBit domain with 2 bits. "<<endl;
+			cerr<<"Error: The secound element domain is not an cDomainNaturalNumberBit domain with 2 bits."<<endl;
 			iReturn++;
 		}
 
 		cDomainNaturalNumberBit domainNaturalNumberBit3=cDomainNaturalNumberBit( 3 );
 		
 		if ( vectorDomain5.getElementDomain( 3 )==NULL ){
-			cerr<<"Error: The third element domain is NULL. "<<endl;
+			cerr<<"Error: The third element domain is NULL."<<endl;
 			iReturn++;
 		}else if ( (*(vectorDomain5.getElementDomain( 3 )))==domainNaturalNumberBit3 ){
 		
-			cout<<"The third element domain is correctly an cDomainNaturalNumberBit domain with 3 bits. "<<endl;
+			cout<<"The third element domain is correctly an cDomainNaturalNumberBit domain with 3 bits."<<endl;
 		}else{
-			cerr<<"Error: The third element domain is not an cDomainNaturalNumberBit domain with 3 bits. "<<endl;
+			cerr<<"Error: The third element domain is not an cDomainNaturalNumberBit domain with 3 bits."<<endl;
 			iReturn++;
 		}
 
 		cDomainNaturalNumberBit domainNaturalNumberBit4=cDomainNaturalNumberBit( 4 );
 		
 		if ( vectorDomain5.getElementDomain( 4 )==NULL ){
-			cerr<<"Error: The 4'th element domain is NULL. "<<endl;
+			cerr<<"Error: The 4'th element domain is NULL."<<endl;
 			iReturn++;
 		}else if ( (*(vectorDomain5.getElementDomain( 4 )))==domainNaturalNumberBit4 ){
 		
-			cout<<"The  4'th element domain is correctly an cDomainNaturalNumberBit domain with 4 bits. "<<endl;
+			cout<<"The  4'th element domain is correctly an cDomainNaturalNumberBit domain with 4 bits."<<endl;
 		}else{
-			cerr<<"Error: The  4'th element domain is not an cDomainNaturalNumberBit domain with 4 bits. "<<endl;
+			cerr<<"Error: The  4'th element domain is not an cDomainNaturalNumberBit domain with 4 bits."<<endl;
 			iReturn++;
 		}
 
 		cDomainNaturalNumberBit domainNaturalNumberBit5=cDomainNaturalNumberBit( 5 );
 		
 		if ( vectorDomain5.getElementDomain( 5 )==NULL ){
-			cerr<<"Error: The 5'th element domain is NULL. "<<endl;
+			cerr<<"Error: The 5'th element domain is NULL."<<endl;
 			iReturn++;
 		}else if ( (*(vectorDomain5.getElementDomain( 5 )))==domainNaturalNumberBit5 ){
 		
-			cout<<"The 5'th element domain is correctly an cDomainNaturalNumberBit domain with 5 bits. "<<endl;
+			cout<<"The 5'th element domain is correctly an cDomainNaturalNumberBit domain with 5 bits."<<endl;
 		}else{
-			cerr<<"Error: The 5'th element domain is not an cDomainNaturalNumberBit domain with 5 bits. "<<endl;
+			cerr<<"Error: The 5'th element domain is not an cDomainNaturalNumberBit domain with 5 bits."<<endl;
 			iReturn++;
 		}
 
@@ -402,7 +403,7 @@ int testCompareTwoEqualDomains( const cDomain &domain1, const string &szNameDoma
 	
 	if ( domain1.equal( domain2 ) ){
 	
-		cout<<"The "<<szNameDomain1<<" is equal to "<<szNameDomain2<<". "<<endl;
+		cout<<"The "<<szNameDomain1<<" is equal to "<<szNameDomain2<<"."<<endl;
 	}else{
 		cerr<<"Error: The "<<szNameDomain1<<" is not equal to "<<
 			szNameDomain2<<"."<<endl;
@@ -411,7 +412,7 @@ int testCompareTwoEqualDomains( const cDomain &domain1, const string &szNameDoma
 	if ( domain1==domain2 ){
 	
 		cout<<"The "<<szNameDomain1<<" is equal (operator==) to "<<
-			szNameDomain2<<". "<<endl;
+			szNameDomain2<<"."<<endl;
 	}else{
 		cerr<<"Error: The "<<szNameDomain1<<" is not equal (operator==) to "<<
 			szNameDomain2<<"."<<endl;
@@ -439,7 +440,7 @@ int testCompareTwoNotEqualDomains( const cDomain &domain1, const string &szNameD
 	
 	if ( ! domain1.equal( domain2 ) ){
 	
-		cout<<"The "<<szNameDomain1<<" is not equal to "<<szNameDomain2<<". "<<endl;
+		cout<<"The "<<szNameDomain1<<" is not equal to "<<szNameDomain2<<"."<<endl;
 	}else{
 		cerr<<"Error: The "<<szNameDomain1<<" is equal to "<<
 			szNameDomain2<<"."<<endl;
@@ -448,7 +449,7 @@ int testCompareTwoNotEqualDomains( const cDomain &domain1, const string &szNameD
 	if ( ! (domain1==domain2) ){
 	
 		cout<<"The "<<szNameDomain1<<" is not equal (operator==) to "<<
-			szNameDomain2<<". "<<endl;
+			szNameDomain2<<"."<<endl;
 	}else{
 		cerr<<"Error: The "<<szNameDomain1<<" is equal (operator==) to "<<
 			szNameDomain2<<"."<<endl;
@@ -866,7 +867,7 @@ int testIsElement( unsigned long &ulTestphase ){
 
 	if ( vectorDomainD1.isElement( vecPositionD1 ) ){
 	
-		cout<<"The vector vecPositionD1 is an element of the domain vectorDomain1. "<<endl;
+		cout<<"The vector vecPositionD1 is an element of the domain vectorDomain1."<<endl;
 	}else{
 		cerr<<"Error: The vector vecPositionD1 is not an element of the domain vectorDomain1."<<endl;
 		iReturn++;
@@ -874,7 +875,7 @@ int testIsElement( unsigned long &ulTestphase ){
 	
 	if ( vectorDomainD1S0p25.isElement( vecPositionD1 ) ){
 	
-		cout<<"The vector vectorDomainD1S0p25 is an element of the domain vectorDomainD1S0p25. "<<endl;
+		cout<<"The vector vectorDomainD1S0p25 is an element of the domain vectorDomainD1S0p25."<<endl;
 	}else{
 		cerr<<"Error: The vector vectorDomainD1S0p25 is not an element of the domain vectorDomainD1S0p25."<<endl;
 		iReturn++;
@@ -882,7 +883,7 @@ int testIsElement( unsigned long &ulTestphase ){
 
 	if ( ! vectorDomainD3.isElement( vecPositionD1 ) ){
 	
-		cout<<"The vector vectorDomainD3 is not an element of the domain vectorDomainD3. "<<endl;
+		cout<<"The vector vectorDomainD3 is not an element of the domain vectorDomainD3."<<endl;
 	}else{
 		cerr<<"Error: The vector vectorDomainD3 is an element of the domain vectorDomainD3."<<endl;
 		iReturn++;
@@ -893,7 +894,7 @@ int testIsElement( unsigned long &ulTestphase ){
 
 	if ( ! vectorDomainD1.isElement( vecPositionD1 ) ){
 	
-		cout<<"The vector vecPositionD1 is not an element of the domain vectorDomain1. "<<endl;
+		cout<<"The vector vecPositionD1 is not an element of the domain vectorDomain1."<<endl;
 	}else{
 		cerr<<"Error: The vector vecPositionD1 is an element of the domain vectorDomain1."<<endl;
 		iReturn++;
@@ -901,7 +902,7 @@ int testIsElement( unsigned long &ulTestphase ){
 	
 	if ( ! vectorDomainD1S0p25.isElement( vecPositionD1 ) ){
 	
-		cout<<"The vector vectorDomainD1S0p25 is not an element of the domain vectorDomainD1S0p25. "<<endl;
+		cout<<"The vector vectorDomainD1S0p25 is not an element of the domain vectorDomainD1S0p25."<<endl;
 	}else{
 		cerr<<"Error: The vector vectorDomainD1S0p25 is an element of the domain vectorDomainD1S0p25."<<endl;
 		iReturn++;
@@ -909,7 +910,7 @@ int testIsElement( unsigned long &ulTestphase ){
 
 	if ( ! vectorDomainD3.isElement( vecPositionD1 ) ){
 	
-		cout<<"The vector vectorDomainD3 is not an element of the domain vectorDomainD3. "<<endl;
+		cout<<"The vector vectorDomainD3 is not an element of the domain vectorDomainD3."<<endl;
 	}else{
 		cerr<<"Error: The vector vectorDomainD3 is an element of the domain vectorDomainD3."<<endl;
 		iReturn++;
@@ -920,7 +921,7 @@ int testIsElement( unsigned long &ulTestphase ){
 
 	if ( vectorDomainD1.isElement( vecPositionD1 ) ){
 	
-		cout<<"The vector vecPositionD1 is an element of the domain vectorDomain1. "<<endl;
+		cout<<"The vector vecPositionD1 is an element of the domain vectorDomain1."<<endl;
 	}else{
 		cerr<<"Error: The vector vecPositionD1 is not an element of the domain vectorDomain1."<<endl;
 		iReturn++;
@@ -928,7 +929,7 @@ int testIsElement( unsigned long &ulTestphase ){
 	
 	if ( ! vectorDomainD1S0p25.isElement( vecPositionD1 ) ){
 	
-		cout<<"The vector vectorDomainD1S0p25 is not an element of the domain vectorDomainD1S0p25. "<<endl;
+		cout<<"The vector vectorDomainD1S0p25 is not an element of the domain vectorDomainD1S0p25."<<endl;
 	}else{
 		cerr<<"Error: The vector vectorDomainD1S0p25 is an element of the domain vectorDomainD1S0p25."<<endl;
 		iReturn++;
@@ -936,7 +937,7 @@ int testIsElement( unsigned long &ulTestphase ){
 
 	if ( ! vectorDomainD3.isElement( vecPositionD1 ) ){
 	
-		cout<<"The vector vectorDomainD3 is not an element of the domain vectorDomainD3. "<<endl;
+		cout<<"The vector vectorDomainD3 is not an element of the domain vectorDomainD3."<<endl;
 	}else{
 		cerr<<"Error: The vector vectorDomainD3 is an element of the domain vectorDomainD3."<<endl;
 		iReturn++;
@@ -947,7 +948,7 @@ int testIsElement( unsigned long &ulTestphase ){
 
 	if ( ! vectorDomainD1.isElement( vecPositionD1 ) ){
 	
-		cout<<"The vector vecPositionD1 is not an element of the domain vectorDomain1. "<<endl;
+		cout<<"The vector vecPositionD1 is not an element of the domain vectorDomain1."<<endl;
 	}else{
 		cerr<<"Error: The vector vecPositionD1 is an element of the domain vectorDomain1."<<endl;
 		iReturn++;
@@ -955,7 +956,7 @@ int testIsElement( unsigned long &ulTestphase ){
 	
 	if ( vectorDomainD1S0p25.isElement( vecPositionD1 ) ){
 	
-		cout<<"The vector vectorDomainD1S0p25 is an element of the domain vectorDomainD1S0p25. "<<endl;
+		cout<<"The vector vectorDomainD1S0p25 is an element of the domain vectorDomainD1S0p25."<<endl;
 	}else{
 		cerr<<"Error: The vector vectorDomainD1S0p25 is not an element of the domain vectorDomainD1S0p25."<<endl;
 		iReturn++;
@@ -963,7 +964,7 @@ int testIsElement( unsigned long &ulTestphase ){
 
 	if ( ! vectorDomainD3.isElement( vecPositionD1 ) ){
 	
-		cout<<"The vector vectorDomainD3 is not an element of the domain vectorDomainD3. "<<endl;
+		cout<<"The vector vectorDomainD3 is not an element of the domain vectorDomainD3."<<endl;
 	}else{
 		cerr<<"Error: The vector vectorDomainD3 is an element of the domain vectorDomainD3."<<endl;
 		iReturn++;
@@ -974,7 +975,7 @@ int testIsElement( unsigned long &ulTestphase ){
 
 	if ( vectorDomainD1.isElement( vecPositionD1 ) ){
 	
-		cout<<"The vector vecPositionD1 is an element of the domain vectorDomain1. "<<endl;
+		cout<<"The vector vecPositionD1 is an element of the domain vectorDomain1."<<endl;
 	}else{
 		cerr<<"Error: The vector vecPositionD1 is not an element of the domain vectorDomain1."<<endl;
 		iReturn++;
@@ -982,7 +983,7 @@ int testIsElement( unsigned long &ulTestphase ){
 	
 	if ( vectorDomainD1S0p25.isElement( vecPositionD1 ) ){
 	
-		cout<<"The vector vectorDomainD1S0p25 is an element of the domain vectorDomainD1S0p25. "<<endl;
+		cout<<"The vector vectorDomainD1S0p25 is an element of the domain vectorDomainD1S0p25."<<endl;
 	}else{
 		cerr<<"Error: The vector vectorDomainD1S0p25 is not an element of the domain vectorDomainD1S0p25."<<endl;
 		iReturn++;
@@ -990,7 +991,7 @@ int testIsElement( unsigned long &ulTestphase ){
 
 	if ( ! vectorDomainD3.isElement( vecPositionD1 ) ){
 	
-		cout<<"The vector vectorDomainD3 is not an element of the domain vectorDomainD3. "<<endl;
+		cout<<"The vector vectorDomainD3 is not an element of the domain vectorDomainD3."<<endl;
 	}else{
 		cerr<<"Error: The vector vectorDomainD3 is an element of the domain vectorDomainD3."<<endl;
 		iReturn++;
@@ -1004,7 +1005,7 @@ int testIsElement( unsigned long &ulTestphase ){
 	
 	if ( ! vectorDomainD1.isElement( vecPositionD3 ) ){
 	
-		cout<<"The vector vecPositionD1 is not an element of the domain vectorDomain1. "<<endl;
+		cout<<"The vector vecPositionD1 is not an element of the domain vectorDomain1."<<endl;
 	}else{
 		cerr<<"Error: The vector vecPositionD1 is an element of the domain vectorDomain1."<<endl;
 		iReturn++;
@@ -1012,7 +1013,7 @@ int testIsElement( unsigned long &ulTestphase ){
 	
 	if ( ! vectorDomainD1S0p25.isElement( vecPositionD3 ) ){
 	
-		cout<<"The vector vectorDomainD1S0p25 is not an element of the domain vectorDomainD1S0p25. "<<endl;
+		cout<<"The vector vectorDomainD1S0p25 is not an element of the domain vectorDomainD1S0p25."<<endl;
 	}else{
 		cerr<<"Error: The vector vectorDomainD1S0p25 is an element of the domain vectorDomainD1S0p25."<<endl;
 		iReturn++;
@@ -1020,7 +1021,7 @@ int testIsElement( unsigned long &ulTestphase ){
 
 	if ( vectorDomainD3.isElement( vecPositionD3 ) ){
 	
-		cout<<"The vector vectorDomainD3 is an element of the domain vectorDomainD3. "<<endl;
+		cout<<"The vector vectorDomainD3 is an element of the domain vectorDomainD3."<<endl;
 	}else{
 		cerr<<"Error: The vector vectorDomainD3 is not an element of the domain vectorDomainD3."<<endl;
 		iReturn++;
@@ -1032,7 +1033,7 @@ int testIsElement( unsigned long &ulTestphase ){
 
 	if ( ! vectorDomainD1.isElement( vecPositionD3 ) ){
 	
-		cout<<"The vector vecPositionD1 is not an element of the domain vectorDomain1. "<<endl;
+		cout<<"The vector vecPositionD1 is not an element of the domain vectorDomain1."<<endl;
 	}else{
 		cerr<<"Error: The vector vecPositionD1 is an element of the domain vectorDomain1."<<endl;
 		iReturn++;
@@ -1040,7 +1041,7 @@ int testIsElement( unsigned long &ulTestphase ){
 	
 	if ( ! vectorDomainD1S0p25.isElement( vecPositionD3 ) ){
 	
-		cout<<"The vector vectorDomainD1S0p25 is not an element of the domain vectorDomainD1S0p25. "<<endl;
+		cout<<"The vector vectorDomainD1S0p25 is not an element of the domain vectorDomainD1S0p25."<<endl;
 	}else{
 		cerr<<"Error: The vector vectorDomainD1S0p25 is an element of the domain vectorDomainD1S0p25."<<endl;
 		iReturn++;
@@ -1048,7 +1049,7 @@ int testIsElement( unsigned long &ulTestphase ){
 
 	if ( vectorDomainD3.isElement( vecPositionD3 ) ){
 	
-		cout<<"The vector vectorDomainD3 is an element of the domain vectorDomainD3. "<<endl;
+		cout<<"The vector vectorDomainD3 is an element of the domain vectorDomainD3."<<endl;
 	}else{
 		cerr<<"Error: The vector vectorDomainD3 is not an element of the domain vectorDomainD3."<<endl;
 		iReturn++;
@@ -1059,7 +1060,7 @@ int testIsElement( unsigned long &ulTestphase ){
 
 	if ( ! vectorDomainD3.isElement( vecPositionD3 ) ){
 	
-		cout<<"The vector vectorDomainD3 is not an element of the domain vectorDomainD3. "<<endl;
+		cout<<"The vector vectorDomainD3 is not an element of the domain vectorDomainD3."<<endl;
 	}else{
 		cerr<<"Error: The vector vectorDomainD3 is an element of the domain vectorDomainD3."<<endl;
 		iReturn++;
@@ -1070,7 +1071,7 @@ int testIsElement( unsigned long &ulTestphase ){
 
 	if ( ! vectorDomainD3.isElement( vecPositionD3 ) ){
 	
-		cout<<"The vector vectorDomainD3 is not an element of the domain vectorDomainD3. "<<endl;
+		cout<<"The vector vectorDomainD3 is not an element of the domain vectorDomainD3."<<endl;
 	}else{
 		cerr<<"Error: The vector vectorDomainD3 is an element of the domain vectorDomainD3."<<endl;
 		iReturn++;
@@ -1083,7 +1084,7 @@ int testIsElement( unsigned long &ulTestphase ){
 
 	if ( ! vectorDomainD3.isElement( vecPositionD3 ) ){
 	
-		cout<<"The vector vectorDomainD3 is not an element of the domain vectorDomainD3. "<<endl;
+		cout<<"The vector vectorDomainD3 is not an element of the domain vectorDomainD3."<<endl;
 	}else{
 		cerr<<"Error: The vector vectorDomainD3 is an element of the domain vectorDomainD3."<<endl;
 		iReturn++;
@@ -1094,7 +1095,7 @@ int testIsElement( unsigned long &ulTestphase ){
 
 	if ( ! vectorDomainD3.isElement( vecPositionD3 ) ){
 	
-		cout<<"The vector vectorDomainD3 is not an element of the domain vectorDomainD3. "<<endl;
+		cout<<"The vector vectorDomainD3 is not an element of the domain vectorDomainD3."<<endl;
 	}else{
 		cerr<<"Error: The vector vectorDomainD3 is an element of the domain vectorDomainD3."<<endl;
 		iReturn++;
@@ -1105,7 +1106,7 @@ int testIsElement( unsigned long &ulTestphase ){
 	
 	if ( ! vectorDomainD3.isElement( vecPositionD3 ) ){
 	
-		cout<<"The vector vectorDomainD3 is not an element of the domain vectorDomainD3. "<<endl;
+		cout<<"The vector vectorDomainD3 is not an element of the domain vectorDomainD3."<<endl;
 	}else{
 		cerr<<"Error: The vector vectorDomainD3 is an element of the domain vectorDomainD3."<<endl;
 		iReturn++;
@@ -1116,7 +1117,7 @@ int testIsElement( unsigned long &ulTestphase ){
 	
 	if ( vectorDomainD3.isElement( vecPositionD3 ) ){
 	
-		cout<<"The vector vectorDomainD3 is an element of the domain vectorDomainD3. "<<endl;
+		cout<<"The vector vectorDomainD3 is an element of the domain vectorDomainD3."<<endl;
 	}else{
 		cerr<<"Error: The vector vectorDomainD3 is not an element of the domain vectorDomainD3."<<endl;
 		iReturn++;
@@ -1127,7 +1128,7 @@ int testIsElement( unsigned long &ulTestphase ){
 	
 	if ( ! vectorDomainD3.isElement( vecPositionD3 ) ){
 	
-		cout<<"The vector vectorDomainD3 is not an element of the domain vectorDomainD3. "<<endl;
+		cout<<"The vector vectorDomainD3 is not an element of the domain vectorDomainD3."<<endl;
 	}else{
 		cerr<<"Error: The vector vectorDomainD3 is an element of the domain vectorDomainD3."<<endl;
 		iReturn++;
@@ -1138,7 +1139,7 @@ int testIsElement( unsigned long &ulTestphase ){
 	
 	if ( ! vectorDomainD3.isElement( vecPositionD3 ) ){
 	
-		cout<<"The vector vectorDomainD3 is not an element of the domain vectorDomainD3. "<<endl;
+		cout<<"The vector vectorDomainD3 is not an element of the domain vectorDomainD3."<<endl;
 	}else{
 		cerr<<"Error: The vector vectorDomainD3 is an element of the domain vectorDomainD3."<<endl;
 		iReturn++;
@@ -1149,7 +1150,7 @@ int testIsElement( unsigned long &ulTestphase ){
 	
 	if ( ! vectorDomainD3.isElement( vecPositionD3 ) ){
 	
-		cout<<"The vector vectorDomainD3 is not an element of the domain vectorDomainD3. "<<endl;
+		cout<<"The vector vectorDomainD3 is not an element of the domain vectorDomainD3."<<endl;
 	}else{
 		cerr<<"Error: The vector vectorDomainD3 is an element of the domain vectorDomainD3."<<endl;
 		iReturn++;
@@ -1160,7 +1161,7 @@ int testIsElement( unsigned long &ulTestphase ){
 
 	if ( vectorDomainD3.isElement( vecPositionD3 ) ){
 	
-		cout<<"The vector vectorDomainD3 is an element of the domain vectorDomainD3. "<<endl;
+		cout<<"The vector vectorDomainD3 is an element of the domain vectorDomainD3."<<endl;
 	}else{
 		cerr<<"Error: The vector vectorDomainD3 is not an element of the domain vectorDomainD3."<<endl;
 		iReturn++;
@@ -1171,7 +1172,7 @@ int testIsElement( unsigned long &ulTestphase ){
 
 	if ( vectorDomainD3.isElement( vecPositionD3 ) ){
 	
-		cout<<"The vector vectorDomainD3 is an element of the domain vectorDomainD3. "<<endl;
+		cout<<"The vector vectorDomainD3 is an element of the domain vectorDomainD3."<<endl;
 	}else{
 		cerr<<"Error: The vector vectorDomainD3 is not an element of the domain vectorDomainD3."<<endl;
 		iReturn++;
@@ -1182,7 +1183,7 @@ int testIsElement( unsigned long &ulTestphase ){
 
 	if ( vectorDomainD3.isElement( vecPositionD3 ) ){
 	
-		cout<<"The vector vectorDomainD3 is an element of the domain vectorDomainD3. "<<endl;
+		cout<<"The vector vectorDomainD3 is an element of the domain vectorDomainD3."<<endl;
 	}else{
 		cerr<<"Error: The vector vectorDomainD3 is not an element of the domain vectorDomainD3."<<endl;
 		iReturn++;
@@ -1193,7 +1194,7 @@ int testIsElement( unsigned long &ulTestphase ){
 	
 	if ( ! vectorDomainD3.isElement( vecPositionD3 ) ){
 	
-		cout<<"The vector vectorDomainD3 is not an element of the domain vectorDomainD3. "<<endl;
+		cout<<"The vector vectorDomainD3 is not an element of the domain vectorDomainD3."<<endl;
 	}else{
 		cerr<<"Error: The vector vectorDomainD3 is an element of the domain vectorDomainD3."<<endl;
 		iReturn++;
@@ -2253,7 +2254,7 @@ int testXmlVectorDomain( const string szFilename, const unsigned int uiNumberOfE
 	TiXmlDocument xmlDocVectorPosition( szFilename );
 	bool loadOkay = xmlDocVectorPosition.LoadFile();
 	if ( loadOkay ){
-		cout<<"The data of the vector was loaded successfull from the file \""<< szFilename <<"\". "<<endl;
+		cout<<"The data of the vector was loaded successfull from the file \""<< szFilename <<"\"."<<endl;
 	}else{
 		cerr<<"Error: Failed to load file \""<< szFilename <<"\""<<endl;
 		iReturn++;
@@ -2269,7 +2270,7 @@ int testXmlVectorDomain( const string szFilename, const unsigned int uiNumberOfE
 		string szElementName = pXmlElement->Value();
 
 		if ( szElementName == "vector" ){
-			cout<<"The root element is correctly named \"vector\". "<<endl;
+			cout<<"The root element is correctly named \"vector\"."<<endl;
 		
 		}else{
 			cerr<<"Error: The name of the root element is "<< szElementName <<" and not \"vector\"."<<endl;
@@ -2285,7 +2286,7 @@ int testXmlVectorDomain( const string szFilename, const unsigned int uiNumberOfE
 			iReturn++;
 		}else if ( iNumberOfElementsLoaded == (int)uiNumberOfElements ) {
 			cout<<"The number of elements of the domain are correctly \""<<
-				uiNumberOfElements <<"\". "<<endl;
+				uiNumberOfElements <<"\"."<<endl;
 		}else{
 			cerr<<"Error: The number of elements of the loaded domain are \""<<
 				iNumberOfElementsLoaded <<"\", but should be \""<<
@@ -2308,13 +2309,13 @@ int testXmlVectorDomain( const string szFilename, const unsigned int uiNumberOfE
 			pXmlElement = pXmlElement->NextSiblingElement(), uiActualSubdomain++ ){
 
 		unsigned int uiBits = vecUiBits[ uiActualSubdomain ];
-		double dScalingfactor = vecScalingfactor[ uiActualSubdomain ];
+		double dScalingFactor = vecScalingfactor[ uiActualSubdomain ];
 	
 		// should always have a valid root but handle gracefully if it does
 		string szElementName = pXmlElement->Value();
 
 		if ( szElementName == "naturalNumberB" ){
-			cout<<"The  element is correctly named \"naturalNumberB\". "<<endl;
+			cout<<"The  element is correctly named \"naturalNumberB\"."<<endl;
 		
 		}else{
 			cerr<<"Error: The name of the element is \""<< szElementName <<"\" and not \"naturalNumberB\"."<<endl;
@@ -2328,48 +2329,41 @@ int testXmlVectorDomain( const string szFilename, const unsigned int uiNumberOfE
 			cerr<<"Error: The domain has no attribute bits."<<endl;
 			iReturn++;
 		}else if ( iBitsLoaded == (int)uiBits ) {
-			cout<<"The number of bits of the domain are correctly \""<< uiBits <<"\". "<<endl;
+			cout<<"The number of bits of the domain are correctly \""<< uiBits <<"\"."<<endl;
 		}else{
 			cerr<<"Error: The number of bits of the loaded domain are \""<< iBitsLoaded
 				<<"\", but should be \""<< uiBits <<"\"."<<endl;
 			iReturn++;
 		}
 
-		const char * pcAttributeScalingfactor =
+		const char * pcAttributeScalingFactor =
 			pXmlElement->Attribute( "scalingfactor" );
 		
-		longFib lfMantissa;
-		longFib lfExponent;
-		decomposeDoubleFib( dScalingfactor, & lfMantissa, & lfExponent );
-		
-		long lMantissa = lfMantissa;
-		long lExponent = lfExponent;
-
-		char szScalingfactorBuffer[128];
-		szScalingfactorBuffer[0] = 0;
-		sprintf ( szScalingfactorBuffer, "%li * 2^(%li)", lMantissa, lExponent );
-		
-		string szScalingfactor( szScalingfactorBuffer );
-		
-		if ( ( dScalingfactor == 1.0 ) && ( pcAttributeScalingfactor == NULL ) ){
+		if ( ( dScalingFactor == 1.0 ) && ( pcAttributeScalingFactor == NULL ) ){
 			//no scalingfactor needed
-			cout<<"No scalingfactor attribut. This is correct because the scalingfactor is 1.0 . "<<endl;
+			cout<<"No scalingfactor attribut. This is correct because the scalingfactor is 1.0 ."<<endl;
 		}else{
-			if ( pcAttributeScalingfactor == NULL ){
+			if ( pcAttributeScalingFactor == NULL ){
 				cerr<<"Error: The domain has no attribute scalingfactor."<<endl;
 				iReturn++;
-			}else if ( szScalingfactor == pcAttributeScalingfactor ) {
-				cout<<"The scalingfactor of the domain is correctly \""<< pcAttributeScalingfactor <<"\". "<<endl;
 			}else{
-				cerr<<"Error: The scalingfactor of the loaded domain is \""<< pcAttributeScalingfactor
-					<<"\", but should be \""<< dScalingfactor <<"\" (=\""<< szScalingfactor <<"\")."<<endl;
-				iReturn++;
+				const double dReadScalingFactor =
+					readDoubleFromFunction( pcAttributeScalingFactor );
+				
+				if ( dScalingFactor == dReadScalingFactor ) {
+					cout<<"The scaling factor of the domain is correctly \""<< pcAttributeScalingFactor <<"\"."<<endl;
+				}else{
+					cerr<<"Error: The scaling factor of the loaded domain is \""<<
+						pcAttributeScalingFactor<<"\"(="<<dReadScalingFactor<<
+						"), but should be \""<<dScalingFactor <<"\" ."<<endl;
+					iReturn++;
+				}
 			}
-			}
+		}
 	}
 	
 	if ( uiActualSubdomain == uiNumberOfElements ){
-		cout<<"The number of subdomains is correct. "<<endl;
+		cout<<"The number of subdomains is correct."<<endl;
 	
 	}else{
 		cerr<<"Error: The number of subdomains is "<< uiActualSubdomain <<
@@ -2417,7 +2411,7 @@ int testStoreXml( unsigned long &ulTestphase ){
 	
 	if ( bStoreSuccesfull ){
 	
-		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\". "<<endl;
+		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\"."<<endl;
 	}else{
 		cerr<<"Error: Storing the data to the file \""<< szFileNameBuffer <<"\" failed."<<endl;
 		iReturn++;
@@ -2453,7 +2447,7 @@ int testStoreXml( unsigned long &ulTestphase ){
 	
 	if ( bStoreSuccesfull ){
 	
-		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\". "<<endl;
+		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\"."<<endl;
 	}else{
 		cerr<<"Error: Storing the data to the file \""<< szFileNameBuffer <<"\" failed."<<endl;
 		iReturn++;
@@ -2499,7 +2493,7 @@ int testStoreXml( unsigned long &ulTestphase ){
 	
 	if ( bStoreSuccesfull ){
 	
-		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\". "<<endl;
+		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\"."<<endl;
 	}else{
 		cerr<<"Error: Storing the data to the file \""<< szFileNameBuffer <<"\" failed."<<endl;
 		iReturn++;
@@ -2540,10 +2534,10 @@ int testStore( unsigned long &ulTestphase ){
 	//test get compressed size
 	if ( domainVectorE1.getCompressedSize() == 32 ){
 	
-		cout<<"The compressed size of the domain is correctly 32 . "<<endl;
+		cout<<"The compressed size of the domain is correctly 32 ."<<endl;
 	}else{
 		cerr<<"Error: The compressed size of the domain is "<<
-			domainVectorE1.getCompressedSize() << ", but should be 32 . "<<endl;
+			domainVectorE1.getCompressedSize() << ", but should be 32 ."<<endl;
 		iReturn++;
 	}
 	
@@ -2561,7 +2555,7 @@ int testStore( unsigned long &ulTestphase ){
 	
 	if ( bStoreSuccesfull ){
 	
-		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\". "<<endl;
+		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\"."<<endl;
 	}else{
 		cerr<<"Error: Storing the data to the file \""<< szFileNameBuffer <<"\" failed."<<endl;
 		iReturn++;
@@ -2569,11 +2563,11 @@ int testStore( unsigned long &ulTestphase ){
 	
 	if ( ( cRestBit == (char)0x00 ) && ( cNumberOfRestBit == 0 ) ){
 		cout<<"The restbit is \""<< hex << (unsigned short)cRestBit <<"\" the number of restbit is "<<
-			dec << (unsigned short)cNumberOfRestBit <<". "<<endl;
+			dec << (unsigned short)cNumberOfRestBit <<"."<<endl;
 	}else{
 		cerr<<"Error: The restbit is \""<< hex << (unsigned short)cRestBit <<"\" the number of restbit is "<<
 			dec << (unsigned short)cNumberOfRestBit <<
-			", but the restbit should be 0 and number of restbit should be 0. "<<endl;
+			", but the restbit should be 0 and number of restbit should be 0."<<endl;
 		iReturn++;
 	}
 
@@ -2596,10 +2590,10 @@ int testStore( unsigned long &ulTestphase ){
 	//test get compressed size
 	if ( domainVectorE0.getCompressedSize() == 16 ){
 	
-		cout<<"The compressed size of the domain is correctly 16 . "<<endl;
+		cout<<"The compressed size of the domain is correctly 16 ."<<endl;
 	}else{
 		cerr<<"Error: The compressed size of the domain is "<<
-			domainVectorE0.getCompressedSize() << ", but should be 16 . "<<endl;
+			domainVectorE0.getCompressedSize() << ", but should be 16 ."<<endl;
 		iReturn++;
 	}
 	
@@ -2616,7 +2610,7 @@ int testStore( unsigned long &ulTestphase ){
 	
 	if ( bStoreSuccesfull ){
 	
-		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\". "<<endl;
+		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\"."<<endl;
 	}else{
 		cerr<<"Error: Storing the data to the file \""<< szFileNameBuffer <<"\" failed."<<endl;
 		iReturn++;
@@ -2624,11 +2618,11 @@ int testStore( unsigned long &ulTestphase ){
 	
 	if ( ( cRestBit == (char)0x00 ) && ( cNumberOfRestBit == 0 ) ){
 		cout<<"The restbit is \""<< hex << (unsigned short)cRestBit <<"\" the number of restbit is "<<
-			dec << (unsigned short)cNumberOfRestBit <<". "<<endl;
+			dec << (unsigned short)cNumberOfRestBit <<"."<<endl;
 	}else{
 		cerr<<"Error: The restbit is \""<< hex << (unsigned short)cRestBit <<"\" the number of restbit is "<<
 			dec << (unsigned short)cNumberOfRestBit <<
-			", but the restbit should be 0 and number of restbit should be 0. "<<endl;
+			", but the restbit should be 0 and number of restbit should be 0."<<endl;
 		iReturn++;
 	}
 
@@ -2662,11 +2656,11 @@ int testStore( unsigned long &ulTestphase ){
 	if ( domainVectorE3.getCompressedSize() == uiCompressedSize ){
 	
 		cout<<"The compressed size of the domain is correctly " <<
-			uiCompressedSize << " . "<<endl;
+			uiCompressedSize << " ."<<endl;
 	}else{
 		cerr<<"Error: The compressed size of the domain is "<<
 			domainVectorE3.getCompressedSize() << ", but should be " <<
-			uiCompressedSize << " . "<<endl;
+			uiCompressedSize << " ."<<endl;
 		iReturn++;
 	}
 	
@@ -2683,7 +2677,7 @@ int testStore( unsigned long &ulTestphase ){
 	
 	if ( bStoreSuccesfull ){
 	
-		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\". "<<endl;
+		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\"."<<endl;
 	}else{
 		cerr<<"Error: Storing the data to the file \""<< szFileNameBuffer <<"\" failed."<<endl;
 		iReturn++;
@@ -2691,11 +2685,11 @@ int testStore( unsigned long &ulTestphase ){
 	
 	if ( ( cRestBit == (char)0x00 ) && ( cNumberOfRestBit == 0 ) ){
 		cout<<"The restbit is \""<< hex << (unsigned short)cRestBit <<"\" the number of restbit is "<<
-			dec << (unsigned short)cNumberOfRestBit <<". "<<endl;
+			dec << (unsigned short)cNumberOfRestBit <<"."<<endl;
 	}else{
 		cerr<<"Error: The restbit is \""<< hex << (unsigned short)cRestBit <<"\" the number of restbit is "<<
 			dec << (unsigned short)cNumberOfRestBit <<
-			", but the restbit should be 0 and number of restbit should be 0. "<<endl;
+			", but the restbit should be 0 and number of restbit should be 0."<<endl;
 		iReturn++;
 	}
 
@@ -2718,7 +2712,7 @@ int testStore( unsigned long &ulTestphase ){
 	cout<<"vector<cDomainSingle*> vecDomains255( uiNumberOfSubdomains );"<<endl;
 	vector<cDomainSingle*> vecDomains255( uiNumberOfSubdomains );
 	
-	cout<<"vecDomains255[ 1 .. "<< uiNumberOfSubdomains <<" ]=new cDomainNaturalNumberBit( 1 );"<<endl;
+	cout<<"vecDomains255[ 1 .."<< uiNumberOfSubdomains <<" ]=new cDomainNaturalNumberBit( 1 );"<<endl;
 	for ( unsigned int uiActualSubDomain = 0;
 			uiActualSubDomain < uiNumberOfSubdomains; uiActualSubDomain++  ){
 		vecDomains255[ uiActualSubDomain ]=new cDomainNaturalNumberBit( 1 );
@@ -2735,11 +2729,11 @@ int testStore( unsigned long &ulTestphase ){
 	if ( domainVectorE255.getCompressedSize() == uiCompressedSize ){
 	
 		cout<<"The compressed size of the domain is correctly " <<
-			uiCompressedSize << " . "<<endl;
+			uiCompressedSize << " ."<<endl;
 	}else{
 		cerr<<"Error: The compressed size of the domain is "<<
 			domainVectorE255.getCompressedSize() << ", but should be " <<
-			uiCompressedSize << " . "<<endl;
+			uiCompressedSize << " ."<<endl;
 		iReturn++;
 	}
 	
@@ -2756,7 +2750,7 @@ int testStore( unsigned long &ulTestphase ){
 	
 	if ( bStoreSuccesfull ){
 	
-		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\". "<<endl;
+		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\"."<<endl;
 	}else{
 		cerr<<"Error: Storing the data to the file \""<< szFileNameBuffer <<"\" failed."<<endl;
 		iReturn++;
@@ -2764,11 +2758,11 @@ int testStore( unsigned long &ulTestphase ){
 	
 	if ( ( cRestBit == (char)0x00 ) && ( cNumberOfRestBit == 0 ) ){
 		cout<<"The restbit is \""<< hex << (unsigned short)cRestBit <<"\" the number of restbit is "<<
-			dec << (unsigned short)cNumberOfRestBit <<". "<<endl;
+			dec << (unsigned short)cNumberOfRestBit <<"."<<endl;
 	}else{
 		cerr<<"Error: The restbit is \""<< hex << (unsigned short)cRestBit <<"\" the number of restbit is "<<
 			dec << (unsigned short)cNumberOfRestBit <<
-			", but the restbit should be 0 and number of restbit should be 0. "<<endl;
+			", but the restbit should be 0 and number of restbit should be 0."<<endl;
 		iReturn++;
 	}
 
@@ -2797,7 +2791,7 @@ int testStore( unsigned long &ulTestphase ){
 	cout<<"vector<cDomainSingle*> vecDomains256( uiNumberOfSubdomains );"<<endl;
 	vector<cDomainSingle*> vecDomains256( uiNumberOfSubdomains );
 	
-	cout<<"vecDomains255[ 1 .. "<< uiNumberOfSubdomains <<" ]=new cDomainNaturalNumberBit( 1 );"<<endl;
+	cout<<"vecDomains255[ 1 .."<< uiNumberOfSubdomains <<" ]=new cDomainNaturalNumberBit( 1 );"<<endl;
 	for ( unsigned int uiActualSubDomain = 0;
 			uiActualSubDomain < uiNumberOfSubdomains; uiActualSubDomain++  ){
 		vecDomains256[ uiActualSubDomain ]=new cDomainNaturalNumberBit( 1 );
@@ -2814,11 +2808,11 @@ int testStore( unsigned long &ulTestphase ){
 	if ( domainVectorE256.getCompressedSize() == uiCompressedSize ){
 	
 		cout<<"The compressed size of the domain is correctly " <<
-			uiCompressedSize << " . "<<endl;
+			uiCompressedSize << " ."<<endl;
 	}else{
 		cerr<<"Error: The compressed size of the domain is "<<
 			domainVectorE256.getCompressedSize() << ", but should be " <<
-			uiCompressedSize << " . "<<endl;
+			uiCompressedSize << " ."<<endl;
 		iReturn++;
 	}
 	
@@ -2835,7 +2829,7 @@ int testStore( unsigned long &ulTestphase ){
 	
 	if ( bStoreSuccesfull ){
 	
-		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\". "<<endl;
+		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\"."<<endl;
 	}else{
 		cerr<<"Error: Storing the data to the file \""<< szFileNameBuffer <<"\" failed."<<endl;
 		iReturn++;
@@ -2843,11 +2837,11 @@ int testStore( unsigned long &ulTestphase ){
 	
 	if ( ( cRestBit == (char)0x00 ) && ( cNumberOfRestBit == 0 ) ){
 		cout<<"The restbit is \""<< hex << (unsigned short)cRestBit <<"\" the number of restbit is "<<
-			dec << (unsigned short)cNumberOfRestBit <<". "<<endl;
+			dec << (unsigned short)cNumberOfRestBit <<"."<<endl;
 	}else{
 		cerr<<"Error: The restbit is \""<< hex << (unsigned short)cRestBit <<"\" the number of restbit is "<<
 			dec << (unsigned short)cNumberOfRestBit <<
-			", but the restbit should be 0 and number of restbit should be 0. "<<endl;
+			", but the restbit should be 0 and number of restbit should be 0."<<endl;
 		iReturn++;
 	}
 
