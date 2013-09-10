@@ -1,0 +1,33 @@
+
+
+- main window
+-- try to implement sub windows for the different Fib object views
+
+- implement input variable view
+
+
+- database functions -> into own database Fib object handler
+	- load Fib database object
+	- load database object
+	- get database objects from database directory / source
+	- set database folder (+ recursive)
+	- store as database object into database
+	- connections betwean objects: used by, created from, similar (, used together)
+
+- object view (for database objects)
+-- connections betwean objects
+
+- test drawing on areas greater +-2^15 (QPainter restrictions)
+- draw background ( paint() ) correctly (cEvalueSimpleRGBA255QPainter)
+
+
+- build cFibElement elements for creator, e.g. cArea -> cAreaCreator
+-- implement converter from cFib* to cFib*Creator (cFib*Creator constructor + convert equal to copyElement() )
+-- implement partial store and restore (with tickets)
+--- basis version in cFibElement (returning with ticket befor reading the next Fib element)
+-- implement cFibInputVariable connection
+-- implement view for them
+
+
+
+
