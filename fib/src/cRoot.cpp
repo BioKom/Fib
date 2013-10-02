@@ -72,6 +72,8 @@ History:
 12.05.2013  Oesterholz  getDigits() andling changed (now version for integers)
 30.07.2013  Oesterholz  method assignValues() added;
 	FEATURE_EXT_SUBOBJECT_INPUT_VECTOR as default (not case removed)
+12.09.2013  Oesterholz  reding default value of input variable with
+	readDoubleFromFunction() and storing it with storeXmlDoubleFib()
 */
 
 
@@ -462,16 +464,26 @@ cRoot::cRoot( const TiXmlElement * pXmlRootElement, intFib & outStatus,
 								iActualVariable++ ){
 
 							int iNumberOfVariable = 0;
-							const char * szXmlVariableNumber = pXmlElementVariable->Attribute( "number", & iNumberOfVariable );
-							double dDefaultValue = 0.0;
-							const char * szXmlVariableDefault = pXmlElementVariable->Attribute( "default", & dDefaultValue );
+							const char * szXmlVariableNumber =
+								pXmlElementVariable->Attribute( "number", & iNumberOfVariable );
+							const char * szXmlVariableDefault =
+								pXmlElementVariable->Attribute( "default" );
 							
 							if ( szXmlVariableNumber == NULL ){
 								//Warning: no correct variablenumber
 								outStatus = 2;
 							}
-							if ( szXmlVariableDefault == NULL ){
-								//Warning: no correct default
+							double dDefaultValue = 0.0;
+							if ( szXmlVariableDefault != NULL ){
+								std::pair< bool, const char * > pPairOutEvalueStatus;
+								dDefaultValue = readDoubleFromFunction(
+									szXmlVariableDefault, &pPairOutEvalueStatus );
+								
+								if ( ! pPairOutEvalueStatus.first ){
+									//Warning: error while reading default value
+									outStatus = 2;
+								}
+							}else{//Warning: no correct default
 								outStatus = 2;
 							}
 							liInputVariables.push_back( make_pair( new cFibVariable( this ), dDefaultValue ) );
@@ -2836,8 +2848,10 @@ bool cRoot::storeXml( ostream & stream ) const{
 			uiNumberOfInputVariable++ ){
 		
 			stream<<"<variable number=\""<< uiNumberOfInputVariable <<"\" ";
-			stream<<"default=\""<< getStandardValueOfInputVariable(
-				uiNumberOfInputVariable ) <<"\"/>"<<endl;
+			stream<<"default=\"";
+			storeXmlDoubleFib( stream,
+				getStandardValueOfInputVariable( uiNumberOfInputVariable ) );
+			stream<<"\"/>"<<endl;
 		}
 		stream<<"</input_variables>"<<endl;
 	}
@@ -7241,7 +7255,7 @@ cRoot * cRoot::copyInternal( const unsignedIntFib uiObjectPoint ) const{
 		if ( pMainFibObject ){
 			uiActualObjectpoints = pMainFibObject->getNumberOfObjectPoints() + 1;
 		}
-			
+		
 		if ( uiRemainingObjectpoints <= uiActualObjectpoints ){
 			//an subobject in the main -Fib-object should be copied
 			pFibObjectCopy->pMainFibObject = pMainFibObject->copyInternal( uiRemainingObjectpoints - 1 );

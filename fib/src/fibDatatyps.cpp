@@ -722,11 +722,9 @@ bool fib::compareDouble( const float & dValue1, const float & dValue2 ){
 }
 
 
-//TODO check
-
 /**
  * This functions reads a double number from the given string.
- * Reading will be independet of the local. (The default format is english.)
+ * Reading will be independent of the local. (The default format is english.)
  * Leading spaces will be ignored.
  * The decimal point can be the english '.' or german ','.
  * If the number contains one '.' and some ',', the '.' will be seen as
@@ -743,6 +741,7 @@ bool fib::compareDouble( const float & dValue1, const float & dValue2 ){
  * 	- "12,345.678,9" = 12345.678
  * 	- "12.345,678.9" = 12345.6789
  *
+ * @see readDoubleReturnEnd()
  * @see readDoubleFromFunction()
  * @param strDouble the string where to read the double from
  * @return the readed double number
@@ -755,7 +754,7 @@ doubleFib fib::readDouble( const char * strDouble ){
 
 /**
  * This functions reads a double number from the given string.
- * Reading will be independet of the local. (The default format is english.)
+ * Reading will be independent of the local. (The default format is english.)
  * Leading spaces will be ignored.
  * The decimal point can be the english '.' or german ','.
  * If the number contains one '.' and some ',', the '.' will be seen as
@@ -771,7 +770,9 @@ doubleFib fib::readDouble( const char * strDouble ){
  * 	- "12,34" = 12.34
  * 	- "12,345.678,9" = 12345.678
  * 	- "12.345,678.9" = 12345.6789
+ * 	- "12,345.678.97,8" = 12345.678
  *
+ * @see readDouble()
  * @see readDoubleFromFunction()
  * @param strDouble the string where to read the double from
  * @return a pair of:
@@ -814,10 +815,10 @@ pair< doubleFib, const char * >
 		}//character not important
 		
 	}//end while string end not reached
-	//if one ',' found zero or more than one '.' ->  use ',' as decimal point
+	//if one ',' found and zero or more than one '.' ->  use ',' as decimal point
 	const char cDecimalPoint =
 		//if one ',' found and (zero or more than one '.') ->  use ',' as decimal point
-		(( uiNumberOfComma == 1 ) && ( uiNumberOfPoints != 1 )) ? ',' :
+		( ( uiNumberOfComma == 1 ) && ( uiNumberOfPoints != 1 ) ) ? ',' :
 		//else use '.' as decimal point
 		'.';
 	const char cNotDecimalPoint = ( cDecimalPoint == '.' ) ? ',' : '.';
@@ -839,7 +840,7 @@ pair< doubleFib, const char * >
 				( cActualChar == '.' ) || ( cActualChar == ',' ) ){
 			//number found
 			break;
-		}
+		}//else
 		if ( ( cActualChar != '+' ) && ( cActualChar != ' ' ) &&
 				( cActualChar != '	' ) ){
 			//not a valid number -> return 0
@@ -898,7 +899,7 @@ pair< doubleFib, const char * >
 			//number found or not spaces
 			break;
 		}
-	}
+	}//end for skip blanks
 	//check for scientific notation (eX = 10^X)
 	if ( ( (*pActualPosition) == 'e' ) || ( (*pActualPosition) == 'E' ) ){
 		//read scientific notation (eX = 10^X ; X is an integer)
@@ -964,19 +965,22 @@ namespace fib{
 namespace nFibDatatypes_ArithmeticOperator{
 	
 	/**
-	 * The parent class for all operators
+	 * The parent class for all operators.
 	 */
 	class cOperator{
 	public:
 		
 		/**
 		 * The number of open brackets for this operator.
-		 * (Brackets before the operator opend, but not closed.)
+		 * (Opened brackets before the operator, but not closed.)
 		 */
 		unsigned int uiOpenBarckets;
 		
 		/**
 		 * standard constructor
+		 *
+		 * @param uiInOpenBarckets the number of open brackets for this operator
+		 * 	@see uiOpenBarckets
 		 */
 		cOperator( const unsigned int uiInOpenBarckets ):
 				uiOpenBarckets( uiInOpenBarckets ){
@@ -1088,15 +1092,15 @@ namespace nFibDatatypes_ArithmeticOperator{
 		bool hasPrecedence( const cOperator * pOperator ) const{
 			
 			if ( pOperator->uiOpenBarckets != uiOpenBarckets ){
+				//different bracked depth
 				if ( pOperator->uiOpenBarckets < uiOpenBarckets ){
 					/*this operator is in bracket (higher than the other)
 					 -> it has precedence over the other*/
 					return true;
-				}else{//( uiOpenBarckets < pOperator->uiOpenBarckets ){
-					/*the other operator is in bracket (higher than this)
-					 -> it has precedence over this*/
-					return false;
-				}
+				}//else ( uiOpenBarckets < pOperator->uiOpenBarckets ){
+				/*the other operator is in bracket (higher than this)
+				 -> it has precedence over this*/
+				return false;
 			}//else open brackets are equal
 			//use the precedence values of the operators
 			return ( pOperator->getPrecedenceValue() <= getPrecedenceValue() );
@@ -1108,13 +1112,13 @@ namespace nFibDatatypes_ArithmeticOperator{
 	
 	
 	/**
-	 * A unary operator.
+	 * Class for unary operators.
 	 */
 	class cUnaryOperator: public cOperator{
 	public:
 		
 		/**
-		 * The operator contained in this operator.
+		 * A pointer to the operator contained in this operator.
 		 */
 		cOperator * pSubOperator;
 		
@@ -1140,6 +1144,8 @@ namespace nFibDatatypes_ArithmeticOperator{
 		 * standard constructor
 		 *
 		 * @param cInType the type of the operator @see cType
+		 * @param uiInOpenBarckets the number of open brackets for this operator
+		 * 	@see uiOpenBarckets
 		 */
 		cUnaryOperator( const char cInType, const unsigned int uiInOpenBarckets  ):
 				cOperator( uiInOpenBarckets ), pSubOperator( NULL ), cType( cInType ){
@@ -1151,6 +1157,7 @@ namespace nFibDatatypes_ArithmeticOperator{
 		 * destructor
 		 */
 		virtual ~cUnaryOperator(){
+			
 			if ( pSubOperator ){
 				//delete sub operator
 				delete pSubOperator;
@@ -1174,11 +1181,11 @@ namespace nFibDatatypes_ArithmeticOperator{
 				case 'n'://negativ
 					return ((doubleFib)0.0) - dSubValue;
 				case 'l'://log
-					return ( 0 < dSubValue ) ? log10( dSubValue ) : 0.0;
+					return ( 0 < dSubValue ) ? log10( dSubValue ) : ((doubleFib)0.0);
 				case 'L'://ln
-					return ( 0 < dSubValue ) ? log( dSubValue ) : 0.0;
+					return ( 0 < dSubValue ) ? log( dSubValue ) : ((doubleFib)0.0);
 				case 'r'://square root
-					return ( 0 < dSubValue ) ? sqrt( dSubValue ) : 0.0;
+					return ( 0 < dSubValue ) ? sqrt( dSubValue ) : ((doubleFib)0.0);
 				case 'i'://increment
 					return dSubValue + ((doubleFib)1.0);
 				case 'c'://decrement
@@ -1203,7 +1210,7 @@ namespace nFibDatatypes_ArithmeticOperator{
 		
 		
 		/**
-		 * @return the number of suboperators for this operator
+		 * @return the number of suboperators for this operator 1
 		 */
 		virtual unsigned int getNumberSubOperators() const{
 			return 1;
@@ -1213,7 +1220,7 @@ namespace nFibDatatypes_ArithmeticOperator{
 		/**
 		 * @see getNumberSubOperators()
 		 * @return true if sub operators of this operator or a contained
-		 * 	operator are missing, else false
+		 * 	operators are missing, else false
 		 */
 		virtual bool hasMissingSubOperators() const{
 			
@@ -1226,11 +1233,13 @@ namespace nFibDatatypes_ArithmeticOperator{
 		
 		/**
 		 * This method sets the most left operator of this or the left
-		 * contained operator.
+		 * contained operators.
+		 * (This operator type (unary) as no left operator. So this method
+		 * will retun always false.)
 		 *
 		 * @see setMostRightOperator()
 		 * @param pOperator a pointer to the operator to set
-		 * @return true if the operator could be set, else false
+		 * @return false because the operator could not be set
 		 */
 		virtual bool setMostLeftOperator( cOperator * pOperator ){
 			//one ary operators have no left sub operator
@@ -1240,7 +1249,7 @@ namespace nFibDatatypes_ArithmeticOperator{
 		
 		/**
 		 * This method sets the most right operator of this or the right
-		 * contained operator.
+		 * contained operators.
 		 *
 		 * @see setMostLeftOperator()
 		 * @param pOperator a pointer to the operator to set
@@ -1257,20 +1266,21 @@ namespace nFibDatatypes_ArithmeticOperator{
 		
 	};//end class cUnaryOperator
 	
+	
 	/**
-	 * A binary operator.
+	 * Class for binary operators.
 	 */
 	class cBinaryOperator: public cOperator{
 	public:
 		
 		/**
-		 * The first operator contained in this operator.
+		 * A pointer to the first operator contained in this operator.
 		 */
 		cOperator * pFirstSubOperator;
 		
 		
 		/**
-		 * The second operator contained in this operator.
+		 * A pointer to the  second operator contained in this operator.
 		 */
 		cOperator * pSecondSubOperator;
 		
@@ -1292,6 +1302,8 @@ namespace nFibDatatypes_ArithmeticOperator{
 		 * standard constructor
 		 *
 		 * @param cInType the type of the operator @see cType
+		 * @param uiInOpenBarckets the number of open brackets for this operator
+		 * 	@see uiOpenBarckets
 		 */
 		cBinaryOperator( const char cInType, const unsigned int uiInOpenBarckets  ):
 				cOperator( uiInOpenBarckets ), pFirstSubOperator( NULL ),
@@ -1304,6 +1316,7 @@ namespace nFibDatatypes_ArithmeticOperator{
 		 * destructor
 		 */
 		virtual ~cBinaryOperator(){
+			
 			if ( pFirstSubOperator ){
 				//delete first sub operator
 				delete pFirstSubOperator;
@@ -1314,6 +1327,7 @@ namespace nFibDatatypes_ArithmeticOperator{
 			}
 		}
 		
+		
 		/**
 		 * @return the evalued value for this operator
 		 */
@@ -1323,7 +1337,7 @@ namespace nFibDatatypes_ArithmeticOperator{
 				//can't evalue a value -> return 0
 				return ((doubleFib)0.0);
 			}
-			const doubleFib dFirstValue = pFirstSubOperator->getValue();
+			const doubleFib dFirstValue  = pFirstSubOperator->getValue();
 			const doubleFib dSecondValue = pSecondSubOperator->getValue();
 			
 			switch ( cType ){
@@ -1334,13 +1348,14 @@ namespace nFibDatatypes_ArithmeticOperator{
 				case 'm'://multiply
 					return dFirstValue * dSecondValue;
 				case 'd'://divide
-					return ( dSecondValue != 0 ) ? ( dFirstValue / dSecondValue ) : 0;
+					return ( isEqualNull( dSecondValue ) ?
+						((doubleFib)0.0) : ( dFirstValue / dSecondValue ) );
 				case 'e'://exponent
 					return pow( dFirstValue, dSecondValue);
 				case 'o'://modulo
 					return fmod( dFirstValue, dSecondValue );
 			}//else unknown operator
-			return((doubleFib)0.0);
+			return ((doubleFib)0.0);
 		}
 		
 		
@@ -1353,7 +1368,7 @@ namespace nFibDatatypes_ArithmeticOperator{
 		
 		
 		/**
-		 * @return the number of suboperators for this operator
+		 * @return the number of suboperators for this operator 2
 		 */
 		virtual unsigned int getNumberSubOperators() const{
 			
@@ -1367,7 +1382,7 @@ namespace nFibDatatypes_ArithmeticOperator{
 		 * 	operator are missing, else false
 		 */
 		virtual bool hasMissingSubOperators() const{
-			
+			//check first suboperator
 			if ( pFirstSubOperator == NULL ){
 				//first suboperator missing
 				return true;
@@ -1377,7 +1392,8 @@ namespace nFibDatatypes_ArithmeticOperator{
 					return true;
 				}
 			}
-			if (pSecondSubOperator == NULL ){
+			//check second suboperator
+			if ( pSecondSubOperator == NULL ){
 				//second suboperator missing
 				return true;
 			}else{//second suboperator not missing
@@ -1438,7 +1454,7 @@ namespace nFibDatatypes_ArithmeticOperator{
 	
 	
 	/**
-	 * An operator which is a value.
+	 * This class represents a operator which is a value.
 	 */
 	class cValueOperator: public cOperator{
 	public:
@@ -1451,6 +1467,8 @@ namespace nFibDatatypes_ArithmeticOperator{
 		/**
 		 * standard constructor
 		 *
+		 * @param uiInOpenBarckets the number of open brackets for this operator
+		 * 	@see uiOpenBarckets
 		 * @param dInValue the value for this value operator
 		 */
 		cValueOperator( const unsigned int uiInOpenBarckets,
@@ -1469,7 +1487,8 @@ namespace nFibDatatypes_ArithmeticOperator{
 		
 		
 		/**
-		 * @return the evalued value for this operator
+		 * @return the value for this operator dValue
+		 * 	@see dValue
 		 */
 		virtual doubleFib getValue() const{
 			
@@ -1478,7 +1497,7 @@ namespace nFibDatatypes_ArithmeticOperator{
 		
 		
 		/**
-		 * @return the type for this operator
+		 * @return the type for this operator 'v'
 		 */
 		virtual char getType() const{
 			return 'v';
@@ -1486,7 +1505,7 @@ namespace nFibDatatypes_ArithmeticOperator{
 		
 		
 		/**
-		 * @return the number of suboperators for this operator
+		 * @return the number of suboperators for this operator 0
 		 */
 		virtual unsigned int getNumberSubOperators() const{
 			
@@ -1497,8 +1516,8 @@ namespace nFibDatatypes_ArithmeticOperator{
 		
 		/**
 		 * @see getNumberSubOperators()
-		 * @return true if sub operators of this operator or a contained
-		 * 	operator are missing, else false
+		 * @return true because no sub operators of this operator or a contained
+		 * 	operator are missing (it has no suboperators which could be missing)
 		 */
 		virtual bool hasMissingSubOperators() const{
 			//value operator has no suboperators -> non can be missing
@@ -1512,7 +1531,8 @@ namespace nFibDatatypes_ArithmeticOperator{
 		 *
 		 * @see setMostRightOperator()
 		 * @param pOperator a pointer to the operator to set
-		 * @return true if the operator could be set, else false
+		 * @return false because no sub operator can be set for this class
+		 * 	(it has no suboperators)
 		 */
 		virtual bool setMostLeftOperator( cOperator * pOperator ){
 			//value operator has no suboperators -> non can be set
@@ -1526,7 +1546,8 @@ namespace nFibDatatypes_ArithmeticOperator{
 		 *
 		 * @see setMostLeftOperator()
 		 * @param pOperator a pointer to the operator to set
-		 * @return true if the operator could be set, else false
+		 * @return false because no sub operator can be set for this class
+		 * 	(it has no suboperators)
 		 */
 		virtual bool setMostRightOperator( cOperator * pOperator ){
 			//value operator has no suboperators -> non can be set
@@ -1536,8 +1557,8 @@ namespace nFibDatatypes_ArithmeticOperator{
 	};//end class cValueOperator
 
 
-}//end namespace fib
-}//end namespace nFibDatatypes_ArithmeticOperator
+};//end namespace fib
+};//end namespace nFibDatatypes_ArithmeticOperator
 
 
 
@@ -1550,8 +1571,9 @@ using namespace fib::nFibDatatypes_ArithmeticOperator;
  * Allowed operators (spaces will be ignored):
  * 	- values as numbers @see readDouble()
  * 	- addition: X + Y
- * 	- subtraction: X -Y
+ * 	- subtraction: X - Y
  * 	- multiply: X * Y
+ * 	- division: X / Y
  * 	- modulo: X % Y
  * 	- increment: ++X
  * 	- decrement: --X
@@ -1572,13 +1594,13 @@ using namespace fib::nFibDatatypes_ArithmeticOperator;
  * @param strDouble the string where to read the double from (null terminated)
  * @param pPairOutEvalueStatus if not NULL a pair for the status of the
  * 	formula evaluation
- * 		first: true if the formular could be evalued, else false.
+ * 		first: true if the formular could be evalued, else false;
  * 			If false the returned value will not include the whole formular.
  * 		second: a pointer to the end position of the readed formular
  * 			(it points to the first character not in the formular)
  * 			If first is false it points to the first character which
  * 			could not be interpreted as a operator or number, but not
- * 			all the sting before is necessarily be used to evalue the
+ * 			all the string before is necessarily be used to evalue the
  * 			return value.
  * @return the readed double number
  */
@@ -1589,7 +1611,7 @@ doubleFib fib::readDoubleFromFunction( const char * strDouble,
 		//Error: nothing to read
 		if ( pPairOutEvalueStatus ){
 			//evalue status
-			pPairOutEvalueStatus->first = false;
+			pPairOutEvalueStatus->first  = false;
 			//the formular could be evalued till the actual position
 			pPairOutEvalueStatus->second = strDouble;
 		}
@@ -1600,7 +1622,7 @@ doubleFib fib::readDoubleFromFunction( const char * strDouble,
 	}
 	
 	unsigned int uiOpenBarckets = 0;
-	
+	//the list of operators in the order they where readed
 	list< cOperator * > liOpenOperators;
 	
 	const char * pActualPosition = strDouble;
@@ -1614,7 +1636,7 @@ doubleFib fib::readDoubleFromFunction( const char * strDouble,
 				//not a blank -> break
 				break;
 			}
-		}
+		}//end for skip blanks
 		if ( (*pActualPosition) == 0x0  ){
 			//end of string
 			break;
@@ -1631,6 +1653,9 @@ doubleFib fib::readDoubleFromFunction( const char * strDouble,
 			//if next is closing bracket
 			if ( 0 < uiOpenBarckets ){
 				uiOpenBarckets--;
+			}else if ( pPairOutEvalueStatus ){
+				//no opening bracket for closing bracket
+				pPairOutEvalueStatus->first = false;
 			}
 			pActualPosition++;
 		}else if ( ( '0' <= cActualChar ) && ( cActualChar <= '9' ) ){
@@ -1654,7 +1679,8 @@ doubleFib fib::readDoubleFromFunction( const char * strDouble,
 		}else{//try to read other operator
 			pActualPosition++;
 			if ( (*pActualPosition) == 0x0  ){
-				
+				/*create operators which can be represented as a single char at
+				 *the formular end*/
 				if ( cActualChar == 'e' ){
 					//constant "e"
 					liOpenOperators.push_back(
@@ -1680,6 +1706,22 @@ doubleFib fib::readDoubleFromFunction( const char * strDouble,
 						liOpenOperators.push_back(
 							new cBinaryOperator( 'a', uiOpenBarckets ) );
 					}
+				}break;
+				case 'a':{//absolut value "abs"
+					if ( (*pActualPosition) == 'b' ){
+						
+						pActualPosition++;
+						if ( (*pActualPosition) == 's' ){
+							liOpenOperators.push_back(
+								new cUnaryOperator( 'p', uiOpenBarckets ) );
+							pActualPosition++;
+							break;
+						}//else
+					}//else unknown operator
+					if ( pPairOutEvalueStatus ){
+						pPairOutEvalueStatus->first = false;
+					}
+					bGoOn = false;
 				}break;
 				case '-':{
 					if ( liOpenOperators.empty() ||
@@ -1709,8 +1751,8 @@ doubleFib fib::readDoubleFromFunction( const char * strDouble,
 					}else if ( (*pActualPosition) == 'o' ){
 						pActualPosition++;
 						
-						if ( ( (*pActualPosition) != 0x0 ) &&
-								(*pActualPosition) == 'g' ){
+						if ( (*pActualPosition) == 'g' ){
+							//log operator
 							liOpenOperators.push_back(
 								new cUnaryOperator( 'l', uiOpenBarckets ) );
 							pActualPosition++;
@@ -1727,12 +1769,10 @@ doubleFib fib::readDoubleFromFunction( const char * strDouble,
 					if ( (*pActualPosition) == 'q' ){
 						
 						pActualPosition++;
-						if ( ( (*pActualPosition) != 0x0 ) &&
-								(*pActualPosition) == 'r' ){
+						if ( (*pActualPosition) == 'r' ){
 							
 							pActualPosition++;
-							if ( ( (*pActualPosition) != 0x0 ) &&
-									(*pActualPosition) == 't' ){
+							if ( (*pActualPosition) == 't' ){
 								//next operator is square root "sqrt"
 								liOpenOperators.push_back(
 									new cUnaryOperator( 'r', uiOpenBarckets ) );
@@ -1743,8 +1783,7 @@ doubleFib fib::readDoubleFromFunction( const char * strDouble,
 					}else if ( (*pActualPosition) == 'i' ){
 						
 						pActualPosition++;
-						if ( ( (*pActualPosition) != 0x0 ) &&
-								(*pActualPosition) == 'n' ){
+						if ( (*pActualPosition) == 'n' ){
 							//next operator is sinus "sin"
 							liOpenOperators.push_back(
 								new cUnaryOperator( 'S', uiOpenBarckets ) );
@@ -1770,8 +1809,8 @@ doubleFib fib::readDoubleFromFunction( const char * strDouble,
 					if ( (*pActualPosition) == 'o' ){
 						
 						pActualPosition++;
-						if ( ( (*pActualPosition) != 0x0 ) &&
-								(*pActualPosition) == 'w' ){
+						if ( (*pActualPosition) == 'w' ){
+							//operator is exponent with "pow"
 							liOpenOperators.push_back(
 								new cBinaryOperator( 'e', uiOpenBarckets ) );
 							pActualPosition++;
@@ -1785,7 +1824,7 @@ doubleFib fib::readDoubleFromFunction( const char * strDouble,
 				}break;
 				case 'P':{//constant "PI"
 					if ( (*pActualPosition) == 'I' ){
-						
+						//operator is constant "PI"
 						liOpenOperators.push_back(
 							new cValueOperator( uiOpenBarckets, 3.141592653589793238462 ) );
 						pActualPosition++;
@@ -1800,29 +1839,12 @@ doubleFib fib::readDoubleFromFunction( const char * strDouble,
 					liOpenOperators.push_back(
 						new cValueOperator( uiOpenBarckets, 2.718281828459045235360 ) );
 				}break;
-				case 'a':{//absolut value "abs"
-					if ( (*pActualPosition) == 'b' ){
-						
-						pActualPosition++;
-						if ( ( (*pActualPosition) != 0x0 ) &&
-								(*pActualPosition) == 's' ){
-							liOpenOperators.push_back(
-								new cUnaryOperator( 'p', uiOpenBarckets ) );
-							pActualPosition++;
-							break;
-						}//else
-					}//else unknown operator
-					if ( pPairOutEvalueStatus ){
-						pPairOutEvalueStatus->first = false;
-					}
-					bGoOn = false;
-				}break;
 				case 'c':{//cosinus with "cos"
 					if ( (*pActualPosition) == 'o' ){
 						
 						pActualPosition++;
-						if ( ( (*pActualPosition) != 0x0 ) &&
-								(*pActualPosition) == 's' ){
+						if ( (*pActualPosition) == 's' ){
+							//operator is cosinus with "cos"
 							liOpenOperators.push_back(
 								new cUnaryOperator( 'C', uiOpenBarckets ) );
 							pActualPosition++;
@@ -1838,8 +1860,8 @@ doubleFib fib::readDoubleFromFunction( const char * strDouble,
 					if ( (*pActualPosition) == 'a' ){
 						
 						pActualPosition++;
-						if ( ( (*pActualPosition) != 0x0 ) &&
-								(*pActualPosition) == 'n' ){
+						if ( (*pActualPosition) == 'n' ){
+							//operator is tangens with "tan"
 							liOpenOperators.push_back(
 								new cUnaryOperator( 'T', uiOpenBarckets ) );
 							pActualPosition++;
@@ -1860,7 +1882,7 @@ doubleFib fib::readDoubleFromFunction( const char * strDouble,
 						pPairOutEvalueStatus->first = false;
 					}
 					bGoOn = false;
-			};//end switch
+			};//end switch operators
 		}
 	}//end while go on
 	
@@ -1873,15 +1895,7 @@ doubleFib fib::readDoubleFromFunction( const char * strDouble,
 		return 0.0;
 	}
 	
-	/*try to reduce listeded operators:
-	- evalue from the list begin
-	- try to allways fill first the right side of the last right side open
-	   operator (if precedence permitts it)
-	- three typs of operators:
-	-- no open suboperators (=value operators; two needed)
-	-- operators right side open (put on "right side open" stack)
-	-- operators both side open (on front of liOpenOperators)
-	*/
+	//try to reduce listeded operators (evalue from the list begin)
 	list< cOperator * >::iterator itrActualOperator = liOpenOperators.begin();
 	list< cOperator * >::iterator itrPreviousOperator;
 	list< cOperator * >::iterator itrNextOperator;
@@ -1897,7 +1911,7 @@ doubleFib fib::readDoubleFromFunction( const char * strDouble,
 			r=most right sub operator open
 			l=most left sub operator open
 			(note: before the first printed character no value operator exists;
-				-> first charcter can't be a l (most left sub operator open))
+				-> first character can't be a 'l' (most left sub operator open))
 				...rV -> ...v
 				...bV -> ...l
 				Vb... -> r...
@@ -1920,7 +1934,7 @@ doubleFib fib::readDoubleFromFunction( const char * strDouble,
 				break;
 			}//else
 			continue;
-		}//actual operator not a value operator
+		}//else actual operator is a value operator
 		itrNextOperator = itrActualOperator;
 		itrNextOperator++;
 		if ( itrNextOperator == liOpenOperators.end() ){
@@ -1929,25 +1943,27 @@ doubleFib fib::readDoubleFromFunction( const char * strDouble,
 				...rV -> ...v
 				...bV -> ...l
 			*/
+			/*the list as minimum two elements and itrActualOperator is the last
+			 -> there exists a previous operator*/
 			itrPreviousOperator = itrActualOperator;
 			itrPreviousOperator--;
 			if ( (*itrPreviousOperator)->setMostRightOperator( *itrActualOperator ) ){
-				//erase insert operator
+				//most right operator could be set -> erase inserted operator (itrActualOperator)
 				liOpenOperators.erase( itrActualOperator );
 				//check previous operator again
 				itrActualOperator = itrPreviousOperator;
 				continue;
-			}else{//could not insert -> no valid formular
+			}else{//could not insert operator -> no valid formular
 				if ( pPairOutEvalueStatus ){
 					pPairOutEvalueStatus->first = false;
 				}
 				break;
 			}
-		}//else
+		}//else there is a next operator
 		if ( itrActualOperator == liOpenOperators.begin() ){
 			//valid case: Vb... -> r...
 			if ( (*itrNextOperator)->setMostLeftOperator( *itrActualOperator ) ){
-				//erase inserted operator
+				//most left operator could be set -> erase inserted operator
 				liOpenOperators.erase( itrActualOperator );
 				//check next operator
 				itrActualOperator = itrNextOperator;
@@ -1958,11 +1974,14 @@ doubleFib fib::readDoubleFromFunction( const char * strDouble,
 				}
 				break;
 			}
-		}//else
+		}//else actual operator has operator befor and after it
 		itrPreviousOperator = itrActualOperator;
 		itrPreviousOperator--;
 		if ( ! (*itrNextOperator)->hasMissingSubOperators() ){
-			//valid case: ...bVv... -> ...rv...
+			/*valid cases:
+				...bVv... -> ...rv...
+				...rVv... -> ...vv...
+			 */
 			if ( (*itrPreviousOperator)->setMostLeftOperator( *itrActualOperator ) ){
 				//erase inserted operator
 				liOpenOperators.erase( itrActualOperator );
@@ -1970,6 +1989,7 @@ doubleFib fib::readDoubleFromFunction( const char * strDouble,
 				itrActualOperator = itrPreviousOperator;
 				continue;
 			}else{//could not insert -> no valid formular
+				//still try to reduce formular as much as possible (to get good result value)
 				if ( (*itrPreviousOperator)->setMostRightOperator( *itrActualOperator ) ){
 					//erase inserted operator
 					liOpenOperators.erase( itrActualOperator );
@@ -1985,7 +2005,7 @@ doubleFib fib::readDoubleFromFunction( const char * strDouble,
 			}
 		}//else check which operator as precedence (previous or next operator)
 		if ( (*itrPreviousOperator)->hasPrecedence( *itrNextOperator ) ){
-			/*valid cases:
+			/*left operator as precedence, valid cases:
 				...bV)l... -> ...rl...
 				...bV)r... -> ...rr...
 				...rV)b... -> ...vb...
@@ -2011,9 +2031,7 @@ doubleFib fib::readDoubleFromFunction( const char * strDouble,
 					break;
 				}
 			}
-			
-		}else{
-			/*valid cases:
+		}else{/*right operator as precedence, valid cases:
 				...b(Vl... -> ...bv...
 				...r(Vb... -> ...rr...
 			*/
@@ -2057,6 +2075,7 @@ doubleFib fib::readDoubleFromFunction( const char * strDouble,
  * This method stores the given double number in XML -format into the
  * given stream.
  * The output is in a form that can be readed by readDoubleFromFunction().
+ * Also (if possible) no precision will be lost.
  *
  * @see readDoubleFromFunction()
  * @param stream the stream where the number should be stored to
@@ -2070,7 +2089,7 @@ void fib::storeXmlDoubleFib( std::ostream & stream,
 		//number with no more than 6 digits before and 2 digits after the point
 		stream.precision( 9 );
 		stream<< dValueToStore;
-	}else{
+	}else{//split into mantissa and exponent (base 2) and store them
 		longFib lMantissa;
 		longFib lExponent;
 		

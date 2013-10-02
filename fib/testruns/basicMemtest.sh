@@ -1,15 +1,35 @@
 #!/bin/bash
 #
-# File Name: basicMemtest.sh
-# Author: Betti Oesterholz ; Date: 23.02.2010
-# System: bash
+# @author Betti Oesterholz
+# @date 23.02.2010
+# @mail webmaster@BioKom.info
+# @filename: basicMemtest.sh
 #
-# Copyright (C) 2009  Betti Oesterholz
+# System: bash, valgrind
 #
 # Description: a basic test on memoryleaks for the Fib -multimedialangeage libary
-# Time: less then 5 minutes
-#
+# Time: less then 60 minutes
 # Attention: You have to be in the direction of this file to run it.
+#    Also you have to install valgrind.
+#
+# Copyright (C) @c GPL3 2009 Betti Oesterholz
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published
+# by the Free Software Foundation, either version 3 of the License, or
+# any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
+#
+# call:
+# 	basicTestrun
+#
 #
 #History:
 # 23.02.2010   Oesterholz   created
@@ -48,8 +68,13 @@
 # 14.02.2012   Oesterholz   tDomainReference added
 # 09.03.2013   Oesterholz   tMatrix3D added
 # 11.05.2013   Oesterholz   tFibDatatyps added
+# 30.09.2013   Oesterholz   reworked for valgrid
 #
 
+
+# TODO
+# can't use compiler option -pg
+#
 
 first(){
   echo $1
@@ -63,366 +88,434 @@ fi
 export ORIGINAL_DIR=$(pwd)
 export OUTPUT=${ORIGINAL_DIR}/result/basicMemtestOut.txt
 export ERROR_OUTPUT=${ORIGINAL_DIR}/result/basicMemtestOut.txt
+export SUM_OUTPUT=${ORIGINAL_DIR}/result/basicMemtestSum.txt
 export ERRORS=0
 export ERROR_SUM=0
-export TMP_OUT=out_memory_test.txt
 
-export LEAK_CHECKER=~/tools/LeakTracer/LeakCheck
-export LEAK_ANALYZE=~/tools/LeakTracer/leak-analyze
+export MEM_CHECKER="valgrind --leak-check=full --track-origins=yes --error-exitcode=1"
 
 # empty output files
-date >${OUTPUT} 
-date >${ERROR_OUTPUT}
+date > ${OUTPUT}
+date > ${ERROR_OUTPUT}
+date > ${SUM_OUTPUT}
 
 
 cd ../testcase >>${OUTPUT} 2>>${ERROR_OUTPUT}
 
 if [ ! -d test_output ]; then
-  mkdir test_output
+	mkdir test_output
 fi
 
-tail -fq ${OUTPUT} &
+tail -fq ${SUM_OUTPUT} &
 export TAIL_PID=$(first $(ps | grep tail))
 
 echo
 #evaluate testcases
 
 echo >>${OUTPUT}
-echo "Memoryleaks in tFibDatatyps" >>${OUTPUT}
-${LEAK_CHECKER} ./tFibDatatyps 256 > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tFibDatatyps >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
-
-
-echo >>${OUTPUT}
-echo "Memoryleaks in tTypeDimension:" >>${OUTPUT}
-${LEAK_CHECKER} ./tTypeDimension > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tTypeDimension >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
+${MEM_CHECKER} ./tFibDatatyps 256 >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tFibDatatyps (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
 
 echo >>${OUTPUT}
-echo "Memoryleaks in tTypeProperty" >>${OUTPUT}
-${LEAK_CHECKER} ./tTypeProperty > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tTypeProperty >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
+${MEM_CHECKER} ./tTypeDimension >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tTypeDimension (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
 
 echo >>${OUTPUT}
-echo "Memoryleaks in tTypeInVar" >>${OUTPUT}
-${LEAK_CHECKER} ./tTypeInVar > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tTypeInVar >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
+${MEM_CHECKER} ./tTypeProperty >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tTypeProperty (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
 
 echo >>${OUTPUT}
-echo "Memoryleaks in tTypeVariable" >>${OUTPUT}
-${LEAK_CHECKER} ./tTypeVariable > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tTypeVariable >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
+${MEM_CHECKER} ./tTypeInVar >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tTypeInVar (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
 
 echo >>${OUTPUT}
-echo "Memoryleaks in tTypeComments" >>${OUTPUT}
-${LEAK_CHECKER} ./tTypeComments > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tTypeComments >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
+${MEM_CHECKER} ./tTypeVariable >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tTypeVariable (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
 
 echo >>${OUTPUT}
-echo "Memoryleaks in tTypeArea" >>${OUTPUT}
-${LEAK_CHECKER} ./tTypeArea > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tTypeArea >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
+${MEM_CHECKER} ./tTypeComments >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tTypeComments (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
 
 echo >>${OUTPUT}
-echo "Memoryleaks in tTypeUnderFunction" >>${OUTPUT}
-${LEAK_CHECKER} ./tTypeUnderFunction > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tTypeUnderFunction >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
+${MEM_CHECKER} ./tTypeArea >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tTypeArea (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
 
 echo >>${OUTPUT}
-echo "Memoryleaks in tTypeExtObject" >>${OUTPUT}
-${LEAK_CHECKER} ./tTypeExtObject > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tTypeExtObject >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
+${MEM_CHECKER} ./tTypeUnderFunction >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tTypeUnderFunction (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
 
 echo >>${OUTPUT}
-echo "Memoryleaks in tTypeExtObjectInput" >>${OUTPUT}
-${LEAK_CHECKER} ./tTypeExtObjectInput > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tTypeExtObjectInput >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
+${MEM_CHECKER} ./tTypeExtObject >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tTypeExtObject (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
 
 echo >>${OUTPUT}
-echo "Memoryleaks in tTypeExtSubobject" >>${OUTPUT}
-${LEAK_CHECKER} ./tTypeExtSubobject > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tTypeExtSubobject >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
+${MEM_CHECKER} ./tTypeExtObjectInput >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tTypeExtObjectInput (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
 
 echo >>${OUTPUT}
-echo "Memoryleaks in tTypeFibSet" >>${OUTPUT}
-${LEAK_CHECKER} ./tTypeFibSet > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tTypeFibSet >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
+${MEM_CHECKER} ./tTypeExtSubobject >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tTypeExtSubobject (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
 
 echo >>${OUTPUT}
-echo "Memoryleaks in tTypeFibMatrix" >>${OUTPUT}
-${LEAK_CHECKER} ./tTypeFibMatrix > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tTypeFibMatrix >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
-
-
-echo >>${OUTPUT}
-echo "Memoryleaks in tDomainNaturalNumberBit" >>${OUTPUT}
-${LEAK_CHECKER} ./tDomainNaturalNumberBit > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tDomainNaturalNumberBit >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
+${MEM_CHECKER} ./tTypeFibSet >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tTypeFibSet (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
 
 echo >>${OUTPUT}
-echo "Memoryleaks in tDomainNaturalNumber" >>${OUTPUT}
-${LEAK_CHECKER} ./tDomainNaturalNumber > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tDomainNaturalNumber >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
-
-echo >>${OUTPUT}
-echo "Memoryleaks in tDomainInteger" >>${OUTPUT}
-${LEAK_CHECKER} ./tDomainInteger > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tDomainInteger >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
-
-echo >>${OUTPUT}
-echo "Memoryleaks in tDomainIntegerBit" >>${OUTPUT}
-${LEAK_CHECKER} ./tDomainIntegerBit > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tDomainIntegerBit >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
-
-echo >>${OUTPUT}
-echo "Memoryleaks in tDomainRational" >>${OUTPUT}
-${LEAK_CHECKER} ./tDomainRational > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tDomainRational >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
-
-echo >>${OUTPUT}
-echo "Memoryleaks in tDomainVector" >>${OUTPUT}
-${LEAK_CHECKER} ./tDomainVector > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tDomainVector >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
-
-echo >>${OUTPUT}
-echo "Memoryleaks in tDomainVectorOpenEnd" >>${OUTPUT}
-${LEAK_CHECKER} ./tDomainVectorOpenEnd > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tDomainVectorOpenEnd >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
-
-echo >>${OUTPUT}
-echo "Memoryleaks in tDomainReference" >>${OUTPUT}
-${LEAK_CHECKER} ./tDomainReference > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tDomainReference >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
-
-
-echo >>${OUTPUT}
-echo "Memoryleaks in tDomainElement" >>${OUTPUT}
-${LEAK_CHECKER} ./tDomainElement > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tDomainElement >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
-
-echo >>${OUTPUT}
-echo "Memoryleaks in tDomains" >>${OUTPUT}
-${LEAK_CHECKER} ./tDomains > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tDomains >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
-
-echo >>${OUTPUT}
-echo "Memoryleaks in tMultimediaInfo" >>${OUTPUT}
-${LEAK_CHECKER} ./tMultimediaInfo > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tMultimediaInfo >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
-
-echo >>${OUTPUT}
-echo "Memoryleaks in tOptionalPart" >>${OUTPUT}
-${LEAK_CHECKER} ./tOptionalPart > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tOptionalPart >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
-
-echo >>${OUTPUT}
-echo "Memoryleaks in tFibVariable" >>${OUTPUT}
-${LEAK_CHECKER} ./tFibVariable > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tFibVariable >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
-
-echo >>${OUTPUT}
-echo "Memoryleaks in tVectorPosition" >>${OUTPUT}
-${LEAK_CHECKER} ./tVectorPosition > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tVectorPosition >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
-
-echo >>${OUTPUT}
-echo "Memoryleaks in tVectorProperty" >>${OUTPUT}
-${LEAK_CHECKER} ./tVectorProperty > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tVectorProperty >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
-
-echo >>${OUTPUT}
-echo "Memoryleaks in tVectorChecksum" >>${OUTPUT}
-${LEAK_CHECKER} ./tVectorChecksum > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tVectorChecksum >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
-
-echo >>${OUTPUT}
-echo "Memoryleaks in tVectorArea" >>${OUTPUT}
-${LEAK_CHECKER} ./tVectorArea > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tVectorArea >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
-
-echo >>${OUTPUT}
-echo "Memoryleaks in tVectorFibSet" >>${OUTPUT}
-${LEAK_CHECKER} ./tVectorFibSet > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tVectorFibSet >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
-
-echo >>${OUTPUT}
-echo "Memoryleaks in tVectorFibMatrix" >>${OUTPUT}
-${LEAK_CHECKER} ./tVectorFibMatrix > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tVectorFibMatrix >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
-
-echo >>${OUTPUT}
-echo "Memoryleaks in tVectorExtObject" >>${OUTPUT}
-${LEAK_CHECKER} ./tVectorExtObject > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tVectorExtObject >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
-
-echo >>${OUTPUT}
-echo "Memoryleaks in tVectorExtSubobject" >>${OUTPUT}
-${LEAK_CHECKER} ./tVectorExtSubobject > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tVectorExtSubobject >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
+${MEM_CHECKER} ./tTypeFibMatrix >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tTypeFibMatrix (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
 
 
 
 echo >>${OUTPUT}
-echo "Memoryleaks in tRoot" >>${OUTPUT}
-${LEAK_CHECKER} ./tRoot > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tRoot >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
+${MEM_CHECKER} ./tDomainNaturalNumberBit >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tDomainNaturalNumberBit (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
 
 echo >>${OUTPUT}
-echo "Memoryleaks in tList" >>${OUTPUT}
-${LEAK_CHECKER} ./tList > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tList >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
+${MEM_CHECKER} ./tDomainNaturalNumber >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tDomainNaturalNumber (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
 
 echo >>${OUTPUT}
-echo "Memoryleaks in tPoint" >>${OUTPUT}
-${LEAK_CHECKER} ./tPoint > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tPoint >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
+${MEM_CHECKER} ./tDomainInteger >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tDomainInteger (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
 
 echo >>${OUTPUT}
-echo "Memoryleaks in tProperty" >>${OUTPUT}
-${LEAK_CHECKER} ./tProperty > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tProperty >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
+${MEM_CHECKER} ./tDomainIntegerBit >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tDomainIntegerBit (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
 
 echo >>${OUTPUT}
-echo "Memoryleaks in tArea" >>${OUTPUT}
-${LEAK_CHECKER} ./tArea > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tArea >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
+${MEM_CHECKER} ./tDomainRational >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tDomainRational (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
 
 echo >>${OUTPUT}
-echo "Memoryleaks in tFunction" >>${OUTPUT}
-${LEAK_CHECKER} ./tFunction > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tFunction >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
+${MEM_CHECKER} ./tDomainVector >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tDomainVector (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
 
 echo >>${OUTPUT}
-echo "Memoryleaks in tFunctionValue" >>${OUTPUT}
-${LEAK_CHECKER} ./tFunctionValue > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tFunctionValue >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
+${MEM_CHECKER} ./tDomainVectorOpenEnd >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tDomainVectorOpenEnd (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
 
 echo >>${OUTPUT}
-echo "Memoryleaks in tFunctionVariable" >>${OUTPUT}
-${LEAK_CHECKER} ./tFunctionVariable > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tFunctionVariable >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
+${MEM_CHECKER} ./tDomainReference >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tDomainReference (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
 
 echo >>${OUTPUT}
-echo "Memoryleaks in tFunctionOneValue" >>${OUTPUT}
-${LEAK_CHECKER} ./tFunctionOneValue > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tFunctionOneValue >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
+${MEM_CHECKER} ./tDomainElement >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tDomainElement (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
 
 echo >>${OUTPUT}
-echo "Memoryleaks in tFunctionTwoValue" >>${OUTPUT}
-${LEAK_CHECKER} ./tFunctionTwoValue > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tFunctionTwoValue >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
+${MEM_CHECKER} ./tDomains >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tDomains (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
 
 echo >>${OUTPUT}
-echo "Memoryleaks in tFunctionIf" >>${OUTPUT}
-${LEAK_CHECKER} ./tFunctionIf > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tFunctionIf >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
+${MEM_CHECKER} ./tMultimediaInfo >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tMultimediaInfo (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
 
 echo >>${OUTPUT}
-echo "Memoryleaks in tComment" >>${OUTPUT}
-${LEAK_CHECKER} ./tComment > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tComment >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
+${MEM_CHECKER} ./tOptionalPart >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tOptionalPart (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
+
+
 
 echo >>${OUTPUT}
-echo "Memoryleaks in tIf" >>${OUTPUT}
-${LEAK_CHECKER} ./tIf > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tIf >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
+${MEM_CHECKER} ./tFibVariable >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tFibVariable (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
 
 echo >>${OUTPUT}
-echo "Memoryleaks in tConditionTrue" >>${OUTPUT}
-${LEAK_CHECKER} ./tConditionTrue > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tConditionTrue >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
+${MEM_CHECKER} ./tVectorPosition >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tVectorPosition (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
 
 echo >>${OUTPUT}
-echo "Memoryleaks in tConditionFalse" >>${OUTPUT}
-${LEAK_CHECKER} ./tConditionFalse > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tConditionFalse >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
+${MEM_CHECKER} ./tVectorProperty >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tVectorProperty (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
 
 echo >>${OUTPUT}
-echo "Memoryleaks in tConditionNot" >>${OUTPUT}
-${LEAK_CHECKER} ./tConditionNot > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tConditionNot >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
+${MEM_CHECKER} ./tVectorChecksum >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tVectorChecksum (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
 
 echo >>${OUTPUT}
-echo "Memoryleaks in tConditionTwoValue" >>${OUTPUT}
-${LEAK_CHECKER} ./tConditionTwoValue > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tConditionTwoValue >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
+${MEM_CHECKER} ./tVectorArea >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tVectorArea (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
 
 echo >>${OUTPUT}
-echo "Memoryleaks in tConditionComparison" >>${OUTPUT}
-${LEAK_CHECKER} ./tConditionComparison > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tConditionComparison >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
+${MEM_CHECKER} ./tVectorFibSet >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tVectorFibSet (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
 
 echo >>${OUTPUT}
-echo "Memoryleaks in tExtObject" >>${OUTPUT}
-${LEAK_CHECKER} ./tExtObject > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tExtObject >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
+${MEM_CHECKER} ./tVectorFibMatrix >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tVectorFibMatrix (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
 
 echo >>${OUTPUT}
-echo "Memoryleaks in tExtSubobject" >>${OUTPUT}
-${LEAK_CHECKER} ./tExtSubobject > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tExtSubobject >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
+${MEM_CHECKER} ./tVectorExtObject >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tVectorExtObject (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
 
 echo >>${OUTPUT}
-echo "Memoryleaks in tFibSet" >>${OUTPUT}
-${LEAK_CHECKER} ./tFibSet > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tFibSet >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
+${MEM_CHECKER} ./tVectorExtSubobject >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tVectorExtSubobject (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
+
 
 echo >>${OUTPUT}
-echo "Memoryleaks in tFibMatrix" >>${OUTPUT}
-${LEAK_CHECKER} ./tFibMatrix > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tFibMatrix >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
+${MEM_CHECKER} ./tRoot >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tRoot (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
 
+echo >>${OUTPUT}
+${MEM_CHECKER} ./tList >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tList (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
+
+echo >>${OUTPUT}
+${MEM_CHECKER} ./tPoint >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tPoint (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
+
+
+
+echo >>${OUTPUT}
+${MEM_CHECKER} ./tProperty >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tProperty (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
+
+echo >>${OUTPUT}
+${MEM_CHECKER} ./tArea >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tArea (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
+
+echo >>${OUTPUT}
+${MEM_CHECKER} ./tFunction >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tFunction (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
+
+echo >>${OUTPUT}
+${MEM_CHECKER} ./tFunctionValue >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tFunctionValue (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
+
+echo >>${OUTPUT}
+${MEM_CHECKER} ./tFunctionVariable >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tFunctionVariable (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
+
+echo >>${OUTPUT}
+${MEM_CHECKER} ./tFunctionOneValue >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tFunctionOneValue (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
+
+echo >>${OUTPUT}
+${MEM_CHECKER} ./tFunctionTwoValue >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tFunctionTwoValue (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
+
+echo >>${OUTPUT}
+${MEM_CHECKER} ./tFunctionIf >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tFunctionIf (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
+
+echo >>${OUTPUT}
+${MEM_CHECKER} ./tComment >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tComment (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
+
+echo >>${OUTPUT}
+${MEM_CHECKER} ./tIf >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tIf (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
+
+echo >>${OUTPUT}
+${MEM_CHECKER} ./tConditionTrue >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tConditionTrue (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
+
+echo >>${OUTPUT}
+${MEM_CHECKER} ./tConditionFalse >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tConditionFalse (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
+
+echo >>${OUTPUT}
+${MEM_CHECKER} ./tConditionNot >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tConditionNot (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
+
+echo >>${OUTPUT}
+${MEM_CHECKER} ./tConditionTwoValue >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tConditionTwoValue (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
+
+echo >>${OUTPUT}
+${MEM_CHECKER} ./tConditionComparison >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tConditionComparison (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
+
+
+echo >>${OUTPUT}
+${MEM_CHECKER} ./tExtObject >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tExtObject (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
+
+echo >>${OUTPUT}
+${MEM_CHECKER} ./tExtSubobject >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tExtSubobject (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
+
+echo >>${OUTPUT}
+${MEM_CHECKER} ./tFibSet >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tFibSet (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
+
+echo >>${OUTPUT}
+${MEM_CHECKER} ./tFibMatrix >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tFibMatrix (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
 
 
 #tests which work random and can be resized
 
 echo >>${OUTPUT}
-echo "Memoryleaks in tGenerateFibObjects" >>${OUTPUT}
-${LEAK_CHECKER} ./tGenerateFibObjects 64 1 > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tGenerateFibObjects >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
+${MEM_CHECKER} ./tGenerateFibObjects 64 1 >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tGenerateFibObjects (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
 
 echo >>${OUTPUT}
-echo "Memoryleaks in tFibObjectVariable" >>${OUTPUT}
-${LEAK_CHECKER} ./tFibObjectVariable 64 1 > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tFibObjectVariable >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
+${MEM_CHECKER} ./tFibObjectVariable 64 1 >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tFibObjectVariable (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
 
 echo >>${OUTPUT}
-echo "Memoryleaks in tFibObject" >>${OUTPUT}
-${LEAK_CHECKER} ./tFibObject 64 1 > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tFibObject >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
+${MEM_CHECKER} ./tFibObject 64 1 >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tFibObject (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
 
 echo >>${OUTPUT}
-echo "Memoryleaks in tFibElementStructur" >>${OUTPUT}
-${LEAK_CHECKER} ./tFibElementStructur 64 1 > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tFibElementStructur >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
+${MEM_CHECKER} ./tFibElementStructur 64 1 >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tFibElementStructur (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
 
 echo >>${OUTPUT}
-echo "Memoryleaks in tFibObjectStore" >>${OUTPUT}
-${LEAK_CHECKER} ./tFibObjectStore 64 1 > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tFibObjectStore >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
+${MEM_CHECKER} ./tFibObjectStore 64 1 >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tFibObjectStore (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
 
 echo >>${OUTPUT}
-echo "Memoryleaks in tEvalueObject" >>${OUTPUT}
-${LEAK_CHECKER} ./tEvalueObject ../testObjects/ > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tEvalueObject >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
+${MEM_CHECKER} ./tEvalueObject ../testObjects/ >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tEvalueObject (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
 
 echo >>${OUTPUT}
-echo "Memoryleaks in tFibDatabase" >>${OUTPUT}
-${LEAK_CHECKER} ./tFibDatabase 64 ../testObjects/testFibDatabase/ > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tFibDatabase >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
-
-
-echo >>${OUTPUT}
-echo "Memoryleaks in tMatrix3D" >>${OUTPUT}
-${LEAK_CHECKER} ./tMatrix3D 64 > ${TMP_OUT} 2>&1;${LEAK_ANALYZE} ./tMatrix3D >>${OUTPUT} 2>>${ERROR_OUTPUT}
-echo >>${OUTPUT}
+${MEM_CHECKER} ./tFibDatabase 64 ../testObjects/testFibDatabase/ >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tFibDatabase (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
 
 
 
-echo "---------------------" >>${OUTPUT}
-echo "done" >>${OUTPUT}
 echo >>${OUTPUT}
-date >>${OUTPUT}
+${MEM_CHECKER} ./tMatrix3D 64 >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tMatrix3D (1=yes;0=no): ${ERRORS}" >> ${SUM_OUTPUT}
+
+
+
+
+echo "---------------------" >> ${OUTPUT}
+echo "all Errors : ${ERROR_SUM}" >> ${SUM_OUTPUT}
+echo >> ${SUM_OUTPUT}
+date >> ${SUM_OUTPUT}
 
 cd ${ORIGINAL_DIR}
 cat ${OUTPUT} > ${ORIGINAL_DIR}/result/basicMemtest.txt

@@ -54,8 +54,11 @@ History:
 	got cut of, so that the restore result was not equal
 03.09.2013  Oesterholz  using readDoubleFromFunction() and storeXmlDoubleFib()
 	for storing and restoring Fib double numbers in XML
+01.10.2013  Oesterholz  some minor changes (comments, formating, help variable)
 */
 
+//comment in for debugging
+//#define DEBUG
 
 #include "cFibVector.h"
 #include "cDomain.h"
@@ -438,8 +441,8 @@ cFibVector::~cFibVector(){
 			uiActualElement < getNumberOfElements(); uiActualElement++ ){
 #endif //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 		
-		if ( (liVectorType[ uiActualElement ] == VARIABLE) &&
-				(liVectorVariable[ uiActualElement ] != NULL) ){
+		if ( ( liVectorType[ uiActualElement ] == VARIABLE ) &&
+				( liVectorVariable[ uiActualElement ] != NULL ) ){
 			//register the defining element at the variables
 			DEBUG_OUT_L3(<<"liVectorVariable[ "<< uiActualElement <<" ]->unregisterUsingElement( "<<this<<" );"<<endl<<flush);
 			
@@ -488,7 +491,7 @@ bool cFibVector::isVariable( unsignedIntFib iNumberElement ) const{
 		return false;
 	}
 
-	if ( liVectorType[iNumberElement-1] == VARIABLE ){
+	if ( liVectorType[ iNumberElement - 1 ] == VARIABLE ){
 		return true;
 	}//else
 	return false;
@@ -620,13 +623,13 @@ doubleFib cFibVector::getValue( unsignedIntFib iNumberElement ) const{
 		return (doubleFib)( 0.0 );
 	}
 
-	if ( liVectorType[iNumberElement-1] == VALUE ){
+	if ( liVectorType[ iNumberElement - 1 ] == VALUE ){
 
-		return liVectorValues[iNumberElement-1];
+		return liVectorValues[ iNumberElement - 1 ];
 
-	} else if ( liVectorType[iNumberElement-1] == VARIABLE ){
+	} else if ( liVectorType[ iNumberElement - 1 ] == VARIABLE ){
 	
-		return liVectorVariable[iNumberElement-1]->getValue();
+		return liVectorVariable[ iNumberElement - 1 ]->getValue();
 	}
 	//return the nullvalue of the domain for the element
 	cDomain * pDomainForElement = getDomain( iNumberElement );
@@ -680,14 +683,16 @@ bool cFibVector::setValue( unsignedIntFib iNumberElement, doubleFib dValue ){
 		return false;
 	}
 	//if the vector element is an variable unregister the defining -element
-	if ( (liVectorType[ iNumberElement - 1 ] == VARIABLE) &&
-			(liVectorVariable[ iNumberElement - 1 ] != NULL) ){
+	if ( ( liVectorType[ iNumberElement - 1 ] == VARIABLE ) &&
+			( liVectorVariable[ iNumberElement - 1 ] != NULL ) ){
 		//register the defining element at the variables
 		
 		/*if the variable isn't used in an other element, unregister this
 		vector at the variable*/
 		bool bVariableIsUsedElseWhere = false;
 		unsigned int uiNumberOfElements = liVectorVariable.size();
+		cFibVariable * pDeletedVariable =
+			liVectorVariable[ iNumberElement - 1 ];
 		for ( unsigned int uiActualElement = 0;
 				uiActualElement < uiNumberOfElements; uiActualElement++ ){
 			
@@ -696,8 +701,7 @@ bool cFibVector::setValue( unsignedIntFib iNumberElement, doubleFib dValue ){
 			}
 			if ( ( liVectorType[ uiActualElement ] == VARIABLE ) &&
 					( liVectorVariable[ uiActualElement ] != NULL ) &&
-					( liVectorVariable[ uiActualElement ] ==
-						liVectorVariable[ iNumberElement - 1 ]) ){
+					( liVectorVariable[ uiActualElement ] == pDeletedVariable ) ){
 				DEBUG_OUT_L4(<<"bVariableIsUsedElseWhere = true; (uiActualElement="<<uiActualElement<<")"<<endl);
 				
 				bVariableIsUsedElseWhere = true;
@@ -705,10 +709,11 @@ bool cFibVector::setValue( unsignedIntFib iNumberElement, doubleFib dValue ){
 			}
 		}
 		if ( ! bVariableIsUsedElseWhere ){
-			liVectorVariable[ iNumberElement - 1 ]->
-				unregisterUsingElement( this );
+			/*Fib variable no more used in this vector
+			-> unregister this vector as a variable listener*/
+			pDeletedVariable->unregisterUsingElement( this );
 		}
-	}
+	}//end if variable was removed
 	
 	liVectorType[ iNumberElement - 1 ]     = VALUE;
 	liVectorValues[ iNumberElement - 1 ]   = dValue;
@@ -776,15 +781,16 @@ bool cFibVector::setVariable( unsignedIntFib iNumberElement,
 		return false;
 	}
 	//if the vector element is an variable unregister the defining -element
-	//if the vector element is an variable unregister the defining -element
-	if ( (liVectorType[ iNumberElement - 1 ] == VARIABLE) &&
-			(liVectorVariable[ iNumberElement - 1 ] != NULL) ){
+	if ( ( liVectorType[ iNumberElement - 1 ] == VARIABLE ) &&
+			( liVectorVariable[ iNumberElement - 1 ] != NULL ) ){
 		//register the defining element at the variables
 		
 		/*if the variable isn't used in an other element, unregister this
 		vector at the variable*/
 		bool bVariableIsUsedElseWhere = false;
 		unsigned int uiNumberOfElements = liVectorVariable.size();
+		cFibVariable * pDeletedVariable =
+			liVectorVariable[ iNumberElement - 1 ];
 		for ( unsigned int uiActualElement = 0;
 				uiActualElement < uiNumberOfElements; uiActualElement++ ){
 			
@@ -792,9 +798,8 @@ bool cFibVector::setVariable( unsignedIntFib iNumberElement,
 				continue;//don't check the variable to change
 			}
 			if ( ( liVectorType[ uiActualElement ] == VARIABLE ) &&
-					(liVectorVariable[ uiActualElement ] != NULL) &&
-					(liVectorVariable[ uiActualElement ] ==
-						liVectorVariable[ iNumberElement - 1 ]) ){
+					( liVectorVariable[ uiActualElement ] != NULL ) &&
+					( liVectorVariable[ uiActualElement ] == pDeletedVariable ) ){
 				DEBUG_OUT_L4(<<"bVariableIsUsedElseWhere = true; (uiActualElement="<<uiActualElement<<")"<<endl);
 				
 				bVariableIsUsedElseWhere = true;
@@ -802,10 +807,11 @@ bool cFibVector::setVariable( unsignedIntFib iNumberElement,
 			}
 		}
 		if ( ! bVariableIsUsedElseWhere ){
-			liVectorVariable[ iNumberElement - 1 ]->
-				unregisterUsingElement( this );
+			/*Fib variable no more used in this vector
+			-> unregister this vector as a variable listener*/
+			pDeletedVariable->unregisterUsingElement( this );
 		}
-	}
+	}//end if variable was removed
 
 	liVectorType[ iNumberElement - 1 ] = VARIABLE;
 	liVectorVariable[ iNumberElement - 1 ] = pVariable;
@@ -1020,7 +1026,8 @@ void cFibVector::setDefiningFibElement( cFibElement * pFibElement,
 					uiActualElement < uiNumberOfElements; uiActualElement++ ){
 				
 				if ( ( liVectorType[ uiActualElement ] == VARIABLE ) &&
-						(liVectorVariable[ uiActualElement ] != NULL) ){
+						( liVectorVariable[ uiActualElement ] != NULL ) ){
+					//unregister this element as variable user
 					liVectorVariable[ uiActualElement ]->unregisterUsingElement( this );
 				}
 			}
@@ -1609,6 +1616,7 @@ bool cFibVector::operator!=( const cFibVector &vector ) const{
 cFibVector & cFibVector::operator=( const cFibVector &inVector ){
 	DEBUG_OUT_L3(<<this<<"->cFibVector::operator=( "<<&inVector<<" )"<<endl);
 	
+	//unregister this element as variable listener at all variables
 #ifndef FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 	unsigned int uiNumberOfElements = getNumberOfElements();
 #endif //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
@@ -1742,9 +1750,9 @@ bool cFibVector::deleteVariable( cFibVariable * pVariable ){
 			uiActualElement < getNumberOfElements(); uiActualElement++ ){
 #endif //FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE
 		
-		if ( (liVectorType[ uiActualElement ] == VARIABLE) &&
-				(liVectorVariable[ uiActualElement ] != NULL) &&
-				(liVectorVariable[ uiActualElement ] == pVariable) ){
+		if ( ( liVectorType[ uiActualElement ] == VARIABLE ) &&
+				( liVectorVariable[ uiActualElement ] != NULL ) &&
+				( liVectorVariable[ uiActualElement ] == pVariable ) ){
 			//replace the variable with undefined
 			
 			liVectorType[ uiActualElement ] = VALUE;

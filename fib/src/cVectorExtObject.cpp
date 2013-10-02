@@ -34,6 +34,7 @@ History:
 22.01.2012  Oesterholz  created
 17.02.2013  Oesterholz FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE implemented
 16.03.2013  Oesterholz  clone() method added
+01.10.2013  Oesterholz  destructor added
 */
 
 
@@ -185,6 +186,14 @@ cVectorExtObject::cVectorExtObject( cReadBits & iBitStream, intFib & outStatus,
 			pInVectorDomain, pInDomainVariable, uiInNumberOfElements ){
 	//nothing to do
 	DEBUG_OUT_L3(<<this<<"->cVectorExtObject() constructor restore bit"<<endl);
+}
+
+
+/**
+ * The destructor of the vector.
+ */
+cVectorExtObject::~cVectorExtObject(){
+	//nothing to do
 }
 
 

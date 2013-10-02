@@ -141,8 +141,8 @@ int main(int argc, char* argv[]){
 	iReturn += testReadDouble( ulTestphase );
 	*/
 	iReturn += testReadDoubleFromFunction( ulTestphase );
-	iReturn += testReadDoubleFromFunctionOnRandString( ulTestphase );
 	/*TODO comment in:
+	iReturn += testReadDoubleFromFunctionOnRandString( ulTestphase );
 	iReturn += testStoreXmlDoubleFib( ulTestphase );
 	*/
 	
@@ -1008,7 +1008,7 @@ int testReadDoubleFromFunction( unsigned long &ulTestphase ){
 	iReturn += testReadDoubleFromFunction( "abs( -9 )", 9.0, 9 );
 	iReturn += testReadDoubleFromFunction( "log( 56 )", log10( 56 ), 9 );
 	iReturn += testReadDoubleFromFunction( " 	 ln 36", log( 36 ), 8 );
-	iReturn += testReadDoubleFromFunction( "sqrt 9 )", 3.0, 8 );
+	iReturn += testReadDoubleFromFunction( "sqrt 9 )", 3.0, 8, false );
 	iReturn += testReadDoubleFromFunction( "2^3", 8.0, 3 );
 	iReturn += testReadDoubleFromFunction( "pow -3 2", 9.0, 8 );
 	iReturn += testReadDoubleFromFunction( "pow( 4, 2)", 16.0, 10 );
@@ -1022,7 +1022,6 @@ int testReadDoubleFromFunction( unsigned long &ulTestphase ){
 	
 	//test nested simple functions (test precedence)
 	iReturn += testReadDoubleFromFunction( "15 * 2^3", 120, 8 );
-	
 	iReturn += testReadDoubleFromFunction( "5 + 2 *  3 ", 11, 11 );
 	iReturn += testReadDoubleFromFunction( "( 5 + 2 )*  3 ", 21, 14 );
 	iReturn += testReadDoubleFromFunction( " 5 + (2 *  3)", 11, 13 );
@@ -1037,13 +1036,17 @@ int testReadDoubleFromFunction( unsigned long &ulTestphase ){
 	iReturn += testReadDoubleFromFunction( " 2 *  --3 ", 4, 10 );
 	iReturn += testReadDoubleFromFunction( " * 2 5", 10, 6 );
 	iReturn += testReadDoubleFromFunction( " / 2	  4", 0.5, 8 );
-	
+	iReturn += testReadDoubleFromFunction( "5 * (2 -  3 )", -5, 13 );
+	iReturn += testReadDoubleFromFunction( "6 * 2/3 ", 4, 8 );
+	iReturn += testReadDoubleFromFunction( "8 / 	4 *  3 ", 6, 12 );
+	iReturn += testReadDoubleFromFunction( "5 * 7 %  3 ", 2, 11 );
+	iReturn += testReadDoubleFromFunction( " 7 %  3 *5 ", 5, 11 );
+	iReturn += testReadDoubleFromFunction( "5 * ++7 ", 40, 8 );
+	iReturn += testReadDoubleFromFunction( "5 * 3^ 2  ", 45, 10 );
+	iReturn += testReadDoubleFromFunction( "5 * 3 pow 2 ", 45, 12 );
 	
 	/*TODO
 	 * - some more precedence
-	 * - non valid formulars
-			iReturn += testReadDoubleFromFunction( " / 2 -5", -10, 6 );
-	 *
 	 * */
 	
 	

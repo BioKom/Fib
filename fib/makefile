@@ -28,10 +28,17 @@
 # 		to clean all files this make has created
 # 	make test
 # 		to create the fib-multimedialange test library and testfiles (testcase/)
+# 	make profile
+# 		to create the fib-multimedialange test library and
+# 		testfiles (testcase/) with the profile parameter set (-pg)
 # 	make win
 # 		to create the fib-multimedialange windows library
 # 	make win_test
-# 		to create the fib-multimedialange windows test library and testfiles (testcase/)
+# 		to create the fib-multimedialange windows test library and
+# 		testfiles (testcase/)
+# 	make win_profile
+# 		to create the fib-multimedialange windows test library and
+# 		testfiles (testcase/) with the profile parameter set (-pg)
 #
 ##########################################################################
 #
@@ -76,6 +83,7 @@
 # 14.10.2012   Oesterholz   library "-lpthread" included
 # 09.03.2013   Oesterholz   tMatrix3D included
 # 11.05.2013   Oesterholz   tFibDatatyps included
+# 01.10.2013   Oesterholz   profile option "-pg" with seperate rules
 
 
 ##########################################################################
@@ -134,7 +142,7 @@ CC:=gcc
 #optimize compile flags
 CFLAG_OPTIMISE:=-O -O2 $(TINYXML_FLAGS)
 CFLAG:=$(CFLAG_OPTIMISE)
-CFLAG_TEST:=-g -pg -Wall -DTEST $(TINYXML_FLAGS)
+CFLAG_TEST:=-g -Wall -DTEST $(TINYXML_FLAGS)
 INCL:=-I$(BASE_DIR) -I$(DIR_INCL) -I$(DIR_TINYXML) -I$(DIR_ZLIB)
 #TODO "-lm" needed?
 #TODO add "-lpthread" and FEATURE_FIB_DB_USE_TREADS when windows treads are implemented
@@ -222,8 +230,13 @@ OBJ_ZLIB:= $(addprefix $(DIR_ZLIB), adler32.o compress.o crc32.o deflate.o\
 
 all: $(DIR_OBJ) $(DIR_BIN) $(DIR_LIB) dependencies.dep $(DIR_LIB)libfib.a
 
-test: $(DIR_OBJ_TEST) $(DIR_TESTCASE) $(DIR_LIB) dependencies.dep $(DIR_LIB)libfib_test.a $(TEST_BIN)
+test: $(DIR_OBJ_TEST) $(DIR_TESTCASE) $(DIR_LIB) dependencies.dep\
+	$(DIR_LIB)libfib_test.a $(TEST_BIN)
 test: CFLAG:=$(CFLAG_TEST)
+
+profile: $(DIR_OBJ_TEST) $(DIR_TESTCASE) $(DIR_LIB) dependencies.dep\
+	$(DIR_LIB)libfib_test.a $(TEST_BIN)
+profile: CFLAG:=$(CFLAG_TEST) -pg
 
 
 $(OBJ_TINYXML): tinyxml
@@ -243,10 +256,19 @@ win: CFLAG:=$(CFLAG_OPTIMISE) -DWINDOWS
 win: WINDOWS:=true
 win: all
 win: LIBS:=$(LIBS_WIN)
-win_test: $(DIR_OBJ_TEST) $(DIR_TESTCASE) $(DIR_LIB) dependencies.dep $(DIR_LIB)libfib_test.a $(TEST_BIN)
+
+win_test: $(DIR_OBJ_TEST) $(DIR_TESTCASE) $(DIR_LIB) dependencies.dep\
+	$(DIR_LIB)libfib_test.a $(TEST_BIN)
 win_test: CFLAG:=$(CFLAG_TEST) -DWINDOWS
 win_test: WINDOWS:=true
 win_test: LIBS:=$(LIBS_WIN)
+
+
+win_profile: $(DIR_OBJ_TEST) $(DIR_TESTCASE) $(DIR_LIB) dependencies.dep\
+	$(DIR_LIB)libfib_test.a $(TEST_BIN)
+win_profile: CFLAG:=$(CFLAG_TEST) -pg -DWINDOWS
+win_profile: WINDOWS:=true
+win_profile: LIBS:=$(LIBS_WIN)
 
 
 ##########################################################################

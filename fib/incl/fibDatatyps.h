@@ -483,7 +483,7 @@ namespace fib{
 	
 	/**
 	 * This functions reads a double number from the given string.
-	 * Reading will be independet of the local. (The default format is english.)
+	 * Reading will be independent of the local. (The default format is english.)
 	 * Leading spaces will be ignored.
 	 * The decimal point can be the english '.' or german ','.
 	 * If the number contains one '.' and some ',', the '.' will be seen as
@@ -509,7 +509,7 @@ namespace fib{
 	
 	/**
 	 * This functions reads a double number from the given string.
-	 * Reading will be independet of the local. (The default format is english.)
+	 * Reading will be independent of the local. (The default format is english.)
 	 * Leading spaces will be ignored.
 	 * The decimal point can be the english '.' or german ','.
 	 * If the number contains one '.' and some ',', the '.' will be seen as
@@ -525,6 +525,7 @@ namespace fib{
 	 * 	- "12,34" = 12.34
 	 * 	- "12,345.678,9" = 12345.678
 	 * 	- "12.345,678.9" = 12345.6789
+	 * 	- "12,345.678.97,8" = 12345.678
 	 *
 	 * @see readDouble()
 	 * @see readDoubleFromFunction()
@@ -537,18 +538,15 @@ namespace fib{
 	std::pair< doubleFib, const char * >
 		readDoubleReturnEnd( const char * strDouble );
 	
-
-	//TODO check
-	
-	
 	/**
 	 * This functions reads a double number from the given string.
 	 * The number can represented by a simple formular.
 	 * Allowed operators (spaces will be ignored):
 	 * 	- values as numbers @see readDouble()
 	 * 	- addition: X + Y
-	 * 	- subtraction: X -Y
+	 * 	- subtraction: X - Y
 	 * 	- multiply: X * Y
+	 * 	- division: X / Y
 	 * 	- modulo: X % Y
 	 * 	- increment: ++X
 	 * 	- decrement: --X
@@ -567,15 +565,15 @@ namespace fib{
 	 *
 	 * @see readDouble()
 	 * @param strDouble the string where to read the double from (null terminated)
-	 * @param pPairOutEvalueStatus if not NULL a pair for the status of the
-	 * 	formula evaluation
-	 * 		first: true if the formular could be evalued, else false.
+	 * @param pPairOutEvalueStatus if not NULL a pair to output the status
+	 * 	of the formula evaluation
+	 * 		first: true if the formular could be evalued, else false;
 	 * 			If false the returned value will not include the whole formular.
 	 * 		second: a pointer to the end position of the readed formular
 	 * 			(it points to the first character not in the formular)
 	 * 			If first is false it points to the first character which
 	 * 			could not be interpreted as a operator or number, but not
-	 * 			all the sting before is necessarily be used to evalue the
+	 * 			all the string before is necessarily be used to evalue the
 	 * 			return value.
 	 * @return the readed double number
 	 */
@@ -587,6 +585,7 @@ namespace fib{
 	 * This method stores the given double number in XML -format into the
 	 * given stream.
 	 * The output is in a form that can be readed by readDoubleFromFunction().
+	 * Also (if possible) no precision will be lost.
 	 *
 	 * @see readDoubleFromFunction()
 	 * @param stream the stream where the number should be stored to

@@ -123,6 +123,7 @@ History:
 	getSuperiorRootElement() implemented
 01.08.2013  Oesterholz  FEATURE_EXT_SUBOBJECT_INPUT_VECTOR as default (not case removed)
 01.08.2013  Oesterholz  test for assignValues() added
+01.10.2013  Oesterholz  memory error fixed: not initialized counter in for loop
 */
 
 
@@ -1733,21 +1734,21 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 		return iReturn;
 	}
 	
-	if ( uiNumberOfAllFibElements != (uiNumberOfAllRootElements +
+	if ( uiNumberOfAllFibElements != ( uiNumberOfAllRootElements +
 			uiNumberOfAllPointElements + uiNumberOfAllPropertyElements +
 			uiNumberOfAllAreaElements + uiNumberOfAllFunctionElements +
 			uiNumberOfAllListElements + uiNumberOfAllCommentElements +
 			uiNumberOfAllIfElements + uiNumberOfAllExtObjectElements +
 			uiNumberOfAllExtSubobjectElements + uiNumberOfAllSetElements +
-			uiNumberOfAllMatrixElements) ){
+			uiNumberOfAllMatrixElements ) ){
 		cerr<<"Error: Ther are different values for number of all Fib elements"<<
 			"given back, counted over all Fib elements and seperatly. "<< endl;
 		iReturn++;
 	}
-	if ( uiNumberOfAllMovePoints != (uiNumberOfAllPropertyElements +
+	if ( uiNumberOfAllMovePoints != ( uiNumberOfAllPropertyElements +
 			uiNumberOfAllAreaElements + uiNumberOfAllFunctionElements +
 			uiNumberOfAllCommentElements + uiNumberOfAllSetElements +
-			uiNumberOfAllMatrixElements) ){
+			uiNumberOfAllMatrixElements ) ){
 		cerr<<"Error: Ther are different values for number of all movepoints "<<
 			"given back, counted over all Fib elements and seperatly over the Fib elements. "<< endl;
 		iReturn++;
@@ -17467,7 +17468,8 @@ int testCopyOnObject( cFibElement * pFibObject ){
 						for ( ; uiSubobject <= pActualExtObjOriginal->getNumberOfSubobjects();
 								uiSubobject++ ){
 							
-							if ( pActualExtObjOriginal->getSubobject( uiSubobject ) == pSubObjectOnWay ){
+							if ( pActualExtObjOriginal->getSubobject(
+									uiSubobject ) == pSubObjectOnWay ){
 								break;
 							}
 						}
@@ -17489,7 +17491,8 @@ int testCopyOnObject( cFibElement * pFibObject ){
 								iReturn++;
 							}
 							//check if all except the copied subobjects are NULL
-							for ( unsignedIntFib uiActualSubobject; uiActualSubobject < uiSubobject;
+							for ( unsignedIntFib uiActualSubobject = 0;
+									uiActualSubobject < uiSubobject;
 									uiActualSubobject++ ){
 								
 								if ( pActualExtObjCopy->getSubobject( uiActualSubobject ) != NULL ){

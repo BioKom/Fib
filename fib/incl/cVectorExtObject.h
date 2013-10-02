@@ -33,10 +33,11 @@
 History:
 22.01.2012  Oesterholz  created
 16.03.2013  Oesterholz  clone() method added
+01.10.2013  Oesterholz  destructor added
 */
 
-#ifndef ___C_VECTOR_EXT_OBJECT_H__
-#define ___C_VECTOR_EXT_OBJECT_H__
+#ifndef ___FIB__C_VECTOR_EXT_OBJECT_H__
+#define ___FIB__C_VECTOR_EXT_OBJECT_H__
 
 
 #include "cFibVector.h"
@@ -130,6 +131,10 @@ public:
 		const cDomain * pInVectorDomain, const cDomain * pInDomainVariable,
 		const unsignedIntFib uiInNumberOfElements );
 
+	/**
+	 * The destructor of the vector.
+	 */
+	virtual ~cVectorExtObject();
 
 	/**
 	 * This method clones this object.
@@ -216,7 +221,7 @@ public:
 };//cVectorExtObject
 }//namespace fib
 
-#endif //___C_VECTOR_EXT_OBJECT_H__
+#endif //___FIB__C_VECTOR_EXT_OBJECT_H__
 
 
 
