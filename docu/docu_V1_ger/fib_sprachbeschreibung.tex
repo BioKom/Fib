@@ -1366,6 +1366,7 @@ Beschreibung der Elemente:
 	isAntialiased & Das dargestellte Multimediaobjekt ist Antialiased bzw. verf"ugt "uber Kantengl"attung. (Gegenst"uck ist der Schl"ussel ``isNotAntialiased'' ) & (isAntialiased , ``'') \\\hline
 	isNotAntialiased & Das dargestellte Multimediaobjekt ist nicht Antialiased bzw. verf"ugt nicht "uber Kantengl"attung.  (Gegenst"uck ist der Schl"ussel ``isAntialiased'' ) & (isNotAntialiased , ``'') \\\hline
 	DbObject::XXX & Der Wert zum Schl"ussel ist der Identifizerer (eine Zahl) des Objekts, welches bis auf die Eigenschaft XXX identisch zum Objekt des root-Elements ist. M"ogliche Werte f"ur XXX sind beispielsweise ``isPointSubObject'' oder ``isAntialiased''. Besitzt also das aktuelle Objekt keine Kantengl"attung, so besitzt das Objekt mit dem Identifizerer des Wertes zu ``DbObject::isAntialiased'' Kantengl"attung, ist aber ansonsten identisch. & (DbObject::isAntialiased , ``-56'') \\\hline
+	connectedTo::XXX & Der Wert zum Schl"ussel ist der Identifizerer (eine Zahl) des Objekts, welches die Verbindung XXX zum aktuellen Objekt hat. Beispielsweise bedeutet ``connectedTo::sameType'', dass das Object zum angegebenen Identifizerer vom selben Type ist. & (connectedTo::sameType , ``-156'') \\\hline
 	
 	
 \caption{Schl"ussel f"ur den optionalen Teil}
