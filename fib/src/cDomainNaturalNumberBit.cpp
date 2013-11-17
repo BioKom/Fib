@@ -38,6 +38,8 @@ History:
 13.05.2010  Oesterholz  the ordering of bit for the compressed storing corrected
 16.05.2010  Oesterholz  getCompressedSizeForScalingFactor() used
 01.12.2011  Oesterholz  method isInBoundaries() added
+03.09.2013  Oesterholz  using storeXmlDoubleFib() for storing  Fib double
+	numbers in XML (@see storeXml() )
 */
 
 
@@ -366,12 +368,9 @@ bool cDomainNaturalNumberBit::storeXml( ostream & ostream ) const{
 	ostream<<"<naturalNumberB ";
 	if ( getScalingFactor() != 1.0 ){
 		//write scalingfactor
-		longFib lMantissa;
-		longFib lExponent;
-		
-		decomposeDoubleFib( getScalingFactor(), & lMantissa, & lExponent );
-		
-		ostream<<"scalingfactor=\""<< lMantissa <<" * 2^("<< lExponent <<")\" ";
+		ostream<<"scalingfactor=\"";
+		storeXmlDoubleFib( ostream, getScalingFactor() );
+		ostream<<"\" ";
 	}
 	ostream<<"bit=\""<< iBitsForDomainNumbers <<"\" />"<<endl;
 	

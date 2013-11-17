@@ -175,6 +175,7 @@ testen (prio 7):
   - cFunctionTwoValue : const cUnderFunction * get*UnderFunction() const;
 	- cRoot::checkExternSubobjects()
 	- cRoot::generateExternSubojectsDefinitions()
+	- cRoot::integrateSubRootObject()
 	- set< longInt > cRoot::getUsedDatabaseIdentifiers() const
 	- void cRoot::addUsedDatabaseIdentifier( const longFib lIdentifier )
 	- bool cRoot::deleteUsedDatabaseIdentifier( const longFib lIdentifier )

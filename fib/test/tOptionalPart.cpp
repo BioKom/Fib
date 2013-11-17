@@ -35,6 +35,7 @@
  * 	- cOptionalPart *clone() const;
  * 	- unsignedLongFib getNumberOfEntries() const;
  * 	- pair< string, string > getEntry( unsignedLongFib ulEntryNumber ) const;
+ * 	- list< pair<string,string> > getEntries() const;
  * 	- list< pair<string,string> > getEntries( string szKey, bool bFullBegin=true ) const;
  * 	- list< pair<string,string> > findKeyPart( string szKeyPart ) const;
  * 	- unsignedLongFib addEntry( string szKey, string szValue, unsignedLongFib ulPosition=0 );
@@ -56,6 +57,7 @@ History:
 16.11.2009  Oesterholz  equal comparrissons and storeXml() tested
 15.07.2011  Oesterholz  functions for compressed storing tested (@see testStore() )
 02.08.2013  Oesterholz  test for operator==() added
+23.10.2013  Oesterholz  method getEntries() without parameters added
 */
 
 #include "version.h"
@@ -985,6 +987,107 @@ int testGetEntries( unsigned long &ulTestphase ){
 			<<" could not be found."<<endl;
 		iReturn++;
 	}
+	
+	
+	ulTestphase++;
+	cout<<endl<<"TESTPASE "<<ulTestphase<<" : testing getEntries() without parameters"<<endl;
+	
+
+	cout<<"optionalpartTest1.getEntries() "<<endl;
+	foundedEntries=optionalpartTest1.getEntries();
+
+	cout<<"Founded entries: ";
+	for (list< pair< string ,string > >::iterator itrEntry=foundedEntries.begin();
+		itrEntry!=foundedEntries.end(); itrEntry++){
+		cout<<(*itrEntry)<<"; ";
+	}
+	cout<<endl;
+
+	//check if one entry was found
+	if ( foundedEntries.size() == 6 ){
+	
+		cout<<"Ther was correctly 6 entries found."<<endl;
+	}else{
+		cerr<<"Error: Ther wher not 6 entries found but "<<
+			foundedEntries.size()<<"."<<endl;
+		iReturn++;
+	}
+
+	//check if the correct entries (all) was found
+	entryFound = find( foundedEntries.begin(), foundedEntries.end(),
+		pair< string ,string >("test2", "wert2") );
+	
+	if ( entryFound!=foundedEntries.end() ){
+	
+		cout<<"The entry "<<pair< string ,string >("test2", "wert2")<<
+			" was correctly found."<<endl;
+	}else{
+		cerr<<"Error: The entry "<<pair< string ,string >("test2", "wert2")
+			<<" could not be found."<<endl;
+		iReturn++;
+	}
+	entryFound = find( foundedEntries.begin(), foundedEntries.end(),
+		pair< string ,string >("test1", "wert1") );
+	
+	if ( entryFound!=foundedEntries.end() ){
+	
+		cout<<"The entry "<<pair< string ,string >("test1", "wert1")<<
+			" was correctly found."<<endl;
+	}else{
+		cerr<<"Error: The entry "<<pair< string ,string >("test1", "wert1")
+			<<" could not be found."<<endl;
+		iReturn++;
+	}
+	entryFound=find( foundedEntries.begin(), foundedEntries.end(),
+		pair< string ,string >("test4", "wert4") );
+	
+	if ( entryFound!=foundedEntries.end() ){
+	
+		cout<<"The entry "<<pair< string ,string >("test4", "wert4")<<
+			" was correctly found."<<endl;
+	}else{
+		cerr<<"Error: The entry "<<pair< string ,string >("test4", "wert4")
+			<<" could not be found."<<endl;
+		iReturn++;
+	}
+	entryFound=find( foundedEntries.begin(), foundedEntries.end(),
+		pair< string ,string >("test3", "wert3") );
+	
+	if ( entryFound!=foundedEntries.end() ){
+	
+		cout<<"The entry "<<pair< string ,string >("test3", "wert3")<<
+			" was correctly found."<<endl;
+	}else{
+		cerr<<"Error: The entry "<<pair< string ,string >("test3", "wert3")
+			<<" could not be found."<<endl;
+		iReturn++;
+	}
+	//check if the correct entry ("test4", "wert2.4") was found
+	entryFound=find( foundedEntries.begin(), foundedEntries.end(),
+		pair< string ,string >("test4", "wert2.4") );
+	
+	if ( entryFound!=foundedEntries.end() ){
+	
+		cout<<"The entry "<<pair< string ,string >("test4", "wert2.4")<<
+			" was correctly found."<<endl;
+	}else{
+		cerr<<"Error: The entry "<<pair< string ,string >("test4", "wert2.4")
+			<<" could not be found."<<endl;
+		iReturn++;
+	}
+	entryFound=find( foundedEntries.begin(), foundedEntries.end(),
+		pair< string ,string >("test4.2", "wert4") );
+	
+	if ( entryFound!=foundedEntries.end() ){
+	
+		cout<<"The entry "<<pair< string ,string >("test4.2", "wert4")<<
+			" was correctly found."<<endl;
+	}else{
+		cerr<<"Error: The entry "<<pair< string ,string >("test4.2", "wert4")
+			<<" could not be found."<<endl;
+		iReturn++;
+	}
+	
 	return iReturn;
 }
 

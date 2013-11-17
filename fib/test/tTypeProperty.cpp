@@ -61,6 +61,7 @@ History:
 04.04.2011  Oesterholz  storing to binary stream
 17.09.2012  Oesterholz  Warning removed: "(char)" for char arrays added
 28.01.2013  Oesterholz  COLOR_SW changed to COLOR_GRAYSCALE
+03.09.2013  Oesterholz  reading scaling factor adapted
 */
 
 //TODO check isCompatible() for more domains + comparrisson
@@ -187,7 +188,7 @@ int testConstructor( unsigned long &ulTestphase ){
 	//check the getType() methode
 	if ( testTypeProperty1.getType()==6 ){
 	
-		cout<<"The correct type 6 for \"cTypeProperty\" is given. "<<endl;
+		cout<<"The correct type 6 for \"cTypeProperty\" is given."<<endl;
 	}else{
 		cerr<<"Error: The type given is not 6 for \"cTypeProperty\"; it is : "<<
 			testTypeProperty1.getType()<<endl;
@@ -203,7 +204,7 @@ int testConstructor( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 3 elements
 	if ( testTypeProperty1.isCompatible( *vectorDomain ) ){
 	
-		cout<<"The type is correctly compatible to the vector domain with 3 elements. "<<endl;
+		cout<<"The type is correctly compatible to the vector domain with 3 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is not compatible to the vector domain with 3 elements."<<endl;
 		iReturn++;
@@ -216,7 +217,7 @@ int testConstructor( unsigned long &ulTestphase ){
 	//check the getNumberOfProperty() methode
 	if ( testTypeProperty1.getNumberOfProperty()==1 ){
 	
-		cout<<"The correct number 1 for \"cTypeProperty\" is given. "<<endl;
+		cout<<"The correct number 1 for \"cTypeProperty\" is given."<<endl;
 	}else{
 		cerr<<"Error: The number given is not 1 for \"cTypeProperty\"; it is : "<<
 			testTypeProperty1.getNumberOfProperty()<<endl;
@@ -225,7 +226,7 @@ int testConstructor( unsigned long &ulTestphase ){
 	//check the getNameOfProperty() methode
 	if ( testTypeProperty1.getNameOfProperty() == "colorRGB" ){
 	
-		cout<<"The correct name \"colorRGB\" for \"cTypeProperty\" is given. "<<endl;
+		cout<<"The correct name \"colorRGB\" for \"cTypeProperty\" is given."<<endl;
 	}else{
 		cerr<<"Error: The given name is not \"colorRGB\" for \"cTypeProperty\"; it is : "<<
 			testTypeProperty1.getNameOfProperty()<<endl;
@@ -241,7 +242,7 @@ int testConstructor( unsigned long &ulTestphase ){
 	//check the getType() methode
 	if ( testTypePropertyTransparency.getType()==6 ){
 	
-		cout<<"The correct type 6 for \"cTypeProperty\" is given. "<<endl;
+		cout<<"The correct type 6 for \"cTypeProperty\" is given."<<endl;
 	}else{
 		cerr<<"Error: The type given is not 6 for \"cTypeProperty\"; it is : "<<
 			testTypePropertyTransparency.getType()<<endl;
@@ -251,7 +252,7 @@ int testConstructor( unsigned long &ulTestphase ){
 	//check the getNumberOfProperty() methode
 	if ( testTypePropertyTransparency.getNumberOfProperty()==cTypeProperty::TRANSPARENCY ){
 	
-		cout<<"The correct typenumber TRANSPARENCY for \"cTypeProperty\" is given. "<<endl;
+		cout<<"The correct typenumber TRANSPARENCY for \"cTypeProperty\" is given."<<endl;
 	}else{
 		cerr<<"Error: The typenumber given is not TRANSPARENCY for \"cTypeProperty\"; it is : "<<
 			testTypePropertyTransparency.getNumberOfProperty()<<endl;
@@ -260,7 +261,7 @@ int testConstructor( unsigned long &ulTestphase ){
 	//check the getNameOfProperty() methode
 	if ( testTypePropertyTransparency.getNameOfProperty() == "transparency" ){
 	
-		cout<<"The correct name \"transparency\" for \"cTypeProperty\" is given. "<<endl;
+		cout<<"The correct name \"transparency\" for \"cTypeProperty\" is given."<<endl;
 	}else{
 		cerr<<"Error: The given name is not \"transparency\" for \"cTypeProperty\"; it is : "<<
 			testTypePropertyTransparency.getNameOfProperty()<<endl;
@@ -274,7 +275,7 @@ int testConstructor( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 1 elements
 	if ( testTypePropertyTransparency.isCompatible( *vectorDomain ) ){
 	
-		cout<<"The type is correctly compatible to the vector domain with 1 elements. "<<endl;
+		cout<<"The type is correctly compatible to the vector domain with 1 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is not compatible to the vector domain with 1 elements."<<endl;
 		iReturn++;
@@ -290,7 +291,7 @@ int testConstructor( unsigned long &ulTestphase ){
 	//check the getType() methode
 	if ( testTypePropertyCopy1.getType()==6 ){
 	
-		cout<<"The correct type 6 for \"cTypeProperty\" is given. "<<endl;
+		cout<<"The correct type 6 for \"cTypeProperty\" is given."<<endl;
 	}else{
 		cerr<<"Error: The type given is not 6 for \"cTypeProperty\"; it is : "<<
 			testTypePropertyCopy1.getType()<<endl;
@@ -300,7 +301,7 @@ int testConstructor( unsigned long &ulTestphase ){
 	//check the getType() methode
 	if ( testTypePropertyCopy1.getNumberOfProperty()==1 ){
 	
-		cout<<"The correct number 1 for \"cTypeProperty\" is given. "<<endl;
+		cout<<"The correct number 1 for \"cTypeProperty\" is given."<<endl;
 	}else{
 		cerr<<"Error: The number given is not 1 for \"cTypeProperty\"; it is : "<<
 			testTypePropertyCopy1.getNumberOfProperty()<<endl;
@@ -309,7 +310,7 @@ int testConstructor( unsigned long &ulTestphase ){
 	//check the getNameOfProperty() methode
 	if ( testTypePropertyCopy1.getNameOfProperty() == "colorRGB" ){
 	
-		cout<<"The correct name \"colorRGB\" for \"cTypeProperty\" is given. "<<endl;
+		cout<<"The correct name \"colorRGB\" for \"cTypeProperty\" is given."<<endl;
 	}else{
 		cerr<<"Error: The given name is not \"colorRGB\" for \"cTypeProperty\"; it is : "<<
 			testTypePropertyCopy1.getNameOfProperty()<<endl;
@@ -324,7 +325,7 @@ int testConstructor( unsigned long &ulTestphase ){
 	//check the getType() methode
 	if ( testTypePropertyCopyTransparency.getType()==6 ){
 	
-		cout<<"The correct type 6 for \"cTypeProperty\" is given. "<<endl;
+		cout<<"The correct type 6 for \"cTypeProperty\" is given."<<endl;
 	}else{
 		cerr<<"Error: The type given is not 6 for \"cTypeProperty\"; it is : "<<
 			testTypePropertyCopyTransparency.getType()<<endl;
@@ -334,7 +335,7 @@ int testConstructor( unsigned long &ulTestphase ){
 	//check the getNumberOfProperty() methode
 	if ( testTypePropertyCopyTransparency.getNumberOfProperty()==cTypeProperty::TRANSPARENCY ){
 	
-		cout<<"The correct typenumber TRANSPARENCY for \"cTypeProperty\" is given. "<<endl;
+		cout<<"The correct typenumber TRANSPARENCY for \"cTypeProperty\" is given."<<endl;
 	}else{
 		cerr<<"Error: The typenumber given is not TRANSPARENCY for \"cTypeProperty\"; it is : "<<
 			testTypePropertyCopyTransparency.getNumberOfProperty()<<endl;
@@ -350,7 +351,7 @@ int testConstructor( unsigned long &ulTestphase ){
 	//check the getType() methode
 	if ( testTypeProperty2003.getType()==6 ){
 	
-		cout<<"The correct type 6 for \"cTypeProperty\" is given. "<<endl;
+		cout<<"The correct type 6 for \"cTypeProperty\" is given."<<endl;
 	}else{
 		cerr<<"Error: The type given is not 6 for \"cTypeProperty\"; it is : "<<
 			testTypeProperty2003.getType()<<endl;
@@ -368,7 +369,7 @@ int testConstructor( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 3 elements
 	if ( testTypeProperty2003.isCompatible( *vectorDomain ) ){
 	
-		cout<<"The type is correctly compatible to the vector domain with 3 elements. "<<endl;
+		cout<<"The type is correctly compatible to the vector domain with 3 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is not compatible to the vector domain with 3 elements."<<endl;
 		iReturn++;
@@ -383,7 +384,7 @@ int testConstructor( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 3 elements
 	if ( testTypeProperty2003.isCompatible( vectorDomainD1 ) ){
 	
-		cout<<"The type is correctly compatible to the vector domain with 1 element. "<<endl;
+		cout<<"The type is correctly compatible to the vector domain with 1 element."<<endl;
 	}else{
 		cerr<<"Error: The type is not compatible to the vector domain with 1 element."<<endl;
 		iReturn++;
@@ -394,7 +395,7 @@ int testConstructor( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 3 elements
 	if ( ! testTypeProperty2003.isCompatible( domainNaturalNumberB3 ) ){
 	
-		cout<<"The type is correctly not compatible to the cDomainNaturalNumberBit with 3 bit. "<<endl;
+		cout<<"The type is correctly not compatible to the cDomainNaturalNumberBit with 3 bit."<<endl;
 	}else{
 		cerr<<"Error: The type is compatible to the cDomainNaturalNumberBit with 3 bit."<<endl;
 		iReturn++;
@@ -403,7 +404,7 @@ int testConstructor( unsigned long &ulTestphase ){
 	//check the getNumberOfProperty() methode
 	if ( testTypeProperty2003.getNumberOfProperty()==2003 ){
 	
-		cout<<"The correct number 2003 for \"cTypeProperty\" is given. "<<endl;
+		cout<<"The correct number 2003 for \"cTypeProperty\" is given."<<endl;
 	}else{
 		cerr<<"Error: The number given is not 2003 for \"cTypeProperty\"; it is : "<<
 			testTypeProperty2003.getNumberOfProperty()<<endl;
@@ -412,7 +413,7 @@ int testConstructor( unsigned long &ulTestphase ){
 	//check the getNameOfProperty() methode
 	if ( testTypeProperty2003.getNameOfProperty() == "2003" ){
 	
-		cout<<"The correct name \"2003\" for \"cTypeProperty\" is given. "<<endl;
+		cout<<"The correct name \"2003\" for \"cTypeProperty\" is given."<<endl;
 	}else{
 		cerr<<"Error: The given name is not \"2003\" for \"cTypeProperty\"; it is : "<<
 			testTypeProperty2003.getNameOfProperty()<<endl;
@@ -445,7 +446,7 @@ int testCloneAndEqual( unsigned long &ulTestphase ){
 	if ( testTypeProperty1.getNumberOfProperty()==cTypeProperty::COLOR_RGB ){
 	
 		cout<<"The correct typenumber COLOR_RGB="<<cTypeProperty::COLOR_RGB<<
-			" for \"cTypeProperty\" is given. "<<endl;
+			" for \"cTypeProperty\" is given."<<endl;
 	}else{
 		cerr<<"Error: The typenumber given is not COLOR_RGB="<<cTypeProperty::COLOR_RGB<<
 			" for \"cTypeProperty\"; it is : "<<
@@ -460,7 +461,7 @@ int testCloneAndEqual( unsigned long &ulTestphase ){
 	if ( testTypePropertyClone1->getNumberOfProperty()==cTypeProperty::COLOR_RGB ){
 	
 		cout<<"The correct typenumber COLOR_RGB="<<cTypeProperty::COLOR_RGB<<
-			" for \"cTypeProperty\" clone is given. "<<endl;
+			" for \"cTypeProperty\" clone is given."<<endl;
 	}else{
 		cerr<<"Error: The typenumber given is not COLOR_RGB="<<cTypeProperty::COLOR_RGB<<
 			" for \"cTypeProperty\" clone; it is : "<<
@@ -479,7 +480,7 @@ int testCloneAndEqual( unsigned long &ulTestphase ){
 	if ( testTypePropertyTransparency.getNumberOfProperty()==cTypeProperty::TRANSPARENCY ){
 	
 		cout<<"The correct typenumber TRANSPARENCY="<<cTypeProperty::TRANSPARENCY<<
-			" for \"cTypeProperty\" is given. "<<endl;
+			" for \"cTypeProperty\" is given."<<endl;
 	}else{
 		cerr<<"Error: The typenumber given is not TRANSPARENCY="<<cTypeProperty::TRANSPARENCY<<
 			" for \"cTypeProperty\"; it is : "<<
@@ -494,7 +495,7 @@ int testCloneAndEqual( unsigned long &ulTestphase ){
 	if ( testTypePropertyCloneTransparency->getNumberOfProperty()==cTypeProperty::TRANSPARENCY ){
 	
 		cout<<"The correct typenumber TRANSPARENCY="<<cTypeProperty::TRANSPARENCY<<
-			" for \"cTypeProperty\" clone is given. "<<endl;
+			" for \"cTypeProperty\" clone is given."<<endl;
 	}else{
 		cerr<<"Error: The typenumber given is not TRANSPARENCY="<<cTypeProperty::TRANSPARENCY<<
 			" for \"cTypeProperty\" clone; it is : "<<
@@ -513,7 +514,7 @@ int testCloneAndEqual( unsigned long &ulTestphase ){
 	if ( testTypePropertyTransparencyD5.getNumberOfProperty()==cTypeProperty::TRANSPARENCY ){
 	
 		cout<<"The correct typenumber TRANSPARENCY="<<cTypeProperty::TRANSPARENCY<<
-			" for \"cTypeProperty\" is given. "<<endl;
+			" for \"cTypeProperty\" is given."<<endl;
 	}else{
 		cerr<<"Error: The typenumber given is not TRANSPARENCY="<<cTypeProperty::TRANSPARENCY<<
 			" for \"cTypeProperty\"; it is : "<<
@@ -528,7 +529,7 @@ int testCloneAndEqual( unsigned long &ulTestphase ){
 	if ( testTypePropertyCloneTransparencyD5->getNumberOfProperty()==cTypeProperty::TRANSPARENCY ){
 	
 		cout<<"The correct typenumber TRANSPARENCY="<<cTypeProperty::TRANSPARENCY<<
-			" for \"cTypeProperty\" clone is given. "<<endl;
+			" for \"cTypeProperty\" clone is given."<<endl;
 	}else{
 		cerr<<"Error: The typenumber given is not TRANSPARENCY="<<cTypeProperty::TRANSPARENCY<<
 			" for \"cTypeProperty\" clone; it is : "<<
@@ -773,7 +774,7 @@ int testPropertyNon( unsigned long &ulTestphase ){
 	if ( testTypeProperty.getNumberOfProperty() == uiPropertyNumber ){
 	
 		cout<<"The correct typenumber "<<szPropertyName<<"="<<uiPropertyNumber<<
-			" for \"cTypeProperty\" is given. "<<endl;
+			" for \"cTypeProperty\" is given."<<endl;
 	}else{
 		cerr<<"Error: The typenumber given is not "<<szPropertyName<<"="<<
 			uiPropertyNumber<<" for \"cTypeProperty\"; it is : "<<
@@ -783,7 +784,7 @@ int testPropertyNon( unsigned long &ulTestphase ){
 	//check the getNameOfProperty() methode
 	if ( testTypeProperty.getNameOfProperty() == "none" ){
 	
-		cout<<"The correct name \"none\" for \"cTypeProperty\" is given. "<<endl;
+		cout<<"The correct name \"none\" for \"cTypeProperty\" is given."<<endl;
 	}else{
 		cerr<<"Error: The given name is not \"none\" for \"cTypeProperty\"; it is : "<<
 			testTypeProperty.getNameOfProperty()<<endl;
@@ -796,7 +797,7 @@ int testPropertyNon( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 3 elements
 	if ( ! testTypeProperty.isCompatible( *domainInt ) ){
 	
-		cout<<"The type is correctly not compatible to a integer domain. "<<endl;
+		cout<<"The type is correctly not compatible to a integer domain."<<endl;
 	}else{
 		cerr<<"Error: The type is correctly compatible to a integer domain.."<<endl;
 		iReturn++;
@@ -811,7 +812,7 @@ int testPropertyNon( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 3 elements
 	if ( testTypeProperty.isCompatible( *vectorDomain ) ){
 	
-		cout<<"The type is correctly compatible to the vector domain with 0 elements. "<<endl;
+		cout<<"The type is correctly compatible to the vector domain with 0 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is not compatible to the vector domain with 0 elements."<<endl;
 		iReturn++;
@@ -826,7 +827,7 @@ int testPropertyNon( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 3 elements
 	if ( testTypeProperty.isCompatible( *vectorDomain1 ) ){
 	
-		cout<<"The type is correctly compatible to the vector domain with 1 elements. "<<endl;
+		cout<<"The type is correctly compatible to the vector domain with 1 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is not compatible to the vector domain with 1 elements."<<endl;
 		iReturn++;
@@ -843,7 +844,7 @@ int testPropertyNon( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 3 elements
 	if ( testTypeProperty.isCompatible( *vectorDomain ) ){
 	
-		cout<<"The type is correctly compatible to the vector domain with 2 elements. "<<endl;
+		cout<<"The type is correctly compatible to the vector domain with 2 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is not compatible to the vector domain with 2 elements."<<endl;
 		iReturn++;
@@ -862,7 +863,7 @@ int testPropertyNon( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 3 elements
 	if ( testTypeProperty.isCompatible( *vectorDomain ) ){
 	
-		cout<<"The type is correctly compatible to the vector domain with 3 elements. "<<endl;
+		cout<<"The type is correctly compatible to the vector domain with 3 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is not compatible to the vector domain with 3 elements."<<endl;
 		iReturn++;
@@ -883,7 +884,7 @@ int testPropertyNon( unsigned long &ulTestphase ){
 		
 	}else if ( standardDomain->getType() == "DomainVector" ){
 	
-		cout<<"The standarddomain is correctly an cDomainVector domain. "<<endl;
+		cout<<"The standarddomain is correctly an cDomainVector domain."<<endl;
 		
 		cDomainVector *standardDomainVector = (cDomainVector*)standardDomain;
 
@@ -892,7 +893,7 @@ int testPropertyNon( unsigned long &ulTestphase ){
 		if ( standardDomainVector->getNumberOfElements() == uiStandardDomainVectorElements ){
 		
 			cout<<"The standarddomainvector has correctly "<<
-				uiStandardDomainVectorElements<<" element. "<<endl;
+				uiStandardDomainVectorElements<<" element."<<endl;
 				
 			//test domain of first vector element
 			cDomain *domainElement1=standardDomainVector->getElementDomain( 1 );
@@ -903,14 +904,14 @@ int testPropertyNon( unsigned long &ulTestphase ){
 				
 			} else if ( domainElement1->getType()=="DomainNaturalNumberBit" ){
 			
-				cout<<"The first element of the standarddomain is correctly an cDomainIntegerBasis domain. "<<endl;
+				cout<<"The first element of the standarddomain is correctly an cDomainIntegerBasis domain."<<endl;
 				
 				cDomainIntegerBasis *domainNaturalNumberBit=(cDomainIntegerBasis*)domainElement1;
 				
 				if ( (domainNaturalNumberBit->getMinimum()==0) &&
 						(domainNaturalNumberBit->getMaximum()==65535) ){
 				
-					cout<<"The domain goes correctly from 0 to 65535. "<<endl;
+					cout<<"The domain goes correctly from 0 to 65535."<<endl;
 				}else{
 					cerr<<"Error: The domain goes correctly from 0 to 65535, but it goes from "<<
 						domainNaturalNumberBit->getMinimum()<<" to "<< 
@@ -944,7 +945,7 @@ int testPropertyNon( unsigned long &ulTestphase ){
 
 		if ( vecUnits[0]=="" ){
 		
-			cout<<"The unit of the first vector domain is correctly empty. "<<endl;
+			cout<<"The unit of the first vector domain is correctly empty."<<endl;
 		}else{
 			cerr<<"Error: The unit of the first vector domain is \""<<vecUnits[0]
 				<<"\", but should be empty."<<endl;
@@ -1047,7 +1048,7 @@ int comparePropertyTypeLists( const list<cTypeProperty> & liEvaluedPropertyTypes
 	if ( liEvaluedPropertyTypes.size() == liToGiveBackPropertyTypes.size() ){
 	
 		cout<<"Ther are correctly "<< liEvaluedPropertyTypes.size() <<
-			" propertytypes given back. "<<endl;
+			" propertytypes given back."<<endl;
 		
 		bool bPropertiesCorrect = true;
 		unsigned int uiPropertyPosition = 1;
@@ -1084,7 +1085,7 @@ int comparePropertyTypeLists( const list<cTypeProperty> & liEvaluedPropertyTypes
 			}
 		}
 		if ( bPropertiesCorrect ){
-			cout<<"All evalued propertytypes are correct. "<<endl;
+			cout<<"All evalued propertytypes are correct."<<endl;
 		}
 		
 	}else{
@@ -1119,7 +1120,7 @@ int testPropertyColorRGB( unsigned long &ulTestphase ){
 	if ( testTypeProperty.getNumberOfProperty() == uiPropertyNumber ){
 	
 		cout<<"The correct typenumber "<<szPropertyName<<"="<<uiPropertyNumber<<
-			" for \"cTypeProperty\" is given. "<<endl;
+			" for \"cTypeProperty\" is given."<<endl;
 	}else{
 		cerr<<"Error: The typenumber given is not "<<szPropertyName<<"="<<
 			uiPropertyNumber<<" for \"cTypeProperty\"; it is : "<<
@@ -1129,7 +1130,7 @@ int testPropertyColorRGB( unsigned long &ulTestphase ){
 	//check the getNameOfProperty() methode
 	if ( testTypeProperty.getNameOfProperty() == szPropertyName ){
 	
-		cout<<"The correct name \""<<szPropertyName<<"\" for the property is given. "<<endl;
+		cout<<"The correct name \""<<szPropertyName<<"\" for the property is given."<<endl;
 	}else{
 		cerr<<"Error: The given name is not \""<<szPropertyName<<"\" for the property; it is : "<<
 			testTypeProperty.getNameOfProperty()<<endl;
@@ -1142,7 +1143,7 @@ int testPropertyColorRGB( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 3 elements
 	if ( ! testTypeProperty.isCompatible( *domainInt ) ){
 	
-		cout<<"The type is correctly not compatible to a integer domain. "<<endl;
+		cout<<"The type is correctly not compatible to a integer domain."<<endl;
 	}else{
 		cerr<<"Error: The type is correctly compatible to a integer domain.."<<endl;
 		iReturn++;
@@ -1157,7 +1158,7 @@ int testPropertyColorRGB( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 0 elements
 	if ( ! testTypeProperty.isCompatible( *vectorDomain ) ){
 	
-		cout<<"The type is correctly not compatible to the vector domain with 0 elements. "<<endl;
+		cout<<"The type is correctly not compatible to the vector domain with 0 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is compatible to the vector domain with 0 elements."<<endl;
 		iReturn++;
@@ -1172,7 +1173,7 @@ int testPropertyColorRGB( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 1 elements
 	if ( ! testTypeProperty.isCompatible( *vectorDomain1 ) ){
 	
-		cout<<"The type is correctly not compatible to the vector domain with 1 elements. "<<endl;
+		cout<<"The type is correctly not compatible to the vector domain with 1 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is compatible to the vector domain with 1 elements."<<endl;
 		iReturn++;
@@ -1189,7 +1190,7 @@ int testPropertyColorRGB( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 2 elements
 	if ( ! testTypeProperty.isCompatible( *vectorDomain ) ){
 	
-		cout<<"The type is correctly not compatible to the vector domain with 2 elements. "<<endl;
+		cout<<"The type is correctly not compatible to the vector domain with 2 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is compatible to the vector domain with 2 elements."<<endl;
 		iReturn++;
@@ -1208,7 +1209,7 @@ int testPropertyColorRGB( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 3 elements
 	if ( testTypeProperty.isCompatible( *vectorDomain ) ){
 	
-		cout<<"The type is correctly compatible to the vector domain with 3 elements. "<<endl;
+		cout<<"The type is correctly compatible to the vector domain with 3 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is not compatible to the vector domain with 3 elements."<<endl;
 		iReturn++;
@@ -1229,7 +1230,7 @@ int testPropertyColorRGB( unsigned long &ulTestphase ){
 		
 	} else if ( standardDomain->getType()=="DomainVector" ){
 	
-		cout<<"The standarddomain is correctly an cDomainVector domain. "<<endl;
+		cout<<"The standarddomain is correctly an cDomainVector domain."<<endl;
 		
 		cDomainVector *standardDomainVector=(cDomainVector*)standardDomain;
 
@@ -1238,7 +1239,7 @@ int testPropertyColorRGB( unsigned long &ulTestphase ){
 		if ( standardDomainVector->getNumberOfElements() == uiStandardDomainVectorElements ){
 		
 			cout<<"The standarddomainvector has correctly "<<
-				uiStandardDomainVectorElements<<" element. "<<endl;
+				uiStandardDomainVectorElements<<" element."<<endl;
 				
 			//test domain of first vector element
 			cDomain *domainElement1=standardDomainVector->getElementDomain( 1 );
@@ -1249,7 +1250,7 @@ int testPropertyColorRGB( unsigned long &ulTestphase ){
 				
 			} else if ( domainElement1->getType()=="DomainNaturalNumberBit" ){
 			
-				cout<<"The first element of the standarddomain is correctly an cDomainIntegerBasis domain. "<<endl;
+				cout<<"The first element of the standarddomain is correctly an cDomainIntegerBasis domain."<<endl;
 				
 				cDomainIntegerBasis *domainNaturalNumberBit=(cDomainIntegerBasis*)domainElement1;
 				
@@ -1260,7 +1261,7 @@ int testPropertyColorRGB( unsigned long &ulTestphase ){
 						(domainNaturalNumberBit->getMaximum()==upperBound) ){
 				
 					cout<<"The domain goes correctly from "<<lowerBound<<
-						" to "<<upperBound<<". "<<endl;
+						" to "<<upperBound<<"."<<endl;
 				}else{
 					cerr<<"Error: The domain goes correctly from "<<lowerBound<<
 						" to "<<upperBound<<", but it goes from "<<
@@ -1283,7 +1284,7 @@ int testPropertyColorRGB( unsigned long &ulTestphase ){
 				
 			} else if ( domainElement2->getType()=="DomainNaturalNumberBit" ){
 			
-				cout<<"The secound element of the standarddomain is correctly an cDomainIntegerBasis domain. "<<endl;
+				cout<<"The secound element of the standarddomain is correctly an cDomainIntegerBasis domain."<<endl;
 				
 				cDomainIntegerBasis *domainNaturalNumberBit=(cDomainIntegerBasis*)domainElement2;
 				
@@ -1294,7 +1295,7 @@ int testPropertyColorRGB( unsigned long &ulTestphase ){
 						(domainNaturalNumberBit->getMaximum()==upperBound) ){
 				
 					cout<<"The domain goes correctly from "<<lowerBound<<
-						" to "<<upperBound<<". "<<endl;
+						" to "<<upperBound<<"."<<endl;
 				}else{
 					cerr<<"Error: The domain goes correctly from "<<lowerBound<<
 						" to "<<upperBound<<", but it goes from "<<
@@ -1317,7 +1318,7 @@ int testPropertyColorRGB( unsigned long &ulTestphase ){
 				
 			} else if ( domainElement3->getType()=="DomainNaturalNumberBit" ){
 			
-				cout<<"The third element of the standarddomain is correctly an cDomainIntegerBasis domain. "<<endl;
+				cout<<"The third element of the standarddomain is correctly an cDomainIntegerBasis domain."<<endl;
 				
 				cDomainIntegerBasis *domainNaturalNumberBit=(cDomainIntegerBasis*)domainElement3;
 				
@@ -1328,7 +1329,7 @@ int testPropertyColorRGB( unsigned long &ulTestphase ){
 						(domainNaturalNumberBit->getMaximum()==upperBound) ){
 				
 					cout<<"The domain goes correctly from "<<lowerBound<<
-						" to "<<upperBound<<". "<<endl;
+						" to "<<upperBound<<"."<<endl;
 				}else{
 					cerr<<"Error: The domain goes correctly from "<<lowerBound<<
 						" to "<<upperBound<<", but it goes from "<<
@@ -1364,7 +1365,7 @@ int testPropertyColorRGB( unsigned long &ulTestphase ){
 
 		if ( vecUnits[0]=="red" ){
 		
-			cout<<"The unit of the first vector domain is correctly \"red\". "<<endl;
+			cout<<"The unit of the first vector domain is correctly \"red\"."<<endl;
 		}else{
 			cerr<<"Error: The unit of the first vector domain is \""<<vecUnits[0]
 				<<"\", but should be \"red\"."<<endl;
@@ -1373,7 +1374,7 @@ int testPropertyColorRGB( unsigned long &ulTestphase ){
 		
 		if ( vecUnits[1]=="green" ){
 		
-			cout<<"The unit of the secound vector domain is correctly \"green\". "<<endl;
+			cout<<"The unit of the secound vector domain is correctly \"green\"."<<endl;
 		}else{
 			cerr<<"Error: The unit of the secound vector domain is \""<<vecUnits[0]
 				<<"\", but should be \"green\"."<<endl;
@@ -1382,7 +1383,7 @@ int testPropertyColorRGB( unsigned long &ulTestphase ){
 		
 		if ( vecUnits[2]=="blue" ){
 		
-			cout<<"The unit of the third vector domain is correctly \"blue\". "<<endl;
+			cout<<"The unit of the third vector domain is correctly \"blue\"."<<endl;
 		}else{
 			cerr<<"Error: The unit of the third vector domain is \""<<vecUnits[0]
 				<<"\", but should be \"blue\"."<<endl;
@@ -1492,7 +1493,7 @@ int testPropertyColorSW( unsigned long &ulTestphase ){
 	if ( testTypeProperty.getNumberOfProperty() == uiPropertyNumber ){
 	
 		cout<<"The correct typenumber "<<szPropertyName<<"="<<uiPropertyNumber<<
-			" for \"cTypeProperty\" is given. "<<endl;
+			" for \"cTypeProperty\" is given."<<endl;
 	}else{
 		cerr<<"Error: The typenumber given is not "<<szPropertyName<<"="<<
 			uiPropertyNumber<<" for \"cTypeProperty\"; it is : "<<
@@ -1502,7 +1503,7 @@ int testPropertyColorSW( unsigned long &ulTestphase ){
 	//check the getNameOfProperty() methode
 	if ( testTypeProperty.getNameOfProperty() == szPropertyName ){
 	
-		cout<<"The correct name \""<<szPropertyName<<"\" for the property is given. "<<endl;
+		cout<<"The correct name \""<<szPropertyName<<"\" for the property is given."<<endl;
 	}else{
 		cerr<<"Error: The given name is not \""<<szPropertyName<<"\" for the property; it is : "<<
 			testTypeProperty.getNameOfProperty()<<endl;
@@ -1515,7 +1516,7 @@ int testPropertyColorSW( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 3 elements
 	if ( ! testTypeProperty.isCompatible( *domainInt ) ){
 	
-		cout<<"The type is correctly not compatible to a integer domain. "<<endl;
+		cout<<"The type is correctly not compatible to a integer domain."<<endl;
 	}else{
 		cerr<<"Error: The type is correctly compatible to a integer domain.."<<endl;
 		iReturn++;
@@ -1530,7 +1531,7 @@ int testPropertyColorSW( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 0 elements
 	if ( ! testTypeProperty.isCompatible( *vectorDomain ) ){
 	
-		cout<<"The type is correctly not compatible to the vector domain with 0 elements. "<<endl;
+		cout<<"The type is correctly not compatible to the vector domain with 0 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is compatible to the vector domain with 0 elements."<<endl;
 		iReturn++;
@@ -1545,7 +1546,7 @@ int testPropertyColorSW( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 1 elements
 	if ( testTypeProperty.isCompatible( *vectorDomain1 ) ){
 	
-		cout<<"The type is correctly compatible to the vector domain with 1 elements. "<<endl;
+		cout<<"The type is correctly compatible to the vector domain with 1 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is not compatible to the vector domain with 1 elements."<<endl;
 		iReturn++;
@@ -1562,7 +1563,7 @@ int testPropertyColorSW( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 2 elements
 	if ( ! testTypeProperty.isCompatible( *vectorDomain ) ){
 	
-		cout<<"The type is correctly not compatible to the vector domain with 2 elements. "<<endl;
+		cout<<"The type is correctly not compatible to the vector domain with 2 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is compatible to the vector domain with 2 elements."<<endl;
 		iReturn++;
@@ -1581,7 +1582,7 @@ int testPropertyColorSW( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 3 elements
 	if ( ! testTypeProperty.isCompatible( *vectorDomain ) ){
 	
-		cout<<"The type is correctly not compatible to the vector domain with 3 elements. "<<endl;
+		cout<<"The type is correctly not compatible to the vector domain with 3 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is compatible to the vector domain with 3 elements."<<endl;
 		iReturn++;
@@ -1602,7 +1603,7 @@ int testPropertyColorSW( unsigned long &ulTestphase ){
 		
 	} else if ( standardDomain->getType()=="DomainVector" ){
 	
-		cout<<"The standarddomain is correctly an cDomainVector domain. "<<endl;
+		cout<<"The standarddomain is correctly an cDomainVector domain."<<endl;
 		
 		cDomainVector *standardDomainVector=(cDomainVector*)standardDomain;
 
@@ -1611,7 +1612,7 @@ int testPropertyColorSW( unsigned long &ulTestphase ){
 		if ( standardDomainVector->getNumberOfElements() == uiStandardDomainVectorElements ){
 		
 			cout<<"The standarddomainvector has correctly "<<
-				uiStandardDomainVectorElements<<" element. "<<endl;
+				uiStandardDomainVectorElements<<" element."<<endl;
 				
 			//test domain of first vector element
 			cDomain *domainElement1=standardDomainVector->getElementDomain( 1 );
@@ -1622,7 +1623,7 @@ int testPropertyColorSW( unsigned long &ulTestphase ){
 				
 			} else if ( domainElement1->getType()=="DomainNaturalNumberBit" ){
 			
-				cout<<"The first element of the standarddomain is correctly an cDomainIntegerBasis domain. "<<endl;
+				cout<<"The first element of the standarddomain is correctly an cDomainIntegerBasis domain."<<endl;
 				
 				cDomainIntegerBasis *domainNaturalNumberBit=(cDomainIntegerBasis*)domainElement1;
 				
@@ -1633,7 +1634,7 @@ int testPropertyColorSW( unsigned long &ulTestphase ){
 						(domainNaturalNumberBit->getMaximum()==upperBound) ){
 				
 					cout<<"The domain goes correctly from "<<lowerBound<<
-						" to "<<upperBound<<". "<<endl;
+						" to "<<upperBound<<"."<<endl;
 				}else{
 					cerr<<"Error: The domain goes correctly from "<<lowerBound<<
 						" to "<<upperBound<<", but it goes from "<<
@@ -1670,7 +1671,7 @@ int testPropertyColorSW( unsigned long &ulTestphase ){
 
 		if ( vecUnits[0]=="white" ){
 		
-			cout<<"The unit of the first vector domain is correctly \"white\". "<<endl;
+			cout<<"The unit of the first vector domain is correctly \"white\"."<<endl;
 		}else{
 			cerr<<"Error: The unit of the first vector domain is \""<<vecUnits[0]
 				<<"\", but should be \"white\"."<<endl;
@@ -1778,7 +1779,7 @@ int testPropertyLayer( unsigned long &ulTestphase ){
 	if ( testTypeProperty.getNumberOfProperty() == uiPropertyNumber ){
 	
 		cout<<"The correct typenumber "<<szPropertyName<<"="<<uiPropertyNumber<<
-			" for \"cTypeProperty\" is given. "<<endl;
+			" for \"cTypeProperty\" is given."<<endl;
 	}else{
 		cerr<<"Error: The typenumber given is not "<<szPropertyName<<"="<<
 			uiPropertyNumber<<" for \"cTypeProperty\"; it is : "<<
@@ -1788,7 +1789,7 @@ int testPropertyLayer( unsigned long &ulTestphase ){
 	//check the getNameOfProperty() methode
 	if ( testTypeProperty.getNameOfProperty() == szPropertyName ){
 	
-		cout<<"The correct name \""<<szPropertyName<<"\" for the property is given. "<<endl;
+		cout<<"The correct name \""<<szPropertyName<<"\" for the property is given."<<endl;
 	}else{
 		cerr<<"Error: The given name is not \""<<szPropertyName<<"\" for the property; it is : "<<
 			testTypeProperty.getNameOfProperty()<<endl;
@@ -1801,7 +1802,7 @@ int testPropertyLayer( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 3 elements
 	if ( ! testTypeProperty.isCompatible( *domainInt ) ){
 	
-		cout<<"The type is correctly not compatible to a integer domain. "<<endl;
+		cout<<"The type is correctly not compatible to a integer domain."<<endl;
 	}else{
 		cerr<<"Error: The type is correctly compatible to a integer domain.."<<endl;
 		iReturn++;
@@ -1816,7 +1817,7 @@ int testPropertyLayer( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 0 elements
 	if ( ! testTypeProperty.isCompatible( *vectorDomain ) ){
 	
-		cout<<"The type is correctly not compatible to the vector domain with 0 elements. "<<endl;
+		cout<<"The type is correctly not compatible to the vector domain with 0 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is compatible to the vector domain with 0 elements."<<endl;
 		iReturn++;
@@ -1831,7 +1832,7 @@ int testPropertyLayer( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 1 elements
 	if ( testTypeProperty.isCompatible( *vectorDomain1 ) ){
 	
-		cout<<"The type is correctly compatible to the vector domain with 1 elements. "<<endl;
+		cout<<"The type is correctly compatible to the vector domain with 1 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is not compatible to the vector domain with 1 elements."<<endl;
 		iReturn++;
@@ -1848,7 +1849,7 @@ int testPropertyLayer( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 2 elements
 	if ( ! testTypeProperty.isCompatible( *vectorDomain ) ){
 	
-		cout<<"The type is correctly not compatible to the vector domain with 2 elements. "<<endl;
+		cout<<"The type is correctly not compatible to the vector domain with 2 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is compatible to the vector domain with 2 elements."<<endl;
 		iReturn++;
@@ -1867,7 +1868,7 @@ int testPropertyLayer( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 3 elements
 	if ( ! testTypeProperty.isCompatible( *vectorDomain ) ){
 	
-		cout<<"The type is correctly not compatible to the vector domain with 3 elements. "<<endl;
+		cout<<"The type is correctly not compatible to the vector domain with 3 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is compatible to the vector domain with 3 elements."<<endl;
 		iReturn++;
@@ -1888,7 +1889,7 @@ int testPropertyLayer( unsigned long &ulTestphase ){
 		
 	} else if ( standardDomain->getType()=="DomainVector" ){
 	
-		cout<<"The standarddomain is correctly an cDomainVector domain. "<<endl;
+		cout<<"The standarddomain is correctly an cDomainVector domain."<<endl;
 		
 		cDomainVector *standardDomainVector=(cDomainVector*)standardDomain;
 
@@ -1897,7 +1898,7 @@ int testPropertyLayer( unsigned long &ulTestphase ){
 		if ( standardDomainVector->getNumberOfElements() == uiStandardDomainVectorElements ){
 		
 			cout<<"The standarddomainvector has correctly "<<
-				uiStandardDomainVectorElements<<" element. "<<endl;
+				uiStandardDomainVectorElements<<" element."<<endl;
 				
 			//test domain of first vector element
 			cDomain *domainElement1=standardDomainVector->getElementDomain( 1 );
@@ -1908,7 +1909,7 @@ int testPropertyLayer( unsigned long &ulTestphase ){
 				
 			} else if ( domainElement1->getType()=="DomainNaturalNumberBit" ){
 			
-				cout<<"The first element of the standarddomain is correctly an cDomainIntegerBasis domain. "<<endl;
+				cout<<"The first element of the standarddomain is correctly an cDomainIntegerBasis domain."<<endl;
 				
 				cDomainIntegerBasis *domainNaturalNumberBit=(cDomainIntegerBasis*)domainElement1;
 				
@@ -1919,7 +1920,7 @@ int testPropertyLayer( unsigned long &ulTestphase ){
 						(domainNaturalNumberBit->getMaximum()==upperBound) ){
 				
 					cout<<"The domain goes correctly from "<<lowerBound<<
-						" to "<<upperBound<<". "<<endl;
+						" to "<<upperBound<<"."<<endl;
 				}else{
 					cerr<<"Error: The domain goes correctly from "<<lowerBound<<
 						" to "<<upperBound<<", but it goes from "<<
@@ -1955,7 +1956,7 @@ int testPropertyLayer( unsigned long &ulTestphase ){
 
 		if ( vecUnits[0]=="layer" ){
 		
-			cout<<"The unit of the first vector domain is correctly \"layer\". "<<endl;
+			cout<<"The unit of the first vector domain is correctly \"layer\"."<<endl;
 		}else{
 			cerr<<"Error: The unit of the first vector domain is \""<<vecUnits[0]
 				<<"\", but should be \"layer\"."<<endl;
@@ -2062,7 +2063,7 @@ int testPropertyTransparency( unsigned long &ulTestphase ){
 	if ( testTypeProperty.getNumberOfProperty() == uiPropertyNumber ){
 	
 		cout<<"The correct typenumber "<<szPropertyName<<"="<<uiPropertyNumber<<
-			" for \"cTypeProperty\" is given. "<<endl;
+			" for \"cTypeProperty\" is given."<<endl;
 	}else{
 		cerr<<"Error: The typenumber given is not "<<szPropertyName<<"="<<
 			uiPropertyNumber<<" for \"cTypeProperty\"; it is : "<<
@@ -2072,7 +2073,7 @@ int testPropertyTransparency( unsigned long &ulTestphase ){
 	//check the getNameOfProperty() methode
 	if ( testTypeProperty.getNameOfProperty() == szPropertyName ){
 	
-		cout<<"The correct name \""<<szPropertyName<<"\" for the property is given. "<<endl;
+		cout<<"The correct name \""<<szPropertyName<<"\" for the property is given."<<endl;
 	}else{
 		cerr<<"Error: The given name is not \""<<szPropertyName<<"\" for the property; it is : "<<
 			testTypeProperty.getNameOfProperty()<<endl;
@@ -2085,7 +2086,7 @@ int testPropertyTransparency( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 3 elements
 	if ( ! testTypeProperty.isCompatible( *domainInt ) ){
 	
-		cout<<"The type is correctly not compatible to a integer domain. "<<endl;
+		cout<<"The type is correctly not compatible to a integer domain."<<endl;
 	}else{
 		cerr<<"Error: The type is correctly compatible to a integer domain.."<<endl;
 		iReturn++;
@@ -2100,7 +2101,7 @@ int testPropertyTransparency( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 0 elements
 	if ( ! testTypeProperty.isCompatible( *vectorDomain ) ){
 	
-		cout<<"The type is correctly not compatible to the vector domain with 0 elements. "<<endl;
+		cout<<"The type is correctly not compatible to the vector domain with 0 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is compatible to the vector domain with 0 elements."<<endl;
 		iReturn++;
@@ -2115,7 +2116,7 @@ int testPropertyTransparency( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 1 elements
 	if ( testTypeProperty.isCompatible( *vectorDomain1 ) ){
 	
-		cout<<"The type is correctly compatible to the vector domain with 1 elements. "<<endl;
+		cout<<"The type is correctly compatible to the vector domain with 1 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is not compatible to the vector domain with 1 elements."<<endl;
 		iReturn++;
@@ -2132,7 +2133,7 @@ int testPropertyTransparency( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 2 elements
 	if ( ! testTypeProperty.isCompatible( *vectorDomain ) ){
 	
-		cout<<"The type is correctly not compatible to the vector domain with 2 elements. "<<endl;
+		cout<<"The type is correctly not compatible to the vector domain with 2 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is compatible to the vector domain with 2 elements."<<endl;
 		iReturn++;
@@ -2151,7 +2152,7 @@ int testPropertyTransparency( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 3 elements
 	if ( ! testTypeProperty.isCompatible( *vectorDomain ) ){
 	
-		cout<<"The type is correctly not compatible to the vector domain with 3 elements. "<<endl;
+		cout<<"The type is correctly not compatible to the vector domain with 3 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is compatible to the vector domain with 3 elements."<<endl;
 		iReturn++;
@@ -2172,7 +2173,7 @@ int testPropertyTransparency( unsigned long &ulTestphase ){
 		
 	} else if ( standardDomain->getType()=="DomainVector" ){
 	
-		cout<<"The standarddomain is correctly an cDomainVector domain. "<<endl;
+		cout<<"The standarddomain is correctly an cDomainVector domain."<<endl;
 		
 		cDomainVector *standardDomainVector=(cDomainVector*)standardDomain;
 
@@ -2181,7 +2182,7 @@ int testPropertyTransparency( unsigned long &ulTestphase ){
 		if ( standardDomainVector->getNumberOfElements() == uiStandardDomainVectorElements ){
 		
 			cout<<"The standarddomainvector has correctly "<<
-				uiStandardDomainVectorElements<<" element. "<<endl;
+				uiStandardDomainVectorElements<<" element."<<endl;
 				
 			//test domain of first vector element
 			cDomain *domainElement1=standardDomainVector->getElementDomain( 1 );
@@ -2192,7 +2193,7 @@ int testPropertyTransparency( unsigned long &ulTestphase ){
 				
 			} else if ( domainElement1->getType()=="DomainNaturalNumberBit" ){
 			
-				cout<<"The first element of the standarddomain is correctly an cDomainIntegerBasis domain. "<<endl;
+				cout<<"The first element of the standarddomain is correctly an cDomainIntegerBasis domain."<<endl;
 				
 				cDomainIntegerBasis *domainNaturalNumberBit=(cDomainIntegerBasis*)domainElement1;
 				
@@ -2203,7 +2204,7 @@ int testPropertyTransparency( unsigned long &ulTestphase ){
 						(domainNaturalNumberBit->getMaximum()==upperBound) ){
 				
 					cout<<"The domain goes correctly from "<<lowerBound<<
-						" to "<<upperBound<<". "<<endl;
+						" to "<<upperBound<<"."<<endl;
 				}else{
 					cerr<<"Error: The domain goes correctly from "<<lowerBound<<
 						" to "<<upperBound<<", but it goes from "<<
@@ -2239,7 +2240,7 @@ int testPropertyTransparency( unsigned long &ulTestphase ){
 
 		if ( vecUnits[0]=="fraction" ){
 		
-			cout<<"The unit of the first vector domain is correctly \"fraction\". "<<endl;
+			cout<<"The unit of the first vector domain is correctly \"fraction\"."<<endl;
 		}else{
 			cerr<<"Error: The unit of the first vector domain is \""<<vecUnits[0]
 				<<"\", but should be \"fraction\"."<<endl;
@@ -2345,7 +2346,7 @@ int testPropertySound( unsigned long &ulTestphase ){
 	if ( testTypeProperty.getNumberOfProperty() == uiPropertyNumber ){
 	
 		cout<<"The correct typenumber "<<szPropertyName<<"="<<uiPropertyNumber<<
-			" for \"cTypeProperty\" is given. "<<endl;
+			" for \"cTypeProperty\" is given."<<endl;
 	}else{
 		cerr<<"Error: The typenumber given is not "<<szPropertyName<<"="<<
 			uiPropertyNumber<<" for \"cTypeProperty\"; it is : "<<
@@ -2355,7 +2356,7 @@ int testPropertySound( unsigned long &ulTestphase ){
 	//check the getNameOfProperty() methode
 	if ( testTypeProperty.getNameOfProperty() == szPropertyName ){
 	
-		cout<<"The correct name \""<<szPropertyName<<"\" for the property is given. "<<endl;
+		cout<<"The correct name \""<<szPropertyName<<"\" for the property is given."<<endl;
 	}else{
 		cerr<<"Error: The given name is not \""<<szPropertyName<<"\" for the property; it is : "<<
 			testTypeProperty.getNameOfProperty()<<endl;
@@ -2368,7 +2369,7 @@ int testPropertySound( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 3 elements
 	if ( ! testTypeProperty.isCompatible( *domainInt ) ){
 	
-		cout<<"The type is correctly not compatible to a integer domain. "<<endl;
+		cout<<"The type is correctly not compatible to a integer domain."<<endl;
 	}else{
 		cerr<<"Error: The type is correctly compatible to a integer domain.."<<endl;
 		iReturn++;
@@ -2383,7 +2384,7 @@ int testPropertySound( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 0 elements
 	if ( ! testTypeProperty.isCompatible( *vectorDomain ) ){
 	
-		cout<<"The type is correctly not compatible to the vector domain with 0 elements. "<<endl;
+		cout<<"The type is correctly not compatible to the vector domain with 0 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is compatible to the vector domain with 0 elements."<<endl;
 		iReturn++;
@@ -2398,7 +2399,7 @@ int testPropertySound( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 1 elements
 	if ( ! testTypeProperty.isCompatible( *vectorDomain1 ) ){
 	
-		cout<<"The type is correctly not compatible to the vector domain with 1 elements. "<<endl;
+		cout<<"The type is correctly not compatible to the vector domain with 1 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is compatible to the vector domain with 1 elements."<<endl;
 		iReturn++;
@@ -2415,7 +2416,7 @@ int testPropertySound( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 2 elements
 	if ( ! testTypeProperty.isCompatible( *vectorDomain ) ){
 	
-		cout<<"The type is correctly not compatible to the vector domain with 2 elements. "<<endl;
+		cout<<"The type is correctly not compatible to the vector domain with 2 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is compatible to the vector domain with 2 elements."<<endl;
 		iReturn++;
@@ -2434,7 +2435,7 @@ int testPropertySound( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 3 elements
 	if ( ! testTypeProperty.isCompatible( *vectorDomain ) ){
 	
-		cout<<"The type is correctly not compatible to the vector domain with 3 elements. "<<endl;
+		cout<<"The type is correctly not compatible to the vector domain with 3 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is compatible to the vector domain with 3 elements."<<endl;
 		iReturn++;
@@ -2460,7 +2461,7 @@ int testPropertySound( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 4 elements
 	if ( testTypeProperty.isCompatible( *vectorDomain ) ){
 	
-		cout<<"The type is correctly compatible to the vector domain with 4 elements. "<<endl;
+		cout<<"The type is correctly compatible to the vector domain with 4 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is not compatible to the vector domain with 4 elements."<<endl;
 		iReturn++;
@@ -2478,7 +2479,7 @@ int testPropertySound( unsigned long &ulTestphase ){
 		
 	} else if ( standardDomain->getType()=="DomainVector" ){
 	
-		cout<<"The standarddomain is correctly an cDomainVector domain. "<<endl;
+		cout<<"The standarddomain is correctly an cDomainVector domain."<<endl;
 		
 		cDomainVector *standardDomainVector=(cDomainVector*)standardDomain;
 
@@ -2487,7 +2488,7 @@ int testPropertySound( unsigned long &ulTestphase ){
 		if ( standardDomainVector->getNumberOfElements() == uiStandardDomainVectorElements ){
 		
 			cout<<"The standarddomainvector has correctly "<<
-				uiStandardDomainVectorElements<<" element. "<<endl;
+				uiStandardDomainVectorElements<<" element."<<endl;
 				
 			//test domain of first vector element
 			cDomain *domainElement1=standardDomainVector->getElementDomain( 1 );
@@ -2498,7 +2499,7 @@ int testPropertySound( unsigned long &ulTestphase ){
 				
 			} else if ( domainElement1->getType()=="DomainNaturalNumberBit" ){
 			
-				cout<<"The first element of the standarddomain is correctly an cDomainIntegerBasis domain. "<<endl;
+				cout<<"The first element of the standarddomain is correctly an cDomainIntegerBasis domain."<<endl;
 				
 				cDomainIntegerBasis *domainNaturalNumberBit=(cDomainIntegerBasis*)domainElement1;
 				
@@ -2509,7 +2510,7 @@ int testPropertySound( unsigned long &ulTestphase ){
 						(domainNaturalNumberBit->getMaximum()==upperBound) ){
 				
 					cout<<"The domain goes correctly from "<<lowerBound<<
-						" to "<<upperBound<<". "<<endl;
+						" to "<<upperBound<<"."<<endl;
 				}else{
 					cerr<<"Error: The domain goes correctly from "<<lowerBound<<
 						" to "<<upperBound<<", but it goes from "<<
@@ -2532,7 +2533,7 @@ int testPropertySound( unsigned long &ulTestphase ){
 				
 			} else if ( domainElement2->getType()=="DomainNaturalNumberBit" ){
 			
-				cout<<"The secound element of the standarddomain is correctly an cDomainIntegerBasis domain. "<<endl;
+				cout<<"The secound element of the standarddomain is correctly an cDomainIntegerBasis domain."<<endl;
 				
 				cDomainIntegerBasis *domainNaturalNumberBit=(cDomainIntegerBasis*)domainElement2;
 				
@@ -2543,7 +2544,7 @@ int testPropertySound( unsigned long &ulTestphase ){
 						(domainNaturalNumberBit->getMaximum()==upperBound) ){
 				
 					cout<<"The domain goes correctly from "<<lowerBound<<
-						" to "<<upperBound<<". "<<endl;
+						" to "<<upperBound<<"."<<endl;
 				}else{
 					cerr<<"Error: The domain goes correctly from "<<lowerBound<<
 						" to "<<upperBound<<", but it goes from "<<
@@ -2566,7 +2567,7 @@ int testPropertySound( unsigned long &ulTestphase ){
 				
 			} else if ( domainElement3->getType()=="DomainNaturalNumberBit" ){
 			
-				cout<<"The third element of the standarddomain is correctly an cDomainIntegerBasis domain. "<<endl;
+				cout<<"The third element of the standarddomain is correctly an cDomainIntegerBasis domain."<<endl;
 				
 				cDomainIntegerBasis *domainNaturalNumberBit=(cDomainIntegerBasis*)domainElement3;
 				
@@ -2577,7 +2578,7 @@ int testPropertySound( unsigned long &ulTestphase ){
 						(domainNaturalNumberBit->getMaximum()==upperBound) ){
 				
 					cout<<"The domain goes correctly from "<<lowerBound<<
-						" to "<<upperBound<<". "<<endl;
+						" to "<<upperBound<<"."<<endl;
 				}else{
 					cerr<<"Error: The domain goes correctly from "<<lowerBound<<
 						" to "<<upperBound<<", but it goes from "<<
@@ -2600,7 +2601,7 @@ int testPropertySound( unsigned long &ulTestphase ){
 				
 			} else if ( domainElement4->getType()=="DomainNaturalNumberBit" ){
 			
-				cout<<"The fourth element of the standarddomain is correctly an cDomainIntegerBasis domain. "<<endl;
+				cout<<"The fourth element of the standarddomain is correctly an cDomainIntegerBasis domain."<<endl;
 				
 				cDomainIntegerBasis *domainNaturalNumberBit=(cDomainIntegerBasis*)domainElement4;
 				
@@ -2611,7 +2612,7 @@ int testPropertySound( unsigned long &ulTestphase ){
 						(domainNaturalNumberBit->getMaximum()==upperBound) ){
 				
 					cout<<"The domain goes correctly from "<<lowerBound<<
-						" to "<<upperBound<<". "<<endl;
+						" to "<<upperBound<<"."<<endl;
 				}else{
 					cerr<<"Error: The domain goes correctly from "<<lowerBound<<
 						" to "<<upperBound<<", but it goes from "<<
@@ -2647,7 +2648,7 @@ int testPropertySound( unsigned long &ulTestphase ){
 
 		if ( vecUnits[0]=="1/s" ){
 		
-			cout<<"The unit of the first vector domain is correctly \"1/s\". "<<endl;
+			cout<<"The unit of the first vector domain is correctly \"1/s\"."<<endl;
 		}else{
 			cerr<<"Error: The unit of the first vector domain is \""<<vecUnits[0]
 				<<"\", but should be \"1/s\"."<<endl;
@@ -2655,7 +2656,7 @@ int testPropertySound( unsigned long &ulTestphase ){
 		}
 		if ( vecUnits[1]=="Pa" ){
 		
-			cout<<"The unit of the secound vector domain is correctly \"Pa\". "<<endl;
+			cout<<"The unit of the secound vector domain is correctly \"Pa\"."<<endl;
 		}else{
 			cerr<<"Error: The unit of the secound vector domain is \""<<vecUnits[0]
 				<<"\", but should be \"Pa\"."<<endl;
@@ -2663,7 +2664,7 @@ int testPropertySound( unsigned long &ulTestphase ){
 		}
 		if ( vecUnits[2]=="radian" ){
 		
-			cout<<"The unit of the 3'th vector domain is correctly \"radian\". "<<endl;
+			cout<<"The unit of the 3'th vector domain is correctly \"radian\"."<<endl;
 		}else{
 			cerr<<"Error: The unit of the 3'th vector domain is \""<<vecUnits[0]
 				<<"\", but should be \"radian\"."<<endl;
@@ -2671,7 +2672,7 @@ int testPropertySound( unsigned long &ulTestphase ){
 		}
 		if ( vecUnits[3]=="s" ){
 		
-			cout<<"The unit of the 4'th vector domain is correctly \"s\". "<<endl;
+			cout<<"The unit of the 4'th vector domain is correctly \"s\"."<<endl;
 		}else{
 			cerr<<"Error: The unit of the 4'th vector domain is \""<<vecUnits[0]
 				<<"\", but should be \"s\"."<<endl;
@@ -2775,7 +2776,7 @@ int testPropertySoundPolarizedStandard2D( unsigned long &ulTestphase ){
 	if ( testTypeProperty.getNumberOfProperty() == uiPropertyNumber ){
 	
 		cout<<"The correct typenumber "<<szPropertyName<<"="<<uiPropertyNumber<<
-			" for \"cTypeProperty\" is given. "<<endl;
+			" for \"cTypeProperty\" is given."<<endl;
 	}else{
 		cerr<<"Error: The typenumber given is not "<<szPropertyName<<"="<<
 			uiPropertyNumber<<" for \"cTypeProperty\"; it is : "<<
@@ -2785,7 +2786,7 @@ int testPropertySoundPolarizedStandard2D( unsigned long &ulTestphase ){
 	//check the getNameOfProperty() methode
 	if ( testTypeProperty.getNameOfProperty() == szPropertyName ){
 	
-		cout<<"The correct name \""<<szPropertyName<<"\" for the property is given. "<<endl;
+		cout<<"The correct name \""<<szPropertyName<<"\" for the property is given."<<endl;
 	}else{
 		cerr<<"Error: The given name is not \""<<szPropertyName<<"\" for the property; it is : "<<
 			testTypeProperty.getNameOfProperty()<<endl;
@@ -2798,7 +2799,7 @@ int testPropertySoundPolarizedStandard2D( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 3 elements
 	if ( ! testTypeProperty.isCompatible( *domainInt ) ){
 	
-		cout<<"The type is correctly not compatible to a integer domain. "<<endl;
+		cout<<"The type is correctly not compatible to a integer domain."<<endl;
 	}else{
 		cerr<<"Error: The type is correctly compatible to a integer domain.."<<endl;
 		iReturn++;
@@ -2813,7 +2814,7 @@ int testPropertySoundPolarizedStandard2D( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 0 elements
 	if ( ! testTypeProperty.isCompatible( *vectorDomain ) ){
 	
-		cout<<"The type is correctly not compatible to the vector domain with 0 elements. "<<endl;
+		cout<<"The type is correctly not compatible to the vector domain with 0 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is compatible to the vector domain with 0 elements."<<endl;
 		iReturn++;
@@ -2828,7 +2829,7 @@ int testPropertySoundPolarizedStandard2D( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 1 elements
 	if ( ! testTypeProperty.isCompatible( *vectorDomain1 ) ){
 	
-		cout<<"The type is correctly not compatible to the vector domain with 1 elements. "<<endl;
+		cout<<"The type is correctly not compatible to the vector domain with 1 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is compatible to the vector domain with 1 elements."<<endl;
 		iReturn++;
@@ -2845,7 +2846,7 @@ int testPropertySoundPolarizedStandard2D( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 2 elements
 	if ( ! testTypeProperty.isCompatible( *vectorDomain ) ){
 	
-		cout<<"The type is correctly not compatible to the vector domain with 2 elements. "<<endl;
+		cout<<"The type is correctly not compatible to the vector domain with 2 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is compatible to the vector domain with 2 elements."<<endl;
 		iReturn++;
@@ -2864,7 +2865,7 @@ int testPropertySoundPolarizedStandard2D( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 3 elements
 	if ( ! testTypeProperty.isCompatible( *vectorDomain ) ){
 	
-		cout<<"The type is correctly not compatible to the vector domain with 3 elements. "<<endl;
+		cout<<"The type is correctly not compatible to the vector domain with 3 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is compatible to the vector domain with 3 elements."<<endl;
 		iReturn++;
@@ -2890,7 +2891,7 @@ int testPropertySoundPolarizedStandard2D( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 4 elements
 	if ( ! testTypeProperty.isCompatible( *vectorDomain ) ){
 	
-		cout<<"The type is not correctly compatible to the vector domain with 4 elements. "<<endl;
+		cout<<"The type is not correctly compatible to the vector domain with 4 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is compatible to the vector domain with 4 elements."<<endl;
 		iReturn++;
@@ -2914,7 +2915,7 @@ int testPropertySoundPolarizedStandard2D( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 5 elements
 	if ( testTypeProperty.isCompatible( *vectorDomain ) ){
 	
-		cout<<"The type is correctly compatible to the vector domain with 5 elements. "<<endl;
+		cout<<"The type is correctly compatible to the vector domain with 5 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is not compatible to the vector domain with 5 elements."<<endl;
 		iReturn++;
@@ -2933,14 +2934,14 @@ int testPropertySoundPolarizedStandard2D( unsigned long &ulTestphase ){
 		
 	} else if ( standardDomain->getType()=="DomainVector" ){
 	
-		cout<<"The standarddomain is correctly an cDomainVector domain. "<<endl;
+		cout<<"The standarddomain is correctly an cDomainVector domain."<<endl;
 		
 		cDomainVector *standardDomainVector=(cDomainVector*)standardDomain;
 		
 		if ( standardDomainVector->getNumberOfElements() == uiStandardDomainVectorElements ){
 		
 			cout<<"The standarddomainvector has correctly "<<
-				uiStandardDomainVectorElements<<" element. "<<endl;
+				uiStandardDomainVectorElements<<" element."<<endl;
 				
 			//test domain of first vector element
 			cDomain *domainElement1=standardDomainVector->getElementDomain( 1 );
@@ -2951,7 +2952,7 @@ int testPropertySoundPolarizedStandard2D( unsigned long &ulTestphase ){
 				
 			} else if ( domainElement1->getType()=="DomainNaturalNumberBit" ){
 			
-				cout<<"The first element of the standarddomain is correctly an cDomainIntegerBasis domain. "<<endl;
+				cout<<"The first element of the standarddomain is correctly an cDomainIntegerBasis domain."<<endl;
 				
 				cDomainIntegerBasis *domainNaturalNumberBit=(cDomainIntegerBasis*)domainElement1;
 				
@@ -2962,7 +2963,7 @@ int testPropertySoundPolarizedStandard2D( unsigned long &ulTestphase ){
 						(domainNaturalNumberBit->getMaximum()==upperBound) ){
 				
 					cout<<"The domain goes correctly from "<<lowerBound<<
-						" to "<<upperBound<<". "<<endl;
+						" to "<<upperBound<<"."<<endl;
 				}else{
 					cerr<<"Error: The domain goes correctly from "<<lowerBound<<
 						" to "<<upperBound<<", but it goes from "<<
@@ -2985,7 +2986,7 @@ int testPropertySoundPolarizedStandard2D( unsigned long &ulTestphase ){
 				
 			} else if ( domainElement2->getType()=="DomainNaturalNumberBit" ){
 			
-				cout<<"The secound element of the standarddomain is correctly an cDomainIntegerBasis domain. "<<endl;
+				cout<<"The secound element of the standarddomain is correctly an cDomainIntegerBasis domain."<<endl;
 				
 				cDomainIntegerBasis *domainNaturalNumberBit=(cDomainIntegerBasis*)domainElement2;
 				
@@ -2996,7 +2997,7 @@ int testPropertySoundPolarizedStandard2D( unsigned long &ulTestphase ){
 						(domainNaturalNumberBit->getMaximum()==upperBound) ){
 				
 					cout<<"The domain goes correctly from "<<lowerBound<<
-						" to "<<upperBound<<". "<<endl;
+						" to "<<upperBound<<"."<<endl;
 				}else{
 					cerr<<"Error: The domain goes correctly from "<<lowerBound<<
 						" to "<<upperBound<<", but it goes from "<<
@@ -3019,7 +3020,7 @@ int testPropertySoundPolarizedStandard2D( unsigned long &ulTestphase ){
 				
 			} else if ( domainElement3->getType()=="DomainNaturalNumberBit" ){
 			
-				cout<<"The third element of the standarddomain is correctly an cDomainIntegerBasis domain. "<<endl;
+				cout<<"The third element of the standarddomain is correctly an cDomainIntegerBasis domain."<<endl;
 				
 				cDomainIntegerBasis *domainNaturalNumberBit=(cDomainIntegerBasis*)domainElement3;
 				
@@ -3030,7 +3031,7 @@ int testPropertySoundPolarizedStandard2D( unsigned long &ulTestphase ){
 						(domainNaturalNumberBit->getMaximum()==upperBound) ){
 				
 					cout<<"The domain goes correctly from "<<lowerBound<<
-						" to "<<upperBound<<". "<<endl;
+						" to "<<upperBound<<"."<<endl;
 				}else{
 					cerr<<"Error: The domain goes correctly from "<<lowerBound<<
 						" to "<<upperBound<<", but it goes from "<<
@@ -3053,7 +3054,7 @@ int testPropertySoundPolarizedStandard2D( unsigned long &ulTestphase ){
 				
 			} else if ( domainElement4->getType()=="DomainNaturalNumberBit" ){
 			
-				cout<<"The fourth element of the standarddomain is correctly an cDomainIntegerBasis domain. "<<endl;
+				cout<<"The fourth element of the standarddomain is correctly an cDomainIntegerBasis domain."<<endl;
 				
 				cDomainIntegerBasis *domainNaturalNumberBit=(cDomainIntegerBasis*)domainElement4;
 				
@@ -3064,7 +3065,7 @@ int testPropertySoundPolarizedStandard2D( unsigned long &ulTestphase ){
 						(domainNaturalNumberBit->getMaximum()==upperBound) ){
 				
 					cout<<"The domain goes correctly from "<<lowerBound<<
-						" to "<<upperBound<<". "<<endl;
+						" to "<<upperBound<<"."<<endl;
 				}else{
 					cerr<<"Error: The domain goes correctly from "<<lowerBound<<
 						" to "<<upperBound<<", but it goes from "<<
@@ -3087,7 +3088,7 @@ int testPropertySoundPolarizedStandard2D( unsigned long &ulTestphase ){
 				
 			} else if ( domainElement5->getType()=="DomainNaturalNumberBit" ){
 			
-				cout<<"The 5'th  element of the standarddomain is correctly an cDomainIntegerBasis domain. "<<endl;
+				cout<<"The 5'th  element of the standarddomain is correctly an cDomainIntegerBasis domain."<<endl;
 				
 				cDomainIntegerBasis *domainNaturalNumberBit=(cDomainIntegerBasis*)domainElement5;
 				
@@ -3098,7 +3099,7 @@ int testPropertySoundPolarizedStandard2D( unsigned long &ulTestphase ){
 						(domainNaturalNumberBit->getMaximum()==upperBound) ){
 				
 					cout<<"The domain goes correctly from "<<lowerBound<<
-						" to "<<upperBound<<". "<<endl;
+						" to "<<upperBound<<"."<<endl;
 				}else{
 					cerr<<"Error: The domain goes correctly from "<<lowerBound<<
 						" to "<<upperBound<<", but it goes from "<<
@@ -3134,7 +3135,7 @@ int testPropertySoundPolarizedStandard2D( unsigned long &ulTestphase ){
 
 		if ( vecUnits[0]=="1/s" ){
 		
-			cout<<"The unit of the first vector domain is correctly \"1/s\". "<<endl;
+			cout<<"The unit of the first vector domain is correctly \"1/s\"."<<endl;
 		}else{
 			cerr<<"Error: The unit of the first vector domain is \""<<vecUnits[0]
 				<<"\", but should be \"1/s\"."<<endl;
@@ -3142,7 +3143,7 @@ int testPropertySoundPolarizedStandard2D( unsigned long &ulTestphase ){
 		}
 		if ( vecUnits[1]=="Pa" ){
 		
-			cout<<"The unit of the secound vector domain is correctly \"Pa\". "<<endl;
+			cout<<"The unit of the secound vector domain is correctly \"Pa\"."<<endl;
 		}else{
 			cerr<<"Error: The unit of the secound vector domain is \""<<vecUnits[0]
 				<<"\", but should be \"Pa\"."<<endl;
@@ -3150,7 +3151,7 @@ int testPropertySoundPolarizedStandard2D( unsigned long &ulTestphase ){
 		}
 		if ( vecUnits[2]=="radian" ){
 		
-			cout<<"The unit of the third vector domain is correctly \"radian\". "<<endl;
+			cout<<"The unit of the third vector domain is correctly \"radian\"."<<endl;
 		}else{
 			cerr<<"Error: The unit of the third vector domain is \""<<vecUnits[0]
 				<<"\", but should be \"radian\"."<<endl;
@@ -3158,7 +3159,7 @@ int testPropertySoundPolarizedStandard2D( unsigned long &ulTestphase ){
 		}
 		if ( vecUnits[3]=="s" ){
 		
-			cout<<"The unit of the 4'th vector domain is correctly \"s\". "<<endl;
+			cout<<"The unit of the 4'th vector domain is correctly \"s\"."<<endl;
 		}else{
 			cerr<<"Error: The unit of the 4'th vector domain is \""<<vecUnits[0]
 				<<"\", but should be \"s\"."<<endl;
@@ -3166,7 +3167,7 @@ int testPropertySoundPolarizedStandard2D( unsigned long &ulTestphase ){
 		}
 		if ( vecUnits[4]=="radian" ){
 		
-			cout<<"The unit of the 5'th vector domain is correctly \"radian\". "<<endl;
+			cout<<"The unit of the 5'th vector domain is correctly \"radian\"."<<endl;
 		}else{
 			cerr<<"Error: The unit of the 5'th vector domain is \""<<vecUnits[0]
 				<<"\", but should be \"radian\"."<<endl;
@@ -3277,7 +3278,7 @@ int testPropertySoundPolarizedStandard3D( unsigned long &ulTestphase ){
 	if ( testTypeProperty.getNumberOfProperty() == uiPropertyNumber ){
 	
 		cout<<"The correct typenumber "<<szPropertyName<<"="<<uiPropertyNumber<<
-			" for \"cTypeProperty\" is given. "<<endl;
+			" for \"cTypeProperty\" is given."<<endl;
 	}else{
 		cerr<<"Error: The typenumber given is not "<<szPropertyName<<"="<<
 			uiPropertyNumber<<" for \"cTypeProperty\"; it is : "<<
@@ -3287,7 +3288,7 @@ int testPropertySoundPolarizedStandard3D( unsigned long &ulTestphase ){
 	//check the getNameOfProperty() methode
 	if ( testTypeProperty.getNameOfProperty() == szPropertyName ){
 	
-		cout<<"The correct name \""<<szPropertyName<<"\" for the property is given. "<<endl;
+		cout<<"The correct name \""<<szPropertyName<<"\" for the property is given."<<endl;
 	}else{
 		cerr<<"Error: The given name is not \""<<szPropertyName<<"\" for the property; it is : "<<
 			testTypeProperty.getNameOfProperty()<<endl;
@@ -3300,7 +3301,7 @@ int testPropertySoundPolarizedStandard3D( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 3 elements
 	if ( ! testTypeProperty.isCompatible( *domainInt ) ){
 	
-		cout<<"The type is correctly not compatible to a integer domain. "<<endl;
+		cout<<"The type is correctly not compatible to a integer domain."<<endl;
 	}else{
 		cerr<<"Error: The type is correctly compatible to a integer domain.."<<endl;
 		iReturn++;
@@ -3315,7 +3316,7 @@ int testPropertySoundPolarizedStandard3D( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 0 elements
 	if ( ! testTypeProperty.isCompatible( *vectorDomain ) ){
 	
-		cout<<"The type is correctly not compatible to the vector domain with 0 elements. "<<endl;
+		cout<<"The type is correctly not compatible to the vector domain with 0 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is compatible to the vector domain with 0 elements."<<endl;
 		iReturn++;
@@ -3330,7 +3331,7 @@ int testPropertySoundPolarizedStandard3D( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 1 elements
 	if ( ! testTypeProperty.isCompatible( *vectorDomain1 ) ){
 	
-		cout<<"The type is correctly not compatible to the vector domain with 1 elements. "<<endl;
+		cout<<"The type is correctly not compatible to the vector domain with 1 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is compatible to the vector domain with 1 elements."<<endl;
 		iReturn++;
@@ -3347,7 +3348,7 @@ int testPropertySoundPolarizedStandard3D( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 2 elements
 	if ( ! testTypeProperty.isCompatible( *vectorDomain ) ){
 	
-		cout<<"The type is correctly not compatible to the vector domain with 2 elements. "<<endl;
+		cout<<"The type is correctly not compatible to the vector domain with 2 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is compatible to the vector domain with 2 elements."<<endl;
 		iReturn++;
@@ -3366,7 +3367,7 @@ int testPropertySoundPolarizedStandard3D( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 3 elements
 	if ( ! testTypeProperty.isCompatible( *vectorDomain ) ){
 	
-		cout<<"The type is correctly not compatible to the vector domain with 3 elements. "<<endl;
+		cout<<"The type is correctly not compatible to the vector domain with 3 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is compatible to the vector domain with 3 elements."<<endl;
 		iReturn++;
@@ -3392,7 +3393,7 @@ int testPropertySoundPolarizedStandard3D( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 4 elements
 	if ( ! testTypeProperty.isCompatible( *vectorDomain ) ){
 	
-		cout<<"The type is correctly not compatible to the vector domain with 4 elements. "<<endl;
+		cout<<"The type is correctly not compatible to the vector domain with 4 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is compatible to the vector domain with 4 elements."<<endl;
 		iReturn++;
@@ -3418,7 +3419,7 @@ int testPropertySoundPolarizedStandard3D( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 6 elements
 	if ( testTypeProperty.isCompatible( *vectorDomain ) ){
 	
-		cout<<"The type is correctly compatible to the vector domain with 6 elements. "<<endl;
+		cout<<"The type is correctly compatible to the vector domain with 6 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is not compatible to the vector domain with 6 elements."<<endl;
 		iReturn++;
@@ -3437,14 +3438,14 @@ int testPropertySoundPolarizedStandard3D( unsigned long &ulTestphase ){
 		
 	} else if ( standardDomain->getType()=="DomainVector" ){
 	
-		cout<<"The standarddomain is correctly an cDomainVector domain. "<<endl;
+		cout<<"The standarddomain is correctly an cDomainVector domain."<<endl;
 		
 		cDomainVector *standardDomainVector=(cDomainVector*)standardDomain;
 		
 		if ( standardDomainVector->getNumberOfElements() == uiStandardDomainVectorElements ){
 		
 			cout<<"The standarddomainvector has correctly "<<
-				uiStandardDomainVectorElements<<" element. "<<endl;
+				uiStandardDomainVectorElements<<" element."<<endl;
 				
 			//test domain of first vector element
 			cDomain *domainElement1=standardDomainVector->getElementDomain( 1 );
@@ -3455,7 +3456,7 @@ int testPropertySoundPolarizedStandard3D( unsigned long &ulTestphase ){
 				
 			} else if ( domainElement1->getType()=="DomainNaturalNumberBit" ){
 			
-				cout<<"The first element of the standarddomain is correctly an cDomainIntegerBasis domain. "<<endl;
+				cout<<"The first element of the standarddomain is correctly an cDomainIntegerBasis domain."<<endl;
 				
 				cDomainIntegerBasis *domainNaturalNumberBit=(cDomainIntegerBasis*)domainElement1;
 				
@@ -3466,7 +3467,7 @@ int testPropertySoundPolarizedStandard3D( unsigned long &ulTestphase ){
 						(domainNaturalNumberBit->getMaximum()==upperBound) ){
 				
 					cout<<"The domain goes correctly from "<<lowerBound<<
-						" to "<<upperBound<<". "<<endl;
+						" to "<<upperBound<<"."<<endl;
 				}else{
 					cerr<<"Error: The domain goes correctly from "<<lowerBound<<
 						" to "<<upperBound<<", but it goes from "<<
@@ -3489,7 +3490,7 @@ int testPropertySoundPolarizedStandard3D( unsigned long &ulTestphase ){
 				
 			} else if ( domainElement2->getType()=="DomainNaturalNumberBit" ){
 			
-				cout<<"The secound element of the standarddomain is correctly an cDomainIntegerBasis domain. "<<endl;
+				cout<<"The secound element of the standarddomain is correctly an cDomainIntegerBasis domain."<<endl;
 				
 				cDomainIntegerBasis *domainNaturalNumberBit=(cDomainIntegerBasis*)domainElement2;
 				
@@ -3500,7 +3501,7 @@ int testPropertySoundPolarizedStandard3D( unsigned long &ulTestphase ){
 						(domainNaturalNumberBit->getMaximum()==upperBound) ){
 				
 					cout<<"The domain goes correctly from "<<lowerBound<<
-						" to "<<upperBound<<". "<<endl;
+						" to "<<upperBound<<"."<<endl;
 				}else{
 					cerr<<"Error: The domain goes correctly from "<<lowerBound<<
 						" to "<<upperBound<<", but it goes from "<<
@@ -3523,7 +3524,7 @@ int testPropertySoundPolarizedStandard3D( unsigned long &ulTestphase ){
 				
 			} else if ( domainElement3->getType()=="DomainNaturalNumberBit" ){
 			
-				cout<<"The third element of the standarddomain is correctly an cDomainIntegerBasis domain. "<<endl;
+				cout<<"The third element of the standarddomain is correctly an cDomainIntegerBasis domain."<<endl;
 				
 				cDomainIntegerBasis *domainNaturalNumberBit=(cDomainIntegerBasis*)domainElement3;
 				
@@ -3534,7 +3535,7 @@ int testPropertySoundPolarizedStandard3D( unsigned long &ulTestphase ){
 						(domainNaturalNumberBit->getMaximum()==upperBound) ){
 				
 					cout<<"The domain goes correctly from "<<lowerBound<<
-						" to "<<upperBound<<". "<<endl;
+						" to "<<upperBound<<"."<<endl;
 				}else{
 					cerr<<"Error: The domain goes correctly from "<<lowerBound<<
 						" to "<<upperBound<<", but it goes from "<<
@@ -3557,7 +3558,7 @@ int testPropertySoundPolarizedStandard3D( unsigned long &ulTestphase ){
 				
 			} else if ( domainElement4->getType()=="DomainNaturalNumberBit" ){
 			
-				cout<<"The fourth element of the standarddomain is correctly an cDomainIntegerBasis domain. "<<endl;
+				cout<<"The fourth element of the standarddomain is correctly an cDomainIntegerBasis domain."<<endl;
 				
 				cDomainIntegerBasis *domainNaturalNumberBit=(cDomainIntegerBasis*)domainElement4;
 				
@@ -3568,7 +3569,7 @@ int testPropertySoundPolarizedStandard3D( unsigned long &ulTestphase ){
 						(domainNaturalNumberBit->getMaximum()==upperBound) ){
 				
 					cout<<"The domain goes correctly from "<<lowerBound<<
-						" to "<<upperBound<<". "<<endl;
+						" to "<<upperBound<<"."<<endl;
 				}else{
 					cerr<<"Error: The domain goes correctly from "<<lowerBound<<
 						" to "<<upperBound<<", but it goes from "<<
@@ -3591,7 +3592,7 @@ int testPropertySoundPolarizedStandard3D( unsigned long &ulTestphase ){
 				
 			} else if ( domainElement5->getType()=="DomainNaturalNumberBit" ){
 			
-				cout<<"The 5'th  element of the standarddomain is correctly an cDomainIntegerBasis domain. "<<endl;
+				cout<<"The 5'th  element of the standarddomain is correctly an cDomainIntegerBasis domain."<<endl;
 				
 				cDomainIntegerBasis *domainNaturalNumberBit=(cDomainIntegerBasis*)domainElement5;
 				
@@ -3602,7 +3603,7 @@ int testPropertySoundPolarizedStandard3D( unsigned long &ulTestphase ){
 						(domainNaturalNumberBit->getMaximum()==upperBound) ){
 				
 					cout<<"The domain goes correctly from "<<lowerBound<<
-						" to "<<upperBound<<". "<<endl;
+						" to "<<upperBound<<"."<<endl;
 				}else{
 					cerr<<"Error: The domain goes correctly from "<<lowerBound<<
 						" to "<<upperBound<<", but it goes from "<<
@@ -3625,7 +3626,7 @@ int testPropertySoundPolarizedStandard3D( unsigned long &ulTestphase ){
 				
 			} else if ( domainElement6->getType()=="DomainNaturalNumberBit" ){
 			
-				cout<<"The 6'th  element of the standarddomain is correctly an cDomainIntegerBasis domain. "<<endl;
+				cout<<"The 6'th  element of the standarddomain is correctly an cDomainIntegerBasis domain."<<endl;
 				
 				cDomainIntegerBasis *domainNaturalNumberBit=(cDomainIntegerBasis*)domainElement6;
 				
@@ -3636,7 +3637,7 @@ int testPropertySoundPolarizedStandard3D( unsigned long &ulTestphase ){
 						(domainNaturalNumberBit->getMaximum()==upperBound) ){
 				
 					cout<<"The domain goes correctly from "<<lowerBound<<
-						" to "<<upperBound<<". "<<endl;
+						" to "<<upperBound<<"."<<endl;
 				}else{
 					cerr<<"Error: The domain goes correctly from "<<lowerBound<<
 						" to "<<upperBound<<", but it goes from "<<
@@ -3673,7 +3674,7 @@ int testPropertySoundPolarizedStandard3D( unsigned long &ulTestphase ){
 
 		if ( vecUnits[0]=="1/s" ){
 		
-			cout<<"The unit of the first vector domain is correctly \"1/s\". "<<endl;
+			cout<<"The unit of the first vector domain is correctly \"1/s\"."<<endl;
 		}else{
 			cerr<<"Error: The unit of the first vector domain is \""<<vecUnits[0]
 				<<"\", but should be \"1/s\"."<<endl;
@@ -3681,7 +3682,7 @@ int testPropertySoundPolarizedStandard3D( unsigned long &ulTestphase ){
 		}
 		if ( vecUnits[1]=="Pa" ){
 		
-			cout<<"The unit of the secound vector domain is correctly \"Pa\". "<<endl;
+			cout<<"The unit of the secound vector domain is correctly \"Pa\"."<<endl;
 		}else{
 			cerr<<"Error: The unit of the secound vector domain is \""<<vecUnits[0]
 				<<"\", but should be \"Pa\"."<<endl;
@@ -3689,7 +3690,7 @@ int testPropertySoundPolarizedStandard3D( unsigned long &ulTestphase ){
 		}
 		if ( vecUnits[2]=="radian" ){
 		
-			cout<<"The unit of the third vector domain is correctly \"radian\". "<<endl;
+			cout<<"The unit of the third vector domain is correctly \"radian\"."<<endl;
 		}else{
 			cerr<<"Error: The unit of the third vector domain is \""<<vecUnits[0]
 				<<"\", but should be \"radian\"."<<endl;
@@ -3697,7 +3698,7 @@ int testPropertySoundPolarizedStandard3D( unsigned long &ulTestphase ){
 		}
 		if ( vecUnits[3]=="s" ){
 		
-			cout<<"The unit of the 4'th vector domain is correctly \"s\". "<<endl;
+			cout<<"The unit of the 4'th vector domain is correctly \"s\"."<<endl;
 		}else{
 			cerr<<"Error: The unit of the 4'th vector domain is \""<<vecUnits[0]
 				<<"\", but should be \"s\"."<<endl;
@@ -3705,7 +3706,7 @@ int testPropertySoundPolarizedStandard3D( unsigned long &ulTestphase ){
 		}
 		if ( vecUnits[4]=="radian" ){
 		
-			cout<<"The unit of the 5'th vector domain is correctly \"radian\". "<<endl;
+			cout<<"The unit of the 5'th vector domain is correctly \"radian\"."<<endl;
 		}else{
 			cerr<<"Error: The unit of the 5'th vector domain is \""<<vecUnits[0]
 				<<"\", but should be \"radian\"."<<endl;
@@ -3713,7 +3714,7 @@ int testPropertySoundPolarizedStandard3D( unsigned long &ulTestphase ){
 		}
 		if ( vecUnits[5]=="radian" ){
 		
-			cout<<"The unit of the 6'th vector domain is correctly \"radian\". "<<endl;
+			cout<<"The unit of the 6'th vector domain is correctly \"radian\"."<<endl;
 		}else{
 			cerr<<"Error: The unit of the 6'th vector domain is \""<<vecUnits[0]
 				<<"\", but should be \"radian\"."<<endl;
@@ -3767,7 +3768,7 @@ int testPropertySoundBarrier( unsigned long &ulTestphase ){
 	if ( testTypeProperty.getNumberOfProperty() == uiPropertyNumber ){
 	
 		cout<<"The correct typenumber "<<szPropertyName<<"="<<uiPropertyNumber<<
-			" for \"cTypeProperty\" is given. "<<endl;
+			" for \"cTypeProperty\" is given."<<endl;
 	}else{
 		cerr<<"Error: The typenumber given is not "<<szPropertyName<<"="<<
 			uiPropertyNumber<<" for \"cTypeProperty\"; it is : "<<
@@ -3777,7 +3778,7 @@ int testPropertySoundBarrier( unsigned long &ulTestphase ){
 	//check the getNameOfProperty() methode
 	if ( testTypeProperty.getNameOfProperty() == szPropertyName ){
 	
-		cout<<"The correct name \""<<szPropertyName<<"\" for the property is given. "<<endl;
+		cout<<"The correct name \""<<szPropertyName<<"\" for the property is given."<<endl;
 	}else{
 		cerr<<"Error: The given name is not \""<<szPropertyName<<"\" for the property; it is : "<<
 			testTypeProperty.getNameOfProperty()<<endl;
@@ -3790,7 +3791,7 @@ int testPropertySoundBarrier( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 3 elements
 	if ( ! testTypeProperty.isCompatible( *domainInt ) ){
 	
-		cout<<"The type is correctly not compatible to a integer domain. "<<endl;
+		cout<<"The type is correctly not compatible to a integer domain."<<endl;
 	}else{
 		cerr<<"Error: The type is correctly compatible to a integer domain.."<<endl;
 		iReturn++;
@@ -3805,7 +3806,7 @@ int testPropertySoundBarrier( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 0 elements
 	if ( ! testTypeProperty.isCompatible( *vectorDomain ) ){
 	
-		cout<<"The type is correctly not compatible to the vector domain with 0 elements. "<<endl;
+		cout<<"The type is correctly not compatible to the vector domain with 0 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is compatible to the vector domain with 0 elements."<<endl;
 		iReturn++;
@@ -3820,7 +3821,7 @@ int testPropertySoundBarrier( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 1 elements
 	if ( testTypeProperty.isCompatible( *vectorDomain1 ) ){
 	
-		cout<<"The type is correctly compatible to the vector domain with 1 elements. "<<endl;
+		cout<<"The type is correctly compatible to the vector domain with 1 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is not compatible to the vector domain with 1 elements."<<endl;
 		iReturn++;
@@ -3837,7 +3838,7 @@ int testPropertySoundBarrier( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 2 elements
 	if ( ! testTypeProperty.isCompatible( *vectorDomain ) ){
 	
-		cout<<"The type is correctly not compatible to the vector domain with 2 elements. "<<endl;
+		cout<<"The type is correctly not compatible to the vector domain with 2 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is compatible to the vector domain with 2 elements."<<endl;
 		iReturn++;
@@ -3856,7 +3857,7 @@ int testPropertySoundBarrier( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 3 elements
 	if ( ! testTypeProperty.isCompatible( *vectorDomain ) ){
 	
-		cout<<"The type is correctly not compatible to the vector domain with 3 elements. "<<endl;
+		cout<<"The type is correctly not compatible to the vector domain with 3 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is compatible to the vector domain with 3 elements."<<endl;
 		iReturn++;
@@ -3877,7 +3878,7 @@ int testPropertySoundBarrier( unsigned long &ulTestphase ){
 		
 	} else if ( standardDomain->getType()=="DomainVector" ){
 	
-		cout<<"The standarddomain is correctly an cDomainVector domain. "<<endl;
+		cout<<"The standarddomain is correctly an cDomainVector domain."<<endl;
 		
 		cDomainVector *standardDomainVector=(cDomainVector*)standardDomain;
 
@@ -3886,7 +3887,7 @@ int testPropertySoundBarrier( unsigned long &ulTestphase ){
 		if ( standardDomainVector->getNumberOfElements() == uiStandardDomainVectorElements ){
 		
 			cout<<"The standarddomainvector has correctly "<<
-				uiStandardDomainVectorElements<<" element. "<<endl;
+				uiStandardDomainVectorElements<<" element."<<endl;
 				
 			//test domain of first vector element
 			cDomain *domainElement1=standardDomainVector->getElementDomain( 1 );
@@ -3897,7 +3898,7 @@ int testPropertySoundBarrier( unsigned long &ulTestphase ){
 				
 			} else if ( domainElement1->getType()=="DomainNaturalNumberBit" ){
 			
-				cout<<"The first element of the standarddomain is correctly an cDomainIntegerBasis domain. "<<endl;
+				cout<<"The first element of the standarddomain is correctly an cDomainIntegerBasis domain."<<endl;
 				
 				cDomainIntegerBasis *domainNaturalNumberBit=(cDomainIntegerBasis*)domainElement1;
 				
@@ -3908,7 +3909,7 @@ int testPropertySoundBarrier( unsigned long &ulTestphase ){
 						(domainNaturalNumberBit->getMaximum()==upperBound) ){
 				
 					cout<<"The domain goes correctly from "<<lowerBound<<
-						" to "<<upperBound<<". "<<endl;
+						" to "<<upperBound<<"."<<endl;
 				}else{
 					cerr<<"Error: The domain goes correctly from "<<lowerBound<<
 						" to "<<upperBound<<", but it goes from "<<
@@ -3944,7 +3945,7 @@ int testPropertySoundBarrier( unsigned long &ulTestphase ){
 
 		if ( vecUnits[0]=="m/s" ){
 		
-			cout<<"The unit of the first vector domain is correctly \"m/s\". "<<endl;
+			cout<<"The unit of the first vector domain is correctly \"m/s\"."<<endl;
 		}else{
 			cerr<<"Error: The unit of the first vector domain is \""<<vecUnits[0]
 				<<"\", but should be \"m/s\"."<<endl;
@@ -4051,7 +4052,7 @@ int testPropertySoundReflected( unsigned long &ulTestphase ){
 	if ( testTypeProperty.getNumberOfProperty() == uiPropertyNumber ){
 	
 		cout<<"The correct typenumber "<<szPropertyName<<"="<<uiPropertyNumber<<
-			" for \"cTypeProperty\" is given. "<<endl;
+			" for \"cTypeProperty\" is given."<<endl;
 	}else{
 		cerr<<"Error: The typenumber given is not "<<szPropertyName<<"="<<
 			uiPropertyNumber<<" for \"cTypeProperty\"; it is : "<<
@@ -4061,7 +4062,7 @@ int testPropertySoundReflected( unsigned long &ulTestphase ){
 	//check the getNameOfProperty() methode
 	if ( testTypeProperty.getNameOfProperty() == szPropertyName ){
 	
-		cout<<"The correct name \""<<szPropertyName<<"\" for the property is given. "<<endl;
+		cout<<"The correct name \""<<szPropertyName<<"\" for the property is given."<<endl;
 	}else{
 		cerr<<"Error: The given name is not \""<<szPropertyName<<"\" for the property; it is : "<<
 			testTypeProperty.getNameOfProperty()<<endl;
@@ -4074,7 +4075,7 @@ int testPropertySoundReflected( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 3 elements
 	if ( ! testTypeProperty.isCompatible( *domainInt ) ){
 	
-		cout<<"The type is correctly not compatible to a integer domain. "<<endl;
+		cout<<"The type is correctly not compatible to a integer domain."<<endl;
 	}else{
 		cerr<<"Error: The type is correctly compatible to a integer domain.."<<endl;
 		iReturn++;
@@ -4089,7 +4090,7 @@ int testPropertySoundReflected( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 0 elements
 	if ( ! testTypeProperty.isCompatible( *vectorDomain ) ){
 	
-		cout<<"The type is correctly not compatible to the vector domain with 0 elements. "<<endl;
+		cout<<"The type is correctly not compatible to the vector domain with 0 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is compatible to the vector domain with 0 elements."<<endl;
 		iReturn++;
@@ -4104,7 +4105,7 @@ int testPropertySoundReflected( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 1 elements
 	if ( testTypeProperty.isCompatible( *vectorDomain1 ) ){
 	
-		cout<<"The type is correctly compatible to the vector domain with 1 elements. "<<endl;
+		cout<<"The type is correctly compatible to the vector domain with 1 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is not compatible to the vector domain with 1 elements."<<endl;
 		iReturn++;
@@ -4121,7 +4122,7 @@ int testPropertySoundReflected( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 2 elements
 	if ( ! testTypeProperty.isCompatible( *vectorDomain ) ){
 	
-		cout<<"The type is correctly not compatible to the vector domain with 2 elements. "<<endl;
+		cout<<"The type is correctly not compatible to the vector domain with 2 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is compatible to the vector domain with 2 elements."<<endl;
 		iReturn++;
@@ -4140,7 +4141,7 @@ int testPropertySoundReflected( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 3 elements
 	if ( ! testTypeProperty.isCompatible( *vectorDomain ) ){
 	
-		cout<<"The type is correctly not compatible to the vector domain with 3 elements. "<<endl;
+		cout<<"The type is correctly not compatible to the vector domain with 3 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is compatible to the vector domain with 3 elements."<<endl;
 		iReturn++;
@@ -4161,7 +4162,7 @@ int testPropertySoundReflected( unsigned long &ulTestphase ){
 		
 	} else if ( standardDomain->getType()=="DomainVector" ){
 	
-		cout<<"The standarddomain is correctly an cDomainVector domain. "<<endl;
+		cout<<"The standarddomain is correctly an cDomainVector domain."<<endl;
 		
 		cDomainVector *standardDomainVector=(cDomainVector*)standardDomain;
 
@@ -4170,7 +4171,7 @@ int testPropertySoundReflected( unsigned long &ulTestphase ){
 		if ( standardDomainVector->getNumberOfElements() == uiStandardDomainVectorElements ){
 		
 			cout<<"The standarddomainvector has correctly "<<
-				uiStandardDomainVectorElements<<" element. "<<endl;
+				uiStandardDomainVectorElements<<" element."<<endl;
 				
 			//test domain of first vector element
 			cDomain *domainElement1=standardDomainVector->getElementDomain( 1 );
@@ -4181,7 +4182,7 @@ int testPropertySoundReflected( unsigned long &ulTestphase ){
 				
 			} else if ( domainElement1->getType()=="DomainNaturalNumberBit" ){
 			
-				cout<<"The first element of the standarddomain is correctly an cDomainIntegerBasis domain. "<<endl;
+				cout<<"The first element of the standarddomain is correctly an cDomainIntegerBasis domain."<<endl;
 				
 				cDomainIntegerBasis *domainNaturalNumberBit=(cDomainIntegerBasis*)domainElement1;
 				
@@ -4192,7 +4193,7 @@ int testPropertySoundReflected( unsigned long &ulTestphase ){
 						(domainNaturalNumberBit->getMaximum()==upperBound) ){
 				
 					cout<<"The domain goes correctly from "<<lowerBound<<
-						" to "<<upperBound<<". "<<endl;
+						" to "<<upperBound<<"."<<endl;
 				}else{
 					cerr<<"Error: The domain goes correctly from "<<lowerBound<<
 						" to "<<upperBound<<", but it goes from "<<
@@ -4228,7 +4229,7 @@ int testPropertySoundReflected( unsigned long &ulTestphase ){
 
 		if ( vecUnits[0]=="fraction" ){
 		
-			cout<<"The unit of the first vector domain is correctly \"fraction\". "<<endl;
+			cout<<"The unit of the first vector domain is correctly \"fraction\"."<<endl;
 		}else{
 			cerr<<"Error: The unit of the first vector domain is \""<<vecUnits[0]
 				<<"\", but should be \"fraction\"."<<endl;
@@ -4334,7 +4335,7 @@ int testPropertySoundDamping( unsigned long &ulTestphase ){
 	if ( testTypeProperty.getNumberOfProperty() == uiPropertyNumber ){
 	
 		cout<<"The correct typenumber "<<szPropertyName<<"="<<uiPropertyNumber<<
-			" for \"cTypeProperty\" is given. "<<endl;
+			" for \"cTypeProperty\" is given."<<endl;
 	}else{
 		cerr<<"Error: The typenumber given is not "<<szPropertyName<<"="<<
 			uiPropertyNumber<<" for \"cTypeProperty\"; it is : "<<
@@ -4344,7 +4345,7 @@ int testPropertySoundDamping( unsigned long &ulTestphase ){
 	//check the getNameOfProperty() methode
 	if ( testTypeProperty.getNameOfProperty() == szPropertyName ){
 	
-		cout<<"The correct name \""<<szPropertyName<<"\" for the property is given. "<<endl;
+		cout<<"The correct name \""<<szPropertyName<<"\" for the property is given."<<endl;
 	}else{
 		cerr<<"Error: The given name is not \""<<szPropertyName<<"\" for the property; it is : "<<
 			testTypeProperty.getNameOfProperty()<<endl;
@@ -4357,7 +4358,7 @@ int testPropertySoundDamping( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 3 elements
 	if ( ! testTypeProperty.isCompatible( *domainInt ) ){
 	
-		cout<<"The type is correctly not compatible to a integer domain. "<<endl;
+		cout<<"The type is correctly not compatible to a integer domain."<<endl;
 	}else{
 		cerr<<"Error: The type is correctly compatible to a integer domain.."<<endl;
 		iReturn++;
@@ -4372,7 +4373,7 @@ int testPropertySoundDamping( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 0 elements
 	if ( ! testTypeProperty.isCompatible( *vectorDomain ) ){
 	
-		cout<<"The type is correctly not compatible to the vector domain with 0 elements. "<<endl;
+		cout<<"The type is correctly not compatible to the vector domain with 0 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is compatible to the vector domain with 0 elements."<<endl;
 		iReturn++;
@@ -4387,7 +4388,7 @@ int testPropertySoundDamping( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 1 elements
 	if ( testTypeProperty.isCompatible( *vectorDomain1 ) ){
 	
-		cout<<"The type is correctly compatible to the vector domain with 1 elements. "<<endl;
+		cout<<"The type is correctly compatible to the vector domain with 1 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is not compatible to the vector domain with 1 elements."<<endl;
 		iReturn++;
@@ -4404,7 +4405,7 @@ int testPropertySoundDamping( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 2 elements
 	if ( ! testTypeProperty.isCompatible( *vectorDomain ) ){
 	
-		cout<<"The type is correctly not compatible to the vector domain with 2 elements. "<<endl;
+		cout<<"The type is correctly not compatible to the vector domain with 2 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is compatible to the vector domain with 2 elements."<<endl;
 		iReturn++;
@@ -4423,7 +4424,7 @@ int testPropertySoundDamping( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 3 elements
 	if ( ! testTypeProperty.isCompatible( *vectorDomain ) ){
 	
-		cout<<"The type is correctly not compatible to the vector domain with 3 elements. "<<endl;
+		cout<<"The type is correctly not compatible to the vector domain with 3 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is compatible to the vector domain with 3 elements."<<endl;
 		iReturn++;
@@ -4444,7 +4445,7 @@ int testPropertySoundDamping( unsigned long &ulTestphase ){
 		
 	} else if ( standardDomain->getType()=="DomainVector" ){
 	
-		cout<<"The standarddomain is correctly an cDomainVector domain. "<<endl;
+		cout<<"The standarddomain is correctly an cDomainVector domain."<<endl;
 		
 		cDomainVector *standardDomainVector=(cDomainVector*)standardDomain;
 
@@ -4453,7 +4454,7 @@ int testPropertySoundDamping( unsigned long &ulTestphase ){
 		if ( standardDomainVector->getNumberOfElements() == uiStandardDomainVectorElements ){
 		
 			cout<<"The standarddomainvector has correctly "<<
-				uiStandardDomainVectorElements<<" element. "<<endl;
+				uiStandardDomainVectorElements<<" element."<<endl;
 				
 			//test domain of first vector element
 			cDomain *domainElement1=standardDomainVector->getElementDomain( 1 );
@@ -4464,7 +4465,7 @@ int testPropertySoundDamping( unsigned long &ulTestphase ){
 				
 			} else if ( domainElement1->getType()=="DomainNaturalNumberBit" ){
 			
-				cout<<"The first element of the standarddomain is correctly an cDomainIntegerBasis domain. "<<endl;
+				cout<<"The first element of the standarddomain is correctly an cDomainIntegerBasis domain."<<endl;
 				
 				cDomainIntegerBasis *domainNaturalNumberBit=(cDomainIntegerBasis*)domainElement1;
 				
@@ -4475,7 +4476,7 @@ int testPropertySoundDamping( unsigned long &ulTestphase ){
 						(domainNaturalNumberBit->getMaximum()==upperBound) ){
 				
 					cout<<"The domain goes correctly from "<<lowerBound<<
-						" to "<<upperBound<<". "<<endl;
+						" to "<<upperBound<<"."<<endl;
 				}else{
 					cerr<<"Error: The domain goes correctly from "<<lowerBound<<
 						" to "<<upperBound<<", but it goes from "<<
@@ -4511,7 +4512,7 @@ int testPropertySoundDamping( unsigned long &ulTestphase ){
 
 		if ( vecUnits[0]=="fraction" ){
 		
-			cout<<"The unit of the first vector domain is correctly \"fraction\". "<<endl;
+			cout<<"The unit of the first vector domain is correctly \"fraction\"."<<endl;
 		}else{
 			cerr<<"Error: The unit of the first vector domain is \""<<vecUnits[0]
 				<<"\", but should be \"fraction\"."<<endl;
@@ -4618,7 +4619,7 @@ int testPropertyKelvin( unsigned long &ulTestphase ){
 	if ( testTypeProperty.getNumberOfProperty() == uiPropertyNumber ){
 	
 		cout<<"The correct typenumber "<<szPropertyName<<"="<<uiPropertyNumber<<
-			" for \"cTypeProperty\" is given. "<<endl;
+			" for \"cTypeProperty\" is given."<<endl;
 	}else{
 		cerr<<"Error: The typenumber given is not "<<szPropertyName<<"="<<
 			uiPropertyNumber<<" for \"cTypeProperty\"; it is : "<<
@@ -4628,7 +4629,7 @@ int testPropertyKelvin( unsigned long &ulTestphase ){
 	//check the getNameOfProperty() methode
 	if ( testTypeProperty.getNameOfProperty() == szPropertyName ){
 	
-		cout<<"The correct name \""<<szPropertyName<<"\" for the property is given. "<<endl;
+		cout<<"The correct name \""<<szPropertyName<<"\" for the property is given."<<endl;
 	}else{
 		cerr<<"Error: The given name is not \""<<szPropertyName<<"\" for the property; it is : "<<
 			testTypeProperty.getNameOfProperty()<<endl;
@@ -4641,7 +4642,7 @@ int testPropertyKelvin( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 3 elements
 	if ( ! testTypeProperty.isCompatible( *domainInt ) ){
 	
-		cout<<"The type is correctly not compatible to a integer domain. "<<endl;
+		cout<<"The type is correctly not compatible to a integer domain."<<endl;
 	}else{
 		cerr<<"Error: The type is correctly compatible to a integer domain.."<<endl;
 		iReturn++;
@@ -4656,7 +4657,7 @@ int testPropertyKelvin( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 0 elements
 	if ( ! testTypeProperty.isCompatible( *vectorDomain ) ){
 	
-		cout<<"The type is correctly not compatible to the vector domain with 0 elements. "<<endl;
+		cout<<"The type is correctly not compatible to the vector domain with 0 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is compatible to the vector domain with 0 elements."<<endl;
 		iReturn++;
@@ -4671,7 +4672,7 @@ int testPropertyKelvin( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 1 elements
 	if ( testTypeProperty.isCompatible( *vectorDomain1 ) ){
 	
-		cout<<"The type is correctly compatible to the vector domain with 1 elements. "<<endl;
+		cout<<"The type is correctly compatible to the vector domain with 1 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is not compatible to the vector domain with 1 elements."<<endl;
 		iReturn++;
@@ -4688,7 +4689,7 @@ int testPropertyKelvin( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 2 elements
 	if ( ! testTypeProperty.isCompatible( *vectorDomain ) ){
 	
-		cout<<"The type is correctly not compatible to the vector domain with 2 elements. "<<endl;
+		cout<<"The type is correctly not compatible to the vector domain with 2 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is compatible to the vector domain with 2 elements."<<endl;
 		iReturn++;
@@ -4707,7 +4708,7 @@ int testPropertyKelvin( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 3 elements
 	if ( ! testTypeProperty.isCompatible( *vectorDomain ) ){
 	
-		cout<<"The type is correctly not compatible to the vector domain with 3 elements. "<<endl;
+		cout<<"The type is correctly not compatible to the vector domain with 3 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is compatible to the vector domain with 3 elements."<<endl;
 		iReturn++;
@@ -4728,7 +4729,7 @@ int testPropertyKelvin( unsigned long &ulTestphase ){
 		
 	} else if ( standardDomain->getType()=="DomainVector" ){
 	
-		cout<<"The standarddomain is correctly an cDomainVector domain. "<<endl;
+		cout<<"The standarddomain is correctly an cDomainVector domain."<<endl;
 		
 		cDomainVector *standardDomainVector=(cDomainVector*)standardDomain;
 
@@ -4737,7 +4738,7 @@ int testPropertyKelvin( unsigned long &ulTestphase ){
 		if ( standardDomainVector->getNumberOfElements() == uiStandardDomainVectorElements ){
 		
 			cout<<"The standarddomainvector has correctly "<<
-				uiStandardDomainVectorElements<<" element. "<<endl;
+				uiStandardDomainVectorElements<<" element."<<endl;
 				
 			//test domain of first vector element
 			cDomain *domainElement1=standardDomainVector->getElementDomain( 1 );
@@ -4748,7 +4749,7 @@ int testPropertyKelvin( unsigned long &ulTestphase ){
 				
 			} else if ( domainElement1->getType()=="DomainNaturalNumberBit" ){
 			
-				cout<<"The first element of the standarddomain is correctly an cDomainIntegerBasis domain. "<<endl;
+				cout<<"The first element of the standarddomain is correctly an cDomainIntegerBasis domain."<<endl;
 				
 				cDomainIntegerBasis *domainNaturalNumberBit=(cDomainIntegerBasis*)domainElement1;
 				
@@ -4759,7 +4760,7 @@ int testPropertyKelvin( unsigned long &ulTestphase ){
 						(domainNaturalNumberBit->getMaximum()==upperBound) ){
 				
 					cout<<"The domain goes correctly from "<<lowerBound<<
-						" to "<<upperBound<<". "<<endl;
+						" to "<<upperBound<<"."<<endl;
 				}else{
 					cerr<<"Error: The domain goes correctly from "<<lowerBound<<
 						" to "<<upperBound<<", but it goes from "<<
@@ -4795,7 +4796,7 @@ int testPropertyKelvin( unsigned long &ulTestphase ){
 
 		if ( vecUnits[0]=="K" ){
 		
-			cout<<"The unit of the first vector domain is correctly \"K\". "<<endl;
+			cout<<"The unit of the first vector domain is correctly \"K\"."<<endl;
 		}else{
 			cerr<<"Error: The unit of the first vector domain is \""<<vecUnits[0]
 				<<"\", but should be \"K\"."<<endl;
@@ -4902,7 +4903,7 @@ int testPropertyElectromagnetic2D( unsigned long &ulTestphase ){
 	if ( testTypeProperty.getNumberOfProperty() == uiPropertyNumber ){
 	
 		cout<<"The correct typenumber "<<szPropertyName<<"="<<uiPropertyNumber<<
-			" for \"cTypeProperty\" is given. "<<endl;
+			" for \"cTypeProperty\" is given."<<endl;
 	}else{
 		cerr<<"Error: The typenumber given is not "<<szPropertyName<<"="<<
 			uiPropertyNumber<<" for \"cTypeProperty\"; it is : "<<
@@ -4912,7 +4913,7 @@ int testPropertyElectromagnetic2D( unsigned long &ulTestphase ){
 	//check the getNameOfProperty() methode
 	if ( testTypeProperty.getNameOfProperty() == szPropertyName ){
 	
-		cout<<"The correct name \""<<szPropertyName<<"\" for the property is given. "<<endl;
+		cout<<"The correct name \""<<szPropertyName<<"\" for the property is given."<<endl;
 	}else{
 		cerr<<"Error: The given name is not \""<<szPropertyName<<"\" for the property; it is : "<<
 			testTypeProperty.getNameOfProperty()<<endl;
@@ -4925,7 +4926,7 @@ int testPropertyElectromagnetic2D( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 3 elements
 	if ( ! testTypeProperty.isCompatible( *domainInt ) ){
 	
-		cout<<"The type is correctly not compatible to a integer domain. "<<endl;
+		cout<<"The type is correctly not compatible to a integer domain."<<endl;
 	}else{
 		cerr<<"Error: The type is correctly compatible to a integer domain.."<<endl;
 		iReturn++;
@@ -4940,7 +4941,7 @@ int testPropertyElectromagnetic2D( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 0 elements
 	if ( ! testTypeProperty.isCompatible( *vectorDomain ) ){
 	
-		cout<<"The type is correctly not compatible to the vector domain with 0 elements. "<<endl;
+		cout<<"The type is correctly not compatible to the vector domain with 0 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is compatible to the vector domain with 0 elements."<<endl;
 		iReturn++;
@@ -4955,7 +4956,7 @@ int testPropertyElectromagnetic2D( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 1 elements
 	if ( ! testTypeProperty.isCompatible( *vectorDomain1 ) ){
 	
-		cout<<"The type is correctly not compatible to the vector domain with 1 elements. "<<endl;
+		cout<<"The type is correctly not compatible to the vector domain with 1 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is compatible to the vector domain with 1 elements."<<endl;
 		iReturn++;
@@ -4972,7 +4973,7 @@ int testPropertyElectromagnetic2D( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 2 elements
 	if ( ! testTypeProperty.isCompatible( *vectorDomain ) ){
 	
-		cout<<"The type is correctly not compatible to the vector domain with 2 elements. "<<endl;
+		cout<<"The type is correctly not compatible to the vector domain with 2 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is compatible to the vector domain with 2 elements."<<endl;
 		iReturn++;
@@ -4991,7 +4992,7 @@ int testPropertyElectromagnetic2D( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 3 elements
 	if ( ! testTypeProperty.isCompatible( *vectorDomain ) ){
 	
-		cout<<"The type is correctly not compatible to the vector domain with 3 elements. "<<endl;
+		cout<<"The type is correctly not compatible to the vector domain with 3 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is compatible to the vector domain with 3 elements."<<endl;
 		iReturn++;
@@ -5017,7 +5018,7 @@ int testPropertyElectromagnetic2D( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 4 elements
 	if ( ! testTypeProperty.isCompatible( *vectorDomain ) ){
 	
-		cout<<"The type is not correctly compatible to the vector domain with 4 elements. "<<endl;
+		cout<<"The type is not correctly compatible to the vector domain with 4 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is compatible to the vector domain with 4 elements."<<endl;
 		iReturn++;
@@ -5041,7 +5042,7 @@ int testPropertyElectromagnetic2D( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 5 elements
 	if ( testTypeProperty.isCompatible( *vectorDomain ) ){
 	
-		cout<<"The type is correctly compatible to the vector domain with 5 elements. "<<endl;
+		cout<<"The type is correctly compatible to the vector domain with 5 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is not compatible to the vector domain with 5 elements."<<endl;
 		iReturn++;
@@ -5060,14 +5061,14 @@ int testPropertyElectromagnetic2D( unsigned long &ulTestphase ){
 		
 	} else if ( standardDomain->getType()=="DomainVector" ){
 	
-		cout<<"The standarddomain is correctly an cDomainVector domain. "<<endl;
+		cout<<"The standarddomain is correctly an cDomainVector domain."<<endl;
 		
 		cDomainVector *standardDomainVector=(cDomainVector*)standardDomain;
 		
 		if ( standardDomainVector->getNumberOfElements() == uiStandardDomainVectorElements ){
 		
 			cout<<"The standarddomainvector has correctly "<<
-				uiStandardDomainVectorElements<<" element. "<<endl;
+				uiStandardDomainVectorElements<<" element."<<endl;
 				
 			//test domain of first vector element
 			cDomain *domainElement1=standardDomainVector->getElementDomain( 1 );
@@ -5078,7 +5079,7 @@ int testPropertyElectromagnetic2D( unsigned long &ulTestphase ){
 				
 			} else if ( domainElement1->getType()=="DomainNaturalNumberBit" ){
 			
-				cout<<"The first element of the standarddomain is correctly an cDomainIntegerBasis domain. "<<endl;
+				cout<<"The first element of the standarddomain is correctly an cDomainIntegerBasis domain."<<endl;
 				
 				cDomainIntegerBasis *domainNaturalNumberBit=(cDomainIntegerBasis*)domainElement1;
 				
@@ -5089,7 +5090,7 @@ int testPropertyElectromagnetic2D( unsigned long &ulTestphase ){
 						(domainNaturalNumberBit->getMaximum()==upperBound) ){
 				
 					cout<<"The domain goes correctly from "<<lowerBound<<
-						" to "<<upperBound<<". "<<endl;
+						" to "<<upperBound<<"."<<endl;
 				}else{
 					cerr<<"Error: The domain goes correctly from "<<lowerBound<<
 						" to "<<upperBound<<", but it goes from "<<
@@ -5112,7 +5113,7 @@ int testPropertyElectromagnetic2D( unsigned long &ulTestphase ){
 				
 			} else if ( domainElement2->getType()=="DomainNaturalNumberBit" ){
 			
-				cout<<"The secound element of the standarddomain is correctly an cDomainIntegerBasis domain. "<<endl;
+				cout<<"The secound element of the standarddomain is correctly an cDomainIntegerBasis domain."<<endl;
 				
 				cDomainIntegerBasis *domainNaturalNumberBit=(cDomainIntegerBasis*)domainElement2;
 				
@@ -5123,7 +5124,7 @@ int testPropertyElectromagnetic2D( unsigned long &ulTestphase ){
 						(domainNaturalNumberBit->getMaximum()==upperBound) ){
 				
 					cout<<"The domain goes correctly from "<<lowerBound<<
-						" to "<<upperBound<<". "<<endl;
+						" to "<<upperBound<<"."<<endl;
 				}else{
 					cerr<<"Error: The domain goes correctly from "<<lowerBound<<
 						" to "<<upperBound<<", but it goes from "<<
@@ -5146,7 +5147,7 @@ int testPropertyElectromagnetic2D( unsigned long &ulTestphase ){
 				
 			} else if ( domainElement3->getType()=="DomainNaturalNumberBit" ){
 			
-				cout<<"The third element of the standarddomain is correctly an cDomainIntegerBasis domain. "<<endl;
+				cout<<"The third element of the standarddomain is correctly an cDomainIntegerBasis domain."<<endl;
 				
 				cDomainIntegerBasis *domainNaturalNumberBit=(cDomainIntegerBasis*)domainElement3;
 				
@@ -5157,7 +5158,7 @@ int testPropertyElectromagnetic2D( unsigned long &ulTestphase ){
 						(domainNaturalNumberBit->getMaximum()==upperBound) ){
 				
 					cout<<"The domain goes correctly from "<<lowerBound<<
-						" to "<<upperBound<<". "<<endl;
+						" to "<<upperBound<<"."<<endl;
 				}else{
 					cerr<<"Error: The domain goes correctly from "<<lowerBound<<
 						" to "<<upperBound<<", but it goes from "<<
@@ -5180,7 +5181,7 @@ int testPropertyElectromagnetic2D( unsigned long &ulTestphase ){
 				
 			} else if ( domainElement4->getType()=="DomainNaturalNumberBit" ){
 			
-				cout<<"The fourth element of the standarddomain is correctly an cDomainIntegerBasis domain. "<<endl;
+				cout<<"The fourth element of the standarddomain is correctly an cDomainIntegerBasis domain."<<endl;
 				
 				cDomainIntegerBasis *domainNaturalNumberBit=(cDomainIntegerBasis*)domainElement4;
 				
@@ -5191,7 +5192,7 @@ int testPropertyElectromagnetic2D( unsigned long &ulTestphase ){
 						(domainNaturalNumberBit->getMaximum()==upperBound) ){
 				
 					cout<<"The domain goes correctly from "<<lowerBound<<
-						" to "<<upperBound<<". "<<endl;
+						" to "<<upperBound<<"."<<endl;
 				}else{
 					cerr<<"Error: The domain goes correctly from "<<lowerBound<<
 						" to "<<upperBound<<", but it goes from "<<
@@ -5214,7 +5215,7 @@ int testPropertyElectromagnetic2D( unsigned long &ulTestphase ){
 				
 			} else if ( domainElement5->getType()=="DomainNaturalNumberBit" ){
 			
-				cout<<"The 5'th  element of the standarddomain is correctly an cDomainIntegerBasis domain. "<<endl;
+				cout<<"The 5'th  element of the standarddomain is correctly an cDomainIntegerBasis domain."<<endl;
 				
 				cDomainIntegerBasis *domainNaturalNumberBit=(cDomainIntegerBasis*)domainElement5;
 				
@@ -5225,7 +5226,7 @@ int testPropertyElectromagnetic2D( unsigned long &ulTestphase ){
 						(domainNaturalNumberBit->getMaximum()==upperBound) ){
 				
 					cout<<"The domain goes correctly from "<<lowerBound<<
-						" to "<<upperBound<<". "<<endl;
+						" to "<<upperBound<<"."<<endl;
 				}else{
 					cerr<<"Error: The domain goes correctly from "<<lowerBound<<
 						" to "<<upperBound<<", but it goes from "<<
@@ -5261,7 +5262,7 @@ int testPropertyElectromagnetic2D( unsigned long &ulTestphase ){
 
 		if ( vecUnits[0]=="1/s" ){
 		
-			cout<<"The unit of the first vector domain is correctly \"1/s\". "<<endl;
+			cout<<"The unit of the first vector domain is correctly \"1/s\"."<<endl;
 		}else{
 			cerr<<"Error: The unit of the first vector domain is \""<<vecUnits[0]
 				<<"\", but should be \"1/s\"."<<endl;
@@ -5269,7 +5270,7 @@ int testPropertyElectromagnetic2D( unsigned long &ulTestphase ){
 		}
 		if ( vecUnits[1]=="cd" ){
 		
-			cout<<"The unit of the secound vector domain is correctly \"cd\". "<<endl;
+			cout<<"The unit of the secound vector domain is correctly \"cd\"."<<endl;
 		}else{
 			cerr<<"Error: The unit of the secound vector domain is \""<<vecUnits[0]
 				<<"\", but should be \"cd\"."<<endl;
@@ -5277,7 +5278,7 @@ int testPropertyElectromagnetic2D( unsigned long &ulTestphase ){
 		}
 		if ( vecUnits[2]=="radian" ){
 		
-			cout<<"The unit of the third vector domain is correctly \"radian\". "<<endl;
+			cout<<"The unit of the third vector domain is correctly \"radian\"."<<endl;
 		}else{
 			cerr<<"Error: The unit of the third vector domain is \""<<vecUnits[0]
 				<<"\", but should be \"radian\"."<<endl;
@@ -5285,7 +5286,7 @@ int testPropertyElectromagnetic2D( unsigned long &ulTestphase ){
 		}
 		if ( vecUnits[3]=="s" ){
 		
-			cout<<"The unit of the 4'th vector domain is correctly \"s\". "<<endl;
+			cout<<"The unit of the 4'th vector domain is correctly \"s\"."<<endl;
 		}else{
 			cerr<<"Error: The unit of the 4'th vector domain is \""<<vecUnits[0]
 				<<"\", but should be \"s\"."<<endl;
@@ -5293,7 +5294,7 @@ int testPropertyElectromagnetic2D( unsigned long &ulTestphase ){
 		}
 		if ( vecUnits[4]=="radian" ){
 		
-			cout<<"The unit of the 5'th vector domain is correctly \"radian\". "<<endl;
+			cout<<"The unit of the 5'th vector domain is correctly \"radian\"."<<endl;
 		}else{
 			cerr<<"Error: The unit of the 5'th vector domain is \""<<vecUnits[0]
 				<<"\", but should be \"radian\"."<<endl;
@@ -5402,7 +5403,7 @@ int testPropertyElectromagnetic4D( unsigned long &ulTestphase ){
 	if ( testTypeProperty.getNumberOfProperty() == uiPropertyNumber ){
 	
 		cout<<"The correct typenumber "<<szPropertyName<<"="<<uiPropertyNumber<<
-			" for \"cTypeProperty\" is given. "<<endl;
+			" for \"cTypeProperty\" is given."<<endl;
 	}else{
 		cerr<<"Error: The typenumber given is not "<<szPropertyName<<"="<<
 			uiPropertyNumber<<" for \"cTypeProperty\"; it is : "<<
@@ -5412,7 +5413,7 @@ int testPropertyElectromagnetic4D( unsigned long &ulTestphase ){
 	//check the getNameOfProperty() methode
 	if ( testTypeProperty.getNameOfProperty() == szPropertyName ){
 	
-		cout<<"The correct name \""<<szPropertyName<<"\" for the property is given. "<<endl;
+		cout<<"The correct name \""<<szPropertyName<<"\" for the property is given."<<endl;
 	}else{
 		cerr<<"Error: The given name is not \""<<szPropertyName<<"\" for the property; it is : "<<
 			testTypeProperty.getNameOfProperty()<<endl;
@@ -5425,7 +5426,7 @@ int testPropertyElectromagnetic4D( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 3 elements
 	if ( ! testTypeProperty.isCompatible( *domainInt ) ){
 	
-		cout<<"The type is correctly not compatible to a integer domain. "<<endl;
+		cout<<"The type is correctly not compatible to a integer domain."<<endl;
 	}else{
 		cerr<<"Error: The type is correctly compatible to a integer domain.."<<endl;
 		iReturn++;
@@ -5440,7 +5441,7 @@ int testPropertyElectromagnetic4D( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 0 elements
 	if ( ! testTypeProperty.isCompatible( *vectorDomain ) ){
 	
-		cout<<"The type is correctly not compatible to the vector domain with 0 elements. "<<endl;
+		cout<<"The type is correctly not compatible to the vector domain with 0 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is compatible to the vector domain with 0 elements."<<endl;
 		iReturn++;
@@ -5455,7 +5456,7 @@ int testPropertyElectromagnetic4D( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 1 elements
 	if ( ! testTypeProperty.isCompatible( *vectorDomain1 ) ){
 	
-		cout<<"The type is correctly not compatible to the vector domain with 1 elements. "<<endl;
+		cout<<"The type is correctly not compatible to the vector domain with 1 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is compatible to the vector domain with 1 elements."<<endl;
 		iReturn++;
@@ -5472,7 +5473,7 @@ int testPropertyElectromagnetic4D( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 2 elements
 	if ( ! testTypeProperty.isCompatible( *vectorDomain ) ){
 	
-		cout<<"The type is correctly not compatible to the vector domain with 2 elements. "<<endl;
+		cout<<"The type is correctly not compatible to the vector domain with 2 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is compatible to the vector domain with 2 elements."<<endl;
 		iReturn++;
@@ -5491,7 +5492,7 @@ int testPropertyElectromagnetic4D( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 3 elements
 	if ( ! testTypeProperty.isCompatible( *vectorDomain ) ){
 	
-		cout<<"The type is correctly not compatible to the vector domain with 3 elements. "<<endl;
+		cout<<"The type is correctly not compatible to the vector domain with 3 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is compatible to the vector domain with 3 elements."<<endl;
 		iReturn++;
@@ -5517,7 +5518,7 @@ int testPropertyElectromagnetic4D( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 4 elements
 	if ( ! testTypeProperty.isCompatible( *vectorDomain ) ){
 	
-		cout<<"The type is not correctly compatible to the vector domain with 4 elements. "<<endl;
+		cout<<"The type is not correctly compatible to the vector domain with 4 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is compatible to the vector domain with 4 elements."<<endl;
 		iReturn++;
@@ -5545,7 +5546,7 @@ int testPropertyElectromagnetic4D( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 7 elements
 	if ( testTypeProperty.isCompatible( *vectorDomain ) ){
 	
-		cout<<"The type is correctly compatible to the vector domain with 7 elements. "<<endl;
+		cout<<"The type is correctly compatible to the vector domain with 7 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is not compatible to the vector domain with 7 elements."<<endl;
 		iReturn++;
@@ -5564,14 +5565,14 @@ int testPropertyElectromagnetic4D( unsigned long &ulTestphase ){
 		
 	} else if ( standardDomain->getType()=="DomainVector" ){
 	
-		cout<<"The standarddomain is correctly an cDomainVector domain. "<<endl;
+		cout<<"The standarddomain is correctly an cDomainVector domain."<<endl;
 		
 		cDomainVector *standardDomainVector=(cDomainVector*)standardDomain;
 		
 		if ( standardDomainVector->getNumberOfElements() == uiStandardDomainVectorElements ){
 		
 			cout<<"The standarddomainvector has correctly "<<
-				uiStandardDomainVectorElements<<" element. "<<endl;
+				uiStandardDomainVectorElements<<" element."<<endl;
 				
 			//test domain of first vector element
 			cDomain *domainElement1=standardDomainVector->getElementDomain( 1 );
@@ -5582,7 +5583,7 @@ int testPropertyElectromagnetic4D( unsigned long &ulTestphase ){
 				
 			} else if ( domainElement1->getType()=="DomainNaturalNumberBit" ){
 			
-				cout<<"The first element of the standarddomain is correctly an cDomainIntegerBasis domain. "<<endl;
+				cout<<"The first element of the standarddomain is correctly an cDomainIntegerBasis domain."<<endl;
 				
 				cDomainIntegerBasis *domainNaturalNumberBit=(cDomainIntegerBasis*)domainElement1;
 				
@@ -5593,7 +5594,7 @@ int testPropertyElectromagnetic4D( unsigned long &ulTestphase ){
 						(domainNaturalNumberBit->getMaximum()==upperBound) ){
 				
 					cout<<"The domain goes correctly from "<<lowerBound<<
-						" to "<<upperBound<<". "<<endl;
+						" to "<<upperBound<<"."<<endl;
 				}else{
 					cerr<<"Error: The domain goes correctly from "<<lowerBound<<
 						" to "<<upperBound<<", but it goes from "<<
@@ -5616,7 +5617,7 @@ int testPropertyElectromagnetic4D( unsigned long &ulTestphase ){
 				
 			} else if ( domainElement2->getType()=="DomainNaturalNumberBit" ){
 			
-				cout<<"The secound element of the standarddomain is correctly an cDomainIntegerBasis domain. "<<endl;
+				cout<<"The secound element of the standarddomain is correctly an cDomainIntegerBasis domain."<<endl;
 				
 				cDomainIntegerBasis *domainNaturalNumberBit=(cDomainIntegerBasis*)domainElement2;
 				
@@ -5627,7 +5628,7 @@ int testPropertyElectromagnetic4D( unsigned long &ulTestphase ){
 						(domainNaturalNumberBit->getMaximum()==upperBound) ){
 				
 					cout<<"The domain goes correctly from "<<lowerBound<<
-						" to "<<upperBound<<". "<<endl;
+						" to "<<upperBound<<"."<<endl;
 				}else{
 					cerr<<"Error: The domain goes correctly from "<<lowerBound<<
 						" to "<<upperBound<<", but it goes from "<<
@@ -5650,7 +5651,7 @@ int testPropertyElectromagnetic4D( unsigned long &ulTestphase ){
 				
 			} else if ( domainElement3->getType()=="DomainNaturalNumberBit" ){
 			
-				cout<<"The third element of the standarddomain is correctly an cDomainIntegerBasis domain. "<<endl;
+				cout<<"The third element of the standarddomain is correctly an cDomainIntegerBasis domain."<<endl;
 				
 				cDomainIntegerBasis *domainNaturalNumberBit=(cDomainIntegerBasis*)domainElement3;
 				
@@ -5661,7 +5662,7 @@ int testPropertyElectromagnetic4D( unsigned long &ulTestphase ){
 						(domainNaturalNumberBit->getMaximum()==upperBound) ){
 				
 					cout<<"The domain goes correctly from "<<lowerBound<<
-						" to "<<upperBound<<". "<<endl;
+						" to "<<upperBound<<"."<<endl;
 				}else{
 					cerr<<"Error: The domain goes correctly from "<<lowerBound<<
 						" to "<<upperBound<<", but it goes from "<<
@@ -5684,7 +5685,7 @@ int testPropertyElectromagnetic4D( unsigned long &ulTestphase ){
 				
 			} else if ( domainElement4->getType()=="DomainNaturalNumberBit" ){
 			
-				cout<<"The fourth element of the standarddomain is correctly an cDomainIntegerBasis domain. "<<endl;
+				cout<<"The fourth element of the standarddomain is correctly an cDomainIntegerBasis domain."<<endl;
 				
 				cDomainIntegerBasis *domainNaturalNumberBit=(cDomainIntegerBasis*)domainElement4;
 				
@@ -5695,7 +5696,7 @@ int testPropertyElectromagnetic4D( unsigned long &ulTestphase ){
 						(domainNaturalNumberBit->getMaximum()==upperBound) ){
 				
 					cout<<"The domain goes correctly from "<<lowerBound<<
-						" to "<<upperBound<<". "<<endl;
+						" to "<<upperBound<<"."<<endl;
 				}else{
 					cerr<<"Error: The domain goes correctly from "<<lowerBound<<
 						" to "<<upperBound<<", but it goes from "<<
@@ -5718,7 +5719,7 @@ int testPropertyElectromagnetic4D( unsigned long &ulTestphase ){
 				
 			} else if ( domainElement5->getType()=="DomainNaturalNumberBit" ){
 			
-				cout<<"The 5'th  element of the standarddomain is correctly an cDomainIntegerBasis domain. "<<endl;
+				cout<<"The 5'th  element of the standarddomain is correctly an cDomainIntegerBasis domain."<<endl;
 				
 				cDomainIntegerBasis *domainNaturalNumberBit=(cDomainIntegerBasis*)domainElement5;
 				
@@ -5729,7 +5730,7 @@ int testPropertyElectromagnetic4D( unsigned long &ulTestphase ){
 						(domainNaturalNumberBit->getMaximum()==upperBound) ){
 				
 					cout<<"The domain goes correctly from "<<lowerBound<<
-						" to "<<upperBound<<". "<<endl;
+						" to "<<upperBound<<"."<<endl;
 				}else{
 					cerr<<"Error: The domain goes correctly from "<<lowerBound<<
 						" to "<<upperBound<<", but it goes from "<<
@@ -5752,7 +5753,7 @@ int testPropertyElectromagnetic4D( unsigned long &ulTestphase ){
 				
 			} else if ( domainElement6->getType()=="DomainNaturalNumberBit" ){
 			
-				cout<<"The 6'th  element of the standarddomain is correctly an cDomainIntegerBasis domain. "<<endl;
+				cout<<"The 6'th  element of the standarddomain is correctly an cDomainIntegerBasis domain."<<endl;
 				
 				cDomainIntegerBasis *domainNaturalNumberBit=(cDomainIntegerBasis*)domainElement6;
 				
@@ -5763,7 +5764,7 @@ int testPropertyElectromagnetic4D( unsigned long &ulTestphase ){
 						(domainNaturalNumberBit->getMaximum()==upperBound) ){
 				
 					cout<<"The domain goes correctly from "<<lowerBound<<
-						" to "<<upperBound<<". "<<endl;
+						" to "<<upperBound<<"."<<endl;
 				}else{
 					cerr<<"Error: The domain goes correctly from "<<lowerBound<<
 						" to "<<upperBound<<", but it goes from "<<
@@ -5786,7 +5787,7 @@ int testPropertyElectromagnetic4D( unsigned long &ulTestphase ){
 				
 			} else if ( domainElement7->getType()=="DomainNaturalNumberBit" ){
 			
-				cout<<"The 7'th  element of the standarddomain is correctly an cDomainIntegerBasis domain. "<<endl;
+				cout<<"The 7'th  element of the standarddomain is correctly an cDomainIntegerBasis domain."<<endl;
 				
 				cDomainIntegerBasis *domainNaturalNumberBit=(cDomainIntegerBasis*)domainElement7;
 				
@@ -5797,7 +5798,7 @@ int testPropertyElectromagnetic4D( unsigned long &ulTestphase ){
 						(domainNaturalNumberBit->getMaximum()==upperBound) ){
 				
 					cout<<"The domain goes correctly from "<<lowerBound<<
-						" to "<<upperBound<<". "<<endl;
+						" to "<<upperBound<<"."<<endl;
 				}else{
 					cerr<<"Error: The domain goes correctly from "<<lowerBound<<
 						" to "<<upperBound<<", but it goes from "<<
@@ -5833,7 +5834,7 @@ int testPropertyElectromagnetic4D( unsigned long &ulTestphase ){
 
 		if ( vecUnits[0]=="1/s" ){
 		
-			cout<<"The unit of the first vector domain is correctly \"1/s\". "<<endl;
+			cout<<"The unit of the first vector domain is correctly \"1/s\"."<<endl;
 		}else{
 			cerr<<"Error: The unit of the first vector domain is \""<<vecUnits[0]
 				<<"\", but should be \"1/s\"."<<endl;
@@ -5841,7 +5842,7 @@ int testPropertyElectromagnetic4D( unsigned long &ulTestphase ){
 		}
 		if ( vecUnits[1]=="cd" ){
 		
-			cout<<"The unit of the secound vector domain is correctly \"cd\". "<<endl;
+			cout<<"The unit of the secound vector domain is correctly \"cd\"."<<endl;
 		}else{
 			cerr<<"Error: The unit of the secound vector domain is \""<<vecUnits[0]
 				<<"\", but should be \"cd\"."<<endl;
@@ -5849,7 +5850,7 @@ int testPropertyElectromagnetic4D( unsigned long &ulTestphase ){
 		}
 		if ( vecUnits[2]=="radian" ){
 		
-			cout<<"The unit of the third vector domain is correctly \"radian\". "<<endl;
+			cout<<"The unit of the third vector domain is correctly \"radian\"."<<endl;
 		}else{
 			cerr<<"Error: The unit of the third vector domain is \""<<vecUnits[0]
 				<<"\", but should be \"radian\"."<<endl;
@@ -5857,7 +5858,7 @@ int testPropertyElectromagnetic4D( unsigned long &ulTestphase ){
 		}
 		if ( vecUnits[3]=="s" ){
 		
-			cout<<"The unit of the 4'th vector domain is correctly \"s\". "<<endl;
+			cout<<"The unit of the 4'th vector domain is correctly \"s\"."<<endl;
 		}else{
 			cerr<<"Error: The unit of the 4'th vector domain is \""<<vecUnits[0]
 				<<"\", but should be \"s\"."<<endl;
@@ -5865,7 +5866,7 @@ int testPropertyElectromagnetic4D( unsigned long &ulTestphase ){
 		}
 		if ( vecUnits[4]=="radian" ){
 		
-			cout<<"The unit of the 5'th vector domain is correctly \"radian\". "<<endl;
+			cout<<"The unit of the 5'th vector domain is correctly \"radian\"."<<endl;
 		}else{
 			cerr<<"Error: The unit of the 5'th vector domain is \""<<vecUnits[0]
 				<<"\", but should be \"radian\"."<<endl;
@@ -5873,7 +5874,7 @@ int testPropertyElectromagnetic4D( unsigned long &ulTestphase ){
 		}
 		if ( vecUnits[5]=="radian" ){
 		
-			cout<<"The unit of the 6'th vector domain is correctly \"radian\". "<<endl;
+			cout<<"The unit of the 6'th vector domain is correctly \"radian\"."<<endl;
 		}else{
 			cerr<<"Error: The unit of the 6'th vector domain is \""<<vecUnits[0]
 				<<"\", but should be \"radian\"."<<endl;
@@ -5881,7 +5882,7 @@ int testPropertyElectromagnetic4D( unsigned long &ulTestphase ){
 		}
 		if ( vecUnits[6]=="radian" ){
 		
-			cout<<"The unit of the 7'th vector domain is correctly \"radian\". "<<endl;
+			cout<<"The unit of the 7'th vector domain is correctly \"radian\"."<<endl;
 		}else{
 			cerr<<"Error: The unit of the 7'th vector domain is \""<<vecUnits[0]
 				<<"\", but should be \"radian\"."<<endl;
@@ -5936,7 +5937,7 @@ int testPropertyChecksum( unsigned long &ulTestphase ){
 	if ( testTypeProperty.getNumberOfProperty() == uiPropertyNumber ){
 	
 		cout<<"The correct typenumber "<<szPropertyName<<"="<<uiPropertyNumber<<
-			" for \"cTypeProperty\" is given. "<<endl;
+			" for \"cTypeProperty\" is given."<<endl;
 	}else{
 		cerr<<"Error: The typenumber given is not "<<szPropertyName<<"="<<
 			uiPropertyNumber<<" for \"cTypeProperty\"; it is : "<<
@@ -5946,7 +5947,7 @@ int testPropertyChecksum( unsigned long &ulTestphase ){
 	//check the getNameOfProperty() methode
 	if ( testTypeProperty.getNameOfProperty() == szPropertyName ){
 	
-		cout<<"The correct name \""<<szPropertyName<<"\" for the property is given. "<<endl;
+		cout<<"The correct name \""<<szPropertyName<<"\" for the property is given."<<endl;
 	}else{
 		cerr<<"Error: The given name is not \""<<szPropertyName<<"\" for the property; it is : "<<
 			testTypeProperty.getNameOfProperty()<<endl;
@@ -5959,7 +5960,7 @@ int testPropertyChecksum( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for integerdomain
 	if ( ! testTypeProperty.isCompatible( *domainInt ) ){
 	
-		cout<<"The type is correctly not compatible to a integer domain. "<<endl;
+		cout<<"The type is correctly not compatible to a integer domain."<<endl;
 	}else{
 		cerr<<"Error: The type is correctly compatible to a integer domain.."<<endl;
 		iReturn++;
@@ -5974,7 +5975,7 @@ int testPropertyChecksum( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 0 elements
 	if ( ! testTypeProperty.isCompatible( *vectorDomain ) ){
 	
-		cout<<"The type is correctly not compatible to the vector domain with 0 elements. "<<endl;
+		cout<<"The type is correctly not compatible to the vector domain with 0 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is compatible to the vector domain with 0 elements."<<endl;
 		iReturn++;
@@ -5989,7 +5990,7 @@ int testPropertyChecksum( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 1 elements
 	if ( ! testTypeProperty.isCompatible( *vectorDomain1 ) ){
 	
-		cout<<"The type is correctly not compatible to the vector domain with 1 elements. "<<endl;
+		cout<<"The type is correctly not compatible to the vector domain with 1 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is compatible to the vector domain with 1 elements."<<endl;
 		iReturn++;
@@ -6006,7 +6007,7 @@ int testPropertyChecksum( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 2 elements
 	if ( ! testTypeProperty.isCompatible( *vectorDomain ) ){
 	
-		cout<<"The type is correctly not compatible to the vector domain with 2 elements. "<<endl;
+		cout<<"The type is correctly not compatible to the vector domain with 2 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is compatible to the vector domain with 2 elements."<<endl;
 		iReturn++;
@@ -6025,7 +6026,7 @@ int testPropertyChecksum( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 3 elements
 	if ( testTypeProperty.isCompatible( *vectorDomain ) ){
 	
-		cout<<"The type is correctly compatible to the vector domain with 3 elements. "<<endl;
+		cout<<"The type is correctly compatible to the vector domain with 3 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is not compatible to the vector domain with 3 elements."<<endl;
 		iReturn++;
@@ -6049,7 +6050,7 @@ int testPropertyChecksum( unsigned long &ulTestphase ){
 		
 	} else if ( standardDomain->getType()=="DomainVector" ){
 	
-		cout<<"The standarddomain is correctly an cDomainVector domain. "<<endl;
+		cout<<"The standarddomain is correctly an cDomainVector domain."<<endl;
 		
 		cDomainVector *standardDomainVector=(cDomainVector*)standardDomain;
 
@@ -6058,7 +6059,7 @@ int testPropertyChecksum( unsigned long &ulTestphase ){
 		if ( standardDomainVector->getNumberOfElements() == uiStandardDomainVectorElements ){
 		
 			cout<<"The standarddomainvector has correctly "<<
-				uiStandardDomainVectorElements<<" element. "<<endl;
+				uiStandardDomainVectorElements<<" element."<<endl;
 				
 			//test domain of first vector element
 			cDomain *domainElement1=standardDomainVector->getElementDomain( 1 );
@@ -6069,7 +6070,7 @@ int testPropertyChecksum( unsigned long &ulTestphase ){
 				
 			} else if ( domainElement1->getType()=="DomainNaturalNumberBit" ){
 			
-				cout<<"The first element of the standarddomain is correctly an cDomainIntegerBasis domain. "<<endl;
+				cout<<"The first element of the standarddomain is correctly an cDomainIntegerBasis domain."<<endl;
 				
 				cDomainIntegerBasis *domainNaturalNumberBit=(cDomainIntegerBasis*)domainElement1;
 				
@@ -6080,7 +6081,7 @@ int testPropertyChecksum( unsigned long &ulTestphase ){
 						(domainNaturalNumberBit->getMaximum()==upperBound) ){
 				
 					cout<<"The domain goes correctly from "<<lowerBound<<
-						" to "<<upperBound<<". "<<endl;
+						" to "<<upperBound<<"."<<endl;
 				}else{
 					cerr<<"Error: The domain goes correctly from "<<lowerBound<<
 						" to "<<upperBound<<", but it goes from "<<
@@ -6103,7 +6104,7 @@ int testPropertyChecksum( unsigned long &ulTestphase ){
 				
 			} else if ( domainElement2->getType()=="DomainNaturalNumberBit" ){
 			
-				cout<<"The secound element of the standarddomain is correctly an cDomainIntegerBasis domain. "<<endl;
+				cout<<"The secound element of the standarddomain is correctly an cDomainIntegerBasis domain."<<endl;
 				
 				cDomainIntegerBasis *domainNaturalNumberBit=(cDomainIntegerBasis*)domainElement2;
 				
@@ -6114,7 +6115,7 @@ int testPropertyChecksum( unsigned long &ulTestphase ){
 						(domainNaturalNumberBit->getMaximum()==upperBound) ){
 				
 					cout<<"The domain goes correctly from "<<lowerBound<<
-						" to "<<upperBound<<". "<<endl;
+						" to "<<upperBound<<"."<<endl;
 				}else{
 					cerr<<"Error: The domain goes correctly from "<<lowerBound<<
 						" to "<<upperBound<<", but it goes from "<<
@@ -6137,7 +6138,7 @@ int testPropertyChecksum( unsigned long &ulTestphase ){
 				
 			} else if ( domainElement3->getType()=="DomainNaturalNumberBit" ){
 			
-				cout<<"The third element of the standarddomain is correctly an cDomainIntegerBasis domain. "<<endl;
+				cout<<"The third element of the standarddomain is correctly an cDomainIntegerBasis domain."<<endl;
 				
 				cDomainIntegerBasis *domainNaturalNumberBit=(cDomainIntegerBasis*)domainElement3;
 				
@@ -6148,7 +6149,7 @@ int testPropertyChecksum( unsigned long &ulTestphase ){
 						(domainNaturalNumberBit->getMaximum()==upperBound) ){
 				
 					cout<<"The domain goes correctly from "<<lowerBound<<
-						" to "<<upperBound<<". "<<endl;
+						" to "<<upperBound<<"."<<endl;
 				}else{
 					cerr<<"Error: The domain goes correctly from "<<lowerBound<<
 						" to "<<upperBound<<", but it goes from "<<
@@ -6184,7 +6185,7 @@ int testPropertyChecksum( unsigned long &ulTestphase ){
 
 		if ( vecUnits[0]=="type" ){
 		
-			cout<<"The unit of the first vector domain is correctly \"type\". "<<endl;
+			cout<<"The unit of the first vector domain is correctly \"type\"."<<endl;
 		}else{
 			cerr<<"Error: The unit of the first vector domain is \""<<vecUnits[0]
 				<<"\", but should be \"type\"."<<endl;
@@ -6193,7 +6194,7 @@ int testPropertyChecksum( unsigned long &ulTestphase ){
 		
 		if ( vecUnits[1]=="bits" ){
 		
-			cout<<"The unit of the secound vector domain is correctly \"bits\". "<<endl;
+			cout<<"The unit of the secound vector domain is correctly \"bits\"."<<endl;
 		}else{
 			cerr<<"Error: The unit of the secound vector domain is \""<<vecUnits[0]
 				<<"\", but should be \"bits\"."<<endl;
@@ -6202,7 +6203,7 @@ int testPropertyChecksum( unsigned long &ulTestphase ){
 		
 		if ( vecUnits[2]=="bits" ){
 		
-			cout<<"The unit of the third vector domain is correctly \"bits\". "<<endl;
+			cout<<"The unit of the third vector domain is correctly \"bits\"."<<endl;
 		}else{
 			cerr<<"Error: The unit of the third vector domain is \""<<vecUnits[0]
 				<<"\", but should be \"bits\"."<<endl;
@@ -6327,35 +6328,35 @@ int testEqualElementType( unsigned long &ulTestphase ){
 
 	if ( typeProperty1.equalElementType( typeProperty1 ) ){
 	
-		cout<<"The typeProperty1 is of the same type as typeProperty1. "<<endl;
+		cout<<"The typeProperty1 is of the same type as typeProperty1."<<endl;
 	}else{
 		cerr<<"Error: The typeProperty1 is not of the same type as typeProperty1."<<endl;
 		iReturn++;
 	}
 	if ( ! typeProperty1.equalElementType( typeProperty2 ) ){
 	
-		cout<<"The typeProperty1 is not of the same type as typeProperty2. "<<endl;
+		cout<<"The typeProperty1 is not of the same type as typeProperty2."<<endl;
 	}else{
 		cerr<<"Error: The typeProperty1 is of the same type as typeProperty2."<<endl;
 		iReturn++;
 	}
 	if ( ! typeProperty1.equalElementType( typeProperty3 ) ){
 	
-		cout<<"The typeProperty1 is not of the same type as typeProperty3. "<<endl;
+		cout<<"The typeProperty1 is not of the same type as typeProperty3."<<endl;
 	}else{
 		cerr<<"Error: The typeProperty1 is of the same type as typeProperty3."<<endl;
 		iReturn++;
 	}
 	if ( ! typeProperty1.equalElementType( typeInVar ) ){
 	
-		cout<<"The typeProperty1 is not of the same type as typeInVar. "<<endl;
+		cout<<"The typeProperty1 is not of the same type as typeInVar."<<endl;
 	}else{
 		cerr<<"Error: The typeProperty1 is of the same type as typeInVar."<<endl;
 		iReturn++;
 	}
 	if ( ! typeProperty1.equalElementType( typeDimension1D3 ) ){
 	
-		cout<<"The typeProperty1 is not of the same type as typeDimension1D3. "<<endl;
+		cout<<"The typeProperty1 is not of the same type as typeDimension1D3."<<endl;
 	}else{
 		cerr<<"Error: The typeProperty1 is of the same type as typeDimension1D3."<<endl;
 		iReturn++;
@@ -6364,35 +6365,35 @@ int testEqualElementType( unsigned long &ulTestphase ){
 
 	if ( typeProperty3.equalElementType( typeProperty3 ) ){
 	
-		cout<<"The typeProperty3 is of the same type as typeProperty3. "<<endl;
+		cout<<"The typeProperty3 is of the same type as typeProperty3."<<endl;
 	}else{
 		cerr<<"Error: The typeProperty3 is not of the same type as typeProperty3."<<endl;
 		iReturn++;
 	}
 	if ( ! typeProperty3.equalElementType( typeProperty2 ) ){
 	
-		cout<<"The typeProperty3 is not of the same type as typeProperty2. "<<endl;
+		cout<<"The typeProperty3 is not of the same type as typeProperty2."<<endl;
 	}else{
 		cerr<<"Error: The typeProperty3 is of the same type as typeProperty2."<<endl;
 		iReturn++;
 	}
 	if ( ! typeProperty3.equalElementType( typeProperty1 ) ){
 	
-		cout<<"The typeProperty3 is not of the same type as typeProperty1. "<<endl;
+		cout<<"The typeProperty3 is not of the same type as typeProperty1."<<endl;
 	}else{
 		cerr<<"Error: The typeProperty3 is of the same type as typeProperty1."<<endl;
 		iReturn++;
 	}
 	if ( ! typeProperty3.equalElementType( typeDimension1D3 ) ){
 	
-		cout<<"The typeProperty3 is not of the same type as typeDimension1D3. "<<endl;
+		cout<<"The typeProperty3 is not of the same type as typeDimension1D3."<<endl;
 	}else{
 		cerr<<"Error: The typeProperty3 is of the same type as typeDimension1D3."<<endl;
 		iReturn++;
 	}
 	if ( ! typeProperty3.equalElementType( typeInVar ) ){
 	
-		cout<<"The typeProperty3 is not of the same type as typeInVar. "<<endl;
+		cout<<"The typeProperty3 is not of the same type as typeInVar."<<endl;
 	}else{
 		cerr<<"Error: The typeProperty3 is of the same type as typeInVar."<<endl;
 		iReturn++;
@@ -6429,7 +6430,7 @@ int testXmlType( const string szFilename, const unsigned int uiPropertyType,
 	TiXmlDocument xmlDocVectorPosition( szFilename );
 	bool loadOkay = xmlDocVectorPosition.LoadFile();
 	if ( loadOkay ){
-		cout<<"The data of the type was loaded successfull from the file \""<< szFilename <<"\". "<<endl;
+		cout<<"The data of the type was loaded successfull from the file \""<< szFilename <<"\"."<<endl;
 	}else{
 		cerr<<"Error: Failed to load file \""<< szFilename <<"\""<<endl;
 		iReturn++;
@@ -6446,7 +6447,7 @@ int testXmlType( const string szFilename, const unsigned int uiPropertyType,
 		string szElementName = pXmlElement->Value();
 
 		if ( szElementName == "property" ){
-			cout<<"The root element is correctly named \"property\". "<<endl;
+			cout<<"The root element is correctly named \"property\"."<<endl;
 		
 		}else{
 			cerr<<"Error: The name of the root element is "<< szElementName <<" and not \"property\"."<<endl;
@@ -6462,7 +6463,7 @@ int testXmlType( const string szFilename, const unsigned int uiPropertyType,
 			iReturn++;
 		}else if ( typeProperty.getNameOfProperty( ) == pcAttributElements ) {
 			cout<<"The propertyname of the type is correctly \""<<
-				typeProperty.getNameOfProperty() <<"\". "<<endl;
+				typeProperty.getNameOfProperty() <<"\"."<<endl;
 		}else{
 			cerr<<"Error: The propertyname of the loaded type is \""<<
 				pcAttributElements <<"\", but should be \""<<
@@ -6488,7 +6489,7 @@ int testXmlType( const string szFilename, const unsigned int uiPropertyType,
 			string szElementName = pXmlElement->Value();
 	
 			if ( szElementName == "vector" ){
-				cout<<"The root element is correctly named \"vector\". "<<endl;
+				cout<<"The root element is correctly named \"vector\"."<<endl;
 			
 			}else{
 				cerr<<"Error: The name of the root element is "<< szElementName <<" and not \"vector\"."<<endl;
@@ -6504,7 +6505,7 @@ int testXmlType( const string szFilename, const unsigned int uiPropertyType,
 				iReturn++;
 			}else if ( iNumberOfElementsLoaded == (int)uiNumberOfElements ) {
 				cout<<"The number of elements of the domain are correctly \""<<
-					uiNumberOfElements <<"\". "<<endl;
+					uiNumberOfElements <<"\"."<<endl;
 			}else{
 				cerr<<"Error: The number of elements of the loaded domain are \""<<
 					iNumberOfElementsLoaded <<"\", but should be \""<<
@@ -6528,13 +6529,13 @@ int testXmlType( const string szFilename, const unsigned int uiPropertyType,
 				pXmlElement = pXmlElement->NextSiblingElement(), uiActualDimension++ ){
 	
 			unsigned int uiBits = vecUiBits[ uiActualDimension ];
-			double dScalingfactor = vecScalingfactor[ uiActualDimension ];
+			double dScalingFactor = vecScalingfactor[ uiActualDimension ];
 		
 			// should always have a valid root but handle gracefully if it does
 			string szElementName = pXmlElement->Value();
 	
 			if ( szElementName == "naturalNumberB" ){
-				cout<<"The  element is correctly named \"naturalNumberB\". "<<endl;
+				cout<<"The  element is correctly named \"naturalNumberB\"."<<endl;
 			
 			}else{
 				cerr<<"Error: The name of the element is \""<< szElementName <<"\" and not \"naturalNumberB\"."<<endl;
@@ -6548,48 +6549,41 @@ int testXmlType( const string szFilename, const unsigned int uiPropertyType,
 				cerr<<"Error: The domain has no attribute bits."<<endl;
 				iReturn++;
 			}else if ( iBitsLoaded == (int)uiBits ) {
-				cout<<"The number of bits of the domain are correctly \""<< uiBits <<"\". "<<endl;
+				cout<<"The number of bits of the domain are correctly \""<< uiBits <<"\"."<<endl;
 			}else{
 				cerr<<"Error: The number of bits of the loaded domain are \""<< iBitsLoaded
 					<<"\", but should be \""<< uiBits <<"\"."<<endl;
 				iReturn++;
 			}
 	
-			const char * pcAttributeScalingfactor =
+			const char * pcAttributeScalingFactor =
 				pXmlElement->Attribute( "scalingfactor" );
 			
-			longFib lfMantissa;
-			longFib lfExponent;
-			decomposeDoubleFib( dScalingfactor, & lfMantissa, & lfExponent );
-			
-			long lMantissa = lfMantissa;
-			long lExponent = lfExponent;
-	
-			char szScalingfactorBuffer[128];
-			szScalingfactorBuffer[0] = 0;
-			sprintf ( szScalingfactorBuffer, "%li * 2^(%li)", lMantissa, lExponent );
-			
-			string szScalingfactor( szScalingfactorBuffer );
-			
-			if ( ( dScalingfactor == 1.0 ) && ( pcAttributeScalingfactor == NULL ) ){
+			if ( ( dScalingFactor == 1.0 ) && ( pcAttributeScalingFactor == NULL ) ){
 				//no scalingfactor needed
-				cout<<"No scalingfactor attribut. This is correct because the scalingfactor is 1.0 . "<<endl;
+				cout<<"No scalingfactor attribut. This is correct because the scalingfactor is 1.0 ."<<endl;
 			}else{
-				if ( pcAttributeScalingfactor == NULL ){
-					cerr<<"Error: The domain has no attribute scalingfactor."<<endl;
+				if ( pcAttributeScalingFactor == NULL ){
+					cerr<<"Error: The domain has no attribute scaling factor."<<endl;
 					iReturn++;
-				}else if ( szScalingfactor == pcAttributeScalingfactor ) {
-					cout<<"The scalingfactor of the domain is correctly \""<< pcAttributeScalingfactor <<"\". "<<endl;
 				}else{
-					cerr<<"Error: The scalingfactor of the loaded domain is \""<< pcAttributeScalingfactor
-						<<"\", but should be \""<< dScalingfactor <<"\" (=\""<< szScalingfactor <<"\")."<<endl;
-					iReturn++;
+					const double dReadScalingFactor =
+						readDoubleFromFunction( pcAttributeScalingFactor );
+					
+					if ( dScalingFactor == dReadScalingFactor ) {
+						cout<<"The scaling factor of the domain is correctly \""<< pcAttributeScalingFactor <<"\"."<<endl;
+					}else{
+						cerr<<"Error: The scaling factor of the loaded domain is \""<<
+							pcAttributeScalingFactor<<"\"(="<<dReadScalingFactor<<
+							"), but should be \""<<dScalingFactor <<"\" ."<<endl;
+						iReturn++;
+					}
 				}
 			}
 		}
 		
 		if ( uiActualDimension == uiNumberOfElements ){
-			cout<<"The number of subdomains is correct. "<<endl;
+			cout<<"The number of subdomains is correct."<<endl;
 		
 		}else{
 			cerr<<"Error: The number of subdomains is "<< uiActualDimension <<
@@ -6637,7 +6631,7 @@ int testStoreXml( unsigned long &ulTestphase ){
 	
 	if ( bStoreSuccesfull ){
 	
-		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\". "<<endl;
+		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\"."<<endl;
 	}else{
 		cerr<<"Error: Storing the data to the file \""<< szFileNameBuffer <<"\" failed."<<endl;
 		iReturn++;
@@ -6679,7 +6673,7 @@ int testStoreXml( unsigned long &ulTestphase ){
 	
 	if ( bStoreSuccesfull ){
 	
-		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\". "<<endl;
+		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\"."<<endl;
 	}else{
 		cerr<<"Error: Storing the data to the file \""<< szFileNameBuffer <<"\" failed."<<endl;
 		iReturn++;
@@ -6707,7 +6701,7 @@ int testStoreXml( unsigned long &ulTestphase ){
 	
 	if ( bStoreSuccesfull ){
 	
-		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\". "<<endl;
+		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\"."<<endl;
 	}else{
 		cerr<<"Error: Storing the data to the file \""<< szFileNameBuffer <<"\" failed."<<endl;
 		iReturn++;
@@ -6769,7 +6763,7 @@ int testStoreXml( unsigned long &ulTestphase ){
 	
 	if ( bStoreSuccesfull ){
 	
-		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\". "<<endl;
+		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\"."<<endl;
 	}else{
 		cerr<<"Error: Storing the data to the file \""<< szFileNameBuffer <<"\" failed."<<endl;
 		iReturn++;
@@ -6809,11 +6803,11 @@ int testStore( unsigned long &ulTestphase ){
 	if ( (unsigned int)(typeProperty1.getCompressedSize()) == uiCompressedSize ){
 	
 		cout<<"The compressed size of the type is correctly "<<
-			uiCompressedSize <<" . "<<endl;
+			uiCompressedSize <<" ."<<endl;
 	}else{
 		cerr<<"Error: The compressed size of the type is "<<
 			typeProperty1.getCompressedSize() << ", but should be "<<
-			uiCompressedSize <<" . "<<endl;
+			uiCompressedSize <<" ."<<endl;
 		iReturn++;
 	}
 	
@@ -6831,7 +6825,7 @@ int testStore( unsigned long &ulTestphase ){
 	
 	if ( bStoreSuccesfull ){
 	
-		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\". "<<endl;
+		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\"."<<endl;
 	}else{
 		cerr<<"Error: Storing the data to the file \""<< szFileNameBuffer <<"\" failed."<<endl;
 		iReturn++;
@@ -6840,11 +6834,11 @@ int testStore( unsigned long &ulTestphase ){
 	unsigned char ucRestBit = cRestBit;
 	if ( ( ucRestBit == (char)0x00 ) && ( cNumberOfRestBit == 0 ) ){
 		cout<<"The restbit is \"(char)0x"<< hex << (unsigned short)ucRestBit <<"\" the number of restbit is "<<
-			dec << (unsigned short)cNumberOfRestBit <<". "<<endl;
+			dec << (unsigned short)cNumberOfRestBit <<"."<<endl;
 	}else{
 		cerr<<"Error: The restbit is \"(char)0x"<< hex << (unsigned short)ucRestBit <<"\" the number of restbit is "<<
 			dec << (unsigned short)cNumberOfRestBit <<
-			", but the restbit should be 0 and number of restbit should be 0. "<<endl;
+			", but the restbit should be 0 and number of restbit should be 0."<<endl;
 		iReturn++;
 	}
 
@@ -6867,11 +6861,11 @@ int testStore( unsigned long &ulTestphase ){
 	if ( (unsigned int)(typeProperty2003.getCompressedSize()) == uiCompressedSize ){
 	
 		cout<<"The compressed size of the type is correctly "<<
-			uiCompressedSize <<" . "<<endl;
+			uiCompressedSize <<" ."<<endl;
 	}else{
 		cerr<<"Error: The compressed size of the type is "<<
 			typeProperty2003.getCompressedSize() << ", but should be "<<
-			uiCompressedSize <<" . "<<endl;
+			uiCompressedSize <<" ."<<endl;
 		iReturn++;
 	}
 	
@@ -6888,7 +6882,7 @@ int testStore( unsigned long &ulTestphase ){
 	
 	if ( bStoreSuccesfull ){
 	
-		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\". "<<endl;
+		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\"."<<endl;
 	}else{
 		cerr<<"Error: Storing the data to the file \""<< szFileNameBuffer <<"\" failed."<<endl;
 		iReturn++;
@@ -6896,11 +6890,11 @@ int testStore( unsigned long &ulTestphase ){
 	ucRestBit = cRestBit;
 	if ( ( ucRestBit == (char)0x00 ) && ( cNumberOfRestBit == 0 ) ){
 		cout<<"The restbit is \"(char)0x"<< hex << (unsigned short)ucRestBit <<"\" the number of restbit is "<<
-			dec << (unsigned short)cNumberOfRestBit <<". "<<endl;
+			dec << (unsigned short)cNumberOfRestBit <<"."<<endl;
 	}else{
 		cerr<<"Error: The restbit is \"(char)0x"<< hex << (unsigned short)ucRestBit <<"\" the number of restbit is "<<
 			dec << (unsigned short)cNumberOfRestBit <<
-			", but the restbit should be 0 and number of restbit should be 0. "<<endl;
+			", but the restbit should be 0 and number of restbit should be 0."<<endl;
 		iReturn++;
 	}
 
@@ -6923,11 +6917,11 @@ int testStore( unsigned long &ulTestphase ){
 	if ( (unsigned int)(typeProperty7.getCompressedSize()) == uiCompressedSize ){
 	
 		cout<<"The compressed size of the type is correctly "<<
-			uiCompressedSize <<" . "<<endl;
+			uiCompressedSize <<" ."<<endl;
 	}else{
 		cerr<<"Error: The compressed size of the type is "<<
 			typeProperty7.getCompressedSize() << ", but should be "<<
-			uiCompressedSize <<" . "<<endl;
+			uiCompressedSize <<" ."<<endl;
 		iReturn++;
 	}
 	
@@ -6944,7 +6938,7 @@ int testStore( unsigned long &ulTestphase ){
 	
 	if ( bStoreSuccesfull ){
 	
-		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\". "<<endl;
+		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\"."<<endl;
 	}else{
 		cerr<<"Error: Storing the data to the file \""<< szFileNameBuffer <<"\" failed."<<endl;
 		iReturn++;
@@ -6952,11 +6946,11 @@ int testStore( unsigned long &ulTestphase ){
 	ucRestBit = cRestBit;
 	if ( ( ucRestBit == (unsigned char)(char)0x00 ) && ( cNumberOfRestBit == 2 ) ){
 		cout<<"The restbit is \"(char)0x"<< hex << (unsigned short)ucRestBit <<"\" the number of restbit is "<<
-			dec << (unsigned short)cNumberOfRestBit <<". "<<endl;
+			dec << (unsigned short)cNumberOfRestBit <<"."<<endl;
 	}else{
 		cerr<<"Error: The restbit is \"(char)0x"<< hex << (unsigned short)ucRestBit <<"\" the number of restbit is "<<
 			dec << (unsigned short)cNumberOfRestBit <<
-			", but the restbit should be (char)0x00 and number of restbit should be 2. "<<endl;
+			", but the restbit should be (char)0x00 and number of restbit should be 2."<<endl;
 		iReturn++;
 	}
 

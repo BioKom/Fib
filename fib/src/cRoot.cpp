@@ -54,7 +54,7 @@ History:
 12.12.2011  Oesterholz  changes for cFibSet and cFibMatrix: changed
 02.01.2012  Oesterholz  generateNeededDomains() cTypeSubarea to cTypeArea
 23.01.2012  Oesterholz  input values changed to input vector
-27.01.2012  Oesterholz  Bugfix in insertObjectInElement() if 
+27.01.2012  Oesterholz  Bugfix in insertObjectInElement() if
 	(fibUnderObjects.front() == NULL) set superior of inserted element to this
 29.01.2012  Oesterholz  FEATURE_EXT_SUBOBJECT_INPUT_VECTOR implemented:
 	the input values are now a vector of values;
@@ -72,11 +72,17 @@ History:
 12.05.2013  Oesterholz  getDigits() andling changed (now version for integers)
 30.07.2013  Oesterholz  method assignValues() added;
 	FEATURE_EXT_SUBOBJECT_INPUT_VECTOR as default (not case removed)
+12.09.2013  Oesterholz  reding default value of input variable with
+	readDoubleFromFunction() and storing it with storeXmlDoubleFib()
+28.10.2013  Oesterholz  method integrateSubRootObject() added
+12.11.2013  Oesterholz  FEATURE_INSERT_OBJECT_IN_ELEMENT:
+	insertObjectInElement(): don't add a new list ifthe main Fib object is
+	allready is list element
 */
 
 
-//TODO weg
-#define DEBUG
+//debugging switches
+//#define DEBUG
 
 
 #include "cRoot.h"
@@ -141,7 +147,7 @@ cFibDatabase * cRoot::pFibDatabase = NULL;
  *
  * @param pInSuperiorRootElement the root-Element in which this
  * 	root-element is an subobject
- * @param pInMainFibObject the main Fib-object of this root-element
+ * @param pInMainFibObject the main Fib object of this root-element
  */
 cRoot::cRoot( cFibElement * pInMainFibObject,
 		cRoot * pInSuperiorRootElement ):
@@ -199,7 +205,7 @@ cRoot::cRoot( cFibElement * pInMainFibObject,
  * 	root-element is an subobject
  * @param pInPreviousFibElement the Fib-Element which stands in th order
  * 	of Fib elements befor this Fib element
- * @param pInMainFibObject the main Fib-object of this root-element
+ * @param pInMainFibObject the main Fib object of this root-element
  */
 cRoot::cRoot( cRoot * pInSuperiorRootElement ,
 		cFibElement * pInPreviousFibElement ,
@@ -267,7 +273,7 @@ cRoot::cRoot( const cRoot & rootElement ):
 /**
  * The constructor for restoring a rootyelement from an TinyXml element.
  *
- * @param pXmlRootElement a pointer to the TinyXml node the Fib-object is stored in
+ * @param pXmlRootElement a pointer to the TinyXml node the Fib object is stored in
  * @param outStatus An reference to an integervalue where the errorvalue
  * 	can be stored to.
  * 	possible errorvalues are:
@@ -462,16 +468,26 @@ cRoot::cRoot( const TiXmlElement * pXmlRootElement, intFib & outStatus,
 								iActualVariable++ ){
 
 							int iNumberOfVariable = 0;
-							const char * szXmlVariableNumber = pXmlElementVariable->Attribute( "number", & iNumberOfVariable );
-							double dDefaultValue = 0.0;
-							const char * szXmlVariableDefault = pXmlElementVariable->Attribute( "default", & dDefaultValue );
+							const char * szXmlVariableNumber =
+								pXmlElementVariable->Attribute( "number", & iNumberOfVariable );
+							const char * szXmlVariableDefault =
+								pXmlElementVariable->Attribute( "default" );
 							
 							if ( szXmlVariableNumber == NULL ){
 								//Warning: no correct variablenumber
 								outStatus = 2;
 							}
-							if ( szXmlVariableDefault == NULL ){
-								//Warning: no correct default
+							double dDefaultValue = 0.0;
+							if ( szXmlVariableDefault != NULL ){
+								std::pair< bool, const char * > pPairOutEvalueStatus;
+								dDefaultValue = readDoubleFromFunction(
+									szXmlVariableDefault, &pPairOutEvalueStatus );
+								
+								if ( ! pPairOutEvalueStatus.first ){
+									//Warning: error while reading default value
+									outStatus = 2;
+								}
+							}else{//Warning: no correct default
 								outStatus = 2;
 							}
 							liInputVariables.push_back( make_pair( new cFibVariable( this ), dDefaultValue ) );
@@ -507,8 +523,8 @@ cRoot::cRoot( const TiXmlElement * pXmlRootElement, intFib & outStatus,
 #endif //FEATURE_FIB_DB_USE_TREADS
 						}
 					}//for all identifiers
-				}else if ( szElementType == "main_fib_object" ){//load main -Fib-object
-					//restore the main -Fib-object
+				}else if ( szElementType == "main_fib_object" ){//load main -Fib object
+					//restore the main -Fib object
 					if ( pMainFibObject == NULL ){
 						for ( const TiXmlNode * pChildMainObject = pChild->FirstChild();
 								pChildMainObject != NULL;
@@ -518,7 +534,7 @@ cRoot::cRoot( const TiXmlElement * pXmlRootElement, intFib & outStatus,
 								pChildMainObject, outStatus, liDefinedVariables );
 							
 							if ( pMainFibObject != NULL ){
-								//main -Fib-object loaded
+								//main -Fib object loaded
 								if ( pMainFibObject->getType() == 'r' ){
 									if ( outStatus == 0 ){
 										//an error occured
@@ -542,7 +558,7 @@ cRoot::cRoot( const TiXmlElement * pXmlRootElement, intFib & outStatus,
 						}
 #endif //FEATURE_FAST_UPDATE
 						fibUnderObjects.front() = pMainFibObject;
-					}else{//Warning: can't restore two main -Fib-object
+					}else{//Warning: can't restore two main -Fib object
 						outStatus = 2;
 					}
 				}else if ( szElementType == "sub_roots" ){
@@ -591,7 +607,7 @@ cRoot::cRoot( const TiXmlElement * pXmlRootElement, intFib & outStatus,
 #endif //FEATURE_FAST_UPDATE
 									}else{
 										if (pFibObject != NULL){
-											//delete restored Fib-object; it isn't usebel
+											//delete restored Fib object; it isn't usebel
 #ifdef FEATURE_FAST_UPDATE
 											pFibObject->deleteObject();
 #else //FEATURE_FAST_UPDATE
@@ -604,7 +620,7 @@ cRoot::cRoot( const TiXmlElement * pXmlRootElement, intFib & outStatus,
 									}
 									if ( iReturnStatus < 0){
 										if (pFibObject != NULL){
-											//delete restored Fib-object; it isn't usebel
+											//delete restored Fib object; it isn't usebel
 #ifdef FEATURE_FAST_UPDATE
 											pFibObject->deleteObject();
 #else //FEATURE_FAST_UPDATE
@@ -699,7 +715,7 @@ cRoot::cRoot( const TiXmlElement * pXmlRootElement, intFib & outStatus,
 	}
 
 	if ( pMainFibObject == NULL ){
-		//Warning: no main -Fib-object restored
+		//Warning: no main -Fib object restored
 		outStatus = 2;
 	}
 #ifdef DEBUG_RESTORE_XML
@@ -910,7 +926,7 @@ cRoot::cRoot( cReadBits & iBitStream, intFib & outStatus, cRoot * pNextRoot ):
 			return;
 		}
 	}
-	//read offset wher the main -Fib-object begins
+	//read offset wher the main -Fib object begins
 	unsignedLongFib ulOffsetMainFibObject = 0;
 	uiBitsRead = iBitStream.readBits( ulOffsetMainFibObject, 64 );
 	if ( ! iBitStream.getStream()->good() ){
@@ -1142,16 +1158,16 @@ cRoot::cRoot( cReadBits & iBitStream, intFib & outStatus, cRoot * pNextRoot ):
 		liDefinedVariables = getInputVariables();
 	}
 	
-	//restore the main -Fib-object
+	//restore the main -Fib object
 	iBitStream.readTillNextFullByte();
 		
 	if ( (iBitStream.getBitReadedCount() - ulRootStartBit) !=
 			ulOffsetMainFibObject * 8 ){
-		DEBUG_OUT_L2(<<"Warning: offset of the main -Fib-object is incorrect "<<endl);
+		DEBUG_OUT_L2(<<"Warning: offset of the main -Fib object is incorrect "<<endl);
 		DEBUG_OUT_L2(<<"   is: "<<(iBitStream.getBitReadedCount() - ulRootStartBit)<< " should be: "<<ulOffsetMainFibObject * 8<<endl);
 		outStatus = 2;
 	}
-	DEBUG_OUT_L1(<<"Restoring main -Fib-object; offset: "<<(iBitStream.getBitReadedCount() - ulRootStartBit)<<endl);
+	DEBUG_OUT_L1(<<"Restoring main -Fib object; offset: "<<(iBitStream.getBitReadedCount() - ulRootStartBit)<<endl);
 	
 #ifdef FEATURE_FAST_UPDATE
 	setMainFibObject( cFibElement::restoreInternal( iBitStream, outStatus,
@@ -1323,7 +1339,7 @@ cRoot::cRoot( cReadBits & iBitStream, intFib & outStatus, cRoot * pNextRoot ):
 	}
 
 	if ( pMainFibObject == NULL ){
-		DEBUG_OUT_L2(<<"Warning: no main-Fib-object restored"<<endl);
+		DEBUG_OUT_L2(<<"Warning: no main-Fib object restored"<<endl);
 		outStatus = 2;
 	}
 #ifdef FEATURE_FAST_UPDATE
@@ -1615,16 +1631,16 @@ list<cFibVariable*> cRoot::getDefinedVariablesInternal( edDirection direction,
 
 
 /**
- * This method checks, if all Fib elements of this Fib-object
+ * This method checks, if all Fib elements of this Fib object
  * have the subobjects they need to be correct.
  *
- * @return true if all Fib elements of this Fib-object have the
+ * @return true if all Fib elements of this Fib object have the
  * 	subobjects they need to be correct, else false
  */
 bool cRoot::hasUnderAllObjects( ) const{
 
 	if ( pMainFibObject == NULL ){
-		//main -Fib-object is missing
+		//main -Fib object is missing
 		return false;
 	}
 	return cFibBranch::hasUnderAllObjects();
@@ -1632,7 +1648,7 @@ bool cRoot::hasUnderAllObjects( ) const{
 
 
 /**
- * This method evaluades the Fib-object.
+ * This method evaluades the Fib object.
  *
  * @param evaluePosition a reference to the object with the
  * 	evaluePosition() method to evalue /store the positions and ther
@@ -1662,13 +1678,13 @@ bool cRoot::evalueObject( iEvaluePosition & evaluePosition,
 	}
 	
 #endif //DEBUG_EVALUE
-	//evalue main -Fib-object
+	//evalue main -Fib object
 	return pMainFibObject->evalueObject( evaluePosition, objectPoint, liVecProperties );
 }
 
 
 /**
- * This method evaluades the Fib-object.
+ * This method evaluades the Fib object.
  * Evertime a Fib elements, with a type of the given type chars in
  * liCFibElementTyps, is reached while evaluation, it is given
  * back with the properties which it has.
@@ -1701,13 +1717,13 @@ bool cRoot::evalueObject( iEvalueFibElement & evalueFibElement,
 			//call evalueElement() with this element
 			return evalueFibElement.evalueElement( *this, liVecProperties );
 		}
-	}//else if this element shouldn't be returned -> evalue the main -Fib-object
+	}//else if this element shouldn't be returned -> evalue the main -Fib object
 
 	if ( pMainFibObject == NULL ){
 		//nothing to evalue
 		return false;
 	}
-	//evalue main -Fib-object
+	//evalue main -Fib object
 	return pMainFibObject->evalueObject( evalueFibElement, objectPoint,
 		liVecProperties, liCFibElementTyps );
 }
@@ -1742,19 +1758,19 @@ unsignedLongFib cRoot::getTimeNeed( unsignedLongFib lMaxTime ) const{
 		lMaxTime -= 3;
 	}
 
-	//evalue time for main -Fib-object
+	//evalue time for main -Fib object
 	return (pMainFibObject->getTimeNeed( lMaxTime ) + 3);
 }
 
 
 /**
- * This method evaluades the size of the Fib-object in bits in the
+ * This method evaluades the size of the Fib object in bits in the
  * compressed file form.
  *
  * The optionalpart field of root-elements will not be ignored.
  *
  * @see store()
- * @return the size of the Fib-object in bits in the compressed form
+ * @return the size of the Fib object in bits in the compressed form
  */
 unsignedLongFib cRoot::getCompressedSize() const{
 	
@@ -1764,13 +1780,13 @@ unsignedLongFib cRoot::getCompressedSize() const{
 
 
 /**
- * This method evaluades the size of the Fib-object in bits in the
+ * This method evaluades the size of the Fib object in bits in the
  * compressed file form.
  *
  * @see store()
  * @param bWriteOptionalPart if true the size of the optionalpart is
  * 	evalued, else it is ignored
- * @return the size of the Fib-object in bits in the compressed form
+ * @return the size of the Fib object in bits in the compressed form
  */
 unsignedLongFib cRoot::getCompressedSize( bool bWriteOptionalPart ) const{
 	//the summ of the compressed size
@@ -1782,7 +1798,7 @@ unsignedLongFib cRoot::getCompressedSize( bool bWriteOptionalPart ) const{
 	//prepare the bits for storing variables
 	unsignedIntFib uiVariablenCount = liInputVariables.size();
 	
-	//counting variables in the main -Fib-object and creating a variables domain
+	//counting variables in the main -Fib object and creating a variables domain
 	if ( pMainFibObject ){
 		uiVariablenCount = const_cast<cFibElement*>(pMainFibObject)->
 			enumerateVariablesForStoring( uiVariablenCount );
@@ -1833,7 +1849,7 @@ unsignedLongFib cRoot::getCompressedSize( bool bWriteOptionalPart ) const{
 	
 	if ( bWriteOptionalPart ){
 		//add bits for the optional part
-		//extract text from the main-Fib-object into the optionalpart
+		//extract text from the main-Fib object into the optionalpart
 		/*enummerate comments and export ther strings to the optional part
 		and create the needed domains*/
 		cOptionalPart * optionalPartFull =
@@ -2024,7 +2040,7 @@ bool cRoot::isMovable() const{
  * @param elementPoint the number of the Fib element, in the order of
  * 	Fib elements of the given type cType, to copy
  * @param bAbsolute if the lNumber is an absolute value for the wool
- * 	Fib-object
+ * 	Fib object
  * @return the copy of the Fib element
  */
 cFibElement *cRoot::copyElement( const char cType, const unsignedIntFib
@@ -2237,12 +2253,12 @@ bool cRoot::assignValues( const cFibElement & fibElement ){
 #ifdef FEATURE_EQUAL_FIB_OBJECT
 
 /**
- * This method checks if the given Fib-object is equal to this fib
+ * This method checks if the given Fib object is equal to this fib
  * -object.
  * Variables can be others, but must be defined and used in equivalent
  * Fib elements.
  *
- * @param fibObject the Fib-object to which this Fib-object should be
+ * @param fibObject the Fib object to which this Fib object should be
  * 	equal
  * @param mapEqualRootObjects the root objects of this object that wher
  * 	already checked as equal
@@ -2261,7 +2277,7 @@ bool cRoot::assignValues( const cFibElement & fibElement ){
  * 			variables to the same values as the key Fib element
  * @param bCheckExternalObjects if true the external objects of
  * 	cExtObject will be compared
- * @return true if this Fib-object is equal to the given Fib-object,
+ * @return true if this Fib object is equal to the given Fib object,
  * 	else false
  */
 bool cRoot::equalInternal( const cFibElement & fibObject,
@@ -2350,7 +2366,7 @@ bool cRoot::equalInternal( const cFibElement & fibObject,
  * 			variables to the same values as the key Fib element
  * @param bCheckExternalObjects if true the external objects of
  * 	cExtObject will be compared
- * @return true if this Fib element is equal to the given Fib-object,
+ * @return true if this Fib element is equal to the given Fib object,
  * 	else false
  */
 bool cRoot::equalElementInternal( const cFibElement & fibElement,
@@ -2527,14 +2543,14 @@ bool cRoot::equalValuesSetInternal( const cFibVariable * pVariableOwn,
 #else //FEATURE_EQUAL_FIB_OBJECT
 
 /**
- * This method checks if the given Fib-object is equal to this Fib
+ * This method checks if the given Fib object is equal to this Fib
  * -object.
  * Variables can be others, but must be defined and used in equivalent
  * Fib elements.
  *
- * @param fibObject the Fib-object to which this Fib-object should be
+ * @param fibObject the Fib object to which this Fib object should be
  * 	equal
- * @return true if this Fib-object is equal to the given Fib-object,
+ * @return true if this Fib object is equal to the given Fib object,
  * 	else false
  */
 bool cRoot::equal( const cFibElement & fibObject ) const{
@@ -2563,7 +2579,7 @@ bool cRoot::equal( const cFibElement & fibObject ) const{
  *
  * @param fibElement the Fib element to which this Fib element should be
  * 	equal
- * @return true if this Fib element is equal to the given Fib-object,
+ * @return true if this Fib element is equal to the given Fib object,
  * 	else false
  */
 bool cRoot::equalElement( const cFibElement & fibElement ) const{
@@ -2714,22 +2730,22 @@ bool cRoot::equalValuesSet( const cFibVariable * variableOwn,
 
 
 /**
- * This method stores this Fib-object in the XML -format into the
+ * This method stores this Fib object in the XML -format into the
  * given stream.
  *
- * @param stream the stream where this Fib-object should be stored to
- * @return true if this Fib-object is stored, else false
+ * @param stream the stream where this Fib object should be stored to
+ * @return true if this Fib object is stored, else false
  */
 bool cRoot::storeXml( ostream & stream ) const{
 
-	//check if the Fib-object is correct
+	//check if the Fib object is correct
 	
 	if ( pMainFibObject == NULL ){
-		//no main -Fib-object -> incorrect Fib-object
+		//no main -Fib object -> incorrect Fib object
 		return false;
 	}
 	if ( pSuperiorElement == NULL ){
-		//check wool Fib-object
+		//check wool Fib object
 #ifndef TEST
 		if ( ! hasUnderAllObjects() ){
 			return false;
@@ -2752,7 +2768,7 @@ bool cRoot::storeXml( ostream & stream ) const{
 		itrActualVariable->first->setIntegerValue( (longFib)(uiVariablenCount) );
 	}
 	
-	//counting variables in the main -Fib-object and creating a variables domain
+	//counting variables in the main -Fib object and creating a variables domain
 	if ( pMainFibObject ){
 		uiVariablenCount = const_cast<cFibElement*>(pMainFibObject)->
 			enumerateVariablesForStoring( uiVariablenCount );
@@ -2836,13 +2852,15 @@ bool cRoot::storeXml( ostream & stream ) const{
 			uiNumberOfInputVariable++ ){
 		
 			stream<<"<variable number=\""<< uiNumberOfInputVariable <<"\" ";
-			stream<<"default=\""<< getStandardValueOfInputVariable(
-				uiNumberOfInputVariable ) <<"\"/>"<<endl;
+			stream<<"default=\"";
+			storeXmlDoubleFib( stream,
+				getStandardValueOfInputVariable( uiNumberOfInputVariable ) );
+			stream<<"\"/>"<<endl;
 		}
 		stream<<"</input_variables>"<<endl;
 	}
 	
-	//write the main -Fib-object
+	//write the main -Fib object
 	if ( pMainFibObject ){
 		stream<<"<main_fib_object>"<<endl;
 		bool bMainFibObjectStored = pMainFibObject->storeXml( stream );
@@ -2939,7 +2957,7 @@ bool cRoot::storeXml( ostream & stream ) const{
  * 	fibElement will be inserted under this Fib element
  * @param fibElement the Fib element to insert
  * @param bAbsolute if the lNumber is an absolute value for the wool
- * 	Fib-object
+ * 	Fib object
  * @param bCheckVariables if true (standardvalue) it will be checked if
  * 	the variables the Fib element defines are needed, else the 
  * 	Fib element will be removed even if its variables are needed elsewher
@@ -2959,10 +2977,171 @@ bool cRoot::insertElement( cFibElement *fibElement, const char cType,
 }
 
 
+#ifdef FEATURE_INSERT_OBJECT_IN_ELEMENT
+
 /**
- * This method inserts the given Fib-object fibObject on the
+ * This method inserts the given Fib object pFibObject on the
+ * specified position. On the specified position a list element will
+ * be inserted, with the old Fib object and the given Fib object
+ * pFibObject as its subobjects.
+ *
+ * @see getNumberOfElement()
+ * @see getNumberOfElements()
+ * @see overwriteObjectWithObject()
+ * @see getType()
+ * @param cType the type of the Fib element, on which position the
+ * 	given Fib object pFibObject should be inserted
+ * @param elementPoint the number of the Fib element, in the order of
+ * 	Fib elements of the given type cType, on which position the given
+ * 	Fib object pFibObject should be inserted
+ * @param pFibObject the Fib object to insert
+ * @param bFirst if true, the inserted object will be the first
+ * 	subobject of the list element, else (it is false) the inserted
+ * 	object will be the last subobject of the list element
+ * @param bAbsolute if the lNumber is an absolute value for the whole
+ * 	Fib object
+ * @return true if the Fib object pFibObject was inserted, else false
+ */
+bool cRoot::insertObjectInElement( cFibElement *pFibObject, const char cType,
+		const unsignedIntFib elementPoint, bool bFirst,
+		bool bAbsolute ){
+	
+	if ( pFibObject == NULL ){
+		//nothing to insert
+		return false;
+	}
+	if ( pFibObject->getType() == 'r' ){
+		//can't insert a root-element
+		return false;
+	}
+	if ( ! cFibObjectCounts::isValidType( cType ) ){
+		return false;
+	}
+	if ( elementPoint == 0 ){
+		//insert in this Fib element
+		if ( fibUnderObjects.empty() ){
+			//insert in this root-element
+			if ( pFibObject->pSuperiorElement != NULL ){
+				pFibObject->pSuperiorElement->cutConnectionsTo(
+					pFibObject );
+			}
+			pFibObject->pSuperiorElement = this;
+			
+			fibUnderObjects.push_front( pFibObject );
+			
+			cFibObjectCounts pFibObjectCountsDelta =
+				evalueCountersForObject( pFibObject );
+			pFibObjectCountsDelta.uiNumberOfObjectpoints++;
+			updateAllCounters( pFibObjectCountsDelta );
+			syncSubobjects();
+			//done with inserting
+			return true;
+		}//else subobjects exists
+		if ( fibUnderObjects.front() == NULL ){
+		
+			if ( pFibObject->pSuperiorElement != NULL ){
+				pFibObject->pSuperiorElement->cutConnectionsTo(
+					pFibObject );
+			}
+			pFibObject->pSuperiorElement = this;
+			
+			fibUnderObjects.front() = pFibObject;
+			
+			cFibObjectCounts pFibObjectCountsDelta =
+				evalueCountersForObject( pFibObject );
+			pFibObjectCountsDelta.uiNumberOfObjectpoints++;
+			updateAllCounters( pFibObjectCountsDelta );
+			syncSubobjects();
+			return true;
+		}//else
+		return insertObjectInElement( pFibObject, 'u', 2, bFirst );
+	}
+	
+	if ( bAbsolute ){
+		const bool bObjectChanged = getMasterRoot()->insertObjectInElement(
+			pFibObject, cType, elementPoint, bFirst );
+		if ( bObjectChanged ){
+			syncSubobjects();
+		}
+		return bObjectChanged;
+	}//else elementPoint is an relative value
+
+	cFibElement * pFibElementPosition = getFibElement( cType, elementPoint );
+	if ( ( pFibElementPosition == NULL ) ||
+			( pFibElementPosition->getType() == 'r' ) ){
+		//no position to insert
+		return false;
+	}
+	cFibElement * pTmpMainFibObject = fibUnderObjects.front();
+	if ( pTmpMainFibObject != NULL ){
+		if ( pTmpMainFibObject == pFibElementPosition ){
+			
+			if ( pFibObject->pSuperiorElement != NULL ){
+				//disconnect superior of to add Fib object from it
+				pFibObject->pSuperiorElement->cutConnectionsTo(
+					pFibObject );
+				pTmpMainFibObject = fibUnderObjects.front();
+			}
+			if ( pTmpMainFibObject->getType() != 'l' ){
+				//don't let the update of counters change the counters of this
+				pFibElementPosition->pSuperiorElement = NULL;
+
+			//insert as main Fib object
+				/*the main Fib object is not a list element
+				-> insert in new list element*/
+				if( bFirst ){
+					fibUnderObjects.front() = new cList( pFibObject, pFibElementPosition );
+				}else{
+					fibUnderObjects.front() = new cList( pFibElementPosition, pFibObject );
+				}
+				//set superior Fib elements
+				pTmpMainFibObject = fibUnderObjects.front();
+				/*pFibElementPosition is no more the main Fib object
+				-> it is a subobject of the main Fib object*/
+				pTmpMainFibObject->pSuperiorElement   = this;
+				pFibElementPosition->pSuperiorElement = pTmpMainFibObject;
+				pFibObject->pSuperiorElement = pTmpMainFibObject;
+				
+				//update counters
+				cFibObjectCounts fibObjectCountsDelta =
+					evalueCountersForObject( pFibObject );
+				
+				fibObjectCountsDelta.vecNumberOfFibElements[ cFibObjectCounts::LIST ]++;
+				fibObjectCountsDelta.vecNumberOfFibElements[ cFibObjectCounts::ALL ]++;
+				fibObjectCountsDelta.uiNumberOfObjectpoints += 2;
+				
+				updateAllCounters( fibObjectCountsDelta );
+				syncSubobjects();
+				return true;
+			}//else the main Fib object is a list element -> add new Fib object to it
+			if( bFirst ){
+				//add new Fib object to front of list
+				(static_cast<cList*>(pTmpMainFibObject))->addUnderobject(
+					pFibObject, 1 );
+			}else{//add new Fib object to end of list
+				(static_cast<cList*>(pTmpMainFibObject))->addUnderobject(
+					pFibObject, ((static_cast<cList*>(pTmpMainFibObject))->
+						getNumberOfUnderobjects()) + 1);
+			}
+			return true;
+		}
+	}
+	
+	const bool bObjectChanged = cFibBranch::insertObjectInElement(
+		pFibObject, cType, elementPoint, bFirst );
+	
+	if ( bObjectChanged ){
+		syncSubobjects();
+	}
+	return bObjectChanged;
+}
+
+#else//FEATURE_INSERT_OBJECT_IN_ELEMENT
+
+/**
+ * This method inserts the given Fib object fibObject on the
  * specified position. On the specified position a listelement will
- * be inserted, with the old Fib-object and the given Fib-object
+ * be inserted, with the old Fib object and the given Fib object
  * fibObject as its subobjects.
  *
  * @see getNumberOfElement()
@@ -2970,16 +3149,16 @@ bool cRoot::insertElement( cFibElement *fibElement, const char cType,
  * @see overwriteObjectWithObject()
  * @see getType()
  * @param cType the type of the Fib element, on which position the 
- * 	given Fib-object fibObject should be inserted
+ * 	given Fib object fibObject should be inserted
  * @param elementPoint the number of the Fib element, in the order of
  * 	Fib elements of the given type cType, on which position the given
- * 	Fib-object fibObject should be inserted
- * @param fibObject the Fib-object to insert
+ * 	Fib object fibObject should be inserted
+ * @param fibObject the Fib object to insert
  * @param first if true, the inserted object will be the first
  * 	subobject of the new listelement
  * @param bAbsolute if the lNumber is an absolute value for the wool
- * 	Fib-object
- * @return true if the Fib-object fibObject was inserted, else false
+ * 	Fib object
+ * @return true if the Fib object fibObject was inserted, else false
  */
 bool cRoot::insertObjectInElement( cFibElement *fibObject, const char cType,
 		const unsignedIntFib elementPoint, bool first,
@@ -3069,7 +3248,7 @@ bool cRoot::insertObjectInElement( cFibElement *fibObject, const char cType,
 		if ( fibUnderObjects.front()->getNumberOfElement() ==
 				pFibElementPosition->getNumberOfElement() ){
 #endif //FEATURE_FAST_UPDATE
-			//insert as main -Fib-object
+			//insert as main -Fib object
 #ifdef FEATURE_SIMPLE_CONSTRUCTOR
 			if( first ){
 				fibUnderObjects.front() = new cList( fibObject, pFibElementPosition );
@@ -3112,27 +3291,29 @@ bool cRoot::insertObjectInElement( cFibElement *fibObject, const char cType,
 	return bObjectChanged;
 }
 
+#endif//FEATURE_INSERT_OBJECT_IN_ELEMENT
+
 
 /**
- * This method overwrites the Fib-object on specified position with
- * the given Fib-object fibObject. The Fib-object on specified
- * position will be replaced with the given Fib-object fibObject.
+ * This method overwrites the Fib object on specified position with
+ * the given Fib object fibObject. The Fib object on specified
+ * position will be replaced with the given Fib object fibObject.
  *
  * @see getNumberOfElement()
  * @see getNumberOfElements()
  * @see insertObjectInElement()
  * @see getType()
  * @param cType the type of the Fib element, on which position the 
- * 	given Fib-object fibObject should be inserted
+ * 	given Fib object fibObject should be inserted
  * @param elementPoint the number of the Fib element, in the order of
  * 	Fib elements of the given type cType, on which position the given
- * 	Fib-object fibObject should be inserted
- * @param fibObject the Fib-object to insert
- * @param bDeleteOld if true, delete the old Fib-object from the memory
+ * 	Fib object fibObject should be inserted
+ * @param fibObject the Fib object to insert
+ * @param bDeleteOld if true, delete the old Fib object from the memory
  * @param bAbsolute if the elementPoint is an absolute value for the wool
- * 	Fib-object
- * @return true if the old Fib-object was overwritten and the given 
- * 	Fib-object fibObject was inserted, else false
+ * 	Fib object
+ * @return true if the old Fib object was overwritten and the given 
+ * 	Fib object fibObject was inserted, else false
  */
 bool cRoot::overwriteObjectWithObject( cFibElement *fibObject, const char cType,
 		const unsignedIntFib elementPoint, bool bDeleteOld,
@@ -3205,7 +3386,7 @@ bool cRoot::overwriteObjectWithObject( cFibElement *fibObject, const char cType,
 	if ( fibUnderObjects.front() != NULL ){
 		if ( fibUnderObjects.front()->getNumberOfElement() ==
 				pFibElementPosition->getNumberOfElement() ){
-			//overwrite the main -Fib-object
+			//overwrite the main -Fib object
 			//set the values of the fibObject
 			fibObject->pSuperiorElement = this;
 					
@@ -3218,7 +3399,7 @@ bool cRoot::overwriteObjectWithObject( cFibElement *fibObject, const char cType,
 			//insert fibObject instead of the actualUnderObject
 			fibUnderObjects.front() = fibObject;
 			
-			//update the Fib-objectcounters
+			//update the Fib objectcounters
 			cFibObjectCounts fibObjectCountsDelta = evalueCountersForObject( fibObject );
 			const cFibObjectCounts fibObjectCountsOld =
 				evalueCountersForObject( pFibElementPosition );
@@ -3239,7 +3420,7 @@ bool cRoot::overwriteObjectWithObject( cFibElement *fibObject, const char cType,
 			//insert fibObject instead of the actualUnderObject
 			fibUnderObjects.front() = fibObject;
 			
-			//remove connections of pOldFibObject to this Fib-object
+			//remove connections of pOldFibObject to this Fib object
 			cFibElement * pLastFibElementInOld = pFibElementPosition->getFibElement(
 					pFibElementPosition->getNumberOfElements() );
 			if ( pLastFibElementInOld == NULL ){
@@ -3287,7 +3468,7 @@ bool cRoot::overwriteObjectWithObject( cFibElement *fibObject, const char cType,
  * @param elementPoint the number of the Fib element, in the order of
  * 	Fib elements of the given type cType, to cut
  * @param bAbsolute if the elementPoint is an absolute value for the wool
- * 	Fib-object
+ * 	Fib object
  * @param bCheckVariables if true (standardvalue) it will be checked if
  * 	the variables the Fib element defines are needed, else the 
  * 	Fib element will be removed even if its variables are needed elsewher
@@ -3310,7 +3491,7 @@ cFibElement * cRoot::cutElement( const char cType, const unsignedIntFib
 /**
  * This method moves a Fib-limb -element (cFibLimb) on the specified
  * position over iHowfar Fib elements.
- * Moving is stoped if an invalid Fib-object would result (e.g. no Fib
+ * Moving is stoped if an invalid Fib object would result (e.g. no Fib
  * -element can be moved over an Fib elements that defines a variable
  * the moved Fib element uses).
  * Moving an Fib element into an listelement will result in an
@@ -3327,7 +3508,7 @@ cFibElement * cRoot::cutElement( const char cType, const unsignedIntFib
  * 	-element will be moved over Fib elements it contains else over
  * 	Fib elements it is contained in
  * @param bAbsolute if the elementPoint is an absolute value for the wool
- * 	Fib-object
+ * 	Fib object
  * @return the number of Fib-Elements over which the to move Fib
  * 	-element was moved; if this value is positiv the Fib element
  * 	was moved over Fib elements it contains else over Fib elements
@@ -3709,10 +3890,10 @@ unsignedIntFib cRoot::getDimensionMapping( unsignedIntFib iDimensionNumber ) con
  */
 
 /**
- * This method sets the main -Fib-object to the given pInMainFibObject.
+ * This method sets the main -Fib object to the given pInMainFibObject.
  *
- * @param pInMainFibObject a pointer to the main -Fib-object to set
- * @return true if the main -Fib-object is set to pInMainFibObject, else false
+ * @param pInMainFibObject a pointer to the main -Fib object to set
+ * @return true if the main -Fib object is set to pInMainFibObject, else false
  */
 bool cRoot::setMainFibObject( cFibElement * pInMainFibObject ){
 	
@@ -3790,7 +3971,7 @@ cDomains * cRoot::getValueDomains(){
 
 /**
  * This method generates all domains, wich are needed to store this
- * Fib-object.
+ * Fib object.
  * Most generated domains are added as value domains of this root-element.
  *
  * the generated domains are for the typs:
@@ -3852,14 +4033,14 @@ void cRoot::generateNeededDomains( const bool bAddAllValueDomains ){
 #ifdef FEATURE_GENERATE_NEEDED_DOMAINS
 	unsignedLongFib uiElementsToCheck =
 		pMainFibObject->getNumberOfElements();
-	//for every Fib element in the Fib-object
+	//for every Fib element in the Fib object
 	for ( cFibElement * pActualFibElement = pMainFibObject;
 			( pActualFibElement != NULL ) && ( 0 < uiElementsToCheck );
 			pActualFibElement = pActualFibElement->getNextFibElement(),
 			uiElementsToCheck-- ){
 #else //FEATURE_GENERATE_NEEDED_DOMAINS
 	unsignedLongFib uiElementsToCheck = getNumberOfElements();
-	//for every Fib element in the Fib-object
+	//for every Fib element in the Fib object
 	for ( cFibElement * pActualFibElement = this;
 			( pActualFibElement != NULL ) && ( 0 < uiElementsToCheck );
 			pActualFibElement = pActualFibElement->getNextFibElement(),
@@ -4903,7 +5084,7 @@ void cRoot::generateNeededDomains( const bool bAddAllValueDomains ){
 
 
 /**
- * @return the count of input variables for the main Fib-object of
+ * @return the count of input variables for the main Fib object of
  * 	this root-object
  */
 unsignedIntFib cRoot::getNumberOfInputVariables() const{
@@ -4912,7 +5093,7 @@ unsignedIntFib cRoot::getNumberOfInputVariables() const{
 
 
 /**
- * This method sets the number of input variables, the main Fib-object
+ * This method sets the number of input variables, the main Fib object
  * of this root-object should have, to the given number. It will
  * create or delete variables as necessary.
  * Standardvalue of new varibles is the nullvalue of the standarddomain
@@ -4922,7 +5103,7 @@ unsignedIntFib cRoot::getNumberOfInputVariables() const{
  * variable can't be deleted.
  * 
  * @param uiNumberOfInputVariables the number of input variables the main
- * 	Fib-object of this root-object should have
+ * 	Fib object of this root-object should have
  * @return true if the number of input variables is set to the given
  * 	value, else false
  */
@@ -5180,19 +5361,19 @@ unsignedIntFib cRoot::getNumberOfOutputVariables(
 /**
  * This method checks the extern subobject of this root-object.
  * It is checked if:
- * 	- every subobject in main -Fib-object of this root-object
+ * 	- every subobject in main -Fib object of this root-object
  * 	is also defined in the root-object
  * 	- the number of output values in the definition and the
  * 	subobject Fib element(s) are the same
  * 	- ever subobject which is defined in this root-object is used
- * 	somewhere in the main -Fib-object
+ * 	somewhere in the main -Fib object
  *
  * @param iErrorNumber a pointer to an integerfild, wher an errornumber
  * 	can be stored; or NULL (standardvalue) if no errornumber should
  * 	be given back
  * 	possible errornumbers:
  * 		- 0 no error, everithing is OK
- * 		- -1 no main -Fib-object
+ * 		- -1 no main -Fib object
  * 		- -10 an subobject definition is missing
  * 		- -11 different number of output values
  * 		- -12 not every defined subobject is used
@@ -5218,7 +5399,7 @@ unsignedIntFib cRoot::checkExternSubobjects(
 	unsignedLongFib ulMaxSubobjectNumber = 0;
 	
 	unsignedLongFib uiElementsToCheck = pMainFibObject->getNumberOfElements( 's' );
-	//for every Fib element in the Fib-object
+	//for every Fib element in the Fib object
 	for ( cExtSubobject * pActualSubobject = ((cExtSubobject*)(pMainFibObject->getNextFibElement( 's' )));
 			( pActualSubobject != NULL ) && ( 0 < uiElementsToCheck );
 			pActualSubobject = ((cExtSubobject*)(pActualSubobject->getNextFibElement( 's' ))),
@@ -5299,7 +5480,7 @@ unsignedIntFib cRoot::checkExternSubobjects(
  * 	be given back
  * 	possible errornumbers:
  * 		- 0 no error, everithing is OK
- * 		- -1 no main -Fib-object
+ * 		- -1 no main -Fib object
  * 		- -11 different number of output values
  * 		- -13 the numbers of the subobjects dosn't go from 1 till n
  * @return the number of the first not correct extern subobject in
@@ -5325,7 +5506,7 @@ unsignedIntFib cRoot::generateExternSubobjectsDefinitions(
 	unsignedLongFib ulMaxSubobjectNumber = 0;
 	
 	unsignedLongFib uiElementsToCheck = pMainFibObject->getNumberOfElements( 's' );
-	//for every Fib element in the Fib-object
+	//for every Fib element in the Fib object
 	for ( cExtSubobject * pActualSubobject = ((cExtSubobject*)(pMainFibObject->getNextFibElement( 's' )));
 			( pActualSubobject != NULL ) && ( 0 < uiElementsToCheck );
 			pActualSubobject = ((cExtSubobject*)(pActualSubobject->getNextFibElement( 's' ))),
@@ -5514,6 +5695,10 @@ unsignedIntFib cRoot::getSubRootObjectNumber( longFib lIdentifier ) const{
  * This method returns the sub-root-object with the identifier
  * lIdentifier in this root-element or NULL if non such exists.
  *
+ * @see liSubRootObjects
+ * @see getAllAccessibleRootObjectIdentifiers()
+ * @see getAccessibleRootObject()
+ * @see getSubRootObject()
  * @param lIdentifier identifier of the sub-root-object which
  * 	should be returned return
  * @return the sub-root-object with the identifier lIdentifier
@@ -5572,7 +5757,7 @@ bool cRoot::addSubRootObject( longFib lIdentifier, cRoot * pRootObject,
 		liSubRootObjects.push_front( make_pair( lIdentifier, pRootObject) );
 		
 		/*add the sub-root-object to the subobject -list an the second
-		position (first is the main -Fib-object)*/
+		position (first is the main -Fib object)*/
 		list< cFibElement * >::iterator itrActualUnderObject =
 			fibUnderObjects.begin();
 		itrActualUnderObject++;
@@ -5674,7 +5859,7 @@ bool cRoot::deleteSubRootObject( unsignedIntFib uiSubRootObjectNumber,
 		}
 #else //FEATURE_FAST_UPDATE
 		if ( bDeleteOld ){
-			//remove connections of pOldFibObject to this Fib-object
+			//remove connections of pOldFibObject to this Fib object
 			pRootObjectToDelete->pPreviousFibElement = NULL;
 			pRootObjectToDelete->pSuperiorElement = NULL;
 			
@@ -5713,6 +5898,124 @@ list<longFib> cRoot::getAllSubRootObjectIdentifiers() const{
 		liIdentifiers.push_back( itrActualSubRootObject->first );
 	}
 	return liIdentifiers;
+}
+
+/**
+ * This method integrates the given Fib object as an accessible subroot
+ * object. After you call this method an accessible subroot object,
+ * which is equal to the given Fib object (or contains it as its main
+ * Fib object), will exists for this object and its identifier will be
+ * returned.
+ * First this method will search for an equal accessible subroot object
+ * to the given Fib object and returns its idenitifier, if it could find one.
+ * If non could be found a clone of the given Fib object will be
+ * integrated as a new sub root object into this root object and its
+ * identifier will be returned.
+ *
+ * @see liSubRootObjects
+ * @see getAllAccessibleRootObjectIdentifiers()
+ * @see getAccessibleRootObject()
+ * @see getSubRootObject()
+ * @param pFibObject a pointer to the Fib object, for which an accessible
+ * 	subroot object should exists
+ * @return the identifier of a subroot object, which is equal to the
+ * 	given Fib object (or contains it as its main Fib object), or 0,
+ * 	if for the given Fib object no subroot object could be created
+ */
+longFib cRoot::integrateSubRootObject( const cFibElement * pFibObject ){
+	
+	if ( pFibObject == NULL ){
+		//nothing to compare to or to integrate
+		return 0;
+	}
+	const char cTypeFibObject = pFibObject->getType();
+	if ( cTypeFibObject == 'r' ){
+		/*try to find a equal subroot object (they have to be root objects,
+		 *so the given Fib object has to be also a root element to be equal)*/
+		const list<longFib> liAllAccessibleRootIds =
+			getAllAccessibleRootObjectIdentifiers();
+		
+		for ( list<longFib>::const_iterator
+				itrIdentifier = liAllAccessibleRootIds.begin();
+				itrIdentifier != liAllAccessibleRootIds.end(); itrIdentifier++ ){
+			
+			const cRoot * pAccessibleRootObject =
+				getAccessibleRootObject( *itrIdentifier );
+			if ( ( pAccessibleRootObject != NULL ) &&
+					pFibObject->equal( *pAccessibleRootObject ) ){
+				//equal subroot object found -> return its identifier
+				return (*itrIdentifier);
+			}
+		}//end for all accessible subroot objects
+	}//end search for identifer
+	//integrate given Fib object as a new sub root object
+	cRoot * pSubrootObjectToIntegrate = NULL;
+	if ( cTypeFibObject =='r' ){
+		//given Fib object is (sub-)root object to integrate
+		pSubrootObjectToIntegrate = ((cRoot*)(pFibObject->clone()));
+	}else{//create (sub-)root object to integrate for given Fib object
+		cFibElement * pFibObjectClone = pFibObject->clone();
+		//create needed input variables
+		//find input variables
+		//evalue the used and defined varibles in the Fib object for the Fib node
+		set< cFibVariable* > setUsedVariables =
+			pFibObjectClone->getUsedVariables( ED_BELOW_EQUAL );
+		const list< cFibVariable* > liDefinedVariables =
+			pFibObjectClone->getDefinedVariables( ED_BELOW_EQUAL );
+		//evalue all used variables not defined in the Fib object
+		for ( list< cFibVariable* >::const_iterator
+				itrDefinedVariable = liDefinedVariables.begin();
+				itrDefinedVariable != liDefinedVariables.end(); itrDefinedVariable++ ){
+			
+			setUsedVariables.erase( *itrDefinedVariable );
+		}//end for all defined variables remove them from used variables
+		/*setUsedVariables contains all used variables not defined in the Fib object
+		 -> setUsedVariables contains all input variables*/
+		
+		//create root object for Fib object to integrate
+		cRoot * pSubrootObjectToIntegrate = new cRoot( pFibObjectClone );
+		if ( ! pSubrootObjectToIntegrate->setNumberOfInputVariables(
+				setUsedVariables.size() ) ){
+			//can't create needed input variables
+			pSubrootObjectToIntegrate->deleteObject();
+			return 0;
+		}
+		/*replace input variables of the Fib object pFibObjectClone with the
+		 root element pSubrootObjectToIntegrate input variables*/
+		list<cFibVariable*> liInputVariables =
+			pSubrootObjectToIntegrate->getInputVariables();
+		
+		set< cFibVariable* >::iterator itrFibObjInVar = setUsedVariables.begin();
+		for ( list<cFibVariable*>::iterator itrRootInVar = liInputVariables.begin();
+				( itrRootInVar != liInputVariables.end() ) &&
+				( itrFibObjInVar != setUsedVariables.end() );
+				itrRootInVar++, itrFibObjInVar++ ){
+			pFibObjectClone->replaceVariable( (*itrFibObjInVar), (*itrRootInVar) );
+		}
+	}
+	//find the first free identifier for the to integrate subroot object
+	set< longFib > setExistingIdentifiers;
+	for ( list< pair< longFib, cRoot * > >::const_iterator
+			itrActualSubRootObject = liSubRootObjects.begin();
+			itrActualSubRootObject != liSubRootObjects.end();
+			itrActualSubRootObject++ ){
+		
+		setExistingIdentifiers.insert( itrActualSubRootObject->first );
+	}
+	longFib lFirstFreeIdentifier = 1;
+	while ( setExistingIdentifiers.find( lFirstFreeIdentifier ) !=
+			setExistingIdentifiers.end() ){
+		//identifier exists allready -> increase identifier
+		lFirstFreeIdentifier++;
+	}
+	//add subroot object to this root object
+	if ( addSubRootObject( lFirstFreeIdentifier, pSubrootObjectToIntegrate,
+			getNumberOfSubRootObjects() + 1 ) ){
+		//sub root object integrated
+		return lFirstFreeIdentifier;
+	}//else can't add subroot object
+	pSubrootObjectToIntegrate->deleteObject();
+	return 0;
 }
 
 
@@ -5786,18 +6089,18 @@ void cRoot::setChecksum( const cVectorChecksum * pInChecksum ){
 
 
 /**
- * This method stores this Fib-object in the compressed Fib-format
+ * This method stores this Fib object in the compressed Fib-format
  * into the given stream.
  * It is needed becouse the stream can yust store byts but the size of
  * Fib elements can be any number of bits. Because of that ther have to
  * be a possibility to exchange the missing bits betwean the Fib elements.
  *
  * @see store
- * @param stream the stream where this Fib-object should be stored to
+ * @param stream the stream where this Fib object should be stored to
  * @param cRestBits the not yet writen bits which should be stored
  * @param uiRestBitPosition the number of bits in the cRestBits which
  * 	should be writen respectively containing valid information
- * @return true if this Fib-object is stored, else false
+ * @return true if this Fib object is stored, else false
  */
 bool cRoot::storeBit( ostream & stream, char & cRestBits,
 		unsigned char & uiRestBitPosition ) const{
@@ -5807,19 +6110,19 @@ bool cRoot::storeBit( ostream & stream, char & cRestBits,
 
 
 /**
- * This method stores this Fib-object in the compressed Fib-format
+ * This method stores this Fib object in the compressed Fib-format
  * into the given stream.
  * It is needed becouse the stream can yust store byts but the size of
  * Fib elements can be any number of bits. Because of that ther have to
  * be a possibility to exchange the missing bits betwean the Fib elements.
  *
  * @see store
- * @param stream the stream where this Fib-object should be stored to
+ * @param stream the stream where this Fib object should be stored to
  * @param cRestBits the not yet writen bits which should be stored
  * @param uiRestBitPosition the number of bits in the cRestBits which
  * 	should be writen respectively containing valid information
  * @param bWriteOptionalPart if true the optionalpart is written
- * @return true if this Fib-object is stored, else false
+ * @return true if this Fib object is stored, else false
  */
 bool cRoot::storeBit( ostream & stream, char & cRestBits,
 		unsigned char & uiRestBitPosition, bool bWriteOptionalPart ) const{
@@ -5828,13 +6131,13 @@ bool cRoot::storeBit( ostream & stream, char & cRestBits,
 	bool bReturnValue = true;
 
 #ifndef TEST
-	//check if the Fib-object is correct
+	//check if the Fib object is correct
 	if ( pMainFibObject == NULL ){
-		//no main -Fib-object -> incorrect Fib-object
+		//no main -Fib object -> incorrect Fib object
 		return false;
 	}
 	if ( pSuperiorElement == NULL ){
-		//check wool Fib-object
+		//check wool Fib object
 		if ( ! hasUnderAllObjects() ){
 			return false;
 		}
@@ -5855,7 +6158,7 @@ bool cRoot::storeBit( ostream & stream, char & cRestBits,
 		uiVariablenCount++;
 		itrActualVariable->first->setIntegerValue( (longFib)(uiVariablenCount) );
 	}
-	//counting variables in the main -Fib-object and creating a variables domain
+	//counting variables in the main -Fib object and creating a variables domain
 	if ( pMainFibObject ){
 		uiVariablenCount = const_cast<cFibElement*>(pMainFibObject)->
 			enumerateVariablesForStoring( uiVariablenCount );
@@ -5880,7 +6183,7 @@ bool cRoot::storeBit( ostream & stream, char & cRestBits,
 		uiRestBitPosition = 0;
 	}
 	
-	//store the Fib-object
+	//store the Fib object
 	
 	//write the stream/file header
 	if ( pSuperiorElement == NULL ){
@@ -5945,7 +6248,7 @@ bool cRoot::storeBit( ostream & stream, char & cRestBits,
 	//check if the optionalpart should be written
 	cOptionalPart * optionalPartFull = NULL;
 	if ( bWriteOptionalPart ){
-		//extract text from the main-Fib-object into the optionalpart
+		//extract text from the main-Fib object into the optionalpart
 
 		//enummerate comments and export ther strings to the optional part
 		optionalPartFull = (const_cast<cRoot*>(this))->exportCommentsIntoOptionalPart();
@@ -6019,7 +6322,7 @@ bool cRoot::storeBit( ostream & stream, char & cRestBits,
 			ulOffset += 8;
 		}
 	}
-	//ulOffset + main -Fib-object offset - root end offset
+	//ulOffset + main -Fib object offset - root end offset
 	ulOffset += 8 + 8;
 	
 	if ( cOptionalInformationBits[0] & 0x40 ){
@@ -6096,9 +6399,9 @@ bool cRoot::storeBit( ostream & stream, char & cRestBits,
 		ulOffset += roundUpToFullByte( ulBitSizeOfStandardValues ) / 8;
 	}
 	
-	//sum compressed size of main -Fib-object
+	//sum compressed size of main -Fib object
 	if ( pMainFibObject != NULL ){
-		/*write the offset for the  main -Fib-object*/
+		/*write the offset for the  main -Fib object*/
 		const bool bOffsetMainFibObjectStored = nBitStream::store(
 			stream, cRestBits, uiRestBitPosition, ulOffset, 64 );
 		if ( ! bOffsetMainFibObjectStored ){
@@ -6334,7 +6637,7 @@ bool cRoot::storeBit( ostream & stream, char & cRestBits,
 		}
 	}
 
-	//store the main -Fib-object
+	//store the main -Fib object
 	if ( pMainFibObject != NULL ){
 
 		bool bMainFibObjectStored =  pMainFibObject->storeBit( stream,
@@ -6493,7 +6796,7 @@ bool cRoot::storeBit( ostream & stream, char & cRestBits,
 		delete optionalPartFull;
 	}
 	
-	//restore old Fib-object
+	//restore old Fib object
 	(const_cast<cRoot*>(this))->backupVariablesValues( false );
 	return bReturnValue;
 }
@@ -6793,7 +7096,7 @@ list<longFib> cRoot::getAllAccessibleRootObjectIdentifiers( const cRoot *pRoot )
 		
 		liIdentifiers.insert( liIdentifiers.end(),
 			liHigherIdentifiers.begin(), liHigherIdentifiers.end() );
-	}else{//execute one time for the Fib-object
+	}else{//execute one time for the Fib object
 		//add database identifiers
 		list<longFib> liDatabaseIdentifiers = getAllDatabaseObjectIdentifiers();
 		liIdentifiers.insert( liIdentifiers.end(),
@@ -6931,12 +7234,12 @@ unsignedIntFib cRoot::getBitsForStoredPropertyType() const{
  * @see storeBit()
  * @see createStorePropertyOrder()
  * @see liStorePropertyOrder
- * @param stream the stream where this Fib-object should be stored to
+ * @param stream the stream where this Fib object should be stored to
  * @param cRestBits the not yet writen bits which should be stored
  * @param uiRestBitPosition the number of bits in the cRestBits which
  * 	should be writen respectively containing valid information
  * @param propertyType the propertytype to store
- * @return true if this Fib-object is stored, else false
+ * @return true if this Fib object is stored, else false
  */
 bool cRoot::storePropertyType( ostream & stream, char & cRestBits,
 		unsigned char & uiRestBitPosition, const cTypeProperty & propertyType ) const{
@@ -7034,7 +7337,7 @@ cTypeProperty cRoot::restorePropertyType( cReadBits & iBitStream, intFib & outSt
 /**
  * This method exports the comment values into a optional part.
  * It also enumerates the comments.
- * This functionality is for compressed storing of an Fib-object.
+ * This functionality is for compressed storing of an Fib object.
  * @see storeBit()
  * @see cRoot( cReadBits & iBitStream, intFib & outStatus, cRoot * pNextRoot )
  * @return a pointer to an optional part with the comments texts in it;
@@ -7043,7 +7346,7 @@ cTypeProperty cRoot::restorePropertyType( cReadBits & iBitStream, intFib & outSt
 cOptionalPart * cRoot::exportCommentsIntoOptionalPart(){
 	
 	if ( pMainFibObject == NULL ){
-		//no main -Fib-object -> no comments in it
+		//no main -Fib object -> no comments in it
 		return optionalPart.clone();
 	}
 	//extraxt all comments
@@ -7110,7 +7413,7 @@ void cRoot::extractCommentsFromOptionalPart(){
 	const unsignedIntFib uiNumberOfComments =
 		pMainFibObject->getNumberOfElements( 'c' );
 	if ( uiNumberOfComments == 0 ){
-		//no comments in Fib-object
+		//no comments in Fib object
 		return;
 	}
 	
@@ -7172,7 +7475,7 @@ void cRoot::extractCommentsFromOptionalPart(){
  * Variables which are not defined in the connected object but used
  * don't change ther reference.
  * It is an helpmethod for the copy method. It dosn't update the
- * structural information of the created Fib-object.
+ * structural information of the created Fib object.
  *
  * @param iObjectPoint the number of the connected object to copy;
  * 	the standartvalue is 0 for coping the complet actual object
@@ -7182,13 +7485,13 @@ cRoot * cRoot::copyInternal( const unsignedIntFib uiObjectPoint ) const{
 	
 	//copy this element
 	cRoot * pFibObjectCopy = new cRoot( * this );
-	//remove NULL main -Fib-object
+	//remove NULL main -Fib object
 	pFibObjectCopy->fibUnderObjects.clear();
 	
 	//copy and insert the subobjects which are part of the uiObjectPoint subobject
 	if ( uiObjectPoint == 0 ){
 		//copy all subobjects
-		//copy main -Fib-object
+		//copy main -Fib object
 		if ( pMainFibObject ){
 			pFibObjectCopy->pMainFibObject = pMainFibObject->copyInternal();
 			pFibObjectCopy->fibUnderObjects.push_back( pFibObjectCopy->pMainFibObject );
@@ -7241,9 +7544,9 @@ cRoot * cRoot::copyInternal( const unsignedIntFib uiObjectPoint ) const{
 		if ( pMainFibObject ){
 			uiActualObjectpoints = pMainFibObject->getNumberOfObjectPoints() + 1;
 		}
-			
+		
 		if ( uiRemainingObjectpoints <= uiActualObjectpoints ){
-			//an subobject in the main -Fib-object should be copied
+			//an subobject in the main -Fib object should be copied
 			pFibObjectCopy->pMainFibObject = pMainFibObject->copyInternal( uiRemainingObjectpoints - 1 );
 #ifdef FEATURE_FAST_UPDATE
 			if ( pFibObjectCopy->pMainFibObject ){
@@ -7294,7 +7597,7 @@ cRoot * cRoot::copyInternal( const unsignedIntFib uiObjectPoint ) const{
 				}
 			}
 		}else{
-			//add main -Fib-object in the subobjects
+			//add main -Fib object in the subobjects
 			if ( pMainFibObject ){
 				pFibObjectCopy->pMainFibObject = pMainFibObject->copyInternal();
 				pFibObjectCopy->fibUnderObjects.push_back( pFibObjectCopy->pMainFibObject );

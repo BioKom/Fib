@@ -37,6 +37,7 @@ History:
 18.04.2012  Oesterholz  Bugfix: replace FirstChild()->ToElement() with
 	FirstChildElement()
 01.08.2013  Oesterholz  method operator=() added
+23.10.2013  Oesterholz  method getEntries() without parameters added
 */
 
 //TODO weg
@@ -154,6 +155,17 @@ pair< string, string > cOptionalPart::getEntry(
 	}
 
 	return (*actualListElement);
+}
+
+
+/**
+ * This method returns all entries.
+ *
+ * @return a list with all entries
+ */
+list< pair<string,string> > cOptionalPart::getEntries() const{
+	
+	return optionalInformation;
 }
 
 

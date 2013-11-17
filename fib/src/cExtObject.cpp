@@ -39,10 +39,12 @@ History:
 03.03.2013  Oesterholz  Bugfix?: if an subobject is deleted, change it's
 	superior just if it (the superior) is this object
 01.08.2013  Oesterholz  method assignValues() added
+01.10.2013  Oesterholz  memory error fixed: syncSubobjects() needs to check
+	if the next subobject exists
 */
 
 
-//TODO debugging switches
+//comment in for debugging (debugging switches)
 //#define DEBUG
 //#define DEBUG_EVALUE
 
@@ -3758,7 +3760,8 @@ void cExtObject::syncSubobjects(){
 #endif //FEATURE_C_EXT_OBJECT_USE_LIST
 				itrNextSubobject++;
 				DEBUG_OUT_L3(<<"   check if one subobject was removed (next subobject="<<(itrNextSubobject->first)<<")"<<endl<<flush);
-				if ( itrNextSubobject->first == (*itrActualUnderobject) ){
+				if ( ( itrNextSubobject != vecSubobjects.end() ) &&
+						( itrNextSubobject->first == (*itrActualUnderobject) ) ){
 					//one subobject was removed -> remove actual subobject
 					DEBUG_OUT_L3(<<"      one subobject was removed -> remove actual subobject"<<endl<<flush);
 #ifdef FEATURE_C_EXT_OBJECT_USE_LIST
@@ -3780,7 +3783,8 @@ void cExtObject::syncSubobjects(){
 						itrActualUnderobject;
 					itrNextUnderobject++;
 					DEBUG_OUT_L3(<<"   check if one subobject was inserted (next underobject="<<(*itrNextUnderobject)<<")"<<endl<<flush);
-					if ( itrActualSubobject->first == (*itrNextUnderobject) ){
+					if ( ( itrNextUnderobject != fibUnderObjects.end() ) &&
+							( itrActualSubobject->first == (*itrNextUnderobject) ) ){
 						/*one subobject was inserted -> insert subobject into
 						subobject vector with 0 output variables*/
 						DEBUG_OUT_L3(<<"      one subobject was inserted -> insert subobject "<<(*itrNextUnderobject)<<" into subobject vector with 0 output variables"<<endl<<flush);
@@ -3797,8 +3801,8 @@ void cExtObject::syncSubobjects(){
 					}
 					itrActualSubobject++;
 					itrActualUnderobject++;
-				}
-			}
+				}//end check if one subobject was inserted or removed
+			}//end if subobjects are equal
 		}
 	}//end for all subobjects
 	//remove subobjects that are to many

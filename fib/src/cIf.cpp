@@ -40,12 +40,14 @@ History:
 17.10.2011  Oesterholz  FEATURE_OUTPUT_ELEMENT_NUMBER_XML implemented
 19.10.2011  Oesterholz  FEATURE_EQUAL_FIB_OBJECT implemented
 01.08.2013  Oesterholz  method assignValues() added
+13.11.2013  Oesterholz  FEATURE_INSERT_OBJECT_IN_ELEMENT implemented
 */
 
 
 #include "cIf.h"
 
 #include "cFibElement.h"
+#include "cList.h"
 #include "cTypeVariable.h"
 #include "cTypeUnderFunction.h"
 #include "cDomainIntegerBasis.h"
@@ -59,13 +61,13 @@ using namespace fib;
  * parameterconstructor
  *
  * @param inCondition the condition this if-element should have
- * @param pInUnderobjectTrueCase the fib-element, which is the underobject of
+ * @param pInUnderobjectTrueCase the fib-element, which is the subobject of
  * 	this fib-element for the true case;
  * 	(it also stands next in the order of fib-elements)
  * @param pInUnderobjectFalseCase the fib-element, which is the
- * 	underobject of this fib-element for the false case
+ * 	subobject of this fib-element for the false case
  * @param pInSuperiorElement the fib-element, in which this
- * 	if-element is an underobject
+ * 	if-element is an subobject
  */
 cIf::cIf( const cCondition & inCondition,
 		cFibElement * pInUnderobjectTrueCase,
@@ -193,7 +195,7 @@ cIf::cIf( const TiXmlElement * pXmlElement, intFib &outStatus,
 							//an error occured
 							return;
 						}
-					}else{//to many underobjects -> no correct area element
+					}else{//to many subobjects -> no correct area element
 						outStatus = 2;
 						continue;
 					}
@@ -227,7 +229,7 @@ cIf::cIf( const TiXmlElement * pXmlElement, intFib &outStatus,
 							return;
 						}
 						fibUnderObjects.push_back( pFibObjectFalse );
-					}else{//to many underobjects -> no correct area element
+					}else{//to many subobjects -> no correct area element
 						outStatus = 2;
 						continue;
 					}
@@ -341,8 +343,8 @@ cIf::cIf( cReadBits & iBitStream, intFib & outStatus,
 		return;
 	}
 
-	//restore the underobject
-	DEBUG_OUT_L2(<<"restoring true case underobject"<<endl);
+	//restore the subobject
+	DEBUG_OUT_L2(<<"restoring true case subobject"<<endl);
 	
 	//every subobject has it's own variables
 	list<cFibVariable*> liDefinedVariablesCopy( liDefinedVariables );
@@ -356,8 +358,8 @@ cIf::cIf( cReadBits & iBitStream, intFib & outStatus,
 		pFibObjectTrue->pSuperiorElement = this;
 	}
 #endif //FEATURE_FAST_UPDATE
-	//restore the underobject
-	DEBUG_OUT_L2(<<"restoring false case underobject"<<endl);
+	//restore the subobject
+	DEBUG_OUT_L2(<<"restoring false case subobject"<<endl);
 	
 	pFibObjectFalse = cFibElement::restoreInternal( iBitStream, outStatus,
 		liDefinedVariables, validDomains, pNextRoot );
@@ -386,14 +388,14 @@ cIf::~cIf(){
 
 
 /**
- * This method checks, if this Fib-element is an valid Fib-element.
+ * This method checks, if this Fib element is an valid Fib element.
  *
- * @return true if this Fib-element is an valid Fib-element, else false
+ * @return true if this Fib element is an valid Fib element, else false
  */
 bool cIf::isValidFibElement() const{
 	
 	if ( fibUnderObjects.size() != 2 ){
-		//no two underobjects
+		//no two subobjects
 		return false;
 	}
 	if ( ( pFibObjectTrue == NULL ) || ( pFibObjectFalse == NULL ) ){
@@ -416,7 +418,7 @@ bool cIf::isValidFibElement() const{
 
 /**
  * @see getTypeName
- * @return a character for the typ of the Fib-element
+ * @return a character for the typ of the Fib element
  * Types are:
  * 	- u: element of unknown typ
  * 	- p: point
@@ -461,7 +463,7 @@ bool cIf::evalueObject( iEvaluePosition & evaluePosition,
 			//no condition -> can't evalue if-element
 			return false;
 		}
-		//evalue the underobject for the condition value
+		//evalue the subobject for the condition value
 		if ( pCondition->getValue() ){
 		
 			if ( pFibObjectTrue == NULL ){
@@ -475,8 +477,8 @@ bool cIf::evalueObject( iEvaluePosition & evaluePosition,
 			return false;
 		}
 		return pFibObjectFalse->evalueObject( evaluePosition, objectPoint, liVecProperties );
-	}else{//evalue on underobject
-		//find the underobject to evalue
+	}else{//evalue on subobject
+		//find the subobject to evalue
 		unsignedIntFib uiRemainingObjectPoints = objectPoint;
 		for (list<cFibElement*>::const_iterator actualUnderObject = fibUnderObjects.begin();
 				actualUnderObject != fibUnderObjects.end(); actualUnderObject++ ){
@@ -487,7 +489,7 @@ bool cIf::evalueObject( iEvaluePosition & evaluePosition,
 					(*actualUnderObject)->getNumberOfObjectPoints() + 1;
 				
 				if ( uiRemainingObjectPoints <= uiActualObjectPoints ){
-					//underobject to copy found
+					//subobject to copy found
 					return (*actualUnderObject)->evalueObject( evaluePosition,
 						uiRemainingObjectPoints - 1, liVecProperties );
 				}else{
@@ -544,7 +546,7 @@ bool cIf::evalueObject( iEvalueFibElement & evalueFibElement,
 			//no condition -> can't evalue if-element
 			return false;
 		}
-		//evalue the underobject for the condition
+		//evalue the subobject for the condition
 		if ( pCondition->getValue() ){
 			
 			if ( pFibObjectTrue == NULL ){
@@ -560,8 +562,8 @@ bool cIf::evalueObject( iEvalueFibElement & evalueFibElement,
 		}
 		return pFibObjectFalse->evalueObject( evalueFibElement, objectPoint,
 			liVecProperties, liCFibElementTyps );
-	}else{//evalue on underobject
-		//find the underobject to evalue
+	}else{//evalue on subobject
+		//find the subobject to evalue
 		unsignedIntFib uiRemainingObjectPoints = objectPoint;
 		for (list<cFibElement*>::const_iterator actualUnderObject = fibUnderObjects.begin();
 				actualUnderObject != fibUnderObjects.end(); actualUnderObject++ ){
@@ -572,7 +574,7 @@ bool cIf::evalueObject( iEvalueFibElement & evalueFibElement,
 					(*actualUnderObject)->getNumberOfObjectPoints() + 1;
 				
 				if ( uiRemainingObjectPoints <= uiActualObjectPoints ){
-					//underobject to copy found
+					//subobject to copy found
 					return (*actualUnderObject)->evalueObject( evalueFibElement,
 						uiRemainingObjectPoints - 1, liVecProperties,
 						liCFibElementTyps );
@@ -610,7 +612,7 @@ unsignedLongFib cIf::getTimeNeed( unsignedLongFib lMaxTime ) const{
 
 	unsignedLongFib ulTimeNeeded = 0;
 
-	//evalue the underobject for the if-element
+	//evalue the subobject for the if-element
 	if ( pCondition ){
 		if ( lMaxTime == 0 ){
 			ulTimeNeeded += pCondition->getTimeNeed( 0 );
@@ -622,7 +624,7 @@ unsignedLongFib cIf::getTimeNeed( unsignedLongFib lMaxTime ) const{
 		}
 	}//else no condition
 	
-	//evalue the underobject for the if-element
+	//evalue the subobject for the if-element
 	const bool bConditionValue = pCondition->getValue();
 	if ( bConditionValue ){
 		if ( pFibObjectTrue == NULL ){
@@ -658,12 +660,12 @@ unsignedLongFib cIf::getTimeNeed( unsignedLongFib lMaxTime ) const{
 
 
 /**
- * This method evaluades the size of the Fib-object in bits in the
+ * This method evaluades the size of the Fib object in bits in the
  * compressed file form.
  * The optionalpart field of if-elements will be ignored.
  *
  * @see store()
- * @return the size of the Fib-object in bits in the compressed form
+ * @return the size of the Fib object in bits in the compressed form
  */
 unsignedLongFib cIf::getCompressedSize() const{
 	
@@ -673,7 +675,7 @@ unsignedLongFib cIf::getCompressedSize() const{
 	if ( pCondition ){
 		ulCompressedSize += pCondition->getCompressedSize();
 	}
-	//add compressed size for the underobject
+	//add compressed size for the subobject
 	if ( pFibObjectTrue != NULL ){
 		ulCompressedSize += pFibObjectTrue->getCompressedSize();
 	}
@@ -792,7 +794,7 @@ bool cIf::replaceVariable( cFibVariable *variableOld,
  * @see getType()
  * @param cType the type of the fib-element to copy
  * @param elementPoint the number of the fib-element, in the order of
- * 	Fib-elements of the given type cType, to copy
+ * 	Fib elements of the given type cType, to copy
  * @param bAbsolute if the lNumber is an absolute value for the wool
  * 	fib -object
  * @return the copy of the fib-element
@@ -896,12 +898,12 @@ bool cIf::assignValues( const cFibElement & fibElement ){
 #ifdef FEATURE_EQUAL_FIB_OBJECT
 
 /**
- * This method checks if the given Fib-object is equal to this fib
+ * This method checks if the given Fib object is equal to this fib
  * -object.
  * Variables can be others, but must be defined and used in equivalent
- * Fib-elements.
+ * Fib elements.
  *
- * @param fibObject the Fib-object to which this Fib-object should be
+ * @param fibObject the Fib object to which this Fib object should be
  * 	equal
  * @param mapEqualRootObjects the root objects of this object that wher
  * 	already checked as equal
@@ -920,7 +922,7 @@ bool cIf::assignValues( const cFibElement & fibElement ){
  * 			variables to the same values as the key Fib element
  * @param bCheckExternalObjects if true the external objects of
  * 	cExtObject will be compared
- * @return true if this Fib-object is equal to the given Fib-object,
+ * @return true if this Fib object is equal to the given Fib object,
  * 	else false
  */
 bool cIf::equalInternal( const cFibElement & fibObject,
@@ -940,30 +942,30 @@ bool cIf::equalInternal( const cFibElement & fibObject,
 	}
 	
 	if ( fibUnderObjects.size() != pIf->fibUnderObjects.size() ){
-		//not the same number of underobjects
+		//not the same number of subobjects
 		return false;
 	}
 	if ( (pFibObjectTrue == NULL) || (pIf->pFibObjectTrue == NULL)){
 		if ( pFibObjectTrue != pIf->pFibObjectTrue ){
-			//one but not both underobjects are NULL
+			//one but not both subobjects are NULL
 			return false;
 		}
 	}else{
 		if ( ! pFibObjectTrue->equalInternal( *(pIf->pFibObjectTrue),
 				mapEqualRootObjects, mapEqualDefinedVariables, bCheckExternalObjects ) ){
-			//both underobjects are not equal
+			//both subobjects are not equal
 			return false;
 		}
 	}
 	if ( (pFibObjectFalse == NULL) || (pIf->pFibObjectFalse == NULL)){
 		if ( pFibObjectFalse != pIf->pFibObjectFalse ){
-			//one but not both underobjects are NULL
+			//one but not both subobjects are NULL
 			return false;
 		}
 	}else{
 		if ( ! pFibObjectFalse->equalInternal( *(pIf->pFibObjectFalse),
 				mapEqualRootObjects, mapEqualDefinedVariables, bCheckExternalObjects ) ){
-			//both underobjects are not equal
+			//both subobjects are not equal
 			return false;
 		}
 	}
@@ -972,12 +974,12 @@ bool cIf::equalInternal( const cFibElement & fibObject,
 
 
 /**
- * This method checks if the given Fib-element is equal to this fib
+ * This method checks if the given Fib element is equal to this fib
  * -element.
  * The subobjects arn't compared, not even ther count is compared.
  * Used variables can be others.
  *
- * @param fibElement the Fib-element to which this Fib-element should be
+ * @param fibElement the Fib element to which this Fib element should be
  * 	equal
  * @param mapEqualRootObjects the root objects of this object that wher
  * 	already checked as equal
@@ -996,7 +998,7 @@ bool cIf::equalInternal( const cFibElement & fibObject,
  * 			variables to the same values as the key Fib element
  * @param bCheckExternalObjects if true the external objects of
  * 	cExtObject will be compared
- * @return true if this Fib-element is equal to the given Fib-object,
+ * @return true if this Fib element is equal to the given Fib object,
  * 	else false
  */
 bool cIf::equalElementInternal( const cFibElement & fibElement,
@@ -1028,14 +1030,14 @@ bool cIf::equalElementInternal( const cFibElement & fibElement,
 #else //FEATURE_EQUAL_FIB_OBJECT
 
 /**
- * This method checks if the given Fib-object is equal to this Fib
+ * This method checks if the given Fib object is equal to this Fib
  * -object.
  * Variables can be others, but must be defined and used in equivalent
  * fib-elements.
  *
- * @param fibObject the Fib-object to which this Fib-object should be
+ * @param fibObject the Fib object to which this Fib object should be
  * 	equal
- * @return true if this Fib-object is equal to the given Fib-object,
+ * @return true if this Fib object is equal to the given Fib object,
  * 	else false
  */
 bool cIf::equal( const cFibElement & fibObject ) const{
@@ -1046,28 +1048,28 @@ bool cIf::equal( const cFibElement & fibObject ) const{
 	}
 	const cIf * pIf = ((cIf*)(&fibObject));
 	if ( fibUnderObjects.size() != pIf->fibUnderObjects.size() ){
-		//not the same number of underobjects
+		//not the same number of subobjects
 		return false;
 	}
 	if ( (pFibObjectTrue == NULL) || (pIf->pFibObjectTrue == NULL)){
 		if ( pFibObjectTrue != pIf->pFibObjectTrue ){
-			//one but not both underobjects are NULL
+			//one but not both subobjects are NULL
 			return false;
 		}
 	}else{
 		if ( ! pFibObjectTrue->equal( *(pIf->pFibObjectTrue) ) ){
-			//both underobjects are not equal
+			//both subobjects are not equal
 			return false;
 		}
 	}
 	if ( (pFibObjectFalse == NULL) || (pIf->pFibObjectFalse == NULL)){
 		if ( pFibObjectFalse != pIf->pFibObjectFalse ){
-			//one but not both underobjects are NULL
+			//one but not both subobjects are NULL
 			return false;
 		}
 	}else{
 		if ( ! pFibObjectFalse->equal( *(pIf->pFibObjectFalse) ) ){
-			//both underobjects are not equal
+			//both subobjects are not equal
 			return false;
 		}
 	}
@@ -1078,7 +1080,7 @@ bool cIf::equal( const cFibElement & fibObject ) const{
 /**
  * This method checks if the given fib-element is equal to this fib
  * -element.
- * The underobjects arn't compared, not even ther count is compared.
+ * The subobjects arn't compared, not even ther count is compared.
  * Used variables can be others.
  *
  * @param fibElement the fib-element to which this fib-element should be
@@ -1112,11 +1114,11 @@ bool cIf::equalElement( const cFibElement & fibElement ) const{
 
 
 /**
- * This method stores this Fib-object in the XML-format into the
+ * This method stores this Fib object in the XML-format into the
  * given stream.
  *
- * @param stream the stream where this Fib-object should be stored to
- * @return true if this Fib-object is stored, else false
+ * @param stream the stream where this Fib object should be stored to
+ * @return true if this Fib object is stored, else false
  */
 bool cIf::storeXml( ostream & stream ) const{
 
@@ -1148,26 +1150,26 @@ bool cIf::storeXml( ostream & stream ) const{
 
 
 /**
- * This method inserts the given Fib-element pFibElement on the
- * specified position. The replaced Fib-element will be the underobject
- * of the inserted Fib-element pFibElement.
+ * This method inserts the given Fib element pFibElement on the
+ * specified position. The replaced Fib element will be the subobject
+ * of the inserted Fib element pFibElement.
  *
  * @see getNumberOfElement()
  * @see getNumberOfElements()
  * @see getType()
- * @param cType the type of the Fib-element insted of which the given
- * 	Fib-element pFibElement should be inserted
- * @param elementPoint the number of the Fib-element, in the order of
- * 	Fib-elements of the given type cType, in which position the given
- * 	Fib-element pFibElement should be inserted; if 0 the given
- * 	pFibElement will be inserted under this Fib-element
- * @param pFibElement the Fib-element to insert
+ * @param cType the type of the Fib element insted of which the given
+ * 	Fib element pFibElement should be inserted
+ * @param elementPoint the number of the Fib element, in the order of
+ * 	Fib elements of the given type cType, in which position the given
+ * 	Fib element pFibElement should be inserted; if 0 the given
+ * 	pFibElement will be inserted under this Fib element
+ * @param pFibElement the Fib element to insert
  * @param bAbsolute if the lNumber is an absolute value for the wool
- * 	Fib-object
+ * 	Fib object
  * @param bCheckVariables if true (standardvalue) it will be checked if
- * 	the variables the Fib-element defines are needed, else the 
- * 	Fib-element will be removed even if its variables are needed elsewher
- * @return true if the Fib-element pFibElement was inserted, else false
+ * 	the variables the Fib element defines are needed, else the 
+ * 	Fib element will be removed even if its variables are needed elsewher
+ * @return true if the Fib element pFibElement was inserted, else false
  */
 bool cIf::insertElement( cFibElement *pFibElement, const char cType,
 		const unsignedIntFib elementPoint, bool bAbsolute, bool bCheckVariables ){
@@ -1183,7 +1185,7 @@ bool cIf::insertElement( cFibElement *pFibElement, const char cType,
 		return false;
 	}
 	if ( pFibElement->getNumberOfElements() != 1 ){
-		//more then one Fib-element to insert
+		//more then one Fib element to insert
 		return false;
 	}
 #ifdef FEATURE_FAST_UPDATE
@@ -1193,10 +1195,10 @@ bool cIf::insertElement( cFibElement *pFibElement, const char cType,
 #endif //FEATURE_FAST_UPDATE
 	
 	if ( elementPoint == 0 ){
-		//replace the (first) underobject of this Fib-element
+		//replace the (first) subobject of this Fib element
 		if ( ( fibUnderObjects.empty() ) ||
 				( fibUnderObjects.front() == NULL ) ){
-			//check if the variables used in the to insert Fib-element are defined higer
+			//check if the variables used in the to insert Fib element are defined higer
 			if ( bCheckVariables && ( ! variablesAreDefined( pFibElement->
 					getUsedVariables( ED_POSITION ) , ED_HIGHER_EQUAL ) ) ){
 				return false;
@@ -1239,17 +1241,17 @@ bool cIf::insertElement( cFibElement *pFibElement, const char cType,
 	cFibElement * pFibElementToReplace = getFibElement( cType, elementPoint );
 	if ( pFibElementToReplace == NULL ){
 		if ( ( ! pFibElement->isLeaf() ) && ( pFibElement->getType() != 'o' )  ){
-			//no Fib-element to replace
+			//no Fib element to replace
 			return false;
 		}
 		//try to insert in the last last Fib element
 		cFibElement * pLastFibElement = getFibElement( getNumberOfElements() );
 		if ( pLastFibElement == this ){
 			if ( 2 <= fibUnderObjects.size() ){
-				//can't insert more underobjects
+				//can't insert more subobjects
 				return false;
 			}
-			//check if the variables used in the to insert Fib-element are defined higer
+			//check if the variables used in the to insert Fib element are defined higer
 			if ( bCheckVariables &&( ! variablesAreDefined( pFibElement->
 					getUsedVariables( ED_POSITION ) , ED_HIGHER_EQUAL ) ) ){
 				return false;
@@ -1279,7 +1281,7 @@ bool cIf::insertElement( cFibElement *pFibElement, const char cType,
 	
 	if ( (pFibElementToReplace != NULL) &&
 			( pFibElementToReplace->getType() == 'r') ){
-		//no Fib-element to replace
+		//no Fib element to replace
 		return false;
 	}
 #else //FEATURE_FIB_ELEMENT_LAST_INSERT
@@ -1288,22 +1290,22 @@ bool cIf::insertElement( cFibElement *pFibElement, const char cType,
 				( pFibElement->getType() != 'o' ) ) ||
 			( (pFibElementToReplace != NULL) &&
 				( pFibElementToReplace->getType() == 'r') ) ){
-		//no Fib-element to replace
+		//no Fib element to replace
 		return false;
 	}
 #endif //FEATURE_FIB_ELEMENT_LAST_INSERT
 
 	/*check ( if (cType=='u') ) if the pFibElement should replace a
-	underobject of this object*/
+	subobject of this object*/
 	if ( cType == 'u' ){
 		if ( elementPoint == 2 ){
 			//insert the pFibElement in this if-element
 			if ( pFibElement->isLeaf() ){
 				if ( 2 <= fibUnderObjects.size() ){
-					//can't insert more underobjects
+					//can't insert more subobjects
 					return false;
 				}
-				//check if the variables used in the to insert Fib-element are defined higer
+				//check if the variables used in the to insert Fib element are defined higer
 				if ( bCheckVariables &&( ! variablesAreDefined( pFibElement->
 						getUsedVariables( ED_POSITION ) , ED_HIGHER_EQUAL ) ) ){
 					return false;
@@ -1341,7 +1343,7 @@ bool cIf::insertElement( cFibElement *pFibElement, const char cType,
 #endif //FEATURE_FAST_UPDATE
 					//replace the actualUnderObject with the given pFibElement
 					
-					//check if the variables used in the to insert Fib-element are defined higer
+					//check if the variables used in the to insert Fib element are defined higer
 					if ( bCheckVariables &&( ! variablesAreDefined(
 							pFibElement->getUsedVariables( ED_POSITION ), ED_HIGHER_EQUAL ) ) ){
 						return false;
@@ -1350,7 +1352,7 @@ bool cIf::insertElement( cFibElement *pFibElement, const char cType,
 					if ( pFibElement->isLeaf() ){
 
 						if ( 2 <= fibUnderObjects.size() ){
-							//can't insert more underobjects
+							//can't insert more subobjects
 							return false;
 						}
 						if ( pFibObjectTrue == NULL ){
@@ -1359,7 +1361,7 @@ bool cIf::insertElement( cFibElement *pFibElement, const char cType,
 						}else if ( pFibObjectFalse == NULL ){
 							fibUnderObjects.push_back( pFibElement );
 							pFibObjectFalse = pFibElement;
-						}else{//can't insert more underobjects
+						}else{//can't insert more subobjects
 							return false;
 						}
 						
@@ -1378,17 +1380,17 @@ bool cIf::insertElement( cFibElement *pFibElement, const char cType,
 						//done and pFibElement inserted
 						return true;
 					}//else not a leaf
-					//set the underobject of the pFibElement
+					//set the subobject of the pFibElement
 					(*actualUnderObject)->pSuperiorElement = NULL;
 					const bool bUnderObjectReplaced =
 						pFibElement->insertObjectInElement( (*actualUnderObject) );
 					if ( ! bUnderObjectReplaced ){
-						//can't replace the underobject
+						//can't replace the subobject
 						return false;
 					}
 					cFibObjectCounts fibObjectCountsDelta;
 					fibObjectCountsDelta -= evalueCountersForObject( (*actualUnderObject) );
-					//set the new underobject of this element
+					//set the new subobject of this element
 					(*actualUnderObject) = pFibElement;
 					pFibObjectTrue  = fibUnderObjects.front();
 					pFibObjectFalse = fibUnderObjects.back();
@@ -1408,14 +1410,14 @@ bool cIf::insertElement( cFibElement *pFibElement, const char cType,
 						//done and pFibElement inserted
 						return true;
 					}
-					//set the underobject of the pFibElement
+					//set the subobject of the pFibElement
 					const bool bUnderObjectReplaced =
 						pFibElement->insertObjectInElement( (*actualUnderObject) );
 					if ( ! bUnderObjectReplaced ){
-						//can't replace the underobject
+						//can't replace the subobject
 						return false;
 					}
-					//set the new underobject of this element
+					//set the new subobject of this element
 					(*actualUnderObject) = pFibElement;
 					updateAllValues();
 #endif //FEATURE_FAST_UPDATE
@@ -1436,32 +1438,246 @@ bool cIf::insertElement( cFibElement *pFibElement, const char cType,
 			(pFibElementToReplace->pSuperiorElement->getNumberOfElement() ),
 			false, bCheckVariables );
 		
-	}//else the to replace Fib-element dosn't exists or is the topmost
+	}//else the to replace Fib element dosn't exists or is the topmost
 	return false;
 }
 
+#ifdef FEATURE_INSERT_OBJECT_IN_ELEMENT
 
 /**
- * This method inserts the given Fib-object fibObject on the
- * specified position. On the specified position a listelement will
- * be inserted, with the old Fib-object and the given Fib-object
- * fibObject as its underobjects.
+ * This method inserts the given Fib object pFibObject on the
+ * specified position. On the specified position a list element will
+ * be inserted, with the old Fib object and the given Fib object
+ * pFibObject as its subobjects.
  *
  * @see getNumberOfElement()
  * @see getNumberOfElements()
  * @see overwriteObjectWithObject()
  * @see getType()
- * @param cType the type of the Fib-element, on which position the 
- * 	given Fib-object fibObject should be inserted
- * @param elementPoint the number of the Fib-element, in the order of
- * 	Fib-elements of the given type cType, on which position the given
- * 	Fib-object fibObject should be inserted
- * @param fibObject the Fib-object to insert
- * @param first if true, the inserted object will be the first
- * 	underobject of the new listelement
+ * @param cType the type of the Fib element, on which position the
+ * 	given Fib object pFibObject should be inserted
+ * @param elementPoint the number of the Fib element, in the order of
+ * 	Fib elements of the given type cType, on which position the given
+ * 	Fib object pFibObject should be inserted
+ * @param pFibObject the Fib object to insert
+ * @param bFirst if true, the inserted object will be the first
+ * 	subobject of the list element, else (it is false) the inserted
+ * 	object will be the last subobject of the list element
  * @param bAbsolute if the lNumber is an absolute value for the wool
- * 	Fib-object
- * @return true if the Fib-object fibObject was inserted, else false
+ * 	Fib object
+ * @return true if the Fib object pFibObject was inserted, else false
+ */
+bool cIf::insertObjectInElement( cFibElement * pFibObject, const char cType,
+		const unsignedIntFib elementPoint, bool bFirst, bool bAbsolute ){
+	
+	if ( pFibObject == NULL ){
+		//nothing to insert
+		return false;
+	}
+	if ( pFibObject->getType() == 'r' ){
+		//can't insert a root -element
+		return false;
+	}
+	if ( ! cFibObjectCounts::isValidType( cType ) ){
+		return false;
+	}
+	
+	if ( elementPoint == 0 ){
+		//insert for the (first) subobject of this Fib element
+		
+		if ( fibUnderObjects.empty() ){
+			//insert in this branchelement
+			fibUnderObjects.push_front( pFibObject );
+			pFibObjectTrue = pFibObject;
+			if ( pFibObject->pSuperiorElement != NULL ){
+				pFibObject->pSuperiorElement->cutConnectionsTo(
+					pFibObject );
+			}
+			pFibObject->pSuperiorElement = this;
+			
+			cFibObjectCounts pFibObjectCountsDelta =
+				evalueCountersForObject( pFibObject );
+			pFibObjectCountsDelta.uiNumberOfObjectpoints++;
+			updateAllCounters( pFibObjectCountsDelta );
+			//done with inserting
+			return true;
+		}else{
+			//check if the subobject to overwrite is NULL
+			list<cFibElement*>::iterator actualUnderObject = fibUnderObjects.begin();
+			
+			if ( ! bFirst ){
+				actualUnderObject++;
+			}
+			if ( (*actualUnderObject) == NULL ){
+				//overwrite the actualUnderObject NULL object
+				
+				//set the values of the pFibObject
+				if ( pFibObject->pSuperiorElement != NULL ){
+					pFibObject->pSuperiorElement->cutConnectionsTo(
+						pFibObject );
+				}
+				pFibObject->pSuperiorElement = this;
+				(*actualUnderObject) = pFibObject;
+				pFibObjectTrue  = fibUnderObjects.front();
+				pFibObjectFalse = fibUnderObjects.back();
+				
+				cFibObjectCounts pFibObjectCountsDelta =
+					evalueCountersForObject( pFibObject );
+				pFibObjectCountsDelta.uiNumberOfObjectpoints++;
+				updateAllCounters( pFibObjectCountsDelta );
+				//done with inserting
+				return true;
+			}
+		}
+		return insertObjectInElement( pFibObject, 'u', 2, bFirst );
+	}
+	
+	if ( bAbsolute ){
+		return getMasterRoot()->insertObjectInElement(
+			pFibObject, cType, elementPoint, bFirst );
+	}//else elementPoint is an relative value
+
+	/*check ( if (cType=='u') ) if the pFibObject should inserted as a
+	neibour of a subobject of this object*/
+	cFibElement * pFibElementPosition = getFibElement( cType, elementPoint );
+	if ( (pFibElementPosition == NULL) || (pFibElementPosition->getType() == 'r')){
+		//no position to insert
+		return false;
+	}
+	if ( cType == 'u' ){
+		if ( pFibElementPosition->pSuperiorElement == this ){
+			if ( fibUnderObjects.size() < 2 ){
+				//can add an subobject
+				
+				if ( fibUnderObjects.front() != NULL ){
+					if ( fibUnderObjects.front() == pFibElementPosition ){
+						//insert the given pFibObject
+						
+						//set the values of the pFibObject
+						if ( pFibObject->pSuperiorElement != NULL ){
+							pFibObject->pSuperiorElement->cutConnectionsTo(
+								pFibObject );
+						}
+						pFibObject->pSuperiorElement = this;
+						
+						if ( bFirst ){
+							//insert pFibObject instead of the actualUnderObject
+							fibUnderObjects.push_front( pFibObject );
+						}else{
+							//insert pFibObject after the actualUnderObject
+							fibUnderObjects.push_back( pFibObject );
+						}
+						pFibObjectTrue  = fibUnderObjects.front();
+						pFibObjectFalse = fibUnderObjects.back();
+	
+						cFibObjectCounts pFibObjectCountsDelta =
+							evalueCountersForObject( pFibObject );
+						pFibObjectCountsDelta.uiNumberOfObjectpoints++;
+						updateAllCounters( pFibObjectCountsDelta );
+						//done and fibElement inserted
+						return true;
+					}else{//Error
+						return false;
+					}
+				}else{//if (fibUnderObjects.front() == NULL )
+					fibUnderObjects.front() = pFibObject;
+					
+					pFibObjectTrue  = fibUnderObjects.front();
+					pFibObjectFalse = fibUnderObjects.back();
+
+					cFibObjectCounts pFibObjectCountsDelta =
+						evalueCountersForObject( pFibObject );
+					pFibObjectCountsDelta.uiNumberOfObjectpoints++;
+					updateAllCounters( pFibObjectCountsDelta );
+					//done and fibElement inserted
+					return true;
+				}
+			}else{// ( 2 <= fibUnderObjects.size() )
+				if ( pFibElementPosition->getType() == 'l' ){
+					//subobject is list element -> insert pFibObject into it
+					if( bFirst ){
+						//add new Fib object to front of list
+						(static_cast<cList*>(pFibElementPosition))->addUnderobject(
+							pFibObject, 1 );
+					}else{//add new Fib object to end of list
+						(static_cast<cList*>(pFibElementPosition))->addUnderobject(
+							pFibObject, ((static_cast<cList*>(pFibElementPosition))->
+								getNumberOfUnderobjects()) + 1);
+					}
+					return true;
+				}/*else create a list element and insert the old subobject and
+				the new into it*/
+				const bool bTrueCase = ( pFibElementPosition == pFibObjectTrue );
+				
+				cFibElement * pOldSubObject = pFibElementPosition;
+				
+				if ( pFibObject->pSuperiorElement != NULL ){
+					pFibObject->pSuperiorElement->cutConnectionsTo(
+						pFibObject );
+				}
+				pOldSubObject->pSuperiorElement = NULL;
+				cFibElement * pNewSubobject = NULL;
+				if( bFirst ){
+					pNewSubobject = new cList( pFibObject, pOldSubObject );
+				}else{
+					pNewSubobject = new cList( pOldSubObject, pFibObject );
+				}
+				//set superior Fib element
+				pNewSubobject->pSuperiorElement = this;
+				pOldSubObject->pSuperiorElement = pNewSubobject;
+				pFibObject->pSuperiorElement    = pNewSubobject;
+				//replace subobject pointer
+				if ( bTrueCase ){
+					pFibObjectTrue = pNewSubobject;
+					fibUnderObjects.front() = pNewSubobject;
+				}else{
+					pFibObjectFalse = pNewSubobject;
+					fibUnderObjects.back() = pNewSubobject;
+				}
+				
+				updateAllValues();
+				//done with inserting
+				return true;
+			}
+		}//end insert in this if-element
+	}
+	/*get the pSuperiorElement of the to inserting object position and call
+	insertElement of it*/
+	if ( pFibElementPosition->pSuperiorElement != NULL ){
+			
+			return pFibElementPosition->pSuperiorElement->insertObjectInElement(
+				pFibObject, 'u',
+				(pFibElementPosition->getNumberOfElement()) + 1 -
+				(pFibElementPosition->pSuperiorElement->getNumberOfElement() ),
+				bFirst );
+			
+	}//else the to insert position dosn't exists or is the top most
+	return false;
+}
+
+#else//FEATURE_INSERT_OBJECT_IN_ELEMENT
+
+/**
+ * This method inserts the given Fib object fibObject on the
+ * specified position. On the specified position a list element will
+ * be inserted, with the old Fib object and the given Fib object
+ * fibObject as its subobjects.
+ *
+ * @see getNumberOfElement()
+ * @see getNumberOfElements()
+ * @see overwriteObjectWithObject()
+ * @see getType()
+ * @param cType the type of the Fib element, on which position the 
+ * 	given Fib object fibObject should be inserted
+ * @param elementPoint the number of the Fib element, in the order of
+ * 	Fib elements of the given type cType, on which position the given
+ * 	Fib object fibObject should be inserted
+ * @param fibObject the Fib object to insert
+ * @param first if true, the inserted object will be the first
+ * 	subobject of the new list element
+ * @param bAbsolute if the lNumber is an absolute value for the wool
+ * 	Fib object
+ * @return true if the Fib object fibObject was inserted, else false
  */
 bool cIf::insertObjectInElement( cFibElement *fibObject, const char cType,
 		const unsignedIntFib elementPoint, bool first, bool bAbsolute ){
@@ -1481,7 +1697,7 @@ bool cIf::insertObjectInElement( cFibElement *fibObject, const char cType,
 #endif //FEATURE_FAST_UPDATE
 
 	if ( elementPoint == 0 ){
-		//insert for the (first) underobject of this Fib-element
+		//insert for the (first) subobject of this Fib element
 
 		if ( fibUnderObjects.empty() ){
 			//insert in this branchelement
@@ -1503,7 +1719,7 @@ bool cIf::insertObjectInElement( cFibElement *fibObject, const char cType,
 			//done with inserting
 			return true;
 		}else{
-			//check if the underobject to overwrite is NULL
+			//check if the subobject to overwrite is NULL
 			list<cFibElement*>::iterator actualUnderObject = fibUnderObjects.begin();
 			
 			if ( ! first ){
@@ -1544,7 +1760,7 @@ bool cIf::insertObjectInElement( cFibElement *fibObject, const char cType,
 	}//else elementPoint is an relative value
 
 	/*check ( if (cType=='u') ) if the fibObject should inserted as an
-	neibour of an underobject of this object*/
+	neibour of an subobject of this object*/
 	cFibElement * pFibElementPosition = getFibElement( cType, elementPoint );
 	if ( (pFibElementPosition == NULL) || (pFibElementPosition->getType() == 'r')){
 		//no position to insert
@@ -1553,7 +1769,7 @@ bool cIf::insertObjectInElement( cFibElement *fibObject, const char cType,
 	if ( cType == 'u' ){
 		if ( pFibElementPosition->pSuperiorElement == this ){
 			if ( fibUnderObjects.size() < 2 ){
-				//can add an underobject
+				//can add an subobject
 				
 				if ( fibUnderObjects.front() != NULL ){
 					if ( fibUnderObjects.front() == pFibElementPosition ){
@@ -1616,6 +1832,7 @@ bool cIf::insertObjectInElement( cFibElement *fibObject, const char cType,
 	return false;
 }
 
+#endif//FEATURE_INSERT_OBJECT_IN_ELEMENT
 
 
 /**
@@ -1635,7 +1852,7 @@ bool cIf::insertObjectInElement( cFibElement *fibObject, const char cType,
  * @param fibObject the Fib -object to insert
  * @param bDeleteOld if true, delete the old Fib -object from the memory
  * @param bAbsolute if the elementPoint is an absolute value for the wool
- * 	Fib-object
+ * 	Fib object
  * @return true if the old Fib -object was overwritten and the given 
  * 	Fib -object fibObject was inserted, else false
  */
@@ -1656,9 +1873,9 @@ bool cIf::overwriteObjectWithObject( cFibElement *fibObject,
 	}
 
 	if ( elementPoint == 0 ){
-		//insert for the (first) underobject of this Fib-element
+		//insert for the (first) subobject of this Fib element
 		
-		//check if the underobject to overwrite is NULL
+		//check if the subobject to overwrite is NULL
 		if ( fibUnderObjects.front() == NULL ){
 			//overwrite the actualUnderObject NULL object
 			
@@ -1686,10 +1903,10 @@ bool cIf::overwriteObjectWithObject( cFibElement *fibObject,
 	}//else elementPoint is an relative value
 
 	/*check ( if (cType=='u') ) if the fibObject should inserted as an
-	neibour of an underobject of this object*/
+	neibour of an subobject of this object*/
 	cFibElement * pFibElementPosition = getFibElement( cType, elementPoint );
 	if ( (pFibElementPosition == NULL) || (pFibElementPosition->getType() == 'r') ){
-		//no Fib-object to overwrite
+		//no Fib object to overwrite
 		return false;
 	}
 	if ( cType == 'u' ){
@@ -1715,14 +1932,14 @@ bool cIf::overwriteObjectWithObject( cFibElement *fibObject,
 				}
 				(*actualUnderObject) = fibObject;
 				
-				//update the Fib-objectcounters
+				//update the Fib objectcounters
 				cFibObjectCounts fibObjectCountsDelta = evalueCountersForObject( fibObject );
 				const cFibObjectCounts fibObjectCountsOld =
 					evalueCountersForObject( pFibElementPosition );
 				fibObjectCountsDelta -= fibObjectCountsOld;
 				updateAllCounters( fibObjectCountsDelta );
 				
-				//remove old underobject
+				//remove old subobject
 				if ( pFibElementPosition->pSuperiorElement == this ){
 					pFibElementPosition->pSuperiorElement = NULL;
 					if ( bDeleteOld ){
@@ -1750,15 +1967,15 @@ bool cIf::overwriteObjectWithObject( cFibElement *fibObject,
 
 
 /**
- * This method checks, if all Fib-elements of this Fib-object
- * have the underobjects they need to be correct.
+ * This method checks, if all Fib elements of this Fib object
+ * have the subobjects they need to be correct.
  *
- * @return true if all Fib-elements of this Fib-object have the
- * 	underobjects they need to be correct, else false
+ * @return true if all Fib elements of this Fib object have the
+ * 	subobjects they need to be correct, else false
  */
 bool cIf::hasUnderAllObjects() const{
 
-	//check all underobjects
+	//check all subobjects
 	if ( ( fibUnderObjects.size() != 2 )
 			|| ( pFibObjectTrue == NULL )
 			|| ( pFibObjectFalse == NULL ) ){
@@ -1770,22 +1987,22 @@ bool cIf::hasUnderAllObjects() const{
 
 
 /**
- * This method cuts the Fib-element on the specified position.
+ * This method cuts the Fib element on the specified position.
  * This works like removeElement(), except that the removed element is
  * returned.
  *
  * @see isDeletableElement()
  * @see removeElement()
  * @see getType()
- * @param cType the type of the Fib-element to cut
- * @param elementPoint the number of the Fib-element, in the order of
- * 	Fib-elements of the given type cType, to cut
+ * @param cType the type of the Fib element to cut
+ * @param elementPoint the number of the Fib element, in the order of
+ * 	Fib elements of the given type cType, to cut
  * @param bAbsolute if the elementPoint is an absolute value for the wool
- * 	Fib-object
+ * 	Fib object
  * @param bCheckVariables if true (standardvalue) it will be checked if
- * 	the variables the Fib-element defines are needed, else the 
- * 	Fib-element will be removed even if its variables are needed elsewher
- * @return the pointer to the cuted Fib-element or NULL, if the Fib
+ * 	the variables the Fib element defines are needed, else the 
+ * 	Fib element will be removed even if its variables are needed elsewher
+ * @return the pointer to the cuted Fib element or NULL, if the Fib
  * 	-element couldn't cut
  */
 cFibElement * cIf::cutElement( const char cType, const unsignedIntFib
@@ -1807,21 +2024,21 @@ cFibElement * cIf::cutElement( const char cType, const unsignedIntFib
 		return NULL;
 	}//the element can be removed
 	
-	//check if the first element of an underobject should be removed
+	//check if the first element of an subobject should be removed
 	for ( list<cFibElement*>::iterator actualUnderObject = fibUnderObjects.begin();
 			actualUnderObject != fibUnderObjects.end(); actualUnderObject++ ){
 		
 		if ( (*actualUnderObject) != NULL ){
-			//no underobject
+			//no subobject
 			if ( (*actualUnderObject) == pFibElementToRemove ){
 				cFibObjectCounts fibObjectCountsDelta;
-				//Fib-element to remove found
+				//Fib element to remove found
 				
-				if ( pFibElementToRemove->getNumberOfElements() == 1 ){/*pFibElementToRemove has no underobjects
+				if ( pFibElementToRemove->getNumberOfElements() == 1 ){/*pFibElementToRemove has no subobjects
 					->can't remove <- the fib-object/if-element will become invalit*/
 					return NULL;
 				}
-				//pFibElementToRemove has underobjects to replace it
+				//pFibElementToRemove has subobjects to replace it
 				(*actualUnderObject) = pFibElementToRemove->getNextFibElement();
 			
 				pFibObjectTrue  = fibUnderObjects.front();
@@ -1841,14 +2058,14 @@ cFibElement * cIf::cutElement( const char cType, const unsignedIntFib
 				fibObjectCountsDelta.vecNumberOfFibElements[ cFibObjectCounts::ALL ]--;
 				updateAllCounters( fibObjectCountsDelta );
 				
-				//clear values of cuted Fib-element
+				//clear values of cuted Fib element
 				pFibElementToRemove->cutConnectionsTo( this );
 				pFibElementToRemove->cutConnectionsTo(
 					pFibElementToRemove->getNextFibElement() );
 #else //FEATURE_FAST_UPDATE
 				updateAllValues();
 				
-				//clear values of cuted Fib-element
+				//clear values of cuted Fib element
 				pFibElementToRemove->cutConnections( ED_ALL );
 #endif //FEATURE_FAST_UPDATE
 				
@@ -1909,11 +2126,11 @@ cFibElement * cIf::getTrueCase(){
 }
 
 /**
- * This method sets the given Fib-object as the true case for this
+ * This method sets the given Fib object as the true case for this
  * this if-element.
  *
- * @param fibObjectTrue the new true case Fib-object to set
- * @param bDeleteOld if true, delete the old Fib-object from the memory
+ * @param fibObjectTrue the new true case Fib object to set
+ * @param bDeleteOld if true, delete the old Fib object from the memory
  * @return true if the true case was set else false
  */
 bool cIf::setTrueCase( cFibElement * fibObjectTrue, bool bDeleteOld ){
@@ -1922,7 +2139,7 @@ bool cIf::setTrueCase( cFibElement * fibObjectTrue, bool bDeleteOld ){
 		
 		if ( ( pFibObjectTrue == fibUnderObjects.front() ) ||
 				( 1 < fibUnderObjects.size() ) ){
-			//remove true case from the underobjects
+			//remove true case from the subobjects
 			fibUnderObjects.pop_front();
 		}
 		cFibObjectCounts fibObjectCountsDelta;
@@ -1935,7 +2152,7 @@ bool cIf::setTrueCase( cFibElement * fibObjectTrue, bool bDeleteOld ){
 			if ( bDeleteOld ){
 				pFibObjectTrue->deleteObject();
 			}
-		}else{//new underobject
+		}else{//new subobject
 			fibObjectCountsDelta.uiNumberOfObjectpoints++;
 		}
 		pFibObjectTrue = fibObjectTrue;
@@ -1964,11 +2181,11 @@ cFibElement * cIf::getFalseCase(){
 
 
 /**
- * This method sets the given Fib-object as the false case for this
+ * This method sets the given Fib object as the false case for this
  * this if-element.
  *
- * @param fibObjectFalse the new false case Fib-object to set
- * @param bDeleteOld if true, delete the old Fib-object from the memory
+ * @param fibObjectFalse the new false case Fib object to set
+ * @param bDeleteOld if true, delete the old Fib object from the memory
  * @return true if the false case was set else false
  */
 bool cIf::setFalseCase( cFibElement * fibObjectFalse, bool bDeleteOld ){
@@ -1977,7 +2194,7 @@ bool cIf::setFalseCase( cFibElement * fibObjectFalse, bool bDeleteOld ){
 		
 		if ( ( pFibObjectFalse == fibUnderObjects.back() ) ||
 				( 1 < fibUnderObjects.size() ) ){
-			//remove true case from the underobjects
+			//remove true case from the subobjects
 			fibUnderObjects.pop_back();
 		}
 		cFibObjectCounts fibObjectCountsDelta;
@@ -1990,7 +2207,7 @@ bool cIf::setFalseCase( cFibElement * fibObjectFalse, bool bDeleteOld ){
 			if ( bDeleteOld ){
 				pFibObjectFalse->deleteObject();
 			}
-		}else{//new underobject
+		}else{//new subobject
 			fibObjectCountsDelta.uiNumberOfObjectpoints++;
 		}
 		pFibObjectFalse = fibObjectFalse;
@@ -2010,7 +2227,7 @@ bool cIf::setFalseCase( cFibElement * fibObjectFalse, bool bDeleteOld ){
 
 
 /**
- * This method stores this Fib-object in the compressed Fib-format
+ * This method stores this Fib object in the compressed Fib-format
  * into the given stream.
  * It is needed becouse the stream can yust store byts but the size of
  * fib-elements can be any number of bits. Because of that ther have to
@@ -2019,11 +2236,11 @@ bool cIf::setFalseCase( cFibElement * fibObjectFalse, bool bDeleteOld ){
  * domain for the if-element or the if-element will not be readebel.
  *
  * @see store
- * @param stream the stream where this Fib-object should be stored to
+ * @param stream the stream where this Fib object should be stored to
  * @param cRestBits the not yet writen bits which should be stored
  * @param uiRestBitPosition the number of bits in the cRestBits which
  * 	should be writen respectively containing valid information
- * @return true if this Fib-object is stored, else false
+ * @return true if this Fib object is stored, else false
  */
 bool cIf::storeBit( ostream & stream, char & cRestBits,
 		unsigned char & uiRestBitPosition ) const{
@@ -2060,7 +2277,7 @@ bool cIf::storeBit( ostream & stream, char & cRestBits,
 /**
  * This method copies the connected object with the given number in the
  * order of connected objects.
- * For this every Fib-element, beginning from this Fib-element, that
+ * For this every Fib element, beginning from this Fib element, that
  * is part of the connected object will be copied.
  * Variables which are not defined in the connected object but used
  * don't change ther reference.
@@ -2077,7 +2294,7 @@ cFibElement * cIf::copyInternal( const unsignedIntFib iObjectPoint ) const{
 		//copy the whool object
 		cIf * pIf = new cIf( *this );
 		
-		//copy every underobject and insert it in the new listelement
+		//copy every subobject and insert it in the new list element
 		for ( list<cFibElement*>::const_iterator actualUnderObject = fibUnderObjects.begin();
 				actualUnderObject != fibUnderObjects.end(); actualUnderObject++ ){
 			
@@ -2124,9 +2341,9 @@ cFibElement * cIf::copyInternal( const unsignedIntFib iObjectPoint ) const{
 		pIf->updateAllCounters();
 #endif //FEATURE_FAST_UPDATE
 		return pIf;
-	}//else just copy one underobject and discard this listelement
+	}//else just copy one subobject and discard this list element
 
-	//find the underobject to copy
+	//find the subobject to copy
 	unsignedIntFib uiRemainingObjectPoints = iObjectPoint;
 	for (list<cFibElement*>::const_iterator actualUnderObject = fibUnderObjects.begin();
 			actualUnderObject != fibUnderObjects.end(); actualUnderObject++ ){
@@ -2137,21 +2354,21 @@ cFibElement * cIf::copyInternal( const unsignedIntFib iObjectPoint ) const{
 				(*actualUnderObject)->getNumberOfObjectPoints() + 1;
 			
 			if ( uiRemainingObjectPoints <= uiActualObjectPoints ){
-				//underobject to copy found
+				//subobject to copy found
 				return (*actualUnderObject)->copyInternal( uiRemainingObjectPoints - 1 );
 			}else{
 				uiRemainingObjectPoints -= uiActualObjectPoints;
 			}
 		}
 	}
-	//no underobject to copy found
+	//no subobject to copy found
 	return NULL;
 }
 
 
 /**
- * This method syncronises the underobjects of this cIf-class with
- * the underobjectslist fibUnderObjects of the cFibBranch class.
+ * This method syncronises the subobjects of this cIf-class with
+ * the subobjectslist fibUnderObjects of the cFibBranch class.
  */
 void cIf::syncSubobjects(){
 	

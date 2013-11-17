@@ -49,22 +49,22 @@
  * by it's properties as propertyvectors.
  * Testfile in a testcasefolder [TESTCASE]:
  * 	- [TESTCASE].xml : file with the Fib object which should be evalued
- * 	  (e.g. "test.xml")
+ * 	  (e.g."test.xml")
  * Optional testfiles (with the testdata) in a testcasefolder [TESTCASE]:
  * 	- [TESTCASE]EvP.xml : file with the evalued data of the whool Fib object
- * 	  (e.g. "testEvP.xml")
+ * 	  (e.g."testEvP.xml")
  * 	- [TESTCASE]EvP_Po[NUMBER].xml : file with the evalued data of the
  * 	  [NUMBER]'th underobject of the Fib object
- * 	  (e.g. "testEvP_Po1.xml" and "testEvP_Po3.xml")
+ * 	  (e.g."testEvP_Po1.xml" and "testEvP_Po3.xml")
  * 	- [TESTCASE]EvE[TYPS].xml : file with the evalued data of the whool
  * 	  Fib object for the given [TYPS], the typs are given as a list of
  * 	  the characters for the Fib-elementtyps (@see cFibElement::getType())
- * 	  (e.g. "testEvEy.xml" and "testEvEyl.xml" (="testEvEly.xml") )
+ * 	  (e.g."testEvEy.xml" and "testEvEyl.xml" (="testEvEly.xml") )
  * 	- [TESTCASE]EvE[TYPS]_Po[NUMBER].xml : file with the evalued data of
  * 	  the [NUMBER]'th underobject of the Fib object for the given [TYPS],
  * 	  the typs are given as a list of the characters for the
  * 	  Fib-elementtyps (@see cFibElement::getType())
- * 	  (e.g. "testEvEy_Po1.xml" and "testEvEl_Po3.xml")
+ * 	  (e.g."testEvEy_Po1.xml" and "testEvEl_Po3.xml")
  *
  *
  * What's tested of class cFibElement -class:
@@ -95,6 +95,7 @@ History:
 10.11.2011  Oesterholz  Bugfix: evalueObject() don't overwrite properties
 29.11.2011  Oesterholz  evalue number of folders wher errors occured
 22.10.2012  Oesterholz  if an error occured when evaluing points: output data
+03.09.2013  Oesterholz  comparison of vectors new allows small differences
 */
 
 #include "version.h"
@@ -262,7 +263,7 @@ int main(int argc, char* argv[]){
 					cout<<"   Evaluing the partobject: "<<
 						liEvalueElementAll.back().second.first <<endl;
 				}else{
-					cout<<"   Evaluing for the wool objects. "<<endl;
+					cout<<"   Evaluing for the wool objects."<<endl;
 				}
 			}else if ( itrTestFile->compare( 0, itrTestFolder->size() + 4, (*itrTestFolder) + "EvP_" ) == 0 ){
 				
@@ -955,6 +956,138 @@ list< string > loadTestFileList( const string szTestFolderName ){
 
 
 /**
+ * This function prints the given vector to the given stream.
+ *
+ * @param streamToPrintTo the stream to print the vector to
+ * @param pVector a pointer to the vector to print
+ */
+void printVector( ostream & streamToPrintTo,
+		const cFibVector * pVector ){
+	
+	if ( pVector == NULL ){
+		streamToPrintTo<<" no vector (NULL);"<<endl;
+		return;
+	}
+	const unsigned int uiNumberOfElements =
+		pVector->getNumberOfElements();
+	
+	streamToPrintTo<<" (";
+	if ( 1 <= uiNumberOfElements ){
+		//print the first vector element
+		streamToPrintTo<<(pVector->getValue( 1 ));
+	}
+	for ( unsigned int uiActualElement = 2;
+			uiActualElement <= uiNumberOfElements; uiActualElement++ ){
+		
+		streamToPrintTo<<", "<<(pVector->getValue( uiActualElement ));
+	}
+	streamToPrintTo<<");"<<endl;
+}
+
+
+/**
+ * This function prints difference of the given vectors to the given stream.
+ *
+ * @param streamToPrintTo the stream to print the vector to
+ * @param pVector1 a pointer to the first vector
+ * @param pVector2 a pointer to the second vector
+ */
+void printVectorDiff( ostream & streamToPrintTo,
+		const cFibVector * pVector1, const cFibVector * pVector2 ){
+	
+	if ( pVector1 == NULL ){
+		streamToPrintTo<<" no vector 1 (NULL);"<<endl;
+		return;
+	}
+	if ( pVector2 == NULL ){
+		streamToPrintTo<<" no vector 2 (NULL);"<<endl;
+		return;
+	}
+	const unsigned int uiNumberOfElements1 =
+		pVector1->getNumberOfElements();
+	const unsigned int uiNumberOfElements2 =
+		pVector2->getNumberOfElements();
+	
+	const unsigned int uiNumberOfElements = (uiNumberOfElements1 < uiNumberOfElements2) ?
+		uiNumberOfElements1: uiNumberOfElements2;
+	
+	streamToPrintTo<<" (";
+	if ( 1 <= uiNumberOfElements ){
+		//print the first vector element
+		streamToPrintTo<<
+			( (pVector1->getValue( 1 )) - (pVector2->getValue( 1 )) );
+	}
+	for ( unsigned int uiActualElement = 2;
+			uiActualElement <= uiNumberOfElements; uiActualElement++ ){
+		
+		streamToPrintTo<<", "<<( (pVector1->getValue( uiActualElement )) -
+			(pVector2->getValue( uiActualElement )) );
+	}
+	
+	if ( uiNumberOfElements1 == uiNumberOfElements2 ){
+		streamToPrintTo<<");"<<endl;
+	}else{
+		streamToPrintTo<<"); the number of elements of the vectors is not equal ("<<
+			uiNumberOfElements1<<" and "<<uiNumberOfElements2<<")"<<endl;
+	}
+}
+
+
+
+
+/**
+ * This function compares two given vectors if the contained values are equal.
+ * The vectors should just contain values.
+ * Really small differences will be ignored.
+ *
+ * @see compareDouble()
+ * @param pVector1 a pointer to the first vector to compare
+ * @param pVector2 a pointer to the second vector to compare
+ */
+unsigned int testCompareVectors(
+		const cFibVector * pVector1, const cFibVector * pVector2 ){
+	
+	if ( pVector1 == NULL ){
+		cerr<<"Error: no vector 1 (NULL);"<<endl;
+		return 1;
+	}
+	if ( pVector2 == NULL ){
+		cerr<<"Error: no vector 2 (NULL);"<<endl;
+		return 1;
+	}
+	unsigned int uiErrors = 0;
+	
+	const unsigned int uiNumberOfElements1 =
+		pVector1->getNumberOfElements();
+	const unsigned int uiNumberOfElements2 =
+		pVector2->getNumberOfElements();
+	
+	if ( uiNumberOfElements1 != uiNumberOfElements2 ){
+		cerr<<"Error: The number of elements of the vectors is not equal ("<<
+			uiNumberOfElements1<<" and "<<uiNumberOfElements2<<")."<<endl;
+		uiErrors++;
+	}
+	const unsigned int uiNumberOfElements =
+		(uiNumberOfElements1 < uiNumberOfElements2) ?
+			uiNumberOfElements1: uiNumberOfElements2;
+	
+	for ( unsigned int uiActualElement = 1;
+			uiActualElement <= uiNumberOfElements; uiActualElement++ ){
+		
+		if ( ! compareDouble( (pVector1->getValue( uiActualElement )),
+				(pVector2->getValue( uiActualElement )) ) ){
+			cerr<<"Error: The the "<<uiActualElement<<"'th vector elements "<<
+				"are not equal ("<<(pVector1->getValue( uiActualElement ))<<
+				", "<<(pVector2->getValue( uiActualElement ))<<")."<<endl;
+			uiErrors++;
+		}
+	}
+	return uiErrors;
+}
+
+
+
+/**
  * This function compares the given list of positionvectors with ther properties.
  *
  * @param liPositionDataCorrect the correct positionsdata
@@ -980,8 +1113,16 @@ unsigned int comparePositionData( const list< pair< cVectorPosition, list< cVect
 			(itrList2 != liPositionDataEvalued.end());
 			itrList1++, itrList2++, uiNumberOfPositions++ ){
 		
-		if ( ! ( itrList1->first == itrList2->first ) ){
+		if ( 0 < testCompareVectors( &(itrList1->first), &(itrList2->first) ) ){
 			cerr<<"Error: The "<< uiNumberOfPositions <<"'th position isn't equal."<<endl;
+			cerr<<"positions vector correct:"<<endl;
+			printVector( cerr, &(itrList1->first) );
+			cerr<<"positions vector evalued:"<<endl;
+			printVector( cerr, &(itrList2->first) );
+			cerr<<"diffence of the positions vectors:"<<endl;
+			printVectorDiff( cerr, &(itrList1->first), &(itrList2->first) );
+			cerr<<endl;
+			
 			iReturn++;
 		}
 		if ( itrList1->second.size() != itrList2->second.size() ){
@@ -1000,13 +1141,20 @@ unsigned int comparePositionData( const list< pair< cVectorPosition, list< cVect
 		for ( ; (itrProperty1 != itrList1->second.end() ) &&
 				 (itrProperty2 != itrList2->second.end() );
 				 itrProperty1++, itrProperty2++, uiNumberOfProperty++ ){
-			if ( ! ( (*itrProperty1) == (*itrProperty2) ) ){
+			
+			if ( 0 < testCompareVectors( &(*itrProperty1), &(*itrProperty2) ) ){
 				cerr<<"Error: The "<< uiNumberOfProperty <<"'th property of the "<<
-					uiNumberOfPositions <<"'th position isn't equal."<<endl;
-				cerr<<"   correct type: "<<itrProperty1->getPropertyType()<<
-					" value 1: "<<itrProperty1->getValue( 1 )<<endl;
-				cerr<<"   evalued type: "<<itrProperty2->getPropertyType()<<
-					" value 1: "<<itrProperty2->getValue( 1 )<<endl;
+					uiNumberOfPositions <<"'th position isn't equal ."<<endl;
+				cerr<<"   correct type: "<<itrProperty1->getPropertyType()<<endl;
+				cerr<<"   evalued type: "<<itrProperty2->getPropertyType()<<endl;
+				
+				cerr<<"property vector correct:"<<endl;
+				printVector( cerr, &(*itrProperty1) );
+				cerr<<"property vector evalued:"<<endl;
+				printVector( cerr, &(*itrProperty2) );
+				cerr<<"diffence of the property vectors:"<<endl;
+				printVectorDiff( cerr, &(*itrProperty1), &(*itrProperty2) );
+				cerr<<endl;
 				iReturn++;
 			}
 		}
@@ -1096,13 +1244,19 @@ unsigned int compareElementData( const list< pair< cFibElement*, list< cVectorPr
 		for ( ; (itrProperty1 != itrList1->second.end() ) &&
 				 (itrProperty2 != itrList2->second.end() );
 				 itrProperty1++, itrProperty2++, uiNumberOfProperty++ ){
-			if ( ! ( (*itrProperty1) == (*itrProperty2) ) ){
+			
+			if ( 0 < testCompareVectors( &(*itrProperty1), &(*itrProperty2) ) ){
 				cerr<<"Error: The "<< uiNumberOfProperty <<"'th property of the "<<
 					uiNumberOfElement <<"'th Fib-element isn't equal."<<endl;
-				cerr<<"   correct type: "<<itrProperty1->getPropertyType()<<
-					" value 1: "<<itrProperty1->getValue( 1 )<<endl;
-				cerr<<"   evalued type: "<<itrProperty2->getPropertyType()<<
-					" value 1: "<<itrProperty2->getValue( 1 )<<endl;
+				cerr<<"   correct type: "<<itrProperty1->getPropertyType()<<endl;
+				cerr<<"   evalued type: "<<itrProperty2->getPropertyType()<<endl;
+				cerr<<"property vector correct:"<<endl;
+				printVector( cerr, &(*itrProperty1) );
+				cerr<<"property vector evalued:"<<endl;
+				printVector( cerr, &(*itrProperty2) );
+				cerr<<"diffence of the property vectors:"<<endl;
+				printVectorDiff( cerr, &(*itrProperty1), &(*itrProperty2) );
+				cerr<<endl;
 				iReturn++;
 			}
 		}

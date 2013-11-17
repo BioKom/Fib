@@ -52,6 +52,8 @@ History:
 09.07.2013  Oesterholz  subobject methods added
 29.07.2013  Oesterholz  method assignValues() added
 16.08.2013  Oesterholz  method getVariablesToReplace() added
+29.08.2013  Oesterholz  getMasterRoot() is now public
+13.11.2013  Oesterholz  FEATURE_INSERT_OBJECT_IN_ELEMENT implemented
 */
 
 
@@ -893,14 +895,20 @@ public:
 	 * 	Fib elements of the given type cType, on which position the given
 	 * 	Fib object fibObject should be inserted
 	 * @param fibObject the Fib object to insert
-	 * @param first if true, the inserted object will be the first
+#ifdef FEATURE_INSERT_OBJECT_IN_ELEMENT
+	 * @param bFirst if true, the inserted object will be the first
+	 * 	subobject of the list element, else (it is false) the inserted
+	 * 	object will be the last subobject of the list element
+#else FEATURE_INSERT_OBJECT_IN_ELEMENT
+	 * @param bFirst if true, the inserted object will be the first
 	 * 	subobject of the new listelement
+#endif FEATURE_INSERT_OBJECT_IN_ELEMENT
 	 * @param bAbsolute if the lNumber is an absolute value for the wool
 	 * 	Fib object
 	 * @return true if the Fib object fibObject was inserted, else false
 	 */
 	virtual bool insertObjectInElement( cFibElement *fibObject, const char cType='u',
-		const unsignedIntFib elementPoint=0, bool first=true, 
+		const unsignedIntFib elementPoint=0, bool bFirst=true,
 		bool bAbsolute=false ) = 0;
 
 #ifndef SWITCH_JUST_STORE_AND_EVALUE
@@ -1369,6 +1377,18 @@ public:
 	 * 	such exists
 	 */
 	virtual const cRoot * getSuperiorRootElement() const;
+
+	/**
+	 * @return the highest Fib-element in the wool Fib-object this
+	 * 	Fib-element is part of
+	 */
+	cFibElement * getMasterRoot();
+
+	/**
+	 * @return the highest Fib-element in the wool Fib-object this
+	 * 	Fib-element is part of
+	 */
+	cFibElement * getMasterRoot() const;
 
 	/**
 	 * This method returns the identifiers of all root-objects of this
@@ -1911,22 +1931,6 @@ protected:
 	 */
 	virtual list<cFibElement*> getAllFibElementsFromPosition( char cType,
 		edDirection direction, unsignedLongFib lNumberOfMaxReturnedElements ) = 0;
-	
-#endif //SWITCH_JUST_STORE_AND_EVALUE
-	
-	/**
-	 * @return the highest Fib-element in the wool Fib-object this
-	 * 	Fib-element is part of
-	 */
-	cFibElement * getMasterRoot();
-
-	/**
-	 * @return the highest Fib-element in the wool Fib-object this
-	 * 	Fib-element is part of
-	 */
-	cFibElement * getMasterRoot() const;
-
-#ifndef SWITCH_JUST_STORE_AND_EVALUE
 	
 	/**
 	 * This method checks if the given variable is defined in the given

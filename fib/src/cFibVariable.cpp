@@ -31,7 +31,11 @@
 History:
 05.05.2009  Oesterholz  created
 19.10.2011  Oesterholz  FEATURE_EQUAL_FIB_OBJECT implemented
+01.10.2013  Oesterholz  debugging information added
 */
+
+//comment in for debugging
+//#define DEBUG
 
 
 #include "cFibVariable.h"
@@ -48,7 +52,9 @@ using namespace fib;
  */
 cFibVariable::cFibVariable( cFibElement *definingFibElement ):
 		variableType( UNDEFINED ), pDefiningFibElement( definingFibElement ){
+	DEBUG_OUT_L3(<<"cFibVariable("<<this<<")::cFibVariable( definingFibElement="<<definingFibElement<<")"<<endl);
 }
+
 
 /**
  * The copyconstructor of the variable.
@@ -62,10 +68,12 @@ cFibVariable::cFibVariable( const cFibVariable & variable,
 		integerValue( variable.integerValue ),
 		pDefiningFibElement( definingFibElement ){
 	//nothing to do
+	DEBUG_OUT_L3(<<"cFibVariable("<<this<<")::cFibVariable( &variable="<<(&variable)<<", definingFibElement="<<definingFibElement<<")"<<endl);
 	if ( pDefiningFibElement == NULL ){
 		pDefiningFibElement = variable.pDefiningFibElement;
 	}
 }
+
 
 /**
  * The destructor of the variable.
@@ -374,6 +382,8 @@ bool cFibVariable::operator==( const cFibVariable &variable ) const{
  */
 cFibVariable & cFibVariable::operator=( const cFibVariable &variable ){
 
+	DEBUG_OUT_L3(<<"cFibVariable("<<this<<")::operator=( &variable="<<(&variable)<<" )"<<endl);
+	
 	variableType = variable.variableType;
 	doubleValue = variable.doubleValue;
 	integerValue = variable.integerValue;

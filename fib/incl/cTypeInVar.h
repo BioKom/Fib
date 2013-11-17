@@ -7,7 +7,9 @@
  *
  * System: C++
  *
- * This class represents an abstract Fib -inputvariabletype.
+ * This class represents an abstract Fib input variable type.
+ *
+ *
  * Copyright (C) @c LGPL3 2009 Betti Oesterholz
  *
  * This program is free software: you can redistribute it and/or modify
@@ -24,8 +26,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * This file contains the basisclass of all Fib -inputvariabletype.
- * Fib -vectorelementtyps are typs of the elements in an Fib -vector (e.g.
+ * This file contains the basisclass of all Fib input variable type.
+ * Fib vector element typs are typs of the elements in an Fib vector (e.g.
  * for an underarea vector the type of the elements is underarea).
  *
  */

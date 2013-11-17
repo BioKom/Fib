@@ -41,6 +41,8 @@ History:
 01.12.2011  Oesterholz  method isInBoundaries() added
 12.05.2013  Oesterholz  lNumberOfValues to unsigned ulNumberOfValues;
 	getDigits() handling changed
+03.09.2013  Oesterholz  using storeXmlDoubleFib() for storing  Fib double
+	numbers in XML (@see storeXml() )
 */
 
 
@@ -402,12 +404,9 @@ bool cDomainInteger::storeXml( ostream & ostream ) const{
 	ostream<<"<integer ";
 	if ( getScalingFactor() != 1.0 ){
 		//write scalingfactor
-		longFib lMantissa;
-		longFib lExponent;
-		
-		decomposeDoubleFib( getScalingFactor(), & lMantissa, & lExponent );
-		
-		ostream<<"scalingfactor=\""<< lMantissa <<" * 2^("<< lExponent <<")\" ";
+		ostream<<"scalingfactor=\"";
+		storeXmlDoubleFib( ostream, getScalingFactor() );
+		ostream<<"\" ";
 	}
 	ostream<<"min=\""<< lMinNumber <<"\" max=\""<< lMaxNumber <<"\" />"<<endl;
 	

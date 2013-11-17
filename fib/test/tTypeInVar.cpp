@@ -52,6 +52,7 @@ History:
 13.05.2010  Oesterholz  the ordering of bits for the compressed storing corrected
 04.04.2011  Oesterholz  storing to binary stream
 17.09.2012  Oesterholz  Warning removed: "(char)" for char arrays added
+03.09.2013  Oesterholz  reading scaling factor adapted
 */
 
 #include "version.h"
@@ -136,7 +137,7 @@ int testCostructor( unsigned long &ulTestphase ){
 	//check the getNumberOfInputVariable() methode from cTypeInVar
 	if ( typeInVar.getType() == (unsignedIntFib)(5) ){
 	
-		cout<<"The type of input variable is correctly 5 . "<<endl;
+		cout<<"The type of input variable is correctly 5 ."<<endl;
 	}else{
 		cerr<<"Error: The type of input variable is "<<
 			typeInVar.getType()<<" but should be 5 ."<<endl;
@@ -146,7 +147,7 @@ int testCostructor( unsigned long &ulTestphase ){
 	//check the getNumberOfInputVariable() methode from cTypeInVar
 	if ( typeInVar.getNumberOfInputVariable() == (unsignedIntFib)(1) ){
 	
-		cout<<"The number of input variable is correctly 1 . "<<endl;
+		cout<<"The number of input variable is correctly 1 ."<<endl;
 	}else{
 		cerr<<"Error: The number of input variable is "<<
 			typeInVar.getNumberOfInputVariable()<<" but should be 1 ."<<endl;
@@ -163,7 +164,7 @@ int testCostructor( unsigned long &ulTestphase ){
 	//check the getNumberOfInputVariable() methode from cTypeInVar
 	if ( typeInVar.getType() == (unsignedIntFib)(5) ){
 	
-		cout<<"The type of input variable is correctly 5 . "<<endl;
+		cout<<"The type of input variable is correctly 5 ."<<endl;
 	}else{
 		cerr<<"Error: The type of input variable is "<<
 			typeInVar.getType()<<" but should be 5 ."<<endl;
@@ -173,7 +174,7 @@ int testCostructor( unsigned long &ulTestphase ){
 	//check the getNumberOfInputVariable() methode from cTypeInVar
 	if ( typeInVar5.getNumberOfInputVariable()==(unsignedIntFib)(5) ){
 	
-		cout<<"The number of input variable is correctly 5 . "<<endl;
+		cout<<"The number of input variable is correctly 5 ."<<endl;
 	}else{
 		cerr<<"Error: The number of input variable is "<<
 			typeInVar5.getNumberOfInputVariable()<<" but should be 5 ."<<endl;
@@ -205,7 +206,7 @@ int testIsCompatibleGetStandardDomain( unsigned long &ulTestphase ){
 	//check the getNumberOfInputVariable() methode from cTypeInVar
 	if ( typeInVar.getType() == (unsignedIntFib)(5) ){
 	
-		cout<<"The type of input variable is correctly 5 . "<<endl;
+		cout<<"The type of input variable is correctly 5 ."<<endl;
 	}else{
 		cerr<<"Error: The type of input variable is "<<
 			typeInVar.getType()<<" but should be 5 ."<<endl;
@@ -215,7 +216,7 @@ int testIsCompatibleGetStandardDomain( unsigned long &ulTestphase ){
 	//check the getNumberOfInputVariable() methode from cTypeInVar
 	if ( typeInVar.getNumberOfInputVariable()==(unsignedIntFib)(2) ){
 	
-		cout<<"The number of input variable is correctly 2 . "<<endl;
+		cout<<"The number of input variable is correctly 2 ."<<endl;
 	}else{
 		cerr<<"Error: The number of input variable is "<<
 			typeInVar.getNumberOfInputVariable()<<" but should be 2 ."<<endl;
@@ -228,7 +229,7 @@ int testIsCompatibleGetStandardDomain( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 3 elements
 	if ( typeInVar.isCompatible( *domainInt ) ){
 	
-		cout<<"The type is correctly compatible to an integer domain. "<<endl;
+		cout<<"The type is correctly compatible to an integer domain."<<endl;
 	}else{
 		cerr<<"Error: The type is not compatible to a integer domain."<<endl;
 		iReturn++;
@@ -244,7 +245,7 @@ int testIsCompatibleGetStandardDomain( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 0 elements
 	if ( ! typeInVar.isCompatible( *vectorDomain ) ){
 	
-		cout<<"The type is correctly not compatible to the vector domain with 0 elements. "<<endl;
+		cout<<"The type is correctly not compatible to the vector domain with 0 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is compatible to the vector domain with 0 elements."<<endl;
 		iReturn++;
@@ -259,7 +260,7 @@ int testIsCompatibleGetStandardDomain( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 1 elements
 	if ( ! typeInVar.isCompatible( *vectorDomain1 ) ){
 	
-		cout<<"The type is correctly not compatible to the vector domain with 1 elements. "<<endl;
+		cout<<"The type is correctly not compatible to the vector domain with 1 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is compatible to the vector domain with 1 elements."<<endl;
 		iReturn++;
@@ -276,7 +277,7 @@ int testIsCompatibleGetStandardDomain( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 2 elements
 	if ( ! typeInVar.isCompatible( *vectorDomain ) ){
 	
-		cout<<"The type is correctly not compatible to the vector domain with 2 elements. "<<endl;
+		cout<<"The type is correctly not compatible to the vector domain with 2 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is compatible to the vector domain with 2 elements."<<endl;
 		iReturn++;
@@ -295,7 +296,7 @@ int testIsCompatibleGetStandardDomain( unsigned long &ulTestphase ){
 	//check the isCompatible() methode for vectordomain with 3 elements
 	if ( ! typeInVar.isCompatible( *vectorDomain ) ){
 	
-		cout<<"The type is correctly not compatible to the vector domain with 3 elements. "<<endl;
+		cout<<"The type is correctly not compatible to the vector domain with 3 elements."<<endl;
 	}else{
 		cerr<<"Error: The type is compatible to the vector domain with 3 elements."<<endl;
 		iReturn++;
@@ -325,7 +326,7 @@ int testIsCompatibleGetStandardDomain( unsigned long &ulTestphase ){
 				(domainNaturalNumberBit->getMaximum()==upperBound) ){
 		
 			cout<<"The domain goes correctly from "<<lowerBound<<
-				" to "<<upperBound<<". "<<endl;
+				" to "<<upperBound<<"."<<endl;
 		}else{
 			cerr<<"Error: The domain goes correctly from "<<lowerBound<<
 				" to "<<upperBound<<", but it goes from "<<
@@ -371,7 +372,7 @@ int testClone( unsigned long &ulTestphase ){
 	//check the getNumberOfInputVariable() methode from cTypeInVar
 	if ( pTypeInVarClone1->getNumberOfInputVariable()==(unsignedIntFib)(4) ){
 	
-		cout<<"The number of input variable is correctly 4 . "<<endl;
+		cout<<"The number of input variable is correctly 4 ."<<endl;
 	}else{
 		cerr<<"Error: The number of input variable is "<<
 			pTypeInVarClone1->getNumberOfInputVariable()<<" but should be 4 ."<<endl;
@@ -382,7 +383,7 @@ int testClone( unsigned long &ulTestphase ){
 	//check the getNumberOfInputVariable() methode from cTypeInVar
 	if ( typeInVar.getNumberOfInputVariable()==(unsignedIntFib)(4) ){
 	
-		cout<<"The number of input variable is correctly 4 . "<<endl;
+		cout<<"The number of input variable is correctly 4 ."<<endl;
 	}else{
 		cerr<<"Error: The number of input variable is "<<
 			typeInVar.getNumberOfInputVariable()<<" but should be 4 ."<<endl;
@@ -411,7 +412,7 @@ int testCompareTwoEqualTyps( const cTypeElement &typeElement1, const string &szN
 	
 	if ( typeElement1.equal( typeElement2 ) ){
 	
-		cout<<"The "<<szNameType1<<" is equal to "<<szNameType2<<". "<<endl;
+		cout<<"The "<<szNameType1<<" is equal to "<<szNameType2<<"."<<endl;
 	}else{
 		cerr<<"Error: The "<<szNameType1<<" is not equal to "<<
 			szNameType2<<"."<<endl;
@@ -420,7 +421,7 @@ int testCompareTwoEqualTyps( const cTypeElement &typeElement1, const string &szN
 	if ( typeElement1==typeElement2 ){
 	
 		cout<<"The "<<szNameType1<<" is equal (operator==) to "<<
-			szNameType2<<". "<<endl;
+			szNameType2<<"."<<endl;
 	}else{
 		cerr<<"Error: The "<<szNameType1<<" is not equal (operator==) to "<<
 			szNameType2<<"."<<endl;
@@ -447,7 +448,7 @@ int testCompareTwoNotEqualTyps( const cTypeElement &typeElement1, const string &
 	
 	if ( ! typeElement1.equal( typeElement2 ) ){
 	
-		cout<<"The "<<szNameType1<<" is not equal to "<<szNameType2<<". "<<endl;
+		cout<<"The "<<szNameType1<<" is not equal to "<<szNameType2<<"."<<endl;
 	}else{
 		cerr<<"Error: The "<<szNameType1<<" is equal to "<<
 			szNameType2<<"."<<endl;
@@ -456,7 +457,7 @@ int testCompareTwoNotEqualTyps( const cTypeElement &typeElement1, const string &
 	if ( ! (typeElement1==typeElement2) ){
 	
 		cout<<"The "<<szNameType1<<" is not equal (operator==) to "<<
-			szNameType2<<". "<<endl;
+			szNameType2<<"."<<endl;
 	}else{
 		cerr<<"Error: The "<<szNameType1<<" is equal (operator==) to "<<
 			szNameType2<<"."<<endl;
@@ -618,21 +619,21 @@ int testEqualElementType( unsigned long &ulTestphase ){
 
 	if ( typeInVar1.equalElementType( typeInVar1 ) ){
 	
-		cout<<"The typeInVar1 is of the same type as typeInVar1. "<<endl;
+		cout<<"The typeInVar1 is of the same type as typeInVar1."<<endl;
 	}else{
 		cerr<<"Error: The typeInVar1 is not of the same type as typeInVar1."<<endl;
 		iReturn++;
 	}
 	if ( ! typeInVar1.equalElementType( typeInVar2 ) ){
 	
-		cout<<"The typeInVar1 is not of the same type as typeInVar2. "<<endl;
+		cout<<"The typeInVar1 is not of the same type as typeInVar2."<<endl;
 	}else{
 		cerr<<"Error: The typeInVar1 is of the same type as typeInVar2."<<endl;
 		iReturn++;
 	}
 	if ( ! typeInVar1.equalElementType( typeInVar144 ) ){
 	
-		cout<<"The typeInVar1 is not of the same type as typeInVar144. "<<endl;
+		cout<<"The typeInVar1 is not of the same type as typeInVar144."<<endl;
 	}else{
 		cerr<<"Error: The typeInVar1 is of the same type as typeInVar144."<<endl;
 		iReturn++;
@@ -640,7 +641,7 @@ int testEqualElementType( unsigned long &ulTestphase ){
 
 	if ( ! typeInVar1.equalElementType( typeProperty ) ){
 	
-		cout<<"The typeInVar1 is not of the same type as typeProperty. "<<endl;
+		cout<<"The typeInVar1 is not of the same type as typeProperty."<<endl;
 	}else{
 		cerr<<"Error: The typeInVar1 is of the same type as typeProperty."<<endl;
 		iReturn++;
@@ -648,7 +649,7 @@ int testEqualElementType( unsigned long &ulTestphase ){
 
 	if ( ! typeInVar1.equalElementType( typeDimension1D3 ) ){
 	
-		cout<<"The typeInVar1 is not of the same type as typeDimension1D3. "<<endl;
+		cout<<"The typeInVar1 is not of the same type as typeDimension1D3."<<endl;
 	}else{
 		cerr<<"Error: The typeInVar1 is of the same type as typeDimension1D3."<<endl;
 		iReturn++;
@@ -657,14 +658,14 @@ int testEqualElementType( unsigned long &ulTestphase ){
 
 	if ( ! typeInVar144.equalElementType( typeInVar1 ) ){
 	
-		cout<<"The typeInVar144 is not of the same type as typeInVar1. "<<endl;
+		cout<<"The typeInVar144 is not of the same type as typeInVar1."<<endl;
 	}else{
 		cerr<<"Error: The typeInVar144 is of the same type as typeInVar1."<<endl;
 		iReturn++;
 	}
 	if ( ! typeInVar144.equalElementType( typeInVar2 ) ){
 	
-		cout<<"The typeInVar144 is not of the same type as typeInVar2. "<<endl;
+		cout<<"The typeInVar144 is not of the same type as typeInVar2."<<endl;
 	}else{
 		cerr<<"Error: The typeInVar144 is of the same type as typeInVar2."<<endl;
 		iReturn++;
@@ -672,7 +673,7 @@ int testEqualElementType( unsigned long &ulTestphase ){
 
 	if ( typeInVar144.equalElementType( typeInVar144 ) ){
 	
-		cout<<"The typeInVar144 is of the same type as typeInVar144. "<<endl;
+		cout<<"The typeInVar144 is of the same type as typeInVar144."<<endl;
 	}else{
 		cerr<<"Error: The typeInVar144 is not of the same type as typeInVar144."<<endl;
 		iReturn++;
@@ -680,7 +681,7 @@ int testEqualElementType( unsigned long &ulTestphase ){
 
 	if ( ! typeInVar144.equalElementType( typeProperty ) ){
 	
-		cout<<"The typeInVar144 is not of the same type as typeProperty. "<<endl;
+		cout<<"The typeInVar144 is not of the same type as typeProperty."<<endl;
 	}else{
 		cerr<<"Error: The typeInVar144 is of the same type as typeProperty."<<endl;
 		iReturn++;
@@ -688,7 +689,7 @@ int testEqualElementType( unsigned long &ulTestphase ){
 
 	if ( ! typeInVar144.equalElementType( typeDimension1D3 ) ){
 	
-		cout<<"The typeInVar144 is not of the same type as typeDimension1D3. "<<endl;
+		cout<<"The typeInVar144 is not of the same type as typeDimension1D3."<<endl;
 	}else{
 		cerr<<"Error: The typeInVar144 is of the same type as typeDimension1D3."<<endl;
 		iReturn++;
@@ -708,12 +709,12 @@ int testEqualElementType( unsigned long &ulTestphase ){
  * @param bHasDomain if true the domain is stored to the type
  * @param uiBits a vector with the bits the cDomainNaturalNumberBit
  * 	domains have
- * @param dScalingfactor a vector with the scalingfactors for the
+ * @param dScalingFactor a vector with the scaling factors for the
  * 	cDomainNaturalNumberBit domains have
  * @return the number of errors occured in the test
  */
 int testXmlType( const string szFilename, unsigned int uiInVarNumber,
-		bool bHasDomain, unsigned int uiBits, double dScalingfactor ){
+		bool bHasDomain, unsigned int uiBits, double dScalingFactor ){
 	
 	unsigned int iReturn = 0;
 	
@@ -722,7 +723,7 @@ int testXmlType( const string szFilename, unsigned int uiInVarNumber,
 	TiXmlDocument xmlDocType( szFilename );
 	bool loadOkay = xmlDocType.LoadFile();
 	if ( loadOkay ){
-		cout<<"The data of the type was loaded successfull from the file \""<< szFilename <<"\". "<<endl;
+		cout<<"The data of the type was loaded successfull from the file \""<< szFilename <<"\"."<<endl;
 	}else{
 		cerr<<"Error: Failed to load file \""<< szFilename <<"\""<<endl;
 		iReturn++;
@@ -739,7 +740,7 @@ int testXmlType( const string szFilename, unsigned int uiInVarNumber,
 		string szElementName = pXmlElement->Value();
 
 		if ( szElementName == "inVar" ){
-			cout<<"The root element is correctly named \"inVar\". "<<endl;
+			cout<<"The root element is correctly named \"inVar\"."<<endl;
 		
 		}else{
 			cerr<<"Error: The name of the root element is "<< szElementName <<" and not \"inVar\"."<<endl;
@@ -755,7 +756,7 @@ int testXmlType( const string szFilename, unsigned int uiInVarNumber,
 			iReturn++;
 		}else if ( iNumberOfInVarLoaded == (int)uiInVarNumber ) {
 			cout<<"The number of the input variable is correctly \""<<
-				uiInVarNumber <<"\". "<<endl;
+				uiInVarNumber <<"\"."<<endl;
 		}else{
 			cerr<<"Error: The number of the input variable is \""<<
 				iNumberOfInVarLoaded <<"\", but should be \""<<
@@ -780,7 +781,7 @@ int testXmlType( const string szFilename, unsigned int uiInVarNumber,
 		string szElementName = pXmlElement->Value();
 	
 		if ( szElementName == "naturalNumberB" ){
-			cout<<"The  element is correctly named \"naturalNumberB\". "<<endl;
+			cout<<"The  element is correctly named \"naturalNumberB\"."<<endl;
 		
 		}else{
 			cerr<<"Error: The name of the element is \""<< szElementName <<"\" and not \"naturalNumberB\"."<<endl;
@@ -794,48 +795,33 @@ int testXmlType( const string szFilename, unsigned int uiInVarNumber,
 			cerr<<"Error: The domain has no attribute bits."<<endl;
 			iReturn++;
 		}else if ( iBitsLoaded == (int)uiBits ) {
-			cout<<"The number of bits of the domain are correctly \""<< uiBits <<"\". "<<endl;
+			cout<<"The number of bits of the domain are correctly \""<< uiBits <<"\"."<<endl;
 		}else{
 			cerr<<"Error: The number of bits of the loaded domain are \""<< iBitsLoaded
 				<<"\", but should be \""<< uiBits <<"\"."<<endl;
 			iReturn++;
 		}
 	
-		const char * pcAttributeScalingfactor =
+		const char * pcAttributeScalingFactor =
 			pXmlElement->Attribute( "scalingfactor" );
 		
-		longFib lfMantissa;
-		longFib lfExponent;
-		decomposeDoubleFib( dScalingfactor, & lfMantissa, & lfExponent );
-		
-		if ( ( dScalingfactor == 1.0 ) && ( pcAttributeScalingfactor == NULL ) ){
-			//no scalingfactor needed
-			cout<<"No scalingfactor attribut. This is correct because the scalingfactor is 1.0 . "<<endl;
+		if ( ( dScalingFactor == 1.0 ) && ( pcAttributeScalingFactor == NULL ) ){
+			//no scaling factor needed
+			cout<<"No scaling factor attribut. This is correct because the scaling factor is 1.0 ."<<endl;
 		}else{
-			if ( pcAttributeScalingfactor == NULL ){
-				cerr<<"Error: The domain has no attribute scalingfactor."<<endl;
+			if ( pcAttributeScalingFactor == NULL ){
+				cerr<<"Error: The domain has no attribute scaling factor."<<endl;
 				iReturn++;
 			}else{
-				long long lMantissa = 0;
-				long long lExponent = 0;
-				// construct an istream containing a number
-				stringstream sinScalingfactor( pcAttributeScalingfactor );
-
-				// read the number -- the crucial bit
-				char c = 0;
-				sinScalingfactor >> lMantissa;
-				while ( (c != '(') && sinScalingfactor ){
-					sinScalingfactor >> c;
-				}
-				sinScalingfactor >> lExponent;
-
-				if ( ( lfMantissa == lMantissa ) &&  ( lfExponent == lExponent ) ) {
-					 cout<<"The scalingfactor of the domain is correctly \""<< pcAttributeScalingfactor <<"\". "<<endl;
+				const double dReadScalingFactor =
+					readDoubleFromFunction( pcAttributeScalingFactor );
+				
+				if ( dScalingFactor == dReadScalingFactor ) {
+					cout<<"The scaling factor of the domain is correctly \""<< pcAttributeScalingFactor <<"\"."<<endl;
 				}else{
-					 cerr<<"Error: The scalingfactor of the loaded domain is \""<< pcAttributeScalingfactor<<
-						"\" (=\""<<lMantissa <<" * 2^("<< lExponent <<")\") "<<
-						", but should be \""<< dScalingfactor <<"\" (=\""<<
-						lfMantissa <<" * 2^("<< lfExponent <<")\")."<<endl;
+					cerr<<"Error: The scaling factor of the loaded domain is \""<<
+						pcAttributeScalingFactor<<"\"(="<<dReadScalingFactor<<
+						"), but should be \""<<dScalingFactor <<"\" ."<<endl;
 					iReturn++;
 				}
 			}
@@ -878,7 +864,7 @@ int testStoreXml( unsigned long &ulTestphase ){
 	
 	if ( bStoreSuccesfull ){
 	
-		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\". "<<endl;
+		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\"."<<endl;
 	}else{
 		cerr<<"Error: Storing the data to the file \""<< szFileNameBuffer <<"\" failed."<<endl;
 		iReturn++;
@@ -898,7 +884,7 @@ int testStoreXml( unsigned long &ulTestphase ){
 	cout<<"cDomainNaturalNumberBit domainNaturalNumberB4( 4 );"<<endl;
 	cDomainNaturalNumberBit domainNaturalNumberB4( 4 );
 	unsigned int uiBits = 4;
-	double dScalingfactor = 1.0;
+	double dScalingFactor = 1.0;
 
 	szFileNameBuffer[0] = 0;
 	strcat( strcat( szFileNameBuffer,
@@ -911,14 +897,14 @@ int testStoreXml( unsigned long &ulTestphase ){
 	
 	if ( bStoreSuccesfull ){
 	
-		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\". "<<endl;
+		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\"."<<endl;
 	}else{
 		cerr<<"Error: Storing the data to the file \""<< szFileNameBuffer <<"\" failed."<<endl;
 		iReturn++;
 	}
 	
 	iReturn += testXmlType( szFileNameBuffer, uiNumberInVar, true,
-		uiBits, dScalingfactor );
+		uiBits, dScalingFactor );
 
 
 	ulTestphase++;
@@ -931,7 +917,7 @@ int testStoreXml( unsigned long &ulTestphase ){
 	cout<<"cDomainNaturalNumberBit domainNaturalNumberB13( 13, 1.24 );"<<endl;
 	cDomainNaturalNumberBit domainNaturalNumberB13(  13, 1.24 );
 	uiBits = 13;
-	dScalingfactor = 1.24;
+	dScalingFactor = 1.24;
 
 	szFileNameBuffer[0] = 0;
 	strcat( strcat( szFileNameBuffer,
@@ -944,14 +930,14 @@ int testStoreXml( unsigned long &ulTestphase ){
 	
 	if ( bStoreSuccesfull ){
 	
-		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\". "<<endl;
+		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\"."<<endl;
 	}else{
 		cerr<<"Error: Storing the data to the file \""<< szFileNameBuffer <<"\" failed."<<endl;
 		iReturn++;
 	}
 	
 	iReturn += testXmlType( szFileNameBuffer, uiNumberInVar, true,
-		uiBits, dScalingfactor );
+		uiBits, dScalingFactor );
 
 
 	return iReturn;
@@ -984,11 +970,11 @@ int testStore( unsigned long &ulTestphase ){
 	if ( (unsigned int)(typeInVar1.getCompressedSize()) == uiCompressedSize ){
 	
 		cout<<"The compressed size of the type is correctly "<<
-			uiCompressedSize <<" . "<<endl;
+			uiCompressedSize <<" ."<<endl;
 	}else{
 		cerr<<"Error: The compressed size of the type is "<<
 			typeInVar1.getCompressedSize() << ", but should be "<<
-			uiCompressedSize <<" . "<<endl;
+			uiCompressedSize <<" ."<<endl;
 		iReturn++;
 	}
 	
@@ -1006,7 +992,7 @@ int testStore( unsigned long &ulTestphase ){
 	
 	if ( bStoreSuccesfull ){
 	
-		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\". "<<endl;
+		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\"."<<endl;
 	}else{
 		cerr<<"Error: Storing the data to the file \""<< szFileNameBuffer <<"\" failed."<<endl;
 		iReturn++;
@@ -1014,11 +1000,11 @@ int testStore( unsigned long &ulTestphase ){
 	
 	if ( ( cRestBit == (char)0x00 ) && ( cNumberOfRestBit == 0 ) ){
 		cout<<"The restbit is \"(char)0x"<< hex << (unsigned short)cRestBit <<"\" the number of restbit is "<<
-			dec << (unsigned short)cNumberOfRestBit <<". "<<endl;
+			dec << (unsigned short)cNumberOfRestBit <<"."<<endl;
 	}else{
 		cerr<<"Error: The restbit is \"(char)0x"<< hex << (unsigned short)cRestBit <<"\" the number of restbit is "<<
 			dec << (unsigned short)cNumberOfRestBit <<
-			", but the restbit should be 0 and number of restbit should be 0. "<<endl;
+			", but the restbit should be 0 and number of restbit should be 0."<<endl;
 		iReturn++;
 	}
 
@@ -1040,11 +1026,11 @@ int testStore( unsigned long &ulTestphase ){
 	if ( (unsigned int)(typeInVar10000.getCompressedSize()) == uiCompressedSize ){
 	
 		cout<<"The compressed size of the type is correctly "<<
-			uiCompressedSize <<" . "<<endl;
+			uiCompressedSize <<" ."<<endl;
 	}else{
 		cerr<<"Error: The compressed size of the type is "<<
 			typeInVar10000.getCompressedSize() << ", but should be "<<
-			uiCompressedSize <<" . "<<endl;
+			uiCompressedSize <<" ."<<endl;
 		iReturn++;
 	}
 	
@@ -1061,7 +1047,7 @@ int testStore( unsigned long &ulTestphase ){
 	
 	if ( bStoreSuccesfull ){
 	
-		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\". "<<endl;
+		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\"."<<endl;
 	}else{
 		cerr<<"Error: Storing the data to the file \""<< szFileNameBuffer <<"\" failed."<<endl;
 		iReturn++;
@@ -1069,11 +1055,11 @@ int testStore( unsigned long &ulTestphase ){
 	unsigned char ucRestBit = cRestBit;
 	if ( ( ucRestBit == (char)0x00 ) && ( cNumberOfRestBit == 0 ) ){
 		cout<<"The restbit is \"(char)0x"<< hex << (unsigned short)cRestBit <<"\" the number of restbit is "<<
-			dec << (unsigned short)cNumberOfRestBit <<". "<<endl;
+			dec << (unsigned short)cNumberOfRestBit <<"."<<endl;
 	}else{
 		cerr<<"Error: The restbit is \"(char)0x"<< hex << (unsigned short)cRestBit <<"\" the number of restbit is "<<
 			dec << (unsigned short)cNumberOfRestBit <<
-			", but the restbit should be 0 and number of restbit should be 0. "<<endl;
+			", but the restbit should be 0 and number of restbit should be 0."<<endl;
 		iReturn++;
 	}
 
@@ -1085,7 +1071,7 @@ int testStore( unsigned long &ulTestphase ){
 
 
 	ulTestphase++;
-	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing storing a 5'th input variable type with 5 restbitsbits"<<endl;
+	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing storing a 5'th input variable type with 5 rest bits"<<endl;
 	
 	cout<<"cTypeInVar typeInVar5( 5 );"<<endl;
 	cTypeInVar typeInVar5( 5 );
@@ -1095,11 +1081,11 @@ int testStore( unsigned long &ulTestphase ){
 	if ( (unsigned int)(typeInVar5.getCompressedSize()) == uiCompressedSize ){
 	
 		cout<<"The compressed size of the type is correctly "<<
-			uiCompressedSize <<" . "<<endl;
+			uiCompressedSize <<" ."<<endl;
 	}else{
 		cerr<<"Error: The compressed size of the type is "<<
 			typeInVar5.getCompressedSize() << ", but should be "<<
-			uiCompressedSize <<" . "<<endl;
+			uiCompressedSize <<" ."<<endl;
 		iReturn++;
 	}
 	
@@ -1116,7 +1102,7 @@ int testStore( unsigned long &ulTestphase ){
 	
 	if ( bStoreSuccesfull ){
 	
-		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\". "<<endl;
+		cout<<"The data was stored successfull to the file \""<< szFileNameBuffer <<"\"."<<endl;
 	}else{
 		cerr<<"Error: Storing the data to the file \""<< szFileNameBuffer <<"\" failed."<<endl;
 		iReturn++;
@@ -1124,11 +1110,11 @@ int testStore( unsigned long &ulTestphase ){
 	ucRestBit = cRestBit;
 	if ( ( ucRestBit == (unsigned char)((char)0x00) ) && ( cNumberOfRestBit == 5 ) ){
 		cout<<"The restbit is \"(char)0x"<< hex << (unsigned short)cRestBit <<"\" the number of restbit is "<<
-			dec << (unsigned short)cNumberOfRestBit <<". "<<endl;
+			dec << (unsigned short)cNumberOfRestBit <<"."<<endl;
 	}else{
 		cerr<<"Error: The restbit is \"(char)0x"<< hex << (unsigned short)ucRestBit <<"\" the number of restbit is "<<
 			dec << (unsigned short)cNumberOfRestBit <<
-			", but the restbit should be (char)0x00 and number of restbit should be 5. "<<endl;
+			", but the restbit should be (char)0x00 and number of restbit should be 5."<<endl;
 		iReturn++;
 	}
 

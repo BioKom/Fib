@@ -54,6 +54,7 @@ History:
 15.11.2009  Oesterholz  testing of: copyconstructor, operator=(),
 	the equalmethodes and isIntegerValue()
 20.02.2009  Oesterholz  testRegisterVector()
+01.10.2013  Oesterholz  some memory errors removed (using elements)
 */
 
 #include "version.h"
@@ -62,6 +63,7 @@ History:
 #include "cVectorProperty.h"
 #include "cVectorPosition.h"
 #include "cRoot.h"
+#include "cArea.h"
 #include "cPoint.h"
 
 #include <iostream>
@@ -82,7 +84,7 @@ int testRegisterVector( unsigned long &ulTestphase );
 int main(int argc, char* argv[]){
 
 	unsigned long ulTestphase = 0;//actual phase of the test 
-	int iReturn = 0;//returnvalue of the test; the number of occured Errors
+	int iReturn = 0;//return value of the test; the number of occured errors
 	
 	cout<<endl<<"Running Test for cFibVariable methods"<<endl;
 	cout<<      "====================================="<<endl;
@@ -116,21 +118,21 @@ int main(int argc, char* argv[]){
  */
 int testCostructor( unsigned long &ulTestphase ){
 
-	int iReturn=0;//returnvalue of the test; the number of occured Errors
+	int iReturn = 0;//return value of the test; the number of occured errors
 
 	ulTestphase++;
 	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing constructing simple cFibVariable"<<endl;
 
-	//TODO adapt root -constructor use other Fib -elements
-	cRoot * definingRoot= new cRoot();
+	//the defining Fib element
+	cFibElement * pDefiningFibElement = new cArea( cVectorArea() );
 
-	cout<<"cFibVariable fibVariable1( definingRoot );"<<endl;
-	cFibVariable fibVariable1( (cFibElement*)definingRoot );
+	cout<<"cFibVariable fibVariable1( pDefiningFibElement );"<<endl;
+	cFibVariable fibVariable1( pDefiningFibElement );
 
 	//check the getValue() methode from cFibVariable
-	if ( fibVariable1.getValue()==(doubleFib)(0.0) ){
+	if ( fibVariable1.getValue() == (doubleFib)(0.0) ){
 	
-		cout<<"The value of the new variable object is correctly 0.0 . "<<endl;
+		cout<<"The value of the new variable object is correctly 0.0 ."<<endl;
 	}else{
 		cerr<<"Error: The value of the new variable object "<<
 			fibVariable1.getValue()<<" but should be 0.0 ."<<endl;
@@ -138,9 +140,9 @@ int testCostructor( unsigned long &ulTestphase ){
 	}
 
 	//check the getIntegerValue() methode from cFibVariable
-	if ( fibVariable1.getIntegerValue()==(longFib)(0) ){
+	if ( fibVariable1.getIntegerValue() == (longFib)(0) ){
 	
-		cout<<"The integer value of the new variable object is correctly 0 . "<<endl;
+		cout<<"The integer value of the new variable object is correctly 0 ."<<endl;
 	}else{
 		cerr<<"Error: The integer value of the new variable object "<<
 			fibVariable1.getIntegerValue()<<" but should be 0 ."<<endl;
@@ -148,23 +150,22 @@ int testCostructor( unsigned long &ulTestphase ){
 	}
 
 	//check the getDefiningElement() methode from cFibVariable
-	//TODO eleminate cast
-	if ( fibVariable1.getDefiningElement()==(cFibElement*)definingRoot ){
+	if ( fibVariable1.getDefiningElement() == pDefiningFibElement ){
 	
 		cout<<"The defining Fib -element of the new variable object is the"<<
-			" correct root element . "<<endl;
+			" correct root element ."<<endl;
 	}else{
 		cerr<<"Error: The defining Fib -element of the new variable object is "<<
 			fibVariable1.getDefiningElement()<<" but should be "<<
-				definingRoot<<" ."<<endl;
+				pDefiningFibElement<<" ."<<endl;
 		iReturn++;
 	}
 
 	//check the getNumberOfUsingElements() methode from cFibVariable
-	if ( fibVariable1.getNumberOfUsingElements()==(unsignedIntFib)(0) ){
+	if ( fibVariable1.getNumberOfUsingElements() == (unsignedIntFib)(0) ){
 	
 		cout<<"The number of using Fib -elements of the new variable object"<<
-				" is correctly 0 . "<<endl;
+				" is correctly 0 ."<<endl;
 	}else{
 		cerr<<"Error: The number of using Fib -elements of the new variable object is "<<
 			fibVariable1.getNumberOfUsingElements()<<" but should be 0 ."<<endl;
@@ -174,10 +175,10 @@ int testCostructor( unsigned long &ulTestphase ){
 	//check the getUsingElements() methode from cFibVariable
 	set<cFibElement*> usingElements=fibVariable1.getUsingElements();
 
-	if ( usingElements.size()==(unsignedIntFib)(0) ){
+	if ( usingElements.size() == (unsignedIntFib)(0) ){
 	
 		cout<<"The number of returned using Fib -elements of the new variable"<<
-				" object is correctly 0 . "<<endl;
+				" object is correctly 0 ."<<endl;
 	}else{
 		cerr<<"Error: The number of returned using Fib -elements of the new variable object is "<<
 			usingElements.size()<<" but should be 0 ."<<endl;
@@ -192,7 +193,7 @@ int testCostructor( unsigned long &ulTestphase ){
 		cerr<<"Error: The variable is looks like it is set to an value, but it shouldn't."<<endl;
 		iReturn++;
 	}
-	delete definingRoot;
+	delete pDefiningFibElement;
 
 	return iReturn;
 }
@@ -208,21 +209,21 @@ int testCostructor( unsigned long &ulTestphase ){
 int testValueMethods( unsigned long &ulTestphase ){
 
 
-	int iReturn=0;//returnvalue of the test; the number of occured Errors
+	int iReturn = 0;//return value of the test; the number of occured errors
 
 	ulTestphase++;
 	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing constructing simple cFibVariable for value changes"<<endl;
 
-	//TODO adapt root -constructor use other Fib -elements
-	cRoot * definingRoot= new cRoot();
+	//adapt root -constructor use other Fib -elements
+	cRoot * pDefiningRoot = new cRoot();
 
 	cout<<"cFibVariable fibVariable1=cFibVariable( masterRoot );"<<endl;
-	cFibVariable fibVariable1=cFibVariable( (cFibElement*)definingRoot );
+	cFibVariable fibVariable1=cFibVariable( (cFibElement*)pDefiningRoot );
 
 	//check the getValue() methode from cFibVariable
-	if ( fibVariable1.getValue()==(doubleFib)(0.0) ){
+	if ( fibVariable1.getValue() == (doubleFib)(0.0) ){
 	
-		cout<<"The value of the new variable object is correctly 0.0 . "<<endl;
+		cout<<"The value of the new variable object is correctly 0.0 ."<<endl;
 	}else{
 		cerr<<"Error: The value of the new variable object "<<
 			fibVariable1.getValue()<<" but should be 0.0 ."<<endl;
@@ -230,9 +231,9 @@ int testValueMethods( unsigned long &ulTestphase ){
 	}
 
 	//check the getIntegerValue() methode from cFibVariable
-	if ( fibVariable1.getIntegerValue()==(longFib)(0) ){
+	if ( fibVariable1.getIntegerValue() == (longFib)(0) ){
 	
-		cout<<"The integer value of the new variable object is correctly 0 . "<<endl;
+		cout<<"The integer value of the new variable object is correctly 0 ."<<endl;
 	}else{
 		cerr<<"Error: The integer value of the new variable object "<<
 			fibVariable1.getIntegerValue()<<" but should be 0 ."<<endl;
@@ -264,9 +265,9 @@ int testValueMethods( unsigned long &ulTestphase ){
 	fibVariable1.setValue( 1.1 );
 
 	//check the getValue() methode from cFibVariable
-	if ( fibVariable1.getValue()==(doubleFib)(1.1) ){
+	if ( fibVariable1.getValue() == (doubleFib)(1.1) ){
 	
-		cout<<"The value of the variable object is correctly 1.1 . "<<endl;
+		cout<<"The value of the variable object is correctly 1.1 ."<<endl;
 	}else{
 		cerr<<"Error: The value of the variable object "<<
 			fibVariable1.getValue()<<" but should be 1.1 ."<<endl;
@@ -274,9 +275,9 @@ int testValueMethods( unsigned long &ulTestphase ){
 	}
 
 	//check the getIntegerValue() methode from cFibVariable
-	if ( fibVariable1.getIntegerValue()==(longFib)(1) ){
+	if ( fibVariable1.getIntegerValue() == (longFib)(1) ){
 	
-		cout<<"The integer value of the variable object is correctly 1 . "<<endl;
+		cout<<"The integer value of the variable object is correctly 1 ."<<endl;
 	}else{
 		cerr<<"Error: The integer value of the variable object "<<
 			fibVariable1.getIntegerValue()<<" but should be 1 ."<<endl;
@@ -305,9 +306,9 @@ int testValueMethods( unsigned long &ulTestphase ){
 	fibVariable1.setValue( 1.49 );
 
 	//check the getValue() methode from cFibVariable
-	if ( fibVariable1.getValue()==(doubleFib)(1.49) ){
+	if ( fibVariable1.getValue() == (doubleFib)(1.49) ){
 	
-		cout<<"The value of the variable object is correctly 1.49 . "<<endl;
+		cout<<"The value of the variable object is correctly 1.49 ."<<endl;
 	}else{
 		cerr<<"Error: The value of the variable object "<<
 			fibVariable1.getValue()<<" but should be 1.49 ."<<endl;
@@ -315,9 +316,9 @@ int testValueMethods( unsigned long &ulTestphase ){
 	}
 
 	//check the getIntegerValue() methode from cFibVariable
-	if ( fibVariable1.getIntegerValue()==(longFib)(1) ){
+	if ( fibVariable1.getIntegerValue() == (longFib)(1) ){
 	
-		cout<<"The integer value of the variable object is correctly 1 . "<<endl;
+		cout<<"The integer value of the variable object is correctly 1 ."<<endl;
 	}else{
 		cerr<<"Error: The integer value of the variable object "<<
 			fibVariable1.getIntegerValue()<<" but should be 1 ."<<endl;
@@ -345,9 +346,9 @@ int testValueMethods( unsigned long &ulTestphase ){
 	fibVariable1.setValue( 1.501 );
 
 	//check the getValue() methode from cFibVariable
-	if ( fibVariable1.getValue()==(doubleFib)(1.501) ){
+	if ( fibVariable1.getValue() == (doubleFib)(1.501) ){
 	
-		cout<<"The value of the variable object is correctly 1.501 . "<<endl;
+		cout<<"The value of the variable object is correctly 1.501 ."<<endl;
 	}else{
 		cerr<<"Error: The value of the variable object "<<
 			fibVariable1.getValue()<<" but should be 1.501 ."<<endl;
@@ -355,9 +356,9 @@ int testValueMethods( unsigned long &ulTestphase ){
 	}
 
 	//check the getIntegerValue() methode from cFibVariable
-	if ( fibVariable1.getIntegerValue()==(longFib)(2) ){
+	if ( fibVariable1.getIntegerValue() == (longFib)(2) ){
 	
-		cout<<"The integer value of the variable object is correctly 2 . "<<endl;
+		cout<<"The integer value of the variable object is correctly 2 ."<<endl;
 	}else{
 		cerr<<"Error: The integer value of the variable object "<<
 			fibVariable1.getIntegerValue()<<" but should be 2 ."<<endl;
@@ -368,9 +369,9 @@ int testValueMethods( unsigned long &ulTestphase ){
 	fibVariable1.setValue( -1501.2547 );
 
 	//check the getValue() methode from cFibVariable
-	if ( fibVariable1.getValue()==(doubleFib)(-1501.2547) ){
+	if ( fibVariable1.getValue() == (doubleFib)(-1501.2547) ){
 	
-		cout<<"The value of the variable object is correctly -1501.2547 . "<<endl;
+		cout<<"The value of the variable object is correctly -1501.2547 ."<<endl;
 	}else{
 		cerr<<"Error: The value of the variable object "<<
 			fibVariable1.getValue()<<" but should be -1501.2547 ."<<endl;
@@ -378,9 +379,9 @@ int testValueMethods( unsigned long &ulTestphase ){
 	}
 
 	//check the getIntegerValue() methode from cFibVariable
-	if ( fibVariable1.getIntegerValue()==(longFib)(-1501) ){
+	if ( fibVariable1.getIntegerValue() == (longFib)(-1501) ){
 	
-		cout<<"The integer value of the variable object is correctly -1501 . "<<endl;
+		cout<<"The integer value of the variable object is correctly -1501 ."<<endl;
 	}else{
 		cerr<<"Error: The integer value of the variable object "<<
 			fibVariable1.getIntegerValue()<<" but should be -1501 ."<<endl;
@@ -391,9 +392,9 @@ int testValueMethods( unsigned long &ulTestphase ){
 	fibVariable1.setValue( 952458712.7586421 );
 
 	//check the getValue() methode from cFibVariable
-	if ( fibVariable1.getValue()==(doubleFib)(952458712.7586421) ){
+	if ( fibVariable1.getValue() == (doubleFib)(952458712.7586421) ){
 	
-		cout<<"The value of the variable object is correctly 952458712.7586421 . "<<endl;
+		cout<<"The value of the variable object is correctly 952458712.7586421 ."<<endl;
 	}else{
 		cerr<<"Error: The value of the variable object "<<
 			fibVariable1.getValue()<<" but should be 952458712.7586421 ."<<endl;
@@ -401,9 +402,9 @@ int testValueMethods( unsigned long &ulTestphase ){
 	}
 
 	//check the getIntegerValue() methode from cFibVariable
-	if ( fibVariable1.getIntegerValue()==(longFib)(952458713) ){
+	if ( fibVariable1.getIntegerValue() == (longFib)(952458713) ){
 	
-		cout<<"The integer value of the variable object is correctly 952458713 . "<<endl;
+		cout<<"The integer value of the variable object is correctly 952458713 ."<<endl;
 	}else{
 		cerr<<"Error: The integer value of the variable object "<<
 			fibVariable1.getIntegerValue()<<" but should be 952458713 ."<<endl;
@@ -417,9 +418,9 @@ int testValueMethods( unsigned long &ulTestphase ){
 	fibVariable1.setIntegerValue( 1 );
 
 	//check the getIntegerValue() methode from cFibVariable
-	if ( fibVariable1.getIntegerValue()==(longFib)(1) ){
+	if ( fibVariable1.getIntegerValue() == (longFib)(1) ){
 	
-		cout<<"The integer value of the variable object is correctly 1 . "<<endl;
+		cout<<"The integer value of the variable object is correctly 1 ."<<endl;
 	}else{
 		cerr<<"Error: The integer value of the variable object "<<
 			fibVariable1.getIntegerValue()<<" but should be 1 ."<<endl;
@@ -438,9 +439,9 @@ int testValueMethods( unsigned long &ulTestphase ){
 	fibVariable1.setIntegerValue( -1501 );
 
 	//check the getIntegerValue() methode from cFibVariable
-	if ( fibVariable1.getIntegerValue()==(longFib)(-1501) ){
+	if ( fibVariable1.getIntegerValue() == (longFib)(-1501) ){
 	
-		cout<<"The integer value of the variable object is correctly -1501 . "<<endl;
+		cout<<"The integer value of the variable object is correctly -1501 ."<<endl;
 	}else{
 		cerr<<"Error: The integer value of the variable object "<<
 			fibVariable1.getIntegerValue()<<" but should be -1501 ."<<endl;
@@ -459,9 +460,9 @@ int testValueMethods( unsigned long &ulTestphase ){
 	fibVariable1.setIntegerValue( 950024581 );
 
 	//check the getIntegerValue() methode from cFibVariable
-	if ( fibVariable1.getIntegerValue()==(longFib)(950024581) ){
+	if ( fibVariable1.getIntegerValue() == (longFib)(950024581) ){
 	
-		cout<<"The integer value of the variable object is correctly 950024581 . "<<endl;
+		cout<<"The integer value of the variable object is correctly 950024581 ."<<endl;
 	}else{
 		cerr<<"Error: The integer value of the variable object "<<
 			fibVariable1.getIntegerValue()<<" but should be 950024581 ."<<endl;
@@ -473,9 +474,9 @@ int testValueMethods( unsigned long &ulTestphase ){
 	fibVariable1.setValue( 1.49 );
 
 	//check the getValue() methode from cFibVariable
-	if ( fibVariable1.getValue()==(doubleFib)(1.49) ){
+	if ( fibVariable1.getValue() == (doubleFib)(1.49) ){
 	
-		cout<<"The value of the variable object is correctly 1.49 . "<<endl;
+		cout<<"The value of the variable object is correctly 1.49 ."<<endl;
 	}else{
 		cerr<<"Error: The value of the variable object "<<
 			fibVariable1.getValue()<<" but should be 1.49 ."<<endl;
@@ -483,9 +484,9 @@ int testValueMethods( unsigned long &ulTestphase ){
 	}
 
 	//check the getIntegerValue() methode from cFibVariable
-	if ( fibVariable1.getIntegerValue()==(longFib)(1) ){
+	if ( fibVariable1.getIntegerValue() == (longFib)(1) ){
 	
-		cout<<"The integer value of the variable object is correctly 1 . "<<endl;
+		cout<<"The integer value of the variable object is correctly 1 ."<<endl;
 	}else{
 		cerr<<"Error: The integer value of the variable object "<<
 			fibVariable1.getIntegerValue()<<" but should be 1 ."<<endl;
@@ -508,7 +509,7 @@ int testValueMethods( unsigned long &ulTestphase ){
 		cerr<<"Error: The variable is looks like it is set to an integervalue, but it shouldn't."<<endl;
 		iReturn++;
 	}
-	delete definingRoot;
+	delete pDefiningRoot;
 
 	return iReturn;
 }
@@ -523,31 +524,31 @@ int testValueMethods( unsigned long &ulTestphase ){
  */
 int testUsingElements( unsigned long &ulTestphase ){
 
-	int iReturn=0;//returnvalue of the test; the number of occured Errors
+	int iReturn = 0;//return value of the test; the number of occured errors
 
 	ulTestphase++;
 	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing constructing simple cFibVariable for testing using element methods"<<endl;
-
-	//TODO adapt root -constructor use other Fib -elements
-	cRoot * definingRoot= new cRoot();
+	
+	//the defining Fib element
+	cRoot * pDefiningRoot= new cRoot();
 
 	cout<<"cFibVariable fibVariable1=cFibVariable( masterRoot );"<<endl;
-	cFibVariable fibVariable1=cFibVariable( (cFibElement*)definingRoot );
+	cFibVariable fibVariable1=cFibVariable( (cFibElement*)pDefiningRoot );
 
-	//TODO adapt: use other Fib -elements
-	cFibElement * usingFibElement1 = new cPoint();
-	cVectorProperty usingElement1( 1 , usingFibElement1 );
-	cFibElement * usingFibElement2 = new cPoint();
-	cVectorProperty usingElement2( 2, usingFibElement2 );
-	cFibElement * usingFibElement3 = new cPoint();
-	cVectorProperty usingElement3( 3, usingFibElement3 );
+	//define some using elements
+	cFibElement * pUsingFibElement1 = new cPoint();
+	cVectorProperty usingElement1( 1 , pUsingFibElement1 );
+	cFibElement * pUsingFibElement2 = new cArea( cVectorArea() );
+	cVectorProperty usingElement2( 2, pUsingFibElement2 );
+	cFibElement * pUsingFibElement3 = new cPoint();
+	cVectorProperty usingElement3( 3, pUsingFibElement3 );
 
 
 	//check the getNumberOfUsingElements() methode from cFibVariable
 	if ( fibVariable1.getNumberOfUsingElements() == (unsignedIntFib)(0) ){
 	
 		cout<<"The number of using Fib -elements of the new variable object"<<
-				" is correctly 0 . "<<endl;
+				" is correctly 0 ."<<endl;
 	}else{
 		cerr<<"Error: The number of using Fib -elements of the new variable object is "<<
 			fibVariable1.getNumberOfUsingElements()<<" but should be 0 ."<<endl;
@@ -560,7 +561,7 @@ int testUsingElements( unsigned long &ulTestphase ){
 	if ( usingElements.size() == (unsignedIntFib)(0) ){
 	
 		cout<<"The number of returned using Fib -elements of the new variable"<<
-				" object is correctly 0 . "<<endl;
+				" object is correctly 0 ."<<endl;
 	}else{
 		cerr<<"Error: The number of returned using Fib -elements of the new variable object is "<<
 			usingElements.size()<<" but should be 0 ."<<endl;
@@ -575,10 +576,10 @@ int testUsingElements( unsigned long &ulTestphase ){
 	fibVariable1.registerUsingElement( &usingElement1 );
 
 	//check the getNumberOfUsingElements() methode from cFibVariable
-	if ( fibVariable1.getNumberOfUsingElements()==(unsignedIntFib)(1) ){
+	if ( fibVariable1.getNumberOfUsingElements() == (unsignedIntFib)(1) ){
 	
 		cout<<"The number of using Fib -elements of the variable object"<<
-				" is correctly 1 . "<<endl;
+				" is correctly 1 ."<<endl;
 	}else{
 		cerr<<"Error: The number of using Fib -elements of the variable object is "<<
 			fibVariable1.getNumberOfUsingElements()<<" but should be 1 ."<<endl;
@@ -588,10 +589,10 @@ int testUsingElements( unsigned long &ulTestphase ){
 	//check the getUsingElements() methode from cFibVariable
 	usingElements=fibVariable1.getUsingElements();
 
-	if ( usingElements.size()==(unsignedIntFib)(1) ){
+	if ( usingElements.size() == (unsignedIntFib)(1) ){
 	
 		cout<<"The number of returned using Fib -elements of the variable"<<
-				" object is correctly 1 . "<<endl;
+				" object is correctly 1 ."<<endl;
 	}else{
 		cerr<<"Error: The number of returned using Fib -elements of the variable object is "<<
 			usingElements.size()<<" but should be 1 ."<<endl;
@@ -603,13 +604,13 @@ int testUsingElements( unsigned long &ulTestphase ){
 	set< cFibElement* >::iterator entryFound;
 	
 	entryFound=find( usingElements.begin(), usingElements.end(),
-		usingFibElement1 );
+		pUsingFibElement1 );
 	
 	if ( entryFound != usingElements.end() ){
 	
-		cout<<"The usingFibElement1 was correctly found."<<endl;
+		cout<<"The pUsingFibElement1 was correctly found."<<endl;
 	}else{
-		cerr<<"Error: The usingFibElement1 could not be found."<<endl;
+		cerr<<"Error: The pUsingFibElement1 could not be found."<<endl;
 		iReturn++;
 	}
 
@@ -620,10 +621,10 @@ int testUsingElements( unsigned long &ulTestphase ){
 	fibVariable1.registerUsingElement( &usingElement2 );
 
 	//check the getNumberOfUsingElements() methode from cFibVariable
-	if ( fibVariable1.getNumberOfUsingElements()==(unsignedIntFib)(2) ){
+	if ( fibVariable1.getNumberOfUsingElements() == (unsignedIntFib)(2) ){
 	
 		cout<<"The number of using Fib -elements of the variable object"<<
-				" is correctly 2 . "<<endl;
+				" is correctly 2 ."<<endl;
 	}else{
 		cerr<<"Error: The number of using Fib -elements of the variable object is "<<
 			fibVariable1.getNumberOfUsingElements()<<" but should be 2 ."<<endl;
@@ -633,10 +634,10 @@ int testUsingElements( unsigned long &ulTestphase ){
 	//check the getUsingElements() methode from cFibVariable
 	usingElements=fibVariable1.getUsingElements();
 
-	if ( usingElements.size()==(unsignedIntFib)(2) ){
+	if ( usingElements.size() == (unsignedIntFib)(2) ){
 	
 		cout<<"The number of returned using Fib -elements of the variable"<<
-				" object is correctly 2 . "<<endl;
+				" object is correctly 2 ."<<endl;
 	}else{
 		cerr<<"Error: The number of returned using Fib -elements of the variable object is "<<
 			usingElements.size()<<" but should be 2 ."<<endl;
@@ -646,25 +647,25 @@ int testUsingElements( unsigned long &ulTestphase ){
 
 	//check if the correct entry was found
 	entryFound=find( usingElements.begin(), usingElements.end(),
-		usingFibElement1 );
+		pUsingFibElement1 );
 	
 	if ( entryFound!=usingElements.end() ){
 	
-		cout<<"The usingFibElement1 was correctly found."<<endl;
+		cout<<"The pUsingFibElement1 was correctly found."<<endl;
 	}else{
-		cerr<<"Error: The usingFibElement1 could not be found."<<endl;
+		cerr<<"Error: The pUsingFibElement1 could not be found."<<endl;
 		iReturn++;
 	}
 
 	//check if the correct entry was found
 	entryFound=find( usingElements.begin(), usingElements.end(),
-		usingFibElement2 );
+		pUsingFibElement2 );
 	
 	if ( entryFound!=usingElements.end() ){
 	
-		cout<<"The usingFibElement2 was correctly found."<<endl;
+		cout<<"The pUsingFibElement2 was correctly found."<<endl;
 	}else{
-		cerr<<"Error: The usingFibElement2 could not be found."<<endl;
+		cerr<<"Error: The pUsingFibElement2 could not be found."<<endl;
 		iReturn++;
 	}
 
@@ -676,10 +677,10 @@ int testUsingElements( unsigned long &ulTestphase ){
 	fibVariable1.registerUsingElement( &usingElement1 );
 
 	//check the getNumberOfUsingElements() methode from cFibVariable
-	if ( fibVariable1.getNumberOfUsingElements()==(unsignedIntFib)(2) ){
+	if ( fibVariable1.getNumberOfUsingElements() == (unsignedIntFib)(2) ){
 	
 		cout<<"The number of using Fib -elements of the variable object"<<
-				" is correctly 2 . "<<endl;
+				" is correctly 2 ."<<endl;
 	}else{
 		cerr<<"Error: The number of using Fib -elements of the variable object is "<<
 			fibVariable1.getNumberOfUsingElements()<<" but should be 2 ."<<endl;
@@ -689,10 +690,10 @@ int testUsingElements( unsigned long &ulTestphase ){
 	//check the getUsingElements() methode from cFibVariable
 	usingElements=fibVariable1.getUsingElements();
 
-	if ( usingElements.size()==(unsignedIntFib)(2) ){
+	if ( usingElements.size() == (unsignedIntFib)(2) ){
 	
 		cout<<"The number of returned using Fib -elements of the variable"<<
-				" object is correctly 2 . "<<endl;
+				" object is correctly 2 ."<<endl;
 	}else{
 		cerr<<"Error: The number of returned using Fib -elements of the variable object is "<<
 			usingElements.size()<<" but should be 2 ."<<endl;
@@ -702,25 +703,25 @@ int testUsingElements( unsigned long &ulTestphase ){
 
 	//check if the correct entry was found
 	entryFound=find( usingElements.begin(), usingElements.end(),
-		usingFibElement1 );
+		pUsingFibElement1 );
 	
 	if ( entryFound!=usingElements.end() ){
 	
-		cout<<"The usingFibElement1 was correctly found."<<endl;
+		cout<<"The pUsingFibElement1 was correctly found."<<endl;
 	}else{
-		cerr<<"Error: The usingFibElement1 could not be found."<<endl;
+		cerr<<"Error: The pUsingFibElement1 could not be found."<<endl;
 		iReturn++;
 	}
 
 	//check if the correct entry was found
 	entryFound=find( usingElements.begin(), usingElements.end(),
-		usingFibElement2 );
+		pUsingFibElement2 );
 	
 	if ( entryFound!=usingElements.end() ){
 	
-		cout<<"The usingFibElement2 was correctly found."<<endl;
+		cout<<"The pUsingFibElement2 was correctly found."<<endl;
 	}else{
-		cerr<<"Error: The usingFibElement2 could not be found."<<endl;
+		cerr<<"Error: The pUsingFibElement2 could not be found."<<endl;
 		iReturn++;
 	}
 
@@ -731,10 +732,10 @@ int testUsingElements( unsigned long &ulTestphase ){
 	fibVariable1.registerUsingElement( &usingElement3 );
 
 	//check the getNumberOfUsingElements() methode from cFibVariable
-	if ( fibVariable1.getNumberOfUsingElements()==(unsignedIntFib)(3) ){
+	if ( fibVariable1.getNumberOfUsingElements() == (unsignedIntFib)(3) ){
 	
 		cout<<"The number of using Fib -elements of the variable object"<<
-				" is correctly 3 . "<<endl;
+				" is correctly 3 ."<<endl;
 	}else{
 		cerr<<"Error: The number of using Fib -elements of the variable object is "<<
 			fibVariable1.getNumberOfUsingElements()<<" but should be 3 ."<<endl;
@@ -744,10 +745,10 @@ int testUsingElements( unsigned long &ulTestphase ){
 	//check the getUsingElements() methode from cFibVariable
 	usingElements=fibVariable1.getUsingElements();
 
-	if ( usingElements.size()==(unsignedIntFib)(3) ){
+	if ( usingElements.size() == (unsignedIntFib)(3) ){
 	
 		cout<<"The number of returned using Fib -elements of the variable"<<
-				" object is correctly 3 . "<<endl;
+				" object is correctly 3 ."<<endl;
 	}else{
 		cerr<<"Error: The number of returned using Fib -elements of the variable object is "<<
 			usingElements.size()<<" but should be 3 ."<<endl;
@@ -756,37 +757,37 @@ int testUsingElements( unsigned long &ulTestphase ){
 
 	//check if the correct entry was found
 	entryFound=find( usingElements.begin(), usingElements.end(),
-		usingFibElement1 );
+		pUsingFibElement1 );
 	
 	if ( entryFound!=usingElements.end() ){
 	
-		cout<<"The usingFibElement1 was correctly found."<<endl;
+		cout<<"The pUsingFibElement1 was correctly found."<<endl;
 	}else{
-		cerr<<"Error: The usingFibElement1 could not be found."<<endl;
+		cerr<<"Error: The pUsingFibElement1 could not be found."<<endl;
 		iReturn++;
 	}
 
 	//check if the correct entry was found
 	entryFound=find( usingElements.begin(), usingElements.end(),
-		usingFibElement2 );
+		pUsingFibElement2 );
 	
 	if ( entryFound!=usingElements.end() ){
 	
-		cout<<"The usingFibElement2 was correctly found."<<endl;
+		cout<<"The pUsingFibElement2 was correctly found."<<endl;
 	}else{
-		cerr<<"Error: The usingFibElement2 could not be found."<<endl;
+		cerr<<"Error: The pUsingFibElement2 could not be found."<<endl;
 		iReturn++;
 	}
 
 	//check if the correct entry was found
 	entryFound=find( usingElements.begin(), usingElements.end(),
-		usingFibElement3 );
+		pUsingFibElement3 );
 	
 	if ( entryFound!=usingElements.end() ){
 	
-		cout<<"The usingFibElement3 was correctly found."<<endl;
+		cout<<"The pUsingFibElement3 was correctly found."<<endl;
 	}else{
-		cerr<<"Error: The usingFibElement3 could not be found."<<endl;
+		cerr<<"Error: The pUsingFibElement3 could not be found."<<endl;
 		iReturn++;
 	}
 
@@ -798,10 +799,10 @@ int testUsingElements( unsigned long &ulTestphase ){
 	fibVariable1.unregisterUsingElement( &usingElement2 );
 
 	//check the getNumberOfUsingElements() methode from cFibVariable
-	if ( fibVariable1.getNumberOfUsingElements()==(unsignedIntFib)(2) ){
+	if ( fibVariable1.getNumberOfUsingElements() == (unsignedIntFib)(2) ){
 	
 		cout<<"The number of using Fib -elements of the variable object"<<
-				" is correctly 2 . "<<endl;
+				" is correctly 2 ."<<endl;
 	}else{
 		cerr<<"Error: The number of using Fib -elements of the variable object is "<<
 			fibVariable1.getNumberOfUsingElements()<<" but should be 2 ."<<endl;
@@ -811,10 +812,10 @@ int testUsingElements( unsigned long &ulTestphase ){
 	//check the getUsingElements() methode from cFibVariable
 	usingElements=fibVariable1.getUsingElements();
 
-	if ( usingElements.size()==(unsignedIntFib)(2) ){
+	if ( usingElements.size() == (unsignedIntFib)(2) ){
 	
 		cout<<"The number of returned using Fib -elements of the variable"<<
-				" object is correctly 2 . "<<endl;
+				" object is correctly 2 ."<<endl;
 	}else{
 		cerr<<"Error: The number of returned using Fib -elements of the variable object is "<<
 			usingElements.size()<<" but should be 2 ."<<endl;
@@ -823,25 +824,25 @@ int testUsingElements( unsigned long &ulTestphase ){
 
 	//check if the correct entry was found
 	entryFound=find( usingElements.begin(), usingElements.end(),
-		usingFibElement1 );
+		pUsingFibElement1 );
 	
 	if ( entryFound!=usingElements.end() ){
 	
-		cout<<"The usingFibElement1 was correctly found."<<endl;
+		cout<<"The pUsingFibElement1 was correctly found."<<endl;
 	}else{
-		cerr<<"Error: The usingFibElement1 could not be found."<<endl;
+		cerr<<"Error: The pUsingFibElement1 could not be found."<<endl;
 		iReturn++;
 	}
 
 	//check if the correct entry was found
 	entryFound=find( usingElements.begin(), usingElements.end(),
-		usingFibElement3 );
+		pUsingFibElement3 );
 	
 	if ( entryFound!=usingElements.end() ){
 	
-		cout<<"The usingFibElement3 was correctly found."<<endl;
+		cout<<"The pUsingFibElement3 was correctly found."<<endl;
 	}else{
-		cerr<<"Error: The usingFibElement3 could not be found."<<endl;
+		cerr<<"Error: The pUsingFibElement3 could not be found."<<endl;
 		iReturn++;
 	}
 
@@ -853,10 +854,10 @@ int testUsingElements( unsigned long &ulTestphase ){
 	fibVariable1.unregisterUsingElement( &usingElement2 );
 
 	//check the getNumberOfUsingElements() methode from cFibVariable
-	if ( fibVariable1.getNumberOfUsingElements()==(unsignedIntFib)(2) ){
+	if ( fibVariable1.getNumberOfUsingElements() == (unsignedIntFib)(2) ){
 	
 		cout<<"The number of using Fib -elements of the variable object"<<
-				" is correctly 2 . "<<endl;
+				" is correctly 2 ."<<endl;
 	}else{
 		cerr<<"Error: The number of using Fib -elements of the variable object is "<<
 			fibVariable1.getNumberOfUsingElements()<<" but should be 2 ."<<endl;
@@ -866,10 +867,10 @@ int testUsingElements( unsigned long &ulTestphase ){
 	//check the getUsingElements() methode from cFibVariable
 	usingElements=fibVariable1.getUsingElements();
 
-	if ( usingElements.size()==(unsignedIntFib)(2) ){
+	if ( usingElements.size() == (unsignedIntFib)(2) ){
 	
 		cout<<"The number of returned using Fib -elements of the variable"<<
-				" object is correctly 2 . "<<endl;
+				" object is correctly 2 ."<<endl;
 	}else{
 		cerr<<"Error: The number of returned using Fib -elements of the variable object is "<<
 			usingElements.size()<<" but should be 2 ."<<endl;
@@ -878,25 +879,25 @@ int testUsingElements( unsigned long &ulTestphase ){
 
 	//check if the correct entry was found
 	entryFound=find( usingElements.begin(), usingElements.end(),
-		usingFibElement1 );
+		pUsingFibElement1 );
 	
 	if ( entryFound!=usingElements.end() ){
 	
-		cout<<"The usingFibElement1 was correctly found."<<endl;
+		cout<<"The pUsingFibElement1 was correctly found."<<endl;
 	}else{
-		cerr<<"Error: The usingFibElement1 could not be found."<<endl;
+		cerr<<"Error: The pUsingFibElement1 could not be found."<<endl;
 		iReturn++;
 	}
 
 	//check if the correct entry was found
 	entryFound=find( usingElements.begin(), usingElements.end(),
-		usingFibElement3 );
+		pUsingFibElement3 );
 	
 	if ( entryFound!=usingElements.end() ){
 	
-		cout<<"The usingFibElement3 was correctly found."<<endl;
+		cout<<"The pUsingFibElement3 was correctly found."<<endl;
 	}else{
-		cerr<<"Error: The usingFibElement3 could not be found."<<endl;
+		cerr<<"Error: The pUsingFibElement3 could not be found."<<endl;
 		iReturn++;
 	}
 
@@ -908,10 +909,10 @@ int testUsingElements( unsigned long &ulTestphase ){
 	fibVariable1.unregisterUsingElement( &usingElement1 );
 
 	//check the getNumberOfUsingElements() methode from cFibVariable
-	if ( fibVariable1.getNumberOfUsingElements()==(unsignedIntFib)(1) ){
+	if ( fibVariable1.getNumberOfUsingElements() == (unsignedIntFib)(1) ){
 	
 		cout<<"The number of using Fib -elements of the variable object"<<
-				" is correctly 1 . "<<endl;
+				" is correctly 1 ."<<endl;
 	}else{
 		cerr<<"Error: The number of using Fib -elements of the variable object is "<<
 			fibVariable1.getNumberOfUsingElements()<<" but should be 1 ."<<endl;
@@ -921,10 +922,10 @@ int testUsingElements( unsigned long &ulTestphase ){
 	//check the getUsingElements() methode from cFibVariable
 	usingElements=fibVariable1.getUsingElements();
 
-	if ( usingElements.size()==(unsignedIntFib)(1) ){
+	if ( usingElements.size() == (unsignedIntFib)(1) ){
 	
 		cout<<"The number of returned using Fib -elements of the variable"<<
-				" object is correctly 1 . "<<endl;
+				" object is correctly 1 ."<<endl;
 	}else{
 		cerr<<"Error: The number of returned using Fib -elements of the variable object is "<<
 			usingElements.size()<<" but should be 1 ."<<endl;
@@ -933,13 +934,13 @@ int testUsingElements( unsigned long &ulTestphase ){
 
 	//check if the correct entry was found
 	entryFound=find( usingElements.begin(), usingElements.end(),
-		usingFibElement3 );
+		pUsingFibElement3 );
 	
 	if ( entryFound!=usingElements.end() ){
 	
-		cout<<"The usingFibElement3 was correctly found."<<endl;
+		cout<<"The pUsingFibElement3 was correctly found."<<endl;
 	}else{
-		cerr<<"Error: The usingFibElement3 could not be found."<<endl;
+		cerr<<"Error: The pUsingFibElement3 could not be found."<<endl;
 		iReturn++;
 	}
 
@@ -951,10 +952,10 @@ int testUsingElements( unsigned long &ulTestphase ){
 	fibVariable1.registerUsingElement( &usingElement1 );
 
 	//check the getNumberOfUsingElements() methode from cFibVariable
-	if ( fibVariable1.getNumberOfUsingElements()==(unsignedIntFib)(2) ){
+	if ( fibVariable1.getNumberOfUsingElements() == (unsignedIntFib)(2) ){
 	
 		cout<<"The number of using Fib -elements of the variable object"<<
-				" is correctly 2 . "<<endl;
+				" is correctly 2 ."<<endl;
 	}else{
 		cerr<<"Error: The number of using Fib -elements of the variable object is "<<
 			fibVariable1.getNumberOfUsingElements()<<" but should be 2 ."<<endl;
@@ -964,10 +965,10 @@ int testUsingElements( unsigned long &ulTestphase ){
 	//check the getUsingElements() methode from cFibVariable
 	usingElements=fibVariable1.getUsingElements();
 
-	if ( usingElements.size()==(unsignedIntFib)(2) ){
+	if ( usingElements.size() == (unsignedIntFib)(2) ){
 	
 		cout<<"The number of returned using Fib -elements of the variable"<<
-				" object is correctly 2 . "<<endl;
+				" object is correctly 2 ."<<endl;
 	}else{
 		cerr<<"Error: The number of returned using Fib -elements of the variable object is "<<
 			usingElements.size()<<" but should be 2 ."<<endl;
@@ -976,25 +977,25 @@ int testUsingElements( unsigned long &ulTestphase ){
 
 	//check if the correct entry was found
 	entryFound=find( usingElements.begin(), usingElements.end(),
-		usingFibElement1 );
+		pUsingFibElement1 );
 	
 	if ( entryFound!=usingElements.end() ){
 	
-		cout<<"The usingFibElement1 was correctly found."<<endl;
+		cout<<"The pUsingFibElement1 was correctly found."<<endl;
 	}else{
-		cerr<<"Error: The usingFibElement1 could not be found."<<endl;
+		cerr<<"Error: The pUsingFibElement1 could not be found."<<endl;
 		iReturn++;
 	}
 
 	//check if the correct entry was found
 	entryFound=find( usingElements.begin(), usingElements.end(),
-		usingFibElement3 );
+		pUsingFibElement3 );
 	
 	if ( entryFound!=usingElements.end() ){
 	
-		cout<<"The usingFibElement3 was correctly found."<<endl;
+		cout<<"The pUsingFibElement3 was correctly found."<<endl;
 	}else{
-		cerr<<"Error: The usingFibElement3 could not be found."<<endl;
+		cerr<<"Error: The pUsingFibElement3 could not be found."<<endl;
 		iReturn++;
 	}
 
@@ -1006,10 +1007,10 @@ int testUsingElements( unsigned long &ulTestphase ){
 	fibVariable1.unregisterUsingElement( &usingElement1 );
 
 	//check the getNumberOfUsingElements() methode from cFibVariable
-	if ( fibVariable1.getNumberOfUsingElements()==(unsignedIntFib)(1) ){
+	if ( fibVariable1.getNumberOfUsingElements() == (unsignedIntFib)(1) ){
 	
 		cout<<"The number of using Fib -elements of the variable object"<<
-				" is correctly 1 . "<<endl;
+				" is correctly 1 ."<<endl;
 	}else{
 		cerr<<"Error: The number of using Fib -elements of the variable object is "<<
 			fibVariable1.getNumberOfUsingElements()<<" but should be 1 ."<<endl;
@@ -1019,10 +1020,10 @@ int testUsingElements( unsigned long &ulTestphase ){
 	//check the getUsingElements() methode from cFibVariable
 	usingElements=fibVariable1.getUsingElements();
 
-	if ( usingElements.size()==(unsignedIntFib)(1) ){
+	if ( usingElements.size() == (unsignedIntFib)(1) ){
 	
 		cout<<"The number of returned using Fib -elements of the variable"<<
-				" object is correctly 1 . "<<endl;
+				" object is correctly 1 ."<<endl;
 	}else{
 		cerr<<"Error: The number of returned using Fib -elements of the variable object is "<<
 			usingElements.size()<<" but should be 1 ."<<endl;
@@ -1031,13 +1032,13 @@ int testUsingElements( unsigned long &ulTestphase ){
 
 	//check if the correct entry was found
 	entryFound=find( usingElements.begin(), usingElements.end(),
-		usingFibElement3 );
+		pUsingFibElement3 );
 	
 	if ( entryFound!=usingElements.end() ){
 	
-		cout<<"The usingFibElement3 was correctly found."<<endl;
+		cout<<"The pUsingFibElement3 was correctly found."<<endl;
 	}else{
-		cerr<<"Error: The usingFibElement3 could not be found."<<endl;
+		cerr<<"Error: The pUsingFibElement3 could not be found."<<endl;
 		iReturn++;
 	}
 
@@ -1049,10 +1050,10 @@ int testUsingElements( unsigned long &ulTestphase ){
 	fibVariable1.unregisterUsingElement( &usingElement3 );
 
 	//check the getNumberOfUsingElements() methode from cFibVariable
-	if ( fibVariable1.getNumberOfUsingElements()==(unsignedIntFib)(0) ){
+	if ( fibVariable1.getNumberOfUsingElements() == (unsignedIntFib)(0) ){
 	
 		cout<<"The number of using Fib -elements of the variable object"<<
-				" is correctly 0 . "<<endl;
+				" is correctly 0 ."<<endl;
 	}else{
 		cerr<<"Error: The number of using Fib -elements of the variable object is "<<
 			fibVariable1.getNumberOfUsingElements()<<" but should be 0 ."<<endl;
@@ -1062,19 +1063,19 @@ int testUsingElements( unsigned long &ulTestphase ){
 	//check the getUsingElements() methode from cFibVariable
 	usingElements=fibVariable1.getUsingElements();
 
-	if ( usingElements.size()==(unsignedIntFib)(0) ){
+	if ( usingElements.size() == (unsignedIntFib)(0) ){
 	
 		cout<<"The number of returned using Fib -elements of the variable"<<
-				" object is correctly 0 . "<<endl;
+				" object is correctly 0 ."<<endl;
 	}else{
 		cerr<<"Error: The number of returned using Fib -elements of the variable object is "<<
 			usingElements.size()<<" but should be 0 ."<<endl;
 		iReturn++;
 	}
-	delete definingRoot;
-	delete usingFibElement1;
-	delete usingFibElement2;
-	delete usingFibElement3;
+	delete pDefiningRoot;
+	delete pUsingFibElement1;
+	delete pUsingFibElement2;
+	delete pUsingFibElement3;
 
 
 	return iReturn;
@@ -1093,7 +1094,7 @@ int testUsingElements( unsigned long &ulTestphase ){
 int compareVariables( const cFibVariable & variable1, const string & szNameVariable1,
 	const cFibVariable & variable2, const string & szNameVariable2 ){
 	
-	int iReturn = 0;//returnvalue of the test; the number of occured Errors
+	int iReturn = 0;//return value of the test; the number of occured errors
 	
 	cout<<"Comparing variable "<< szNameVariable1 <<" with variable "<<
 		szNameVariable2 <<" : "<<endl;
@@ -1129,33 +1130,14 @@ int compareVariables( const cFibVariable & variable1, const string & szNameVaria
 			szNameVariable2 <<" it is "<< variable2.getDefiningElement() <<" ."<<endl;
 		iReturn++;
 	}
-/*TODO weg;
-	//compare the number of using elements
-	if ( variable1.getNumberOfUsingElements() == variable2.getNumberOfUsingElements() ){
-		//compare the using elements
-		set<cFibElement*> setUsingElements1 = variable1.getUsingElements();
-		set<cFibElement*> setUsingElements2 = variable2.getUsingElements();
-		
-		if ( setUsingElements1 != setUsingElements2 ){
-			
-			cerr<<"Error: The using elements of the variables are not equal."<<endl;
-			iReturn++;
-		}
-	
-	}else{
-		cerr<<"Error: The number of using elements of the variable "<< szNameVariable1 <<
-			"  is "<< variable1.getNumberOfUsingElements() <<" but of variable "<<
-			szNameVariable2 <<" it is "<< variable2.getNumberOfUsingElements() <<" ."<<endl;
-		iReturn++;
-	}
-*/
+
 	if ( iReturn == 0 ){
 	
 		cout<<"The variable "<< szNameVariable1 <<" is equal with variable "<<
-			szNameVariable2 <<" . "<<endl;
+			szNameVariable2 <<" ."<<endl;
 	}else{
 		cerr<<"Error: The variable "<< szNameVariable1 <<" is not equal with variable "<<
-			szNameVariable2 <<" . "<<endl;
+			szNameVariable2 <<" ."<<endl;
 	}
 	
 	return iReturn;
@@ -1173,16 +1155,16 @@ int compareVariables( const cFibVariable & variable1, const string & szNameVaria
  */
 int testCopyConstructor( unsigned long &ulTestphase ){
 
-	int iReturn=0;//returnvalue of the test; the number of occured Errors
+	int iReturn = 0;//return value of the test; the number of occured errors
 
 	ulTestphase++;
 	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing copying a new variable"<<endl;
 
-	//TODO adapt root -constructor use other Fib -elements
-	cRoot * definingRoot= new cRoot();
+	//define a defining Fib element
+	cFibElement * pDefiningFibElement= new cArea( cVectorArea() );
 
 	cout<<"cFibVariable fibVariable1( masterRoot );"<<endl;
-	cFibVariable fibVariable1( (cFibElement*)definingRoot );
+	cFibVariable fibVariable1( pDefiningFibElement );
 	
 	cout<<"cFibVariable fibVariable1Copy( fibVariable1 );"<<endl;
 	cFibVariable fibVariable1Copy( fibVariable1 );
@@ -1194,9 +1176,9 @@ int testCopyConstructor( unsigned long &ulTestphase ){
 	ulTestphase++;
 	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing copying a variable with using elements"<<endl;
 
-	//TODO adapt: use other Fib -elements
+	//define some using elements
 	cVectorProperty usingElement1( 1 );
-	cVectorProperty usingElement2( 2 );
+	cVectorArea usingElement2( 1, 2 );
 	cVectorProperty usingElement3( 3 );
 
 	cout<<"fibVariable1.registerUsingElement( usingElement1 );"<<endl;
@@ -1274,7 +1256,14 @@ int testCopyConstructor( unsigned long &ulTestphase ){
 	iReturn += compareVariables( fibVariable1, "fibVariable1",
 		fibVariable1CopyIv2, "fibVariable1CopyIv2" );
 	
-	delete definingRoot;
+	delete pDefiningFibElement;
+	
+	cout<<"fibVariable1.unregisterUsingElement( usingElement1 );"<<endl;
+	fibVariable1.unregisterUsingElement( &usingElement1 );
+	cout<<"fibVariable1.unregisterUsingElement( &usingElement2 );"<<endl;
+	fibVariable1.unregisterUsingElement( &usingElement2 );
+	cout<<"fibVariable1.unregisterUsingElement( &usingElement3 );"<<endl;
+	fibVariable1.unregisterUsingElement( &usingElement3 );
 	
 	return iReturn;
 }
@@ -1292,20 +1281,20 @@ int testCopyConstructor( unsigned long &ulTestphase ){
  */
 int testAssignment( unsigned long &ulTestphase ){
 
-	int iReturn=0;//returnvalue of the test; the number of occured Errors
+	int iReturn = 0;//return value of the test; the number of occured errors
 
 	ulTestphase++;
 	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing assignment of a new variable"<<endl;
 
-	//TODO adapt root -constructor use other Fib -elements
-	cRoot * definingRoot= new cRoot();
-	cRoot * definingRoot2= new cRoot();
+	//define some defining elements
+	cRoot * pDefiningRoot = new cRoot();
+	cFibElement * pDefiningFibElement2 = new cArea( cVectorArea() );
 
 	cout<<"cFibVariable fibVariable1( masterRoot );"<<endl;
-	cFibVariable fibVariable1( (cFibElement*)definingRoot );
+	cFibVariable fibVariable1( (cFibElement*)pDefiningRoot );
 	
-	cout<<"cFibVariable fibVariable1Copy( definingRoot2 );"<<endl;
-	cFibVariable fibVariable1Copy( definingRoot2 );
+	cout<<"cFibVariable fibVariable1Copy( pDefiningFibElement2 );"<<endl;
+	cFibVariable fibVariable1Copy( pDefiningFibElement2 );
 	
 	cout<<"fibVariable1Copy = fibVariable1;"<<endl;
 	fibVariable1Copy = fibVariable1;
@@ -1317,16 +1306,16 @@ int testAssignment( unsigned long &ulTestphase ){
 	ulTestphase++;
 	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing assignment of a variable with using elements"<<endl;
 
-	//TODO adapt: use other Fib -elements
+	//define some using elements
 	cVectorProperty usingElement1( 1 );
-	cVectorProperty usingElement2( 2 );
+	cVectorArea usingElement2( 5, 6 );
 	cVectorProperty usingElement3( 3 );
 
 	cout<<"fibVariable1.registerUsingElement( &usingElement1 );"<<endl;
 	fibVariable1.registerUsingElement( &usingElement1 );
 	
-	cout<<"cFibVariable fibVariable1Copy2( definingRoot2 );"<<endl;
-	cFibVariable fibVariable1Copy2( definingRoot2 );
+	cout<<"cFibVariable fibVariable1Copy2( pDefiningFibElement2 );"<<endl;
+	cFibVariable fibVariable1Copy2( pDefiningFibElement2 );
 	
 	cout<<"fibVariable1Copy2 = fibVariable1;"<<endl;
 	fibVariable1Copy2 = fibVariable1;
@@ -1339,8 +1328,8 @@ int testAssignment( unsigned long &ulTestphase ){
 	cout<<"fibVariable1.registerUsingElement( &usingElement3 );"<<endl;
 	fibVariable1.registerUsingElement( &usingElement3 );
 	
-	cout<<"cFibVariable fibVariable1Copy3( definingRoot2 );"<<endl;
-	cFibVariable fibVariable1Copy3( definingRoot2 );
+	cout<<"cFibVariable fibVariable1Copy3( pDefiningFibElement2 );"<<endl;
+	cFibVariable fibVariable1Copy3( pDefiningFibElement2 );
 	
 	cout<<"fibVariable1Copy3 = fibVariable1;"<<endl;
 	fibVariable1Copy3 = fibVariable1;
@@ -1355,8 +1344,8 @@ int testAssignment( unsigned long &ulTestphase ){
 	cout<<"fibVariable1.setValue( 1.1 );"<<endl;
 	fibVariable1.setValue( 1.1 );
 
-	cout<<"cFibVariable fibVariable1CopyV1( definingRoot2 );"<<endl;
-	cFibVariable fibVariable1CopyV1( definingRoot2 );
+	cout<<"cFibVariable fibVariable1CopyV1( pDefiningFibElement2 );"<<endl;
+	cFibVariable fibVariable1CopyV1( pDefiningFibElement2 );
 	
 	cout<<"fibVariable1CopyV1 = fibVariable1;"<<endl;
 	fibVariable1CopyV1 = fibVariable1;
@@ -1367,8 +1356,8 @@ int testAssignment( unsigned long &ulTestphase ){
 	cout<<"fibVariable1.setValue( -32.6544 );"<<endl;
 	fibVariable1.setValue( -32.6544 );
 
-	cout<<"cFibVariable fibVariable1CopyV2( definingRoot2 );"<<endl;
-	cFibVariable fibVariable1CopyV2( definingRoot2 );
+	cout<<"cFibVariable fibVariable1CopyV2( pDefiningFibElement2 );"<<endl;
+	cFibVariable fibVariable1CopyV2( pDefiningFibElement2 );
 	
 	cout<<"fibVariable1CopyV2 = fibVariable1;"<<endl;
 	fibVariable1CopyV2 = fibVariable1;
@@ -1383,8 +1372,8 @@ int testAssignment( unsigned long &ulTestphase ){
 	cout<<"fibVariable1.setIntegerValue( 24 );"<<endl;
 	fibVariable1.setIntegerValue( 24 );
 
-	cout<<"cFibVariable fibVariable1CopyIv1( definingRoot2 );"<<endl;
-	cFibVariable fibVariable1CopyIv1( definingRoot2 );
+	cout<<"cFibVariable fibVariable1CopyIv1( pDefiningFibElement2 );"<<endl;
+	cFibVariable fibVariable1CopyIv1( pDefiningFibElement2 );
 	
 	cout<<"fibVariable1CopyIv1 = fibVariable1;"<<endl;
 	fibVariable1CopyIv1 = fibVariable1;
@@ -1395,8 +1384,8 @@ int testAssignment( unsigned long &ulTestphase ){
 	cout<<"fibVariable1.setIntegerValue( -1245 );"<<endl;
 	fibVariable1.setIntegerValue( -1245 );
 
-	cout<<"cFibVariable fibVariable1CopyIv2( definingRoot2 );"<<endl;
-	cFibVariable fibVariable1CopyIv2( definingRoot2 );
+	cout<<"cFibVariable fibVariable1CopyIv2( pDefiningFibElement2 );"<<endl;
+	cFibVariable fibVariable1CopyIv2( pDefiningFibElement2 );
 	
 	cout<<"fibVariable1CopyIv2 = fibVariable1;"<<endl;
 	fibVariable1CopyIv2 = fibVariable1;
@@ -1412,8 +1401,8 @@ int testAssignment( unsigned long &ulTestphase ){
 	cout<<"fibVariable1.unregisterUsingElement( &usingElement2 );"<<endl;
 	fibVariable1.unregisterUsingElement( &usingElement2 );
 
-	cout<<"cFibVariable fibVariable2( definingRoot2 );"<<endl;
-	cFibVariable fibVariable2( definingRoot2 );
+	cout<<"cFibVariable fibVariable2( pDefiningFibElement2 );"<<endl;
+	cFibVariable fibVariable2( pDefiningFibElement2 );
 
 	cout<<"fibVariable2.registerUsingElement( &usingElement2 );"<<endl;
 	fibVariable2.registerUsingElement( &usingElement2 );
@@ -1431,8 +1420,21 @@ int testAssignment( unsigned long &ulTestphase ){
 	iReturn += compareVariables( fibVariable1, "fibVariable1",
 		fibVariable2, "fibVariable2" );
 	
-	delete definingRoot;
-	delete definingRoot2;
+	
+	delete pDefiningRoot;
+	delete pDefiningFibElement2;
+	
+	cout<<"fibVariable1.unregisterUsingElement( &usingElement1 );"<<endl;
+	fibVariable1.unregisterUsingElement( &usingElement1 );
+	cout<<"fibVariable1.unregisterUsingElement( &usingElement3 );"<<endl;
+	fibVariable1.unregisterUsingElement( &usingElement3 );
+	cout<<"fibVariable2.unregisterUsingElement( &usingElement2 );"<<endl;
+	fibVariable2.unregisterUsingElement( &usingElement2 );
+	cout<<"fibVariable2.unregisterUsingElement( &usingElement1 );"<<endl;
+	fibVariable2.unregisterUsingElement( &usingElement1 );
+	cout<<"fibVariable2.unregisterUsingElement( &usingElement3 );"<<endl;
+	fibVariable2.unregisterUsingElement( &usingElement3 );
+	
 	
 	return iReturn;
 }
@@ -1452,11 +1454,11 @@ int testAssignment( unsigned long &ulTestphase ){
 int testCompareTwoEqualVariables( const cFibVariable & variable1, const string & szNameVariabler1,
 	const cFibVariable & variable2, const string & szNameVariabler2 ){
 	
-	int iReturn = 0;//returnvalue of the test; the number of occured Errors
+	int iReturn = 0;//return value of the test; the number of occured errors
 	
 	if ( variable1.equal( variable2 ) ){
 	
-		cout<<"The "<<szNameVariabler1<<" is equal to "<<szNameVariabler2<<". "<<endl;
+		cout<<"The "<<szNameVariabler1<<" is equal to "<<szNameVariabler2<<"."<<endl;
 	}else{
 		cerr<<"Error: The "<<szNameVariabler1<<" is not equal to "<<
 			szNameVariabler2<<"."<<endl;
@@ -1465,7 +1467,7 @@ int testCompareTwoEqualVariables( const cFibVariable & variable1, const string &
 	if ( variable1 == variable2 ){
 	
 		cout<<"The "<<szNameVariabler1<<" is equal (operator==) to "<<
-			szNameVariabler2<<". "<<endl;
+			szNameVariabler2<<"."<<endl;
 	}else{
 		cerr<<"Error: The "<<szNameVariabler1<<" is not equal (operator==) to "<<
 			szNameVariabler2<<"."<<endl;
@@ -1488,11 +1490,11 @@ int testCompareTwoEqualVariables( const cFibVariable & variable1, const string &
 int testCompareTwoNotEqualVariables( const cFibVariable & variable1, const string & szNameVariabler1,
 	const cFibVariable & variable2, const string & szNameVariabler2 ){
 	
-	int iReturn = 0;//returnvalue of the test; the number of occured Errors
+	int iReturn = 0;//return value of the test; the number of occured errors
 	
 	if ( ! variable1.equal( variable2 ) ){
 	
-		cout<<"The "<<szNameVariabler1<<" is not equal to "<<szNameVariabler2<<". "<<endl;
+		cout<<"The "<<szNameVariabler1<<" is not equal to "<<szNameVariabler2<<"."<<endl;
 	}else{
 		cerr<<"Error: The "<<szNameVariabler1<<" is equal to "<<
 			szNameVariabler2<<"."<<endl;
@@ -1501,7 +1503,7 @@ int testCompareTwoNotEqualVariables( const cFibVariable & variable1, const strin
 	if ( ! (variable1 == variable2) ){
 	
 		cout<<"The "<<szNameVariabler1<<" is not equal (operator==) to "<<
-			szNameVariabler2<<". "<<endl;
+			szNameVariabler2<<"."<<endl;
 	}else{
 		cerr<<"Error: The "<<szNameVariabler1<<" is equal (operator==) to "<<
 			szNameVariabler2<<"."<<endl;
@@ -1525,7 +1527,7 @@ int testCompareTwoNotEqualVariables( const cFibVariable & variable1, const strin
  */
 int testEqual( unsigned long &ulTestphase ){
 
-	int iReturn=0;//returnvalue of the test; the number of occured Errors
+	int iReturn = 0;//return value of the test; the number of occured errors
 
 	ulTestphase++;
 	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing the equal method and the operator== "<<endl;
@@ -1545,9 +1547,9 @@ int testEqual( unsigned long &ulTestphase ){
 	cout<<"root2.setNumberOfInputVariables( 3 )"<<endl;
 	root2.setNumberOfInputVariables( 3 );
 
-	//TODO adapt: use other Fib -elements
+	//define some using elements
 	cVectorProperty usingElement1( 1 );
-	cVectorProperty usingElement2( 2 );
+	cVectorArea usingElement2( 2, 15 );
 	
 	cout<<"cFibVariable fibVariableNull1( NULL );"<<endl;
 	cFibVariable fibVariableNull1( NULL );
@@ -1694,6 +1696,18 @@ int testEqual( unsigned long &ulTestphase ){
 	iReturn += testCompareTwoNotEqualVariables( *actualVariable, szActualVariableName, *pVariable3Root2, "pVariable3Root2" );
 	iReturn += testCompareTwoEqualVariables( *actualVariable, szActualVariableName, *pVariable4Root1, "pVariable4Root1" );
 
+	cout<<"pVariable2Root1.unregisterUsingElement( &usingElement1 );"<<endl;
+	pVariable2Root1->unregisterUsingElement( &usingElement1 );
+	cout<<"pVariable2Root1->unregisterUsingElement( &usingElement2 );"<<endl;
+	pVariable2Root1->unregisterUsingElement( &usingElement2 );
+	cout<<"pVariable4Root1->unregisterUsingElement( &usingElement1 );"<<endl;
+	pVariable4Root1->unregisterUsingElement( &usingElement1 );
+	cout<<"pVariable4Root1->unregisterUsingElement( &usingElement2 );"<<endl;
+	pVariable4Root1->unregisterUsingElement( &usingElement2 );
+	cout<<"pVariable3Root2->unregisterUsingElement( &usingElement1 );"<<endl;
+	pVariable3Root2->unregisterUsingElement( &usingElement1 );
+	cout<<"pVariable3Root2->unregisterUsingElement( &usingElement2 );"<<endl;
+	pVariable3Root2->unregisterUsingElement( &usingElement2 );
 	
 	return iReturn;
 }
@@ -1711,7 +1725,7 @@ int testEqual( unsigned long &ulTestphase ){
  */
 int testRegisterVector( unsigned long &ulTestphase ){
 
-	int iReturn=0;//returnvalue of the test; the number of occured Errors
+	int iReturn = 0;//return value of the test; the number of occured errors
 
 	ulTestphase++;
 	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing registerhandling of the vector as a using element"<<endl;

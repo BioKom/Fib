@@ -64,6 +64,7 @@
 History:
 26.01.2012  Oesterholz  created
 17.09.2012  Oesterholz  Warning removed: "(char)" for char arrays added
+01.10.2013  Oesterholz  memory error fixed
 */
 
 
@@ -6968,23 +6969,23 @@ int testCreateInstance( unsigned long &ulTestphase ){
 	cout<<"cExtObject extObjectRd2( 5, 3, &rootD2 );"<<endl;
 	cExtObject extObjectRd2( 5, 3, &rootD2 );
 	
-	cout<<"cFibVector * vectorInstanceD2FsRD2 = vecExtObjectE4RD2.createInstance( 2, &extObjectRd2 );"<<endl;
-	cFibVector * vectorInstanceD2FsRD2 = vecExtObjectE4RD2.createInstance( 2, &extObjectRd2 );
+	cout<<"cFibVector * pVectorInstanceD2FsRD2 = vecExtObjectE4RD2.createInstance( 2, &extObjectRd2 );"<<endl;
+	cFibVector * pVectorInstanceD2FsRD2 = vecExtObjectE4RD2.createInstance( 2, &extObjectRd2 );
 
 	cout<<endl<<"Testing the created instance:"<<flush<<endl;
 
 	//check the getVectorType() methode from cVectorExtObject
-	if ( vectorInstanceD2FsRD2->getVectorType() == "externObjectInput" ){
+	if ( pVectorInstanceD2FsRD2->getVectorType() == "externObjectInput" ){
 	
 		cout<<"The name of the external object element vector is correctly \"externObjectInput\" . "<<endl;
 	}else{
 		cerr<<"Error: The name of the external object element vector is "<<
-			vectorInstanceD2FsRD2->getVectorType()<<" but should be \"externObjectInput\" ."<<endl;
+			pVectorInstanceD2FsRD2->getVectorType()<<" but should be \"externObjectInput\" ."<<endl;
 		iReturn++;
 	}
 	
 	//check the getElementType() methode from cVectorExtObject
-	pTypeExtObject = vectorInstanceD2FsRD2->getElementType();
+	pTypeExtObject = pVectorInstanceD2FsRD2->getElementType();
 	cout<<"cTypeExtObjectInput typeExtObject5( 5 );"<<endl;
 	cTypeExtObjectInput typeExtObject5( 5 );
 	if ( typeExtObject5 == (*pTypeExtObject) ){
@@ -6997,21 +6998,21 @@ int testCreateInstance( unsigned long &ulTestphase ){
 	delete pTypeExtObject;
 	
 	//check the getNumberOfElements() methode from cVectorExtObject
-	if ( vectorInstanceD2FsRD2->getNumberOfElements() == (unsignedIntFib)(2) ){
+	if ( pVectorInstanceD2FsRD2->getNumberOfElements() == (unsignedIntFib)(2) ){
 	
 		cout<<"The number of elements of the external object element vector is correctly 2 . "<<endl;
 	}else{
 		cerr<<"Error: The number of elements of the external object element vector is "<<
-			vectorInstanceD2FsRD2->getNumberOfElements()<<" but should be 2 ."<<endl;
+			pVectorInstanceD2FsRD2->getNumberOfElements()<<" but should be 2 ."<<endl;
 		iReturn++;
 	}
 	
 	/*check the elements of the set-vektor*/
 	for ( unsignedIntFib uiActualElement = 1;
-			uiActualElement <= vectorInstanceD2FsRD2->getNumberOfElements();
+			uiActualElement <= pVectorInstanceD2FsRD2->getNumberOfElements();
 			uiActualElement++ ){
 		
-		if ( ! vectorInstanceD2FsRD2->isVariable( uiActualElement ) ){
+		if ( ! pVectorInstanceD2FsRD2->isVariable( uiActualElement ) ){
 		
 			cout<<"The "<<uiActualElement<<"'th element of the "<<
 				"external object element vector is correctly not a variable. "<<endl;
@@ -7020,22 +7021,22 @@ int testCreateInstance( unsigned long &ulTestphase ){
 				"external object element vector is a variable. "<<endl;
 			iReturn++;
 		}
-		if ( vectorInstanceD2FsRD2->getValue( uiActualElement ) == (doubleFib)(0.0)){
+		if ( pVectorInstanceD2FsRD2->getValue( uiActualElement ) == (doubleFib)(0.0)){
 		
 			cout<<"The "<<uiActualElement<<"'th element of the "<<
 				"external object element vector is correctly 0 . "<<endl;
 		}else{
 			cerr<<"Error: The "<<uiActualElement<<"'th element of the "<<
-				"external object element vector is "<<vectorInstanceD2FsRD2->getValue( uiActualElement )<<
+				"external object element vector is "<<pVectorInstanceD2FsRD2->getValue( uiActualElement )<<
 				" and not 0 . "<<endl;
 			iReturn++;
 		}
 	}
 	//check the getDefiningFibElement() methode from cVectorExtObject
-	if ( vectorInstanceD2FsRD2->getDefiningFibElement() == NULL ){
+	if ( pVectorInstanceD2FsRD2->getDefiningFibElement() == NULL ){
 		cerr<<"Error: Ther is no defining element for the external object element vector."<<endl;
 		iReturn++;	
-	}else if ( &extObjectRd2 == vectorInstanceD2FsRD2->getDefiningFibElement() ){
+	}else if ( &extObjectRd2 == pVectorInstanceD2FsRD2->getDefiningFibElement() ){
 	
 		cout<<"The extObjectRd2 is the defining element for the external object element vector. "<<endl;
 	}else{
@@ -7043,13 +7044,13 @@ int testCreateInstance( unsigned long &ulTestphase ){
 		iReturn++;
 	}
 	//check the getDomain() methode from cVectorExtObject
-	if ( vectorInstanceD1->getDomain() == NULL ){
+	if ( pVectorInstanceD2FsRD2->getDomain() == NULL ){
 		cout<<"Ther is no domain defined for the external object element vector."<<endl;
 	}else{
 		cerr<<"Error: Ther is a domain for the external object element vector."<<endl;
 		iReturn++;
 	}
-	delete vectorInstanceD2FsRD2;
+	delete pVectorInstanceD2FsRD2;
 	
 	return iReturn;
 }

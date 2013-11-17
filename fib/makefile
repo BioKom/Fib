@@ -23,15 +23,27 @@
 #
 # call:
 # 	make
-# 		to create the fib-multimedialange library
+# 		to create the Fib multimedialange library
 # 	make clean
 # 		to clean all files this make has created
 # 	make test
-# 		to create the fib-multimedialange test library and testfiles (testcase/)
+# 		to create the Fib multimedialange test library and testfiles (testcase/)
+# 	make profile
+# 		to create the Fib multimedialange test library and
+# 		testfiles (testcase/) with the profile parameter set (-pg)
+# 	make gcov
+# 		to create the Fib multimedialange test library and
+# 		testfiles (testcase/) with the "gcov" test coverage
+# 		parameter set (call (in seperate folder):
+# 		 	">gcov -d -o obj_test/ test/TESTFILE")
 # 	make win
-# 		to create the fib-multimedialange windows library
+# 		to create the Fib multimedialange windows library
 # 	make win_test
-# 		to create the fib-multimedialange windows test library and testfiles (testcase/)
+# 		to create the Fib multimedialange windows test library and
+# 		testfiles (testcase/)
+# 	make win_profile
+# 		to create the Fib multimedialange windows test library and
+# 		testfiles (testcase/) with the profile parameter set (-pg)
 #
 ##########################################################################
 #
@@ -76,6 +88,8 @@
 # 14.10.2012   Oesterholz   library "-lpthread" included
 # 09.03.2013   Oesterholz   tMatrix3D included
 # 11.05.2013   Oesterholz   tFibDatatyps included
+# 01.10.2013   Oesterholz   profile option "-pg" with seperate rules
+# 19.10.2013   Oesterholz   cade coverage "gcov" targed added
 
 
 ##########################################################################
@@ -134,7 +148,7 @@ CC:=gcc
 #optimize compile flags
 CFLAG_OPTIMISE:=-O -O2 $(TINYXML_FLAGS)
 CFLAG:=$(CFLAG_OPTIMISE)
-CFLAG_TEST:=-g -pg -Wall -DTEST $(TINYXML_FLAGS)
+CFLAG_TEST:=-g -Wall -DTEST $(TINYXML_FLAGS)
 INCL:=-I$(BASE_DIR) -I$(DIR_INCL) -I$(DIR_TINYXML) -I$(DIR_ZLIB)
 #TODO "-lm" needed?
 #TODO add "-lpthread" and FEATURE_FIB_DB_USE_TREADS when windows treads are implemented
@@ -166,6 +180,8 @@ INCL_FIB:=$(addprefix $(DIR_INCL), $(shell ls $(DIR_INCL)) )
 # include variables
 #
 ##########################################################################
+
+TEST_FIB_LIBRARY:=$(DIR_LIB)libfib_test.a
 
 TEST_FIB:=$(addprefix $(DIR_TEST), $(shell ls $(DIR_TEST)) )
 
@@ -222,8 +238,21 @@ OBJ_ZLIB:= $(addprefix $(DIR_ZLIB), adler32.o compress.o crc32.o deflate.o\
 
 all: $(DIR_OBJ) $(DIR_BIN) $(DIR_LIB) dependencies.dep $(DIR_LIB)libfib.a
 
-test: $(DIR_OBJ_TEST) $(DIR_TESTCASE) $(DIR_LIB) dependencies.dep $(DIR_LIB)libfib_test.a $(TEST_BIN)
+test: $(DIR_OBJ_TEST) $(DIR_TESTCASE) $(DIR_LIB) dependencies.dep\
+	$(TEST_FIB_LIBRARY) $(TEST_BIN)
 test: CFLAG:=$(CFLAG_TEST)
+
+# rule for profiler gprof
+profile: $(DIR_OBJ_TEST) $(DIR_TESTCASE) $(DIR_LIB) dependencies.dep\
+	$(TEST_FIB_LIBRARY) $(TEST_BIN)
+profile: CFLAG:=$(CFLAG_TEST) -pg
+
+# rule to compile code coverage with gcov
+gcov: TEST_FIB_LIBRARY:=$(DIR_LIB)libfib_gcov.a
+gcov: $(DIR_OBJ_TEST) $(DIR_TESTCASE) $(DIR_LIB) dependencies.dep\
+	$(TEST_FIB_LIBRARY) $(TEST_BIN)
+gcov: CFLAG:=$(CFLAG_TEST) -fprofile-arcs -ftest-coverage
+gcov: LDFLAGS:=$(LDFLAGS) -fprofile-arcs
 
 
 $(OBJ_TINYXML): tinyxml
@@ -243,10 +272,19 @@ win: CFLAG:=$(CFLAG_OPTIMISE) -DWINDOWS
 win: WINDOWS:=true
 win: all
 win: LIBS:=$(LIBS_WIN)
-win_test: $(DIR_OBJ_TEST) $(DIR_TESTCASE) $(DIR_LIB) dependencies.dep $(DIR_LIB)libfib_test.a $(TEST_BIN)
+
+win_test: $(DIR_OBJ_TEST) $(DIR_TESTCASE) $(DIR_LIB) dependencies.dep\
+	$(TEST_FIB_LIBRARY) $(TEST_BIN)
 win_test: CFLAG:=$(CFLAG_TEST) -DWINDOWS
 win_test: WINDOWS:=true
 win_test: LIBS:=$(LIBS_WIN)
+
+
+win_profile: $(DIR_OBJ_TEST) $(DIR_TESTCASE) $(DIR_LIB) dependencies.dep\
+	$(TEST_FIB_LIBRARY) $(TEST_BIN)
+win_profile: CFLAG:=$(CFLAG_TEST) -pg -DWINDOWS
+win_profile: WINDOWS:=true
+win_profile: LIBS:=$(LIBS_WIN)
 
 
 ##########################################################################
@@ -290,7 +328,7 @@ $(DIR_LIB)libfib.a: $(OBJ_TINYXML) $(OBJ_ZLIB) $(OBJ_FIB)
 #
 ##########################################################################
 
-$(DIR_LIB)libfib_test.a: $(OBJ_TINYXML) $(OBJ_ZLIB) $(OBJ_TEST_FIB)
+$(TEST_FIB_LIBRARY): $(OBJ_TINYXML) $(OBJ_ZLIB) $(OBJ_TEST_FIB)
 	$(AR) $(ARFLAGS) $@ $?
 
 
@@ -306,7 +344,7 @@ $(DIR_LIB)libfib_test.a: $(OBJ_TINYXML) $(OBJ_ZLIB) $(OBJ_TEST_FIB)
 # @param Testprogramname (file-)name of the testprogram to generate
 #
 define generat_test_bin
-$(DIR_TESTCASE)$(1): $(DIR_OBJ_TEST)$(1).o $(TEST_TOOLS) $(DIR_LIB)libfib_test.a
+$(DIR_TESTCASE)$(1): $(DIR_OBJ_TEST)$(1).o $(TEST_TOOLS) $(TEST_FIB_LIBRARY)
 	$(CC) $$(CFLAG_TEST) $$(LDFLAGS) -o $$@ $$^ $$(LIBS)
 endef
 
