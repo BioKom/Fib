@@ -236,6 +236,37 @@ cFibInputVariable * cFibInputVariableHandler::getFibInputVariableForFibVariable(
 					 of the root input variable*/
 					pNewInVar->setValue( pDefiningRootElement->
 						getStandardValueOfInputVariable( uiActualInputVariable ) );
+					
+					/*set the input variable name to the optional part entry
+					 *with key "inVarX::name" or "inVarX::description"*/
+					const cOptionalPart * pOptionalPart =
+						pDefiningRootElement->getOptionalPart();
+					if ( pOptionalPart != NULL ){
+						char szKeyBuffer[ 64 ];
+						sprintf( szKeyBuffer, "inVar%u::name", uiActualInputVariable );
+						//try to find a "inVarX::name" entry
+						const list< pair<string,string> > liFoundNameEntries =
+							pOptionalPart->getEntries( string( szKeyBuffer ) );
+						
+						if ( ! liFoundNameEntries.empty() ){
+							//a "inVarX::name" was found -> set the variable name to it
+							pNewInVar->setVariableName( QString(
+								liFoundNameEntries.front().second.c_str() ) );
+						}else{//if liFoundNameEntries.empty()
+							sprintf( szKeyBuffer, "inVar%u::description",
+								uiActualInputVariable );
+							//try to find a "inVarX::description" entry
+							const list< pair<string,string> > liFoundDescriptionEntries =
+								pOptionalPart->getEntries( string( szKeyBuffer ) );
+							
+							if ( ! liFoundDescriptionEntries.empty() ){
+								//a "inVarX::name" was found -> set the variable name to it
+								pNewInVar->setVariableName( QString(
+									liFoundDescriptionEntries.front().second.c_str() ) );
+							}//else don't change the input variable name
+						}
+					}//end if set the input variables name from optional part
+					
 				}
 			};break;
 			case 'f':{

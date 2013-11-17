@@ -1,6 +1,3 @@
-
-//TODO check
-
 /**
  * @file cWidgetFibInputVariables
  * file name: cWidgetFibInputVariables.h
@@ -50,28 +47,33 @@ History:
 
 #include "version.h"
 
-#include "cWidgetFibInputVariable.h"
-#include "cFlowLayout.h"
 #include "cFibInputVariables.h"
-#include "cFibInputVariable.h"
-#include "lInputVariableChanged.h"
-#include "eFibInputVariableChangedEvent.h"
 
 #include <string>
 
 #include <QObject>
 #include <QWidget>
 #include <QMap>
-#include <QMutex>
+
+
+//forward declarations
+class cFlowLayout;
 
 
 namespace fib{
 
 namespace nCreator{
 
+//forward declarations
+class cWidgetFibInputVariable;
+class cFibInputVariable;
+class eFibInputVariableChangedEvent;
+
+
 class cWidgetFibInputVariables: public QWidget,
 	public cFibInputVariables{
 protected:
+	
 	/**
 	 * A list with input variables and there widgets.
 	 */
@@ -85,25 +87,26 @@ protected:
 public:
 
 	/**
-	 * standard constructor for a list of input variable widgets
+	 * The standard constructor for a list of input variable widgets.
 	 * It constructs a list of input variables with no input variables. (So
 	 * you can add them later.)
 	 */
 	cWidgetFibInputVariables();
 
 	/**
-	 * parameter constructor for a list of input variables widgets
+	 * A parameter constructor for a list of input variables widgets.
 	 *
 	 * @param liInInputVariables list with input variables for this object
 	 * 	@see inputVariables
 	 * @param pInFibObject the Fib object for which the input variables are or NULL
 	 * 	@see pFibObject
 	 */
-	cWidgetFibInputVariables( QList< cFibInputVariable * > & liInInputVariables,
+	explicit cWidgetFibInputVariables(
+		QList< cFibInputVariable * > & liInInputVariables,
 		cFibElement * pInFibObject = NULL );
 	
 	/**
-	 * parameter constructor for a list of input variable widgets
+	 * A parameter constructor for a list of input variable widgets.
 	 *
 	 * @param pInFibObject the Fib object for which the input variables are or NULL
 	 * 	@see pFibObject
@@ -112,8 +115,8 @@ public:
 	 * 	It will evalue all variables used in the Fib object, but not
 	 * 	defined in it. Also input variables are input variables of the
 	 * 	root element pFibObject, if pFibObject is a root element.
-	 * 	Also the list will be updated for input variables changes.
 	 * 	@see nFibObjectTools::evalueInputVariables()
+	 * 	Also the list will be updated for input variables changes.
 	 * 	If bFindInputVariables is false, this constructor constructs a
 	 * 	list of input variables with no input variables. (So you can add
 	 * 	them later.)
@@ -122,13 +125,13 @@ public:
 	 * 	with no superior), else the input variables for pFibObject will
 	 * 	be returned
 	 */
-	cWidgetFibInputVariables( cFibElement * pInFibObject,
+	explicit cWidgetFibInputVariables( cFibElement * pInFibObject,
 		const bool bFindInputVariables = true, const bool bTillRoot = false );
 	
 	/**
-	 * copy constructor for a list of input variable widgets
+	 * The copy constructor for a list of input variable widgets.
 	 *
-	 * @param fibInputVariables the input variables to copy
+	 * @param fibInputVariables the input variables widget to copy
 	 */
 	cWidgetFibInputVariables( cWidgetFibInputVariables & fibInputVariables );
 	
@@ -209,7 +212,7 @@ public:
 	/**
 	 * This method sets the list of input variables to the given list.
 	 * All old input variables of this list are removed and the given input
-	 * added.
+	 * variables added.
 	 *
 	 * @see inputVariables
 	 * @see getNumberOfInputVariables()
@@ -226,7 +229,7 @@ public:
 	/**
 	 * Event method
 	 * It will be called every time a input variable (cFibInputVariable),
-	 * at which this object is registered,was changed.
+	 * at which this object is registered, was changed.
 	 *
 	 * @param pFibInputVariableEvent a pointer to the event with the
 	 * 	information of the change of the Fib input variable

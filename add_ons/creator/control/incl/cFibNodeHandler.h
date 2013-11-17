@@ -86,78 +86,6 @@ class cFibNodeHandler{
 friend class nFibNodeHandler::cFibNodeHandlerDeleter;
 friend class nFibNodeHandler::cThreadDeleteNodesWithoutListener;
 
-protected:
-	
-	/**
-	 * A pointer to the node handler object.
-	 */
-	static cFibNodeHandler * pFibNodeHandler;
-	
-	/**
-	 * A set with the existing Fib object roots.
-	 */
-	set< cFibElement * > setFibObjectsRoot;
-	
-	/**
-	 * A set with the existing Fib nodes.
-	 */
-	set< cFibNode * > setFibNodes;
-	
-	/**
-	 * The map for the existing Fib nodes.
-	 * 	key: the Fib objects for the value Fib node
-	 * 	value: the Fib nodes for the key Fib objects
-	 */
-	map< cFibElement * , cFibNode * > mapFibNodes;
-	
-	/**
-	 * The map for the existing Fib object roots.
-	 * 	key: the Fib objects for the Fib object roots
-	 * 	value: the Fib object roots for the key Fib objects
-	 * 		@see setFibObjectsRoot
-	 */
-	map< cFibElement * , cFibElement * > mapFibObjectRoots;
-	
-	/**
-	 * The map for the existing Fib object roots.
-	 * 	key: the Fib object roots for the value Fib object nodes
-	 * 	value: a list with the Fib object nodes for the Fib object root
-	 */
-	map< cFibElement * , set< cFibNode * > > mapNodesForRoots;
-	
-	/**
-	 * Mutex to lock access to the Fib object and Fib node data of this class.
-	 * Lock the mutex if you use one of the following containers:
-	 * @see setFibObjectsRoot
-	 * @see setFibNodes
-	 * @see mapFibNodes
-	 * @see mapFibObjectRoots
-	 * @see mapNodesForRoots
-	 */
-	QMutex mutexFibNodeHandler;
-	
-	/**
-	 * The map for the existing Fib object roots mutexs.
-	 * 	key: the Fib object roots
-	 * 		@see setFibObjectsRoot
-	 * 	value: the mutex for the key Fib object roots
-	 * @see lock()
-	 * @see tryLock()
-	 * @see unlock()
-	 */
-	map< cFibElement * , QMutex * > mapFibObjectRootsMutex;
-
-	/**
-	 * The next time it should be tried to delete not needed nodes.
-	 * @see deleteNodesWithoutListeners()
-	 */
-	time_t tmNextDeleteNodesAction;
-	
-	/**
-	 * constructor for the Fib object node handler
-	 */
-	cFibNodeHandler();
-	
 public:
 	
 	/**
@@ -296,6 +224,11 @@ public:
 protected:
 	
 	/**
+	 * constructor for the Fib object node handler
+	 */
+	cFibNodeHandler();
+	
+	/**
 	 * This method returns the mutex for the given Fib node.
 	 * @see lock( cFibNode * pFibNode )
 	 * @see unlock( cFibNode * pFibNode )
@@ -383,6 +316,73 @@ protected:
 	bool transferNodeForEqualFibObject(
 			cFibNode * pNodeToTransfer,
 			cFibElement * pFromFibObject, cFibElement * pToFibObject );
+
+//members
+	
+	/**
+	 * A pointer to the node handler object.
+	 */
+	static cFibNodeHandler * pFibNodeHandler;
+	
+	/**
+	 * A set with the existing Fib object roots.
+	 */
+	set< cFibElement * > setFibObjectsRoot;
+	
+	/**
+	 * A set with the existing Fib nodes.
+	 */
+	set< cFibNode * > setFibNodes;
+	
+	/**
+	 * The map for the existing Fib nodes.
+	 * 	key: the Fib objects for the value Fib node
+	 * 	value: the Fib nodes for the key Fib objects
+	 */
+	map< cFibElement * , cFibNode * > mapFibNodes;
+	
+	/**
+	 * The map for the existing Fib object roots.
+	 * 	key: the Fib objects for the Fib object roots
+	 * 	value: the Fib object roots for the key Fib objects
+	 * 		@see setFibObjectsRoot
+	 */
+	map< cFibElement * , cFibElement * > mapFibObjectRoots;
+	
+	/**
+	 * The map for the existing Fib object roots.
+	 * 	key: the Fib object roots for the value Fib object nodes
+	 * 	value: a list with the Fib object nodes for the Fib object root
+	 */
+	map< cFibElement * , set< cFibNode * > > mapNodesForRoots;
+	
+	/**
+	 * Mutex to lock access to the Fib object and Fib node data of this class.
+	 * Lock the mutex if you use one of the following containers:
+	 * @see setFibObjectsRoot
+	 * @see setFibNodes
+	 * @see mapFibNodes
+	 * @see mapFibObjectRoots
+	 * @see mapNodesForRoots
+	 */
+	QMutex mutexFibNodeHandler;
+	
+	/**
+	 * The map for the existing Fib object roots mutexs.
+	 * 	key: the Fib object roots
+	 * 		@see setFibObjectsRoot
+	 * 	value: the mutex for the key Fib object roots
+	 * @see lock()
+	 * @see tryLock()
+	 * @see unlock()
+	 */
+	map< cFibElement * , QMutex * > mapFibObjectRootsMutex;
+
+	/**
+	 * The next time it should be tried to delete not needed nodes.
+	 * @see deleteNodesWithoutListeners()
+	 */
+	time_t tmNextDeleteNodesAction;
 	
 };//end class cFibNodeHandler
 

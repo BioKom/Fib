@@ -1,6 +1,3 @@
-
-//TODO check
-
 /**
  * @file eFibInputVariableChangedEvent
  * file name: eFibInputVariableChangedEvent.h
@@ -10,7 +7,7 @@
  *
  * System: C++, Qt4
  *
- * This file specifies a event for for input variables changes.
+ * This file specifies a event for input variables changes.
  *
  *
  * Copyright (C) @c GPL3 2013 Betti Oesterholz
@@ -29,9 +26,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * This file specifies a event for for input variables changes.
+ * This file implements a event for input variables changes.
  * If a input variable changes, the input variable object (cFibInputVariable)
- * for it will send a event of this type to all registered listeners of type.
+ * for it will send an event of this type to all registered listeners of
+ * the type lInputVariableChanged .
  * @see cFibInputVariable
  * @see lInputVariableChanged
  */

@@ -52,10 +52,12 @@ History:
 	time by external objects
 30.07.2013  Oesterholz  method assignValues() added;
 	FEATURE_EXT_SUBOBJECT_INPUT_VECTOR as default (not case removed)
+28.10.2013  Oesterholz  method integrateSubRootObject() added
+13.11.2013  Oesterholz  FEATURE_INSERT_OBJECT_IN_ELEMENT implemented
 */
 
-#ifndef ___C_ROOT_H__
-#define ___C_ROOT_H__
+#ifndef ___FIB__C_ROOT_H__
+#define ___FIB__C_ROOT_H__
 
 
 #include "version.h"
@@ -108,6 +110,15 @@ private:
 	 * same order in the fibUnderObjects property of the cFibBranch class.
 	 * So a lot methods can be implemented ther and don't have to
 	 * overwritten in this cRoot class.
+	 *
+	 * @see getNumberOfSubRootObjects()
+	 * @see getSubRootObject()
+	 * @see getSubRootObjectNumber()
+	 * @see getSubRootObjectForIdentifier()
+	 * @see addSubRootObject()
+	 * @see deleteSubRootObject()
+	 * @see getAllSubRootObjectIdentifiers()
+	 * @see integrateSubRootObject()
 	 */
 	list< pair< longFib, cRoot * > > liSubRootObjects;
 
@@ -563,14 +574,20 @@ public:
 	 * 	Fib-elements of the given type cType, on which position the given
 	 * 	Fib-object fibObject should be inserted
 	 * @param fibObject the Fib-object to insert
-	 * @param first if true, the inserted object will be the first
-	 * 	subobject of the new listelement
+#ifdef FEATURE_INSERT_OBJECT_IN_ELEMENT
+	 * @param bFirst if true, the inserted object will be the first
+	 * 	subobject of the list element, else (it is false) the inserted
+	 * 	object will be the last subobject of the list element
+#else FEATURE_INSERT_OBJECT_IN_ELEMENT
+	 * @param bFirst if true, the inserted object will be the first
+	 * 	subobject of the new list element
+#endif FEATURE_INSERT_OBJECT_IN_ELEMENT
 	 * @param bAbsolute if the lNumber is an absolute value for the wool
 	 * 	Fib object
 	 * @return true if the Fib-object fibObject was inserted, else false
 	 */
 	virtual bool insertObjectInElement( cFibElement *fibObject, const char cType='u',
-		const unsignedIntFib elementPoint=0, bool first=true, 
+		const unsignedIntFib elementPoint=0, bool bFirst=true, 
 		bool bAbsolute=false );
 
 	/**
@@ -968,6 +985,14 @@ public:
 
 
 	/**
+	 * @see liSubRootObjects
+	 * @see getSubRootObject()
+	 * @see getSubRootObjectNumber()
+	 * @see getSubRootObjectForIdentifier()
+	 * @see addSubRootObject()
+	 * @see deleteSubRootObject()
+	 * @see getAllSubRootObjectIdentifiers()
+	 * @see integrateSubRootObject()
 	 * @return the count of sub -root-objects in this root-object
 	 */
 	unsignedIntFib getNumberOfSubRootObjects() const;
@@ -978,6 +1003,14 @@ public:
 	 * The returned pair first element is the identifier of the sub -root
 	 * -object and the secound is a pointer to the sub -root-object.
 	 *
+	 * @see liSubRootObjects
+	 * @see getNumberOfSubRootObjects()
+	 * @see getSubRootObjectNumber()
+	 * @see getSubRootObjectForIdentifier()
+	 * @see addSubRootObject()
+	 * @see deleteSubRootObject()
+	 * @see getAllSubRootObjectIdentifiers()
+	 * @see integrateSubRootObject()
 	 * @param uiNumberOfUnderObject the number of the sub -root-object to
 	 * 	return
 	 * @return the uiNumberOfUnderObject't sub -root-objects of this
@@ -991,6 +1024,14 @@ public:
 	 * This method returns the number of the sub -root-object with the
 	 * identifier lIdentifier in this root-element or 0 if non such exists.
 	 *
+	 * @see liSubRootObjects
+	 * @see getNumberOfSubRootObjects()
+	 * @see getSubRootObject()
+	 * @see getSubRootObjectForIdentifier()
+	 * @see addSubRootObject()
+	 * @see deleteSubRootObject()
+	 * @see getAllSubRootObjectIdentifiers()
+	 * @see integrateSubRootObject()
 	 * @param lIdentifier identifier of the sub -root-object for which
 	 * 	the number should be returned return
 	 * @return the number of the sub -root-object with the identifier
@@ -1002,6 +1043,14 @@ public:
 	 * This method returns the sub -root-object with the identifier
 	 * lIdentifier in this root-element or NULL if non such exists.
 	 *
+	 * @see liSubRootObjects
+	 * @see getNumberOfSubRootObjects()
+	 * @see getSubRootObject()
+	 * @see getSubRootObjectNumber()
+	 * @see addSubRootObject()
+	 * @see deleteSubRootObject()
+	 * @see getAllSubRootObjectIdentifiers()
+	 * @see integrateSubRootObject()
 	 * @param lIdentifier identifier of the sub -root-object which
 	 * 	should be returned return
 	 * @return the sub -root-object with the identifier lIdentifier
@@ -1017,6 +1066,14 @@ public:
 	 * 	- the identifier lIdentifier is allready in use somewher in this
 	 * 	wool object
 	 *
+	 * @see liSubRootObjects
+	 * @see getNumberOfSubRootObjects()
+	 * @see getSubRootObject()
+	 * @see getSubRootObjectNumber()
+	 * @see getSubRootObjectForIdentifier()
+	 * @see deleteSubRootObject()
+	 * @see getAllSubRootObjectIdentifiers()
+	 * @see integrateSubRootObject()
 	 * @param lIdentifier the identifier the root-object should have
 	 * @param pRootObject a pointer to the root-object to add; the object
 	 * 	will not be copied, so don't delete it
@@ -1032,6 +1089,14 @@ public:
 	 * This method deletes the uiSubRootObjectNumber'th sub -root-object
 	 * in this root-element.
 	 *
+	 * @see liSubRootObjects
+	 * @see getNumberOfSubRootObjects()
+	 * @see getSubRootObject()
+	 * @see getSubRootObjectNumber()
+	 * @see getSubRootObjectForIdentifier()
+	 * @see addSubRootObject()
+	 * @see getAllSubRootObjectIdentifiers()
+	 * @see integrateSubRootObject()
 	 * @param uiSubRootObjectNumber the number of the sub -root-object in
 	 * 	the sub -root-object -list to delete
 	 * @param bDeleteOld if true the sub -root-object will be removed from
@@ -1047,20 +1112,52 @@ public:
 	 * This method returns all identifiers of all sub -root-objects in
 	 * this root-element.
 	 *
+	 * @see liSubRootObjects
+	 * @see getNumberOfSubRootObjects()
+	 * @see getSubRootObject()
+	 * @see getSubRootObjectNumber()
+	 * @see getSubRootObjectForIdentifier()
+	 * @see addSubRootObject()
+	 * @see deleteSubRootObject()
+	 * @see integrateSubRootObject()
 	 * @return all identifiers of all sub -root-objects in this root-element
 	 */
 	list< longFib > getAllSubRootObjectIdentifiers() const;
 	
+	/**
+	 * This method integrates the given Fib object as an accessible subroot
+	 * object. After you call this method an accessible subroot object,
+	 * which is equal to the given Fib object (or contains it as its main
+	 * Fib object), will exists for this object and its identifier will be
+	 * returned.
+	 * First this method will search for an equal accessible subroot object
+	 * to the given Fib object and returns its idenitifier, if it could find one.
+	 * If non could be found a clone of the given Fib object will be
+	 * integrated as a new sub root object into this root object and its
+	 * identifier will be returned.
+	 *
+	 * @see liSubRootObjects
+	 * @see getAllAccessibleRootObjectIdentifiers()
+	 * @see getAccessibleRootObject()
+	 * @see getSubRootObject()
+	 * @param pFibObject a pointer to the Fib object, for which an accessible
+	 * 	subroot object should exists
+	 * @return the identifier of a subroot object, which is equal to the
+	 * 	given Fib object (or contains it as its main Fib object), or 0,
+	 * 	if for the given Fib object no subroot object could be created
+	 */
+	longFib integrateSubRootObject( const cFibElement * pFibObject );
+	
 	
 	/**
 	 * @return a set with all database identifiers that are given in this
-	 * 	root-element as used database objects 
+	 * 	root-element as used database objects
 	 * 	@see setDatabaseIdentifiers
 	 */
 	set< longFib > getUsedDatabaseIdentifiers() const;
 	
 	/**
-	 * This method adds the given database identifier to the used database 
+	 * This method adds the given database identifier to the used database
 	 * identifiers of this root-element.
 	 * @see setDatabaseIdentifiers
 	 * 
@@ -1070,7 +1167,7 @@ public:
 	void addUsedDatabaseIdentifier( const longFib lIdentifier );
 
 	/**
-	 * This method deletes the given database identifier from the used 
+	 * This method deletes the given database identifier from the used
 	 * database identifiers of this root-element.
 	 * @see setDatabaseIdentifiers
 	 * 
@@ -1503,7 +1600,7 @@ protected:
 };
 }//namespace fib
 
-#endif //___C_ROOT_H__
+#endif //___FIB__C_ROOT_H__
 
 
 

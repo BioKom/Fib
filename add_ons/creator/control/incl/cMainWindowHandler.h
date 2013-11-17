@@ -50,8 +50,6 @@ History:
 
 #include "version.h"
 
-#include "cFibNode.h"
-
 #include <set>
 
 #include <QObject>
@@ -59,12 +57,16 @@ History:
 #include <QMutex>
 
 #include "cFibObjectMainWindow.h"
+#include "cFibNode.h"
 
 
 
 namespace fib{
 
 namespace nCreator{
+
+//forward declarations
+class cFibObjectInfo;
 
 namespace nMainWindowHandler{
 	//cyclic dependencies
@@ -160,10 +162,28 @@ public:
 	 * 	So don't delete it.
 	 * @param bIsChangebel true (standard value) if (the Fib element
 	 * 	 pFibObject of) the to create node is changebel, else false
-	 * @return the a new main window for the given Fib object
+	 * @return a pointer to the a new main window for the given Fib object
 	 */
 	cFibObjectMainWindow * getNewMainWindowForFibObject(
 			cFibElement * pFibObject, const bool bIsChangebel=true );
+	
+	/**
+	 * This method returns a new main window for the given Fib object info
+	 * Fib object.
+	 *
+	 * @see setMainWindows
+	 * @see cFibObjectInfo
+	 * @param pFibObjectInfo the Fib object info of the Fib object for the
+	 * 	main window to return
+	 * 	The responsibility for the Fib object will go to the Fib object
+	 * 	node handler @see cFibNodeHandler
+	 * 	So don't delete it.
+	 * @param bIsChangebel true (standard value) if (the Fib element
+	 * 	 pFibObject of) the to create node is changebel, else false
+	 * @return a pointer to the a new main window for the given Fib object
+	 */
+	cFibObjectMainWindow * getNewMainWindowForFibObjectInfo(
+			cFibObjectInfo * pFibObjectInfo, const bool bIsChangebel=true );
 	
 	
 	/**

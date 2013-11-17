@@ -70,6 +70,9 @@ History:
 #include "cTypeProperty.h"
 
 #include "cDialogNewFibObject.h"
+#include "cFibObjectInfo.h"
+#include "cFibObjectSource.h"
+#include "cFibObjectSourcePath.h"
 
 
 using namespace std;
@@ -92,7 +95,7 @@ namespace nMainWindowHandler{
 
 	/**
 	 * This class is for deleting the Fib main window handler when the
-	 * programm ends.
+	 * program ends.
 	 * @see cMainWindowHandlerDeleter
 	 */
 	class cMainWindowHandlerDeleter{
@@ -276,6 +279,58 @@ cFibObjectMainWindow * cMainWindowHandler::getNewMainWindowForFibObject(
 	pNewMainWindow->show();
 	
 	return pNewMainWindow;
+}
+
+
+/**
+ * This method returns a new main window for the given Fib object info
+ * Fib object.
+ *
+ * @see setMainWindows
+ * @see cFibObjectInfo
+ * @param pFibObjectInfo the Fib object info of the Fib object for the
+ * 	main window to return
+ * 	The responsibility for the Fib object will go to the Fib object
+ * 	node handler @see cFibNodeHandler
+ * 	So don't delete it.
+ * @param bIsChangebel true (standard value) if (the Fib element
+ * 	 pFibObject of) the to create node is changebel, else false
+ * @return a pointer to the a new main window for the given Fib object
+ */
+cFibObjectMainWindow * cMainWindowHandler::getNewMainWindowForFibObjectInfo(
+		cFibObjectInfo * pFibObjectInfo, const bool bIsChangebel ){
+	
+	DEBUG_OUT_L2(<<"cMainWindowHandler("<<this<<")::getNewMainWindowForFibObjectInfo( pFibObjectInfo="<<pFibObjectInfo<<", bIsChangebel="<<(bIsChangebel ? "true" : "false")<<") called"<<endl<<flush);
+	if ( pFibObjectInfo == NULL ){
+		//no Fib object for the new main window -> return NULL
+		return NULL;
+	}
+	int iOutStatus = 0;
+	cFibElement * pLoadedFibObject =
+		pFibObjectInfo->loadFibObjectFromSource( &iOutStatus );
+	
+	if ( pLoadedFibObject == NULL ){
+		//no Fib object for Fib object info -> no main window can be created
+		return NULL;
+	}
+	if ( iOutStatus < 0 ){
+		/*error while loading Fib object for Fib object info
+		 *-> no main window can be created*/
+		return NULL;
+	}
+	//create main window for clone of Fib object info
+	cFibObjectMainWindow * pNewFibObjectMainWindow =
+		getNewMainWindowForFibObject( pLoadedFibObject->clone(), bIsChangebel );
+	
+	if ( ( pNewFibObjectMainWindow != NULL ) &&
+			( pFibObjectInfo->getFibObjectSource() != NULL ) &&
+			( pFibObjectInfo->getFibObjectSource()->getName() != "cFibObjectSourcePath" ) ){
+		//set path of loaded Fib object as current path
+		pNewFibObjectMainWindow->setCurrentFile( ((cFibObjectSourcePath*)(
+			pFibObjectInfo->getFibObjectSource()))->getPath().c_str() );
+		//TODO? better: set Fib object info for node (?and main window)
+	}
+	return pNewFibObjectMainWindow;
 }
 
 

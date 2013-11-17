@@ -46,16 +46,7 @@ History:
 
 #include "version.h"
 
-#include "cFibElement.h"
-
-#include "cFibNode.h"
 #include "lFibNodeChanged.h"
-#include "cFibNodeHandler.h"
-
-#include "cFibPlainTextEdit.h"
-#include "cFibGraphicsScene.h"
-
-#include <set>
 
 #include <QMap>
 
@@ -67,121 +58,29 @@ History:
 #include <QGraphicsView>
 
 
-using namespace std;
-
-
 namespace fib{
+
+//forward declarations
+class cFibElement;
 
 namespace nCreator{
 
 //cyclic dependencies
 class cMainWindowHandler;
 
+//forward declarations
+class cFibNode;
+class cFibNodeHandler;
+class cFibPlainTextEdit;
+class cWidgetFibInputVariables;
+class cFibGraphicsScene;
+class cDialogSelectFibObject;
+
+
 class cFibObjectMainWindow: public QMainWindow, public lFibNodeChanged{
 		Q_OBJECT
 
 friend class cMainWindowHandler;
-
-protected:
-	
-	/**
-	 * A pointer to the Fib node object for this window
-	 */
-	cFibNode * pFibNode;
-	
-	
-	/**
-	 * The main graphics scene where the Fib object is shown.
-	 * @see pFibNode
-	 * @see pFibObjectGraphicsView
-	 * TODO set  Qt::WA_OpaquePaintEvent for QGraphicsView (overwrite all background)
-	 */
-	cFibGraphicsScene * pFibObjectGraphicsScene;
-	
-	/**
-	 * The main graphics view for the graphics scene where the Fib object is
-	 * shown.
-	 * @see pFibObjectGraphicsScene
-	 */
-	QGraphicsView * pFibObjectGraphicsView;
-	
-	/**
-	 * The central widget of this main window.
-	 * It should contain the main graphical wiew (or scene) and the input
-	 * variable widget of the main graphical scene.
-	 * If NULL no input variable widget of the main graphical scene exists
-	 * and the graphical view will be used directly as the central widget of
-	 * this main window.
-	 *
-	 * @see pFibObjectGraphicsScene
-	 * @see pFibObjectGraphicsView
-	 */
-	QWidget * pCentralWidget;
-	
-	
-	/**
-	 * A mep of the open dock widgets of this window.
-	 */
-	QMap< QWidget *, QDockWidget * > mapOpenDockWidgets;
-	
-	/**
-	 * A subwindow (QDockWidget) for editing Fib objects in (Fib XML) plain text.
-	 */
-	cFibPlainTextEdit * pFibPlainTextEdit;
-	
-	
-	/**
-	 * The name of the current loaded Fib object.
-	 */
-	QString strCurFilePath;
-	
-	///file menu
-	QMenu * pMenuFile;
-	///edit menu
-	QMenu * pMenuEdit;
-	///edit menu
-	QMenu * pMenuWindow;
-	///help menu
-	QMenu * pMenuHelp;
-	///file tool bar
-	QToolBar * pToolBarFile;
-	///edit tool bar
-	QToolBar * pToolBarEdit;
-	
-	/**
-	 * Actions
-	 */
-	///action for new Fib object
-	QAction * pActNew;
-	///action for open file for loading Fib object
-	QAction * pActOpen;
-	///action for saving Fib object
-	QAction * pActSave;
-	///action for saving Fib object with given file name
-	QAction * pActSaveAs;
-	///action for close this window
-	QAction * pActCloseWindow;
-	///action for exit the application
-	QAction * pActExit;
-	
-	///action for cuting part Fib object
-	QAction * pActCut;
-	///action for copy part Fib object
-	QAction * pActCopy;
-	///action for inserting a copied part Fib object
-	QAction * pActPaste;
-	
-	/**
-	 * Action to togle the Fib plain text view.
-	 * @see pFibPlainTextEdit
-	 * @see toglePlaintextWindow()
-	 **/
-	QAction * pActTogleShowPlaintext;
-	
-	///action for show about this application information
-	QAction * pActAbout;
-	
-	
 public:
 	
 	/**
@@ -192,7 +91,7 @@ public:
 	 * @param bInIsChangebel true (standard value) if (the Fib element of)
 	 * 	the to create node is changebel, else false
 	 */
-	cFibObjectMainWindow( cFibElement * pInFibObject, const bool bInIsChangebel=true );
+	explicit cFibObjectMainWindow( cFibElement * pInFibObject, const bool bInIsChangebel=true );
 	
 	/**
 	 * parameter constructor for a Fib object node
@@ -200,7 +99,7 @@ public:
 	 * @param pInFibNode a pointer to the Fib node object for the window to construct
 	 * 	@see pFibNode
 	 */
-	cFibObjectMainWindow( cFibNode * pInFibNode );
+	explicit cFibObjectMainWindow( cFibNode * pInFibNode );
 	
 	/**
 	 * destructor
@@ -284,6 +183,24 @@ protected:
 	 * @return true if a Fib plain text edit window could be closed, else false
 	 */
 	bool closePlainTextEdit();
+	
+	/**
+	 * This method opens a subwindow (QDockWidget) for selecting / choosing
+	 * Fib objects.
+	 * @see pDialogSelectFibObject
+	 *
+	 * @return true if the choose Fib object dialog could be opened, else false
+	 */
+	bool openDialogSelectFibObject();
+	
+	/**
+	 * This method a subwindow (QDockWidget) for selecting / choosing
+	 * Fib objects.
+	 * @see pDialogSelectFibObject
+	 *
+	 * @return true if the choose Fib object dialog could be closed, else false
+	 */
+	bool closeDialogSelectFibObject();
 	
 	/**
 	 * This method creates the widgets used in this window.
@@ -393,6 +310,115 @@ protected:
 	virtual bool setFibObject( cFibElement * pNewFibObject );
 	
 	
+
+//members
+	
+	/**
+	 * A pointer to the Fib node object for this window
+	 */
+	cFibNode * pFibNode;
+	
+	
+	/**
+	 * The main graphics scene where the Fib object is shown.
+	 * @see pFibNode
+	 * @see pFibObjectGraphicsView
+	 * TODO set  Qt::WA_OpaquePaintEvent for QGraphicsView (overwrite all background)
+	 */
+	cFibGraphicsScene * pFibObjectGraphicsScene;
+	
+	/**
+	 * The main graphics view for the graphics scene where the Fib object is
+	 * shown.
+	 * @see pFibObjectGraphicsScene
+	 */
+	QGraphicsView * pFibObjectGraphicsView;
+	
+	/**
+	 * The central widget of this main window.
+	 * It should contain the main graphical wiew (or scene) and the input
+	 * variable widget of the main graphical scene.
+	 * If NULL no input variable widget of the main graphical scene exists
+	 * and the graphical view will be used directly as the central widget of
+	 * this main window.
+	 *
+	 * @see pFibObjectGraphicsScene
+	 * @see pFibObjectGraphicsView
+	 */
+	QWidget * pCentralWidget;
+	
+	
+	/**
+	 * A mep of the open dock widgets of this window.
+	 */
+	QMap< QWidget *, QDockWidget * > mapOpenDockWidgets;
+	
+	/**
+	 * A subwindow (QDockWidget) for editing Fib objects in (Fib XML) plain text.
+	 */
+	cFibPlainTextEdit * pFibPlainTextEdit;
+	
+	/**
+	 * A subwindow (QDockWidget) for selecting / choosing Fib objects.
+	 * @see cDialogSelectFibObject
+	 * @see openDialogSelectFibObject()
+	 * @see closeDialogSelectFibObject()
+	 */
+	cDialogSelectFibObject * pDialogSelectFibObject;
+	
+	
+	/**
+	 * The name of the current loaded Fib object.
+	 */
+	QString strCurFilePath;
+	
+	///file menu
+	QMenu * pMenuFile;
+	///edit menu
+	QMenu * pMenuEdit;
+	///edit menu
+	QMenu * pMenuWindow;
+	///help menu
+	QMenu * pMenuHelp;
+	///file tool bar
+	QToolBar * pToolBarFile;
+	///edit tool bar
+	QToolBar * pToolBarEdit;
+	
+	/**
+	 * Actions
+	 */
+	///action for new Fib object
+	QAction * pActNew;
+	///action for open file for loading Fib object
+	QAction * pActOpen;
+	///action for saving Fib object
+	QAction * pActSave;
+	///action for saving Fib object with given file name
+	QAction * pActSaveAs;
+	///action for close this window
+	QAction * pActCloseWindow;
+	///action for exit the application
+	QAction * pActExit;
+	
+	///action for cuting part Fib object
+	QAction * pActCut;
+	///action for copy part Fib object
+	QAction * pActCopy;
+	///action for inserting a copied part Fib object
+	QAction * pActPaste;
+	
+	/**
+	 * Action to togle the Fib plain text view.
+	 * @see pFibPlainTextEdit
+	 * @see toglePlainTextWindow()
+	 **/
+	QAction * pActTogleShowPlaintext;
+	
+	///action for show about this application information
+	QAction * pActAbout;
+	
+	
 private slots:
 	
 	/**
@@ -441,9 +467,22 @@ private slots:
 	/**
 	 * This slot will action to togle the Fib plain text view.
 	 *
+	 * @see pFibPlainTextEdit
+	 * @see openPlainTextEdit()
+	 * @see closePlainTextEdit()
 	 * @return true if the plain text view is shown, else false
 	 */
-	bool toglePlaintextWindow();
+	bool toglePlainTextWindow();
+	
+	/**
+	 * This slot will action to togle the dialog to choose Fib objects view.
+	 *
+	 * @see pDialogSelectFibObject
+	 * @see openDialogSelectFibObject()
+	 * @see closeDialogSelectFibObject()
+	 * @return true if the dialog to choose Fib objects is shown, else false
+	 */
+	bool togleDialogSelectFibObject();
 	
 	/**
 	 * This slot shows the about (this application) information.

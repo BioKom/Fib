@@ -52,7 +52,7 @@ History:
 
 
 //TODO switches for test proposes
-#define DEBUG
+//#define DEBUG
 
 
 #include "cFibGraphicsScene.h"
@@ -61,7 +61,15 @@ History:
 #include "nFibObjectTools.h"
 #include "cFibGraphicsItemFibList.h"
 #include "cFibGraphicsItemFibObject.h"
+#include "cFibNode.h"
+#include "cFibNodeHandler.h"
+#include "cFibGraphicsItem.h"
+#include "cWidgetFibInputVariables.h"
+#include "cEvalueSimpleRGBA255QPainter.h"
 
+#include "cFibElement.h"
+#include "cFibVariable.h"
+#include "cDomain.h"
 #include "cDomains.h"
 #include "cDomain.h"
 #include "cDomainSingle.h"
@@ -97,9 +105,6 @@ cFibGraphicsScene::cFibGraphicsScene( cFibNode * pInFibNode, QWidget * pParent )
 	
 	DEBUG_OUT_L2(<<"cFibGraphicsScene("<<this<<")::cFibGraphicsScene( pInFibNode="<<pInFibNode<<", pParent="<<pParent<<" ) called"<<endl<<flush);
 	
-	evalueInputVariables();
-	evalueGraphicsItemsFromFibNode();
-	
 	setFibObjectNode( pInFibNode );
 }
 
@@ -123,11 +128,37 @@ cFibGraphicsScene::cFibGraphicsScene( cFibNode * pInFibNode,
 	
 	DEBUG_OUT_L2(<<"cFibGraphicsScene("<<this<<")::cFibGraphicsScene( pInFibNode="<<pInFibNode<<", pInMainWindow="<<pInMainWindow<<" ) called"<<endl<<flush);
 	
-	evalueInputVariables();
-	evalueGraphicsItemsFromFibNode();
-	
 	setFibObjectNode( pInFibNode );
 }
+
+/**
+ * A parameter constructor for a graphics view of a Fib object
+ *
+ * @param pInFibObject a pointer to the Fib object for the widget to
+ * 	construct, the node for it will be used as the Fib node for this
+ * 	Fib graphic scene; use this constructor if you need a listener for
+ * 	node changes (this object will be added as a listener)
+ * 	@see pFibNode
+ * 	@see cFibNodeHandler::getNodeForFibObject()
+ * @param pParent a pointer to parent of this widget
+ */
+cFibGraphicsScene::cFibGraphicsScene( cFibElement * pInFibObject,
+			QWidget * pParent ):
+		QGraphicsScene( pParent ), pFibNode( NULL ),
+		ulFibNodeVersionDisplayed( 0 ), pWidgetFibInputVariables( NULL ),
+		pMainWindow( NULL ), pEvalueSimpleRGBA255QPainter( NULL ),
+		pFibRootNode( NULL ),
+		dPointWidth( 1.0 ), dPointHeight( 1.0 ),
+		dDirection1Minimum( 0.0 ), dDirection1Maximum( 0.0 ),
+		dDirection2Minimum( 0.0 ), dDirection2Maximum( 0.0 ){
+	
+	DEBUG_OUT_L2(<<"cFibGraphicsScene("<<this<<")::cFibGraphicsScene( pInFibNode="<<pInFibObject<<", pParent="<<pParent<<" ) called"<<endl<<flush);
+	
+	cFibNode * pInFibNode = cFibNodeHandler::getInstance()->
+		getNodeForFibObject( pInFibObject, this );
+	setFibObjectNode( pInFibNode );
+}
+
 
 
 /**
@@ -272,7 +303,7 @@ void cFibGraphicsScene::fibNodeChangedEvent(
 			DEBUG_OUT_L2(<<"cFibGraphicsScene("<<this<<")::fibNodeChangedEvent( pFibNodeChanged="<<pFibNodeChanged<<") done the Fib master root object nothing changed"<<endl<<flush);
 			return;
 		}
-	}else{//the Fib node and Fib rood naode are the same
+	}else{//the Fib node and Fib rood node are the same
 		if ( ( pFibNodeChanged->pFibNodeChanged->getFibObjectVersion() ==
 					ulFibNodeVersionDisplayed ) ){
 			//nothing changed
@@ -1075,6 +1106,7 @@ bool cFibGraphicsScene::updateEvalueFibObjectForPainter(){
 	
 		delete pEvalueSimpleRGBA255QPainter;
 		pEvalueSimpleRGBA255QPainter = new cEvalueSimpleRGBA255QPainter( NULL,
+			dDirection2Maximum,
 			dNewScalingFactorAlpha, dNewScalingFactorRed,
 			dNewScalingFactorGreen, dNewScalingFactorBlue,
 			dNewScalingFactorGrayscale );
@@ -1283,9 +1315,18 @@ bool cFibGraphicsScene::updateForDimensionChange(){
 		//cDomainIntegerBasis
 		dPointWidth = ((cDomainIntegerBasis*)pDirection1Domain)->getScalingFactor();
 	}
+	//check if the painter should be updated
+	if ( ( pEvalueSimpleRGBA255QPainter != NULL ) &&
+			( dDirection2Maximum != pDirection2Domain->getMaximum() ) ){
+		//height changed -> update painter
+		pEvalueSimpleRGBA255QPainter->setHeight(
+			pDirection2Domain->getMaximum() );
+	}
 	//evalue the values for direction 2
 	dDirection2Minimum = pDirection2Domain->getMinimum();
 	dDirection2Maximum = pDirection2Domain->getMaximum();
+	
+	
 	dPointHeight = 1.0;
 	const string szDomainElementTypeDim2 = pDirection2Domain->getType();
 	if ( ( szDomainElementTypeDim2.compare( 0, 19, "DomainNaturalNumber" ) == 0 ) ||
@@ -1355,6 +1396,22 @@ bool cFibGraphicsScene::setPenForPointSize( QPainter * pPainter ) const{
 	QPainter::setPen( QPen::QPen( QBrush() , qreal width=1, Qt::PenStyle style = Qt::SolidLine, Qt::PenCapStyle cap = Qt::SquareCap, Qt::PenJoinStyle join = Qt::BevelJoin ) )
 	 */
 	return true;
+}
+
+
+/**
+ * This method returns the size of a point.
+ *
+ * @see dPointWidth
+ * @see dPointHeight
+ * @see setPenForPointSize()
+ * @see updateForDimensionChange()
+ * @see pFibNode
+ * @return the size of a point
+ */
+QSizeF cFibGraphicsScene::getPointSize() const{
+	
+	return QSizeF( dPointWidth, dPointHeight );
 }
 
 

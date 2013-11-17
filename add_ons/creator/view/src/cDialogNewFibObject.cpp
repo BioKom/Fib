@@ -44,9 +44,9 @@ History:
 */
 
 
-//TODO switches for test proposes
-#define DEBUG
-#define DEBUG_FIB_OBJECT
+//switches for test proposes
+//#define DEBUG
+//#define DEBUG_FIB_OBJECT
 
 
 #include "cDialogNewFibObject.h"

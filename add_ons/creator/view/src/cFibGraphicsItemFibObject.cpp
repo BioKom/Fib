@@ -48,15 +48,28 @@ History:
 
 
 //TODO switches for test proposes
-#define DEBUG
+//#define DEBUG
 
 
 #include "cFibGraphicsItemFibObject.h"
 
+#include "cFibElement.h"
+
 #include "cFibGraphicsScene.h"
+#include "cFibInputVariable.h"
+#include "cFibInputVariables.h"
+#include "cWidgetFibInputVariables.h"
 #include "cEvalueSimpleRGBA255QPainter.h"
+#include "cEvalueSimpleRGBA255TwoQPainter.h"
+#include "eFibNodeChangedEvent.h"
+#include "cFibNode.h"
+#include "cFibNodeHandler.h"
 
 #include <list>
+
+#include <QPixmap>
+#include <QGraphicsPixmapItem>
+
 
 using namespace std;
 using namespace fib::nCreator;
@@ -83,10 +96,19 @@ cFibGraphicsItemFibObject::cFibGraphicsItemFibObject( cFibElement * pInFibObject
 		cFibElement * pInFibObjectCopy,
 		QGraphicsItem * pParent ):
 		cFibGraphicsItem( pInFibObject, ulInFibNodeVersionDisplayed, pParent ),
-		pFibObjectCopy( pInFibObjectCopy ), pWidgetFibInputVariables( NULL ),
-		pFibInputVariablesCopy( NULL ){
+		pFibObjectCopy( pInFibObjectCopy ), pFibObjectCopyNode( NULL ),
+		pWidgetFibInputVariables( NULL ), pFibInputVariablesCopy( NULL ),
+		pGraphicsPixmapItemForFibObject( NULL ){
 			
-	DEBUG_OUT_L2(<<"cFibGraphicsItemFibObject("<<this<<")::cFibGraphicsItemFibObject( pInFibObject="<<pInFibObject<<", ulInFibNodeVersionDisplayed="<<ulInFibNodeVersionDisplayed<<", cFibElement * pInFibObjectCopy="<<pInFibObjectCopy<<", QGraphicsItem * pParent="<<pParent<<" ) called"<<endl<<flush);
+	DEBUG_OUT_L2(<<"cFibGraphicsItemFibObject("<<this<<")::cFibGraphicsItemFibObject( pInFibObject="<<pInFibObject<<", ulInFibNodeVersionDisplayed="<<ulInFibNodeVersionDisplayed<<", pInFibObjectCopy="<<pInFibObjectCopy<<", pParent="<<pParent<<" ) called"<<endl<<flush);
+	
+	if ( pFibObjectCopy ){
+		//if a Fib object copy exists -> get node object for it
+		pFibObjectCopyNode = cFibNodeHandler::getInstance()->
+			getNodeForFibObject( pFibObjectCopy, this );
+		DEBUG_OUT_L3(<<"cFibGraphicsItemFibObject("<<this<<")::cFibGraphicsItemFibObject( pInFibObject="<<pInFibObject<<", ulInFibNodeVersionDisplayed="<<ulInFibNodeVersionDisplayed<<", pInFibObjectCopy="<<pInFibObjectCopy<<", pParent="<<pParent<<" ) Fib node for copy Fib object: "<<pFibObjectCopyNode<<endl<<flush);
+	}
+	
 	//reevaluate the bounding box (boundingRectangle)
 	paint( NULL, NULL );
 	
@@ -121,9 +143,18 @@ cFibGraphicsItemFibObject::cFibGraphicsItemFibObject( cFibElement * pInFibObject
 		QGraphicsItem * pParent ):
 		cFibGraphicsItem( pInFibObject, ulInFibNodeVersionDisplayed,
 			pInFibGraphicsScene, pParent ),
-		pFibObjectCopy( pInFibObjectCopy ), pWidgetFibInputVariables( NULL ),
-		pFibInputVariablesCopy( NULL ){
-	DEBUG_OUT_L2(<<"cFibGraphicsItemFibObject("<<this<<")::cFibGraphicsItemFibObject( pInFibObject="<<pInFibObject<<", pInFibGraphicsScene="<<pInFibGraphicsScene<<" ulInFibNodeVersionDisplayed="<<ulInFibNodeVersionDisplayed<<", cFibElement * pInFibObjectCopy="<<pInFibObjectCopy<<", QGraphicsItem * pParent"<<pParent<<" ) called"<<endl<<flush);
+		pFibObjectCopy( pInFibObjectCopy ), pFibObjectCopyNode( NULL ),
+		pWidgetFibInputVariables( NULL ), pFibInputVariablesCopy( NULL ),
+		pGraphicsPixmapItemForFibObject( NULL ){
+	
+	DEBUG_OUT_L2(<<"cFibGraphicsItemFibObject("<<this<<")::cFibGraphicsItemFibObject( pInFibObject="<<pInFibObject<<", pInFibGraphicsScene="<<pInFibGraphicsScene<<", ulInFibNodeVersionDisplayed="<<ulInFibNodeVersionDisplayed<<", pInFibObjectCopy="<<pInFibObjectCopy<<", pParent="<<pParent<<" ) called"<<endl<<flush);
+	
+	if ( pFibObjectCopy ){
+		//if a Fib object copy exists -> get node object for it
+		pFibObjectCopyNode = cFibNodeHandler::getInstance()->
+			getNodeForFibObject( pFibObjectCopy, this );
+		DEBUG_OUT_L3(<<"cFibGraphicsItemFibObject("<<this<<")::cFibGraphicsItemFibObject( pInFibObject="<<pInFibObject<<", pInFibGraphicsScene="<<pInFibGraphicsScene<<", ulInFibNodeVersionDisplayed="<<ulInFibNodeVersionDisplayed<<", pInFibObjectCopy="<<pInFibObjectCopy<<", pParent="<<pParent<<" ) Fib node for copy Fib object: "<<pFibObjectCopyNode<<endl<<flush);
+	}
 	
 	//evalue input variables
 	evalueInputVariables();
@@ -139,8 +170,12 @@ cFibGraphicsItemFibObject::cFibGraphicsItemFibObject( cFibElement * pInFibObject
 cFibGraphicsItemFibObject::~cFibGraphicsItemFibObject(){
 	
 	DEBUG_OUT_L2(<<"cFibGraphicsItemFibObject("<<this<<")::~cFibGraphicsItemFibObject() called"<<endl<<flush);
-	if ( pFibObjectCopy ){
-		pFibObjectCopy->deleteObject();
+	if ( pFibObjectCopyNode ){
+		//the Fib node handler will delete the copy Fib object
+		DEBUG_OUT_L3(<<"cFibGraphicsItemFibObject("<<this<<")::~cFibGraphicsItemFibObject() unregister this at Fib node "<<pFibObjectCopyNode<<endl<<flush);
+		pFibObjectCopyNode->unregisterNodeChangeListener( this );
+		pFibObjectCopyNode = NULL;
+		pFibObjectCopy = NULL;
 	}
 	if ( pWidgetFibInputVariables ){
 		//unregister this object as a value change listener of them
@@ -151,6 +186,12 @@ cFibGraphicsItemFibObject::~cFibGraphicsItemFibObject(){
 	if ( pFibInputVariablesCopy ){
 		delete pFibInputVariablesCopy;
 	}
+	mutexGraphicsPixmapItemForFibObject.lock();
+	if ( pGraphicsPixmapItemForFibObject ){
+		//delete the pixmap for the Fib object
+		delete pGraphicsPixmapItemForFibObject;
+	}
+	mutexGraphicsPixmapItemForFibObject.unlock();
 }
 
 
@@ -355,6 +396,13 @@ bool cFibGraphicsItemFibObject::updateForFibElementChange(
 		}
 		
 	}//end if pFibObjectCopy exists -> integrate changes into pFibObjectCopy
+	mutexGraphicsPixmapItemForFibObject.lock();
+	if ( pGraphicsPixmapItemForFibObject ){
+		//Fib object needs to be reevaluated -> delete pGraphicsPixmapItemForFibObject
+		delete pGraphicsPixmapItemForFibObject;
+		pGraphicsPixmapItemForFibObject = NULL;
+	}
+	mutexGraphicsPixmapItemForFibObject.unlock();
 	//reevaluate the bounding box (boundingRectangle)
 	paint( NULL, NULL );
 	return bReturnValue;
@@ -374,7 +422,57 @@ bool cFibGraphicsItemFibObject::updateForFibElementChange(
 void cFibGraphicsItemFibObject::paint( QPainter * pPainter,
 	const QStyleOptionGraphicsItem * pOption, QWidget * pWidget ){
 	
-	DEBUG_OUT_L3(<<"cFibGraphicsItemFibObject("<<this<<")::paint( pPainter="<<pPainter<<", pOption="<<pOption<<", pWidget="<<pWidget<<" ) called"<<endl<<flush);
+	DEBUG_OUT_L2(<<"cFibGraphicsItemFibObject("<<this<<")::paint( pPainter="<<pPainter<<", pOption="<<pOption<<", pWidget="<<pWidget<<" ) called"<<endl<<flush);
+	
+	QPixmap * pPixmapForFibObject = NULL;
+	QPainter * pPainterPixmap = NULL;
+	
+	if ( pPainter != NULL ){
+		//if Fib object should be drawn
+		mutexGraphicsPixmapItemForFibObject.lock();
+		DEBUG_OUT_L3(<<"cFibGraphicsItemFibObject("<<this<<")::paint( pPainter="<<pPainter<<", pOption="<<pOption<<", pWidget="<<pWidget<<" ) if Fib object should be drawn (pGraphicsPixmapItemForFibObject="<<pGraphicsPixmapItemForFibObject<<")"<<endl<<flush);
+		if ( pGraphicsPixmapItemForFibObject != NULL ){
+			/*if Fib object not changed and a pixmap exists for it
+			 -> use pixmap to draw Fib object*/
+			pGraphicsPixmapItemForFibObject->paint( pPainter, pOption, pWidget );
+			DEBUG_OUT_L3(<<"cFibGraphicsItemFibObject("<<this<<")::paint( pPainter="<<pPainter<<", pOption="<<pOption<<", pWidget="<<pWidget<<" ) done use pixmap to draw Fib object"<<endl<<flush);
+			mutexGraphicsPixmapItemForFibObject.unlock();
+			return;
+		}
+		mutexGraphicsPixmapItemForFibObject.unlock();
+	
+		//adapt painter to draw a pixmap
+		if ( boundingRectangle.isValid() ){
+			//evalue size of the pixmap to draw on
+			DEBUG_OUT_L3(<<"cFibGraphicsItemFibObject("<<this<<")::paint( pPainter="<<pPainter<<", pOption="<<pOption<<", pWidget="<<pWidget<<" ) evalue size of the pixmap to draw on"<<endl<<flush);
+			
+			bool bUsePixmap = false;
+			
+			if ( pFibGraphicsScene ){
+				const QSizeF sizePixle = pFibGraphicsScene->getPointSize();
+				
+				if ( ( ((qreal)((int)( sizePixle.width() ))) == sizePixle.width() ) &&
+						( ((qreal)((int)( sizePixle.height() ))) == sizePixle.height() ) ){
+					//if the pixle hight and width are integers
+					bUsePixmap = true;
+				}//else hight and width are not integers -> don't use pixmap
+			}else{//default paintwidth is 1
+				bUsePixmap = true;
+			}
+			if ( bUsePixmap ){
+				//adapt painter to paint also on a pixmap
+				DEBUG_OUT_L3(<<"cFibGraphicsItemFibObject("<<this<<")::paint( pPainter="<<pPainter<<", pOption="<<pOption<<", pWidget="<<pWidget<<" ) pPixmapForFibObject = new QPixmap( "<< (boundingRectangle.width() + 8) <<", "<< (boundingRectangle.height() + 8 )<<" )"<<endl<<flush);
+				pPixmapForFibObject = new QPixmap(
+					boundingRectangle.width() + 8 ,
+					boundingRectangle.height() + 8 );
+				
+				pPixmapForFibObject->fill( QColor( 0, 0, 0, 0 ) );
+				
+				pPainterPixmap = new QPainter();
+				pPainterPixmap->begin( pPixmapForFibObject );
+			}
+		}
+	}//end if painter not NULL
 	
 	cEvalueSimpleRGBA255QPainter * pEvalueSimpleRGBA255QPainter = NULL;
 	
@@ -384,21 +482,45 @@ void cFibGraphicsItemFibObject::paint( QPainter * pPainter,
 			pFibGraphicsScene->getEvalueSimpleRGBA255QPainter();
 		if ( pEvalueSimpleRGBA255QPainterGraphicScene ){
 			//cEvalueSimpleRGBA255QPainter from the graphic scene exists -> use it
-			pEvalueSimpleRGBA255QPainter = new cEvalueSimpleRGBA255QPainter(
-				pPainter, *pEvalueSimpleRGBA255QPainterGraphicScene );
+			if ( pPainterPixmap ){
+				//use also the pixmap painter
+				pEvalueSimpleRGBA255QPainter = new cEvalueSimpleRGBA255TwoQPainter(
+					pPainter, pPainterPixmap, *pEvalueSimpleRGBA255QPainterGraphicScene );
+				
+				((cEvalueSimpleRGBA255TwoQPainter*)pEvalueSimpleRGBA255QPainter)->
+					setOffsetSecondPainter( ( boundingRectangle.left() - 4 ),
+						( boundingRectangle.top() - 4 ) );
+				
+			}else{//use just one painter
+				pEvalueSimpleRGBA255QPainter = new cEvalueSimpleRGBA255QPainter(
+					pPainter, *pEvalueSimpleRGBA255QPainterGraphicScene );
+			}
 		}
 		//set the pen
 		//TODO what if a point is not a quadrangle?
 		pFibGraphicsScene->setPenForPointSize( pPainter );
+		if ( pPainterPixmap ){
+			pFibGraphicsScene->setPenForPointSize( pPainterPixmap );
+		}
 	}
 	if ( pEvalueSimpleRGBA255QPainter == NULL ){
 		//use dummy cEvalueSimpleRGBA255QPainter
-		pEvalueSimpleRGBA255QPainter = new cEvalueSimpleRGBA255QPainter( pPainter );
+		if ( pPainterPixmap ){
+			//use also the pixmap painter
+			pEvalueSimpleRGBA255QPainter = new cEvalueSimpleRGBA255TwoQPainter(
+				pPainter, pPainterPixmap );
+			
+			((cEvalueSimpleRGBA255TwoQPainter*)pEvalueSimpleRGBA255QPainter)->
+				setOffsetSecondPainter( ( boundingRectangle.left() - 4 ),
+					( boundingRectangle.top() - 4 ) );
+		}else{//use just one painter
+			pEvalueSimpleRGBA255QPainter = new cEvalueSimpleRGBA255QPainter( pPainter );
+		}
 	}
 	bool bFibObjectEvalued = false;
 	if ( pFibObjectCopy ){
 		DEBUG_OUT_L3(<<"cFibGraphicsItemFibObject("<<this<<")::paint( pPainter="<<pPainter<<", pOption="<<pOption<<", pWidget="<<pWidget<<" ) evalue pFibObjectCopy"<<endl<<flush);
-		/*TODO adapt: skip root objects so they dont set the input varaibles
+		/*TODO adapt: skip root objects so they don't set the input varaibles
 		bFibObjectEvalued = pFibObjectCopy->evalueObjectSimple(
 			*pEvalueSimpleRGBA255QPainter );
 		*/
@@ -423,17 +545,68 @@ void cFibGraphicsItemFibObject::paint( QPainter * pPainter,
 			*pEvalueSimpleRGBA255QPainter );
 	}//else Error no Fib object to evalue
 	if ( bFibObjectEvalued ){
+		const QRectF boundingRectangleEvalued =
+			pEvalueSimpleRGBA255QPainter->boundingRectangle;
+		//update pGraphicsPixmapItemForFibObject if possible
+		if ( pPainterPixmap ){
+			pPainterPixmap->end();
+			//a pixmap was evalued for the Fib object
+			DEBUG_OUT_L3(<<"cFibGraphicsItemFibObject("<<this<<")::paint( pPainter="<<pPainter<<", pOption="<<pOption<<", pWidget="<<pWidget<<" ) a pixmap was evalued for the Fib object"<<endl<<flush);
+			
+			//the start point wher to start copy the pismap
+			const qreal fPixmapLeftClip = boundingRectangleEvalued.x() -
+					( boundingRectangle.x() - 4 );
+			const qreal fPixmapTopClip = boundingRectangleEvalued.y() -
+					( boundingRectangle.y() - 4 );
+			
+			if ( boundingRectangleEvalued.isValid() &&
+					( 0 <= fPixmapLeftClip ) && ( 0 <= fPixmapTopClip ) &&
+					( ( boundingRectangleEvalued.width() + fPixmapLeftClip ) <=
+						boundingRectangle.width() + 8 ) &&
+					( ( boundingRectangleEvalued.height() + fPixmapTopClip ) <=
+						boundingRectangle.height() + 8 ) ){
+				//new bounding rectangle is contained in pixmap
+				DEBUG_OUT_L3(<<"cFibGraphicsItemFibObject("<<this<<")::paint( pPainter="<<pPainter<<", pOption="<<pOption<<", pWidget="<<pWidget<<" ) new bounding rectangle is contained in pixmap"<<endl<<flush);
+				mutexGraphicsPixmapItemForFibObject.lock();
+				if ( pGraphicsPixmapItemForFibObject ){
+					//delete old graphics pixmap item
+					delete pGraphicsPixmapItemForFibObject;
+					pGraphicsPixmapItemForFibObject = NULL;
+				}
+				
+				DEBUG_OUT_L3(<<"cFibGraphicsItemFibObject("<<this<<")::paint( pPainter="<<pPainter<<", pOption="<<pOption<<", pWidget="<<pWidget<<" ) create a graphic item pixmap object for the Fib objects"<<endl<<flush);
+				//create a graphic item pixmap object for the Fib objects
+				pGraphicsPixmapItemForFibObject = new QGraphicsPixmapItem(
+					//copy the area for the Fib object
+					*pPixmapForFibObject );
+				pGraphicsPixmapItemForFibObject->setOffset(
+					boundingRectangle.left() - 4,
+					boundingRectangle.top() - 4 );
+				mutexGraphicsPixmapItemForFibObject.unlock();
+			}
+		}//end if update pGraphicsPixmapItemForFibObject if possible
+		
 		//update the bounding rectangle of this class
-		DEBUG_OUT_L3(<<"cFibGraphicsItemFibObject("<<this<<")::paint() boundingRectangle=( "<<boundingRectangle.x()<<", "<<boundingRectangle.y()<<" ) "<<boundingRectangle.width()<<","<<boundingRectangle.height()<<endl<<flush);
-		DEBUG_OUT_L3(<<"cFibGraphicsItemFibObject("<<this<<")::paint() evalued boundingRectangle=( "<<pEvalueSimpleRGBA255QPainter->boundingRectangle.x()<<", "<<pEvalueSimpleRGBA255QPainter->boundingRectangle.y()<<" ) "<<pEvalueSimpleRGBA255QPainter->boundingRectangle.width()<<","<<pEvalueSimpleRGBA255QPainter->boundingRectangle.height()<<endl<<flush);
-		if ( boundingRectangle != pEvalueSimpleRGBA255QPainter->boundingRectangle ){
+		DEBUG_OUT_L3(<<"cFibGraphicsItemFibObject("<<this<<")::paint() boundingRectangle=( "<<boundingRectangle.x()<<", "<<boundingRectangle.y()<<" ) w="<<boundingRectangle.width()<<" h="<<boundingRectangle.height()<<endl<<flush);
+		DEBUG_OUT_L3(<<"cFibGraphicsItemFibObject("<<this<<")::paint() evalued boundingRectangle=( "<<boundingRectangleEvalued.x()<<", "<<boundingRectangleEvalued.y()<<" ) w="<<boundingRectangleEvalued.width()<<" h="<<boundingRectangleEvalued.height()<<endl<<flush);
+		if ( boundingRectangle != boundingRectangleEvalued ){
 			//bounding rectangle changed
 			prepareGeometryChange();
-			boundingRectangle = pEvalueSimpleRGBA255QPainter->boundingRectangle;
+			boundingRectangle = boundingRectangleEvalued;
 		}
 	}
+	DEBUG_OUT_L4(<<"cFibGraphicsItemFibObject("<<this<<")::paint( pPainter="<<pPainter<<", pOption="<<pOption<<", pWidget="<<pWidget<<" ) delete pEvalueSimpleRGBA255QPainter"<<endl<<flush);
+	delete pEvalueSimpleRGBA255QPainter;
+	if ( pPainterPixmap != NULL ){
+		//delete duplicate painter
+		DEBUG_OUT_L4(<<"cFibGraphicsItemFibObject("<<this<<")::paint( pPainter="<<pPainter<<", pOption="<<pOption<<", pWidget="<<pWidget<<" ) delete duplicate painter"<<endl<<flush);
+		delete pPainterPixmap;
+		//delete pixmap object
+		DEBUG_OUT_L4(<<"cFibGraphicsItemFibObject("<<this<<")::paint( pPainter="<<pPainter<<", pOption="<<pOption<<", pWidget="<<pWidget<<" ) delete pixmap object"<<endl<<flush);
+		delete pPixmapForFibObject;
+	}
 	
-	DEBUG_OUT_L3(<<"cFibGraphicsItemFibObject("<<this<<")::paint( pPainter="<<pPainter<<", pOption="<<pOption<<", pWidget="<<pWidget<<" ) done"<<endl<<flush);
+	DEBUG_OUT_L2(<<"cFibGraphicsItemFibObject("<<this<<")::paint( pPainter="<<pPainter<<", pOption="<<pOption<<", pWidget="<<pWidget<<" ) done"<<endl<<flush);
 }
 
 
@@ -486,6 +659,13 @@ void cFibGraphicsItemFibObject::fibInputVariableValueChangedEvent(
 	if ( pFibInputVariablesCopy ){
 		pFibInputVariablesCopy->assignValues();
 	}
+	mutexGraphicsPixmapItemForFibObject.lock();
+	if ( pGraphicsPixmapItemForFibObject ){
+		//Fib object needs to be reevaluated -> delete pGraphicsPixmapItemForFibObject
+		delete pGraphicsPixmapItemForFibObject;
+		pGraphicsPixmapItemForFibObject = NULL;
+	}
+	mutexGraphicsPixmapItemForFibObject.unlock();
 	//reevaluate the bounding box (boundingRectangle)
 	paint( NULL, NULL );
 	//redraw this item
@@ -544,6 +724,33 @@ void cFibGraphicsItemFibObject::evalueInputVariables(){
 }
 
 
+/**
+ * Event method
+ * It will be called every time a Fib node (cFibNode), at which
+ * this object is registered, was changed.
+ *
+ * @param pFibNodeChanged a pointer to the event, with the information
+ * 	about the changed Fib node
+ */
+void cFibGraphicsItemFibObject::fibNodeChangedEvent(
+		const eFibNodeChangedEvent * pFibNodeChanged ){
+	
+	if ( ( pFibNodeChanged != NULL ) &&
+			( pFibNodeChanged->pFibNodeChanged != NULL ) &&
+			( pFibNodeChanged->pFibNodeChanged == pFibObjectCopyNode ) &&
+			( pFibNodeChanged->bNodeDeleted ) ){
+		
+		DEBUG_OUT_L2(<<"cFibGraphicsItemFibObject("<<this<<")::fibNodeChangedEvent( pFibNodeChanged="<<pFibNodeChanged<<" ) the Fib node object for the Fib object copy was deleted"<<endl<<flush);
+		/*the Fib node object for the Fib object copy was deleted
+		 -> don't use it or the Fib object copy anymore*/
+		pFibObjectCopy = NULL;
+		pFibObjectCopyNode = NULL;
+		if ( pFibInputVariablesCopy ){
+			delete pFibInputVariablesCopy;
+			pFibInputVariablesCopy = NULL;
+		}
+	}
+}
 
 
 

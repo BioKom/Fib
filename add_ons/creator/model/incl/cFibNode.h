@@ -77,6 +77,8 @@ namespace nCreator{
 
 //cyclic dependencies
 class cFibNodeHandler;
+//forward declarations
+class cFibObjectInfo;
 
 class cFibNode{
 protected:
@@ -228,6 +230,24 @@ public:
 	 * 	@see bIsChangebel
 	 */
 	bool isChangebel() const;
+	
+	/**
+	 * This method inserts the Fib object for the given Fib object info
+	 * into the Fib object of this Fib object node.
+	 * It will be tried to insert the given Fib object as a external
+	 * subobject and a subroot object (if not a same subroot object allready
+	 * exists).
+	 *
+	 * @see cFibElement::insertObjectInElement()
+	 * @see cExtObject
+	 * TODO
+	 * @see cRoot::integrateSubRootObject()
+	 * @param pFibObjectInfo a pointer to the Fib object info object of
+	 * 	the Fib object to insert
+	 * @return true if the Fib object could be inserted, else false
+	 */
+	bool insertFibObjectInfo( cFibObjectInfo * pFibObjectInfo );
+	
 	
 	/**
 	 * With this function you can register a listeners for changes in the

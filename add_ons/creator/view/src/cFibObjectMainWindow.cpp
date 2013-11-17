@@ -47,30 +47,35 @@ History:
 
 #include "cFibObjectMainWindow.h"
 
-#include "cFibNodeHandler.h"
-#include "cMainWindowHandler.h"
-#include "cFibGraphicsScene.h"
-#include "cWidgetFibInputVariables.h"
-
-#include "cFibElement.h"
-#include "cRoot.h"
-
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QMenuBar>
 #include <QToolBar>
 #include <QStatusBar>
 #include <QSettings>
+#include <QVBoxLayout>
 #include <QStyle>
 
 #include <fstream>
+
+#include "cFibElement.h"
+#include "cRoot.h"
+
+#include "cFibNode.h"
+#include "cFibNodeHandler.h"
+#include "cMainWindowHandler.h"
+#include "cFibGraphicsScene.h"
+#include "cWidgetFibInputVariables.h"
+#include "cFibPlainTextEdit.h"
+#include "cFibGraphicsScene.h"
+#include "cDialogSelectFibObject.h"
 
 
 
 using namespace std;
 
-
 using namespace fib::nCreator;
+using namespace fib;
 
 
 
@@ -87,7 +92,8 @@ cFibObjectMainWindow::cFibObjectMainWindow( cFibElement * pInFibObject,
 			getNodeForFibObject( pInFibObject, this, bInIsChangebel ) ),
 		pFibObjectGraphicsScene( NULL ), pFibObjectGraphicsView( NULL ),
 		pCentralWidget( NULL ),
-		pFibPlainTextEdit( NULL ),strCurFilePath(""){
+		pFibPlainTextEdit( NULL ), pDialogSelectFibObject( NULL ),
+		strCurFilePath(""){
 	
 	DEBUG_OUT_L2(<<"cFibObjectMainWindow("<<this<<")::cFibObjectMainWindow( pInFibObject="<<pInFibObject<<") called"<<endl<<flush);
 	
@@ -125,7 +131,8 @@ cFibObjectMainWindow::cFibObjectMainWindow( cFibNode * pInFibNode ):
 		pFibNode( pInFibNode ),
 		pFibObjectGraphicsScene( NULL ), pFibObjectGraphicsView( NULL ),
 		pCentralWidget( NULL ),
-		pFibPlainTextEdit( NULL ), strCurFilePath(""){
+		pFibPlainTextEdit( NULL ), pDialogSelectFibObject( NULL ),
+		strCurFilePath(""){
 	
 	DEBUG_OUT_L2(<<"cFibObjectMainWindow("<<this<<")::cFibObjectMainWindow( pInFibNode="<<pInFibNode<<") called"<<endl<<flush);
 	
@@ -145,6 +152,7 @@ cFibObjectMainWindow::cFibObjectMainWindow( cFibNode * pInFibNode ):
 	setCentralWidget( new QGraphicsView( pFibObjectGraphicsScene, this ) );
 	
 	//create subwindows
+	openDialogSelectFibObject();
 	openPlainTextEdit();
 	
 	setWindowTitle("Fib creator [*]");
@@ -320,6 +328,89 @@ bool cFibObjectMainWindow::closePlainTextEdit(){
 	return true;
 }
 
+//TODO rework more methods for pDialogSelectFibObject
+
+/**
+ * This method opens a subwindow (QDockWidget) for selecting / choosing
+ * Fib objects.
+ * @see pDialogSelectFibObject
+ *
+ * @return true if the choose Fib object dialog could be opened, else false
+ */
+bool cFibObjectMainWindow::openDialogSelectFibObject(){
+	
+	DEBUG_OUT_L2(<<"cFibObjectMainWindow("<<this<<")::openDialogSelectFibObject() called"<<endl<<flush);
+	if ( pDialogSelectFibObject == NULL ){
+		DEBUG_OUT_L3(<<"cFibObjectMainWindow("<<this<<")::openDialogSelectFibObject() create dialog to choose Fib object"<<endl<<flush);
+		pDialogSelectFibObject = new cDialogSelectFibObject( this, pFibNode );
+		
+		QDockWidget * pDockWidget = new QDockWidget( tr("Choose Fib object"), this );
+		pDockWidget->setAllowedAreas(
+			Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea );
+		pDockWidget->setWidget( pDialogSelectFibObject );
+		addDockWidget( Qt::LeftDockWidgetArea, pDockWidget );
+		
+		mapOpenDockWidgets.insert( pDialogSelectFibObject, pDockWidget );
+		
+		return true;
+	}/*else dialog to choose Fib object already exists for this window
+	-> just set node for it*/
+	if ( pDialogSelectFibObject->getAssociatedNode() == pFibNode ){
+		//correct node allready set -> nothing to do
+		DEBUG_OUT_L3(<<"cFibObjectMainWindow("<<this<<")::openDialogSelectFibObject() correct node allready set -> nothing to do"<<endl<<flush);
+		return true;
+	}
+	//set Fib node of this window
+	DEBUG_OUT_L3(<<"cFibObjectMainWindow("<<this<<")::openDialogSelectFibObject() set Fib node of this window"<<endl<<flush);
+	pDialogSelectFibObject->setAssociatedNode( pFibNode );
+	
+	DEBUG_OUT_L2(<<"cFibObjectMainWindow("<<this<<")::openDialogSelectFibObject() done"<<endl<<flush);
+	return true;
+}
+
+
+/**
+ * This method a subwindow (QDockWidget) for selecting / choosing
+ * Fib objects.
+ * @see pDialogSelectFibObject
+ *
+ * @return true if the choose Fib object dialog could be closed, else false
+ */
+bool cFibObjectMainWindow::closeDialogSelectFibObject(){
+	
+	DEBUG_OUT_L2(<<"cFibObjectMainWindow("<<this<<")::closeDialogSelectFibObject() called"<<endl<<flush);
+	if ( pDialogSelectFibObject == NULL ){
+		//dialog to choose Fib object allready closed
+		return true;
+	}
+	//delete dialog to choose Fib object
+	DEBUG_OUT_L3(<<"cFibObjectMainWindow("<<this<<")::closeDialogSelectFibObject() delete dialog to choose Fib object"<<endl<<flush);
+	delete pDialogSelectFibObject;
+	pDialogSelectFibObject = NULL;
+	//find dock widget to delete it
+	DEBUG_OUT_L3(<<"cFibObjectMainWindow("<<this<<")::closeDialogSelectFibObject() find dock widget to delete it"<<endl<<flush);
+	QMap< QWidget *, QDockWidget * >::iterator itrPlainTextDockWidget =
+		mapOpenDockWidgets.find( pDialogSelectFibObject );
+	if ( itrPlainTextDockWidget != mapOpenDockWidgets.end() ){
+		/*Error: no dock widget for dialog to choose Fib object
+		-> dialog to choose Fib object should not exists*/
+		return true;
+	}//else dock widget for dialog to choose Fib object found -> delete them
+	//delete dock widget
+	DEBUG_OUT_L3(<<"cFibObjectMainWindow("<<this<<")::closeDialogSelectFibObject() delete dock widget"<<endl<<flush);
+	QDockWidget * pDockWidget = itrPlainTextDockWidget.value();
+	DEBUG_OUT_L4(<<"cFibObjectMainWindow("<<this<<")::closeDialogSelectFibObject() removeDockWidget( pDockWidget )"<<endl<<flush);
+	removeDockWidget( pDockWidget );
+	DEBUG_OUT_L4(<<"cFibObjectMainWindow("<<this<<")::closeDialogSelectFibObject() delete pDockWidget"<<endl<<flush);
+	delete pDockWidget;
+	DEBUG_OUT_L4(<<"cFibObjectMainWindow("<<this<<")::closeDialogSelectFibObject() delete pDockWidget"<<endl<<flush);
+	mapOpenDockWidgets.erase( itrPlainTextDockWidget );
+	
+	DEBUG_OUT_L2(<<"cFibObjectMainWindow("<<this<<")::closeDialogSelectFibObject() done"<<endl<<flush);
+	return true;
+}
+
+
 
 /**
  * This method creates the widgets used in this window.
@@ -369,6 +460,7 @@ void cFibObjectMainWindow::createSubWidgets(){
 	
 	//create subwindows
 	DEBUG_OUT_L3(<<"cFibObjectMainWindow("<<this<<")::cFibObjectMainWindow() create subwindows"<<endl<<flush);
+	openDialogSelectFibObject();
 	openPlainTextEdit();
 }
 
@@ -465,8 +557,10 @@ void cFibObjectMainWindow::createActions(){
 	pActTogleShowPlaintext = new QAction( QIcon(":/images/plaintext.png"), tr("&Plain text view"), this );
 	//TODO?: pActTogleShowPlaintext->setShortcuts( QKeySequence::Paste);
 	pActTogleShowPlaintext->setStatusTip( tr("Togels the plain text view ") );
-	connect( pActTogleShowPlaintext, SIGNAL( triggered() ), this, SLOT( toglePlaintextWindow() ) );
+	connect( pActTogleShowPlaintext, SIGNAL( triggered() ), this, SLOT( toglePlainTextWindow() ) );
 	
+	//TODO for pDialogSelectFibObject
+	//togleDialogSelectFibObject()
 	
 	//action for show about this application information
 	pActAbout = new QAction( tr("&About"), this );
@@ -678,13 +772,13 @@ bool cFibObjectMainWindow::open(){
 	cFibElement * pLoadedFibObject =
 		cMainWindowHandler::openFibObjectFromFileStatic( &strLoadedFibObject );
 #ifdef DEBUG_FIB_OBJECT
-		cout<<"cFibObjectMainWindow("<<this<<")::open() loaded Fib object:"<<endl;
-		if ( pLoadedFibObject ){
-			pLoadedFibObject->storeXml( cout );
-		}else{
-			cout<<"NULL";
-		}
-		cout<<endl;
+	cout<<"cFibObjectMainWindow("<<this<<")::open() loaded Fib object:"<<endl;
+	if ( pLoadedFibObject ){
+		pLoadedFibObject->storeXml( cout );
+	}else{
+		cout<<"NULL";
+	}
+	cout<<endl;
 #endif //DEBUG_FIB_OBJECT
 	if ( pLoadedFibObject == NULL ){
 		//no new Fib object loaded
@@ -776,14 +870,34 @@ bool cFibObjectMainWindow::closeWindow(){
  *
  * @return true if the plain text view is shown, else false
  */
-bool cFibObjectMainWindow::toglePlaintextWindow(){
+bool cFibObjectMainWindow::toglePlainTextWindow(){
 	
-	DEBUG_OUT_L2(<<"cFibObjectMainWindow("<<this<<")::toglePlaintextWindow() called"<<endl<<flush);
+	DEBUG_OUT_L2(<<"cFibObjectMainWindow("<<this<<")::toglePlainTextWindow() called"<<endl<<flush);
 	if ( ( pFibPlainTextEdit == NULL ) || ( ! pFibPlainTextEdit->isVisible() ) ){
 		//no plain text view exists or is open -> open it
 		return openPlainTextEdit();
 	}//else close plain text view
 	return ( ! closePlainTextEdit() );
+}
+
+
+/**
+ * This slot will action to togle the dialog to choose Fib objects view.
+ *
+ * @see pDialogSelectFibObject
+ * @see openDialogSelectFibObject()
+ * @see closeDialogSelectFibObject()
+ * @return true if the dialog to choose Fib objects is shown, else false
+ */
+bool cFibObjectMainWindow::togleDialogSelectFibObject(){
+	
+	DEBUG_OUT_L2(<<"cFibObjectMainWindow("<<this<<")::togleDialogSelectFibObject() called"<<endl<<flush);
+	if ( ( pDialogSelectFibObject == NULL ) ||
+			( ! pDialogSelectFibObject->isVisible() ) ){
+		//no the dialog to choose Fib objects exists or is open -> open it
+		return openDialogSelectFibObject();
+	}//else close the dialog to choose Fib objects
+	return ( ! closeDialogSelectFibObject() );
 }
 
 
@@ -884,7 +998,7 @@ bool cFibObjectMainWindow::loadFibObject( const QString & szFibObjectPath ){
 bool cFibObjectMainWindow::storeFibObject( const QString & strFilePath ){
 	
 	if ( ( pFibNode == NULL ) || ( pFibNode->getMasterRoot() == NULL ) ){
-		//no Fib object to store name given
+		//no Fib object to store given
 		QMessageBox msgBox( this );
 		msgBox.setWindowTitle("Fib creator save Fib object");
 		msgBox.setText( tr( "No Fib object to store." ).

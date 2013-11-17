@@ -46,6 +46,7 @@ History:
 17.02.2013  Oesterholz  FEATURE_FIB_VECTOR_GET_SIZE_WITH_VARIABLE added
 09.05.2013  Oesterholz  SWITCH_JUST_STORE_AND_EVALUE added
 31.07.2013  Oesterholz  FEATURE_EXT_SUBOBJECT_INPUT_VECTOR removed
+13.11.2013  Oesterholz  FEATURE_INSERT_OBJECT added
 */
 
 
@@ -359,7 +360,7 @@ History:
  * code and reduce the project size
  *
  * created: 09.05.2013 Betti Oesterholz
- * status:  running and tested(09.05.2013)
+ * status:  TODO implement
  *//*
 History:
 */
@@ -368,7 +369,26 @@ History:
 #endif //NEVER
 
 
-
+/**
+ * With this switch a new version of insertObjectInElement() is implemented.
+ * If the insert position is a list element, the insert object method will
+ * now add the to insert Fib object into the list element on the position,
+ * instead of creating a new list element.
+ * Also if the "first" parameter (if true: the inserted object will be the
+ * first subobject) is false, the inserted object will be inserted as the
+ * last subobject of the branch element.
+ *
+ * @see cFibElement::insertObjectInElement()
+ * created: 13.11.2013 Betti Oesterholz
+ * status:  running and tested(15.11.2013)
+ * needed features:
+ * 	- FEATURE_SIMPLE_CONSTRUCTOR
+ * 	- FEATURE_FAST_UPDATE
+ * (deprecated: not FEATURE_INSERT_OBJECT_IN_ELEMENT)
+ *//*
+History:
+*/
+#define FEATURE_INSERT_OBJECT_IN_ELEMENT
 
 
 

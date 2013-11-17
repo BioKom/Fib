@@ -1,6 +1,3 @@
-
-//TODO check
-
 /**
  * @file lInputVariableValueChanged
  * file name: lInputVariableValueChanged.h
@@ -32,7 +29,7 @@
  *
  * This file specifies a listener interface for listening for input
  * variables value changes. If a input variable value changes, the input
- * variable object (cFibInputVariable) for it will send a event to all
+ * variable object (cFibInputVariable) for it will send an event to all
  * registered listeners of this type.
  * @see cFibInputVariable
  */
@@ -55,14 +52,16 @@ namespace fib{
 
 namespace nCreator{
 
+//forward declarations
+class cFibInputVariable;
 
 class lInputVariableValueChanged{
 public:
 	
 	/**
 	 * Event method
-	 * It will be called every time a input variable value (cFibInputVariable),
-	 * at which this object is registered, was changed.
+	 * It will be called every time a input variable value (cFibInputVariable)
+	 * of a variable, at which this object is registered, was changed.
 	 *
 	 * @see cFibInputVariable::dValue
 	 * @param pFibInputVariable a pointer to the changed Fib input variable
@@ -71,7 +70,7 @@ public:
 		const cFibInputVariable * pFibInputVariable ) = 0;
 	
 	/**
-	 * @return the name of the class
+	 * @return the name of this class
 	 */
 	virtual std::string getName() const = 0;
 	

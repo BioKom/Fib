@@ -50,8 +50,6 @@ History:
 
 #include "version.h"
 
-#include "cRoot.h"
-
 #include <QDialog>
 
 #include <QWidget>
@@ -64,18 +62,56 @@ History:
 #include <QVBoxLayout>
 
 
-using namespace std;
-
 
 namespace fib{
 
+//forward declarations
+class cRoot;
+
 namespace nCreator{
+
 class cDialogNewFibObject: public QDialog{
 		Q_OBJECT
+public:
+	
+	/**
+	 * standard constructor for a Fib object node
+	 *
+	 * @param pParent a pointer the parent of this new Fib object dialog window
+	 */
+	explicit cDialogNewFibObject( QWidget * pParent = NULL );
+	
+	/**
+	 * destructor
+	 */
+	virtual ~cDialogNewFibObject();
+	
+	/**
+	 * This method will create the Fib object and return a pointer to the
+	 * Fib (root) object for the dialog.
+	 * BEWARE: You have to care that the returned Fib object is deleted (deleteObject())
+	 *
+	 * @return a pointer to the Fib (root) object for the dialog
+	 */
+	cRoot * getFibObject();
+	
+	/**
+	 * @return the name of this class "cDialogNewFibObject"
+	 */
+	virtual std::string getName() const;
+	
 protected:
 	
 	/**
-	 * Elements fo the image size.
+	 * @return a hint for a good size of this window
+	 */
+	virtual QSize sizeHint() const;
+	
+	
+//members
+	
+	/**
+	 * Elements for the image size.
 	 */
 	/// The label for the width (dimension 1) input field.
 	QLabel * pLabelDimension1;
@@ -157,41 +193,6 @@ protected:
 	QHBoxLayout * pLayoutTransparency;
 	QVBoxLayout * pLayoutMain;
 	
-	
-public:
-	
-	/**
-	 * standard constructor for a Fib object node
-	 *
-	 * @param pParent a pointer the parent of this new Fib object dialog window
-	 */
-	cDialogNewFibObject( QWidget * pParent = NULL );
-	
-	/**
-	 * destructor
-	 */
-	virtual ~cDialogNewFibObject();
-	
-	/**
-	 * This method will create the Fib object and return a pointer to the
-	 * Fib (root) object for the dialog.
-	 * BEWARE: You have to care that the returned Fib object is deleted (deleteObject())
-	 *
-	 * @return a pointer to the Fib (root) object for the dialog
-	 */
-	cRoot * getFibObject();
-	
-	/**
-	 * @return the name of this class "cDialogNewFibObject"
-	 */
-	virtual std::string getName() const;
-	
-protected:
-	
-	/**
-	 * @return a hint for a good size of this window
-	 */
-	virtual QSize sizeHint() const;
 	
 };//end class cDialogNewFibObject
 

@@ -46,7 +46,7 @@
  * Normally for every Fib object (@see pFibObject) there should be just one node.
  *
  * TODO:
- * @see cPlainArea
+ * @see cPlainArea (should store the area for the node)
  */
 /*
 History:
@@ -59,6 +59,16 @@ History:
 
 
 #include "cFibNode.h"
+
+#include "cFibNodeHandler.h"
+#include "cFibObjectInfo.h"
+#include "cFibObjectSourceFibDb.h"
+#include "nFibObjectTools.h"
+
+#include "cExtObject.h"
+#include "cList.h"
+#include "cFunction.h"
+#include "cFunctionValue.h"
 
 
 using namespace std;
@@ -273,6 +283,183 @@ const cFibElement * cFibNode::getMasterRootConst() const{
 bool cFibNode::isChangebel() const{
 	
 	return bIsChangebel;
+}
+
+
+/**
+ * This method inserts the Fib object for the given Fib object info
+ * into the Fib object of this Fib object node.
+ * It will be tried to insert the given Fib object as a external
+ * subobject and a subroot object (if not a same subroot object allready
+ * exists).
+ *
+ * @see cFibElement::insertObjectInElement()
+ * @see cExtObject
+ * @see cRoot::integrateSubRootObject()
+ * @param pFibObjectInfo a pointer to the Fib object info object of
+ * 	the Fib object to insert
+ * @return true if the Fib object could be inserted, else false
+ */
+bool cFibNode::insertFibObjectInfo( cFibObjectInfo * pFibObjectInfo ){
+	
+	DEBUG_OUT_L2(<<"cFibNode("<<this<<")::insertFibObjectInfo( pFibObjectInfo="<<pFibObjectInfo<<" ) started"<<endl<<flush);
+	if ( ( ! isChangebel() ) || ( pFibObject == NULL ) ){
+		//Fib object for this node not changebel -> can't insert a Fib object in it
+		return false;
+	}
+	if ( pFibObjectInfo == NULL ){
+		//no Fib object for the new main window -> return false
+		return false;
+	}
+	cFibNodeHandler * pFibNodeHandler = cFibNodeHandler::getInstance();
+	
+	if ( pFibNodeHandler ){
+		pFibNodeHandler->lock( this );
+	}
+	
+	//try to integrate the Fib object for the Fib object info object
+	cExtObject * pExternalSubobjectToInsert = NULL;
+	if ( ( pFibObjectInfo->getFibObjectSource() != NULL ) &&
+			( pFibObjectInfo->getFibObjectSource()->getName() ==
+				"cFibObjectSourceFibDb" ) ){
+		DEBUG_OUT_L3(<<"cFibNode("<<this<<")::insertFibObjectInfo( pFibObjectInfo="<<pFibObjectInfo<<" ) using Fib database object"<<endl<<flush);
+		
+		cFibObjectSourceFibDb * pFibObjectSourceFibDb =
+			((cFibObjectSourceFibDb*)(pFibObjectInfo->getFibObjectSource()));
+		//if the to integrate Fib object is a database object
+		const unsignedIntFib ulNumberOfInputVariables =
+			pFibObjectInfo->getNumberOfInputVariables();
+		cVectorExtObject vecInInputValues( ulNumberOfInputVariables );
+		if ( 0 < ulNumberOfInputVariables ){
+			//evalue and set default values for the input variables
+			int iOutStatus = 0;
+			cFibElement * pLoadedFibObject =
+				pFibObjectInfo->loadFibObjectFromSource( &iOutStatus );
+			
+			if ( ( pLoadedFibObject != NULL ) && ( 0 <= iOutStatus ) &&
+					( pLoadedFibObject->getType() == 'r' ) ){
+				
+				cRoot * pLoadedRootObject = (static_cast<cRoot*>(pLoadedFibObject));
+				
+				for ( unsignedIntFib uiActualInVar = 1;
+						uiActualInVar <= ulNumberOfInputVariables; uiActualInVar++ ){
+					vecInInputValues.setValue( uiActualInVar,
+						pLoadedRootObject->getStandardValueOfInputVariable( uiActualInVar ) );
+				}
+			}/*else no Fib object for Fib object info or error while loading
+				 * Fib object for Fib object info or not a root element
+				 * -> no main window can be created*/
+			
+		}
+		//create external subobject to insert
+		pExternalSubobjectToInsert = new cExtObject(
+			pFibObjectSourceFibDb->getFibDbIdentifier(), vecInInputValues );
+		
+	}else if ( 2 < pFibObjectInfo->getNumberOfFibElements() ){
+		/*else the to integrate Fib object is not a database object
+		 and if the Fib object for the info object contains more than a root
+		 element and a other Fib element*/
+		DEBUG_OUT_L3(<<"cFibNode("<<this<<")::insertFibObjectInfo( pFibObjectInfo="<<pFibObjectInfo<<" ) using not a Fib database object"<<endl<<flush);
+		int iOutStatus = 0;
+		cFibElement * pLoadedFibObject =
+			pFibObjectInfo->loadFibObjectFromSource( &iOutStatus );
+		
+		if ( ( pLoadedFibObject == NULL ) || ( iOutStatus < 0 ) ){
+			/* no Fib object for Fib object info or error while loading
+			 * Fib object for Fib object info
+			 * -> no main window can be created*/
+			if ( pFibNodeHandler ){
+				pFibNodeHandler->unlock( this );
+			}
+			return false;
+		}
+		//the root element where to integrate the loaded Fib object
+		cRoot * pNextSuperiorRoot = ( pFibObject->getType() == 'r' ) ?
+			(static_cast<cRoot*>(pFibObject)) :
+			pFibObject->getSuperiorRootElement();
+		
+		if ( pNextSuperiorRoot != NULL ){
+			//more than root and one Fib element in the to integrate Fib object
+			//try to integrate Fib (root) object in next superior root element
+			const longFib lIdentifier = pNextSuperiorRoot->integrateSubRootObject(
+				pLoadedFibObject );
+			
+			if ( lIdentifier != 0 ){
+				/*the Fib object could be inserted as a subroot object
+				 -> create external subobject for it*/
+				//if the to integrate Fib object is a database object
+				cRoot * pSubRoot =
+					pNextSuperiorRoot->getAccessibleRootObject( lIdentifier );
+				const unsignedIntFib ulNumberOfInputVariables =
+					pSubRoot->getNumberOfInputVariables();
+				cVectorExtObject vecInInputValues( ulNumberOfInputVariables );
+				if ( 0 < ulNumberOfInputVariables ){
+					//evalue and set default values for the input variables
+					for ( unsignedIntFib uiActualInVar = 1;
+							uiActualInVar <= ulNumberOfInputVariables; uiActualInVar++ ){
+						vecInInputValues.setValue( uiActualInVar,
+							pSubRoot->getStandardValueOfInputVariable( uiActualInVar ) );
+					}
+				}//end if input variables exists
+				//create external subobject to insert
+				pExternalSubobjectToInsert = new cExtObject(
+					lIdentifier, vecInInputValues );
+			}
+		}
+	}//end if Fib database object
+	DEBUG_OUT_L3(<<"cFibNode("<<this<<")::insertFibObjectInfo( pFibObjectInfo="<<pFibObjectInfo<<" ) integrating Fib object of info (pExternalSubobjectToInsert="<<pExternalSubobjectToInsert<<")"<<endl<<flush);
+	cFibElement * pFibObjectToInsert = pExternalSubobjectToInsert;
+	if ( pFibObjectToInsert == NULL ){
+		//insert Fib object directly
+		int iOutStatus = 0;
+		cFibElement * pLoadedFibObject =
+			pFibObjectInfo->loadFibObjectFromSource( &iOutStatus );
+		
+		if ( ( pLoadedFibObject == NULL ) || ( iOutStatus < 0 ) ){
+			/* no Fib object for Fib object info or error while loading
+			 * Fib object for Fib object info
+			 * -> no main window can be created*/
+			if ( pFibNodeHandler ){
+				pFibNodeHandler->unlock( this );
+			}
+			return false;
+		}
+		const list< cFibVariable * > liInputvariables =
+			nFibObjectTools::evalueInputVariables( pLoadedFibObject );
+		
+		pFibObjectToInsert = pLoadedFibObject->clone();
+		//define every input variable (create a function element with value 0 for it)
+		cFunctionValue subFunValueNull( 0.0 );
+		for ( list< cFibVariable * >::const_reverse_iterator
+				itrActualVariable = liInputvariables.rbegin();
+				itrActualVariable != liInputvariables.rend(); itrActualVariable++ ){
+			
+			cFunction * pNewFunction = new cFunction( subFunValueNull,
+				pFibObjectToInsert );
+			
+			pFibObjectToInsert->replaceVariable( *itrActualVariable,
+				pNewFunction->getDefinedVariable() );
+			
+			pFibObjectToInsert = pNewFunction;
+		}
+	}//else insert the created external object into the Fib object of this node
+	
+	const bool bExtObjectInserted = pFibObject->insertObjectInElement(
+		pFibObjectToInsert, 'u', 0, false );
+	if ( ! bExtObjectInserted ){
+		//external object could not be inserted -> delete it
+		if ( pFibNodeHandler ){
+			pFibNodeHandler->unlock( this );
+		}
+		pExternalSubobjectToInsert->deleteObject();
+		return false;
+	}
+	if ( pFibNodeHandler ){
+		pFibNodeHandler->unlock( this );
+	}
+	fibObjectChanged();
+	DEBUG_OUT_L2(<<"cFibNode("<<this<<")::insertFibObjectInfo( pFibObjectInfo="<<pFibObjectInfo<<" ) done insert OK"<<endl<<flush);
+	return true;
 }
 
 

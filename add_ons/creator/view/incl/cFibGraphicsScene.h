@@ -58,16 +58,8 @@ History:
 #include "version.h"
 
 #include "fibDatatyps.h"
-#include "cFibElement.h"
-#include "cFibVariable.h"
-#include "cDomain.h"
 
-#include "cFibNode.h"
 #include "lFibNodeChanged.h"
-#include "cFibNodeHandler.h"
-#include "cFibGraphicsItem.h"
-#include "cWidgetFibInputVariables.h"
-#include "cEvalueSimpleRGBA255QPainter.h"
 
 #include <set>
 #include <string>
@@ -79,129 +71,23 @@ History:
 
 namespace fib{
 
+//forward declarations
+class cFibElement;
+class cFibVariable;
+class cDomain;
+
 namespace nCreator{
 
-//cyclic dependencies
+//forward declarations
 class cFibObjectMainWindow;
+class cFibNode;
+class cFibNodeHandler;
+class cFibGraphicsItem;
+class cWidgetFibInputVariables;
+class cEvalueSimpleRGBA255QPainter;
 
 class cFibGraphicsScene: public QGraphicsScene, public lFibNodeChanged{
 		Q_OBJECT
-
-protected:
-	
-	/**
-	 * A pointer to the Fib node object for this widget.
-	 */
-	cFibNode * pFibNode;
-	
-	/**
-	 * The version of the Fib object for the node, which is displayed.
-	 * Every time the Fib object is changed the version number is counted up.
-	 * If this number is not equal to the Fib node version number the shown
-	 * Fib object needs to be updated.
-	 * @see cFibNode::ulVersion
-	 * @see cFibNode::fibObjectChanged()
-	 */
-	unsigned long ulFibNodeVersionDisplayed;
-	
-	
-	/**
-	 * A pointer the the widget for the input variables, or NULL if non
-	 * exists.
-	 * @see evalueInputVariables()
-	 * @see getInputVariablesWidget()
-	 */
-	cWidgetFibInputVariables * pWidgetFibInputVariables;
-	
-#ifdef TODO_WEG
-	/**
-	 * A list with the input variables of the Fib object for the Fib node.
-	 * 	first: a pointer to the input variable
-	 * 	second: a value for the input variable
-	 * Input variables of a Fib object are variables, which are used in the
-	 * Fib object, but not defined in it. So these variables need to be
-	 * set to a value in order to evalue the Fib object.
-	 *
-	 * @see pFibNode
-	 */
-	list< pair< cFibVariable *, doubleFib > > pWidgetInputVariables;
-#endif //TODO_WEG
-	
-	
-	/**
-	 * A pointer to the main window for this widget, or NULL if non exists.
-	 */
-	cFibObjectMainWindow * pMainWindow;
-	
-	/**
-	 * This mutex is to controll access to liFibParts.
-	 * Lock this mutex befor using or changing liFibParts and unlock it afterwards.
-	 * @see liFibParts
-	 */
-	mutable QMutex mutexFibParts;
-	
-	
-	
-	/**
-	 * A pointer cEvalueSimpleRGBA255QPainter template for this graphic scene.
-	 * If existing, this painter will contain the enviroment / domain
-	 * information to paint a Fib object into this graphic scene.
-	 * This object can be used with the template constructor of the
-	 * cEvalueSimpleRGBA255QPainter to construct a cEvalueSimpleRGBA255QPainter
-	 * object which has the correct enviroment parameters set and uses
-	 * the actual painter (QPainter) object.
-	 * If you use this cEvalueSimpleRGBA255QPainter template, you have still
-	 * to adapt the QPainter for painting (e.g. you have to set the QPainter
-	 * pen ( setPen() ) to the correct values (e. g. width) vor drawing points.)
-	 * @see cEvalueSimpleRGBA255QPainter( QPainter * pInPainter, const cEvalueSimpleRGBA255QPainter & evalueSimpleRGBA255 );
-	 * @see QPainter
-	 * @see pFibRootNode
-	 */
-	cEvalueSimpleRGBA255QPainter * pEvalueSimpleRGBA255QPainter;
-	
-	
-	/**
-	 * The node for the root (top most) Fib root object of the Fib node object
-	 * for this widget.
-	 * It should contain the domains for this graphic scene, so the graphic
-	 * scene can be tailord to the Fib object domains.
-	 * @see pFibNode
-	 * @see pEvalueSimpleRGBA255QPainter
-	 */
-	cFibNode * pFibRootNode;
-	
-	/**
-	 * The width of a point of the Fib object.
-	 * @see pFibNode
-	 */
-	qreal dPointWidth;
-	
-	/**
-	 * The height of a point of the Fib object.
-	 * @see pFibNode
-	 */
-	qreal dPointHeight;
-	
-	/**
-	 * The minimum value for the direction 1 (x).
-	 */
-	qreal dDirection1Minimum;
-	
-	/**
-	 * The maximum value for the direction 1 (x).
-	 */
-	qreal dDirection1Maximum;
-	
-	/**
-	 * The minimum value for the direction 2 (x).
-	 */
-	qreal dDirection2Minimum;
-	
-	/**
-	 * The maximum value for the direction 2 (x).
-	 */
-	qreal dDirection2Maximum;
-	
 public:
 
 	/**
@@ -211,7 +97,7 @@ public:
 	 * 	@see pFibNode
 	 * @param pParent a pointer to parent of this widget
 	 */
-	cFibGraphicsScene( cFibNode * pInFibNode, QWidget * pParent = NULL );
+	explicit cFibGraphicsScene( cFibNode * pInFibNode, QWidget * pParent = NULL );
 	
 	/**
 	 * parameter constructor for a graphics view of a Fib object
@@ -222,6 +108,19 @@ public:
 	 * 	@see pMainWindow
 	 */
 	cFibGraphicsScene( cFibNode * pInFibNode, cFibObjectMainWindow * pInMainWindow );
+	
+	/**
+	 * A parameter constructor for a graphics view of a Fib object
+	 *
+	 * @param pInFibObject a pointer to the Fib object for the widget to
+	 * 	construct, the node for it will be used as the Fib node for this
+	 * 	Fib graphic scene; use this constructor if you need a listener for
+	 * 	node changes (this object will be added as a listener)
+	 * 	@see pFibNode
+	 * 	@see cFibNodeHandler::getNodeForFibObject()
+	 * @param pParent a pointer to parent of this widget
+	 */
+	explicit cFibGraphicsScene( cFibElement * pInFibObject, QWidget * pParent = NULL );
 	
 	/**
 	 * destructor
@@ -440,6 +339,18 @@ public:
 	bool setPenForPointSize( QPainter * pPainter ) const;
 	
 	/**
+	 * This method returns the size of a point.
+	 *
+	 * @see dPointWidth
+	 * @see dPointHeight
+	 * @see setPenForPointSize()
+	 * @see updateForDimensionChange()
+	 * @see pFibNode
+	 * @return the size of a point
+	 */
+	QSizeF getPointSize() const;
+	
+	/**
 	 * @return the name of this class "cFibGraphicsScene"
 	 */
 	virtual std::string getName() const;
@@ -548,6 +459,122 @@ public slots:
 	 * @param fibNodeChangedEvent the information for the change event
 	 */
 	void notifyNodeForChange( const eFibNodeChangedEvent & fibNodeChangedEvent );
+	
+
+protected:
+	
+	/**
+	 * A pointer to the Fib node object for this widget.
+	 */
+	cFibNode * pFibNode;
+	
+	/**
+	 * The version of the Fib object for the node, which is displayed.
+	 * Every time the Fib object is changed the version number is counted up.
+	 * If this number is not equal to the Fib node version number the shown
+	 * Fib object needs to be updated.
+	 * @see cFibNode::ulVersion
+	 * @see cFibNode::fibObjectChanged()
+	 */
+	unsigned long ulFibNodeVersionDisplayed;
+	
+	
+	/**
+	 * A pointer the the widget for the input variables, or NULL if non
+	 * exists.
+	 * @see evalueInputVariables()
+	 * @see getInputVariablesWidget()
+	 */
+	cWidgetFibInputVariables * pWidgetFibInputVariables;
+	
+#ifdef TODO_WEG
+	/**
+	 * A list with the input variables of the Fib object for the Fib node.
+	 * 	first: a pointer to the input variable
+	 * 	second: a value for the input variable
+	 * Input variables of a Fib object are variables, which are used in the
+	 * Fib object, but not defined in it. So these variables need to be
+	 * set to a value in order to evalue the Fib object.
+	 *
+	 * @see pFibNode
+	 */
+	list< pair< cFibVariable *, doubleFib > > pWidgetInputVariables;
+#endif //TODO_WEG
+	
+	
+	/**
+	 * A pointer to the main window for this widget, or NULL if non exists.
+	 */
+	cFibObjectMainWindow * pMainWindow;
+	
+	/**
+	 * This mutex is to controll access to liFibParts.
+	 * Lock this mutex befor using or changing liFibParts and unlock it afterwards.
+	 * @see liFibParts
+	 */
+	mutable QMutex mutexFibParts;
+	
+	
+	
+	/**
+	 * A pointer cEvalueSimpleRGBA255QPainter template for this graphic scene.
+	 * If existing, this painter will contain the enviroment / domain
+	 * information to paint a Fib object into this graphic scene.
+	 * This object can be used with the template constructor of the
+	 * cEvalueSimpleRGBA255QPainter to construct a cEvalueSimpleRGBA255QPainter
+	 * object which has the correct enviroment parameters set and uses
+	 * the actual painter (QPainter) object.
+	 * If you use this cEvalueSimpleRGBA255QPainter template, you have still
+	 * to adapt the QPainter for painting (e.g. you have to set the QPainter
+	 * pen ( setPen() ) to the correct values (e. g. width) vor drawing points.)
+	 * @see cEvalueSimpleRGBA255QPainter( QPainter * pInPainter, const cEvalueSimpleRGBA255QPainter & evalueSimpleRGBA255 );
+	 * @see QPainter
+	 * @see pFibRootNode
+	 */
+	cEvalueSimpleRGBA255QPainter * pEvalueSimpleRGBA255QPainter;
+	
+	
+	/**
+	 * The node for the root (top most) Fib root object of the Fib node object
+	 * for this widget.
+	 * It should contain the domains for this graphic scene, so the graphic
+	 * scene can be tailord to the Fib object domains.
+	 * @see pFibNode
+	 * @see pEvalueSimpleRGBA255QPainter
+	 */
+	cFibNode * pFibRootNode;
+	
+	/**
+	 * The width of a point of the Fib object.
+	 * @see pFibNode
+	 */
+	qreal dPointWidth;
+	
+	/**
+	 * The height of a point of the Fib object.
+	 * @see pFibNode
+	 */
+	qreal dPointHeight;
+	
+	/**
+	 * The minimum value for the direction 1 (x).
+	 */
+	qreal dDirection1Minimum;
+	
+	/**
+	 * The maximum value for the direction 1 (x).
+	 */
+	qreal dDirection1Maximum;
+	
+	/**
+	 * The minimum value for the direction 2 (x).
+	 */
+	qreal dDirection2Minimum;
+	
+	/**
+	 * The maximum value for the direction 2 (x).
+	 */
+	qreal dDirection2Maximum;
 	
 };//end class cFibGraphicsScene
 

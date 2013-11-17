@@ -3,7 +3,7 @@ Fib creator
 ===========
 
 In this folder the Fib creator submodul.
-It is an application, with a grapical user interface, for creating and
+It is an application, with a graphical user interface, for creating and
 changing Fib objects.
 
 

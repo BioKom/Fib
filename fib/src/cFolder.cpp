@@ -41,6 +41,20 @@ History:
 
 #include <cstring>
 #include <cstdio>
+#include <cstdlib>
+
+
+
+/** @def PATH_SEPERATOR the operatingsystem dependent seperator in filepath */
+#ifdef linux
+	#define PATH_SEPERATOR      '/'
+	#define NOT_PATH_SEPERATOR  '\\'
+#else//dos/windows
+	#define PATH_SEPERATOR      '\\'
+	#define NOT_PATH_SEPERATOR  '/'
+#endif
+
+
 
 /**
  * constructor
@@ -69,6 +83,8 @@ cFolder::cFolder( const string & szInFolderName ):
 /**
  * Updates the data of the folder.
  * This means the folder information is reread.
+ *
+ * @return true if the folder, this class represents, is accessible, else false
  */
 bool cFolder::update(){
 	
@@ -78,7 +94,7 @@ bool cFolder::update(){
 	liFiles.clear();
 	bGood = true;
 	
-	//read the folderentries
+	//read the folder entries
 	DIR * pFolder = opendir( szFolderName.c_str() );
 	
 	if ( pFolder == NULL ){
@@ -93,7 +109,7 @@ bool cFolder::update(){
 	}
 	closedir( pFolder );
 	
-	//read the information of the folderentries
+	//read the information of the folder entries
 	for ( list<string>::iterator itrEntry = liEntries.begin();
 			itrEntry != liEntries.end(); itrEntry++ ){
 		
@@ -121,6 +137,7 @@ bool cFolder::update(){
 	return bGood;
 }
 
+
 /**
  * @return true if the folder, this class represents, is accessible, else false
  */
@@ -131,7 +148,7 @@ bool cFolder::good() const{
 
 
 /**
- * Returns the entryinformation for the entry with the given number.
+ * Returns the entry information for the entry with the given number.
  *
  * @param uiEntryNumber the number of the entry, for which the information
  * 	is to be returned
@@ -157,7 +174,7 @@ struct stat cFolder::getInfo( unsigned int uiEntryNumber ) const{
 }
 
 /**
- * Returns the entryinformation for the entry with the given name.
+ * Returns the entry information for the entry with the given name.
  *
  * @param szEntryName the name of the entry, for which the information
  * 	is to be returned
@@ -301,7 +318,88 @@ list<string> cFolder::getFiles() const{
 }
 
 
+/**
+ * This method creates the folder if it didn't exists.
+ *
+ * @return true if the folder, this class represents, is accessible, else false
+ * 	@see update()
+ */
+bool cFolder::create(){
+	
+	if ( bGood ){
+		//path allready exists
+		return true;
+	}
+	//ulMaxChars= maximal chars to read; to avoid infinity loops
+	unsigned long ulMaxChars = 0;
+	unsigned long ulActualChar = 0;
+	
+	if  ( szFolderName.empty() ){
+		//no path to create
+		return false;
+	}
+	//begin with the first folder, check if the folder exists and if not creat it
+	const char * szPath = szFolderName.c_str();
+	char szActualFolder[ szFolderName.size() + 1 ];
+	char mkDir[ szFolderName.size() + 20 ];
+	for ( ; ( ulMaxChars < 100000 ) && ( szPath[ ulActualChar ] != 0 ) ;
+			ulMaxChars++ ){
+		//check next szActualFolder
+		for ( ; ( ulMaxChars < 100000 ) && ( szPath[ ulActualChar ] != 0 ) ;
+				ulMaxChars++ ){
+			//read szActualFolder from path
+			if ( szPath[ ulActualChar ] == PATH_SEPERATOR ){
+			
+				szActualFolder[ ulActualChar ] = PATH_SEPERATOR;
+				ulActualChar++;
+				break;
+			}else{
+				szActualFolder[ ulActualChar ] = szPath[ ulActualChar ];
+				ulActualChar++;
+			}
+		}
+		szActualFolder[ ulActualChar ] = 0x0;
+		if ( ( ulActualChar != 0 ) &&
+				! ( ( ulActualChar == 1 ) && ( szActualFolder[ 0 ] == PATH_SEPERATOR ) ) &&
+				! ( ( ulActualChar == 2 ) && (szActualFolder[ 0 ]=='.') &&
+					( szActualFolder[ 1 ] == PATH_SEPERATOR ) )
+				&& ! ( checkPath( szActualFolder ) ) ){
+			//if in szActualFolder stands a valid path
+			sprintf( mkDir, "mkdir %s ", szActualFolder );
+			system( mkDir );
+		}
+		if ( szPath[ ulActualChar ] == 0x0 ){
+			//end of path reached
+			break;
+		}
+	}//end for all path characters
+	
+	return update();
+}
 
+
+/**
+ * This function checks if a file for the given path exists and can be
+ * opened.
+ *
+ * @param szPath a string for the path to be checked
+ * @return true if the path exists, else false
+ */
+bool cFolder::checkPath( char * szPath ){
+
+	if  ( szPath == NULL ){
+		//no path given
+		return false;
+	}
+	//read the folder entries
+	DIR * pFolder = opendir( szPath );
+	
+	if ( pFolder == NULL ){
+		//no such folder
+		return false;
+	}
+	return false;
+}
 
 
 

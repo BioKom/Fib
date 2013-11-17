@@ -124,6 +124,12 @@ protected:
 	 */
 	bool bPointEvalued;
 	
+	/**
+	 * The height of the image so that it can be inverted.
+	 * All vertical positions y will be ( fHeight - position.getValue( 2 ) ) .
+	 */
+	qreal fHeight;
+	
 public:
 	
 	/**
@@ -138,6 +144,8 @@ public:
 	 *
 	 * @param pInPainter the painter with which the image should be drawn
 	 * 	@see pPainter
+	 * @param fInHeight the height of the image so that it can be inverted
+	 * 	@see fHeight
 	 * @param dInScalingFactorAlpha the scaling factor for the color alpha
 	 * 	@see dScalingFactorAlpha
 	 * @param dInScalingFactorRed the scaling factor for the color red
@@ -150,7 +158,7 @@ public:
 	 * 	@see dScalingFactorGrayscale
 	 */
 	cEvalueSimpleRGBA255QPainter(
-		QPainter * pInPainter,
+		QPainter * pInPainter, const qreal fInHeight = 0.0,
 		const qreal dInScalingFactorAlpha = 1.0,
 		const qreal dInScalingFactorRed = 1.0,
 		const qreal dInScalingFactorGreen = 1.0,
@@ -182,7 +190,7 @@ public:
 		cEvalueSimpleRGBA255QPainter & evalueSimpleRGBA255 );
 
 	/**
-	 * desstructor
+	 * destructor
 	 */
 	virtual ~cEvalueSimpleRGBA255QPainter();
 
@@ -217,6 +225,14 @@ public:
 	virtual bool evaluePosition( const cVectorPosition & vPosition,
 		const list<cVectorProperty> & vProperties );
 	
+	/**
+	 * This method draws the given point.
+	 *
+	 * @param vPosition the position of the point to draw
+	 * @param color the color of the point to draw
+	 */
+	virtual void drawPoint( const cVectorPosition & vPosition,
+		const QColor & color );
 	
 	/**
 	 * @return scaling factor for the transparency values
@@ -247,6 +263,21 @@ public:
 	 * 	@see dScalingFactorGrayscale
 	 */
 	qreal getScalingFactorGrayscale() const;
+	
+	
+	/**
+	 * @return the height of the image so that it can be inverted
+	 * 	All vertical positions y will be ( fHeight - position.getValue( 2 ) )
+	 * 	@see fHeight
+	 */
+	qreal getHeight() const;
+
+	/**
+	 * @param fInHeight the height of the image so that it can be inverted
+	 * 	All vertical positions y will be ( fHeight - position.getValue( 2 ) )
+	 * 	@see fHeight
+	 */
+	void setHeight( const qreal & fInHeight );
 	
 };//class cEvalueSimpleRGBA255QPainter
 

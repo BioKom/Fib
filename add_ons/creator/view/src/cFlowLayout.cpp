@@ -1,6 +1,3 @@
-
-//TODO check
-
 /**
  * @file cFlowLayout
  * file name: cFlowLayout.cpp
@@ -114,7 +111,7 @@ cFlowLayout::~cFlowLayout(){
  */
 int cFlowLayout::count() const{
 	
-	return liLayoutItems.size();
+	return liLayoutItems.count();
 }
 
 
@@ -182,7 +179,7 @@ void cFlowLayout::addItem( QLayoutItem * pItem, const unsigned int index ){
  * @see count()
  * @param index the index where to remove the item from (counting starts with 0)
  * @param bDeleteItem if true the item will also be deleted from the memory;
- * 	Note: if you give false, you have to care that the item will be deleted.
+ * 	Note: If you give false, you have to care that the item will be deleted.
  * @return if true the item was removed, else false
  */
 bool cFlowLayout::removeItem( const unsigned int index, const bool bDeleteItem ){
@@ -260,7 +257,7 @@ void cFlowLayout::addWidget( QWidget * pWidget, const unsigned int index ){
  * @see takeAt()
  * @param index the index where to remove the widget from (counting starts with 0)
  * @param bDeleteItem if true the widget will also be deleted from the memory;
- * 	Note: if you give false, you have to care that the widget will be deleted.
+ * 	Note: If you give false, you have to care that the widget will be deleted.
  * @return if true the widget was removed, else false
  */
 bool cFlowLayout::removeWidget( const unsigned int index, const bool bDeleteItem ){
@@ -338,9 +335,8 @@ void cFlowLayout::clear( const bool bDeleteItem ){
 				delete (*itrItem);
 			}
 		}
-	}else{//just remove item from item list
-		liLayoutItems.clear();
-	}
+	}//else just remove item from item list
+	liLayoutItems.clear();
 	
 	return;
 }
@@ -428,7 +424,7 @@ void cFlowLayout::setGeometry( const QRect & rectangle ){
 
 /**
  * @see QLayout::hasHeightForWidth()
- * @return true because this layout's preferred height depends on its width
+ * @return true because this layouts preferred height depends on its width
  */
 bool cFlowLayout::hasHeightForWidth() const{
 	
@@ -446,19 +442,19 @@ bool cFlowLayout::hasHeightForWidth() const{
  */
 int cFlowLayout::heightForWidth( const int iWidth ) const{
 	//evalue the height with simulated created layout
+	//TODO use caching (use same value as long as nothing is changed in layout)
 	return createLayout( QRect( 0, 0, iWidth, 0 ), true );
 }
 
 
 /**
- * This method evalues the layout if horizontalSpacing() or
- * verticalSpacing() don't return the default value.
+ * This method evalues the layout.
  * It uses getContentsMargins() to calculate the area available to the
  * layout items.
  *
  * @param rectLayout the rectangle for the layout
  * @param bJustEvalue if true just evaluates the layout, without changing
- * 	the layout
+ * 	the layout (the return value is evaluated, but nothing else changed)
  * @return the hight of the layout in pixles
  */
 int cFlowLayout::createLayout(
@@ -469,7 +465,7 @@ int cFlowLayout::createLayout(
 	int iRightBorder;
 	int iBottomBorder;
 	getContentsMargins( &iLeftBorder, &iTopBorder, &iRightBorder, &iBottomBorder );
-	//reduce the rectangly for thy layout by the margins (can't use the margins)
+	//reduce the rectangle for the layout by the margins (can't use the margins)
 	const QRect effectiveRect = rectLayout.adjusted(
 		iLeftBorder, iTopBorder, 0 - iRightBorder, 0 - iBottomBorder );
 	//get values for the layout item spacings
@@ -492,19 +488,23 @@ int cFlowLayout::createLayout(
 	foreach ( pItem, liLayoutItems ){
 		//evalue spacing for the element
 		QWidget * pItemWidged = pItem->widget();
+		if ( pItemWidged == NULL ){
+			//layout item not a widget -> skip item
+			continue;
+		}
 		//get spacing for x direction
 		iXSpacing = iXDefaultSpacing;
 		if ( iXDefaultSpacing == -1 ){
 			//use item spacing in x direction
 			iXSpacing = pItemWidged->style()->layoutSpacing(
-				QSizePolicy::PushButton, QSizePolicy::PushButton, Qt::Horizontal );
+				QSizePolicy::DefaultType, QSizePolicy::DefaultType, Qt::Horizontal );
 		}
-		//get spacing for x direction
+		//get spacing for y direction
 		iYSpacing = iYDefaultSpacing;
 		if ( iYDefaultSpacing == -1 ){
 			//use item spacing in y direction
 			iYSpacing = pItemWidged->style()->layoutSpacing(
-				QSizePolicy::PushButton, QSizePolicy::PushButton, Qt::Vertical );
+				QSizePolicy::DefaultType, QSizePolicy::DefaultType, Qt::Vertical );
 		}
 		//add the item to this layout
 		const QSize sizeActualItem = pItem->sizeHint();
@@ -526,7 +526,7 @@ int cFlowLayout::createLayout(
 		}
 		iXPosition  = iXPositionNext;
 		//max( iLineHeight, sizeActualItem.height() )
-		iLineHeight = ( iLineHeight < sizeActualItem.height() )?
+		iLineHeight = ( iLineHeight < sizeActualItem.height() ) ?
 			sizeActualItem.height() : iLineHeight ;
 	}
 	//return the hight of the layout
@@ -548,17 +548,17 @@ int cFlowLayout::createLayout(
 int cFlowLayout::evalueGoodSpacing( QStyle::PixelMetric pixleMetric ) const{
 	
 	QObject * pParent = this->parent();
-	if ( ! pParent ){
+	if ( pParent == 0 ){
 		//no parrent -> no good spacing
 		return -1;
 	}//else
 	if ( pParent->isWidgetType() ) {
 		//the parent is a widget
-		QWidget * pParentWidget = static_cast<QWidget *>(pParent);
+		QWidget * pParentWidget = static_cast<QWidget *>( pParent );
 		return pParentWidget->style()->pixelMetric(
 			pixleMetric, 0, pParentWidget );
 	}//else
-	return static_cast<QLayout *>(pParent)->spacing();
+	return (static_cast<QLayout *>(pParent))->spacing();
 }
 
 

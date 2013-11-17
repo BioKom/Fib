@@ -32,6 +32,7 @@
 /*
 History:
 07.02.2010  Oesterholz  created
+07.10.2013  Oesterholz  method create() added
 */
 
 
@@ -101,6 +102,8 @@ public:
 	/**
 	 * Updates the data of the folder.
 	 * This means the folder information is reread.
+	 *
+	 * @return true if the folder, this class represents, is accessible, else false
 	 */
 	bool update();
 	
@@ -110,7 +113,7 @@ public:
 	bool good() const;
 	
 	/**
-	 * Returns the entryinformation for the entry with the given number.
+	 * Returns the entry information for the entry with the given number.
 	 *
 	 * @param uiEntryNumber the number of the entry, for which the information
 	 * 	is to be returned
@@ -119,7 +122,7 @@ public:
 	struct stat getInfo( unsigned int uiEntryNumber ) const;
 	
 	/**
-	 * Returns the entryinformation for the entry with the given name.
+	 * Returns the entry information for the entry with the given name.
 	 *
 	 * @param szEntryName the name of the entry, for which the information
 	 * 	is to be returned
@@ -209,10 +212,27 @@ public:
 	 * @return a list with the names of all (regular) files in the folder
 	 */
 	list<string> getFiles() const;
-
-
-
-};//cFolder
+	
+	/**
+	 * This method creates the folder if it didn't exists.
+	 *
+	 * @return true if the folder, this class represents, is accessible, else false
+	 * 	@see update()
+	 */
+	bool create();
+	
+private:
+	
+	/**
+	 * This function checks if a file for the given path exists and can be
+	 * opened.
+	 *
+	 * @param szPath a string for the path to be checked
+	 * @return true if the path exists, else false
+	 */
+	static bool checkPath( char * szPath );
+	
+};//end class cFolder
 
 #endif //___C_FOLDER_H__
 

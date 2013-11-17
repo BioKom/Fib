@@ -73,7 +73,8 @@ namespace fib{
 namespace nCreator{
 
 
-class cFibInputVariableHandler: public lFibNodeChanged, lInputVariableChanged{
+class cFibInputVariableHandler: public lFibNodeChanged,
+		public lInputVariableChanged{
 
 protected:
 	

@@ -50,6 +50,7 @@ History:
 #include "cFibGraphicsItem.h"
 
 #include "cFibGraphicsScene.h"
+#include "cFibNode.h"
 
 
 using namespace fib::nCreator;

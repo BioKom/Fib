@@ -49,8 +49,6 @@ History:
 
 #include "version.h"
 
-#include "eFibInputVariableChangedEvent.h"
-
 #include <string>
 
 
@@ -58,6 +56,8 @@ namespace fib{
 
 namespace nCreator{
 
+//forward declarations
+class eFibInputVariableChangedEvent;
 
 class lInputVariableChanged{
 public:

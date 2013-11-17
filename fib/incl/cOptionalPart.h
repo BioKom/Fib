@@ -36,6 +36,7 @@ History:
 10.07.2011  Oesterholz  changes for compressed storing
 23.09.2012  Oesterholz  Warning removed: virtual destructor added
 01.08.2013  Oesterholz  method operator=() added
+23.10.2013  Oesterholz  method getEntries() without parameters added
 */
 
 #ifndef ___C_OPTIONAL_PART_H__
@@ -166,6 +167,13 @@ public:
 
 
 	/**
+	 * This method returns all entries.
+	 *
+	 * @return a list with all entries
+	 */
+	list< pair<string,string> > getEntries() const;
+
+		/**
 	 * This method returns all entries which have the given key szKey as
 	 * ther full key (if bFullBegin=true) or as the begining of ther key
 	 * (if bFullBegin=false) .

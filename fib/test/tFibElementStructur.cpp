@@ -124,6 +124,7 @@ History:
 01.08.2013  Oesterholz  FEATURE_EXT_SUBOBJECT_INPUT_VECTOR as default (not case removed)
 01.08.2013  Oesterholz  test for assignValues() added
 01.10.2013  Oesterholz  memory error fixed: not initialized counter in for loop
+14.11.2013  Oesterholz  FEATURE_INSERT_OBJECT_IN_ELEMENT implemented
 */
 
 
@@ -528,7 +529,7 @@ char choosRandomType(){
  * 	- bool insertElement( cFibElement *fibElement, const char cType, const unsignedIntFib elementPoint, bool bAbsolute=true, bool bCheckVariables=true )
  *
  * methods tested with uiTestType=42 :
- * 	- bool insertElement( cFibElement *fibElement, const char cType, const unsignedIntFib elementPoint, bool bAbsolute=false, bool bCheckVariables=true ); wher the inserted Fib element sould replace a NULL subobject
+ * 	- bool insertElement( cFibElement *fibElement, const char cType, const unsignedIntFib elementPoint, bool bAbsolute=false, bool bCheckVariables=true ); where the inserted Fib element sould replace a NULL subobject
  *
  * methods tested with uiTestType=43 :
  * 	- bool insertElement( cFibElement *fibElement, const char cType, const unsignedIntFib elementPoint, bool bAbsolute=false, bool bCheckVariables=false )
@@ -537,7 +538,7 @@ char choosRandomType(){
  * 	- bool insertElement( cFibElement *fibElement, const char cType, const unsignedIntFib elementPoint, bool bAbsolute=true, bool bCheckVariables=false )
  *
  * methods tested with uiTestType=45 :
- * 	- bool insertElement( cFibElement *fibElement, const char cType, const unsignedIntFib elementPoint, bool bAbsolute=false, bool bCheckVariables=false ); wher the inserted Fib element sould replace a NULL subobject
+ * 	- bool insertElement( cFibElement *fibElement, const char cType, const unsignedIntFib elementPoint, bool bAbsolute=false, bool bCheckVariables=false ); where the inserted Fib element sould replace a NULL subobject
  *
  *
  * methods tested with uiTestType=50 till 53 :
@@ -662,7 +663,7 @@ int testStructurRandom( unsigned long &ulTestphase, unsigned int uiMaxSize,
 			cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the insertElement() method on random generated Fib objects(with bCheckVariables=true and bAbsolute=true)"<<endl;
 		}break;
 		case 42:{
-			cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the insertElement() method on random generated Fib objects, wher the inserted Fib element sould replace a NULL subobject (with bCheckVariables=true and bAbsolute=true)"<<endl;
+			cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the insertElement() method on random generated Fib objects, where the inserted Fib element sould replace a NULL subobject (with bCheckVariables=true and bAbsolute=true)"<<endl;
 		}break;
 		case 43:{
 			cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the insertElement() method on random generated Fib objects (with bCheckVariables=false and bAbsolute=false)"<<endl;
@@ -671,7 +672,7 @@ int testStructurRandom( unsigned long &ulTestphase, unsigned int uiMaxSize,
 			cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the insertElement() method on random generated Fib objects(with bCheckVariables=false and bAbsolute=true)"<<endl;
 		}break;
 		case 45:{
-			cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the insertElement() method on random generated Fib objects, wher the inserted Fib element sould replace a NULL subobject (with bCheckVariables=false and bAbsolute=true)"<<endl;
+			cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the insertElement() method on random generated Fib objects, where the inserted Fib element sould replace a NULL subobject (with bCheckVariables=false and bAbsolute=true)"<<endl;
 		}break;
 		case 50:{
 			cout<<endl<<"TEST PHASE "<<ulTestphase<<" : Testing the cutElement() method on random generated Fib objects (with bCheckVariables=true and bAbsolute=false)"<<endl;
@@ -904,7 +905,7 @@ int testStructurRandom( unsigned long &ulTestphase, unsigned int uiMaxSize,
 				uiNumberOfAverageInputVariables, uiFractionsOfUsedVariables,
 				uiMaxVectorElementNumber, uiIteration, uiTestType ,".xml" );
 				
-			cerr<<"Error: The Fib object wher the error occured will be writen to the file \""<< szFileNameBuffer <<"\" ."<<endl;
+			cerr<<"Error: The Fib object where the error occured will be writen to the file \""<< szFileNameBuffer <<"\" ."<<endl;
 			
 			ofstream * pFile = new ofstream( szFileNameBuffer );
 			
@@ -1023,10 +1024,10 @@ int testOnTwoEqualStructurRandom( unsigned long &ulTestphase, unsigned int uiMax
 		
 		if ( pGeneratedFibObject1 && pGeneratedFibObject2 ){
 			if ( pGeneratedFibObject1 ){
-				cout<<" object 1 generated ";
+				cout<<" object 1 generated";
 			}
 			if ( pGeneratedFibObject2 ){
-				cout<<" object 2 generated ";
+				cout<<" object 2 generated";
 			}
 			cout<<endl;
 			
@@ -1071,7 +1072,7 @@ int testOnTwoEqualStructurRandom( unsigned long &ulTestphase, unsigned int uiMax
 				uiNumberOfAverageInputVariables, uiFractionsOfUsedVariables,
 				uiMaxVectorElementNumber, uiIteration, uiTestType ,".xml" );
 				
-			cerr<<"Error: The Fib object wher the error occured will be writen to the file \""<< szFileNameBuffer <<"\" ."<<endl;
+			cerr<<"Error: The Fib object where the error occured will be writen to the file \""<< szFileNameBuffer <<"\" ."<<endl;
 				
 			ofstream * pFile = new ofstream( szFileNameBuffer );
 				
@@ -1090,7 +1091,7 @@ int testOnTwoEqualStructurRandom( unsigned long &ulTestphase, unsigned int uiMax
 				uiNumberOfAverageInputVariables, uiFractionsOfUsedVariables,
 				uiMaxVectorElementNumber, uiIteration, uiTestType ,".xml" );
 				
-			cerr<<"Error: The Fib object wher the error occured will be writen to the file \""<< szFileNameBuffer <<"\" ."<<endl;
+			cerr<<"Error: The Fib object where the error occured will be writen to the file \""<< szFileNameBuffer <<"\" ."<<endl;
 			
 			pFile = new ofstream( szFileNameBuffer );
 			
@@ -1230,7 +1231,7 @@ int testRandFunInRow( unsigned long &ulTestphase, unsigned int uiMaxSize,
 			uiMaxVectorElementNumber );
 		
 		if ( pGeneratedFibObject ){
-			cout<<" generated "<<flush<<endl;
+			cout<<" generated"<<flush<<endl;
 		}else{
 			cout<<endl;
 			cerr<<"Error: Generated Fib object failed:"<<
@@ -1411,7 +1412,7 @@ int testRandFunInRow( unsigned long &ulTestphase, unsigned int uiMaxSize,
 			uiNumberOfAverageInputVariables, uiFractionsOfUsedVariables,
 			uiMaxVectorElementNumber, uiIteration, ".xml" );
 			
-			cerr<<"Error: The Fib object wher the error occured will be writen to the file \""<< szFileNameBuffer <<"\" ."<<endl;
+			cerr<<"Error: The Fib object where the error occured will be writen to the file \""<< szFileNameBuffer <<"\" ."<<endl;
 			
 			ofstream * pFile = new ofstream( szFileNameBuffer );
 			
@@ -1729,7 +1730,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 	}
 	
 	if ( uiNumberOfAllFibElements == 0 ){
-		cerr<<"Error: No Fib elements in the Fib Object. "<< endl;
+		cerr<<"Error: No Fib elements in the Fib Object."<<endl;
 		iReturn++;
 		return iReturn;
 	}
@@ -1742,7 +1743,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 			uiNumberOfAllExtSubobjectElements + uiNumberOfAllSetElements +
 			uiNumberOfAllMatrixElements ) ){
 		cerr<<"Error: Ther are different values for number of all Fib elements"<<
-			"given back, counted over all Fib elements and seperatly. "<< endl;
+			"given back, counted over all Fib elements and seperatly."<<endl;
 		iReturn++;
 	}
 	if ( uiNumberOfAllMovePoints != ( uiNumberOfAllPropertyElements +
@@ -1750,14 +1751,14 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 			uiNumberOfAllCommentElements + uiNumberOfAllSetElements +
 			uiNumberOfAllMatrixElements ) ){
 		cerr<<"Error: Ther are different values for number of all movepoints "<<
-			"given back, counted over all Fib elements and seperatly over the Fib elements. "<< endl;
+			"given back, counted over all Fib elements and seperatly over the Fib elements."<<endl;
 		iReturn++;
 	}
 	if ( uiNumberOfAllObjectPoints != (uiNumberOfAllPointElements + uiNumberOfAllExtSubobjectElements +
 			uiNumberOfAllListElements + uiNumberOfAllIfElements +
 			uiNumberOfAllExtObjectElements + (uiNumberOfAllRootElements - 1)) ){
 		cerr<<"Error: Ther are different values for number of all objectpoints "<<
-			"given back, counted over all Fib elements and seperatly over the Fib elements. "<< endl;
+			"given back, counted over all Fib elements and seperatly over the Fib elements."<<endl;
 		iReturn++;
 	}
 
@@ -1809,7 +1810,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 			"'th Fib element from the "<< uiNumberOfActualFibElement <<
 			"'th next Fib element is not equal to the next "<<
 			uiNumberOfNextFibElement <<"'th Fib element"<<
-			" (getFibElement() != getConstFibElement()) "<< endl;
+			" (getFibElement() != getConstFibElement())"<<endl;
 		iReturn++;
 	}
 	
@@ -1841,7 +1842,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 				"'th Fib element from the "<< uiNumberOfActualFibElement <<
 				"'th next Fib element is not equal to the next "<<
 				uiNumberOfNextAbsoluteFib <<"'th Fib element"<<
-				" (getFibElement() != getConstFibElement()) "<< endl;
+				" (getFibElement() != getConstFibElement())"<<endl;
 				
 			if ( pNextNumberAbsoluteFibElement ){
 				cerr<<"   getFibElement() = "<<pNextNumberAbsoluteFibElement->getNumberOfElement()<<endl;
@@ -1863,7 +1864,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 				"'th Fib element from the "<< uiNumberOfActualFibElement <<
 				"'th next Fib element is not equal to the next "<<
 				uiNumberOfNextAbsoluteFib <<"'th Fib element"<<
-				" (getFibElement() != getConstFibElement()) "<< endl;
+				" (getFibElement() != getConstFibElement())"<<endl;
 			if ( pNextNumberAbsoluteFibElement ){
 				cerr<<"   getFibElement() = "<<pNextNumberAbsoluteFibElement->getNumberOfElement()<<endl;
 			}else{
@@ -1884,7 +1885,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 				"'th Fib element from the "<< uiNumberOfActualFibElement <<
 				"'th next Fib element of type 'u' is not equal to the next "<<
 				uiNumberOfNextAbsoluteFib <<"'th Fib element"<<
-				" (getFibElement() != getConstFibElement()) "<< endl;
+				" (getFibElement() != getConstFibElement())"<<endl;
 			iReturn++;
 		}
 		pNextNumberAbsoluteFibElementU =
@@ -1894,7 +1895,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 				"'th Fib element from the "<< uiNumberOfActualFibElement <<
 				"'th next Fib element of type 'u' is not equal to the next "<<
 				uiNumberOfNextAbsoluteFib <<"'th Fib element"<<
-				" (getFibElement() != getConstFibElement()) "<< endl;
+				" (getFibElement() != getConstFibElement())"<<endl;
 			iReturn++;
 		}
 
@@ -1905,7 +1906,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 				"'th Fib element from the "<< uiNumberOfActualFibElement <<
 				"'th next Fib element of type 'u' is not equal to the next "<<
 				uiNumberOfNextAbsoluteFib <<"'th Fib element"<<
-				" (getFibElement() != getConstFibElement()) "<< endl;
+				" (getFibElement() != getConstFibElement())"<<endl;
 			iReturn++;
 		}
 		pConstNextNumberAbsoluteFibElement = pCallingFibElement->getConstFibElement(
@@ -1915,7 +1916,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 				"'th Fib element from the "<< uiNumberOfActualFibElement <<
 				"'th next Fib element of type 'u' is not equal to the next "<<
 				uiNumberOfNextAbsoluteFib <<"'th Fib element"<<
-				" (getFibElement() != getConstFibElement()) "<< endl;
+				" (getFibElement() != getConstFibElement())"<<endl;
 			iReturn++;
 		}
 		
@@ -1947,7 +1948,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 				"'th point element from the "<< uiNumberOfActualFibElement <<
 				" next point element is not equal to the next "<<
 					uiNumberOfNextPointElement <<"'th point element"<<
-					" (getFibElement() != getConstFibElement()) "<< endl;
+					" (getFibElement() != getConstFibElement())"<<endl;
 			iReturn++;
 		}
 		
@@ -1975,7 +1976,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 					"'th point element from the "<< uiNumberOfActualFibElement <<
 					" next point element is not equal to the next "<<
 					uiNumberOfNextAbsolutePointElement <<"'th point element"<<
-					" (getFibElement() != getConstFibElement()) "<< endl;
+					" (getFibElement() != getConstFibElement())"<<endl;
 				iReturn++;
 			}
 			
@@ -2004,7 +2005,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 				"'th list element from the "<< uiNumberOfActualFibElement <<
 				" next list element is not equal to the next "<<
 					uiNumberOfNextListElement <<"'th list element"<<
-					" (getFibElement() != getConstFibElement()) "<< endl;
+					" (getFibElement() != getConstFibElement())"<<endl;
 			iReturn++;
 		}
 		
@@ -2032,7 +2033,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 					"'th list element from the "<< uiNumberOfActualFibElement <<
 					" next list element is not equal to the next "<<
 					uiNumberOfNextAbsoluteListElement <<"'th list element"<<
-					" (getFibElement() != getConstFibElement()) "<< endl;
+					" (getFibElement() != getConstFibElement())"<<endl;
 				iReturn++;
 			}
 			
@@ -2061,7 +2062,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 				"'th property element from the "<< uiNumberOfActualFibElement <<
 				" next property element is not equal to the next "<<
 					uiNumberOfNextPropertyElement <<"'th property element"<<
-					" (getFibElement() != getConstFibElement()) "<< endl;
+					" (getFibElement() != getConstFibElement())"<<endl;
 			iReturn++;
 		}
 		
@@ -2089,7 +2090,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 					"'th property element from the "<< uiNumberOfActualFibElement <<
 					" next property element is not equal to the next "<<
 					uiNumberOfNextAbsolutePropertyElement <<"'th property element"<<
-					" (getFibElement() != getConstFibElement()) "<< endl;
+					" (getFibElement() != getConstFibElement())"<<endl;
 				iReturn++;
 			}
 			
@@ -2118,7 +2119,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 				"'th area element from the "<< uiNumberOfActualFibElement <<
 				" next area element is not equal to the next "<<
 					uiNumberOfNextAreaElement <<"'th area element"<<
-					" (getFibElement() != getConstFibElement()) "<< endl;
+					" (getFibElement() != getConstFibElement())"<<endl;
 			iReturn++;
 		}
 		
@@ -2146,7 +2147,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 					"'th area element from the "<< uiNumberOfActualFibElement <<
 					" next area element is not equal to the next "<<
 					uiNumberOfNextAbsoluteAreaElement <<"'th area element"<<
-					" (getFibElement() != getConstFibElement()) "<< endl;
+					" (getFibElement() != getConstFibElement())"<<endl;
 				iReturn++;
 			}
 			
@@ -2175,7 +2176,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 				"'th function element from the "<< uiNumberOfActualFibElement <<
 				" next function element is not equal to the next "<<
 				uiNumberOfNextFunctionElement <<"'th function element"<<
-				" (getFibElement() != getConstFibElement()) "<< endl;
+				" (getFibElement() != getConstFibElement())"<<endl;
 			iReturn++;
 		}
 		/*check getFibElement( char cType, longFib lNumber, true) for random coosen Fib element;
@@ -2202,7 +2203,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 					"'th function element from the "<< uiNumberOfActualFibElement <<
 					" next function element is not equal to the next "<<
 					uiNumberOfNextAbsoluteFunctionElement <<"'th function element"<<
-					" (getFibElement() != getConstFibElement()) "<< endl;
+					" (getFibElement() != getConstFibElement())"<<endl;
 				iReturn++;
 			}
 			
@@ -2232,7 +2233,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 				"'th if-element from the "<< uiNumberOfActualFibElement <<
 				" next if-element is not equal to the next "<<
 				uiNumberOfNextIfElement <<"'th if-element"<<
-				" (getFibElement() != getConstFibElement()) "<< endl;
+				" (getFibElement() != getConstFibElement())"<<endl;
 			iReturn++;
 		}
 		/*check getFibElement( char cType, longFib lNumber, true) for random coosen Fib element;
@@ -2259,7 +2260,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 					"'th if-element from the "<< uiNumberOfActualFibElement <<
 					" next if-element is not equal to the next "<<
 					uiNumberOfNextAbsoluteIfElement <<"'th if-element"<<
-					" (getFibElement() != getConstFibElement()) "<< endl;
+					" (getFibElement() != getConstFibElement())"<<endl;
 				iReturn++;
 			}
 			
@@ -2288,7 +2289,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 				"'th comment element from the "<< uiNumberOfActualFibElement <<
 				" next comment element is not equal to the next "<<
 				uiNumberOfNextCommentElement <<"'th comment element"<<
-				" (getFibElement() != getConstFibElement()) "<< endl;
+				" (getFibElement() != getConstFibElement())"<<endl;
 			iReturn++;
 		}
 		
@@ -2316,7 +2317,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 					"'th comment element from the "<< uiNumberOfActualFibElement <<
 					" next comment element is not equal to the next "<<
 					uiNumberOfNextAbsoluteCommentElement <<"'th comment element"<<
-					" (getFibElement() != getConstFibElement()) "<< endl;
+					" (getFibElement() != getConstFibElement())"<<endl;
 				iReturn++;
 			}
 			
@@ -2345,7 +2346,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 				"'th external object element from the "<< uiNumberOfActualFibElement <<
 				" next external object element is not equal to the next "<<
 				uiNumberOfNextExtObjectElement <<"'th external object element"<<
-				" (getFibElement() != getConstFibElement()) "<< endl;
+				" (getFibElement() != getConstFibElement())"<<endl;
 			iReturn++;
 		}
 		
@@ -2373,7 +2374,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 					"'th external object element from the "<< uiNumberOfActualFibElement <<
 					" next external object element is not equal to the next "<<
 					uiNumberOfNextAbsoluteExtObjectElement <<"'th external object element"<<
-					" (getFibElement() != getConstFibElement()) "<< endl;
+					" (getFibElement() != getConstFibElement())"<<endl;
 				iReturn++;
 			}
 			
@@ -2403,7 +2404,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 				"'th external subobject element from the "<< uiNumberOfActualFibElement <<
 				" next external subobject element is not equal to the next "<<
 				uiNumberOfNextExtSubobjectElement <<"'th external subobject element"<<
-				" (getFibElement() != getConstFibElement()) "<< endl;
+				" (getFibElement() != getConstFibElement())"<<endl;
 			iReturn++;
 		}
 		
@@ -2431,7 +2432,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 					"'th external subobject element from the "<< uiNumberOfActualFibElement <<
 					" next external subobject element is not equal to the next "<<
 					uiNumberOfNextAbsoluteExtSubobjectElement <<"'th external subobject element"<<
-					" (getFibElement() != getConstFibElement()) "<< endl;
+					" (getFibElement() != getConstFibElement())"<<endl;
 				iReturn++;
 			}
 			
@@ -2460,7 +2461,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 				"'th set element from the "<< uiNumberOfActualFibElement <<
 				" next set element is not equal to the next "<<
 				uiNumberOfNextSetElement <<"'th set element"<<
-				" (getFibElement() != getConstFibElement()) "<< endl;
+				" (getFibElement() != getConstFibElement())"<<endl;
 			iReturn++;
 		}
 		
@@ -2488,7 +2489,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 					"'th set element from the "<< uiNumberOfActualFibElement <<
 					" next set element is not equal to the next "<<
 					uiNumberOfNextAbsoluteSetElement <<"'th set element"<<
-					" (getFibElement() != getConstFibElement()) "<< endl;
+					" (getFibElement() != getConstFibElement())"<<endl;
 				iReturn++;
 			}
 			
@@ -2517,7 +2518,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 				"'th matrix element from the "<< uiNumberOfActualFibElement <<
 				" next matrix element is not equal to the next "<<
 				uiNumberOfNextMatrixElement <<"'th matrix element"<<
-				" (getFibElement() != getConstFibElement()) "<< endl;
+				" (getFibElement() != getConstFibElement())"<<endl;
 			iReturn++;
 		}
 		
@@ -2545,7 +2546,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 					"'th matrix element from the "<< uiNumberOfActualFibElement <<
 					" next matrix element is not equal to the next "<<
 					uiNumberOfNextAbsoluteMatrixElement <<"'th matrix element"<<
-					" (getFibElement() != getConstFibElement()) "<< endl;
+					" (getFibElement() != getConstFibElement())"<<endl;
 				iReturn++;
 			}
 			
@@ -2574,7 +2575,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 				"'th rootelement from the "<< uiNumberOfActualFibElement <<
 				" next rootelement is not equal to the next "<<
 					uiNumberOfNextRootElement <<"'th rootelement"<<
-					" (getFibElement() != getConstFibElement()) "<< endl;
+					" (getFibElement() != getConstFibElement())"<<endl;
 			iReturn++;
 		}
 		
@@ -2602,7 +2603,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 					"'th rootelement from the "<< uiNumberOfActualFibElement <<
 					" next rootelement is not equal to the next "<<
 					uiNumberOfNextAbsoluteRootElement <<"'th rootelement"<<
-					" (getFibElement() != getConstFibElement()) "<< endl;
+					" (getFibElement() != getConstFibElement())"<<endl;
 				iReturn++;
 			}
 			
@@ -2613,63 +2614,63 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 
 	//check highest root-element
 	if ( pFibObject->getSuperiorFibElement() != NULL ){
-			cerr<<"Error: The given Fib object has an superior Fib element. "<< endl;
+			cerr<<"Error: The given Fib object has an superior Fib element."<<endl;
 			iReturn++;
 	}
 	if ( pFibObject->getFibElement( -1 ) != NULL ){
-			cerr<<"Error: The given Fib object has an previos Fib element. "<< endl;
+			cerr<<"Error: The given Fib object has an previos Fib element."<<endl;
 			iReturn++;
 	}
 	if ( pFibObject->getFibElement( 'r', -1 ) != NULL ){//Root
-			cerr<<"Error: The given Fib object has an previos root-element. "<< endl;
+			cerr<<"Error: The given Fib object has an previos root-element."<<endl;
 			iReturn++;
 	}
 	if ( pFibObject->getFibElement( 'p', -1 ) != NULL ){//Point
-			cerr<<"Error: The given Fib object has an previos point element. "<< endl;
+			cerr<<"Error: The given Fib object has an previos point element."<<endl;
 			iReturn++;
 	}
 	if ( pFibObject->getFibElement( 'y', -1 ) != NULL ){//Property
-			cerr<<"Error: The given Fib object has an previos property element. "<< endl;
+			cerr<<"Error: The given Fib object has an previos property element."<<endl;
 			iReturn++;
 	}
 	if ( pFibObject->getFibElement( 'a', -1 ) != NULL ){//Area
-			cerr<<"Error: The given Fib object has an previos area element. "<< endl;
+			cerr<<"Error: The given Fib object has an previos area element."<<endl;
 			iReturn++;
 	}
 	if ( pFibObject->getFibElement( 'f', -1 ) != NULL ){//Function
-			cerr<<"Error: The given Fib object has an previos function element. "<< endl;
+			cerr<<"Error: The given Fib object has an previos function element."<<endl;
 			iReturn++;
 	}
 	if ( pFibObject->getFibElement( 'i', -1 ) != NULL ){//if
-			cerr<<"Error: The given Fib object has an previos if-element. "<< endl;
+			cerr<<"Error: The given Fib object has an previos if-element."<<endl;
 			iReturn++;
 	}
 	if ( pFibObject->getFibElement( 'c', -1 ) != NULL ){//Comment
-			cerr<<"Error: The given Fib object has an previos comment element. "<< endl;
+			cerr<<"Error: The given Fib object has an previos comment element."<<endl;
 			iReturn++;
 	}
 	if ( pFibObject->getFibElement( 'l', -1 ) != NULL ){//List
-			cerr<<"Error: The given Fib object has an previos list element. "<< endl;
+			cerr<<"Error: The given Fib object has an previos list element."<<endl;
 			iReturn++;
 	}
 	if ( pFibObject->getFibElement( 'o', -1 ) != NULL ){//external object element
-			cerr<<"Error: The given Fib object has an previos external object element. "<< endl;
+			cerr<<"Error: The given Fib object has an previos external object element."<<endl;
 			iReturn++;
 	}
 	if ( pFibObject->getFibElement( 's', -1 ) != NULL ){//external subobject element
-			cerr<<"Error: The given Fib object has an previos external subobject element. "<< endl;
+			cerr<<"Error: The given Fib object has an previos external subobject element."<<endl;
 			iReturn++;
 	}
 	if ( pFibObject->getFibElement( 'v', -1 ) != NULL ){//set element
-			cerr<<"Error: The given Fib object has an previos set element. "<< endl;
+			cerr<<"Error: The given Fib object has an previos set element."<<endl;
 			iReturn++;
 	}
 	if ( pFibObject->getFibElement( 'm', -1 ) != NULL ){//matrix element
-			cerr<<"Error: The given Fib object has an previos matrix element. "<< endl;
+			cerr<<"Error: The given Fib object has an previos matrix element."<<endl;
 			iReturn++;
 	}
 	if ( pFibObject->getType() != 'r' ){//Root
-			cerr<<"Error: The given Fib object has not an root-element as it's top most Fib element. "<< endl;
+			cerr<<"Error: The given Fib object has not an root-element as it's top most Fib element."<<endl;
 			iReturn++;
 	}else{
 		pNextRoot = pFibObject;
@@ -2687,7 +2688,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 				uiNumberOfActualFibElement ){
 			cerr<<"Error: The actual Fib element should be the Fib element number "<<
 				uiNumberOfActualFibElement<<" , but returns the number "<<
-				pActualFibElement->getNumberOfElement() <<" . "<< endl;
+				pActualFibElement->getNumberOfElement() <<" ."<<endl;
 			iReturn++;
 		}
 		
@@ -2700,12 +2701,12 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 						uiNumberOfLastRoot ){
 					cerr<<"Error: The actual rootelement should be the rootelement number "<<
 						uiNumberOfLastRoot<<" , but returns the number "<<
-						pActualFibElement->getNumberOfElement( 'r' ) <<" . "<< endl;
+						pActualFibElement->getNumberOfElement( 'r' ) <<" ."<<endl;
 					iReturn++;
 				}
 				if ( pNextRoot != pActualFibElement ){
 					cerr<<"Error: The actual Fib element (number="<< uiNumberOfActualFibElement
-						<<") is an root-element but not the next root-element. "<< endl;
+						<<") is an root-element but not the next root-element."<<endl;
 					iReturn++;
 				}
 				pNextRoot  = pActualFibElement->getNextFibElement( 'r' );
@@ -2716,12 +2717,12 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 						uiNumberOfLastPoint ){
 					cerr<<"Error: The actual point element should be the point element number "<<
 						uiNumberOfLastPoint<<" , but returns the number "<<
-						pActualFibElement->getNumberOfElement( 'p' ) <<" . "<< endl;
+						pActualFibElement->getNumberOfElement( 'p' ) <<" ."<<endl;
 					iReturn++;
 				}
 				if ( pNextPoint != pActualFibElement ){
 					cerr<<"Error: The actual Fib element (number="<< uiNumberOfActualFibElement
-						<<" is an point element but not the next point element. "<< endl;
+						<<" is an point element but not the next point element."<<endl;
 					iReturn++;
 				}
 				pNextPoint = pActualFibElement->getNextFibElement( 'p' );
@@ -2732,12 +2733,12 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 						uiNumberOfLastProperty ){
 					cerr<<"Error: The actual property element should be the property element number "<<
 						uiNumberOfLastProperty<<" , but returns the number "<<
-						pActualFibElement->getNumberOfElement( 'y' ) <<" . "<< endl;
+						pActualFibElement->getNumberOfElement( 'y' ) <<" ."<<endl;
 					iReturn++;
 				}
 				if ( pNextProperty != pActualFibElement ){
 					cerr<<"Error: The actual Fib element (number="<< uiNumberOfActualFibElement
-						<<") is an property element but not the next property element. "<< endl;
+						<<") is an property element but not the next property element."<<endl;
 					iReturn++;
 				}
 				pNextProperty = pActualFibElement->getNextFibElement( 'y' );
@@ -2748,12 +2749,12 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 						uiNumberOfLastArea ){
 					cerr<<"Error: The actual area element should be the area element number "<<
 						uiNumberOfLastArea <<" , but returns the number "<<
-						pActualFibElement->getNumberOfElement( 'a' ) <<" . "<< endl;
+						pActualFibElement->getNumberOfElement( 'a' ) <<" ."<<endl;
 					iReturn++;
 				}
 				if ( pNextArea != pActualFibElement ){
 					cerr<<"Error: The actual Fib element (number="<< uiNumberOfActualFibElement
-						<<") is an area element but not the next area element. "<< endl;
+						<<") is an area element but not the next area element."<<endl;
 					iReturn++;
 				}
 				pNextArea = pActualFibElement->getNextFibElement( 'a' );
@@ -2764,12 +2765,12 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 						uiNumberOfLastFunction ){
 					cerr<<"Error: The actual function element should be the function element number "<<
 						uiNumberOfLastFunction <<" , but returns the number "<<
-						pActualFibElement->getNumberOfElement( 'f' ) <<" . "<< endl;
+						pActualFibElement->getNumberOfElement( 'f' ) <<" ."<<endl;
 					iReturn++;
 				}
 				if ( pNextFunction != pActualFibElement ){
 					cerr<<"Error: The actual Fib element (number="<< uiNumberOfActualFibElement
-						<<") is an function element but not the next function element. "<< endl;
+						<<") is an function element but not the next function element."<<endl;
 					iReturn++;
 				}
 				pNextFunction = pActualFibElement->getNextFibElement( 'f' );
@@ -2780,12 +2781,12 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 						uiNumberOfLastIf ){
 					cerr<<"Error: The actual if-element should be the if-element number "<<
 						uiNumberOfLastIf <<" , but returns the number "<<
-						pActualFibElement->getNumberOfElement( 'i' ) <<" . "<< endl;
+						pActualFibElement->getNumberOfElement( 'i' ) <<" ."<<endl;
 					iReturn++;
 				}
 				if ( pNextIf != pActualFibElement ){
 					cerr<<"Error: The actual Fib element (number="<< uiNumberOfActualFibElement
-						<<") is an if-element but not the next if-element. "<< endl;
+						<<") is an if-element but not the next if-element."<<endl;
 					iReturn++;
 				}
 				pNextIf = pActualFibElement->getNextFibElement( 'i' );
@@ -2796,12 +2797,12 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 						uiNumberOfLastComment ){
 					cerr<<"Error: The actual comment element should be the comment element number "<<
 						uiNumberOfLastComment <<" , but returns the number "<<
-						pActualFibElement->getNumberOfElement( 'c' ) <<" . "<< endl;
+						pActualFibElement->getNumberOfElement( 'c' ) <<" ."<<endl;
 					iReturn++;
 				}
 				if ( pNextComment != pActualFibElement ){
 					cerr<<"Error: The actual Fib element (number="<< uiNumberOfActualFibElement
-						<<") is an comment element but not the next comment element. "<< endl;
+						<<") is an comment element but not the next comment element."<<endl;
 					iReturn++;
 				}
 				pNextComment = pActualFibElement->getNextFibElement( 'c' );
@@ -2812,12 +2813,12 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 						uiNumberOfLastList ){
 					cerr<<"Error: The actual list element should be the list element number "<<
 						uiNumberOfLastList<<" , but returns the number "<<
-						pActualFibElement->getNumberOfElement( 'l' ) <<" . "<< endl;
+						pActualFibElement->getNumberOfElement( 'l' ) <<" ."<<endl;
 					iReturn++;
 				}
 				if ( pNextList != pActualFibElement ){
 					cerr<<"Error: The actual Fib element (number="<< uiNumberOfActualFibElement
-						<<") is an list element but not the next list element. "<< endl;
+						<<") is an list element but not the next list element."<<endl;
 					iReturn++;
 				}
 				pNextList = pActualFibElement->getNextFibElement( 'l' );
@@ -2828,12 +2829,12 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 						uiNumberOfLastExtObject ){
 					cerr<<"Error: The actual external object element should be the external object element number "<<
 						uiNumberOfLastExtObject<<" , but returns the number "<<
-						pActualFibElement->getNumberOfElement( 'o' ) <<" . "<< endl;
+						pActualFibElement->getNumberOfElement( 'o' ) <<" ."<<endl;
 					iReturn++;
 				}
 				if ( pNextExtObject != pActualFibElement ){
 					cerr<<"Error: The actual Fib element (number="<< uiNumberOfActualFibElement
-						<<") is an external object element but not the next external object element. "<< endl;
+						<<") is an external object element but not the next external object element."<<endl;
 					iReturn++;
 				}
 				pNextExtObject = pActualFibElement->getNextFibElement( 'o' );
@@ -2844,12 +2845,12 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 						uiNumberOfLastExtSubobject ){
 					cerr<<"Error: The actual external subobject element should be the external subobject element number "<<
 						uiNumberOfLastExtSubobject<<" , but returns the number "<<
-						pActualFibElement->getNumberOfElement( 's' ) <<" . "<< endl;
+						pActualFibElement->getNumberOfElement( 's' ) <<" ."<<endl;
 					iReturn++;
 				}
 				if ( pNextExtSubobject != pActualFibElement ){
 					cerr<<"Error: The actual Fib element (number="<< uiNumberOfActualFibElement
-						<<") is an external subobject element but not the next external subobject element. "<< endl;
+						<<") is an external subobject element but not the next external subobject element."<<endl;
 					iReturn++;
 				}
 				pNextExtSubobject = pActualFibElement->getNextFibElement( 's' );
@@ -2860,12 +2861,12 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 						uiNumberOfLastSet ){
 					cerr<<"Error: The actual set element should be the set element number "<<
 						uiNumberOfLastSet<<" , but returns the number "<<
-						pActualFibElement->getNumberOfElement( 'v' ) <<" . "<< endl;
+						pActualFibElement->getNumberOfElement( 'v' ) <<" ."<<endl;
 					iReturn++;
 				}
 				if ( pNextSet != pActualFibElement ){
 					cerr<<"Error: The actual Fib element (number="<< uiNumberOfActualFibElement
-						<<") is an set element but not the next set element. "<< endl;
+						<<") is an set element but not the next set element."<<endl;
 					iReturn++;
 				}
 				pNextSet = pActualFibElement->getNextFibElement( 'v' );
@@ -2876,12 +2877,12 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 						uiNumberOfLastMatrix ){
 					cerr<<"Error: The actual matrix element should be the matrix element number "<<
 						uiNumberOfLastMatrix<<" , but returns the number "<<
-						pActualFibElement->getNumberOfElement( 'm' ) <<" . "<< endl;
+						pActualFibElement->getNumberOfElement( 'm' ) <<" ."<<endl;
 					iReturn++;
 				}
 				if ( pNextMatrix != pActualFibElement ){
 					cerr<<"Error: The actual Fib element (number="<< uiNumberOfActualFibElement
-						<<") is an matrix element but not the next matrix element. "<< endl;
+						<<") is an matrix element but not the next matrix element."<<endl;
 					iReturn++;
 				}
 				pNextMatrix = pActualFibElement->getNextFibElement( 'm' );
@@ -2895,7 +2896,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 				cerr<<"Error: The actual Fib element (number="<<
 					uiNumberOfActualFibElement<<") should be the movepoint number "<<
 					uiNumberOfLastMovePoint <<" , but returns the number "<<
-					pActualFibElement->getNumberOfMovePoint() <<" . "<< endl;
+					pActualFibElement->getNumberOfMovePoint() <<" ."<<endl;
 				iReturn++;
 			}
 		}else{
@@ -2903,7 +2904,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 				cerr<<"Error: The actual Fib element (number="<<
 					uiNumberOfActualFibElement <<") should give back 0 as "<<
 					"it's movepoint number, but returns the number "<<
-					pActualFibElement->getNumberOfMovePoint() <<" . "<< endl;
+					pActualFibElement->getNumberOfMovePoint() <<" ."<<endl;
 				iReturn++;
 			}
 		}
@@ -2915,12 +2916,12 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 			cerr<<"Error: The actual Fib element (number="<<
 				uiNumberOfActualFibElement<<") should have the objectpoint number "<<
 				uiNumberOfLastObjectPoint <<" , but returns the number "<<
-				pActualFibElement->getNumberOfObjectPoint() <<" . "<< endl;
+				pActualFibElement->getNumberOfObjectPoint() <<" ."<<endl;
 			iReturn++;
 		}
 		if ( ! pActualFibElement->hasUnderAllObjects() ){
 			cerr<<"Error: The actual Fib element (number="<<
-				uiNumberOfActualFibElement <<") dosn't have all subobjects . "<< endl;
+				uiNumberOfActualFibElement <<") dosn't have all subobjects ."<<endl;
 			iReturn++;
 		}
 		
@@ -2929,7 +2930,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 				cerr<<"Error: The next Fib element (number="<<pNextNumberFibElement->getNumberOfElement()<<
 					") for a number, should be the actual Fib element (number="<<
 					pActualFibElement->getNumberOfElement()<<"="<<
-					uiNumberOfActualFibElement <<") but isn't it  . "<< endl;
+					uiNumberOfActualFibElement <<") but isn't it  ."<<endl;
 				iReturn++;
 			}
 			/*check getFibElement(longFib lNumber, false) for random coosen
@@ -2947,7 +2948,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 					"'th Fib element from the "<< uiNumberOfActualFibElement <<
 					"'th next Fib element is not equal to the next "<<
 					uiNumberOfNextFibElement <<"'th Fib element"<<
-					" (getFibElement() != getConstFibElement()) "<< endl;
+					" (getFibElement() != getConstFibElement())"<<endl;
 				iReturn++;
 			}
 		}
@@ -2970,7 +2971,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 					cerr<<"Error: The next absolute "<< itrAbsolutElement->second <<
 						"'th Fib element from the "<< uiNumberOfActualFibElement <<
 						"'th next Fib element is not equal to the stored next "<<
-						itrAbsolutElement->second <<"'th Fib element. "<< endl;
+						itrAbsolutElement->second <<"'th Fib element."<<endl;
 					if ( pNextNumberAbsoluteFibElement == NULL){
 						cerr<<"   The evalued Fib element is NULL."<<endl;
 					}
@@ -2991,7 +2992,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 						"'th Fib element from the "<< uiNumberOfActualFibElement <<
 						"'th next Fib element is not equal to the next "<<
 						itrAbsolutElement->second <<"'th Fib element"<<
-						" (getFibElement() != getConstFibElement()) "<< endl;
+						" (getFibElement() != getConstFibElement())"<<endl;
 					iReturn++;
 				}
 			}
@@ -3004,7 +3005,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 					if ( pNextNumberRootElement != pActualFibElement ){
 						cerr<<"Error: The actual Fib element (number="<<
 							uiNumberOfActualFibElement <<") is an number'th "<<
-							"root-element, but not the next evalued root-element for the number. "<< endl;
+							"root-element, but not the next evalued root-element for the number."<<endl;
 						iReturn++;
 					}
 					//evalue new next root-element, but not from the actual root element
@@ -3022,7 +3023,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 								"'th rootelement from the "<< pNextStartElement->getNumberOfElement() <<
 								"'th next Fib element is not equal to the next "<<
 									uiNumberOfNextRootElement <<"'th rootelement"<<
-									" (getFibElement() != getConstFibElement()) "<< endl;
+									" (getFibElement() != getConstFibElement())"<<endl;
 							iReturn++;
 						}
 						//incrase the number with the number of root-elements betwean the actual (inclusive) and start -element
@@ -3043,7 +3044,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 					if ( pNextNumberPointElement != pActualFibElement ){
 						cerr<<"Error: The actual Fib element (number="<<
 							uiNumberOfActualFibElement <<") is an number'th "<<
-							"point -element, but not the next evalued point element for the number. "<< endl;
+							"point -element, but not the next evalued point element for the number."<<endl;
 						iReturn++;
 					}
 					//evalue new next point -element, but not from the actual point element
@@ -3062,7 +3063,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 								"'th point element from the "<< pNextStartElement->getNumberOfElement() <<
 								"'th next Fib element is not equal to the next "<<
 									uiNumberOfNextPointElement <<"'th point element"<<
-									" (getFibElement() != getConstFibElement()) "<< endl;
+									" (getFibElement() != getConstFibElement())"<<endl;
 							iReturn++;
 						}
 						//incrase the number with the number of point elements betwean the actual (inclusive) and start -element
@@ -3083,7 +3084,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 					if ( pNextNumberPropertyElement != pActualFibElement ){
 						cerr<<"Error: The actual Fib element (number="<<
 							uiNumberOfActualFibElement <<") is an number'th "<<
-							"property element, but not the next evalued property element for the number. "<< endl;
+							"property element, but not the next evalued property element for the number."<<endl;
 						iReturn++;
 					}
 					//evalue new next property -element, but not from the actual property element
@@ -3102,7 +3103,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 								"'th property element from the "<< pNextStartElement->getNumberOfElement() <<
 								"'th next Fib element is not equal to the next "<<
 									uiNumberOfNextPropertyElement <<"'th property element"<<
-									" (getFibElement() != getConstFibElement()) "<< endl;
+									" (getFibElement() != getConstFibElement())"<<endl;
 							iReturn++;
 						}
 						//incrase the number with the number of property elements betwean the actual (inclusive) and start -element
@@ -3123,7 +3124,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 					if ( pNextNumberAreaElement != pActualFibElement ){
 						cerr<<"Error: The actual Fib element (number="<<
 							uiNumberOfActualFibElement <<") is an number'th "<<
-							"area element, but not the next evalued area element for the number. "<< endl;
+							"area element, but not the next evalued area element for the number."<<endl;
 						iReturn++;
 					}
 					//evalue new next area element, but not from the actual area element
@@ -3142,7 +3143,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 								"'th area element from the "<< pNextStartElement->getNumberOfElement() <<
 								"'th next Fib element is not equal to the next "<<
 									uiNumberOfNextAreaElement <<"'th area element"<<
-									" (getFibElement() != getConstFibElement()) "<< endl;
+									" (getFibElement() != getConstFibElement())"<<endl;
 							iReturn++;
 						}
 						//incrase the number with the number of area elements betwean the actual (inclusive) and start -element
@@ -3163,7 +3164,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 					if ( pNextNumberFunctionElement != pActualFibElement ){
 						cerr<<"Error: The actual Fib element (number="<<
 							uiNumberOfActualFibElement <<") is an number'th "<<
-							"function element, but not the next evalued function element for the number. "<< endl;
+							"function element, but not the next evalued function element for the number."<<endl;
 						iReturn++;
 					}
 					//evalue new next function element, but not from the actual function element
@@ -3182,7 +3183,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 								"'th function element from the "<< pNextStartElement->getNumberOfElement() <<
 								"'th next Fib element is not equal to the next "<<
 									uiNumberOfNextFunctionElement <<"'th function element"<<
-									" (getFibElement() != getConstFibElement()) "<< endl;
+									" (getFibElement() != getConstFibElement())"<<endl;
 							iReturn++;
 						}
 						//incrase the number with the number of function elements betwean the actual (inclusive) and start -element
@@ -3203,7 +3204,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 					if ( pNextNumberIfElement != pActualFibElement ){
 						cerr<<"Error: The actual Fib element (number="<<
 							uiNumberOfActualFibElement <<") is an number'th "<<
-							"if-element, but not the next evalued if-element for the number. "<< endl;
+							"if-element, but not the next evalued if-element for the number."<<endl;
 						iReturn++;
 					}
 					//evalue new next if-element, but not from the actual if-element
@@ -3222,7 +3223,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 								"'th if-element from the "<< pNextStartElement->getNumberOfElement() <<
 								"'th next Fib element is not equal to the next "<<
 									uiNumberOfNextIfElement <<"'th if-element"<<
-									" (getFibElement() != getConstFibElement()) "<< endl;
+									" (getFibElement() != getConstFibElement())"<<endl;
 							iReturn++;
 						}
 						//incrase the number with the number of if-elements betwean the actual (inclusive) and start -element
@@ -3243,7 +3244,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 					if ( pNextNumberCommentElement != pActualFibElement ){
 						cerr<<"Error: The actual Fib element (number="<<
 							uiNumberOfActualFibElement <<") is an number'th "<<
-							"comment element, but not the next evalued comment element for the number. "<< endl;
+							"comment element, but not the next evalued comment element for the number."<<endl;
 						iReturn++;
 					}
 					//evalue new next comment element, but not from the actual comment element
@@ -3262,7 +3263,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 								"'th comment element from the "<< pNextStartElement->getNumberOfElement() <<
 								"'th next Fib element is not equal to the next "<<
 								uiNumberOfNextCommentElement <<"'th comment element"<<
-								" (getFibElement() != getConstFibElement()) "<< endl;
+								" (getFibElement() != getConstFibElement())"<<endl;
 							iReturn++;
 						}
 						//incrase the number with the number of comment elements betwean the actual (inclusive) and start -element
@@ -3283,7 +3284,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 					if ( pNextNumberListElement != pActualFibElement ){
 						cerr<<"Error: The actual Fib element (number="<<
 							uiNumberOfActualFibElement <<") is an number'th "<<
-							"list -element, but not the next evalued list element for the number. "<< endl;
+							"list -element, but not the next evalued list element for the number."<<endl;
 						iReturn++;
 					}
 					//evalue new next list -element, but not from the actual list element
@@ -3302,7 +3303,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 								"'th list element from the "<< pNextStartElement->getNumberOfElement() <<
 								"'th next Fib element is not equal to the next "<<
 									uiNumberOfNextListElement <<"'th list element"<<
-									" (getFibElement() != getConstFibElement()) "<< endl;
+									" (getFibElement() != getConstFibElement())"<<endl;
 							iReturn++;
 						}
 						//incrase the number with the number of list elements betwean the actual (inclusive) and start -element
@@ -3323,7 +3324,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 					if ( pNextNumberExtObjectElement != pActualFibElement ){
 						cerr<<"Error: The actual Fib element (number="<<
 							uiNumberOfActualFibElement <<") is an number'th "<<
-							"external object  element, but not the next evalued external object element for the number. "<< endl;
+							"external object  element, but not the next evalued external object element for the number."<<endl;
 						iReturn++;
 					}
 					//evalue new next external object  element, but not from the actual external object  element
@@ -3342,7 +3343,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 								"'th external object  element from the "<< pNextStartElement->getNumberOfElement() <<
 								"'th next Fib element is not equal to the next "<<
 								uiNumberOfNextExtObjectElement <<"'th external object element"<<
-								" (getFibElement() != getConstFibElement()) "<< endl;
+								" (getFibElement() != getConstFibElement())"<<endl;
 							iReturn++;
 						}
 						//incrase the number with the number of external object  elements betwean the actual (inclusive) and start -element
@@ -3363,7 +3364,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 					if ( pNextNumberExtSubobjectElement != pActualFibElement ){
 						cerr<<"Error: The actual Fib element (number="<<
 							uiNumberOfActualFibElement <<") is an number'th "<<
-							"external subobject  element, but not the next evalued external subobject element for the number. "<< endl;
+							"external subobject  element, but not the next evalued external subobject element for the number."<<endl;
 						iReturn++;
 					}
 					//evalue new next external subobject  element, but not from the actual external subobject  element
@@ -3382,7 +3383,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 								"'th external subobject  element from the "<< pNextStartElement->getNumberOfElement() <<
 								"'th next Fib element is not equal to the next "<<
 								uiNumberOfNextExtSubobjectElement <<"'th external subobject element"<<
-								" (getFibElement() != getConstFibElement()) "<< endl;
+								" (getFibElement() != getConstFibElement())"<<endl;
 							iReturn++;
 						}
 						//incrase the number with the number of external subobject  elements betwean the actual (inclusive) and start -element
@@ -3403,7 +3404,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 					if ( pNextNumberSetElement != pActualFibElement ){
 						cerr<<"Error: The actual Fib element (number="<<
 							uiNumberOfActualFibElement <<") is an number'th "<<
-							"set  element, but not the next evalued set element for the number. "<< endl;
+							"set  element, but not the next evalued set element for the number."<<endl;
 						iReturn++;
 					}
 					//evalue new next set  element, but not from the actual set  element
@@ -3422,7 +3423,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 								"'th set  element from the "<< pNextStartElement->getNumberOfElement() <<
 								"'th next Fib element is not equal to the next "<<
 								uiNumberOfNextSetElement <<"'th set element"<<
-								" (getFibElement() != getConstFibElement()) "<< endl;
+								" (getFibElement() != getConstFibElement())"<<endl;
 							iReturn++;
 						}
 						//incrase the number with the number of set  elements betwean the actual (inclusive) and start -element
@@ -3443,7 +3444,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 					if ( pNextNumberMatrixElement != pActualFibElement ){
 						cerr<<"Error: The actual Fib element (number="<<
 							uiNumberOfActualFibElement <<") is an number'th "<<
-							"matrix  element, but not the next evalued matrix element for the number. "<< endl;
+							"matrix  element, but not the next evalued matrix element for the number."<<endl;
 						iReturn++;
 					}
 					//evalue new next matrix  element, but not from the actual matrix  element
@@ -3462,7 +3463,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 								"'th matrix  element from the "<< pNextStartElement->getNumberOfElement() <<
 								"'th next Fib element is not equal to the next "<<
 								uiNumberOfNextMatrixElement <<"'th matrix element"<<
-								" (getFibElement() != getConstFibElement()) "<< endl;
+								" (getFibElement() != getConstFibElement())"<<endl;
 							iReturn++;
 						}
 						//incrase the number with the number of matrix  elements betwean the actual (inclusive) and start -element
@@ -3498,7 +3499,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 					cerr<<"Error: The next absolute "<< itrAbsolutElement->second <<
 						"'th point element from the "<< uiNumberOfActualFibElement <<
 						" next point element is not equal to the stored next "<<
-						itrAbsolutElement->second <<"'th point element. "<< endl;
+						itrAbsolutElement->second <<"'th point element."<<endl;
 					iReturn++;
 				}
 				/*check if getConstPoint(longFib lNumber, true) is equal to
@@ -3513,7 +3514,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 						"'th point element from the "<< uiNumberOfActualFibElement <<
 						" next point element is not equal to the next "<<
 						itrAbsolutElement->second <<"'th point element"<<
-						" (getFibElement() != getConstFibElement()) "<< endl;
+						" (getFibElement() != getConstFibElement())"<<endl;
 					iReturn++;
 				}
 			}
@@ -3537,7 +3538,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 					cerr<<"Error: The next absolute "<< itrAbsolutElement->second <<
 						"'th list element from the "<< uiNumberOfActualFibElement <<
 						" next list element is not equal to the stored next "<<
-						itrAbsolutElement->second <<"'th list element. "<< endl;
+						itrAbsolutElement->second <<"'th list element."<<endl;
 					iReturn++;
 				}
 				/*check if getConstList(longFib lNumber, true) is equal to
@@ -3552,7 +3553,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 						"'th list element from the "<< uiNumberOfActualFibElement <<
 						" next list element is not equal to the next "<<
 						itrAbsolutElement->second <<"'th list element"<<
-						" (getFibElement() != getConstFibElement()) "<< endl;
+						" (getFibElement() != getConstFibElement())"<<endl;
 					iReturn++;
 				}
 			}
@@ -3576,7 +3577,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 					cerr<<"Error: The next absolute "<< itrAbsolutElement->second <<
 						"'th property element from the "<< uiNumberOfActualFibElement <<
 						" next property element is not equal to the stored next "<<
-						itrAbsolutElement->second <<"'th property element. "<< endl;
+						itrAbsolutElement->second <<"'th property element."<<endl;
 					iReturn++;
 				}
 				/*check if getConstProperty(longFib lNumber, true) is equal to
@@ -3591,7 +3592,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 						"'th property element from the "<< uiNumberOfActualFibElement <<
 						" next property element is not equal to the next "<<
 						itrAbsolutElement->second <<"'th property element"<<
-						" (getFibElement() != getConstFibElement()) "<< endl;
+						" (getFibElement() != getConstFibElement())"<<endl;
 					iReturn++;
 				}
 			}
@@ -3615,7 +3616,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 					cerr<<"Error: The next absolute "<< itrAbsolutElement->second <<
 						"'th area element from the "<< uiNumberOfActualFibElement <<
 						" next area element is not equal to the stored next "<<
-						itrAbsolutElement->second <<"'th area element. "<< endl;
+						itrAbsolutElement->second <<"'th area element."<<endl;
 					iReturn++;
 				}
 				/*check if getConstArea(longFib lNumber, true) is equal to
@@ -3630,7 +3631,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 						"'th area element from the "<< uiNumberOfActualFibElement <<
 						" next area element is not equal to the next "<<
 						itrAbsolutElement->second <<"'th area element"<<
-						" (getFibElement() != getConstFibElement()) "<< endl;
+						" (getFibElement() != getConstFibElement())"<<endl;
 					iReturn++;
 				}
 			}
@@ -3654,7 +3655,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 					cerr<<"Error: The next absolute "<< itrAbsolutElement->second <<
 						"'th function element from the "<< uiNumberOfActualFibElement <<
 						" next function element is not equal to the stored next "<<
-						itrAbsolutElement->second <<"'th function element. "<< endl;
+						itrAbsolutElement->second <<"'th function element."<<endl;
 					iReturn++;
 				}
 				/*check if getConstFunction(longFib lNumber, true) is equal to
@@ -3669,7 +3670,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 						"'th function element from the "<< uiNumberOfActualFibElement <<
 						" next function element is not equal to the next "<<
 						itrAbsolutElement->second <<"'th function element"<<
-						" (getFibElement() != getConstFibElement()) "<< endl;
+						" (getFibElement() != getConstFibElement())"<<endl;
 					iReturn++;
 				}
 			}
@@ -3693,7 +3694,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 					cerr<<"Error: The next absolute "<< itrAbsolutElement->second <<
 						"'th if-element from the "<< uiNumberOfActualFibElement <<
 						" next if-element is not equal to the stored next "<<
-						itrAbsolutElement->second <<"'th if-element. "<< endl;
+						itrAbsolutElement->second <<"'th if-element."<<endl;
 					iReturn++;
 				}
 				/*check if getConstIf(longFib lNumber, true) is equal to
@@ -3708,7 +3709,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 						"'th if-element from the "<< uiNumberOfActualFibElement <<
 						" next if-element is not equal to the next "<<
 						itrAbsolutElement->second <<"'th if-element"<<
-						" (getFibElement() != getConstFibElement()) "<< endl;
+						" (getFibElement() != getConstFibElement())"<<endl;
 					iReturn++;
 				}
 			}
@@ -3732,7 +3733,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 					cerr<<"Error: The next absolute "<< itrAbsolutElement->second <<
 						"'th comment element from the "<< uiNumberOfActualFibElement <<
 						" next comment element is not equal to the stored next "<<
-						itrAbsolutElement->second <<"'th comment element. "<< endl;
+						itrAbsolutElement->second <<"'th comment element."<<endl;
 					iReturn++;
 				}
 				/*check if getConstComment(longFib lNumber, true) is equal to
@@ -3747,7 +3748,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 						"'th comment element from the "<< uiNumberOfActualFibElement <<
 						" next comment element is not equal to the next "<<
 						itrAbsolutElement->second <<"'th comment element"<<
-						" (getFibElement() != getConstFibElement()) "<< endl;
+						" (getFibElement() != getConstFibElement())"<<endl;
 					iReturn++;
 				}
 			}
@@ -3771,7 +3772,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 					cerr<<"Error: The next absolute "<< itrAbsolutElement->second <<
 						"'th external object element from the "<< uiNumberOfActualFibElement <<
 						" next external object element is not equal to the stored next "<<
-						itrAbsolutElement->second <<"'th external object element. "<< endl;
+						itrAbsolutElement->second <<"'th external object element."<<endl;
 					iReturn++;
 				}
 				/*check if getConstExtObject(longFib lNumber, true) is equal to
@@ -3786,7 +3787,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 						"'th external object element from the "<< uiNumberOfActualFibElement <<
 						" next external object element is not equal to the next "<<
 						itrAbsolutElement->second <<"'th external object element"<<
-						" (getFibElement() != getConstFibElement()) "<< endl;
+						" (getFibElement() != getConstFibElement())"<<endl;
 					iReturn++;
 				}
 			}
@@ -3810,7 +3811,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 					cerr<<"Error: The next absolute "<< itrAbsolutElement->second <<
 						"'th external subobject element from the "<< uiNumberOfActualFibElement <<
 						" next external subobject element is not equal to the stored next "<<
-						itrAbsolutElement->second <<"'th external subobject element. "<< endl;
+						itrAbsolutElement->second <<"'th external subobject element."<<endl;
 					iReturn++;
 				}
 				/*check if getConstExtSubobject(longFib lNumber, true) is equal to
@@ -3825,7 +3826,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 						"'th external subobject element from the "<< uiNumberOfActualFibElement <<
 						" next external subobject element is not equal to the next "<<
 						itrAbsolutElement->second <<"'th external subobject element"<<
-						" (getFibElement() != getConstFibElement()) "<< endl;
+						" (getFibElement() != getConstFibElement())"<<endl;
 					iReturn++;
 				}
 			}
@@ -3849,7 +3850,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 					cerr<<"Error: The next absolute "<< itrAbsolutElement->second <<
 						"'th set element from the "<< uiNumberOfActualFibElement <<
 						" next set element is not equal to the stored next "<<
-						itrAbsolutElement->second <<"'th set element. "<< endl;
+						itrAbsolutElement->second <<"'th set element."<<endl;
 					iReturn++;
 				}
 				/*check if getConstSet(longFib lNumber, true) is equal to
@@ -3864,7 +3865,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 						"'th set element from the "<< uiNumberOfActualFibElement <<
 						" next set element is not equal to the next "<<
 						itrAbsolutElement->second <<"'th set element"<<
-						" (getFibElement() != getConstFibElement()) "<< endl;
+						" (getFibElement() != getConstFibElement())"<<endl;
 					iReturn++;
 				}
 			}
@@ -3888,7 +3889,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 					cerr<<"Error: The next absolute "<< itrAbsolutElement->second <<
 						"'th matrix element from the "<< uiNumberOfActualFibElement <<
 						" next matrix element is not equal to the stored next "<<
-						itrAbsolutElement->second <<"'th matrix element. "<< endl;
+						itrAbsolutElement->second <<"'th matrix element."<<endl;
 					iReturn++;
 				}
 				/*check if getConstMatrix(longFib lNumber, true) is equal to
@@ -3903,7 +3904,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 						"'th matrix element from the "<< uiNumberOfActualFibElement <<
 						" next matrix element is not equal to the next "<<
 						itrAbsolutElement->second <<"'th matrix element"<<
-						" (getFibElement() != getConstFibElement()) "<< endl;
+						" (getFibElement() != getConstFibElement())"<<endl;
 					iReturn++;
 				}
 			}
@@ -3927,7 +3928,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 					cerr<<"Error: The next absolute "<< itrAbsolutElement->second <<
 						"'th rootelement from the "<< uiNumberOfActualFibElement <<
 						" next rootelement is not equal to the stored next "<<
-						itrAbsolutElement->second <<"'th rootelement. "<< endl;
+						itrAbsolutElement->second <<"'th rootelement."<<endl;
 					iReturn++;
 				}
 				/*check if getConstRoot(longFib lNumber, true) is equal to
@@ -3942,7 +3943,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 						"'th rootelement from the "<< uiNumberOfActualFibElement <<
 						" next rootelement is not equal to the next "<<
 						itrAbsolutElement->second <<"'th rootelement"<<
-						" (getFibElement() != getConstFibElement()) "<< endl;
+						" (getFibElement() != getConstFibElement())"<<endl;
 					iReturn++;
 				}
 			}
@@ -4488,91 +4489,91 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 	if ( uiNumberOfAllFibElements != uiNumberOfActualFibElement ){
 		cerr<<"Error: Ther are different values for number of all Fib elements "<<
 			"given back ("<< uiNumberOfAllFibElements <<") and counted ("<<
-			uiNumberOfActualFibElement <<"). "<< endl;
+			uiNumberOfActualFibElement <<")."<<endl;
 		iReturn++;
 	}
 	if ( uiNumberOfAllRootElements != uiNumberOfLastRoot ){
 		cerr<<"Error: Ther are different values for number of all root-elements given "<<
 			"given back ("<< uiNumberOfAllRootElements <<") and counted ("<<
-			uiNumberOfLastRoot <<"). "<< endl;
+			uiNumberOfLastRoot <<")."<<endl;
 		iReturn++;
 	}
 	if ( uiNumberOfAllPointElements != uiNumberOfLastPoint ){
 		cerr<<"Error: Ther are different values for number of all point elements given "<<
 			"given back ("<< uiNumberOfAllPointElements <<") and counted ("<<
-			uiNumberOfLastPoint <<"). "<< endl;
+			uiNumberOfLastPoint <<")."<<endl;
 		iReturn++;
 	}
 	if ( uiNumberOfAllPropertyElements != uiNumberOfLastProperty ){
 		cerr<<"Error: Ther are different values for number of all property elements given "<<
 			"given back ("<< uiNumberOfAllPropertyElements <<") and counted ("<<
-			uiNumberOfLastProperty <<"). "<< endl;
+			uiNumberOfLastProperty <<")."<<endl;
 		iReturn++;
 	}
 	if ( uiNumberOfAllAreaElements != uiNumberOfLastArea ){
 		cerr<<"Error: Ther are different values for number of all area elements given "<<
 			"given back ("<< uiNumberOfAllAreaElements <<") and counted ("<<
-			uiNumberOfLastArea <<"). "<< endl;
+			uiNumberOfLastArea <<")."<<endl;
 		iReturn++;
 	}
 	if ( uiNumberOfAllFunctionElements != uiNumberOfLastFunction ){
 		cerr<<"Error: Ther are different values for number of all function elements given "<<
 			"given back ("<< uiNumberOfAllFunctionElements <<") and counted ("<<
-			uiNumberOfLastFunction <<"). "<< endl;
+			uiNumberOfLastFunction <<")."<<endl;
 		iReturn++;
 	}
 	if ( uiNumberOfAllIfElements != uiNumberOfLastIf ){
 		cerr<<"Error: Ther are different values for number of all if-elements given "<<
 			"given back ("<< uiNumberOfAllIfElements <<") and counted ("<<
-			uiNumberOfLastIf <<"). "<< endl;
+			uiNumberOfLastIf <<")."<<endl;
 		iReturn++;
 	}
 	if ( uiNumberOfAllCommentElements != uiNumberOfLastComment ){
 		cerr<<"Error: Ther are different values for number of all comment elements given "<<
 			"given back ("<< uiNumberOfAllCommentElements <<") and counted ("<<
-			uiNumberOfLastComment <<"). "<< endl;
+			uiNumberOfLastComment <<")."<<endl;
 		iReturn++;
 	}
 	if ( uiNumberOfAllListElements != uiNumberOfLastList ){
 		cerr<<"Error: Ther are different values for number of all list elements given "<<
 			"given back ("<< uiNumberOfAllListElements <<") and counted ("<<
-			uiNumberOfLastList <<"). "<< endl;
+			uiNumberOfLastList <<")."<<endl;
 		iReturn++;
 	}
 	if ( uiNumberOfAllExtObjectElements != uiNumberOfLastExtObject ){
 		cerr<<"Error: Ther are different values for number of all external object elements given "<<
 			"given back ("<< uiNumberOfAllExtObjectElements <<") and counted ("<<
-			uiNumberOfLastExtObject <<"). "<< endl;
+			uiNumberOfLastExtObject <<")."<<endl;
 		iReturn++;
 	}
 	if ( uiNumberOfAllExtSubobjectElements != uiNumberOfLastExtSubobject ){
 		cerr<<"Error: Ther are different values for number of all external subobject elements given "<<
 			"given back ("<< uiNumberOfAllExtSubobjectElements <<") and counted ("<<
-			uiNumberOfLastExtSubobject <<"). "<< endl;
+			uiNumberOfLastExtSubobject <<")."<<endl;
 		iReturn++;
 	}
 	if ( uiNumberOfAllSetElements != uiNumberOfLastSet ){
 		cerr<<"Error: Ther are different values for number of all set elements given "<<
 			"given back ("<< uiNumberOfAllSetElements <<") and counted ("<<
-			uiNumberOfLastSet <<"). "<< endl;
+			uiNumberOfLastSet <<")."<<endl;
 		iReturn++;
 	}
 	if ( uiNumberOfAllMatrixElements != uiNumberOfLastMatrix ){
 		cerr<<"Error: Ther are different values for number of all matrix elements given "<<
 			"given back ("<< uiNumberOfAllMatrixElements <<") and counted ("<<
-			uiNumberOfLastMatrix <<"). "<< endl;
+			uiNumberOfLastMatrix <<")."<<endl;
 		iReturn++;
 	}
 	if ( uiNumberOfAllMovePoints != uiNumberOfLastMovePoint ){
 		cerr<<"Error: Ther are different values for the number of all movepoints "<<
 			"given back ("<< uiNumberOfAllMovePoints <<") and counted ("<<
-			uiNumberOfLastMovePoint <<"). "<< endl;
+			uiNumberOfLastMovePoint <<")."<<endl;
 		iReturn++;
 	}
 	if ( uiNumberOfAllObjectPoints != uiNumberOfLastObjectPoint ){
 		cerr<<"Error: Ther are different values for the number of all objectpoints "<<
 			"given back ("<< uiNumberOfAllObjectPoints <<") and counted ("<<
-			uiNumberOfLastObjectPoint <<"). "<< endl;
+			uiNumberOfLastObjectPoint <<")."<<endl;
 		iReturn++;
 	}
 
@@ -4604,7 +4605,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 				pEndingPoint->getNumberOfElement() <<") the distance "<<
 				lDistance <<" and back from the endpoint the distance "<<
 				(lDistance * -1 + 1) <<" dosn't ends at the startingpoint, but on the "<<
-				" the NULL -pointer. "<< endl;
+				" the NULL -pointer."<<endl;
 			iReturn++;
 			continue;
 		}
@@ -4614,7 +4615,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 				pEndingPoint->getNumberOfElement() <<") the distance "<<
 				lDistance <<" and back from the endpoint the distance "<<
 				(lDistance * -1 + 1) <<" dosn't ends at the startingpoint, but on the "<<
-				pStartingPointRevers->getNumberOfElement()<<"'th Fib element. "<< endl;
+				pStartingPointRevers->getNumberOfElement()<<"'th Fib element."<<endl;
 			iReturn++;
 		}
 	}
@@ -4727,7 +4728,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 					lDistance <<" and back "<<
 					"from the endpoint the distance "<< lElementsOfTypeBetwean <<
 					" over "<<szNameActualType <<"elements dosn't ends at the "<<
-					"startingpoint, but on the NULL -pointer. "<< endl;
+					"startingpoint, but on the NULL -pointer."<<endl;
 				iReturn++;
 				continue;
 			}
@@ -4740,7 +4741,7 @@ int testStructurOnObject( cFibElement * pFibObject, bool bPrintMessages ){
 					"from the endpoint the distance "<< lElementsOfTypeBetwean <<
 					" over "<<szNameActualType <<"elements dosn't ends at the "<<
 					"startingpoint, but on the "<< pStartingPointRevers->getNumberOfElement() <<
-					"'th Fib element. "<< endl;
+					"'th Fib element."<<endl;
 				iReturn++;
 			}
 		}
@@ -4819,7 +4820,7 @@ int testGetNumberOfCountOnObject( cFibElement * pFibObject ){
 				cerr<<"Error: The actual Fib element (number="<<
 					pNextToLastFibElementInObject->getNumberOfElement() <<
 					") shouldn't be in the subobject of the choosen Fib element "<<
-					pChoosenNumberFibElement->getNumberOfElement() <<" , but it is. "<< endl;
+					pChoosenNumberFibElement->getNumberOfElement() <<" , but it is."<<endl;
 				iReturn++;
 				break;
 			}
@@ -4851,7 +4852,7 @@ int testGetNumberOfCountOnObject( cFibElement * pFibObject ){
 				cerr<<"Error: The objectpoint "<< uiCountObjectPoints <<
 					" ,which is the "<< uiElementPointOfObjectPoint <<"'th Fib element, "<<
 					" is not in the subobject of the choosen Fib element "<<
-					pChoosenNumberFibElement->getNumberOfElement() <<" . "<< endl;
+					pChoosenNumberFibElement->getNumberOfElement() <<" ."<<endl;
 				iReturn++;
 			}
 		}
@@ -4864,7 +4865,7 @@ int testGetNumberOfCountOnObject( cFibElement * pFibObject ){
 				uiElementPointOfNextObjectPoint <<") next to the objectpoint "<<
 				uiCountObjectPoints <<" , which is the "<< uiElementPointOfObjectPoint
 				<<"'th Fib element, is in the subobject of the choosen Fib element "<<
-				pChoosenNumberFibElement->getNumberOfElement() <<" . "<< endl;
+				pChoosenNumberFibElement->getNumberOfElement() <<" ."<<endl;
 			iReturn++;
 		}
 
@@ -4931,91 +4932,91 @@ int testGetNumberOfCountOnObject( cFibElement * pFibObject ){
 				"Fib element, which should be the last in the subobject "<<
 				"to the choosen Fib element "<<
 				pChoosenNumberFibElement->getNumberOfElement() <<
-				", the choosen Fib element wasn't reached. "<< endl;
+				", the choosen Fib element wasn't reached."<<endl;
 			iReturn++;
 		}
 		if ( lCountFibElements != 0 ){
 			cerr<<"Error: In the subobject to the choosen Fib element "<<
 				pChoosenNumberFibElement->getNumberOfElement() <<
-				" ther wher "<< lCountFibElements <<" Fib elements counted to much. "<< endl;
+				" ther wher "<< lCountFibElements <<" Fib elements counted to much."<<endl;
 			iReturn++;
 		}
 		if ( lCountMovePoints != 0 ){
 			cerr<<"Error: In the subobject to the choosen Fib element "<<
 				pChoosenNumberFibElement->getNumberOfElement() <<
-				" ther wher "<< lCountMovePoints <<" movepoints counted to much. "<< endl;
+				" ther wher "<< lCountMovePoints <<" movepoints counted to much."<<endl;
 			iReturn++;
 		}
 		if ( lCountRoots != 0 ){
 			cerr<<"Error: In the subobject to the choosen Fib element "<<
 				pChoosenNumberFibElement->getNumberOfElement() <<
-				" ther wher "<< lCountRoots <<" root-elements counted to much. "<< endl;
+				" ther wher "<< lCountRoots <<" root-elements counted to much."<<endl;
 			iReturn++;
 		}
 		if ( lCountPoints != 0 ){
 			cerr<<"Error: In the subobject to the choosen Fib element "<<
 				pChoosenNumberFibElement->getNumberOfElement() <<
-				" ther wher "<< lCountPoints <<" point elements counted to much. "<< endl;
+				" ther wher "<< lCountPoints <<" point elements counted to much."<<endl;
 			iReturn++;
 		}
 		if ( lCountProperties != 0 ){
 			cerr<<"Error: In the subobject to the choosen Fib element "<<
 				pChoosenNumberFibElement->getNumberOfElement() <<
-				" ther wher "<< lCountProperties <<" property elements counted to much. "<< endl;
+				" ther wher "<< lCountProperties <<" property elements counted to much."<<endl;
 			iReturn++;
 		}
 		if ( lCountAreas != 0 ){
 			cerr<<"Error: In the subobject to the choosen Fib element "<<
 				pChoosenNumberFibElement->getNumberOfElement() <<
-				" ther wher "<< lCountAreas <<" area elements counted to much. "<< endl;
+				" ther wher "<< lCountAreas <<" area elements counted to much."<<endl;
 			iReturn++;
 		}
 		if ( lCountFunctions != 0 ){
 			cerr<<"Error: In the subobject to the choosen Fib element "<<
 				pChoosenNumberFibElement->getNumberOfElement() <<
-				" ther wher "<< lCountFunctions <<" function elements counted to much. "<< endl;
+				" ther wher "<< lCountFunctions <<" function elements counted to much."<<endl;
 			iReturn++;
 		}
 		if ( lCountIfs != 0 ){
 			cerr<<"Error: In the subobject to the choosen Fib element "<<
 				pChoosenNumberFibElement->getNumberOfElement() <<
-				" ther wher "<< lCountIfs <<" if-elements counted to much. "<< endl;
+				" ther wher "<< lCountIfs <<" if-elements counted to much."<<endl;
 			iReturn++;
 		}
 		if ( lCountComments != 0 ){
 			cerr<<"Error: In the subobject to the choosen Fib element "<<
 				pChoosenNumberFibElement->getNumberOfElement() <<
-				" ther wher "<< lCountComments <<" comment elements counted to much. "<< endl;
+				" ther wher "<< lCountComments <<" comment elements counted to much."<<endl;
 			iReturn++;
 		}
 		if ( lCountLists != 0 ){
 			cerr<<"Error: In the subobject to the choosen Fib element "<<
 				pChoosenNumberFibElement->getNumberOfElement() <<
-				" ther wher "<< lCountLists <<" list elements counted to much. "<< endl;
+				" ther wher "<< lCountLists <<" list elements counted to much."<<endl;
 			iReturn++;
 		}
 		if ( lCountExtObjects != 0 ){
 			cerr<<"Error: In the subobject to the choosen Fib element "<<
 				pChoosenNumberFibElement->getNumberOfElement() <<
-				" ther wher "<< lCountExtObjects <<" external object elements counted to much. "<< endl;
+				" ther wher "<< lCountExtObjects <<" external object elements counted to much."<<endl;
 			iReturn++;
 		}
 		if ( lCountExtSubobjects != 0 ){
 			cerr<<"Error: In the subobject to the choosen Fib element "<<
 				pChoosenNumberFibElement->getNumberOfElement() <<
-				" ther wher "<< lCountExtSubobjects <<" external subobject elements counted to much. "<< endl;
+				" ther wher "<< lCountExtSubobjects <<" external subobject elements counted to much."<<endl;
 			iReturn++;
 		}
 		if ( lCountSet != 0 ){
 			cerr<<"Error: In the subobject to the choosen Fib element "<<
 				pChoosenNumberFibElement->getNumberOfElement() <<
-				" ther wher "<< lCountSet <<" set elements counted to much. "<< endl;
+				" ther wher "<< lCountSet <<" set elements counted to much."<<endl;
 			iReturn++;
 		}
 		if ( lCountMatrix != 0 ){
 			cerr<<"Error: In the subobject to the choosen Fib element "<<
 				pChoosenNumberFibElement->getNumberOfElement() <<
-				" ther wher "<< lCountMatrix <<" matrix elements counted to much. "<< endl;
+				" ther wher "<< lCountMatrix <<" matrix elements counted to much."<<endl;
 			iReturn++;
 		}
 	}
@@ -5074,7 +5075,7 @@ int checkIsConnectedTypeTree( list<cFibElement*> liClusterElements,
 				cerr<<"Error: The type of the "<<
 					(*itrActualFibElement)->getNumberOfElement()<<
 					"'th Fib element in the given tree is not of the selected type "<<
-					cType <<", but has the type "<< (*itrActualFibElement)->getType() <<" . "<< endl;
+					cType <<", but has the type "<< (*itrActualFibElement)->getType() <<" ."<<endl;
 				iReturn++;
 			}
 		}
@@ -5086,7 +5087,7 @@ int checkIsConnectedTypeTree( list<cFibElement*> liClusterElements,
 	//check if ther is no duplicate Fib element in the list
 	if ( setClusterElements.size() != liClusterElements.size() ){
 		cerr<<"Error: Ther are duplicate Fib elements in the Fib elementtree"<<
-			" of type "<< cType <<" . "<< endl;
+			" of type "<< cType <<" ."<<endl;
 		iReturn++;
 	}
 	if ( pRootElement == NULL ){
@@ -5120,7 +5121,7 @@ int checkIsConnectedTypeTree( list<cFibElement*> liClusterElements,
 				//root-element not found in the tree
 				cerr<<"Error: The root-element with number "<<
 					pRootElement->getNumberOfElement() <<
-					" has the correct type "<< cType <<", but isn't in the tree. "<< endl;
+					" has the correct type "<< cType <<", but isn't in the tree."<<endl;
 				iReturn++;
 			}
 		}
@@ -5176,7 +5177,7 @@ int checkIsConnectedTypeTree( list<cFibElement*> liClusterElements,
 							cerr<<"Error: The superior Fib element with number "<<
 								pActualSuperiorElement->getNumberOfElement() <<
 								" of the central node Fib element with number "<<
-								pCentralNode->getNumberOfElement()<<" has higher number. "<< endl;
+								pCentralNode->getNumberOfElement()<<" has higher number."<<endl;
 							iReturn++;
 						}
 						//this Fib element is Ok -> don't check it later
@@ -5194,7 +5195,7 @@ int checkIsConnectedTypeTree( list<cFibElement*> liClusterElements,
 							pActualSuperiorElement->getNumberOfElement() <<
 							" of the central node Fib element with number "<<
 							pCentralNode->getNumberOfElement()<<
-							" has the correct type "<< cType <<", but isn't in the tree. "<< endl;
+							" has the correct type "<< cType <<", but isn't in the tree."<<endl;
 						iReturn++;
 					}
 				}
@@ -5247,7 +5248,7 @@ int checkIsConnectedTypeTree( list<cFibElement*> liClusterElements,
 						cerr<<"Error: The superior Fib element with number "<<
 							pActualSuperiorElement->getNumberOfElement() <<
 							" of the Fib element with number "<<
-							(*itrActualFibElement)->getNumberOfElement()<<" has higher number. "<< endl;
+							(*itrActualFibElement)->getNumberOfElement()<<" has higher number."<<endl;
 						iReturn++;
 					}
 					break;
@@ -5257,7 +5258,7 @@ int checkIsConnectedTypeTree( list<cFibElement*> liClusterElements,
 						pActualSuperiorElement->getNumberOfElement() <<
 						" of the Fib element with number "<<
 						(*itrActualFibElement)->getNumberOfElement()<<
-						" has the correct type "<< cType <<", but isn't in the tree. "<< endl;
+						" has the correct type "<< cType <<", but isn't in the tree."<<endl;
 					iReturn++;
 				}
 			}
@@ -5266,12 +5267,12 @@ int checkIsConnectedTypeTree( list<cFibElement*> liClusterElements,
 			if ( pCentralNode == NULL){
 				cerr<<"Error: The Fib element with number "<<
 					(*itrActualFibElement)->getNumberOfElement()<<
-					" should be in the tree, but hasn't the common root. "<< endl;
+					" should be in the tree, but hasn't the common root."<<endl;
 				iReturn++;
 			}else{
 				cerr<<"Error: The Fib element with number "<<
 					(*itrActualFibElement)->getNumberOfElement()<<
-					" should be in the tree, but hasn't the central node as it's superior. "<< endl;
+					" should be in the tree, but hasn't the central node as it's superior."<<endl;
 				iReturn++;
 			}
 		}
@@ -7620,7 +7621,7 @@ int testOverwriteObjectWithObjectOnObject( cFibElement * pFibObject, bool bDelet
 		pFibObjectToInsert = pGeneratedFibObject;
 		
 		if ( rand() % 50 != 0 ){
-			//get the next non root-element from the generated fib object
+			//get the next non root-element from the generated Fib object
 			for ( pFibObjectToInsert = pGeneratedFibObject;
 					(pFibObjectToInsert != NULL) && ( pFibObjectToInsert->getType() == 'r' );
 				pFibObjectToInsert = pFibObjectToInsert->getNextFibElement() ){
@@ -7638,7 +7639,7 @@ int testOverwriteObjectWithObjectOnObject( cFibElement * pFibObject, bool bDelet
 	cFibElement * pCallingFibElement =
 		pFibObject->getFibElement( uiCallingFibElement );
 
-	//choos a position wher the Fib object will be inserted
+	//choos a position where the Fib object will be inserted
 #ifdef TODO_LATER
 //when getFibElements works on negativ values:
 	char cTypeOverwriteObject = choosRandomType();
@@ -7936,13 +7937,13 @@ int testOverwriteObjectWithObjectOnObject( cFibElement * pFibObject, bool bDelet
 		pFibObjectToInsert <<", "<< cTypeOverwriteObject<<", "<<
 		uiToOverwriteObject<<", "<< (bDeleteOld ?"true":"false") << " ) from the "<<
 		pCallingFibElement->getNumberOfElement()<<"'th Fib element "<<
-		"(which is of type "<< pCallingFibElement->getType() <<"). "<< endl;
+		"(which is of type "<< pCallingFibElement->getType() <<")."<<endl;
 	if ( pSuperiorFibObjectToInsert != NULL ){
 		cout<<"   The superior Fib element of the to overwrite "<<
 			"Fib element is the "<<
 			pSuperiorFibObjectToInsert->getNumberOfElement() <<
 			"'th Fib element with the type "<<
-			pSuperiorFibObjectToInsert->getType() <<" . "<< endl;
+			pSuperiorFibObjectToInsert->getType() <<" ."<<endl;
 	}
 	if ( pToOverwriteObject == NULL ){
 		cout<<"   But ther is no Fib object to overwrite.";
@@ -7968,7 +7969,7 @@ int testOverwriteObjectWithObjectOnObject( cFibElement * pFibObject, bool bDelet
 				" ) from the "<<pCallingElementNumber<<"'th Fib element "<<
 				"(which is of type "<< pCallingElementType <<"), "<<
 				"the to overwrite Fib element can't be overwritten, but it "<<
-				"was overwritten. "<< endl;
+				"was overwritten."<<endl;
 			iReturn++;
 			
 			if ( ( ! bDeleteOld ) && ( pToOverwriteObject != NULL ) ){
@@ -8002,13 +8003,13 @@ int testOverwriteObjectWithObjectOnObject( cFibElement * pFibObject, bool bDelet
 			uiToOverwriteObject<<", "<< (bDeleteOld ?"true":"false") <<
 			" ) from the "<<pCallingElementNumber<<"'th Fib element "<<
 			"(which is of type "<< pCallingElementType <<"), "<<
-			"the to overwrite Fib element couldn't be overwritten. "<< endl;
+			"the to overwrite Fib element couldn't be overwritten."<<endl;
 		if ( pSuperiorFibObjectToInsert != NULL ){
 			cerr<<"   The superior Fib element of the to overwrite "<<
 				"Fib element is the "<<
 				pSuperiorFibObjectToInsert->getNumberOfElement() <<
 				"'th Fib element with the type "<<
-				pSuperiorFibObjectToInsert->getType() <<" . "<< endl;
+				pSuperiorFibObjectToInsert->getType() <<" ."<<endl;
 		}
 		iReturn++;
 	}else{
@@ -8208,13 +8209,13 @@ int testOverwriteObjectWithObjectOnObject( cFibElement * pFibObject, bool bDelet
 				"the inserted Fib object has the wrong superior Fib element (number="<<
 				pFibObjectToInsert->getSuperiorFibElement()->getNumberOfElement()
 				<<" and not number="<<
-				pSuperiorFibObjectToInsert->getNumberOfElement() <<") . "<< endl;
+				pSuperiorFibObjectToInsert->getNumberOfElement() <<") ."<<endl;
 			iReturn++;
 		}
 	}else{
 		cerr<<"Error: The superior element is NULL (sup insert old="<<
 			pSuperiorFibObjectToInsert <<" new="<<
-			pFibObjectToInsert->getSuperiorFibElement() <<"). "<< endl;
+			pFibObjectToInsert->getSuperiorFibElement() <<")."<<endl;
 		iReturn++;
 	}
 	if ( pLastInFibObjectInInsert != NULL ){
@@ -8229,10 +8230,10 @@ int testOverwriteObjectWithObjectOnObject( cFibElement * pFibObject, bool bDelet
 			if ( pLastInFibObjectInInsert->getNextFibElement() ){
 				cerr<<"(number="<<pLastInFibObjectInInsert->getNextFibElement()->
 					getNumberOfElement() <<" and not number="<<
-					pAfterFibObjectToInsert->getNumberOfElement() <<"). "<< endl;
+					pAfterFibObjectToInsert->getNumberOfElement() <<")."<<endl;
 			}else{
 				cerr<<" NULL and not number="<<
-					pAfterFibObjectToInsert->getNumberOfElement() <<"). "<< endl;
+					pAfterFibObjectToInsert->getNumberOfElement() <<")."<<endl;
 			}
 			iReturn++;
 		}
@@ -8246,7 +8247,7 @@ int testOverwriteObjectWithObjectOnObject( cFibElement * pFibObject, bool bDelet
 				"the inserted Fib object has the wrong next Fib element "<<
 				"it isn't NULL (has number="<<
 				pLastInFibObjectInInsert->getNextFibElement()->getNumberOfElement()
-				<<"), but it should be. "<< endl;
+				<<"), but it should be."<<endl;
 			iReturn++;
 		}
 	}
@@ -8344,7 +8345,7 @@ int testOverwriteObjectWithObjectAbsoluteOnObject( cFibElement * pFibObject, boo
 		pFibObjectToInsert = pGeneratedFibObject;
 		
 		if ( rand() % 50 != 0 ){
-			//get the next non root-element from the generated fib object
+			//get the next non root-element from the generated Fib object
 			for ( pFibObjectToInsert = pGeneratedFibObject;
 					(pFibObjectToInsert != NULL) && ( pFibObjectToInsert->getType() == 'r' );
 					pFibObjectToInsert = pFibObjectToInsert->getNextFibElement() ){
@@ -8361,7 +8362,7 @@ int testOverwriteObjectWithObjectAbsoluteOnObject( cFibElement * pFibObject, boo
 	cFibElement * pCallingFibElement =
 		pFibObject->getFibElement( uiCallingFibElement );
 
-	//choos a position wher the Fib object will be inserted
+	//choos a position where the Fib object will be inserted
 	char cTypeOverwriteObject = choosRandomType();
 
 	unsigned int uiToOverwriteObject = 0;
@@ -8582,13 +8583,13 @@ int testOverwriteObjectWithObjectAbsoluteOnObject( cFibElement * pFibObject, boo
 		pFibObjectToInsert <<", "<< cTypeOverwriteObject<<", "<<
 		uiToOverwriteObject<<", "<< (bDeleteOld ?"true":"false") << ", true ) from the "<<
 		pCallingFibElement->getNumberOfElement()<<"'th Fib element "<<
-		"(which is of type "<< pCallingFibElement->getType() <<"). "<< endl;
+		"(which is of type "<< pCallingFibElement->getType() <<")."<<endl;
 	if ( pSuperiorFibObjectToInsert != NULL ){
 		cout<<"   The superior Fib element of the to overwrite "<<
 			"Fib element is the "<<
 			pSuperiorFibObjectToInsert->getNumberOfElement() <<
 			"'th Fib element with the type "<<
-			pSuperiorFibObjectToInsert->getType() <<" . "<< endl;
+			pSuperiorFibObjectToInsert->getType() <<" ."<<endl;
 	}
 	if ( pToOverwriteObject == NULL ){
 		cout<<"   But ther is no Fib object to overwrite.";
@@ -8614,7 +8615,7 @@ int testOverwriteObjectWithObjectAbsoluteOnObject( cFibElement * pFibObject, boo
 				", true ) from the "<<pCallingElementNumber<<"'th Fib element "<<
 				"(which is of type "<< pCallingElementType <<"), "<<
 				"the to overwrite Fib element can't be overwritten, but it "<<
-				"was overwritten. "<< endl;
+				"was overwritten."<<endl;
 			iReturn++;
 			
 			if ( ( ! bDeleteOld ) && ( pToOverwriteObject != NULL ) ){
@@ -8641,13 +8642,13 @@ int testOverwriteObjectWithObjectAbsoluteOnObject( cFibElement * pFibObject, boo
 			uiToOverwriteObject<<", "<< (bDeleteOld ?"true":"false") <<
 			", true ) from the "<<pCallingElementNumber<<"'th Fib element "<<
 			"(which is of type "<< pCallingElementType <<"), "<<
-			"the to overwrite Fib element couldn't be overwritten. "<< endl;
+			"the to overwrite Fib element couldn't be overwritten."<<endl;
 		if ( pSuperiorFibObjectToInsert != NULL ){
 			cerr<<"   The superior Fib element of the to overwrite "<<
 				"Fib element is the "<<
 				pSuperiorFibObjectToInsert->getNumberOfElement() <<
 				"'th Fib element with the type "<<
-				pSuperiorFibObjectToInsert->getType() <<" . "<< endl;
+				pSuperiorFibObjectToInsert->getType() <<" ."<<endl;
 		}
 		iReturn++;
 	}else{
@@ -8847,13 +8848,13 @@ int testOverwriteObjectWithObjectAbsoluteOnObject( cFibElement * pFibObject, boo
 				"the inserted Fib object has the wrong superior Fib element (number="<<
 				pFibObjectToInsert->getSuperiorFibElement()->getNumberOfElement()
 				<<" and not number="<<
-				pSuperiorFibObjectToInsert->getNumberOfElement() <<") . "<< endl;
+				pSuperiorFibObjectToInsert->getNumberOfElement() <<") ."<<endl;
 			iReturn++;
 		}
 	}else{
 		cerr<<"Error: The superior element is NULL (sup insert old="<<
 			pSuperiorFibObjectToInsert <<" new="<<
-			pFibObjectToInsert->getSuperiorFibElement() <<"). "<< endl;
+			pFibObjectToInsert->getSuperiorFibElement() <<")."<<endl;
 		iReturn++;
 	}
 	if ( pLastInFibObjectInInsert != NULL ){
@@ -8868,10 +8869,10 @@ int testOverwriteObjectWithObjectAbsoluteOnObject( cFibElement * pFibObject, boo
 			if ( pLastInFibObjectInInsert->getNextFibElement() ){
 				cerr<<"(number="<<pLastInFibObjectInInsert->getNextFibElement()->
 					getNumberOfElement() <<" and not number="<<
-					pAfterFibObjectToInsert->getNumberOfElement() <<"). "<< endl;
+					pAfterFibObjectToInsert->getNumberOfElement() <<")."<<endl;
 			}else{
 				cerr<<" NULL and not number="<<
-					pAfterFibObjectToInsert->getNumberOfElement() <<"). "<< endl;
+					pAfterFibObjectToInsert->getNumberOfElement() <<")."<<endl;
 			}
 			iReturn++;
 		}
@@ -8885,7 +8886,7 @@ int testOverwriteObjectWithObjectAbsoluteOnObject( cFibElement * pFibObject, boo
 				"the inserted Fib object has the wrong next Fib element "<<
 				"it isn't NULL (has number="<<
 				pLastInFibObjectInInsert->getNextFibElement()->getNumberOfElement()
-				<<"), but it should be. "<< endl;
+				<<"), but it should be."<<endl;
 			iReturn++;
 		}
 	}
@@ -9241,6 +9242,3076 @@ int testRemoveObjectAbsoluteOnObject( cFibElement * pFibObject, bool bDeleteOld 
 
 
 
+
+#ifdef FEATURE_INSERT_OBJECT_IN_ELEMENT
+
+//TODO check
+
+/**
+ * This function tests the overwriteObjectWithObject() method for a given
+ * Fib object.
+ * ATTENTION: The random number generator should to be initialisized with srand()
+ *
+ * methods tested:
+ * 	- bool insertObjectInElement( cFibElement *fibObject, const char cType, const unsignedIntFib elementPoint, bool first=true, bool bAbsolute=false );
+ *
+ * Fib elements tested:
+ * 	- cRoot
+ * 	- cList
+ * 	- cPoint
+ * 	- cProperty
+ * 	- cArea
+ * 	- cFunction
+ * 	- cIf
+ * 	- cComment
+ * 	- cExtObject
+ * 	- cExtSubobject
+ * 	- cFibSet
+ * 	- cFibMatrix
+ *
+ * @param pFibObject a pointer to the Fib object to test
+ * @return the number of erros occured in the test
+ */
+int testInsertObjectInElementObjectFirstOnObject( cFibElement * pFibObject ){
+
+	int iReturn = 0;//return value of the test; the number of occured errors
+	
+	if ( pFibObject == NULL ){
+		cerr<<"Error: No Fib object to check ."<<endl;
+		iReturn++;
+		return iReturn;
+	}
+	//evalue the count values of the given Fib object
+	const unsigned int uiNumberOfAllFibElements =
+		pFibObject->getNumberOfElements();
+	const unsigned int uiNumberOfRootElements =
+		pFibObject->getNumberOfElements( 'r' );
+	const unsigned int uiNumberOfPointElements =
+		pFibObject->getNumberOfElements( 'p' );
+	const unsigned int uiNumberOfListElements =
+		pFibObject->getNumberOfElements( 'l' );
+	const unsigned int uiNumberOfPropertyElements =
+		pFibObject->getNumberOfElements( 'y' );
+	const unsigned int uiNumberOfAreaElements =
+		pFibObject->getNumberOfElements( 'a' );
+	const unsigned int uiNumberOfFunctionElements =
+		pFibObject->getNumberOfElements( 'f' );
+	const unsigned int uiNumberOfIfElements =
+		pFibObject->getNumberOfElements( 'i' );
+	const unsigned int uiNumberOfCommentElements =
+		pFibObject->getNumberOfElements( 'c' );
+	const unsigned int uiNumberOfExtObjectElements =
+		pFibObject->getNumberOfElements( 'o' );
+	const unsigned int uiNumberOfExtSubobjectElements =
+		pFibObject->getNumberOfElements( 's' );
+	const unsigned int uiNumberOfSetElements =
+		pFibObject->getNumberOfElements( 'v' );
+	const unsigned int uiNumberOfMatrixElements =
+		pFibObject->getNumberOfElements( 'm' );
+
+
+	const unsigned int uiAverageSubRoots = 1;
+	const unsigned int uiAverageSubRootsDepth = 1;
+	const unsigned int uiNumberOfAverageInputVariables = 0;
+	const unsigned int uiMaxVectorElementNumber = 1023;
+	
+	//TODO check with variables
+	const double dFractionsOfUsedVariables = 0.0;
+
+	cFibElement * pFibObjectToInsert = NULL;
+	if ( rand() % 50 != 0 ){
+		cFibElement * pGeneratedFibObject = generateFibObject( uiNumberOfAllFibElements / 10 + 10,
+			liFractionOfFibElements, liPossiblePropertytyps, uiNumberOfDimensions,
+			uiAverageSubRoots, uiAverageSubRootsDepth,
+			uiNumberOfAverageInputVariables, dFractionsOfUsedVariables,
+			uiMaxVectorElementNumber );
+		
+		pFibObjectToInsert = pGeneratedFibObject;
+		
+		if ( rand() % 50 != 0 ){
+			//get the next non root-element from the generated Fib object
+			for ( pFibObjectToInsert = pGeneratedFibObject;
+					(pFibObjectToInsert != NULL) && ( pFibObjectToInsert->getType() == 'r' );
+					pFibObjectToInsert = pFibObjectToInsert->getNextFibElement() ){
+			}
+			pFibObjectToInsert = pFibObjectToInsert->copy();
+			pGeneratedFibObject->deleteObject();
+		}//else check when to insert a root-element
+	}//else check when return is false when pFibObjectToInsert==NULL
+	
+	//choos a random calling Fib element
+	const unsigned int uiCallingFibElement =
+		rand() % uiNumberOfAllFibElements + 1;
+	cFibElement * pCallingFibElement =
+		pFibObject->getFibElement( uiCallingFibElement );
+
+	//choos a position where the Fib object will be inserted
+
+	char cTypeInsertObject = choosRandomType();
+	unsigned int uiNumberOfElementsOfType = pCallingFibElement->
+		getNumberOfElements( cTypeInsertObject );
+
+	unsigned int uiToInsertPositionObject = 0;
+	
+	cFibElement * pToInsertPositionObject = NULL;
+	if ( rand() % 50 != 0 ){
+		if ( uiNumberOfElementsOfType != 0 ){
+			uiToInsertPositionObject = rand() % (uiNumberOfElementsOfType + 1);
+		}else{
+			uiToInsertPositionObject = 0;
+		}
+		pToInsertPositionObject = pCallingFibElement->getFibElement(
+				cTypeInsertObject, uiToInsertPositionObject );
+		//check the getType() methode from cList
+		if ( pToInsertPositionObject == NULL ){
+			cerr<<"Error: The "<< uiToInsertPositionObject <<
+				"'th Fib element from the calling Fib element of the "<<
+				"Fib object couldn't be choosen as the basis the Fib element."<<endl;
+			iReturn++;
+			
+			if ( pFibObjectToInsert ){
+				pFibObjectToInsert->deleteObject();
+			}
+			return iReturn;
+		}
+	}else{//test when no Fib object to overwrite exists
+		switch ( cTypeInsertObject ){
+			case 'u':uiToInsertPositionObject = uiNumberOfAllFibElements + 1;
+			break;
+			case 'r':uiToInsertPositionObject = uiNumberOfRootElements + 1;
+			break;
+			case 'p':uiToInsertPositionObject = uiNumberOfPointElements + 1;
+			break;
+			case 'l':uiToInsertPositionObject = uiNumberOfListElements + 1;
+			break;
+			case 'y':uiToInsertPositionObject = uiNumberOfPropertyElements + 1;
+			break;
+			case 'a':uiToInsertPositionObject = uiNumberOfAreaElements + 1;
+			break;
+			case 'f':uiToInsertPositionObject = uiNumberOfFunctionElements + 1;
+			break;
+			case 'i':uiToInsertPositionObject = uiNumberOfIfElements + 1;
+			break;
+			case 'c':uiToInsertPositionObject = uiNumberOfCommentElements + 1;
+			break;
+			case 'o':uiToInsertPositionObject = uiNumberOfExtObjectElements + 1;
+			break;
+			case 's':uiToInsertPositionObject = uiNumberOfExtSubobjectElements + 1;
+			break;
+			case 'v':uiToInsertPositionObject = uiNumberOfSetElements + 1;
+			break;
+			case 'm':uiToInsertPositionObject = uiNumberOfMatrixElements + 1;
+			break;
+		}
+	}
+	
+	cFibElement * pSuperiorFibObjectToInsert = NULL;
+	cFibElement * pAfterFibObjectToInsert = pToInsertPositionObject;
+	bool bCanInsert = true;
+	if ( uiToInsertPositionObject == 0 ){
+		//insert the object into the selected Fib element
+		if ( pCallingFibElement->getType() == 'o' ){
+			//insert in a erxternal object element
+			cout<<"Insert in an external object element with "<<
+				((cExtObject*)(pCallingFibElement))->getNumberOfSubobjects()<<" subobjects."<<endl;
+			pSuperiorFibObjectToInsert = pCallingFibElement;
+			pAfterFibObjectToInsert = pCallingFibElement->getNextFibElement();
+			if ( ((cExtObject*)(pCallingFibElement))->getNumberOfSubobjects() == 0 ){
+				pToInsertPositionObject = NULL;
+			}else{/*the external object element has subobjects ->
+				the first subobject is the insert position*/
+				pToInsertPositionObject = pCallingFibElement->getNextFibElement();
+			}
+		}else{
+			cFibElement * pToInsertPositionObjectTmp =
+				pCallingFibElement->getNextFibElement();
+			
+			if ( pToInsertPositionObjectTmp != NULL ){
+				if ( pToInsertPositionObjectTmp->getSuperiorFibElement() ==
+						pCallingFibElement ){
+					/*overwrite the next Fib element/ the subobject of the
+					selected Fib element*/
+					pToInsertPositionObject = pToInsertPositionObjectTmp;
+					pAfterFibObjectToInsert = pToInsertPositionObject;
+				}else{
+					
+					cout<<"Should insert in the Fib element on the position,"<<
+						" but it's next Fib element superior isn't the Fib element."<<endl;
+					bCanInsert = false;
+				}
+			}else{
+				cout<<"Should insert in the Fib element on the position, but it has no next Fib element."<<endl;
+				bCanInsert = false;
+			}
+		}
+	}else{
+		if ( pToInsertPositionObject == NULL ){
+			cout<<"Can't insert: The to insert position object is NULL."<<endl;
+			bCanInsert = false;
+		}
+	}
+	
+	if ( pToInsertPositionObject != NULL ){
+		if ( pToInsertPositionObject->getType() == 'r' ){
+			cout<<"Can't insert: The to insert position object is wrong an root-element."<<endl;
+			bCanInsert = false;
+		}else if ( pToInsertPositionObject->getSuperiorFibElement() == NULL ){
+			cout<<"Can't insert: The to insert position object has superior NULL."<<endl;
+			bCanInsert = false;
+		}//else ( pToInsertPositionObject->getSuperiorFibElement() != NULL )
+	}
+	
+	//evalue the count values of the to insert Fib object
+	unsigned int uiNumberOfAllFibElementsInInsert   = 0;
+	unsigned int uiNumberOfRootElementsInInsert     = 0;
+	unsigned int uiNumberOfPointElementsInInsert    = 0;
+	unsigned int uiNumberOfListElementsInInsert     = 0;
+	unsigned int uiNumberOfPropertyElementsInInsert = 0;
+	unsigned int uiNumberOfAreaElementsInInsert = 0;
+	unsigned int uiNumberOfFunctionElementsInInsert = 0;
+	unsigned int uiNumberOfIfElementsInInsert   = 0;
+	unsigned int uiNumberOfCommentElementsInInsert  = 0;
+	unsigned int uiNumberOfExtObjectElementsInInsert= 0;
+	unsigned int uiNumberOfExtSubobjectElementsInInsert= 0;
+	unsigned int uiNumberOfSetElementsInInsert= 0;
+	unsigned int uiNumberOfMatrixElementsInInsert= 0;
+	
+	cFibElement * pLastInFibObjectInInsert = NULL;
+
+	if ( pFibObjectToInsert != NULL ){
+		uiNumberOfAllFibElementsInInsert =
+			pFibObjectToInsert->getNumberOfElements();
+		uiNumberOfRootElementsInInsert =
+			pFibObjectToInsert->getNumberOfElements( 'r' );
+		uiNumberOfPointElementsInInsert =
+			pFibObjectToInsert->getNumberOfElements( 'p' );
+		uiNumberOfListElementsInInsert =
+			pFibObjectToInsert->getNumberOfElements( 'l' );
+		uiNumberOfPropertyElementsInInsert =
+			pFibObjectToInsert->getNumberOfElements( 'y' );
+		uiNumberOfAreaElementsInInsert =
+			pFibObjectToInsert->getNumberOfElements( 'a' );
+		uiNumberOfFunctionElementsInInsert =
+			pFibObjectToInsert->getNumberOfElements( 'f' );
+		uiNumberOfIfElementsInInsert =
+			pFibObjectToInsert->getNumberOfElements( 'i' );
+		uiNumberOfCommentElementsInInsert =
+			pFibObjectToInsert->getNumberOfElements( 'c' );
+		uiNumberOfExtObjectElementsInInsert =
+			pFibObjectToInsert->getNumberOfElements( 'o' );
+		uiNumberOfExtSubobjectElementsInInsert =
+			pFibObjectToInsert->getNumberOfElements( 's' );
+		uiNumberOfSetElementsInInsert =
+			pFibObjectToInsert->getNumberOfElements( 'v' );
+		uiNumberOfMatrixElementsInInsert =
+			pFibObjectToInsert->getNumberOfElements( 'm' );
+			
+		//store last Fib element of the insert Fib object
+		pLastInFibObjectInInsert = pFibObjectToInsert->getFibElement(
+			pFibObjectToInsert->getNumberOfElements() );
+			
+		if ( pFibObjectToInsert->getType() == 'r' ){
+			//can't insert a root-element
+			cout<<"The to insert object is an root-element."<<endl;
+			bCanInsert = false;
+		}
+	}else{
+		cout<<"The to insert object didn't exists."<<endl;
+		bCanInsert = false;
+	}
+	
+	//subtract the counts of the Fib part object that will be overwritten
+	unsigned int uiNumberOfAllFibElementsOfResult =
+		uiNumberOfAllFibElements + uiNumberOfAllFibElementsInInsert;
+	const unsigned int uiNumberOfRootElementsOfResult =
+		uiNumberOfRootElements + uiNumberOfRootElementsInInsert;
+	const unsigned int uiNumberOfPointElementsOfResult =
+		uiNumberOfPointElements + uiNumberOfPointElementsInInsert;
+	unsigned int uiNumberOfListElementsOfResult =
+		uiNumberOfListElements + uiNumberOfListElementsInInsert;
+	const unsigned int uiNumberOfPropertyElementsOfResult =
+		uiNumberOfPropertyElements + uiNumberOfPropertyElementsInInsert;
+	const unsigned int uiNumberOfAreaElementsOfResult =
+		uiNumberOfAreaElements + uiNumberOfAreaElementsInInsert;
+	const unsigned int uiNumberOfFunctionElementsOfResult =
+		uiNumberOfFunctionElements + uiNumberOfFunctionElementsInInsert;
+	const unsigned int uiNumberOfIfElementsOfResult =
+		uiNumberOfIfElements + uiNumberOfIfElementsInInsert;
+	const unsigned int uiNumberOfCommentElementsOfResult =
+		uiNumberOfCommentElements + uiNumberOfCommentElementsInInsert;
+	const unsigned int uiNumberOfExtObjectElementsOfResult =
+		uiNumberOfExtObjectElements + uiNumberOfExtObjectElementsInInsert;
+	const unsigned int uiNumberOfExtSubobjectElementsOfResult =
+		uiNumberOfExtSubobjectElements + uiNumberOfExtSubobjectElementsInInsert;
+	const unsigned int uiNumberOfSetElementsOfResult =
+		uiNumberOfSetElements + uiNumberOfSetElementsInInsert;
+	const unsigned int uiNumberOfMatrixElementsOfResult =
+		uiNumberOfMatrixElements + uiNumberOfMatrixElementsInInsert;
+	
+	//store the Fib elements betwean which the Fib object will be inserted
+	if ( pToInsertPositionObject ){
+		pSuperiorFibObjectToInsert =
+			pToInsertPositionObject->getSuperiorFibElement();
+	}
+	
+	if ( (pSuperiorFibObjectToInsert != NULL) &&
+			( pSuperiorFibObjectToInsert->getType() != 'l' ) &&
+			( pSuperiorFibObjectToInsert->getType() != 'o' ) &&
+			( ( pToInsertPositionObject == NULL ) ||
+				( pToInsertPositionObject->getType() != 'l' ) ) ){
+		/*create a new list element to insert at the insert position*/
+		uiNumberOfAllFibElementsOfResult++;
+		uiNumberOfListElementsOfResult++;
+	}
+	//adapt pAfterFibObjectToInsert
+	if ( (pSuperiorFibObjectToInsert != NULL) &&
+			( ! ( ( pSuperiorFibObjectToInsert->getType() == 'l' ) ||
+				( pSuperiorFibObjectToInsert->getType() == 'o' ) ) ) &&
+			( ( pToInsertPositionObject != NULL ) &&
+				( pToInsertPositionObject->getType() == 'l' ) ) ){
+		//Fib object will be inserted into pToInsertPositionObject as first subobject
+		pAfterFibObjectToInsert = pToInsertPositionObject->getNextFibElement();
+	}
+	
+	cout<<"Calling insertObjectInElement("<<
+		pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+		uiToInsertPositionObject<<", true ) from the "<<
+		pCallingFibElement->getNumberOfElement()<<"'th Fib element "<<
+		"(which is of type "<< pCallingFibElement->getType();
+	if ( pToInsertPositionObject ){
+		cout<<", insert position type "<<pToInsertPositionObject->getType();
+	}
+	if ( pSuperiorFibObjectToInsert ){
+		cout<<", superior to insert position type "<<pSuperiorFibObjectToInsert->getType();
+	}
+	cout<<")."<<endl;
+	if ( pSuperiorFibObjectToInsert != NULL ){
+		cout<<"   The superior Fib element of the to insert "<<
+			"Fib element is the "<<
+			pSuperiorFibObjectToInsert->getNumberOfElement() <<
+			"'th Fib element with the type "<<
+			pSuperiorFibObjectToInsert->getType() <<" ."<<endl;
+	}
+
+	const unsigned int pCallingElementNumber =
+		pCallingFibElement->getNumberOfElement();
+	const char pCallingElementType = pCallingFibElement->getType();
+	
+	//call insertObjectInElement()
+	const bool bInserted = pCallingFibElement->insertObjectInElement(
+		pFibObjectToInsert, cTypeInsertObject, uiToInsertPositionObject, true );
+
+	if ( ! bCanInsert  ){
+		if ( bInserted ){
+			cerr<<"Error: At the insert Fib element can't be insert,"<<
+				" but it was insert."<<endl;
+			iReturn++;
+		}else{
+			if ( pFibObjectToInsert ){
+				pFibObjectToInsert->deleteObject();
+			}
+		}
+		return iReturn;
+	}
+	if ( ! bInserted ){
+		cerr<<"Error: At the insert Fib element couldn't be inserted."<<endl;
+		if ( pSuperiorFibObjectToInsert != NULL ){
+			cerr<<"   The superior Fib element of the to insert "<<
+				"Fib element is the "<<
+				pSuperiorFibObjectToInsert->getNumberOfElement() <<
+				"'th Fib element with the type "<<
+				pSuperiorFibObjectToInsert->getType() <<" ."<<endl;
+		}
+		iReturn++;
+		if ( pFibObjectToInsert ){
+			pFibObjectToInsert->deleteObject();
+		}
+		return iReturn;
+	}
+	
+	//check the created Fib object
+	if ( uiNumberOfAllFibElementsOfResult !=
+			pFibObject->getNumberOfElements() ){
+		cerr<<"Error: While calling insertObjectInElement("<<
+			pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+			uiToInsertPositionObject<<", true ) from the "<<
+			pCallingElementNumber<<"'th Fib element "<<
+			"(which is of type "<< pCallingElementType <<"), "<<
+			"the number of Fib elements "<< pFibObject->getNumberOfElements() <<
+			" isn't correct ("<<uiNumberOfAllFibElementsOfResult<<
+			") in the created Fib object. (old value="<<
+			uiNumberOfAllFibElements <<" + "<<
+			uiNumberOfAllFibElementsInInsert <<")"<< endl;
+		iReturn++;
+	}
+	if ( uiNumberOfRootElementsOfResult !=
+			pFibObject->getNumberOfElements( 'r' ) ){
+		cerr<<"Error: While calling insertObjectInElement("<<
+			pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+			uiToInsertPositionObject<<", true ) from the "<<
+			pCallingElementNumber<<"'th Fib element "<<
+			"(which is of type "<< pCallingElementType <<"), "<<
+			"the number of root-elements "<< pFibObject->getNumberOfElements( 'r' ) <<
+			" isn't correct ("<<uiNumberOfRootElementsOfResult<<
+			") in the created Fib object. (old value="<<
+			uiNumberOfRootElements <<" + "<<
+			uiNumberOfRootElementsInInsert <<")"<< endl;
+		iReturn++;
+	}
+	if ( uiNumberOfPointElementsOfResult !=
+			pFibObject->getNumberOfElements( 'p' ) ){
+		cerr<<"Error: While calling insertObjectInElement("<<
+			pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+			uiToInsertPositionObject<<", true ) from the "<<
+			pCallingElementNumber<<"'th Fib element "<<
+			"(which is of type "<< pCallingElementType <<"), "<<
+			"the number of point elements "<< pFibObject->getNumberOfElements( 'p' ) <<
+			" isn't correct ("<<uiNumberOfPointElementsOfResult<<
+			") in the created Fib object. (old value="<<
+			uiNumberOfPointElements <<" + "<<
+			uiNumberOfPointElementsInInsert <<")"<< endl;
+		iReturn++;
+	}
+	if ( uiNumberOfListElementsOfResult !=
+			pFibObject->getNumberOfElements( 'l' ) ){
+		cerr<<"Error: While calling insertObjectInElement("<<
+			pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+			uiToInsertPositionObject<<", true ) from the "<<
+			pCallingElementNumber<<"'th Fib element "<<
+			"(which is of type "<< pCallingElementType <<"), "<<
+			"the number of list elements "<< pFibObject->getNumberOfElements( 'l' ) <<
+			" isn't correct ("<<uiNumberOfListElementsOfResult<<
+			") in the created Fib object. (old value="<<
+			uiNumberOfListElements <<" + "<<
+			uiNumberOfListElementsInInsert <<")"<<endl;
+		iReturn++;
+	}
+	if ( uiNumberOfPropertyElementsOfResult !=
+			pFibObject->getNumberOfElements( 'y' ) ){
+		cerr<<"Error: While calling insertObjectInElement("<<
+			pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+			uiToInsertPositionObject<<", true ) from the "<<
+			pCallingElementNumber<<"'th Fib element "<<
+			"(which is of type "<< pCallingElementType <<"), "<<
+			"the number of property elements "<< pFibObject->getNumberOfElements( 'y' ) <<
+			" isn't correct ("<<uiNumberOfPropertyElementsOfResult<<
+			") in the created Fib object. (old value="<<
+			uiNumberOfPropertyElements <<" + "<<
+			uiNumberOfPropertyElementsInInsert <<")"<<endl;
+		iReturn++;
+	}
+	if ( uiNumberOfAreaElementsOfResult !=
+			pFibObject->getNumberOfElements( 'a' ) ){
+		cerr<<"Error: While calling insertObjectInElement("<<
+			pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+			uiToInsertPositionObject<<", true ) from the "<<
+			pCallingElementNumber<<"'th Fib element "<<
+			"(which is of type "<< pCallingElementType <<"), "<<
+			"the number of area elements "<< pFibObject->getNumberOfElements( 'a' ) <<
+			" isn't correct ("<<uiNumberOfAreaElementsOfResult<<
+			") in the created Fib object. (old value="<<
+			uiNumberOfAreaElements <<" + "<<
+			uiNumberOfAreaElementsInInsert <<")"<<endl;
+		iReturn++;
+	}
+	if ( uiNumberOfFunctionElementsOfResult !=
+			pFibObject->getNumberOfElements( 'f' ) ){
+		cerr<<"Error: While calling insertObjectInElement("<<
+			pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+			uiToInsertPositionObject<<", true ) from the "<<
+			pCallingElementNumber<<"'th Fib element "<<
+			"(which is of type "<< pCallingElementType <<"), "<<
+			"the number of function elements "<< pFibObject->getNumberOfElements( 'f' ) <<
+			" isn't correct ("<<uiNumberOfFunctionElementsOfResult<<
+			") in the created Fib object. (old value="<<
+			uiNumberOfFunctionElements <<" + "<<
+			uiNumberOfFunctionElementsInInsert <<")"<<endl;
+		iReturn++;
+	}
+	if ( uiNumberOfIfElementsOfResult !=
+			pFibObject->getNumberOfElements( 'i' ) ){
+		cerr<<"Error: While calling insertObjectInElement("<<
+			pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+			uiToInsertPositionObject<<", true ) from the "<<
+			pCallingElementNumber<<"'th Fib element "<<
+			"(which is of type "<< pCallingElementType <<"), "<<
+			"the number of if-elements "<< pFibObject->getNumberOfElements( 'i' ) <<
+			" isn't correct ("<<uiNumberOfIfElementsOfResult<<
+			") in the created Fib object. (old value="<<
+			uiNumberOfIfElements <<" + "<<
+			uiNumberOfIfElementsInInsert <<")"<<endl;
+		iReturn++;
+	}
+	if ( uiNumberOfCommentElementsOfResult !=
+			pFibObject->getNumberOfElements( 'c' ) ){
+		cerr<<"Error: While calling insertObjectInElement("<<
+			pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+			uiToInsertPositionObject<<", true ) from the "<<
+			pCallingElementNumber<<"'th Fib element "<<
+			"(which is of type "<< pCallingElementType <<"), "<<
+			"the number of comment elements "<< pFibObject->getNumberOfElements( 'c' ) <<
+			" isn't correct ("<<uiNumberOfCommentElementsOfResult<<
+			") in the created Fib object. (old value="<<
+			uiNumberOfCommentElements <<" + "<<
+			uiNumberOfCommentElementsInInsert <<")"<<endl;
+		iReturn++;
+	}
+	if ( uiNumberOfExtObjectElementsOfResult !=
+			pFibObject->getNumberOfElements( 'o' ) ){
+		cerr<<"Error: While calling insertObjectInElement("<<
+			pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+			uiToInsertPositionObject<<", true ) from the "<<
+			pCallingElementNumber<<"'th Fib element "<<
+			"(which is of type "<< pCallingElementType <<"), "<<
+			"the number of external object elements "<< pFibObject->getNumberOfElements( 'o' ) <<
+			" isn't correct ("<<uiNumberOfExtObjectElementsOfResult<<
+			") in the created Fib object. (old value="<<
+			uiNumberOfExtObjectElements <<" + "<<
+			uiNumberOfExtObjectElementsInInsert <<")"<<endl;
+		iReturn++;
+	}
+	if ( uiNumberOfExtSubobjectElementsOfResult !=
+			pFibObject->getNumberOfElements( 's' ) ){
+		cerr<<"Error: While calling insertObjectInElement("<<
+			pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+			uiToInsertPositionObject<<", true ) from the "<<
+			pCallingElementNumber<<"'th Fib element "<<
+			"(which is of type "<< pCallingElementType <<"), "<<
+			"the number of external subobject elements "<< pFibObject->getNumberOfElements( 's' ) <<
+			" isn't correct ("<<uiNumberOfExtSubobjectElementsOfResult<<
+			") in the created Fib object. (old value="<<
+			uiNumberOfExtSubobjectElements <<" + "<<
+			uiNumberOfExtSubobjectElementsInInsert <<")"<<endl;
+		iReturn++;
+	}
+	if ( uiNumberOfSetElementsOfResult !=
+			pFibObject->getNumberOfElements( 'v' ) ){
+		cerr<<"Error: While calling insertObjectInElement("<<
+			pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+			uiToInsertPositionObject<<", true ) from the "<<
+			pCallingElementNumber<<"'th Fib element "<<
+			"(which is of type "<< pCallingElementType <<"), "<<
+			"the number of external subobject elements "<< pFibObject->getNumberOfElements( 'v' ) <<
+			" isn't correct ("<<uiNumberOfSetElementsOfResult<<
+			") in the created Fib object. (old value="<<
+			uiNumberOfSetElements <<" + "<<
+			uiNumberOfSetElementsInInsert <<")"<<endl;
+		iReturn++;
+	}
+	if ( uiNumberOfMatrixElementsOfResult !=
+			pFibObject->getNumberOfElements( 'm' ) ){
+		cerr<<"Error: While calling insertObjectInElement("<<
+			pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+			uiToInsertPositionObject<<", true ) from the "<<
+			pCallingElementNumber<<"'th Fib element "<<
+			"(which is of type "<< pCallingElementType <<"), "<<
+			"the number of matrix elements "<< pFibObject->getNumberOfElements( 'm' ) <<
+			" isn't correct ("<<uiNumberOfMatrixElementsOfResult<<
+			") in the created Fib object. (old value="<<
+			uiNumberOfMatrixElements <<" + "<<
+			uiNumberOfMatrixElementsInInsert <<")"<<endl;
+		iReturn++;
+	}
+	
+	if ( (pFibObjectToInsert->getSuperiorFibElement() != NULL) &&
+			(pSuperiorFibObjectToInsert != NULL) ){
+		if ( ( (pSuperiorFibObjectToInsert->getType() == 'l') ||
+					(pSuperiorFibObjectToInsert->getType() == 'o') ) &&
+				(pFibObjectToInsert->getSuperiorFibElement() != pSuperiorFibObjectToInsert) ){
+			cerr<<"Error: The inserted Fib element wasn't inserted in the "<<
+				"list or external object element at the superior insert position."<<endl;
+			iReturn++;
+		}
+		if ( ( ( ! ( ( pSuperiorFibObjectToInsert->getType() == 'l' ) ||
+						( pSuperiorFibObjectToInsert->getType() == 'o' ) ) ) &&
+					( ( pToInsertPositionObject != NULL ) &&
+						( pToInsertPositionObject->getType() == 'l' ) ) ) &&
+				(pFibObjectToInsert->getSuperiorFibElement() != pToInsertPositionObject) ){
+			cerr<<"Error: The inserted Fib element wasn't inserted in the "<<
+				"list object element at the insert position ( notBranch( list(...)) )."<<endl;
+			iReturn++;
+		}
+		if ( pFibObjectToInsert->getSuperiorFibElement()->getType() == 'l' ){
+			cList * pInsertList = static_cast<cList*>(
+				pFibObjectToInsert->getSuperiorFibElement());
+			
+			if ( pSuperiorFibObjectToInsert->getType() != 'l' ){
+				
+				if ( ( ! ( ( pSuperiorFibObjectToInsert->getType() == 'l' ) ||
+							( pSuperiorFibObjectToInsert->getType() == 'o' ) ) ) &&
+						( ( pToInsertPositionObject != NULL ) &&
+							( pToInsertPositionObject->getType() == 'l' ) ) ){
+					
+					if ( pInsertList->getUnderobject( 1 ) != pFibObjectToInsert ){
+						cerr<<"Error: The list element, where the Fib object was "<<
+							"inserted, hasn't the inserted Fib object as it's first subobject."<<endl;
+						iReturn++;
+					}
+					if ( pInsertList->getUnderobject( 2 ) != pAfterFibObjectToInsert ){
+						cerr<<"Error: The list element, where the Fib object was "<<
+							"inserted, hasn't the old after Fib object the inserted "<<
+							"Fib object as it's second subobject."<<endl;
+						iReturn++;
+					}
+					if ( pInsertList != pToInsertPositionObject ){
+						cerr<<"Error: The list element, where the Fib object was "<<
+							"inserted,is not the insert position Fib object."<<endl;
+						iReturn++;
+					}
+				}else{
+					if ( pInsertList->getUnderobject( 1 ) != pFibObjectToInsert ){
+						cerr<<"Error: The list element, where the Fib object was "<<
+							"inserted, hasn't the inserted Fib object as it's first subobject."<<endl;
+						iReturn++;
+					}
+					if ( pInsertList->getUnderobject( 2 ) != pToInsertPositionObject ){
+						cerr<<"Error: The list element, where the Fib object was "<<
+							"inserted, hasn't the insert position Fib object as it's "<<
+							"second subobject."<<endl;
+						iReturn++;
+					}
+				}
+			}else{
+				unsigned int uiActualListelement;
+				for ( uiActualListelement = 1;
+						uiActualListelement < pInsertList->getNumberOfUnderobjects();
+						uiActualListelement++ ){
+					if ( pInsertList->getUnderobject( uiActualListelement ) == pFibObjectToInsert ){
+						//inserted Fib object found
+						break;
+					}
+				}
+				if ( uiActualListelement == pInsertList->getNumberOfUnderobjects() ){
+					if ( pInsertList->getUnderobject( uiActualListelement ) == pFibObjectToInsert ){
+						cerr<<"Error: The in the superior list element inserted "<<
+							"Fib object is the last in the list element."<<endl;
+						iReturn++;
+					}else{
+						cerr<<"Error: The inserted Fib object was not found in the superior list element."<<endl;
+						iReturn++;
+					}
+				}else{
+					if ( pInsertList->getUnderobject( uiActualListelement + 1 ) != pToInsertPositionObject ){
+						cerr<<"Error: After the inserted Fib object in the "<<
+							"superior list element isn't the positions Fib element."<<endl;
+						iReturn++;
+					}
+				}
+			}
+		}else if ( pFibObjectToInsert->getSuperiorFibElement()->getType() == 'o' ){
+			cExtObject * pInsertExtObject = (cExtObject*)pFibObjectToInsert->getSuperiorFibElement();
+			if ( pSuperiorFibObjectToInsert->getType() != 'o' ){
+				
+				cerr<<"Error: A new external object element was created."<<endl;
+				iReturn++;
+			}else{
+				unsigned int uiActualSubobject;
+				for ( uiActualSubobject = 1;
+						uiActualSubobject < pInsertExtObject->getNumberOfSubobjects();
+						uiActualSubobject++ ){
+					if ( pInsertExtObject->getSubobject( uiActualSubobject ) == pFibObjectToInsert ){
+						//inserted Fib object found
+						break;
+					}
+				}
+				if ( ( uiActualSubobject == pInsertExtObject->getNumberOfSubobjects() ) &&
+						( 1 < uiActualSubobject ) ){
+					if ( pInsertExtObject->getSubobject( uiActualSubobject ) == pFibObjectToInsert ){
+						cerr<<"Error: The in the superior external object element inserted "<<
+							"Fib object is the last in the external object element."<<endl;
+						iReturn++;
+					}else{
+						cerr<<"Error: The inserted Fib object was not found in the superior external object element."<<endl;
+						iReturn++;
+					}
+				}else{
+					if ( ( pToInsertPositionObject != NULL ) &&
+							( pInsertExtObject->getSubobject( uiActualSubobject + 1 ) != pToInsertPositionObject ) ){
+						cerr<<"Error: After the inserted Fib object in the "<<
+							"superior external object element isn't the positions Fib element."<<endl;
+						iReturn++;
+					}
+				}
+			}
+		}else{
+			cerr<<"Error: The Fib element wasn't inserted in a list element."<<endl;
+			iReturn++;
+		}
+	}else{
+		cerr<<"Error: The superior Fib element of the inserted Fib element is NULL."<<endl;
+		iReturn++;
+	}
+
+	if ( ( pToInsertPositionObject != NULL ) &&
+			( (pToInsertPositionObject->getType() != 'l') &&
+				(pToInsertPositionObject->getType() != 'o') ) &&
+			(pToInsertPositionObject != pLastInFibObjectInInsert->getNextFibElement()) ){
+		cerr<<"Error: While calling insertObjectInElement("<<
+			pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+			uiToInsertPositionObject<<", true ) from the "<<
+			pCallingElementNumber<<"'th Fib element "<<
+			"(which is of type "<< pCallingElementType <<"), "<<
+			"the inserted Fib object has the wrong next Fib element ";
+		if ( pLastInFibObjectInInsert->getNextFibElement() ){
+			cerr<<"(number="<<pLastInFibObjectInInsert->getNextFibElement()->
+				getNumberOfElement() <<" and not number="<<
+				pToInsertPositionObject->getNumberOfElement() <<")."<<endl;
+		}else{
+			cerr<<" NULL and not number="<<
+				pToInsertPositionObject->getNumberOfElement() <<")."<<endl;
+		}
+		iReturn++;
+	}
+	
+	cFibElement * pNewAfterFibObjectToInsert = pFibObjectToInsert->getFibElement(
+		pFibObjectToInsert->getNumberOfElements() + 1 );
+	
+	if ( (pAfterFibObjectToInsert != NULL) && ( pAfterFibObjectToInsert !=
+			pNewAfterFibObjectToInsert ) ){
+		cerr<<"Error: While calling insertObjectInElement("<<
+			pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+			uiToInsertPositionObject<<", true ) from the "<<
+			pCallingElementNumber<<"'th Fib element "<<
+			"(which is of type "<< pCallingElementType <<"), "<<
+			"the insert position Fib object has the wrong next Fib element ";
+		if ( pNewAfterFibObjectToInsert ){
+			cerr<<"(number="<< pNewAfterFibObjectToInsert->getNumberOfElement() <<
+				" and not number="<<
+				pAfterFibObjectToInsert->getNumberOfElement() <<")."<<endl;
+		}else{
+			cerr<<" NULL and not number="<<
+				pAfterFibObjectToInsert->getNumberOfElement() <<")."<<endl;
+		}
+		iReturn++;
+	}
+	if ( (pAfterFibObjectToInsert == NULL) &&
+			(pLastInFibObjectInInsert->getNextFibElement() != NULL ) ){
+		cerr<<"Error: While calling insertObjectInElement("<<
+			pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+			uiToInsertPositionObject<<", true ) from the "<<
+			pCallingElementNumber<<"'th Fib element "<<
+			"(which is of type "<< pCallingElementType <<"), "<<
+			"the inserted Fib object has the wrong next Fib element "<<
+			"it isn't NULL (has number="<<
+			pLastInFibObjectInInsert->getNextFibElement()->getNumberOfElement()
+			<<"), but it should be."<<endl;
+		iReturn++;
+	}
+
+	if ( iReturn == 0 ){
+		iReturn += testStructurOnObject( pFibObject, false );
+	}else{//print some more information about the checked Fib object
+		iReturn += testStructurOnObject( pFibObject, true );
+	}
+
+	return iReturn;
+}
+
+
+/**
+ * This function tests the overwriteObjectWithObject() method for a given
+ * Fib object.
+ * ATTENTION: The random number generator should to be initialisized with srand()
+ *
+ * methods tested:
+ * 	- bool insertObjectInElement( cFibElement *fibObject, const char cType, const unsignedIntFib elementPoint, bool first=true, bool bAbsolute=true );
+ *
+ * Fib elements tested:
+ * 	- cRoot
+ * 	- cList
+ * 	- cPoint
+ * 	- cProperty
+ * 	- cArea
+ * 	- cFunction
+ * 	- cIf
+ * 	- cComment
+ * 	- cExtObject
+ * 	- cExtSubobject
+ * 	- cFibSet
+ * 	- cFibMatrix
+ *
+ * @param pFibObject a pointer to the Fib object to test
+ * @return the number of erros occured in the test
+ */
+int testInsertObjectInElementObjectFirstAbsoluteOnObject( cFibElement * pFibObject ){
+
+	int iReturn = 0;//return value of the test; the number of occured errors
+	
+	if ( pFibObject == NULL ){
+		cerr<<"Error: No Fib object to check ."<<endl;
+		iReturn++;
+		return iReturn;
+	}
+	//evalue the count values of the given Fib object
+	const unsigned int uiNumberOfAllFibElements =
+		pFibObject->getNumberOfElements();
+	const unsigned int uiNumberOfRootElements =
+		pFibObject->getNumberOfElements( 'r' );
+	const unsigned int uiNumberOfPointElements =
+		pFibObject->getNumberOfElements( 'p' );
+	const unsigned int uiNumberOfListElements =
+		pFibObject->getNumberOfElements( 'l' );
+	const unsigned int uiNumberOfPropertyElements =
+		pFibObject->getNumberOfElements( 'y' );
+	const unsigned int uiNumberOfAreaElements =
+		pFibObject->getNumberOfElements( 'a' );
+	const unsigned int uiNumberOfFunctionElements =
+		pFibObject->getNumberOfElements( 'f' );
+	const unsigned int uiNumberOfIfElements =
+		pFibObject->getNumberOfElements( 'i' );
+	const unsigned int uiNumberOfCommentElements =
+		pFibObject->getNumberOfElements( 'c' );
+	const unsigned int uiNumberOfExtObjectElements =
+		pFibObject->getNumberOfElements( 'o' );
+	const unsigned int uiNumberOfExtSubobjectElements =
+		pFibObject->getNumberOfElements( 's' );
+	const unsigned int uiNumberOfSetElements =
+		pFibObject->getNumberOfElements( 'v' );
+	const unsigned int uiNumberOfMatrixElements =
+		pFibObject->getNumberOfElements( 'm' );
+
+
+	const unsigned int uiAverageSubRoots = 1;
+	const unsigned int uiAverageSubRootsDepth = 1;
+	const unsigned int uiNumberOfAverageInputVariables = 0;
+	const unsigned int uiMaxVectorElementNumber = 1023;
+	
+	//TODO check with variables
+	const double dFractionsOfUsedVariables = 0.0;
+
+	cFibElement * pFibObjectToInsert = NULL;
+	if ( rand() % 50 != 0 ){
+		cFibElement * pGeneratedFibObject = generateFibObject( uiNumberOfAllFibElements / 10 + 10,
+			liFractionOfFibElements, liPossiblePropertytyps, uiNumberOfDimensions,
+			uiAverageSubRoots, uiAverageSubRootsDepth,
+			uiNumberOfAverageInputVariables, dFractionsOfUsedVariables,
+			uiMaxVectorElementNumber );
+		
+		pFibObjectToInsert = pGeneratedFibObject;
+		
+		if ( rand() % 50 != 0 ){
+			//get the next non root-element from the generated Fib object
+			for ( pFibObjectToInsert = pGeneratedFibObject;
+					(pFibObjectToInsert != NULL) && ( pFibObjectToInsert->getType() == 'r' );
+					pFibObjectToInsert = pFibObjectToInsert->getNextFibElement() ){
+			}
+			pFibObjectToInsert = pFibObjectToInsert->copy();
+			pGeneratedFibObject->deleteObject();
+		}//else check when to insert a root-element
+	}//else check when return is false when pFibObjectToInsert==NULL
+	
+	//choos a random calling Fib element
+	const unsigned int uiCallingFibElement =
+		rand() % uiNumberOfAllFibElements + 1;
+	cFibElement * pCallingFibElement =
+		pFibObject->getFibElement( uiCallingFibElement );
+
+	//choos a position where the Fib object will be inserted
+	char cTypeInsertObject = choosRandomType();
+
+	unsigned int uiNumberOfElementsOfType = 0;
+	switch ( cTypeInsertObject ){
+		case 'u':uiNumberOfElementsOfType = uiNumberOfAllFibElements;
+		break;
+		case 'r':uiNumberOfElementsOfType = uiNumberOfRootElements;
+		break;
+		case 'p':uiNumberOfElementsOfType = uiNumberOfPointElements;
+		break;
+		case 'l':uiNumberOfElementsOfType = uiNumberOfListElements;
+		break;
+		case 'y':uiNumberOfElementsOfType = uiNumberOfPropertyElements;
+		break;
+		case 'a':uiNumberOfElementsOfType = uiNumberOfAreaElements;
+		break;
+		case 'f':uiNumberOfElementsOfType = uiNumberOfFunctionElements;
+		break;
+		case 'i':uiNumberOfElementsOfType = uiNumberOfIfElements;
+		break;
+		case 'c':uiNumberOfElementsOfType = uiNumberOfCommentElements;
+		break;
+		case 'o':uiNumberOfElementsOfType = uiNumberOfExtObjectElements;
+		break;
+		case 's':uiNumberOfElementsOfType = uiNumberOfExtSubobjectElements;
+		break;
+		case 'v':uiNumberOfElementsOfType = uiNumberOfSetElements;
+		break;
+		case 'm':uiNumberOfElementsOfType = uiNumberOfMatrixElements;
+		break;
+	}
+	
+	unsigned int uiToInsertPositionObject = 0;
+	
+	cFibElement * pToInsertPositionObject = NULL;
+	if ( rand() % 50 != 0 ){
+		if ( uiNumberOfElementsOfType != 0 ){
+			uiToInsertPositionObject = rand() % (uiNumberOfElementsOfType + 1);
+		}else{
+			uiToInsertPositionObject = 0;
+		}
+		pToInsertPositionObject = pFibObject->getFibElement(
+				cTypeInsertObject, uiToInsertPositionObject );
+		//check the getType() methode from cList
+		if ( pToInsertPositionObject == NULL ){
+			cerr<<"Error: The "<< uiToInsertPositionObject <<
+				"'th Fib element from the calling Fib element of the "<<
+				"Fib object couldn't be choosen as the basis the Fib element."<<endl;
+			iReturn++;
+			if ( pFibObjectToInsert ){
+				pFibObjectToInsert->deleteObject();
+			}
+			return iReturn;
+		}
+	}else{//test when no Fib object to overwrite exists
+		uiToInsertPositionObject = uiNumberOfElementsOfType + 1;
+	}
+	if ( uiToInsertPositionObject == 0 ){
+		pToInsertPositionObject = pCallingFibElement;
+	}
+	
+	cFibElement * pSuperiorFibObjectToInsert = NULL;
+	cFibElement * pAfterFibObjectToInsert = pToInsertPositionObject;
+	bool bCanInsert = true;
+	if ( uiToInsertPositionObject == 0 ){
+		//insert the object into the selected Fib element
+		if ( pCallingFibElement->getType() == 'o' ){
+			//insert in a erxternal object element
+			cout<<"Insert in an external object element with "<<
+				((cExtObject*)(pCallingFibElement))->getNumberOfSubobjects()<<" subobjects."<<endl;
+			pSuperiorFibObjectToInsert = pCallingFibElement;
+			pAfterFibObjectToInsert = pCallingFibElement->getNextFibElement();
+			if ( ((cExtObject*)(pCallingFibElement))->getNumberOfSubobjects() == 0 ){
+				pToInsertPositionObject = NULL;
+			}else{/*the external object element has subobjects ->
+				the first subobject is the insert position*/
+				pToInsertPositionObject = pCallingFibElement->getNextFibElement();
+			}
+		}else{
+			cFibElement * pToInsertPositionObjectTmp =
+				pCallingFibElement->getNextFibElement();
+			
+			if ( pToInsertPositionObjectTmp != NULL ){
+				if ( pToInsertPositionObjectTmp->getSuperiorFibElement() ==
+						pCallingFibElement ){
+					/*overwrite the next Fib element/ the subobject of the
+					selected Fib element*/
+					pToInsertPositionObject = pToInsertPositionObjectTmp;
+					pAfterFibObjectToInsert = pToInsertPositionObject;
+				}else{
+					
+					cout<<"Should insert in the Fib element on the position,"<<
+						" but it's next Fib element superior isn't the Fib element."<<endl;
+					bCanInsert = false;
+				}
+			}else{
+				cout<<"Should insert in the Fib element on the position, but it has no next Fib element."<<endl;
+				bCanInsert = false;
+			}
+		}
+	}else{
+		if ( pToInsertPositionObject == NULL ){
+			cout<<"Can't insert: The to insert position object is NULL."<<endl;
+			bCanInsert = false;
+		}
+	}
+	if ( pToInsertPositionObject != NULL ){
+		if ( pToInsertPositionObject->getType() == 'r' ){
+			cout<<"Can't insert: The to insert position object is wrong an root-element."<<endl;
+			bCanInsert = false;
+		}else if ( pToInsertPositionObject->getSuperiorFibElement() == NULL ){
+			cout<<"Can't insert: The to insert position object has superior NULL."<<endl;
+			bCanInsert = false;
+		}//else ( pToInsertPositionObject->getSuperiorFibElement() != NULL )
+	}
+	
+	//evalue the count values of the to insert Fib object
+	unsigned int uiNumberOfAllFibElementsInInsert   = 0;
+	unsigned int uiNumberOfRootElementsInInsert     = 0;
+	unsigned int uiNumberOfPointElementsInInsert    = 0;
+	unsigned int uiNumberOfListElementsInInsert     = 0;
+	unsigned int uiNumberOfPropertyElementsInInsert = 0;
+	unsigned int uiNumberOfAreaElementsInInsert     = 0;
+	unsigned int uiNumberOfFunctionElementsInInsert = 0;
+	unsigned int uiNumberOfIfElementsInInsert = 0;
+	unsigned int uiNumberOfCommentElementsInInsert  = 0;
+	unsigned int uiNumberOfExtObjectElementsInInsert = 0;
+	unsigned int uiNumberOfExtSubobjectElementsInInsert = 0;
+	unsigned int uiNumberOfSetElementsInInsert = 0;
+	unsigned int uiNumberOfMatrixElementsInInsert = 0;
+	
+	cFibElement * pLastInFibObjectInInsert = NULL;
+
+	if ( pFibObjectToInsert != NULL ){
+		uiNumberOfAllFibElementsInInsert =
+			pFibObjectToInsert->getNumberOfElements();
+		uiNumberOfRootElementsInInsert =
+			pFibObjectToInsert->getNumberOfElements( 'r' );
+		uiNumberOfPointElementsInInsert =
+			pFibObjectToInsert->getNumberOfElements( 'p' );
+		uiNumberOfListElementsInInsert =
+			pFibObjectToInsert->getNumberOfElements( 'l' );
+		uiNumberOfPropertyElementsInInsert =
+			pFibObjectToInsert->getNumberOfElements( 'y' );
+		uiNumberOfAreaElementsInInsert =
+			pFibObjectToInsert->getNumberOfElements( 'a' );
+		uiNumberOfFunctionElementsInInsert =
+			pFibObjectToInsert->getNumberOfElements( 'f' );
+		uiNumberOfIfElementsInInsert =
+			pFibObjectToInsert->getNumberOfElements( 'i' );
+		uiNumberOfCommentElementsInInsert =
+			pFibObjectToInsert->getNumberOfElements( 'c' );
+		uiNumberOfExtObjectElementsInInsert =
+			pFibObjectToInsert->getNumberOfElements( 'o' );
+		uiNumberOfExtSubobjectElementsInInsert =
+			pFibObjectToInsert->getNumberOfElements( 's' );
+		uiNumberOfSetElementsInInsert =
+			pFibObjectToInsert->getNumberOfElements( 'v' );
+		uiNumberOfMatrixElementsInInsert =
+			pFibObjectToInsert->getNumberOfElements( 'm' );
+			
+		//store last Fib element of the insert Fib object
+		pLastInFibObjectInInsert = pFibObjectToInsert->getFibElement(
+			pFibObjectToInsert->getNumberOfElements() );
+			
+		if ( pFibObjectToInsert->getType() == 'r' ){
+			//can't insert a root-element
+			cout<<"The to insert object is an root-element."<<endl;
+			bCanInsert = false;
+		}
+	}else{
+		cout<<"The to insert object didn't exists."<<endl;
+		bCanInsert = false;
+	}
+	
+	//subtract the counts of the Fib part object that will be overwritten
+	unsigned int uiNumberOfAllFibElementsOfResult =
+		uiNumberOfAllFibElements + uiNumberOfAllFibElementsInInsert;
+	const unsigned int uiNumberOfRootElementsOfResult =
+		uiNumberOfRootElements + uiNumberOfRootElementsInInsert;
+	const unsigned int uiNumberOfPointElementsOfResult =
+		uiNumberOfPointElements + uiNumberOfPointElementsInInsert;
+	unsigned int uiNumberOfListElementsOfResult =
+		uiNumberOfListElements + uiNumberOfListElementsInInsert;
+	const unsigned int uiNumberOfPropertyElementsOfResult =
+		uiNumberOfPropertyElements + uiNumberOfPropertyElementsInInsert;
+	const unsigned int uiNumberOfAreaElementsOfResult =
+		uiNumberOfAreaElements + uiNumberOfAreaElementsInInsert;
+	const unsigned int uiNumberOfFunctionElementsOfResult =
+		uiNumberOfFunctionElements + uiNumberOfFunctionElementsInInsert;
+	const unsigned int uiNumberOfIfElementsOfResult =
+		uiNumberOfIfElements + uiNumberOfIfElementsInInsert;
+	const unsigned int uiNumberOfCommentElementsOfResult =
+		uiNumberOfCommentElements + uiNumberOfCommentElementsInInsert;
+	const unsigned int uiNumberOfExtObjectElementsOfResult =
+		uiNumberOfExtObjectElements + uiNumberOfExtObjectElementsInInsert;
+	const unsigned int uiNumberOfExtSubobjectElementsOfResult =
+		uiNumberOfExtSubobjectElements + uiNumberOfExtSubobjectElementsInInsert;
+	const unsigned int uiNumberOfSetElementsOfResult =
+		uiNumberOfSetElements + uiNumberOfSetElementsInInsert;
+	const unsigned int uiNumberOfMatrixElementsOfResult =
+		uiNumberOfMatrixElements + uiNumberOfMatrixElementsInInsert;
+	
+	//store the Fib elements betwean which the Fib object will be inserted
+	if ( pToInsertPositionObject ){
+		pSuperiorFibObjectToInsert =
+			pToInsertPositionObject->getSuperiorFibElement();
+	}
+	if ( (pSuperiorFibObjectToInsert != NULL) &&
+			( pSuperiorFibObjectToInsert->getType() != 'l' ) &&
+			( pSuperiorFibObjectToInsert->getType() != 'o' ) &&
+			( ( pToInsertPositionObject == NULL ) ||
+				( pToInsertPositionObject->getType() != 'l' ) ) ){
+		/*create a new list element to insert at the insert position*/
+		uiNumberOfAllFibElementsOfResult++;
+		uiNumberOfListElementsOfResult++;
+	}
+	//adapt pAfterFibObjectToInsert
+	if ( (pSuperiorFibObjectToInsert != NULL) &&
+			( ! ( ( pSuperiorFibObjectToInsert->getType() == 'l' ) ||
+				( pSuperiorFibObjectToInsert->getType() == 'o' ) ) ) &&
+			( ( pToInsertPositionObject != NULL ) &&
+				( pToInsertPositionObject->getType() == 'l' ) ) ){
+		//Fib object will be inserted into pToInsertPositionObject as first subobject
+		pAfterFibObjectToInsert = pToInsertPositionObject->getNextFibElement();
+	}
+
+	cout<<"Calling insertObjectInElement("<<
+		pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+		uiToInsertPositionObject<<", true, true ) from the "<<
+		pCallingFibElement->getNumberOfElement()<<"'th Fib element "<<
+		"(which is of type "<< pCallingFibElement->getType();
+	if ( pToInsertPositionObject ){
+		cout<<", insert position type "<<pToInsertPositionObject->getType();
+	}
+	if ( pSuperiorFibObjectToInsert ){
+		cout<<", superior to insert position type "<<pSuperiorFibObjectToInsert->getType();
+	}
+	cout<<")."<<endl;
+	if ( pSuperiorFibObjectToInsert != NULL ){
+		cout<<"   The superior Fib element of the to insert "<<
+			"Fib element is the "<<
+			pSuperiorFibObjectToInsert->getNumberOfElement() <<
+			"'th Fib element with the type "<<
+			pSuperiorFibObjectToInsert->getType() <<" ."<<endl;
+	}
+	if ( pFibObjectToInsert ){
+		cout<<"   The to insert Fib object has the type "<<
+			pFibObjectToInsert->getType() <<" ."<<endl;
+	}
+
+	const unsigned int pCallingElementNumber =
+		pCallingFibElement->getNumberOfElement();
+	const char pCallingElementType = pCallingFibElement->getType();
+	
+	//call insertObjectInElement()
+	bool bInserted = pCallingFibElement->insertObjectInElement(
+		pFibObjectToInsert, cTypeInsertObject, uiToInsertPositionObject, true, true );
+
+	if ( ! bCanInsert  ){
+		if ( bInserted ){
+			cerr<<"Error: At the insert Fib element can't be insert,"<<
+				" but it was insert."<<endl;
+			iReturn++;
+		}else{
+			if ( pFibObjectToInsert ){
+				pFibObjectToInsert->deleteObject();
+			}
+		}
+		return iReturn;
+	}
+	if ( ! bInserted ){
+		cerr<<"Error: At the insert Fib element couldn't be inserted."<<endl;
+		iReturn++;
+		
+		if ( pFibObjectToInsert ){
+			pFibObjectToInsert->deleteObject();
+		}
+		return iReturn;
+	}else{
+		cout<<"   The Fib object was inserted."<<endl;
+	}
+	
+	//check the created Fib object
+	if ( uiNumberOfAllFibElementsOfResult !=
+			pFibObject->getNumberOfElements() ){
+		cerr<<"Error: While calling insertObjectInElement("<<
+			pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+			uiToInsertPositionObject<<", true, true ) from the "<<
+			pCallingElementNumber<<"'th Fib element "<<
+			"(which is of type "<< pCallingElementType <<"), "<<
+			"the number of Fib elements "<< pFibObject->getNumberOfElements() <<
+			" isn't correct ("<<uiNumberOfAllFibElementsOfResult<<
+			") in the created Fib object. (old value="<<
+			uiNumberOfAllFibElements <<" + "<<
+			uiNumberOfAllFibElementsInInsert <<")"<< endl;
+		iReturn++;
+	}
+	if ( uiNumberOfRootElementsOfResult !=
+			pFibObject->getNumberOfElements( 'r' ) ){
+		cerr<<"Error: While calling insertObjectInElement("<<
+			pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+			uiToInsertPositionObject<<", true, true ) from the "<<
+			pCallingElementNumber<<"'th Fib element "<<
+			"(which is of type "<< pCallingElementType <<"), "<<
+			"the number of root-elements "<< pFibObject->getNumberOfElements( 'r' ) <<
+			" isn't correct ("<<uiNumberOfRootElementsOfResult<<
+			") in the created Fib object. (old value="<<
+			uiNumberOfRootElements <<" + "<<
+			uiNumberOfRootElementsInInsert <<")"<< endl;
+		iReturn++;
+	}
+	if ( uiNumberOfPointElementsOfResult !=
+			pFibObject->getNumberOfElements( 'p' ) ){
+		cerr<<"Error: While calling insertObjectInElement("<<
+			pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+			uiToInsertPositionObject<<", true, true ) from the "<<
+			pCallingElementNumber<<"'th Fib element "<<
+			"(which is of type "<< pCallingElementType <<"), "<<
+			"the number of point elements "<< pFibObject->getNumberOfElements( 'p' ) <<
+			" isn't correct ("<<uiNumberOfPointElementsOfResult<<
+			") in the created Fib object. (old value="<<
+			uiNumberOfPointElements <<" + "<<
+			uiNumberOfPointElementsInInsert <<")"<< endl;
+		iReturn++;
+	}
+	if ( uiNumberOfListElementsOfResult !=
+			pFibObject->getNumberOfElements( 'l' ) ){
+		cerr<<"Error: While calling insertObjectInElement("<<
+			pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+			uiToInsertPositionObject<<", true, true ) from the "<<
+			pCallingElementNumber<<"'th Fib element "<<
+			"(which is of type "<< pCallingElementType <<"), "<<
+			"the number of list elements "<< pFibObject->getNumberOfElements( 'l' ) <<
+			" isn't correct ("<<uiNumberOfListElementsOfResult<<
+			") in the created Fib object. (old value="<<
+			uiNumberOfListElements <<" + "<<
+			uiNumberOfListElementsInInsert <<")"<<endl;
+		iReturn++;
+	}
+	if ( uiNumberOfPropertyElementsOfResult !=
+			pFibObject->getNumberOfElements( 'y' ) ){
+		cerr<<"Error: While calling insertObjectInElement("<<
+			pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+			uiToInsertPositionObject<<", true, true ) from the "<<
+			pCallingElementNumber<<"'th Fib element "<<
+			"(which is of type "<< pCallingElementType <<"), "<<
+			"the number of property elements "<< pFibObject->getNumberOfElements( 'y' ) <<
+			" isn't correct ("<<uiNumberOfPropertyElementsOfResult<<
+			") in the created Fib object. (old value="<<
+			uiNumberOfPropertyElements <<" + "<<
+			uiNumberOfPropertyElementsInInsert <<")"<<endl;
+		iReturn++;
+	}
+	if ( uiNumberOfAreaElementsOfResult !=
+			pFibObject->getNumberOfElements( 'a' ) ){
+		cerr<<"Error: While calling insertObjectInElement("<<
+			pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+			uiToInsertPositionObject<<", true, true ) from the "<<
+			pCallingElementNumber<<"'th Fib element "<<
+			"(which is of type "<< pCallingElementType <<"), "<<
+			"the number of area elements "<< pFibObject->getNumberOfElements( 'a' ) <<
+			" isn't correct ("<<uiNumberOfAreaElementsOfResult<<
+			") in the created Fib object. (old value="<<
+			uiNumberOfAreaElements <<" + "<<
+			uiNumberOfAreaElementsInInsert <<")"<<endl;
+		iReturn++;
+	}
+	if ( uiNumberOfFunctionElementsOfResult !=
+			pFibObject->getNumberOfElements( 'f' ) ){
+		cerr<<"Error: While calling insertObjectInElement("<<
+			pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+			uiToInsertPositionObject<<", true, true ) from the "<<
+			pCallingElementNumber<<"'th Fib element "<<
+			"(which is of type "<< pCallingElementType <<"), "<<
+			"the number of function elements "<< pFibObject->getNumberOfElements( 'f' ) <<
+			" isn't correct ("<<uiNumberOfFunctionElementsOfResult<<
+			") in the created Fib object. (old value="<<
+			uiNumberOfFunctionElements <<" + "<<
+			uiNumberOfFunctionElementsInInsert <<")"<<endl;
+		iReturn++;
+	}
+	if ( uiNumberOfIfElementsOfResult !=
+			pFibObject->getNumberOfElements( 'i' ) ){
+		cerr<<"Error: While calling insertObjectInElement("<<
+			pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+			uiToInsertPositionObject<<", true, true ) from the "<<
+			pCallingElementNumber<<"'th Fib element "<<
+			"(which is of type "<< pCallingElementType <<"), "<<
+			"the number of if-elements "<< pFibObject->getNumberOfElements( 'i' ) <<
+			" isn't correct ("<<uiNumberOfIfElementsOfResult<<
+			") in the created Fib object. (old value="<<
+			uiNumberOfIfElements <<" + "<<
+			uiNumberOfIfElementsInInsert <<")"<<endl;
+		iReturn++;
+	}
+	if ( uiNumberOfCommentElementsOfResult !=
+			pFibObject->getNumberOfElements( 'c' ) ){
+		cerr<<"Error: While calling insertObjectInElement("<<
+			pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+			uiToInsertPositionObject<<", true, true ) from the "<<
+			pCallingElementNumber<<"'th Fib element "<<
+			"(which is of type "<< pCallingElementType <<"), "<<
+			"the number of comment elements "<< pFibObject->getNumberOfElements( 'c' ) <<
+			" isn't correct ("<<uiNumberOfCommentElementsOfResult<<
+			") in the created Fib object. (old value="<<
+			uiNumberOfCommentElements <<" + "<<
+			uiNumberOfCommentElementsInInsert <<")"<<endl;
+		iReturn++;
+	}
+	if ( uiNumberOfExtObjectElementsOfResult !=
+			pFibObject->getNumberOfElements( 'o' ) ){
+		cerr<<"Error: While calling insertObjectInElement("<<
+			pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+			uiToInsertPositionObject<<", true, true ) from the "<<
+			pCallingElementNumber<<"'th Fib element "<<
+			"(which is of type "<< pCallingElementType <<"), "<<
+			"the number of external object elements "<< pFibObject->getNumberOfElements( 'o' ) <<
+			" isn't correct ("<<uiNumberOfExtObjectElementsOfResult<<
+			") in the created Fib object. (old value="<<
+			uiNumberOfExtObjectElements <<" + "<<
+			uiNumberOfExtObjectElementsInInsert <<")"<<endl;
+		iReturn++;
+	}
+	if ( uiNumberOfExtSubobjectElementsOfResult !=
+			pFibObject->getNumberOfElements( 's' ) ){
+		cerr<<"Error: While calling insertObjectInElement("<<
+			pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+			uiToInsertPositionObject<<", true, true ) from the "<<
+			pCallingElementNumber<<"'th Fib element "<<
+			"(which is of type "<< pCallingElementType <<"), "<<
+			"the number of external subobject elements "<< pFibObject->getNumberOfElements( 's' ) <<
+			" isn't correct ("<<uiNumberOfExtSubobjectElementsOfResult<<
+			") in the created Fib object. (old value="<<
+			uiNumberOfExtSubobjectElements <<" + "<<
+			uiNumberOfExtSubobjectElementsInInsert <<")"<<endl;
+		iReturn++;
+	}
+	if ( uiNumberOfSetElementsOfResult !=
+			pFibObject->getNumberOfElements( 'v' ) ){
+		cerr<<"Error: While calling insertObjectInElement("<<
+			pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+			uiToInsertPositionObject<<", true, true ) from the "<<
+			pCallingElementNumber<<"'th Fib element "<<
+			"(which is of type "<< pCallingElementType <<"), "<<
+			"the number of set elements "<< pFibObject->getNumberOfElements( 'v' ) <<
+			" isn't correct ("<<uiNumberOfSetElementsOfResult<<
+			") in the created Fib object. (old value="<<
+			uiNumberOfSetElements <<" + "<<
+			uiNumberOfSetElementsInInsert <<")"<<endl;
+		iReturn++;
+	}
+	if ( uiNumberOfMatrixElementsOfResult !=
+			pFibObject->getNumberOfElements( 'm' ) ){
+		cerr<<"Error: While calling insertObjectInElement("<<
+			pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+			uiToInsertPositionObject<<", true, true ) from the "<<
+			pCallingElementNumber<<"'th Fib element "<<
+			"(which is of type "<< pCallingElementType <<"), "<<
+			"the number of matrix elements "<< pFibObject->getNumberOfElements( 'm' ) <<
+			" isn't correct ("<<uiNumberOfMatrixElementsOfResult<<
+			") in the created Fib object. (old value="<<
+			uiNumberOfMatrixElements <<" + "<<
+			uiNumberOfMatrixElementsInInsert <<")"<<endl;
+		iReturn++;
+	}
+	
+	if ( (pFibObjectToInsert->getSuperiorFibElement() != NULL) &&
+			(pSuperiorFibObjectToInsert != NULL) ){
+		if ( ( (pSuperiorFibObjectToInsert->getType() == 'l') ||
+					(pSuperiorFibObjectToInsert->getType() == 'o') ) &&
+				(pFibObjectToInsert->getSuperiorFibElement() != pSuperiorFibObjectToInsert) ){
+			cerr<<"Error: The inserted Fib element wasn't inserted in the "<<
+				"list or external object element at the superior insert position."<<endl;
+			iReturn++;
+		}
+		if ( ( ( ! ( ( pSuperiorFibObjectToInsert->getType() == 'l' ) ||
+						( pSuperiorFibObjectToInsert->getType() == 'o' ) ) ) &&
+					( ( pToInsertPositionObject != NULL ) &&
+						( pToInsertPositionObject->getType() == 'l' ) ) ) &&
+				(pFibObjectToInsert->getSuperiorFibElement() != pToInsertPositionObject) ){
+			cerr<<"Error: The inserted Fib element wasn't inserted in the "<<
+				"list object element at the insert position ( notBranch( list(...)) )."<<endl;
+			iReturn++;
+		}
+		if ( pFibObjectToInsert->getSuperiorFibElement()->getType() == 'l' ){
+			cList * pInsertList = static_cast<cList*>(
+				pFibObjectToInsert->getSuperiorFibElement());
+			
+			if ( pSuperiorFibObjectToInsert->getType() != 'l' ){
+				
+				if ( ( ! ( ( pSuperiorFibObjectToInsert->getType() == 'l' ) ||
+							( pSuperiorFibObjectToInsert->getType() == 'o' ) ) ) &&
+						( ( pToInsertPositionObject != NULL ) &&
+							( pToInsertPositionObject->getType() == 'l' ) ) ){
+				
+					if ( pInsertList->getUnderobject( 1 ) != pFibObjectToInsert ){
+						cerr<<"Error: The list element, where the Fib object was "<<
+							"inserted, hasn't the inserted Fib object as it's first subobject."<<endl;
+						iReturn++;
+					}
+					if ( pInsertList->getUnderobject( 2 ) != pAfterFibObjectToInsert ){
+						cerr<<"Error: The list element, where the Fib object was "<<
+							"inserted, hasn't the old after Fib object the inserted "<<
+							"Fib object as it's second subobject."<<endl;
+						iReturn++;
+					}
+					if ( pInsertList != pToInsertPositionObject ){
+						cerr<<"Error: The list element, where the Fib object was "<<
+							"inserted, is not the insert position Fib object."<<endl;
+						iReturn++;
+					}
+				}else{
+					if ( pInsertList->getUnderobject( 1 ) != pFibObjectToInsert ){
+						cerr<<"Error: The list element, where the Fib object was "<<
+							"inserted, hasn't the inserted Fib object as it's first subobject."<<endl;
+						iReturn++;
+					}
+					if ( pInsertList->getUnderobject( 2 ) != pToInsertPositionObject ){
+						cerr<<"Error: The list element, where the Fib object was "<<
+							"inserted, hasn't the insert position Fib object as it's "<<
+							"second subobject."<<endl;
+						iReturn++;
+					}
+				}
+			}else{
+				unsigned int uiActualListelement;
+				for ( uiActualListelement = 1;
+						uiActualListelement < pInsertList->getNumberOfUnderobjects();
+						uiActualListelement ++ ){
+					if ( pInsertList->getUnderobject( uiActualListelement ) == pFibObjectToInsert ){
+						//inserted Fib object found
+						break;
+					}
+				}
+				if ( uiActualListelement == pInsertList->getNumberOfUnderobjects() ){
+					if ( pInsertList->getUnderobject( uiActualListelement ) == pFibObjectToInsert ){
+						cerr<<"Error: The in the superior list element inserted "<<
+							"Fib object is the last in the list element."<<endl;
+						iReturn++;
+					}else{
+						cerr<<"Error: The inserted Fib object was not found in the superior list element."<<endl;
+						iReturn++;
+					}
+				}else{
+					if ( pInsertList->getUnderobject( uiActualListelement + 1 ) != pToInsertPositionObject ){
+						cerr<<"Error: After the inserted Fib object in the "<<
+							"superior list element isn't the positions Fib element."<<endl;
+						iReturn++;
+					}
+				}
+			}
+		}else if ( pFibObjectToInsert->getSuperiorFibElement()->getType() == 'o' ){
+			cExtObject * pInsertExtObject = (cExtObject*)pFibObjectToInsert->getSuperiorFibElement();
+			if ( pSuperiorFibObjectToInsert->getType() != 'o' ){
+				
+				cerr<<"Error: A new external object element was created."<<endl;
+				iReturn++;
+			}else{
+				unsigned int uiActualSubobject;
+				for ( uiActualSubobject = 1;
+						uiActualSubobject < pInsertExtObject->getNumberOfSubobjects();
+						uiActualSubobject++ ){
+					if ( pInsertExtObject->getSubobject( uiActualSubobject ) == pFibObjectToInsert ){
+						//inserted Fib object found
+						break;
+					}
+				}
+				if ( ( uiActualSubobject == pInsertExtObject->getNumberOfSubobjects() ) &&
+						( 1 < uiActualSubobject ) ){
+					if ( pInsertExtObject->getSubobject( uiActualSubobject ) == pFibObjectToInsert ){
+						cerr<<"Error: The in the superior external object element inserted "<<
+							"Fib object is the last in the external object element."<<endl;
+						iReturn++;
+					}else{
+						cerr<<"Error: The inserted Fib object was not found in the superior external object element."<<endl;
+						iReturn++;
+					}
+				}else{
+					if ( ( pToInsertPositionObject != NULL ) &&
+							( pInsertExtObject->getSubobject( uiActualSubobject + 1 ) != pToInsertPositionObject ) ){
+						cerr<<"Error: After the inserted Fib object in the "<<
+							"superior external object element isn't the positions Fib element."<<endl;
+						iReturn++;
+					}
+				}
+			}
+		}else{
+			cerr<<"Error: The Fib element wasn't inserted in a list element."<<endl;
+			iReturn++;
+		}
+	}else{
+		cerr<<"Error: The superior Fib element of the inserted Fib element is NULL."<<endl;
+		iReturn++;
+	}
+
+	if ( ( pToInsertPositionObject != NULL ) &&
+			( (pToInsertPositionObject->getType() != 'l') &&
+				(pToInsertPositionObject->getType() != 'o') ) &&
+			(pToInsertPositionObject != pLastInFibObjectInInsert->getNextFibElement()) ){
+		cerr<<"Error: While calling insertObjectInElement("<<
+			pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+			uiToInsertPositionObject<<", true, true ) from the "<<
+			pCallingElementNumber<<"'th Fib element "<<
+			"(which is of type "<< pCallingElementType <<"), "<<
+			"the inserted Fib object has the wrong next Fib element ";
+		if ( pLastInFibObjectInInsert->getNextFibElement() ){
+			cerr<<"(number="<<pLastInFibObjectInInsert->getNextFibElement()->
+				getNumberOfElement() <<" and not number="<<
+				pToInsertPositionObject->getNumberOfElement() <<")."<<endl;
+		}else{
+			cerr<<" NULL and not number="<<
+				pToInsertPositionObject->getNumberOfElement() <<")."<<endl;
+		}
+		iReturn++;
+	}
+	
+	cFibElement * pNewAfterFibObjectToInsert = pFibObjectToInsert->getFibElement(
+		pFibObjectToInsert->getNumberOfElements() + 1 );
+	
+	if ( (pAfterFibObjectToInsert != NULL) && ( pAfterFibObjectToInsert !=
+			pNewAfterFibObjectToInsert ) ){
+		cerr<<"Error: While calling insertObjectInElement("<<
+			pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+			uiToInsertPositionObject<<", true, true ) from the "<<
+			pCallingElementNumber<<"'th Fib element "<<
+			"(which is of type "<< pCallingElementType <<"), "<<
+			"the insert position Fib object has the wrong next Fib element ";
+		if ( pNewAfterFibObjectToInsert ){
+			cerr<<"(number="<< pNewAfterFibObjectToInsert->getNumberOfElement() <<
+				" and not number="<<
+				pAfterFibObjectToInsert->getNumberOfElement() <<")."<<endl;
+		}else{
+			cerr<<" NULL and not number="<<
+				pAfterFibObjectToInsert->getNumberOfElement() <<")."<<endl;
+		}
+		iReturn++;
+	}
+	if ( (pAfterFibObjectToInsert == NULL) &&
+			(pLastInFibObjectInInsert->getNextFibElement() != NULL ) ){
+		cerr<<"Error: While calling insertObjectInElement("<<
+			pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+			uiToInsertPositionObject<<", true, true ) from the "<<
+			pCallingElementNumber<<"'th Fib element "<<
+			"(which is of type "<< pCallingElementType <<"), "<<
+			"the inserted Fib object has the wrong next Fib element "<<
+			"it isn't NULL (has number="<<
+			pLastInFibObjectInInsert->getNextFibElement()->getNumberOfElement()
+			<<"), but it should be."<<endl;
+		iReturn++;
+	}
+
+	if ( iReturn == 0 ){
+		iReturn += testStructurOnObject( pFibObject, false );
+	}else{//print some more information about the checked Fib object
+		iReturn += testStructurOnObject( pFibObject, true );
+	}
+
+	return iReturn;
+}
+
+
+/**
+ * This function tests the overwriteObjectWithObject() method for a given
+ * Fib object.
+ * ATTENTION: The random number generator should to be initialisized with srand()
+ *
+ * methods tested:
+ * 	- bool insertObjectInElement( cFibElement *fibObject, const char cType, const unsignedIntFib elementPoint, bool first=false, bool bAbsolute=false );
+ *
+ * Fib elements tested:
+ * 	- cRoot
+ * 	- cList
+ * 	- cPoint
+ * 	- cProperty
+ * 	- cArea
+ * 	- cFunction
+ * 	- cIf
+ * 	- cComment
+ * 	- cExtObject
+ *
+ * @param pFibObject a pointer to the Fib object to test
+ * @return the number of erros occured in the test
+ */
+int testInsertObjectInElementObjectSecondOnObject( cFibElement * pFibObject ){
+
+	int iReturn = 0;//return value of the test; the number of occured errors
+	
+	if ( pFibObject == NULL ){
+		cerr<<"Error: No Fib object to check ."<<endl;
+		iReturn++;
+		return iReturn;
+	}
+	//evalue the count values of the given Fib object
+	const unsigned int uiNumberOfAllFibElements =
+		pFibObject->getNumberOfElements();
+	const unsigned int uiNumberOfRootElements =
+		pFibObject->getNumberOfElements( 'r' );
+	const unsigned int uiNumberOfPointElements =
+		pFibObject->getNumberOfElements( 'p' );
+	const unsigned int uiNumberOfListElements =
+		pFibObject->getNumberOfElements( 'l' );
+	const unsigned int uiNumberOfPropertyElements =
+		pFibObject->getNumberOfElements( 'y' );
+	const unsigned int uiNumberOfAreaElements =
+		pFibObject->getNumberOfElements( 'a' );
+	const unsigned int uiNumberOfFunctionElements =
+		pFibObject->getNumberOfElements( 'f' );
+	const unsigned int uiNumberOfIfElements =
+		pFibObject->getNumberOfElements( 'i' );
+	const unsigned int uiNumberOfCommentElements =
+		pFibObject->getNumberOfElements( 'c' );
+	const unsigned int uiNumberOfExtObjectElements =
+		pFibObject->getNumberOfElements( 'o' );
+	const unsigned int uiNumberOfExtSubobjectElements =
+		pFibObject->getNumberOfElements( 's' );
+	const unsigned int uiNumberOfSetElements =
+		pFibObject->getNumberOfElements( 'v' );
+	const unsigned int uiNumberOfMatrixElements =
+		pFibObject->getNumberOfElements( 'm' );
+
+
+	const unsigned int uiAverageSubRoots = 1;
+	const unsigned int uiAverageSubRootsDepth = 1;
+	const unsigned int uiNumberOfAverageInputVariables = 0;
+	const unsigned int uiMaxVectorElementNumber = 1023;
+	
+	//TODO check with variables
+	const double dFractionsOfUsedVariables = 0.0;
+
+	cFibElement * pFibObjectToInsert = NULL;
+	if ( rand() % 50 != 0 ){
+		cFibElement * pGeneratedFibObject = generateFibObject( uiNumberOfAllFibElements / 10 + 10,
+			liFractionOfFibElements, liPossiblePropertytyps, uiNumberOfDimensions,
+			uiAverageSubRoots, uiAverageSubRootsDepth,
+			uiNumberOfAverageInputVariables, dFractionsOfUsedVariables,
+			uiMaxVectorElementNumber );
+		
+		pFibObjectToInsert = pGeneratedFibObject;
+		
+		if ( rand() % 50 != 0 ){
+			//get the next non root-element from the generated Fib object
+			for ( pFibObjectToInsert = pGeneratedFibObject;
+					(pFibObjectToInsert != NULL) && ( pFibObjectToInsert->getType() == 'r' );
+					pFibObjectToInsert = pFibObjectToInsert->getNextFibElement() ){
+			}
+			pFibObjectToInsert = pFibObjectToInsert->copy();
+			pGeneratedFibObject->deleteObject();
+		}//else check when to insert a root-element
+	}//else check when return is false when pFibObjectToInsert==NULL
+	
+	//choos a random calling Fib element
+	const unsigned int uiCallingFibElement =
+		rand() % uiNumberOfAllFibElements + 1;
+	cFibElement * pCallingFibElement =
+		pFibObject->getFibElement( uiCallingFibElement );
+
+	//choos a position where the Fib object will be inserted
+
+	char cTypeInsertObject = choosRandomType();
+	unsigned int uiNumberOfElementsOfType = pCallingFibElement->
+		getNumberOfElements( cTypeInsertObject );
+
+	unsigned int uiToInsertPositionObject = 0;
+	
+	cFibElement * pToInsertPositionObject = NULL;
+	if ( rand() % 50 != 0 ){
+		if ( uiNumberOfElementsOfType != 0 ){
+			uiToInsertPositionObject = rand() % (uiNumberOfElementsOfType + 1);
+		}else{
+			uiToInsertPositionObject = 0;
+		}
+		pToInsertPositionObject = pCallingFibElement->getFibElement(
+				cTypeInsertObject, uiToInsertPositionObject );
+		//check the getType() methode from cList
+		if ( pToInsertPositionObject == NULL ){
+			cerr<<"Error: The "<< uiToInsertPositionObject <<
+				"'th Fib element from the calling Fib element of the "<<
+				"Fib object couldn't be choosen as the basis the Fib element."<<endl;
+			iReturn++;
+			if ( pFibObjectToInsert ){
+				pFibObjectToInsert->deleteObject();
+			}
+			return iReturn;
+		}
+	}else{//test when no Fib object to overwrite exists
+		switch ( cTypeInsertObject ){
+			case 'u':uiToInsertPositionObject = uiNumberOfAllFibElements + 1;
+			break;
+			case 'r':uiToInsertPositionObject = uiNumberOfRootElements + 1;
+			break;
+			case 'p':uiToInsertPositionObject = uiNumberOfPointElements + 1;
+			break;
+			case 'l':uiToInsertPositionObject = uiNumberOfListElements + 1;
+			break;
+			case 'y':uiToInsertPositionObject = uiNumberOfPropertyElements + 1;
+			break;
+			case 'a':uiToInsertPositionObject = uiNumberOfAreaElements + 1;
+			break;
+			case 'f':uiToInsertPositionObject = uiNumberOfFunctionElements + 1;
+			break;
+			case 'i':uiToInsertPositionObject = uiNumberOfIfElements + 1;
+			break;
+			case 'c':uiToInsertPositionObject = uiNumberOfCommentElements + 1;
+			break;
+			case 'o':uiToInsertPositionObject = uiNumberOfExtObjectElements + 1;
+			break;
+			case 's':uiToInsertPositionObject = uiNumberOfExtSubobjectElements + 1;
+			break;
+			case 'v':uiToInsertPositionObject = uiNumberOfSetElements + 1;
+			break;
+			case 'm':uiToInsertPositionObject = uiNumberOfMatrixElements + 1;
+			break;
+		}
+	}
+	
+	cFibElement * pSuperiorFibObjectToInsert = NULL;
+	bool bCanInsert = true;
+	if ( uiToInsertPositionObject == 0 ){
+		//insert the object into the selected Fib element
+		if ( pCallingFibElement->getType() == 'o' ){
+			//insert in a erxternal object element
+			cout<<"Insert in an external object element with "<<
+				((cExtObject*)(pCallingFibElement))->getNumberOfSubobjects()<<" subobjects."<<endl;
+			pSuperiorFibObjectToInsert = pCallingFibElement;
+			if ( ((cExtObject*)(pCallingFibElement))->getNumberOfSubobjects() == 0 ){
+				pToInsertPositionObject = NULL;
+			}else{/*the external object element has subobjects ->
+				the first subobject is the insert position*/
+				pToInsertPositionObject = pCallingFibElement->getNextFibElement();
+			}
+		}else{
+			cFibElement * pToInsertPositionObjectTmp =
+				pCallingFibElement->getNextFibElement();
+			
+			if ( pToInsertPositionObjectTmp != NULL ){
+				if ( pToInsertPositionObjectTmp->getSuperiorFibElement() ==
+						pCallingFibElement ){
+					/*overwrite the next Fib element/ the subobject of the
+					selected Fib element*/
+					pToInsertPositionObject = pToInsertPositionObjectTmp;
+				}else{
+					
+					cout<<"Should insert in the Fib element on the position,"<<
+						" but it's next Fib element superior isn't the Fib element."<<endl;
+					bCanInsert = false;
+				}
+			}else{
+				cout<<"Should insert in the Fib element on the position, but it has no next Fib element."<<endl;
+				bCanInsert = false;
+			}
+		}
+	}else{
+		if ( pToInsertPositionObject == NULL ){
+			cout<<"Can't insert: The to insert position object is NULL."<<endl;
+			bCanInsert = false;
+		}
+	}
+	if ( pToInsertPositionObject != NULL ){
+		if ( pToInsertPositionObject->getType() == 'r' ){
+			cout<<"Can't insert: The to insert position object is wrong an root-element."<<endl;
+			bCanInsert = false;
+		}else if ( pToInsertPositionObject->getSuperiorFibElement() == NULL ){
+			cout<<"Can't insert: The to insert position object has superior NULL."<<endl;
+			bCanInsert = false;
+		}//else ( pToInsertPositionObject->getSuperiorFibElement() != NULL )
+	}
+	
+	//evalue the count values of the to insert Fib object
+	unsigned int uiNumberOfAllFibElementsInInsert   = 0;
+	unsigned int uiNumberOfRootElementsInInsert     = 0;
+	unsigned int uiNumberOfPointElementsInInsert    = 0;
+	unsigned int uiNumberOfListElementsInInsert     = 0;
+	unsigned int uiNumberOfPropertyElementsInInsert = 0;
+	unsigned int uiNumberOfAreaElementsInInsert     = 0;
+	unsigned int uiNumberOfFunctionElementsInInsert = 0;
+	unsigned int uiNumberOfIfElementsInInsert       = 0;
+	unsigned int uiNumberOfCommentElementsInInsert  = 0;
+	unsigned int uiNumberOfExtObjectElementsInInsert= 0;
+	unsigned int uiNumberOfExtSubobjectElementsInInsert= 0;
+	unsigned int uiNumberOfSetElementsInInsert= 0;
+	unsigned int uiNumberOfMatrixElementsInInsert= 0;
+	
+	cFibElement * pLastInFibObjectInInsert = NULL;
+
+	if ( pFibObjectToInsert != NULL ){
+		uiNumberOfAllFibElementsInInsert =
+			pFibObjectToInsert->getNumberOfElements();
+		uiNumberOfRootElementsInInsert =
+			pFibObjectToInsert->getNumberOfElements( 'r' );
+		uiNumberOfPointElementsInInsert =
+			pFibObjectToInsert->getNumberOfElements( 'p' );
+		uiNumberOfListElementsInInsert =
+			pFibObjectToInsert->getNumberOfElements( 'l' );
+		uiNumberOfPropertyElementsInInsert =
+			pFibObjectToInsert->getNumberOfElements( 'y' );
+		uiNumberOfAreaElementsInInsert =
+			pFibObjectToInsert->getNumberOfElements( 'a' );
+		uiNumberOfFunctionElementsInInsert =
+			pFibObjectToInsert->getNumberOfElements( 'f' );
+		uiNumberOfIfElementsInInsert =
+			pFibObjectToInsert->getNumberOfElements( 'i' );
+		uiNumberOfCommentElementsInInsert =
+			pFibObjectToInsert->getNumberOfElements( 'c' );
+		uiNumberOfExtObjectElementsInInsert =
+			pFibObjectToInsert->getNumberOfElements( 'o' );
+		uiNumberOfExtSubobjectElementsInInsert =
+			pFibObjectToInsert->getNumberOfElements( 's' );
+		uiNumberOfSetElementsInInsert =
+			pFibObjectToInsert->getNumberOfElements( 'v' );
+		uiNumberOfMatrixElementsInInsert =
+			pFibObjectToInsert->getNumberOfElements( 'm' );
+			
+		//store last Fib element of the insert Fib object
+		pLastInFibObjectInInsert = pFibObjectToInsert->getFibElement(
+			pFibObjectToInsert->getNumberOfElements() );
+			
+		if ( pFibObjectToInsert->getType() == 'r' ){
+			//can't insert a root-element
+			cout<<"The to insert object is an root-element."<<endl;
+			bCanInsert = false;
+		}
+	}else{
+		cout<<"The to insert object didn't exists."<<endl;
+		bCanInsert = false;
+	}
+	
+	//subtract the counts of the Fib part object that will be overwritten
+	unsigned int uiNumberOfAllFibElementsOfResult =
+		uiNumberOfAllFibElements + uiNumberOfAllFibElementsInInsert;
+	const unsigned int uiNumberOfRootElementsOfResult =
+		uiNumberOfRootElements + uiNumberOfRootElementsInInsert;
+	const unsigned int uiNumberOfPointElementsOfResult =
+		uiNumberOfPointElements + uiNumberOfPointElementsInInsert;
+	unsigned int uiNumberOfListElementsOfResult =
+		uiNumberOfListElements + uiNumberOfListElementsInInsert;
+	const unsigned int uiNumberOfPropertyElementsOfResult =
+		uiNumberOfPropertyElements + uiNumberOfPropertyElementsInInsert;
+	const unsigned int uiNumberOfAreaElementsOfResult =
+		uiNumberOfAreaElements + uiNumberOfAreaElementsInInsert;
+	const unsigned int uiNumberOfFunctionElementsOfResult =
+		uiNumberOfFunctionElements + uiNumberOfFunctionElementsInInsert;
+	const unsigned int uiNumberOfIfElementsOfResult =
+		uiNumberOfIfElements + uiNumberOfIfElementsInInsert;
+	const unsigned int uiNumberOfCommentElementsOfResult =
+		uiNumberOfCommentElements + uiNumberOfCommentElementsInInsert;
+	const unsigned int uiNumberOfExtObjectElementsOfResult =
+		uiNumberOfExtObjectElements + uiNumberOfExtObjectElementsInInsert;
+	const unsigned int uiNumberOfExtSubobjectElementsOfResult =
+		uiNumberOfExtSubobjectElements + uiNumberOfExtSubobjectElementsInInsert;
+	const unsigned int uiNumberOfSetElementsOfResult =
+		uiNumberOfSetElements + uiNumberOfSetElementsInInsert;
+	const unsigned int uiNumberOfMatrixElementsOfResult =
+		uiNumberOfMatrixElements + uiNumberOfMatrixElementsInInsert;
+	
+	//store the Fib elements betwean which the Fib object will be inserted
+	cFibElement * pAfterFibObjectToInsert = NULL;
+	unsignedIntFib uiNumberOfElementsInToInsert = 0;
+	if ( pToInsertPositionObject ){
+		pSuperiorFibObjectToInsert =
+			pToInsertPositionObject->getSuperiorFibElement();
+		uiNumberOfElementsInToInsert =
+			pToInsertPositionObject->getNumberOfElements();
+		pAfterFibObjectToInsert = pToInsertPositionObject->getFibElement(
+			uiNumberOfElementsInToInsert + 1 );
+	}else if ( ( pSuperiorFibObjectToInsert != NULL ) && bCanInsert ){
+		//can insert in superior element
+		pAfterFibObjectToInsert = pSuperiorFibObjectToInsert->getFibElement(
+			pSuperiorFibObjectToInsert->getNumberOfElements() + 1 );
+	}
+	
+	if ( (pSuperiorFibObjectToInsert != NULL) &&
+			( pSuperiorFibObjectToInsert->getType() != 'l' ) &&
+			( pSuperiorFibObjectToInsert->getType() != 'o' ) &&
+			( ( pToInsertPositionObject == NULL ) ||
+				( pToInsertPositionObject->getType() != 'l' ) ) ){
+		/*create a new list element to insert at the insert position*/
+		uiNumberOfAllFibElementsOfResult++;
+		uiNumberOfListElementsOfResult++;
+	}
+
+	cout<<"Calling insertObjectInElement("<<
+		pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+		uiToInsertPositionObject<<", false ) from the "<<
+		pCallingFibElement->getNumberOfElement()<<"'th Fib element "<<
+		"(which is of type "<< pCallingFibElement->getType();
+	if ( pToInsertPositionObject ){
+		cout<<", insert position type "<<pToInsertPositionObject->getType()<<
+			" (nbr.: "<<pToInsertPositionObject->getNumberOfElement()<<")";
+	}
+	if ( pSuperiorFibObjectToInsert ){
+		cout<<", superior to insert position type "<<pSuperiorFibObjectToInsert->getType()<<
+			"(nbr.: "<<pSuperiorFibObjectToInsert->getNumberOfElement()<<")";
+	}
+	cout<<")."<<endl;
+	if ( pSuperiorFibObjectToInsert != NULL ){
+		cout<<"   The superior Fib element of the to insert "<<
+			"Fib element is the "<<
+			pSuperiorFibObjectToInsert->getNumberOfElement() <<
+			"'th Fib element with the type "<<
+			pSuperiorFibObjectToInsert->getType() <<" ."<<endl;
+	}
+	if ( pFibObjectToInsert ){
+		cout<<"   The to insert Fib object has the type "<<
+			pFibObjectToInsert->getType() <<" ."<<endl;
+	}
+
+	const unsigned int pCallingElementNumber =
+		pCallingFibElement->getNumberOfElement();
+	const char pCallingElementType = pCallingFibElement->getType();
+	
+	//call insertObjectInElement()
+	bool bInserted = pCallingFibElement->insertObjectInElement(
+		pFibObjectToInsert, cTypeInsertObject, uiToInsertPositionObject, false );
+
+	if ( ! bCanInsert  ){
+		if ( bInserted ){
+			cerr<<"Error: At the insert Fib element can't be insert,"<<
+				" but it was insert."<<endl;
+			iReturn++;
+		}else{
+			if ( pFibObjectToInsert ){
+				pFibObjectToInsert->deleteObject();
+			}
+		}
+		return iReturn;
+	}
+	if ( ! bInserted ){
+		cerr<<"Error: At the insert Fib element couldn't be inserted."<<endl;
+		if ( pSuperiorFibObjectToInsert != NULL ){
+			cerr<<"   The superior Fib element of the to insert "<<
+				"Fib element is the "<<
+				pSuperiorFibObjectToInsert->getNumberOfElement() <<
+				"'th Fib element with the type "<<
+				pSuperiorFibObjectToInsert->getType() <<" ."<<endl;
+		}
+		iReturn++;
+		
+		if ( pFibObjectToInsert ){
+			pFibObjectToInsert->deleteObject();
+		}
+		return iReturn;
+	}
+	
+	//check the created Fib object
+	if ( uiNumberOfAllFibElementsOfResult !=
+			pFibObject->getNumberOfElements() ){
+		cerr<<"Error: While calling insertObjectInElement("<<
+			pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+			uiToInsertPositionObject<<", false ) from the "<<
+			pCallingElementNumber<<"'th Fib element "<<
+			"(which is of type "<< pCallingElementType <<"), "<<
+			"the number of Fib elements "<< pFibObject->getNumberOfElements() <<
+			" isn't correct ("<<uiNumberOfAllFibElementsOfResult<<
+			") in the created Fib object. (old value="<<
+			uiNumberOfAllFibElements <<" + "<<
+			uiNumberOfAllFibElementsInInsert <<")"<< endl;
+		iReturn++;
+	}
+	if ( uiNumberOfRootElementsOfResult !=
+			pFibObject->getNumberOfElements( 'r' ) ){
+		cerr<<"Error: While calling insertObjectInElement("<<
+			pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+			uiToInsertPositionObject<<", false ) from the "<<
+			pCallingElementNumber<<"'th Fib element "<<
+			"(which is of type "<< pCallingElementType <<"), "<<
+			"the number of root-elements "<< pFibObject->getNumberOfElements( 'r' ) <<
+			" isn't correct ("<<uiNumberOfRootElementsOfResult<<
+			") in the created Fib object. (old value="<<
+			uiNumberOfRootElements <<" + "<<
+			uiNumberOfRootElementsInInsert <<")"<< endl;
+		iReturn++;
+	}
+	if ( uiNumberOfPointElementsOfResult !=
+			pFibObject->getNumberOfElements( 'p' ) ){
+		cerr<<"Error: While calling insertObjectInElement("<<
+			pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+			uiToInsertPositionObject<<", false ) from the "<<
+			pCallingElementNumber<<"'th Fib element "<<
+			"(which is of type "<< pCallingElementType <<"), "<<
+			"the number of point elements "<< pFibObject->getNumberOfElements( 'p' ) <<
+			" isn't correct ("<<uiNumberOfPointElementsOfResult<<
+			") in the created Fib object. (old value="<<
+			uiNumberOfPointElements <<" + "<<
+			uiNumberOfPointElementsInInsert <<")"<< endl;
+		iReturn++;
+	}
+	if ( uiNumberOfListElementsOfResult !=
+			pFibObject->getNumberOfElements( 'l' ) ){
+		cerr<<"Error: While calling insertObjectInElement("<<
+			pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+			uiToInsertPositionObject<<", false ) from the "<<
+			pCallingElementNumber<<"'th Fib element "<<
+			"(which is of type "<< pCallingElementType <<"), "<<
+			"the number of list elements "<< pFibObject->getNumberOfElements( 'l' ) <<
+			" isn't correct ("<<uiNumberOfListElementsOfResult<<
+			") in the created Fib object. (old value="<<
+			uiNumberOfListElements <<" + "<<
+			uiNumberOfListElementsInInsert <<")"<<endl;
+		iReturn++;
+	}
+	if ( uiNumberOfPropertyElementsOfResult !=
+			pFibObject->getNumberOfElements( 'y' ) ){
+		cerr<<"Error: While calling insertObjectInElement("<<
+			pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+			uiToInsertPositionObject<<", false ) from the "<<
+			pCallingElementNumber<<"'th Fib element "<<
+			"(which is of type "<< pCallingElementType <<"), "<<
+			"the number of property elements "<< pFibObject->getNumberOfElements( 'y' ) <<
+			" isn't correct ("<<uiNumberOfPropertyElementsOfResult<<
+			") in the created Fib object. (old value="<<
+			uiNumberOfPropertyElements <<" + "<<
+			uiNumberOfPropertyElementsInInsert <<")"<<endl;
+		iReturn++;
+	}
+	if ( uiNumberOfAreaElementsOfResult !=
+			pFibObject->getNumberOfElements( 'a' ) ){
+		cerr<<"Error: While calling insertObjectInElement("<<
+			pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+			uiToInsertPositionObject<<", false ) from the "<<
+			pCallingElementNumber<<"'th Fib element "<<
+			"(which is of type "<< pCallingElementType <<"), "<<
+			"the number of area elements "<< pFibObject->getNumberOfElements( 'a' ) <<
+			" isn't correct ("<<uiNumberOfAreaElementsOfResult<<
+			") in the created Fib object. (old value="<<
+			uiNumberOfAreaElements <<" + "<<
+			uiNumberOfAreaElementsInInsert <<")"<<endl;
+		iReturn++;
+	}
+	if ( uiNumberOfFunctionElementsOfResult !=
+			pFibObject->getNumberOfElements( 'f' ) ){
+		cerr<<"Error: While calling insertObjectInElement("<<
+			pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+			uiToInsertPositionObject<<", false ) from the "<<
+			pCallingElementNumber<<"'th Fib element "<<
+			"(which is of type "<< pCallingElementType <<"), "<<
+			"the number of function elements "<< pFibObject->getNumberOfElements( 'f' ) <<
+			" isn't correct ("<<uiNumberOfFunctionElementsOfResult<<
+			") in the created Fib object. (old value="<<
+			uiNumberOfFunctionElements <<" + "<<
+			uiNumberOfFunctionElementsInInsert <<")"<<endl;
+		iReturn++;
+	}
+	if ( uiNumberOfIfElementsOfResult !=
+			pFibObject->getNumberOfElements( 'i' ) ){
+		cerr<<"Error: While calling insertObjectInElement("<<
+			pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+			uiToInsertPositionObject<<", false ) from the "<<
+			pCallingElementNumber<<"'th Fib element "<<
+			"(which is of type "<< pCallingElementType <<"), "<<
+			"the number of if-elements "<< pFibObject->getNumberOfElements( 'i' ) <<
+			" isn't correct ("<<uiNumberOfIfElementsOfResult<<
+			") in the created Fib object. (old value="<<
+			uiNumberOfIfElements <<" + "<<
+			uiNumberOfIfElementsInInsert <<")"<<endl;
+		iReturn++;
+	}
+	if ( uiNumberOfCommentElementsOfResult !=
+			pFibObject->getNumberOfElements( 'c' ) ){
+		cerr<<"Error: While calling insertObjectInElement("<<
+			pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+			uiToInsertPositionObject<<", false ) from the "<<
+			pCallingElementNumber<<"'th Fib element "<<
+			"(which is of type "<< pCallingElementType <<"), "<<
+			"the number of comment elements "<< pFibObject->getNumberOfElements( 'c' ) <<
+			" isn't correct ("<<uiNumberOfCommentElementsOfResult<<
+			") in the created Fib object. (old value="<<
+			uiNumberOfCommentElements <<" + "<<
+			uiNumberOfCommentElementsInInsert <<")"<<endl;
+		iReturn++;
+	}
+	if ( uiNumberOfExtObjectElementsOfResult !=
+			pFibObject->getNumberOfElements( 'o' ) ){
+		cerr<<"Error: While calling insertObjectInElement("<<
+			pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+			uiToInsertPositionObject<<", false ) from the "<<
+			pCallingElementNumber<<"'th Fib element "<<
+			"(which is of type "<< pCallingElementType <<"), "<<
+			"the number of external object elements "<< pFibObject->getNumberOfElements( 'o' ) <<
+			" isn't correct ("<<uiNumberOfExtObjectElementsOfResult<<
+			") in the created Fib object. (old value="<<
+			uiNumberOfExtObjectElements <<" + "<<
+			uiNumberOfExtObjectElementsInInsert <<")"<<endl;
+		iReturn++;
+	}
+	if ( uiNumberOfExtSubobjectElementsOfResult !=
+			pFibObject->getNumberOfElements( 's' ) ){
+		cerr<<"Error: While calling insertObjectInElement("<<
+			pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+			uiToInsertPositionObject<<", false ) from the "<<
+			pCallingElementNumber<<"'th Fib element "<<
+			"(which is of type "<< pCallingElementType <<"), "<<
+			"the number of external object elements "<< pFibObject->getNumberOfElements( 's' ) <<
+			" isn't correct ("<<uiNumberOfExtSubobjectElementsOfResult<<
+			") in the created Fib object. (old value="<<
+			uiNumberOfExtSubobjectElements <<" + "<<
+			uiNumberOfExtSubobjectElementsInInsert <<")"<<endl;
+		iReturn++;
+	}
+	if ( uiNumberOfSetElementsOfResult !=
+			pFibObject->getNumberOfElements( 'v' ) ){
+		cerr<<"Error: While calling insertObjectInElement("<<
+			pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+			uiToInsertPositionObject<<", false ) from the "<<
+			pCallingElementNumber<<"'th Fib element "<<
+			"(which is of type "<< pCallingElementType <<"), "<<
+			"the number of set elements "<< pFibObject->getNumberOfElements( 'v' ) <<
+			" isn't correct ("<<uiNumberOfSetElementsOfResult<<
+			") in the created Fib object. (old value="<<
+			uiNumberOfSetElements <<" + "<<
+			uiNumberOfSetElementsInInsert <<")"<<endl;
+		iReturn++;
+	}
+	if ( uiNumberOfMatrixElementsOfResult !=
+			pFibObject->getNumberOfElements( 'm' ) ){
+		cerr<<"Error: While calling insertObjectInElement("<<
+			pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+			uiToInsertPositionObject<<", false ) from the "<<
+			pCallingElementNumber<<"'th Fib element "<<
+			"(which is of type "<< pCallingElementType <<"), "<<
+			"the number of matrix elements "<< pFibObject->getNumberOfElements( 'm' ) <<
+			" isn't correct ("<<uiNumberOfMatrixElementsOfResult<<
+			") in the created Fib object. (old value="<<
+			uiNumberOfMatrixElements <<" + "<<
+			uiNumberOfMatrixElementsInInsert <<")"<<endl;
+		iReturn++;
+	}
+	
+	if ( (pFibObjectToInsert->getSuperiorFibElement() != NULL) &&
+			(pSuperiorFibObjectToInsert != NULL) ){
+		if ( ( (pSuperiorFibObjectToInsert->getType() == 'l') ||
+					(pSuperiorFibObjectToInsert->getType() == 'o') ) &&
+				(pFibObjectToInsert->getSuperiorFibElement() != pSuperiorFibObjectToInsert) ){
+			cerr<<"Error: The inserted Fib element wasn't inserted in the "<<
+				"list or external object element at the superior insert position."<<endl;
+			iReturn++;
+		}
+		if ( ( ( ! ( ( pSuperiorFibObjectToInsert->getType() == 'l' ) ||
+						( pSuperiorFibObjectToInsert->getType() == 'o' ) ) ) &&
+					( ( pToInsertPositionObject != NULL ) &&
+						( pToInsertPositionObject->getType() == 'l' ) ) ) &&
+				(pFibObjectToInsert->getSuperiorFibElement() != pToInsertPositionObject) ){
+			cerr<<"Error: The inserted Fib element wasn't inserted in the "<<
+				"list object element at the insert position ( notBranch( list(...)) )."<<endl;
+			iReturn++;
+		}
+		if ( pFibObjectToInsert->getSuperiorFibElement()->getType() == 'l' ){
+			cList * pInsertList = static_cast<cList*>(
+				pFibObjectToInsert->getSuperiorFibElement());
+			
+			if ( pSuperiorFibObjectToInsert->getType() != 'l' ){
+				
+				if ( ( ! ( ( pSuperiorFibObjectToInsert->getType() == 'l' ) ||
+							( pSuperiorFibObjectToInsert->getType() == 'o' ) ) ) &&
+						( ( pToInsertPositionObject != NULL ) &&
+							( pToInsertPositionObject->getType() == 'l' ) ) ){
+				
+					if ( pInsertList->getUnderobject(
+							pInsertList->getNumberOfUnderobjects() ) != pFibObjectToInsert ){
+						cerr<<"Error: The list element, where the Fib object was "<<
+							"inserted, hasn't the inserted Fib object as it's last subobject."<<endl;
+						iReturn++;
+					}
+					if ( pInsertList != pToInsertPositionObject ){
+						cerr<<"Error: The list element, where the Fib object was "<<
+							"inserted, is not the insert position Fib object."<<endl;
+						iReturn++;
+					}
+				}else{
+					if ( pInsertList->getUnderobject( 1 ) != pToInsertPositionObject ){
+						cerr<<"Error: The list element, where the Fib object was "<<
+							"inserted, hasn't the insert position Fib object as it's "<<
+							"first subobject."<<endl;
+						iReturn++;
+					}
+					if ( pInsertList->getUnderobject( 2 ) != pFibObjectToInsert ){
+						cerr<<"Error: The list element, where the Fib object was "<<
+							"inserted, hasn't the inserted Fib object as it's second subobject."<<endl;
+						iReturn++;
+					}
+				}
+			}else{
+				unsigned int uiActualListelement;
+				for ( uiActualListelement = 1;
+						uiActualListelement < pInsertList->getNumberOfUnderobjects();
+						uiActualListelement++ ){
+					if ( pInsertList->getUnderobject( uiActualListelement ) == pFibObjectToInsert ){
+						//inserted Fib object found
+						break;
+					}
+				}
+				if ( uiActualListelement == 1 ){
+					if ( pInsertList->getUnderobject( 1 ) == pFibObjectToInsert ){
+						cerr<<"Error: The in the superior list element inserted "<<
+							"Fib object is the first in the list element."<<endl;
+						iReturn++;
+					}else{
+						cerr<<"Error: The inserted Fib object was not found in the superior list element."<<endl;
+						iReturn++;
+					}
+				}else{
+					if ( pInsertList->getUnderobject( uiActualListelement ) != pFibObjectToInsert ){
+						cerr<<"Error: The inserted Fib object was not found in the superior list element."<<endl;
+						iReturn++;
+					}
+					if ( pInsertList->getUnderobject( uiActualListelement - 1 ) != pToInsertPositionObject ){
+						cerr<<"Error: Befor the inserted Fib object in the "<<
+							"superior list element isn't the positions Fib element."<<endl;
+						iReturn++;
+					}
+				}
+			}
+		}else if ( pFibObjectToInsert->getSuperiorFibElement()->getType() == 'o' ){
+			cExtObject * pInsertExtObject = (cExtObject*)pFibObjectToInsert->getSuperiorFibElement();
+			if ( pSuperiorFibObjectToInsert->getType() != 'o' ){
+				
+				cerr<<"Error: A new external object element was created."<<endl;
+				iReturn++;
+			}else{
+				unsigned int uiActualSubobject;
+				for ( uiActualSubobject = 1;
+						uiActualSubobject < pInsertExtObject->getNumberOfSubobjects();
+						uiActualSubobject++ ){
+					if ( pInsertExtObject->getSubobject( uiActualSubobject ) == pFibObjectToInsert ){
+						//inserted Fib object found
+						break;
+					}
+				}
+				if ( uiActualSubobject == 1 ){
+					if ( 1 < pInsertExtObject->getNumberOfSubobjects() ){
+						if ( pInsertExtObject->getSubobject( 1 ) == pFibObjectToInsert ){
+							cerr<<"Error: The in the superior external object element inserted "<<
+								"Fib object is the first in the external object element."<<endl;
+							iReturn++;
+						}else{
+							cerr<<"Error: The inserted Fib object was not found in the superior external object element."<<endl;
+							iReturn++;
+						}
+					}
+				}else{
+					if ( pInsertExtObject->getSubobject( uiActualSubobject ) != pFibObjectToInsert ){
+						cerr<<"Error: The inserted Fib object was not found in the superior external object element."<<endl;
+						iReturn++;
+					}
+					if ( pInsertExtObject->getSubobject( uiActualSubobject - 1 ) != pToInsertPositionObject ){
+						cerr<<"Error: Befor the inserted Fib object in the "<<
+							"superior external object element isn't the positions Fib element."<<endl;
+						iReturn++;
+					}
+				}
+			}
+		}else{
+			cerr<<"Error: The Fib element wasn't inserted in a list element."<<endl;
+			iReturn++;
+		}
+	}else{
+		cerr<<"Error: The superior Fib element of the inserted Fib element is NULL."<<endl;
+		iReturn++;
+	}
+	if ( (pToInsertPositionObject != NULL) && (pFibObjectToInsert != NULL) ){
+		cFibElement * pNewAfterInsertPositionObject =
+			pToInsertPositionObject->getFibElement(
+				uiNumberOfElementsInToInsert + 1 );
+		
+		if ( pNewAfterInsertPositionObject != pFibObjectToInsert ){
+			cerr<<"Error: While calling insertObjectInElement("<<
+				pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+				uiToInsertPositionObject<<", false ) from the "<<
+				pCallingElementNumber<<"'th Fib element "<<
+				"(which is of type "<< pCallingElementType <<"), "<<
+				"the inserted position Fib object has the wrong next Fib element ";
+			if ( pNewAfterInsertPositionObject ){
+				cerr<<"(number="<<pNewAfterInsertPositionObject->
+					getNumberOfElement() <<" and not number="<<
+					pFibObjectToInsert->getNumberOfElement() <<")."<<endl;
+			}else{
+				cerr<<" NULL and not number="<<
+					pFibObjectToInsert->getNumberOfElement() <<")."<<endl;
+			}
+			iReturn++;
+		}
+	}
+	if ( pFibObjectToInsert ){
+		cFibElement * pNewAfterFibObjectToInsert = pFibObjectToInsert->getFibElement(
+			pFibObjectToInsert->getNumberOfElements() + 1 );
+		
+		if ( (pAfterFibObjectToInsert != NULL) &&
+				( pAfterFibObjectToInsert != pNewAfterFibObjectToInsert ) ){
+			cerr<<"Error: While calling insertObjectInElement("<<
+				pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+				uiToInsertPositionObject<<", false ) from the "<<
+				pCallingElementNumber<<"'th Fib element "<<
+				"(which is of type "<< pCallingElementType <<"), "<<
+				"the insert position Fib object has the wrong next Fib element ";
+			if ( pNewAfterFibObjectToInsert ){
+				cerr<<"(number="<< pNewAfterFibObjectToInsert->getNumberOfElement() <<
+					" and not number="<<
+					pAfterFibObjectToInsert->getNumberOfElement() <<")."<<endl;
+			}else{
+				cerr<<" NULL and not number="<<
+					pAfterFibObjectToInsert->getNumberOfElement() <<")."<<endl;
+			}
+			iReturn++;
+		}
+		if ( (pAfterFibObjectToInsert == NULL) &&
+				(pLastInFibObjectInInsert->getNextFibElement() != NULL ) ){
+			cerr<<"Error: While calling insertObjectInElement("<<
+				pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+				uiToInsertPositionObject<<", false ) from the "<<
+				pCallingElementNumber<<"'th Fib element "<<
+				"(which is of type "<< pCallingElementType <<"), "<<
+				"the inserted Fib object has the wrong next Fib element "<<
+				"it isn't NULL (has number="<<
+				pLastInFibObjectInInsert->getNextFibElement()->getNumberOfElement()
+				<<"), but it should be."<<endl;
+			iReturn++;
+		}
+	}
+
+	if ( iReturn == 0 ){
+		iReturn += testStructurOnObject( pFibObject, false );
+	}else{//print some more information about the checked Fib object
+		iReturn += testStructurOnObject( pFibObject, true );
+	}
+
+	return iReturn;
+}
+
+
+/**
+ * This function tests the overwriteObjectWithObject() method for a given
+ * Fib object.
+ * ATTENTION: The random number generator should to be initialisized with srand()
+ *
+ * methods tested:
+ * 	- bool insertObjectInElement( cFibElement *fibObject, const char cType, const unsignedIntFib elementPoint, bool first=false, bool bAbsolute=true );
+ *
+ * Fib elements tested:
+ * 	- cRoot
+ * 	- cList
+ * 	- cPoint
+ * 	- cProperty
+ * 	- cArea
+ * 	- cFunction
+ * 	- cIf
+ * 	- cComment
+ * 	- cExtObject
+ * 	- cExtSubobject
+ * 	- cFibSet
+ * 	- cFibMatrix
+ *
+ * @param pFibObject a pointer to the Fib object to test
+ * @return the number of erros occured in the test
+ */
+int testInsertObjectInElementObjectSecondAbsoluteOnObject( cFibElement * pFibObject ){
+
+	int iReturn = 0;//return value of the test; the number of occured errors
+	
+	if ( pFibObject == NULL ){
+		cerr<<"Error: No Fib object to check ."<<endl;
+		iReturn++;
+		return iReturn;
+	}
+	//evalue the count values of the given Fib object
+	const unsigned int uiNumberOfAllFibElements =
+		pFibObject->getNumberOfElements();
+	const unsigned int uiNumberOfRootElements =
+		pFibObject->getNumberOfElements( 'r' );
+	const unsigned int uiNumberOfPointElements =
+		pFibObject->getNumberOfElements( 'p' );
+	const unsigned int uiNumberOfListElements =
+		pFibObject->getNumberOfElements( 'l' );
+	const unsigned int uiNumberOfPropertyElements =
+		pFibObject->getNumberOfElements( 'y' );
+	const unsigned int uiNumberOfAreaElements =
+		pFibObject->getNumberOfElements( 'a' );
+	const unsigned int uiNumberOfFunctionElements =
+		pFibObject->getNumberOfElements( 'f' );
+	const unsigned int uiNumberOfIfElements =
+		pFibObject->getNumberOfElements( 'i' );
+	const unsigned int uiNumberOfCommentElements =
+		pFibObject->getNumberOfElements( 'c' );
+	const unsigned int uiNumberOfExtObjectElements =
+		pFibObject->getNumberOfElements( 'o' );
+	const unsigned int uiNumberOfExtSubobjectElements =
+		pFibObject->getNumberOfElements( 's' );
+	const unsigned int uiNumberOfSetElements =
+		pFibObject->getNumberOfElements( 'v' );
+	const unsigned int uiNumberOfMatrixElements =
+		pFibObject->getNumberOfElements( 'm' );
+
+
+	const unsigned int uiAverageSubRoots = 1;
+	const unsigned int uiAverageSubRootsDepth = 1;
+	const unsigned int uiNumberOfAverageInputVariables = 0;
+	const unsigned int uiMaxVectorElementNumber = 1023;
+	
+	//TODO check with variables
+	const double dFractionsOfUsedVariables = 0.0;
+
+	cFibElement * pFibObjectToInsert = NULL;
+	if ( rand() % 50 != 0 ){
+		cFibElement * pGeneratedFibObject = generateFibObject( uiNumberOfAllFibElements / 10 + 10,
+			liFractionOfFibElements, liPossiblePropertytyps, uiNumberOfDimensions,
+			uiAverageSubRoots, uiAverageSubRootsDepth,
+			uiNumberOfAverageInputVariables, dFractionsOfUsedVariables,
+			uiMaxVectorElementNumber );
+		
+		pFibObjectToInsert = pGeneratedFibObject;
+		
+		if ( rand() % 50 != 0 ){
+			//get the next non root-element from the generated Fib object
+			for ( pFibObjectToInsert = pGeneratedFibObject;
+					(pFibObjectToInsert != NULL) && ( pFibObjectToInsert->getType() == 'r' );
+					pFibObjectToInsert = pFibObjectToInsert->getNextFibElement() ){
+			}
+			pFibObjectToInsert = pFibObjectToInsert->copy();
+			pGeneratedFibObject->deleteObject();
+		}//else check when to insert a root-element
+	}//else check when return is false when pFibObjectToInsert==NULL
+	
+	//choos a random calling Fib element
+	const unsigned int uiCallingFibElement =
+		rand() % uiNumberOfAllFibElements + 1;
+	cFibElement * pCallingFibElement =
+		pFibObject->getFibElement( uiCallingFibElement );
+
+	//choos a position where the Fib object will be inserted
+	char cTypeInsertObject = choosRandomType();
+
+	unsigned int uiNumberOfElementsOfType = 0;
+	switch ( cTypeInsertObject ){
+		case 'u':uiNumberOfElementsOfType = uiNumberOfAllFibElements;
+		break;
+		case 'r':uiNumberOfElementsOfType = uiNumberOfRootElements;
+		break;
+		case 'p':uiNumberOfElementsOfType = uiNumberOfPointElements;
+		break;
+		case 'l':uiNumberOfElementsOfType = uiNumberOfListElements;
+		break;
+		case 'y':uiNumberOfElementsOfType = uiNumberOfPropertyElements;
+		break;
+		case 'a':uiNumberOfElementsOfType = uiNumberOfAreaElements;
+		break;
+		case 'f':uiNumberOfElementsOfType = uiNumberOfFunctionElements;
+		break;
+		case 'i':uiNumberOfElementsOfType = uiNumberOfIfElements;
+		break;
+		case 'c':uiNumberOfElementsOfType = uiNumberOfCommentElements;
+		break;
+		case 'o':uiNumberOfElementsOfType = uiNumberOfExtObjectElements;
+		break;
+		case 's':uiNumberOfElementsOfType = uiNumberOfExtSubobjectElements;
+		break;
+		case 'v':uiNumberOfElementsOfType = uiNumberOfSetElements;
+		break;
+		case 'm':uiNumberOfElementsOfType = uiNumberOfMatrixElements;
+		break;
+	}
+	
+	unsigned int uiToInsertPositionObject = 0;
+	
+	cFibElement * pToInsertPositionObject = NULL;
+	if ( rand() % 50 != 0 ){
+		if ( uiNumberOfElementsOfType != 0 ){
+			uiToInsertPositionObject = rand() % (uiNumberOfElementsOfType + 1);
+		}else{
+			uiToInsertPositionObject = 0;
+		}
+		pToInsertPositionObject = pFibObject->getFibElement(
+				cTypeInsertObject, uiToInsertPositionObject );
+		//check the getType() methode from cList
+		if ( pToInsertPositionObject == NULL ){
+			cerr<<"Error: The "<< uiToInsertPositionObject <<
+				"'th Fib element from the calling Fib element of the "<<
+				"Fib object couldn't be choosen as the basis the Fib element."<<endl;
+			iReturn++;
+			if ( pFibObjectToInsert ){
+				pFibObjectToInsert->deleteObject();
+			}
+			return iReturn;
+		}
+	}else{//test when no Fib object to overwrite exists
+		uiToInsertPositionObject = uiNumberOfElementsOfType + 1;
+	}
+	
+	cFibElement * pSuperiorFibObjectToInsert = NULL;
+	bool bCanInsert = true;
+	if ( uiToInsertPositionObject == 0 ){
+		//insert the object into the selected Fib element
+		if ( pCallingFibElement->getType() == 'o' ){
+			//insert in a erxternal object element
+			cout<<"Insert in an external object element with "<<
+				((cExtObject*)(pCallingFibElement))->getNumberOfSubobjects()<<" subobjects."<<endl;
+			pSuperiorFibObjectToInsert = pCallingFibElement;
+			if ( ((cExtObject*)(pCallingFibElement))->getNumberOfSubobjects() == 0 ){
+				pToInsertPositionObject = NULL;
+			}else{/*the external object element has subobjects ->
+				the first subobject is the insert position*/
+				pToInsertPositionObject = pCallingFibElement->getNextFibElement();
+			}
+		}else{
+			cFibElement * pToInsertPositionObjectTmp =
+				pCallingFibElement->getNextFibElement();
+			
+			if ( pToInsertPositionObjectTmp != NULL ){
+				if ( pToInsertPositionObjectTmp->getSuperiorFibElement() ==
+						pCallingFibElement ){
+					/*overwrite the next Fib element/ the subobject of the
+					selected Fib element*/
+					pToInsertPositionObject = pToInsertPositionObjectTmp;
+				}else{
+					
+					cout<<"Should insert in the Fib element on the position,"<<
+						" but it's next Fib element superior isn't the Fib element."<<endl;
+					bCanInsert = false;
+				}
+			}else{
+				cout<<"Should insert in the Fib element on the position, but it has no next Fib element."<<endl;
+				bCanInsert = false;
+			}
+		}
+	}else{
+		if ( pToInsertPositionObject == NULL ){
+			cout<<"Can't insert: The to insert position object is NULL."<<endl;
+			bCanInsert = false;
+		}
+	}
+	if ( pToInsertPositionObject != NULL ){
+		if ( pToInsertPositionObject->getType() == 'r' ){
+			cout<<"Can't insert: The to insert position object is wrong an root-element."<<endl;
+			bCanInsert = false;
+		}else if ( pToInsertPositionObject->getSuperiorFibElement() == NULL ){
+			cout<<"Can't insert: The to insert position object has superior NULL."<<endl;
+			bCanInsert = false;
+		}//else ( pToInsertPositionObject->getSuperiorFibElement() != NULL )
+	}
+	
+	//evalue the count values of the to insert Fib object
+	unsigned int uiNumberOfAllFibElementsInInsert   = 0;
+	unsigned int uiNumberOfRootElementsInInsert     = 0;
+	unsigned int uiNumberOfPointElementsInInsert    = 0;
+	unsigned int uiNumberOfListElementsInInsert     = 0;
+	unsigned int uiNumberOfPropertyElementsInInsert = 0;
+	unsigned int uiNumberOfAreaElementsInInsert     = 0;
+	unsigned int uiNumberOfFunctionElementsInInsert = 0;
+	unsigned int uiNumberOfIfElementsInInsert       = 0;
+	unsigned int uiNumberOfCommentElementsInInsert  = 0;
+	unsigned int uiNumberOfExtObjectElementsInInsert= 0;
+	unsigned int uiNumberOfExtSubobjectElementsInInsert= 0;
+	unsigned int uiNumberOfSetElementsInInsert= 0;
+	unsigned int uiNumberOfMatrixElementsInInsert= 0;
+	
+	cFibElement * pLastInFibObjectInInsert = NULL;
+
+	if ( pFibObjectToInsert != NULL ){
+		uiNumberOfAllFibElementsInInsert =
+			pFibObjectToInsert->getNumberOfElements();
+		uiNumberOfRootElementsInInsert =
+			pFibObjectToInsert->getNumberOfElements( 'r' );
+		uiNumberOfPointElementsInInsert =
+			pFibObjectToInsert->getNumberOfElements( 'p' );
+		uiNumberOfListElementsInInsert =
+			pFibObjectToInsert->getNumberOfElements( 'l' );
+		uiNumberOfPropertyElementsInInsert =
+			pFibObjectToInsert->getNumberOfElements( 'y' );
+		uiNumberOfAreaElementsInInsert =
+			pFibObjectToInsert->getNumberOfElements( 'a' );
+		uiNumberOfFunctionElementsInInsert =
+			pFibObjectToInsert->getNumberOfElements( 'f' );
+		uiNumberOfIfElementsInInsert =
+			pFibObjectToInsert->getNumberOfElements( 'i' );
+		uiNumberOfCommentElementsInInsert =
+			pFibObjectToInsert->getNumberOfElements( 'c' );
+		uiNumberOfExtObjectElementsInInsert =
+			pFibObjectToInsert->getNumberOfElements( 'o' );
+		uiNumberOfExtSubobjectElementsInInsert =
+			pFibObjectToInsert->getNumberOfElements( 's' );
+		uiNumberOfSetElementsInInsert =
+			pFibObjectToInsert->getNumberOfElements( 'v' );
+		uiNumberOfMatrixElementsInInsert =
+			pFibObjectToInsert->getNumberOfElements( 'm' );
+			
+		//store last Fib element of the insert Fib object
+		pLastInFibObjectInInsert = pFibObjectToInsert->getFibElement(
+			pFibObjectToInsert->getNumberOfElements() );
+			
+		if ( pFibObjectToInsert->getType() == 'r' ){
+			//can't insert a root-element
+			cout<<"The to insert object is an root-element."<<endl;
+			bCanInsert = false;
+		}
+	}else{
+		cout<<"The to insert object didn't exists."<<endl;
+		bCanInsert = false;
+	}
+	
+	//subtract the counts of the Fib part object that will be overwritten
+	unsigned int uiNumberOfAllFibElementsOfResult =
+		uiNumberOfAllFibElements + uiNumberOfAllFibElementsInInsert;
+	const unsigned int uiNumberOfRootElementsOfResult =
+		uiNumberOfRootElements + uiNumberOfRootElementsInInsert;
+	const unsigned int uiNumberOfPointElementsOfResult =
+		uiNumberOfPointElements + uiNumberOfPointElementsInInsert;
+	unsigned int uiNumberOfListElementsOfResult =
+		uiNumberOfListElements + uiNumberOfListElementsInInsert;
+	const unsigned int uiNumberOfPropertyElementsOfResult =
+		uiNumberOfPropertyElements + uiNumberOfPropertyElementsInInsert;
+	const unsigned int uiNumberOfAreaElementsOfResult =
+		uiNumberOfAreaElements + uiNumberOfAreaElementsInInsert;
+	const unsigned int uiNumberOfFunctionElementsOfResult =
+		uiNumberOfFunctionElements + uiNumberOfFunctionElementsInInsert;
+	const unsigned int uiNumberOfIfElementsOfResult =
+		uiNumberOfIfElements + uiNumberOfIfElementsInInsert;
+	const unsigned int uiNumberOfCommentElementsOfResult =
+		uiNumberOfCommentElements + uiNumberOfCommentElementsInInsert;
+	const unsigned int uiNumberOfExtObjectElementsOfResult =
+		uiNumberOfExtObjectElements + uiNumberOfExtObjectElementsInInsert;
+	const unsigned int uiNumberOfExtSubobjectElementsOfResult =
+		uiNumberOfExtSubobjectElements + uiNumberOfExtSubobjectElementsInInsert;
+	const unsigned int uiNumberOfSetElementsOfResult =
+		uiNumberOfSetElements + uiNumberOfSetElementsInInsert;
+	const unsigned int uiNumberOfMatrixElementsOfResult =
+		uiNumberOfMatrixElements + uiNumberOfMatrixElementsInInsert;
+	
+	//store the Fib elements betwean which the Fib object will be inserted
+	cFibElement * pAfterFibObjectToInsert = NULL;
+	unsignedIntFib uiNumberOfElementsInToInsert = 0;
+	if ( pToInsertPositionObject ){
+		pSuperiorFibObjectToInsert =
+			pToInsertPositionObject->getSuperiorFibElement();
+		uiNumberOfElementsInToInsert =
+			pToInsertPositionObject->getNumberOfElements();
+		pAfterFibObjectToInsert = pToInsertPositionObject->getFibElement(
+			uiNumberOfElementsInToInsert + 1 );
+	}else if ( ( pSuperiorFibObjectToInsert != NULL ) && bCanInsert ){
+		//can insert in superior element
+		pAfterFibObjectToInsert = pSuperiorFibObjectToInsert->getFibElement(
+			pSuperiorFibObjectToInsert->getNumberOfElements() + 1 );
+	}
+	
+	if ( (pSuperiorFibObjectToInsert != NULL) &&
+			( pSuperiorFibObjectToInsert->getType() != 'l' ) &&
+			( pSuperiorFibObjectToInsert->getType() != 'o' ) &&
+			( ( pToInsertPositionObject == NULL ) ||
+				( pToInsertPositionObject->getType() != 'l' ) ) ){
+		/*create a new list element to insert at the insert position*/
+		uiNumberOfAllFibElementsOfResult++;
+		uiNumberOfListElementsOfResult++;
+	}
+
+	cout<<"Calling insertObjectInElement("<<
+		pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+		uiToInsertPositionObject<<", false, true ) from the "<<
+		pCallingFibElement->getNumberOfElement()<<"'th Fib element "<<
+		"(which is of type "<< pCallingFibElement->getType();
+	if ( pToInsertPositionObject ){
+		cout<<", insert position type "<<pToInsertPositionObject->getType()<<
+			" (nbr.: "<<pToInsertPositionObject->getNumberOfElement()<<")";
+	}
+	if ( pSuperiorFibObjectToInsert ){
+		cout<<", superior to insert position type "<<pSuperiorFibObjectToInsert->getType();
+	}
+	cout<<")."<<endl;
+	if ( pSuperiorFibObjectToInsert != NULL ){
+		cout<<"   The superior Fib element of the to insert "<<
+			"Fib element is the "<<
+			pSuperiorFibObjectToInsert->getNumberOfElement() <<
+			"'th Fib element with the type "<<
+			pSuperiorFibObjectToInsert->getType() <<" ."<<endl;
+	}
+	if ( pFibObjectToInsert ){
+		cout<<"   The to insert Fib object has the type "<<
+			pFibObjectToInsert->getType() <<" ."<<endl;
+	}
+
+	const unsigned int pCallingElementNumber =
+		pCallingFibElement->getNumberOfElement();
+	const char pCallingElementType = pCallingFibElement->getType();
+	
+	//call insertObjectInElement()
+	bool bInserted = pCallingFibElement->insertObjectInElement(
+		pFibObjectToInsert, cTypeInsertObject, uiToInsertPositionObject, false, true );
+
+	if ( ! bCanInsert  ){
+		if ( bInserted ){
+			cerr<<"Error: At the insert Fib element can't be insert,"<<
+				" but it was insert."<<endl;
+			iReturn++;
+		}else{
+			if ( pFibObjectToInsert ){
+				pFibObjectToInsert->deleteObject();
+			}
+		}
+		return iReturn;
+	}
+	if ( ! bInserted ){
+		cerr<<"Error: At the insert Fib element couldn't be inserted."<<endl;
+		if ( pSuperiorFibObjectToInsert != NULL ){
+			cerr<<"   The superior Fib element of the to insert "<<
+				"Fib element is the "<<
+				pSuperiorFibObjectToInsert->getNumberOfElement() <<
+				"'th Fib element with the type "<<
+				pSuperiorFibObjectToInsert->getType() <<" ."<<endl;
+		}
+		iReturn++;
+		
+		if ( pFibObjectToInsert ){
+			pFibObjectToInsert->deleteObject();
+		}
+		return iReturn;
+	}else{
+		cout<<"   The Fib object was inserted."<<endl;
+	}
+	
+	//check the created Fib object
+	if ( uiNumberOfAllFibElementsOfResult !=
+			pFibObject->getNumberOfElements() ){
+		cerr<<"Error: While calling insertObjectInElement("<<
+			pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+			uiToInsertPositionObject<<", false, true ) from the "<<
+			pCallingElementNumber<<"'th Fib element "<<
+			"(which is of type "<< pCallingElementType <<"), "<<
+			"the number of Fib elements "<< pFibObject->getNumberOfElements() <<
+			" isn't correct ("<<uiNumberOfAllFibElementsOfResult<<
+			") in the created Fib object. (old value="<<
+			uiNumberOfAllFibElements <<" + "<<
+			uiNumberOfAllFibElementsInInsert <<")"<< endl;
+		iReturn++;
+	}
+	if ( uiNumberOfRootElementsOfResult !=
+			pFibObject->getNumberOfElements( 'r' ) ){
+		cerr<<"Error: While calling insertObjectInElement("<<
+			pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+			uiToInsertPositionObject<<", false, true ) from the "<<
+			pCallingElementNumber<<"'th Fib element "<<
+			"(which is of type "<< pCallingElementType <<"), "<<
+			"the number of root-elements "<< pFibObject->getNumberOfElements( 'r' ) <<
+			" isn't correct ("<<uiNumberOfRootElementsOfResult<<
+			") in the created Fib object. (old value="<<
+			uiNumberOfRootElements <<" + "<<
+			uiNumberOfRootElementsInInsert <<")"<< endl;
+		iReturn++;
+	}
+	if ( uiNumberOfPointElementsOfResult !=
+			pFibObject->getNumberOfElements( 'p' ) ){
+		cerr<<"Error: While calling insertObjectInElement("<<
+			pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+			uiToInsertPositionObject<<", false, true ) from the "<<
+			pCallingElementNumber<<"'th Fib element "<<
+			"(which is of type "<< pCallingElementType <<"), "<<
+			"the number of point elements "<< pFibObject->getNumberOfElements( 'p' ) <<
+			" isn't correct ("<<uiNumberOfPointElementsOfResult<<
+			") in the created Fib object. (old value="<<
+			uiNumberOfPointElements <<" + "<<
+			uiNumberOfPointElementsInInsert <<")"<< endl;
+		iReturn++;
+	}
+	if ( uiNumberOfListElementsOfResult !=
+			pFibObject->getNumberOfElements( 'l' ) ){
+		cerr<<"Error: While calling insertObjectInElement("<<
+			pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+			uiToInsertPositionObject<<", false, true ) from the "<<
+			pCallingElementNumber<<"'th Fib element "<<
+			"(which is of type "<< pCallingElementType <<"), "<<
+			"the number of list elements "<< pFibObject->getNumberOfElements( 'l' ) <<
+			" isn't correct ("<<uiNumberOfListElementsOfResult<<
+			") in the created Fib object. (old value="<<
+			uiNumberOfListElements <<" + "<<
+			uiNumberOfListElementsInInsert <<")"<<endl;
+		iReturn++;
+	}
+	if ( uiNumberOfPropertyElementsOfResult !=
+			pFibObject->getNumberOfElements( 'y' ) ){
+		cerr<<"Error: While calling insertObjectInElement("<<
+			pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+			uiToInsertPositionObject<<", false, true ) from the "<<
+			pCallingElementNumber<<"'th Fib element "<<
+			"(which is of type "<< pCallingElementType <<"), "<<
+			"the number of property elements "<< pFibObject->getNumberOfElements( 'y' ) <<
+			" isn't correct ("<<uiNumberOfPropertyElementsOfResult<<
+			") in the created Fib object. (old value="<<
+			uiNumberOfPropertyElements <<" + "<<
+			uiNumberOfPropertyElementsInInsert <<")"<<endl;
+		iReturn++;
+	}
+	if ( uiNumberOfAreaElementsOfResult !=
+			pFibObject->getNumberOfElements( 'a' ) ){
+		cerr<<"Error: While calling insertObjectInElement("<<
+			pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+			uiToInsertPositionObject<<", false, true ) from the "<<
+			pCallingElementNumber<<"'th Fib element "<<
+			"(which is of type "<< pCallingElementType <<"), "<<
+			"the number of area elements "<< pFibObject->getNumberOfElements( 'a' ) <<
+			" isn't correct ("<<uiNumberOfAreaElementsOfResult<<
+			") in the created Fib object. (old value="<<
+			uiNumberOfAreaElements <<" + "<<
+			uiNumberOfAreaElementsInInsert <<")"<<endl;
+		iReturn++;
+	}
+	if ( uiNumberOfFunctionElementsOfResult !=
+			pFibObject->getNumberOfElements( 'f' ) ){
+		cerr<<"Error: While calling insertObjectInElement("<<
+			pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+			uiToInsertPositionObject<<", false, true ) from the "<<
+			pCallingElementNumber<<"'th Fib element "<<
+			"(which is of type "<< pCallingElementType <<"), "<<
+			"the number of function elements "<< pFibObject->getNumberOfElements( 'f' ) <<
+			" isn't correct ("<<uiNumberOfFunctionElementsOfResult<<
+			") in the created Fib object. (old value="<<
+			uiNumberOfFunctionElements <<" + "<<
+			uiNumberOfFunctionElementsInInsert <<")"<<endl;
+		iReturn++;
+	}
+	if ( uiNumberOfIfElementsOfResult !=
+			pFibObject->getNumberOfElements( 'i' ) ){
+		cerr<<"Error: While calling insertObjectInElement("<<
+			pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+			uiToInsertPositionObject<<", false, true ) from the "<<
+			pCallingElementNumber<<"'th Fib element "<<
+			"(which is of type "<< pCallingElementType <<"), "<<
+			"the number of if-elements "<< pFibObject->getNumberOfElements( 'i' ) <<
+			" isn't correct ("<<uiNumberOfIfElementsOfResult<<
+			") in the created Fib object. (old value="<<
+			uiNumberOfIfElements <<" + "<<
+			uiNumberOfIfElementsInInsert <<")"<<endl;
+		iReturn++;
+	}
+	if ( uiNumberOfCommentElementsOfResult !=
+			pFibObject->getNumberOfElements( 'c' ) ){
+		cerr<<"Error: While calling insertObjectInElement("<<
+			pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+			uiToInsertPositionObject<<", false, true ) from the "<<
+			pCallingElementNumber<<"'th Fib element "<<
+			"(which is of type "<< pCallingElementType <<"), "<<
+			"the number of comment elements "<< pFibObject->getNumberOfElements( 'c' ) <<
+			" isn't correct ("<<uiNumberOfCommentElementsOfResult<<
+			") in the created Fib object. (old value="<<
+			uiNumberOfCommentElements <<" + "<<
+			uiNumberOfCommentElementsInInsert <<")"<<endl;
+		iReturn++;
+	}
+	if ( uiNumberOfExtObjectElementsOfResult !=
+			pFibObject->getNumberOfElements( 'o' ) ){
+		cerr<<"Error: While calling insertObjectInElement("<<
+			pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+			uiToInsertPositionObject<<", false, true ) from the "<<
+			pCallingElementNumber<<"'th Fib element "<<
+			"(which is of type "<< pCallingElementType <<"), "<<
+			"the number of external object elements "<< pFibObject->getNumberOfElements( 'o' ) <<
+			" isn't correct ("<<uiNumberOfExtObjectElementsOfResult<<
+			") in the created Fib object. (old value="<<
+			uiNumberOfExtObjectElements <<" + "<<
+			uiNumberOfExtObjectElementsInInsert <<")"<<endl;
+		iReturn++;
+	}
+	if ( uiNumberOfExtSubobjectElementsOfResult !=
+			pFibObject->getNumberOfElements( 's' ) ){
+		cerr<<"Error: While calling insertObjectInElement("<<
+			pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+			uiToInsertPositionObject<<", false, true ) from the "<<
+			pCallingElementNumber<<"'th Fib element "<<
+			"(which is of type "<< pCallingElementType <<"), "<<
+			"the number of external subobject elements "<< pFibObject->getNumberOfElements( 's' ) <<
+			" isn't correct ("<<uiNumberOfExtSubobjectElementsOfResult<<
+			") in the created Fib object. (old value="<<
+			uiNumberOfExtSubobjectElements <<" + "<<
+			uiNumberOfExtSubobjectElementsInInsert <<")"<<endl;
+		iReturn++;
+	}
+	if ( uiNumberOfSetElementsOfResult !=
+			pFibObject->getNumberOfElements( 'v' ) ){
+		cerr<<"Error: While calling insertObjectInElement("<<
+			pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+			uiToInsertPositionObject<<", false, true ) from the "<<
+			pCallingElementNumber<<"'th Fib element "<<
+			"(which is of type "<< pCallingElementType <<"), "<<
+			"the number of set elements "<< pFibObject->getNumberOfElements( 'v' ) <<
+			" isn't correct ("<<uiNumberOfSetElementsOfResult<<
+			") in the created Fib object. (old value="<<
+			uiNumberOfSetElements <<" + "<<
+			uiNumberOfSetElementsInInsert <<")"<<endl;
+		iReturn++;
+	}
+	if ( uiNumberOfMatrixElementsOfResult !=
+			pFibObject->getNumberOfElements( 'm' ) ){
+		cerr<<"Error: While calling insertObjectInElement("<<
+			pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+			uiToInsertPositionObject<<", false, true ) from the "<<
+			pCallingElementNumber<<"'th Fib element "<<
+			"(which is of type "<< pCallingElementType <<"), "<<
+			"the number of matrix elements "<< pFibObject->getNumberOfElements( 'm' ) <<
+			" isn't correct ("<<uiNumberOfMatrixElementsOfResult<<
+			") in the created Fib object. (old value="<<
+			uiNumberOfMatrixElements <<" + "<<
+			uiNumberOfMatrixElementsInInsert <<")"<<endl;
+		iReturn++;
+	}
+	
+	if ( (pFibObjectToInsert->getSuperiorFibElement() != NULL) &&
+			(pSuperiorFibObjectToInsert != NULL) ){
+		if ( ( (pSuperiorFibObjectToInsert->getType() == 'l') ||
+					(pSuperiorFibObjectToInsert->getType() == 'o') ) &&
+				(pFibObjectToInsert->getSuperiorFibElement() != pSuperiorFibObjectToInsert) ){
+			cerr<<"Error: The inserted Fib element wasn't inserted in the "<<
+				"list or external object element at the superior insert position."<<endl;
+			iReturn++;
+		}
+		if ( ( ( ! ( ( pSuperiorFibObjectToInsert->getType() == 'l' ) ||
+						( pSuperiorFibObjectToInsert->getType() == 'o' ) ) ) &&
+					( ( pToInsertPositionObject != NULL ) &&
+						( pToInsertPositionObject->getType() == 'l' ) ) ) &&
+				(pFibObjectToInsert->getSuperiorFibElement() != pToInsertPositionObject) ){
+			cerr<<"Error: The inserted Fib element wasn't inserted in the "<<
+				"list object element at the insert position ( notBranch( list(...)) )."<<endl;
+			iReturn++;
+		}
+		if ( pFibObjectToInsert->getSuperiorFibElement()->getType() == 'l' ){
+			cList * pInsertList = static_cast<cList*>(
+				pFibObjectToInsert->getSuperiorFibElement());
+			
+			if ( pSuperiorFibObjectToInsert->getType() != 'l' ){
+				
+				if ( ( ! ( ( pSuperiorFibObjectToInsert->getType() == 'l' ) ||
+							( pSuperiorFibObjectToInsert->getType() == 'o' ) ) ) &&
+						( ( pToInsertPositionObject != NULL ) &&
+							( pToInsertPositionObject->getType() == 'l' ) ) ){
+				
+					if ( pInsertList->getUnderobject(
+							pInsertList->getNumberOfUnderobjects() ) != pFibObjectToInsert ){
+						cerr<<"Error: The list element, where the Fib object was "<<
+							"inserted, hasn't the inserted Fib object as it's last subobject."<<endl;
+						iReturn++;
+					}
+					if ( pInsertList != pToInsertPositionObject ){
+						cerr<<"Error: The list element, where the Fib object was "<<
+							"inserted, is not the insert position Fib object."<<endl;
+						iReturn++;
+					}
+				}else{
+					if ( pInsertList->getUnderobject( 1 ) != pToInsertPositionObject ){
+						cerr<<"Error: The list element, where the Fib object was "<<
+							"inserted, hasn't the insert position Fib object as it's "<<
+							"first subobject."<<endl;
+						iReturn++;
+					}
+					if ( pInsertList->getUnderobject( 2 ) != pFibObjectToInsert ){
+						cerr<<"Error: The list element, where the Fib object was "<<
+							"inserted, hasn't the inserted Fib object as it's second subobject."<<endl;
+						iReturn++;
+					}
+				}
+			}else{
+				unsigned int uiActualListelement;
+				for ( uiActualListelement = 1;
+						uiActualListelement < pInsertList->getNumberOfUnderobjects();
+						uiActualListelement++ ){
+					if ( pInsertList->getUnderobject( uiActualListelement ) == pFibObjectToInsert ){
+						//inserted Fib object found
+						break;
+					}
+				}
+				if ( uiActualListelement == 1 ){
+					if ( pInsertList->getUnderobject( 1 ) == pFibObjectToInsert ){
+						cerr<<"Error: The in the superior list element inserted "<<
+							"Fib object is the first in the list element."<<endl;
+						iReturn++;
+					}else{
+						cerr<<"Error: The inserted Fib object was not found in the superior list element."<<endl;
+						iReturn++;
+					}
+				}else{
+					if ( pInsertList->getUnderobject( uiActualListelement ) != pFibObjectToInsert ){
+						cerr<<"Error: The inserted Fib object was not found in the superior list element."<<endl;
+						iReturn++;
+					}
+					if ( pInsertList->getUnderobject( uiActualListelement - 1 ) != pToInsertPositionObject ){
+						cerr<<"Error: Befor the inserted Fib object in the "<<
+							"superior list element isn't the positions Fib element."<<endl;
+						iReturn++;
+					}
+				}
+			}
+		}else if ( pFibObjectToInsert->getSuperiorFibElement()->getType() == 'o' ){
+			cExtObject * pInsertExtObject = (cExtObject*)pFibObjectToInsert->getSuperiorFibElement();
+			if ( pSuperiorFibObjectToInsert->getType() != 'o' ){
+				
+				cerr<<"Error: A new external object element was created."<<endl;
+				iReturn++;
+			}else{
+				unsigned int uiActualSubobject;
+				for ( uiActualSubobject = 1;
+						uiActualSubobject < pInsertExtObject->getNumberOfSubobjects();
+						uiActualSubobject ++ ){
+					if ( pInsertExtObject->getSubobject( uiActualSubobject ) == pFibObjectToInsert ){
+						//inserted Fib object found
+						break;
+					}
+				}
+				if ( uiActualSubobject == 1 ){
+					if ( 1 < pInsertExtObject->getNumberOfSubobjects() ){
+						if ( pInsertExtObject->getSubobject( 1 ) == pFibObjectToInsert ){
+							cerr<<"Error: The in the superior external object element inserted "<<
+								"Fib object is the first in the external object element."<<endl;
+							iReturn++;
+						}else{
+							cerr<<"Error: The inserted Fib object was not found in the superior external object element."<<endl;
+							iReturn++;
+						}
+					}
+				}else{
+					if ( pInsertExtObject->getSubobject( uiActualSubobject ) != pFibObjectToInsert ){
+						cerr<<"Error: The inserted Fib object was not found in the superior external object element."<<endl;
+						iReturn++;
+					}
+					if ( pInsertExtObject->getSubobject( uiActualSubobject - 1 ) != pToInsertPositionObject ){
+						cerr<<"Error: Befor the inserted Fib object in the "<<
+							"superior external object element isn't the positions Fib element."<<endl;
+						iReturn++;
+					}
+				}
+			}
+		}else{
+			cerr<<"Error: The Fib element wasn't inserted in a list element."<<endl;
+			iReturn++;
+		}
+	}else{
+		cerr<<"Error: The superior Fib element of the inserted Fib element is NULL."<<endl;
+		iReturn++;
+	}
+	if ( (pToInsertPositionObject != NULL) && (pFibObjectToInsert != NULL) ){
+		cFibElement * pNewAfterInsertPositionObject =
+			pToInsertPositionObject->getFibElement(
+				uiNumberOfElementsInToInsert + 1 );
+		
+		if (  pNewAfterInsertPositionObject != pFibObjectToInsert ){
+			cerr<<"Error: While calling insertObjectInElement("<<
+				pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+				uiToInsertPositionObject<<", false ) from the "<<
+				pCallingElementNumber<<"'th Fib element "<<
+				"(which is of type "<< pCallingElementType <<"), "<<
+				"the inserted position Fib object has the wrong next Fib element ";
+			if ( pNewAfterInsertPositionObject ){
+				cerr<<"(number="<<pNewAfterInsertPositionObject->
+					getNumberOfElement() <<" and not number="<<
+					pFibObjectToInsert->getNumberOfElement() <<")."<<endl;
+			}else{
+				cerr<<" NULL and not number="<<
+					pFibObjectToInsert->getNumberOfElement() <<")."<<endl;
+			}
+			iReturn++;
+		}
+	}
+	if ( pFibObjectToInsert ){
+		cFibElement * pNewAfterFibObjectToInsert = pFibObjectToInsert->getFibElement(
+			pFibObjectToInsert->getNumberOfElements() + 1 );
+		
+		if ( ( pAfterFibObjectToInsert != NULL ) &&
+				( pAfterFibObjectToInsert != pNewAfterFibObjectToInsert ) ){
+			cerr<<"Error: While calling insertObjectInElement("<<
+				pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+				uiToInsertPositionObject<<", false ) from the "<<
+				pCallingElementNumber<<"'th Fib element "<<
+				"(which is of type "<< pCallingElementType <<"), "<<
+				"the insert position Fib object has the wrong next Fib element ";
+			if ( pNewAfterFibObjectToInsert ){
+				cerr<<"(number="<< pNewAfterFibObjectToInsert->getNumberOfElement() <<
+					" and not number="<<
+					pAfterFibObjectToInsert->getNumberOfElement() <<")."<<endl;
+			}else{
+				cerr<<"NULL and not number="<<
+					pAfterFibObjectToInsert->getNumberOfElement() <<")."<<endl;
+			}
+			iReturn++;
+		}
+		if ( ( pAfterFibObjectToInsert == NULL ) &&
+				(pLastInFibObjectInInsert->getNextFibElement() != NULL ) ){
+			cerr<<"Error: While calling insertObjectInElement("<<
+				pFibObjectToInsert <<", "<< cTypeInsertObject<<", "<<
+				uiToInsertPositionObject<<", false ) from the "<<
+				pCallingElementNumber<<"'th Fib element "<<
+				"(which is of type "<< pCallingElementType <<"), "<<
+				"the inserted Fib object has the wrong next Fib element "<<
+				"it isn't NULL (has number="<<
+				pLastInFibObjectInInsert->getNextFibElement()->getNumberOfElement()
+				<<"), but it should be."<<endl;
+			iReturn++;
+		}
+	}
+
+	if ( iReturn == 0 ){
+		iReturn += testStructurOnObject( pFibObject, false );
+	}else{//print some more information about the checked Fib object
+		iReturn += testStructurOnObject( pFibObject, true );
+	}
+
+	return iReturn;
+}
+
+//TODO check end
+
+#else//FEATURE_INSERT_OBJECT_IN_ELEMENT
+
+
+
 /**
  * This function tests the overwriteObjectWithObject() method for a given
  * Fib object.
@@ -9339,7 +12410,7 @@ int testInsertObjectInElementObjectFirstOnObject( cFibElement * pFibObject ){
 	cFibElement * pCallingFibElement =
 		pFibObject->getFibElement( uiCallingFibElement );
 
-	//choos a position wher the Fib object will be inserted
+	//choos a position where the Fib object will be inserted
 
 	char cTypeInsertObject = choosRandomType();
 	unsigned int uiNumberOfElementsOfType = pCallingFibElement->
@@ -9808,12 +12879,12 @@ int testInsertObjectInElementObjectFirstOnObject( cFibElement * pFibObject ){
 			if ( pSuperiorFibObjectToInsert->getType() != 'l' ){
 				
 				if ( pInsertList->getUnderobject( 1 ) != pFibObjectToInsert ){
-					cerr<<"Error: The list element, wher the Fib object was "<<
+					cerr<<"Error: The list element, where the Fib object was "<<
 						"inserted, hasn't the inserted Fib object as it's first subobject."<<endl;
 					iReturn++;
 				}
 				if ( pInsertList->getUnderobject( 2 ) != pToInsertPositionObject ){
-					cerr<<"Error: The list element, wher the Fib object was "<<
+					cerr<<"Error: The list element, where the Fib object was "<<
 						"inserted, hasn't the insert position Fib object as it's "<<
 						"second subobject."<<endl;
 					iReturn++;
@@ -10053,7 +13124,7 @@ int testInsertObjectInElementObjectFirstAbsoluteOnObject( cFibElement * pFibObje
 	cFibElement * pCallingFibElement =
 		pFibObject->getFibElement( uiCallingFibElement );
 
-	//choos a position wher the Fib object will be inserted
+	//choos a position where the Fib object will be inserted
 	char cTypeInsertObject = choosRandomType();
 
 	unsigned int uiNumberOfElementsOfType = 0;
@@ -10523,12 +13594,12 @@ int testInsertObjectInElementObjectFirstAbsoluteOnObject( cFibElement * pFibObje
 			if ( pSuperiorFibObjectToInsert->getType() != 'l' ){
 				
 				if ( pInsertList->getUnderobject( 1 ) != pFibObjectToInsert ){
-					cerr<<"Error: The list element, wher the Fib object was "<<
+					cerr<<"Error: The list element, where the Fib object was "<<
 						"inserted, hasn't the inserted Fib object as it's first subobject."<<endl;
 					iReturn++;
 				}
 				if ( pInsertList->getUnderobject( 2 ) != pToInsertPositionObject ){
-					cerr<<"Error: The list element, wher the Fib object was "<<
+					cerr<<"Error: The list element, where the Fib object was "<<
 						"inserted, hasn't the insert position Fib object as it's "<<
 						"second subobject."<<endl;
 					iReturn++;
@@ -10765,7 +13836,7 @@ int testInsertObjectInElementObjectSecondOnObject( cFibElement * pFibObject ){
 	cFibElement * pCallingFibElement =
 		pFibObject->getFibElement( uiCallingFibElement );
 
-	//choos a position wher the Fib object will be inserted
+	//choos a position where the Fib object will be inserted
 
 	char cTypeInsertObject = choosRandomType();
 	unsigned int uiNumberOfElementsOfType = pCallingFibElement->
@@ -11240,13 +14311,13 @@ int testInsertObjectInElementObjectSecondOnObject( cFibElement * pFibObject ){
 			if ( pSuperiorFibObjectToInsert->getType() != 'l' ){
 				
 				if ( pInsertList->getUnderobject( 1 ) != pToInsertPositionObject ){
-					cerr<<"Error: The list element, wher the Fib object was "<<
+					cerr<<"Error: The list element, where the Fib object was "<<
 						"inserted, hasn't the insert position Fib object as it's "<<
 						"first subobject."<<endl;
 					iReturn++;
 				}
 				if ( pInsertList->getUnderobject( 2 ) != pFibObjectToInsert ){
-					cerr<<"Error: The list element, wher the Fib object was "<<
+					cerr<<"Error: The list element, where the Fib object was "<<
 						"inserted, hasn't the inserted Fib object as it's second subobject."<<endl;
 					iReturn++;
 				}
@@ -11495,7 +14566,7 @@ int testInsertObjectInElementObjectSecondAbsoluteOnObject( cFibElement * pFibObj
 	cFibElement * pCallingFibElement =
 		pFibObject->getFibElement( uiCallingFibElement );
 
-	//choos a position wher the Fib object will be inserted
+	//choos a position where the Fib object will be inserted
 	char cTypeInsertObject = choosRandomType();
 
 	unsigned int uiNumberOfElementsOfType = 0;
@@ -11972,13 +15043,13 @@ int testInsertObjectInElementObjectSecondAbsoluteOnObject( cFibElement * pFibObj
 			if ( pSuperiorFibObjectToInsert->getType() != 'l' ){
 				
 				if ( pInsertList->getUnderobject( 1 ) != pToInsertPositionObject ){
-					cerr<<"Error: The list element, wher the Fib object was "<<
+					cerr<<"Error: The list element, where the Fib object was "<<
 						"inserted, hasn't the insert position Fib object as it's "<<
 						"first subobject."<<endl;
 					iReturn++;
 				}
 				if ( pInsertList->getUnderobject( 2 ) != pFibObjectToInsert ){
-					cerr<<"Error: The list element, wher the Fib object was "<<
+					cerr<<"Error: The list element, where the Fib object was "<<
 						"inserted, hasn't the inserted Fib object as it's second subobject."<<endl;
 					iReturn++;
 				}
@@ -12127,6 +15198,12 @@ int testInsertObjectInElementObjectSecondAbsoluteOnObject( cFibElement * pFibObj
 
 	return iReturn;
 }
+
+
+#endif//FEATURE_INSERT_OBJECT_IN_ELEMENT
+
+
+
 
 
 
@@ -12417,7 +15494,7 @@ int testInsertElementOnObject( cFibElement * pFibObject, bool bCheckVariables ){
 			return iReturn;
 	}
 
-	//choos a position wher the Fib object will be inserted
+	//choos a position where the Fib object will be inserted
 
 	char cTypeInsertObject = choosRandomType();
 	unsigned int uiNumberOfElementsOfType = pCallingFibElement->
@@ -12661,13 +15738,13 @@ int testInsertElementOnObject( cFibElement * pFibObject, bool bCheckVariables ){
 		uiToInsertPositionObject<<", bAbsolute=false, bCheckVariables="<<
 		(bCheckVariables?"true":"false") <<" ) from the "<<
 		pCallingFibElement->getNumberOfElement()<<"'th Fib element "<<
-		"(which is of type "<< pCallingFibElement->getType() <<"). "<< endl;
+		"(which is of type "<< pCallingFibElement->getType() <<")."<<endl;
 	if ( pSuperiorFibObjectToInsert != NULL ){
 		cout<<"   The superior Fib element of the to insert "<<
 			"Fib element is the "<<
 			pSuperiorFibObjectToInsert->getNumberOfElement() <<
 			"'th Fib element with the type "<<
-			pSuperiorFibObjectToInsert->getType() <<" . "<< endl;
+			pSuperiorFibObjectToInsert->getType() <<" ."<<endl;
 	}
 	
 	//call insertElement()
@@ -12678,20 +15755,20 @@ int testInsertElementOnObject( cFibElement * pFibObject, bool bCheckVariables ){
 		if ( bInserted ){
 			cout<<"Fib element correctly inserted"<<endl;
 		}else{
-			cerr<<"Error: The insert Fib element couldn't be inserted. "<< endl;
+			cerr<<"Error: The insert Fib element couldn't be inserted."<<endl;
 			if ( pSuperiorFibObjectToInsert != NULL ){
 				cerr<<"   The superior Fib element of the to insert "<<
 					"Fib element is the "<<
 					pSuperiorFibObjectToInsert->getNumberOfElement() <<
 					"'th Fib element with the type "<<
-					pSuperiorFibObjectToInsert->getType() <<" . "<< endl;
+					pSuperiorFibObjectToInsert->getType() <<" ."<<endl;
 			}
 			iReturn++;
 		}
 	}else{
 		if ( bInserted ){
 			cerr<<"Error: The insert Fib element can't be insert,"<<
-				" but it was insert. "<< endl;
+				" but it was insert."<<endl;
 			iReturn++;
 		}else{
 			cout<<"Fib element correctly not inserted"<<endl;
@@ -12715,10 +15792,10 @@ int testInsertElementOnObject( cFibElement * pFibObject, bool bCheckVariables ){
 			if ( pFibElementToInsert->getNextFibElement() ){
 				cerr<<"(number="<<pFibElementToInsert->getNextFibElement()->
 					getNumberOfElement() <<" and not number="<<
-					pNextFibElementToInsert->getNumberOfElement() <<"). "<< endl;
+					pNextFibElementToInsert->getNumberOfElement() <<")."<<endl;
 			}else{
 				cerr<<" NULL and not number="<<
-					pNextFibElementToInsert->getNumberOfElement() <<"). "<< endl;
+					pNextFibElementToInsert->getNumberOfElement() <<")."<<endl;
 			}
 			iReturn++;
 		}
@@ -12728,7 +15805,7 @@ int testInsertElementOnObject( cFibElement * pFibObject, bool bCheckVariables ){
 			cerr<<"Error: The inserted Fib object has the wrong next Fib element "<<
 				"it isn't NULL (has number="<<
 				pFibElementToInsert->getNextFibElement()->getNumberOfElement()
-				<<"), but it should be NULL. "<< endl;
+				<<"), but it should be NULL."<<endl;
 			iReturn++;
 		}
 	}else{
@@ -12976,7 +16053,7 @@ int testInsertElementAbsoluteOnObject( cFibElement * pFibObject, bool bCheckVari
 			return iReturn;
 	}
 
-	//choos a position wher the Fib object will be inserted
+	//choos a position where the Fib object will be inserted
 
 	char cTypeInsertObject = choosRandomType();
 	unsigned int uiNumberOfElementsOfType = 0;
@@ -13249,13 +16326,13 @@ int testInsertElementAbsoluteOnObject( cFibElement * pFibObject, bool bCheckVari
 		uiToInsertPositionObject<<", bAbsolute=true, bCheckVariables="<<
 		(bCheckVariables?"true":"false") <<" ) from the "<<
 		pCallingFibElement->getNumberOfElement()<<"'th Fib element "<<
-		"(which is of type "<< pCallingFibElement->getType() <<"). "<< endl;
+		"(which is of type "<< pCallingFibElement->getType() <<")."<<endl;
 	if ( pSuperiorFibObjectToInsert != NULL ){
 		cout<<"   The superior Fib element of the to insert "<<
 			"Fib element is the "<<
 			pSuperiorFibObjectToInsert->getNumberOfElement() <<
 			"'th Fib element with the type "<<
-			pSuperiorFibObjectToInsert->getType() <<" . "<< endl;
+			pSuperiorFibObjectToInsert->getType() <<" ."<<endl;
 	}
 	
 	//call insertElement()
@@ -13272,7 +16349,7 @@ int testInsertElementAbsoluteOnObject( cFibElement * pFibObject, bool bCheckVari
 					"Fib element is the "<<
 					pSuperiorFibObjectToInsert->getNumberOfElement() <<
 					"'th Fib element with the type "<<
-					pSuperiorFibObjectToInsert->getType() <<" . "<< endl;
+					pSuperiorFibObjectToInsert->getType() <<" ."<<endl;
 			}
 			iReturn++;
 		}
@@ -13303,10 +16380,10 @@ int testInsertElementAbsoluteOnObject( cFibElement * pFibObject, bool bCheckVari
 			if ( pFibElementToInsert->getNextFibElement() ){
 				cerr<<"(number="<<pFibElementToInsert->getNextFibElement()->
 					getNumberOfElement() <<" and not number="<<
-					pNextFibElementToInsert->getNumberOfElement() <<"). "<< endl;
+					pNextFibElementToInsert->getNumberOfElement() <<")."<<endl;
 			}else{
 				cerr<<" NULL and not number="<<
-					pNextFibElementToInsert->getNumberOfElement() <<"). "<< endl;
+					pNextFibElementToInsert->getNumberOfElement() <<")."<<endl;
 			}
 			iReturn++;
 		}
@@ -13316,7 +16393,7 @@ int testInsertElementAbsoluteOnObject( cFibElement * pFibObject, bool bCheckVari
 			cerr<<"Error: The inserted Fib object has the wrong next Fib element "<<
 				"it isn't NULL (has number="<<
 				pFibElementToInsert->getNextFibElement()->getNumberOfElement()
-				<<"), but it should be NULL. "<< endl;
+				<<"), but it should be NULL."<<endl;
 			iReturn++;
 		}
 	}else{
@@ -13505,7 +16582,7 @@ int testInsertElementNullOnObject( cFibElement * pFibObject, bool bCheckVariable
 		return iReturn;
 	}
 	
-	//replace the Fib object wher the Fib element should be inserted with 0
+	//replace the Fib object where the Fib element should be inserted with 0
 	//evalue the count values of the given Fib object
 	unsigned int uiNumberOfAllFibElements = pFibObject->getNumberOfElements();
 
@@ -13733,7 +16810,7 @@ int testInsertElementNullOnObject( cFibElement * pFibObject, bool bCheckVariable
 		pFibElementToInsert <<", "<< cTypeInsertPosition <<", 0, false, bCheckVariables="<<
 		(bCheckVariables?"true":"false") << ") from the "<<
 		pFibElementCopy->getNumberOfElement()<<"'th Fib element, "<<
-		"wich has type "<< pFibElementCopy->getType() <<" and has no subobjects. "<< endl;
+		"wich has type "<< pFibElementCopy->getType() <<" and has no subobjects."<<endl;
 	
 	//call insertElement()
 	const bool bInserted = pFibElementCopy->insertElement(
@@ -13743,13 +16820,13 @@ int testInsertElementNullOnObject( cFibElement * pFibObject, bool bCheckVariable
 		if ( bInserted ){
 			cout<<"Fib element correctly inserted"<<endl;
 		}else{
-			cerr<<"Error: At the insert position the Fib element couldn't be inserted. "<< endl;
+			cerr<<"Error: At the insert position the Fib element couldn't be inserted."<<endl;
 			iReturn++;
 		}
 	}else{
 		if ( bInserted ){
 			cerr<<"Error: At the insert position the Fib element can't be insert,"<<
-				" but it was insert. "<< endl;
+				" but it was insert."<<endl;
 			iReturn++;
 		}else{
 			cout<<"Fib element correctly not inserted"<<endl;
@@ -13772,10 +16849,10 @@ int testInsertElementNullOnObject( cFibElement * pFibObject, bool bCheckVariable
 			if ( pFibElementCopy->getNextFibElement() ){
 				cerr<<"(number="<< pFibElementCopy->getNextFibElement()->
 					getNumberOfElement() <<" and not number="<<
-					pFibElementToInsert->getNumberOfElement() <<"). "<< endl;
+					pFibElementToInsert->getNumberOfElement() <<")."<<endl;
 			}else{
 				cerr<<" NULL and not number="<<
-					pFibElementToInsert->getNumberOfElement() <<"). "<< endl;
+					pFibElementToInsert->getNumberOfElement() <<")."<<endl;
 			}
 			iReturn++;
 		}
@@ -13783,9 +16860,9 @@ int testInsertElementNullOnObject( cFibElement * pFibObject, bool bCheckVariable
 		if ( pFibElementToInsert->getNextFibElement() != pNextFibObjectToInsert ){
 			cerr<<"Error: The inserted Fib object has the wrong next Fib element ";
 			if ( pFibElementToInsert->getNextFibElement() != NULL ){
-				cerr<<"it is "<< pFibElementToInsert->getNextFibElement()->getNumberOfElement()<<". "<< endl;
+				cerr<<"it is "<< pFibElementToInsert->getNextFibElement()->getNumberOfElement()<<"."<<endl;
 			}else{
-				cerr<<"it is NULL. "<< endl;
+				cerr<<"it is NULL."<<endl;
 			}
 			iReturn++;
 		}
@@ -14235,13 +17312,13 @@ int testRemoveElementOnObject( cFibElement * pFibObject, bool bCut, bool bCheckV
 		cTypeRemoveElement <<", "<< uiToRemoveFibElement<<", false, "<<
 		(bCheckVariables?"true":"false") <<" ) from the "<<
 		pCallingFibElement->getNumberOfElement()<<"'th Fib element "<<
-		"(which is of type "<< pCallingFibElement->getType() <<"). "<< endl;
+		"(which is of type "<< pCallingFibElement->getType() <<")."<<endl;
 	if ( pSuperiorFibObjectToRemove != NULL ){
 		cout<<"   The superior Fib element of the to remove "<<
 			"Fib element is the "<<
 			pSuperiorFibObjectToRemove->getNumberOfElement() <<
 			"'th Fib element with the type "<<
-			pSuperiorFibObjectToRemove->getType() <<" . "<< endl;
+			pSuperiorFibObjectToRemove->getType() <<" ."<<endl;
 	}
 	const bool bIsRemovebel = pCallingFibElement->isRemovableElement(
 		cTypeRemoveElement, uiToRemoveFibElement, false, bCheckVariables );
@@ -14249,12 +17326,12 @@ int testRemoveElementOnObject( cFibElement * pFibObject, bool bCut, bool bCheckV
 		if ( bIsRemovebel ){
 			cout<<"Fib element correctly can be removed."<<endl;
 		}else{
-			cerr<<"Error: The to remove Fib element says it isn't removebel, but it should. "<< endl;
+			cerr<<"Error: The to remove Fib element says it isn't removebel, but it should."<<endl;
 			iReturn++;
 		}
 	}else{
 		if ( bIsRemovebel ){
-			cerr<<"Error: The to remove Fib element says it is removebel, but it shouldn't. "<< endl;
+			cerr<<"Error: The to remove Fib element says it is removebel, but it shouldn't."<<endl;
 			iReturn++;
 		}else{
 			cout<<"Fib element correctly can't be removed."<<endl;
@@ -14268,13 +17345,13 @@ int testRemoveElementOnObject( cFibElement * pFibObject, bool bCut, bool bCheckV
 			cTypeRemoveElement <<", "<< uiToRemoveFibElement<<", false, "<<
 			(bCheckVariables?"true":"false") <<") from the "<<
 			pCallingFibElement->getNumberOfElement()<<"'th Fib element "<<
-			"(which is of type "<< pCallingFibElement->getType() <<"). "<< endl;
+			"(which is of type "<< pCallingFibElement->getType() <<")."<<endl;
 		if ( pSuperiorFibObjectToRemove != NULL ){
 			cout<<"   The superior Fib element of the to remove "<<
 				"Fib element is the "<<
 				pSuperiorFibObjectToRemove->getNumberOfElement() <<
 				"'th Fib element with the type "<<
-				pSuperiorFibObjectToRemove->getType() <<" . "<< endl;
+				pSuperiorFibObjectToRemove->getType() <<" ."<<endl;
 		}
 		
 		//call cutElement()
@@ -14283,7 +17360,7 @@ int testRemoveElementOnObject( cFibElement * pFibObject, bool bCut, bool bCheckV
 		
 		if ( pCutElement ){
 			if ( pCutElement != pToRemoveFibElement ){
-				cerr<<"Error: Wrong Fib element cuted. "<< endl;
+				cerr<<"Error: Wrong Fib element cuted."<<endl;
 				cerr<<"   The cuted Fib element is "<<pCutElement <<" "<<
 					"and not "<< pToRemoveFibElement <<" with number "<<
 					uiNumberOfToRemoveElement <<" ."<<endl;
@@ -14302,13 +17379,13 @@ int testRemoveElementOnObject( cFibElement * pFibObject, bool bCut, bool bCheckV
 			cTypeRemoveElement <<", "<< uiToRemoveFibElement<<", false, "<<
 			(bCheckVariables?"true":"false") <<" ) from the "<<
 			pCallingFibElement->getNumberOfElement()<<"'th Fib element "<<
-			"(which is of type "<< pCallingFibElement->getType() <<"). "<< endl;
+			"(which is of type "<< pCallingFibElement->getType() <<")."<<endl;
 		if ( pSuperiorFibObjectToRemove != NULL ){
 			cout<<"   The superior Fib element of the to remove "<<
 				"Fib element is the "<<
 				pSuperiorFibObjectToRemove->getNumberOfElement() <<
 				"'th Fib element with the type "<<
-				pSuperiorFibObjectToRemove->getType() <<" . "<< endl;
+				pSuperiorFibObjectToRemove->getType() <<" ."<<endl;
 		}
 		
 		//call removeElement()
@@ -14319,13 +17396,13 @@ int testRemoveElementOnObject( cFibElement * pFibObject, bool bCut, bool bCheckV
 		if ( bRemoved ){
 			cout<<"Fib element correctly removed."<<endl;
 		}else{
-			cerr<<"Error: The to remove Fib element couldn't be removed. "<< endl;
+			cerr<<"Error: The to remove Fib element couldn't be removed."<<endl;
 			iReturn++;
 		}
 	}else{
 		if ( bRemoved ){
 			cerr<<"Error: The to remove Fib element can't be remove,"<<
-				" but it was remove. "<< endl;
+				" but it was remove."<<endl;
 			iReturn++;
 		}else{
 			cout<<"Fib element correctly not removed."<<endl;
@@ -14822,13 +17899,13 @@ int testRemoveElementAbsoluteOnObject( cFibElement * pFibObject, bool bCut, bool
 		cTypeRemoveElement <<", "<< uiToRemoveFibElement<<", true, "<<
 		(bCheckVariables?"true":"false") <<" ) from the "<<
 		pCallingFibElement->getNumberOfElement()<<"'th Fib element "<<
-		"(which is of type "<< pCallingFibElement->getType() <<"). "<< endl;
+		"(which is of type "<< pCallingFibElement->getType() <<")."<<endl;
 	if ( pSuperiorFibObjectToRemove != NULL ){
 		cout<<"   The superior Fib element of the to remove "<<
 			"Fib element is the "<<
 			pSuperiorFibObjectToRemove->getNumberOfElement() <<
 			"'th Fib element with the type "<<
-			pSuperiorFibObjectToRemove->getType() <<" . "<< endl;
+			pSuperiorFibObjectToRemove->getType() <<" ."<<endl;
 	}
 	const bool bIsRemovebel = pCallingFibElement->isRemovableElement(
 		cTypeRemoveElement, uiToRemoveFibElement, true, bCheckVariables );
@@ -14836,12 +17913,12 @@ int testRemoveElementAbsoluteOnObject( cFibElement * pFibObject, bool bCut, bool
 		if ( bIsRemovebel ){
 			cout<<"Fib element correctly can be removed."<<endl;
 		}else{
-			cerr<<"Error: The to remove Fib element says it isn't removebel, but it should. "<< endl;
+			cerr<<"Error: The to remove Fib element says it isn't removebel, but it should."<<endl;
 			iReturn++;
 		}
 	}else{
 		if ( bIsRemovebel ){
-			cerr<<"Error: The to remove Fib element says it is removebel, but it shouldn't. "<< endl;
+			cerr<<"Error: The to remove Fib element says it is removebel, but it shouldn't."<<endl;
 			iReturn++;
 		}else{
 			cout<<"Fib element correctly can't be removed."<<endl;
@@ -14855,13 +17932,13 @@ int testRemoveElementAbsoluteOnObject( cFibElement * pFibObject, bool bCut, bool
 			cTypeRemoveElement <<", "<< uiToRemoveFibElement<<", true, "<<
 			(bCheckVariables?"true":"false") <<") from the "<<
 			pCallingFibElement->getNumberOfElement()<<"'th Fib element "<<
-			"(which is of type "<< pCallingFibElement->getType() <<"). "<< endl;
+			"(which is of type "<< pCallingFibElement->getType() <<")."<<endl;
 		if ( pSuperiorFibObjectToRemove != NULL ){
 			cout<<"   The superior Fib element of the to remove "<<
 				"Fib element is the "<<
 				pSuperiorFibObjectToRemove->getNumberOfElement() <<
 				"'th Fib element with the type "<<
-				pSuperiorFibObjectToRemove->getType() <<" . "<< endl;
+				pSuperiorFibObjectToRemove->getType() <<" ."<<endl;
 		}
 		
 		//call cutElement()
@@ -14870,7 +17947,7 @@ int testRemoveElementAbsoluteOnObject( cFibElement * pFibObject, bool bCut, bool
 		
 		if ( pCutElement ){
 			if ( pCutElement != pToRemoveFibElement ){
-				cerr<<"Error: Wrong Fib element cuted. "<< endl;
+				cerr<<"Error: Wrong Fib element cuted."<<endl;
 				cerr<<"   The cuted Fib element is "<<pCutElement <<" "<<
 					"and not "<< pToRemoveFibElement <<" with number "<<
 					uiNumberOfToRemoveElement <<" ."<<endl;
@@ -14889,13 +17966,13 @@ int testRemoveElementAbsoluteOnObject( cFibElement * pFibObject, bool bCut, bool
 			cTypeRemoveElement <<", "<< uiToRemoveFibElement<<", true, "<<
 			(bCheckVariables?"true":"false") <<" ) from the "<<
 			pCallingFibElement->getNumberOfElement()<<"'th Fib element "<<
-			"(which is of type "<< pCallingFibElement->getType() <<"). "<< endl;
+			"(which is of type "<< pCallingFibElement->getType() <<")."<<endl;
 		if ( pSuperiorFibObjectToRemove != NULL ){
 			cout<<"   The superior Fib element of the to remove "<<
 				"Fib element is the "<<
 				pSuperiorFibObjectToRemove->getNumberOfElement() <<
 				"'th Fib element with the type "<<
-				pSuperiorFibObjectToRemove->getType() <<" . "<< endl;
+				pSuperiorFibObjectToRemove->getType() <<" ."<<endl;
 		}
 		
 		//call removeElement()
@@ -14906,13 +17983,13 @@ int testRemoveElementAbsoluteOnObject( cFibElement * pFibObject, bool bCut, bool
 		if ( bRemoved ){
 			cout<<"Fib element correctly removed."<<endl;
 		}else{
-			cerr<<"Error: The to remove Fib element couldn't be removed. "<< endl;
+			cerr<<"Error: The to remove Fib element couldn't be removed."<<endl;
 			iReturn++;
 		}
 	}else{
 		if ( bRemoved ){
 			cerr<<"Error: The to remove Fib element can't be remove,"<<
-				" but it was remove. "<< endl;
+				" but it was remove."<<endl;
 			iReturn++;
 		}else{
 			cout<<"Fib element correctly not removed."<<endl;
@@ -17116,7 +20193,7 @@ int testCopyElementOnObject( cFibElement * pFibObject, bool bAbsolute ){
 			pCallingFibElement->getNumberOfElement()<<"'th Fib element "<<
 			"(which is of type "<< pCallingFibElement->getType() <<"), "<<
 			"to copy the "<< uiNumberOfToCopyElement <<"'th Fib element "<<
-			"and has the type "<< cTypeToCopy <<" . "<< endl;
+			"and has the type "<< cTypeToCopy <<" ."<<endl;
 
 		cFibElement * pFibElementCopy = pCallingFibElement->copyElement( cType, uiElementPoint, bAbsolute );
 		
@@ -17239,7 +20316,7 @@ int testCopyOnObject( cFibElement * pFibObject ){
 		"(which is of type "<< pCallingFibElement->getType() <<"), "<<
 		"to copy the part object which is defined with the "<<
 		uiNumberOfDefiningElement <<"'th Fib element of type ("<<
-		((pDefiningFibElement != NULL) ? pDefiningFibElement->getType() : '_')<<") . "<< endl;
+		((pDefiningFibElement != NULL) ? pDefiningFibElement->getType() : '_')<<") ."<<endl;
 
 	cFibElement * pFibObjectCopy = pCallingFibElementConst->copy( uiObjectPoint );
 	
@@ -17575,7 +20652,7 @@ int testCopyOnObject( cFibElement * pFibObject ){
 			sprintf ( szFileNameBuffer, "%s%s%uI%s",
 				DIR_OUTPUT, "copyObjError", uiErrorFile ,".xml" );
 				
-			cerr<<"Error: The Fib object copy wher the error occured will be writen to the file \""<< szFileNameBuffer <<"\" ."<<endl;
+			cerr<<"Error: The Fib object copy where the error occured will be writen to the file \""<< szFileNameBuffer <<"\" ."<<endl;
 			
 			ofstream * pFile = new ofstream( szFileNameBuffer );
 			

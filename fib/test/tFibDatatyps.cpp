@@ -42,9 +42,9 @@
  *
  * Methods tested:
  * 	- longFib roundToLongFib( const Type &value )
- * 	-(TODO) Type max( const Type &value1, const Type &value2 )
- * 	-(TODO) std::list< Type >::iterator getListElement( std::list< Type > & liList, unsigned long ulElementNumber )
- * 	-(TODO) std::list< Type >::const_iterator getListElement( const std::list< Type > & liList, unsigned long ulElementNumber )
+ * 	- Type max( const Type &value1, const Type &value2 )
+ * 	-TODO std::list< Type >::iterator getListElement( std::list< Type > & liList, unsigned long ulElementNumber )
+ * 	-TODO std::list< Type >::const_iterator getListElement( const std::list< Type > & liList, unsigned long ulElementNumber )
  * 	- int getDigits( unsigned int llValue )
  * 	- int getDigits( unsigned long llValue )
  * 	- int getDigits( int llValue )
@@ -52,21 +52,21 @@
  * 	- int getDigits( long long llValue )
  * 	- void decomposeDoubleFib( const double dNumber, longFib * lMantissa, longFib * lExponent, intFib * iSizeMantissa = NULL, intFib * iSizeExponent = NULL )
  * 	- double composeDoubleFib( const longFib & lMantissa, const longFib & lExponent )
- * 	-(TODO) unsigned long roundUpToFullByte( unsigned long ulNumberOfBits );
- * 	-(TODO) doubleFib gcd( doubleFib dValue1, doubleFib dValue2 );
- * 	-(TODO) float absF( const float & dValue );
- * 	-(TODO) double absF( const double & dValue );
- * 	-(TODO) bool isEqualNull( const double & dValue );
- * 	-(TODO) bool isEqualNull( const float & dValue );
- * 	-(TODO) bool compareDouble( const double & dValue1, const double & dValue2 );
- * 	-(TODO) bool compareDouble( const float & dValue1, const float & dValue2 );
- * 	-(TODO) bool compareVectorDouble( const std::vector< tDouble > & vector1, const std::vector< tDouble > & vector2 )
- * 	-(TODO) tDouble add( const tDouble & dValue1, const tDouble & dValue2 )
- * 	-(TODO) tDouble sub( const tDouble & dValue1, const tDouble & dValue2 )
- * 	-(TODO) tDouble addToFirst( tDouble & dValue1, const tDouble & dValue2 )
- * 	-(TODO) tDouble subFromFirst( tDouble & dValue1, const tDouble & dValue2 )
- * 	-(TODO) std::vector< tDouble > addToFirst( std::vector< tDouble > & vecValue1, const std::vector< tDouble > & vecValue2 )
- * 	-(TODO) std::vector< tDouble > multToFirst( std::vector< tDouble > & vecValue, const tDouble & dValue )
+ * 	-TODO unsigned long roundUpToFullByte( unsigned long ulNumberOfBits );
+ * 	-TODO doubleFib gcd( doubleFib dValue1, doubleFib dValue2 );
+ * 	-TODO float absF( const float & dValue );
+ * 	-TODO double absF( const double & dValue );
+ * 	-TODO bool isEqualNull( const double & dValue );
+ * 	-TODO bool isEqualNull( const float & dValue );
+ * 	-TODO bool compareDouble( const double & dValue1, const double & dValue2 );
+ * 	-TODO bool compareDouble( const float & dValue1, const float & dValue2 );
+ * 	-TODO bool compareVectorDouble( const std::vector< tDouble > & vector1, const std::vector< tDouble > & vector2 )
+ * 	-TODO tDouble add( const tDouble & dValue1, const tDouble & dValue2 )
+ * 	-TODO tDouble sub( const tDouble & dValue1, const tDouble & dValue2 )
+ * 	-TODO tDouble addToFirst( tDouble & dValue1, const tDouble & dValue2 )
+ * 	-TODO tDouble subFromFirst( tDouble & dValue1, const tDouble & dValue2 )
+ * 	-TODO std::vector< tDouble > addToFirst( std::vector< tDouble > & vecValue1, const std::vector< tDouble > & vecValue2 )
+ * 	-TODO std::vector< tDouble > multToFirst( std::vector< tDouble > & vecValue, const tDouble & dValue )
  * 	- doubleFib readDouble( const char * strDouble );
  * 	- pair< doubleFib, const char * > readDoubleReturnEnd( const char * strDouble );
  * 	- doubleFib readDoubleFromFunction( const char * strDouble, std::pair< bool, const char * > * pPairOutEvalueStatus = NULL );
@@ -101,6 +101,7 @@ unsigned long MAX_ITERATION = 1024;
 
 
 
+int testMaxFibFunction( unsigned long &ulTestphase );
 int testRoundToLongFibFunction( unsigned long &ulTestphase );
 int testGetDigitsFunction( unsigned long &ulTestphase );
 int testComposeDoubleFibFunctions( unsigned long &ulTestphase );
@@ -134,13 +135,14 @@ int main(int argc, char* argv[]){
 	//test the fibDatatyps functions
 	
 	//TODO more test
+	iReturn += testMaxFibFunction( ulTestphase );
 	/*TODO comment in:
 	iReturn += testRoundToLongFibFunction( ulTestphase );
 	iReturn += testGetDigitsFunction( ulTestphase );
 	iReturn += testComposeDoubleFibFunctions( ulTestphase );
 	iReturn += testReadDouble( ulTestphase );
-	*/
 	iReturn += testReadDoubleFromFunction( ulTestphase );
+	*/
 	/*TODO comment in:
 	iReturn += testReadDoubleFromFunctionOnRandString( ulTestphase );
 	iReturn += testStoreXmlDoubleFib( ulTestphase );
@@ -261,6 +263,77 @@ void writeBitsLongLong( ostream & stream, const long long llValue,
 		ullValue = ullValue >> 1;
 	}
 }
+
+
+
+
+/**
+ * This function tests the max() function.
+ *
+ * Methods tested:
+ * 	- Type max( const Type &value1, const Type &value2 )
+ *
+ * @param ulTestphase a reference to the number for the test phase
+ * @return the number of errors occured in the test
+ */
+int testMaxFibFunction( unsigned long &ulTestphase ){
+	
+	int iReturn = 0;//return value of the test; the number of occured errors
+	
+	ulTestphase++;
+	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing max() on longFib function"<<endl;
+	
+	for ( unsigned int uiActualIteration = 0;
+			uiActualIteration < MAX_ITERATION; uiActualIteration++ ){
+		//generate random correct number
+		const longFib lValue1 = ( rand() * rand() ) -
+			( rand() * rand() ) + rand();
+		const longFib lValue2 = ( rand() * rand() ) -
+			( rand() * rand() ) + rand();
+		
+		const longFib lMaxValue = fib::max( lValue1, lValue2 );
+		cout<<"fib::max( "<<lValue1<<", "<<lValue2<<" ) = "<<lMaxValue<<endl;
+		
+		if ( ( lValue1 < lValue2 ) && ( lMaxValue != lValue2 ) ){
+			cerr<<"Error: The maximum value "<<lMaxValue<<
+				" is not correct (both values "<<lValue1<<", "<<lValue2<<")."<<endl;
+			iReturn++;
+		}else if ( ( lValue2 <= lValue1 ) && ( lMaxValue != lValue1 ) ){
+			cerr<<"Error: The maximum value "<<lMaxValue<<
+				" is not correct (both values "<<lValue1<<", "<<lValue2<<")."<<endl;
+			iReturn++;
+		}
+	}//end iterate random test
+	
+	ulTestphase++;
+	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing max() on doubleFib function"<<endl;
+	
+	for ( unsigned int uiActualIteration = 0;
+			uiActualIteration < MAX_ITERATION; uiActualIteration++ ){
+		//generate random correct number
+		const doubleFib dValue1 = generateRandomDouble();
+		const doubleFib dValue2 = generateRandomDouble();
+		
+		const doubleFib lMaxValue = fib::max( dValue1, dValue2 );
+		cout<<"fib::max( "<<dValue1<<", "<<dValue2<<" ) = "<<lMaxValue<<endl;
+		
+		if ( ( dValue1 < dValue2 ) && ( lMaxValue != dValue2 ) ){
+			cerr<<"Error: The maximum value "<<lMaxValue<<
+				" is not correct (both values "<<dValue1<<", "<<dValue2<<")."<<endl;
+			iReturn++;
+		}else if ( ( dValue2 <= dValue1 ) && ( lMaxValue != dValue1 ) ){
+			cerr<<"Error: The maximum value "<<lMaxValue<<
+				" is not correct (both values "<<dValue1<<", "<<dValue2<<")."<<endl;
+			iReturn++;
+		}
+	}//end iterate random test
+	
+	return iReturn;
+}
+
+
+
+
 
 
 

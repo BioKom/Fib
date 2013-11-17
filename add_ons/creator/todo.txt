@@ -3,8 +3,6 @@
 - main window
 -- try to implement sub windows for the different Fib object views
 
-- implement input variable view
-
 
 - database functions -> into own database Fib object handler
 	- load Fib database object
@@ -17,7 +15,6 @@
 - object view (for database objects)
 -- connections betwean objects
 
-- test drawing on areas greater +-2^15 (QPainter restrictions)
 - draw background ( paint() ) correctly (cEvalueSimpleRGBA255QPainter)
 
 
@@ -29,5 +26,16 @@
 -- implement view for them
 
 
+nice to have:
+-------------
+
+cFibObjectSourcePath::loadFibObject() : "user can change" adapt for operating system users or/and with optional part entry
+
+cFibObjectInfo + tFibObjectInfo: extractInfoFromLoadedFibObject() ( + cFibObjectInfo( ulInIdentifier, pInFibObjectSource ) )
 
 
+- test drawing on areas greater +-2^15 (QPainter restrictions)
+
+
+cFlowLayout::heightForWidth( const int iWidth ):
+	- use caching (use same value as long as nothing is changed in layout)

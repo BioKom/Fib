@@ -53,12 +53,9 @@ History:
 
 #include "version.h"
 
-#include "cFibElement.h"
-
 #include "cFibGraphicsItem.h"
-#include "cFibInputVariable.h"
-#include "cFibInputVariables.h"
-#include "cWidgetFibInputVariables.h"
+#include "lInputVariableValueChanged.h"
+#include "lFibNodeChanged.h"
 
 #include <string>
 
@@ -67,17 +64,27 @@ History:
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
 #include <QWidget>
+#include <QGraphicsPixmapItem>
+#include <QMutex>
 
 
 namespace fib{
 
+//forward declarations
+class cFibElement;
+
 namespace nCreator{
 
-//cyclic dependencies
+//forward declarations
 class cFibGraphicsScene;
+class cFibInputVariable;
+class cFibInputVariables;
+class cWidgetFibInputVariables;
+class eFibNodeChangedEvent;
+class cFibNode;
 
 class cFibGraphicsItemFibObject: public cFibGraphicsItem,
-		public lInputVariableValueChanged{
+		public lInputVariableValueChanged, public lFibNodeChanged{
 
 protected:
 	
@@ -95,6 +102,13 @@ protected:
 	 * @see cFibElement::evalueObject()
 	 */
 	cFibElement * pFibObjectCopy;
+	
+	/**
+	 * The node for the Fib object copy.
+	 * @see pFibObjectCopy
+	 */
+	cFibNode * pFibObjectCopyNode;
+	
 	
 	/**
 	 * A pointer to the input variables of the Fib object for this item, or
@@ -131,6 +145,20 @@ protected:
 	 * The bounding rectangle for the Fib object.
 	 */
 	QRectF boundingRectangle;
+	
+	
+	/**
+	 * A buffer for the Fib object.
+	 * If not NULL it contains the pixmap for the Fib object.
+	 * @see mutexGraphicsPixmapItemForFibObject
+	 */
+	QGraphicsPixmapItem * pGraphicsPixmapItemForFibObject;
+	
+	/**
+	 * The mutex for acessing pGraphicsPixmapItemForFibObject.
+	 * @see pGraphicsPixmapItemForFibObject
+	 */
+	QMutex mutexGraphicsPixmapItemForFibObject;
 	
 public:
 
@@ -258,6 +286,16 @@ public:
 	virtual void fibInputVariableValueChangedEvent(
 		const cFibInputVariable * pFibInputVariable );
 	
+	/**
+	 * Event method
+	 * It will be called every time a Fib node (cFibNode), at which
+	 * this object is registered, was changed.
+	 *
+	 * @param pFibNodeChanged a pointer to the event, with the information
+	 * 	about the changed Fib node
+	 */
+	virtual void fibNodeChangedEvent(
+		const eFibNodeChangedEvent * pFibNodeChanged );
 	
 private slots:
 	

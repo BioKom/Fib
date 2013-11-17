@@ -41,8 +41,8 @@ History:
 
 
 //TODO switches for test proposes
-#define DEBUG
-#define DEBUG_FIB_OBJECT
+//#define DEBUG
+//#define DEBUG_FIB_OBJECT
 
 
 #include "cFibPlainTextEdit.h"

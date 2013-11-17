@@ -79,7 +79,7 @@ protected:
 	 * Lock the mutex if you use one of the following containers:
 	 * @see inputVariables
 	 */
-	mutable QMutex mutexFibNodeHandler;
+	mutable QMutex mutexFibInputVariablesHandler;
 	
 	
 	/**
@@ -94,9 +94,23 @@ protected:
 	set< lInputVariableChanged * > setInputVariableChangeListener;
 	
 	/**
+	 * Mutex to lock access to the listeners for input variables changes.
+	 * Lock the mutex if you use one of the following containers:
+	 * @see setInputVariableChangeListener
+	 */
+	mutable QMutex mutexInputVariableChangeListener;
+	
+	/**
 	 * The set with the listeners for input variables value changes.
 	 */
 	set< lInputVariableValueChanged * > setInputVariableValueChangeListener;
+	
+	/**
+	 * Mutex to lock access to the listeners for input variables value changes.
+	 * Lock the mutex if you use one of the following containers:
+	 * @see setInputVariableValueChangeListener
+	 */
+	mutable QMutex mutexInputVariableValueChangeListener;
 	
 public:
 
@@ -172,7 +186,7 @@ public:
 	 *
 	 * @see inputVariables
 	 * @see getNumberOfInputVariables()
-	 * @param uiNumberOfVariable the number of the input variable to remove
+	 * @param uiNumberOfVariable the number of the input variable to return
 	 * 	(counting starts with 1)
 	 * @return a pointer to the uiNumberOfVariable'th input variable, or
 	 * 	NULL if non exists

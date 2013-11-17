@@ -162,10 +162,19 @@ cFibNodeHandler::~cFibNodeHandler(){
 	setFibNodes.clear();
 	
 	//delete all Fib objects
-	DEBUG_OUT_L2(<<"cFibNodeHandler::~cFibNodeHandler() delete all Fib objects"<<endl<<flush);
+#ifdef DEBUG
+	DEBUG_OUT_L2(<<"cFibNodeHandler::~cFibNodeHandler() existing "<<setFibObjectsRoot.size()<<" root Fib objects"<<endl<<flush);
 	for ( set< cFibElement * >::iterator itrFibObject = setFibObjectsRoot.begin();
 			itrFibObject != setFibObjectsRoot.end(); itrFibObject++ ){
 		
+		DEBUG_OUT_L3(<<"cFibNodeHandler::~cFibNodeHandler() existing Fib object root "<<(*itrFibObject)<<endl<<flush);
+	}
+#endif //DEBUG
+	DEBUG_OUT_L2(<<"cFibNodeHandler::~cFibNodeHandler() delete all "<<setFibObjectsRoot.size()<<" Fib objects"<<endl<<flush);
+	for ( set< cFibElement * >::iterator itrFibObject = setFibObjectsRoot.begin();
+			itrFibObject != setFibObjectsRoot.end(); itrFibObject++ ){
+		
+		DEBUG_OUT_L3(<<"cFibNodeHandler::~cFibNodeHandler() delete Fib object root "<<(*itrFibObject)<<" (superior "<<flush<<(*itrFibObject)->getSuperiorFibElement()<<")"<<endl<<flush);
 		(*itrFibObject)->deleteObject();
 	}
 	setFibObjectsRoot.clear();
@@ -251,6 +260,7 @@ cFibNode * cFibNodeHandler::getNodeForFibObject( cFibElement * pFibObject,
 	
 	//update the Fib node andler members
 	cFibElement * pFibObjectRoot = pFibObject->getMasterRoot();
+	DEBUG_OUT_L2(<<"cFibNodeHandler::getNodeForFibObject() add root Fib object "<<pFibObjectRoot<<endl<<flush);
 	pair< set< cFibElement * >::iterator, bool > paRootInserted =
 		setFibObjectsRoot.insert( pFibObjectRoot );
 	if ( ! paRootInserted.second ){
@@ -694,7 +704,7 @@ bool cFibNodeHandler::integrateFibObjectIntoNode( cFibNode * pContainingNode,
 			( pNewFibObject == NULL ) ){
 		//can't integrate Fib object
 		if ( pNewFibObject != NULL ){
-			DEBUG_OUT_L2(<<"bool cFibNodeHandler::integrateFibObjectIntoNode() delete new Fib object"<<endl<<flush);
+			DEBUG_OUT_L2(<<"bool cFibNodeHandler::integrateFibObjectIntoNode() delete new Fib object ("<<pNewFibObject<<" delete Fib object)"<<endl<<flush);
 			pNewFibObject->deleteObject();
 		}
 		DEBUG_OUT_L2(<<"bool cFibNodeHandler::integrateFibObjectIntoNode() done NULL given"<<endl<<flush);
@@ -703,7 +713,7 @@ bool cFibNodeHandler::integrateFibObjectIntoNode( cFibNode * pContainingNode,
 	
 	if ( ! pContainingNode->bIsChangebel ){
 		//original not changebel -> can't integrate new Fib object pNewFibObject
-		DEBUG_OUT_L2(<<"bool cFibNodeHandler::integrateFibObjectIntoNode() done original not changebel -> can't integrate new Fib object pNewFibObject"<<endl<<flush);
+		DEBUG_OUT_L2(<<"bool cFibNodeHandler::integrateFibObjectIntoNode() done original not changebel -> can't integrate new Fib object pNewFibObject -> delete Fib object pNewFibObject ("<<pNewFibObject<<")"<<endl<<flush);
 		pNewFibObject->deleteObject();
 		return false;
 	}
@@ -795,7 +805,7 @@ bool cFibNodeHandler::integrateFibObjectIntoNode( cFibNode * pContainingNode,
 				overwriteObjectWithObject( pNewFibObject );
 			if ( ! bFibObjectReplaced ){
 				//Error: Fib object could not be replaced
-				DEBUG_OUT_EL2(<<"bool cFibNodeHandler::integrateFibObjectIntoNode() Error: Fib object could not be replaced"<<endl<<flush);
+				DEBUG_OUT_EL2(<<"bool cFibNodeHandler::integrateFibObjectIntoNode() Error: Fib object could not be replaced (delete Fib object "<<pNewFibObject<<" (new))"<<endl<<flush);
 				
 				pNewFibObject->deleteObject();
 				//unlock the containers of this object
@@ -849,13 +859,16 @@ bool cFibNodeHandler::integrateFibObjectIntoNode( cFibNode * pContainingNode,
 			if ( ( itrNodesForRoot != mapNodesForRoots.end() ) &&
 					( itrNodesForRoot->second.empty() ) ){
 				//no nodes for root remaining -> remove it from this class members
+				DEBUG_OUT_L3(<<"cFibNodeHandler::integrateFibObjectIntoNode() erase old root Fib object "<<pOldMasterRoot<<endl<<flush);
 				setFibObjectsRoot.erase( pOldMasterRoot );
 				mapNodesForRoots.erase( itrNodesForRoot );
 				mapFibObjectRootsMutex.erase( pOldMasterRoot );
+				DEBUG_OUT_L3(<<"cFibNodeHandler::integrateFibObjectIntoNode() delete old root Fib object (delete Fib object)"<<pOldMasterRoot<<endl<<flush);
 				pOldMasterRoot->deleteObject();
 			}
 			//update class members
 			mapFibNodes[ pNewFibObject ] = pNodeToTransfer;
+			DEBUG_OUT_L3(<<"cFibNodeHandler::integrateFibObjectIntoNode() add new root Fib object "<<pNodeToTransfer->pMasterRoot<<endl<<flush);
 			setFibObjectsRoot.insert( pNodeToTransfer->pMasterRoot );
 			mapFibObjectRoots[ pNewFibObject ] = pNodeToTransfer->pMasterRoot;
 			mapNodesForRoots[ pNodeToTransfer->pMasterRoot ].insert( pNodeToTransfer );
@@ -889,13 +902,46 @@ bool cFibNodeHandler::integrateFibObjectIntoNode( cFibNode * pContainingNode,
 			}//end notify all nodes
 		}
 		
-		//delete the osiginal Fib object
+		//delete the original Fib object
+		DEBUG_OUT_L3(<<"cFibNodeHandler::integrateFibObjectIntoNode() delete original root Fib object "<<pOriginalFibObjectToReplace<<" (delete Fib object)"<<endl<<flush);
+		
+		set< cFibElement * >::iterator itrRootFibObject =
+			setFibObjectsRoot.find( pOriginalFibObjectToReplace );
+		if ( itrRootFibObject != setFibObjectsRoot.end() ){
+			//original Fib object is a root Fib object
+			setFibObjectsRoot.erase( itrRootFibObject );
+			//erase entries from mapFibObjectRoots
+			map< cFibElement * , cFibElement * >::iterator
+				itrNextElement;
+			for ( map< cFibElement * , cFibElement * >::iterator
+					itrActualFibElement = mapFibObjectRoots.begin();
+					itrActualFibElement != mapFibObjectRoots.end(); ){
+				itrNextElement = itrActualFibElement;
+				itrNextElement++;
+				if ( (itrActualFibElement->second) == pOriginalFibObjectToReplace ){
+					//delete entry
+					mapFibObjectRoots.erase( itrActualFibElement );
+				}//else use next element
+				itrActualFibElement = itrNextElement;
+			}
+			//mapNodesForRoots value entry for root should allready be empty
+			mapNodesForRoots.erase( pOriginalFibObjectToReplace );
+			//delete the mutex for the root
+			map< cFibElement * , QMutex * > ::iterator itrMutexForRoot =
+				mapFibObjectRootsMutex.find( pOriginalFibObjectToReplace );
+			if ( itrMutexForRoot->second ){
+				//delete mutex for Fib object
+				delete (itrMutexForRoot->second);
+			}
+			mapFibObjectRootsMutex.erase( itrMutexForRoot );
+		}//end if original Fib object is a root Fib object
 		pOriginalFibObjectToReplace->deleteObject();
+		
 		//unlock the containers of this object
 		mutexFibNodeHandler.unlock();
 		
 	}else{//original Fib object allready equal to new Fib object -> delete new
-		DEBUG_OUT_L2(<<"bool cFibNodeHandler::integrateFibObjectIntoNode() original Fib object allready equal to new Fib object -> delete new"<<endl<<flush);
+		DEBUG_OUT_L2(<<"bool cFibNodeHandler::integrateFibObjectIntoNode() original Fib object allready equal to new Fib object -> delete new (delete Fib object)"<<endl<<flush);
 		pNewFibObject->deleteObject();
 	}
 	
@@ -1228,6 +1274,7 @@ set< cFibNode * > cFibNodeHandler::transferNode(
 		cFibNode * pNodeToTransfer,
 		cFibElement * pFromFibObject, cFibElement * pToFibObject ){
 	
+	DEBUG_OUT_L3(<<"cFibNodeHandler::transferNode( pNodeToTransfer="<<pNodeToTransfer<<", pFromFibObject="<<pFromFibObject<<", pToFibObject="<<pToFibObject<<" ) started "<<endl<<flush);
 	if ( ( pNodeToTransfer == NULL ) || ( pFromFibObject == NULL ) ||
 			( pToFibObject == NULL ) ){
 		//can't integrate Fib node, something is missing
@@ -1354,6 +1401,7 @@ set< cFibNode * > cFibNodeHandler::transferNode(
 	
 	//update class members
 	mapFibNodes[ pNewFibNodeObject ] = pNodeToTransfer;
+	DEBUG_OUT_L3(<<"cFibNodeHandler::transferNode() add new root Fib object "<<pNodeToTransfer->pMasterRoot<<endl<<flush);
 	setFibObjectsRoot.insert( pNodeToTransfer->pMasterRoot );
 	mapFibObjectRoots[ pNewFibNodeObject ] = pNodeToTransfer->pMasterRoot;
 	mapNodesForRoots[ pNodeToTransfer->pMasterRoot ].insert( pNodeToTransfer );
@@ -1462,6 +1510,7 @@ bool cFibNodeHandler::transferNodeForEqualFibObject(
 		cFibNode * pNodeToTransfer,
 		cFibElement * pFromFibObject, cFibElement * pToFibObject ){
 	
+	DEBUG_OUT_L2(<<"cFibNodeHandler::transferNodeForEqualFibObject( pNodeToTransfer="<<pNodeToTransfer<<", pFromFibObject="<<pFromFibObject<<", pToFibObject="<<pToFibObject<<" ) started"<<endl<<flush);
 	if ( ( pNodeToTransfer == NULL ) || ( pFromFibObject == NULL ) ||
 			( pToFibObject == NULL ) ){
 		//can't integrate Fib node, something is missing
@@ -1503,6 +1552,7 @@ bool cFibNodeHandler::transferNodeForEqualFibObject(
 		
 		//update class members
 		mapFibNodes[ pNewFibElementForNode ] = pNodeToTransfer;
+		DEBUG_OUT_L3(<<"cFibNodeHandler::transferNodeForEqualFibObject() add new root Fib object "<<pNodeToTransfer->pMasterRoot<<endl<<flush);
 		setFibObjectsRoot.insert( pNodeToTransfer->pMasterRoot );
 		mapFibObjectRoots[ pNewFibElementForNode ] = pNodeToTransfer->pMasterRoot;
 		mapNodesForRoots[ pNodeToTransfer->pMasterRoot ].insert( pNodeToTransfer );
@@ -1816,7 +1866,7 @@ void cFibNodeHandler::deleteNodesWithoutListeners(){
 			
 			if ( setNodesForRoot.empty() ){
 				//no Fib node for root object -> delete root object
-				DEBUG_OUT_L2(<<"cFibNodeHandler::deleteNodesWithoutListeners() no Fib node ("<<(*itrActualNode)<<") for root object -> delete root object "<<pFibElementRoot<<""<<endl<<flush);
+				DEBUG_OUT_L3(<<"cFibNodeHandler::deleteNodesWithoutListeners() no Fib node ("<<(*itrActualNode)<<") for root object -> erase root object "<<pFibElementRoot<<""<<endl<<flush);
 				setFibObjectsRoot.erase( pFibElementRoot );
 				mapNodesForRoots.erase( pFibElementRoot );
 				
@@ -1829,6 +1879,7 @@ void cFibNodeHandler::deleteNodesWithoutListeners(){
 					mapFibObjectRootsMutex.erase( itrMutex );
 				}
 				
+				DEBUG_OUT_L3(<<"cFibNodeHandler::deleteNodesWithoutListeners() delete root object "<<pFibElementRoot<<" (delete Fib object)"<<endl<<flush);
 				pFibElementRoot->deleteObject();
 			}
 		}//end if node can be deleted

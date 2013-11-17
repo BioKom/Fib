@@ -64,6 +64,8 @@ using namespace fib::nCreator;
  *
  * @param pInPainter the painter with which the image should be drawn
  * 	@see pPainter
+ * @param fInHeight the height of the image so that it can be inverted
+ * 	@see fHeight
  * @param dInScalingFactorAlpha the scaling factor for the color alpha
  * 	@see dScalingFactorAlpha
  * @param dInScalingFactorRed the scaling factor for the color red
@@ -76,7 +78,7 @@ using namespace fib::nCreator;
  * 	@see dScalingFactorGrayscale
  */
 cEvalueSimpleRGBA255QPainter::cEvalueSimpleRGBA255QPainter(
-	QPainter * pInPainter,
+	QPainter * pInPainter, const qreal fInHeight,
 	const doubleFib dInScalingFactorAlpha,
 	const doubleFib dInScalingFactorRed,
 	const doubleFib dInScalingFactorGreen,
@@ -88,7 +90,7 @@ cEvalueSimpleRGBA255QPainter::cEvalueSimpleRGBA255QPainter(
 		dScalingFactorGreen( dInScalingFactorGreen ),
 		dScalingFactorBlue( dInScalingFactorBlue ),
 		dScalingFactorGrayscale( dInScalingFactorGrayscale ),
-		bPointEvalued( false ), boundingRectangle(){
+		bPointEvalued( false ), fHeight( fInHeight ), boundingRectangle(){
 		
 	DEBUG_OUT_L2(<<"cEvalueSimpleRGBA255QPainter("<<this<<")::cEvalueSimpleRGBA255QPainter( pInPainter="<<pInPainter<<", dInScalingFactorAlpha="<<dInScalingFactorAlpha<<", dInScalingFactorRed="<<dInScalingFactorRed<<", dInScalingFactorGreen="<<dInScalingFactorGreen<<", dInScalingFactorBlue="<<dInScalingFactorBlue<<", dInScalingFactorGrayscale="<<dInScalingFactorGrayscale<<", ) called"<<endl<<flush);
 	//nothing to do
@@ -115,7 +117,8 @@ cEvalueSimpleRGBA255QPainter::cEvalueSimpleRGBA255QPainter(
 		dScalingFactorGreen( evalueSimpleRGBA255.dScalingFactorGreen ),
 		dScalingFactorBlue( evalueSimpleRGBA255.dScalingFactorBlue ),
 		dScalingFactorGrayscale( evalueSimpleRGBA255.dScalingFactorGrayscale ),
-		bPointEvalued( false ), boundingRectangle(){
+		bPointEvalued( false ), fHeight( evalueSimpleRGBA255.fHeight ),
+		boundingRectangle(){
 	//nothing to do
 	DEBUG_OUT_L2(<<"cEvalueSimpleRGBA255QPainter("<<this<<")::cEvalueSimpleRGBA255QPainter(  pPainter="<<pInPainter<<", evalueSimpleRGBA255( dScalingFactorAlpha="<<evalueSimpleRGBA255.dScalingFactorAlpha<<", dScalingFactorRed="<<evalueSimpleRGBA255.dScalingFactorRed<<", dScalingFactorGreen="<<evalueSimpleRGBA255.dScalingFactorGreen<<", dScalingFactorBlue="<<evalueSimpleRGBA255.dScalingFactorBlue<<", dScalingFactorGrayscale="<<evalueSimpleRGBA255.dScalingFactorGrayscale<<", ) called"<<endl<<flush);
 }
@@ -135,6 +138,7 @@ cEvalueSimpleRGBA255QPainter::cEvalueSimpleRGBA255QPainter(
 		dScalingFactorBlue( evalueSimpleRGBA255.dScalingFactorBlue ),
 		dScalingFactorGrayscale( evalueSimpleRGBA255.dScalingFactorGrayscale ),
 		bPointEvalued( evalueSimpleRGBA255.bPointEvalued ),
+		fHeight( evalueSimpleRGBA255.fHeight ),
 		boundingRectangle( evalueSimpleRGBA255.boundingRectangle ){
 	//nothing to do
 	DEBUG_OUT_L2(<<"cEvalueSimpleRGBA255QPainter("<<this<<")::cEvalueSimpleRGBA255QPainter(  evalueSimpleRGBA255( pPainter="<<evalueSimpleRGBA255.pPainter<<", dScalingFactorAlpha="<<evalueSimpleRGBA255.dScalingFactorAlpha<<", dScalingFactorRed="<<evalueSimpleRGBA255.dScalingFactorRed<<", dScalingFactorGreen="<<evalueSimpleRGBA255.dScalingFactorGreen<<", dScalingFactorBlue="<<evalueSimpleRGBA255.dScalingFactorBlue<<", dScalingFactorGrayscale="<<evalueSimpleRGBA255.dScalingFactorGrayscale<<", ) called"<<endl<<flush);
@@ -142,7 +146,7 @@ cEvalueSimpleRGBA255QPainter::cEvalueSimpleRGBA255QPainter(
 
 
 /**
- * desstructor
+ * destructor
  */
 cEvalueSimpleRGBA255QPainter::~cEvalueSimpleRGBA255QPainter(){
 	
@@ -185,35 +189,36 @@ std::string cEvalueSimpleRGBA255QPainter::getName() const{
 bool cEvalueSimpleRGBA255QPainter::evaluePosition( const cVectorPosition & vPosition,
 	const list<cVectorProperty> & vProperties ){
 	
-	if ( pPainter == NULL ){
-		//no painter -> just evalue the bounding box
-		if ( vPosition.getNumberOfElements() != 0 ){
-			//normal point
-			const qreal fX = vPosition.getValue( 1 );
-			const qreal fY = vPosition.getValue( 2 );
-			//(re-)evalue bounding box
-			if ( bPointEvalued ){
-				if ( ! boundingRectangle.contains( fX, fY ) ){
-					//point not in bounding box -> enlarge bounding box if needed
-					boundingRectangle.setLeft(
-						qMin( boundingRectangle.left(), fX ) );
-					boundingRectangle.setRight(
-						qMax( boundingRectangle.right(), fX + 1 ) );
-					boundingRectangle.setTop(
-						qMin( boundingRectangle.top(), fY ) );
-					boundingRectangle.setBottom(
-						qMax( boundingRectangle.bottom(), fY + 1 ) );
-				}//else point in bounding box -> do nothing
-			}else{//first point to add to the bounding box -> bounding box = point
-				boundingRectangle.setRect( fX, fY, 1, 1 );
-				bPointEvalued = true;
-			}
+	//(re-)evalue the bounding box
+	if ( vPosition.getNumberOfElements() != 0 ){
+		//normal point
+		const qreal fX = vPosition.getValue( 1 );
+		const qreal fY = fHeight - vPosition.getValue( 2 );
+		//(re-)evalue bounding box
+		if ( bPointEvalued ){
+			if ( ! boundingRectangle.contains( fX, fY ) ){
+				//point not in bounding box -> enlarge bounding box if needed
+				boundingRectangle.setLeft(
+					qMin( boundingRectangle.left(), fX ) );
+				boundingRectangle.setRight(
+					qMax( boundingRectangle.right(), fX + 1 ) );
+				boundingRectangle.setTop(
+					qMin( boundingRectangle.top(), fY ) );
+				boundingRectangle.setBottom(
+					qMax( boundingRectangle.bottom(), fY + 1 ) );
+			}//else point in bounding box -> do nothing
+		}else{//first point to add to the bounding box -> bounding box = point
+			boundingRectangle.setRect( fX, fY, 1, 1 );
+			bPointEvalued = true;
 		}
+	}//end if evalue bounding box
+	if ( pPainter == NULL ){
+		//no painter -> done
 		return true;
 	}
 	
 	//the color of the point
-	QColor color( 0, 0, 0 );
+	QColor color( 0, 0, 0, 0 );
 	
 	/*the last found alpha value for the point;
 	 init with 1 because transparency standard value is 0*/
@@ -238,14 +243,23 @@ bool cEvalueSimpleRGBA255QPainter::evaluePosition( const cVectorPosition & vPosi
 			const qreal fAlphaMatrix = color.alphaF();
 			
 			//red
-			color.setRedF( itrProperty->getValue( 1 ) * dScalingFactorRed * fLastAlpha +
-				(color.redF() * fAlphaMatrix * ( 1.0 - fLastAlpha ) ) );
+			const qreal fRed = itrProperty->getValue( 1 ) *
+				dScalingFactorRed * fLastAlpha +
+				(color.redF() * fAlphaMatrix * ( 1.0 - fLastAlpha ) );
+			color.setRedF(
+				( fRed <= 0.0) ? 0.0 : ( ( 1.0 <= fRed )? 1.0 : fRed ) );
 			//green
-			color.setGreenF( itrProperty->getValue( 2 ) * dScalingFactorGreen * fLastAlpha +
-				(color.greenF() * fAlphaMatrix * ( 1.0 - fLastAlpha ) ) );
+			const qreal fGreen = itrProperty->getValue( 2 ) *
+				dScalingFactorGreen * fLastAlpha +
+				(color.greenF() * fAlphaMatrix * ( 1.0 - fLastAlpha ) );
+			color.setGreenF(
+				( fGreen <= 0.0) ? 0.0 : ( ( 1.0 <= fGreen )? 1.0 : fGreen ) );
 			//blue
-			color.setBlueF( itrProperty->getValue( 3 ) * dScalingFactorBlue * fLastAlpha +
-				(color.blueF() * fAlphaMatrix * ( 1.0 - fLastAlpha ) ) );
+			const qreal fBlue = itrProperty->getValue( 3 ) *
+				dScalingFactorBlue * fLastAlpha +
+				(color.blueF() * fAlphaMatrix * ( 1.0 - fLastAlpha ) );
+			color.setBlueF(
+				( fBlue <= 0.0) ? 0.0 : ( ( 1.0 <= fBlue )? 1.0 : fBlue ) );
 			
 		}else if ( uiPropertytype == cTypeProperty::TRANSPARENCY ){
 			//transparency
@@ -257,7 +271,8 @@ bool cEvalueSimpleRGBA255QPainter::evaluePosition( const cVectorPosition & vPosi
 				( 1.0 < fTransparency ) ? 0.0 : (1.0 - fTransparency);
 			
 			//alpha_matrix_new = 255.0 * fLastAlpha );
-			color.setAlphaF( 255.0 * fLastAlpha );
+			color.setAlphaF( ( fLastAlpha <= 0.0) ?
+				0.0 : ( ( 1.0 <= fLastAlpha )? 1.0 : fLastAlpha ) );
 			
 			bNoAlpha = false;//transparency value set
 		}else if ( uiPropertytype == cTypeProperty::COLOR_GRAYSCALE ){
@@ -275,50 +290,52 @@ bool cEvalueSimpleRGBA255QPainter::evaluePosition( const cVectorPosition & vPosi
 				itrProperty->getValue( 1 ) * dScalingFactorGrayscale * fLastAlpha;
 			
 			//red
-			color.setRedF( fColorGrayscale +
-				( color.redF() * fAlphaMatrix * ( 1.0 - fLastAlpha ) ) );
+			const qreal fRed = fColorGrayscale +
+				( color.redF() * fAlphaMatrix * ( 1.0 - fLastAlpha ) );
+			color.setRedF(
+				( fRed <= 0.0) ? 0.0 : ( ( 1.0 <= fRed )? 1.0 : fRed ) );
 			//green
-			color.setGreenF( fColorGrayscale +
-				( color.greenF() * fAlphaMatrix * ( 1.0 - fLastAlpha ) ) );
+			const qreal fGreen = fColorGrayscale +
+				( color.greenF() * fAlphaMatrix * ( 1.0 - fLastAlpha ) );
+			color.setGreenF(
+				( fGreen <= 0.0) ? 0.0 : ( ( 1.0 <= fGreen )? 1.0 : fGreen ) );
 			//blue
-			color.setBlueF(  fColorGrayscale +
-				( color.blueF() * fAlphaMatrix * ( 1.0 - fLastAlpha ) ) );
+			const qreal fBlue = fColorGrayscale +
+				( color.blueF() * fAlphaMatrix * ( 1.0 - fLastAlpha ) );
+			color.setBlueF(
+				( fBlue <= 0.0) ? 0.0 : ( ( 1.0 <= fBlue )? 1.0 : fBlue ) );
 		}//else discard property
 		
 	}//end for all properties for the point
 	
+	drawPoint( vPosition, color );
+	
+	return true;
+}
+
+
+/**
+ * This method draws the given point.
+ *
+ * @param vPosition the position of the point to draw
+ * @param color the color of the point to draw
+ */
+void cEvalueSimpleRGBA255QPainter::drawPoint(
+		const cVectorPosition & vPosition, const QColor & color ){
 	
 	if ( vPosition.getNumberOfElements() != 0 ){
 		//normal point
 		pPainter->setPen( color );
 		
 		const qreal fX = vPosition.getValue( 1 );
-		const qreal fY = vPosition.getValue( 2 );
+		const qreal fY = fHeight - vPosition.getValue( 2 );
 		pPainter->drawPoint( QPointF( fX, fY ) );
-		DEBUG_OUT_L4(<<"cEvalueSimpleRGBA255QPainter("<<this<<")::cEvalueSimpleRGBA255QPainter() draw point ("<<fX<<", "<<fY<<") with color ("<<color.redF()<<", "<<color.greenF()<<", "<<color.blueF()<<")"<<endl<<flush);
+		DEBUG_OUT_L4(<<"cEvalueSimpleRGBA255QPainter("<<this<<")::drawPoint() draw point ("<<fX<<", "<<fY<<") with color ("<<color.redF()<<", "<<color.greenF()<<", "<<color.blueF()<<",  "<<color.alphaF()<<")"<<endl<<flush);
 		
-		//(re-)evalue bounding box
-		if ( bPointEvalued ){
-			if ( ! boundingRectangle.contains( fX, fY ) ){
-				//point not in bounding box -> enlarge bounding box if needed
-				boundingRectangle.setLeft(
-					qMin( boundingRectangle.left(), fX ) );
-				boundingRectangle.setRight(
-					qMax( boundingRectangle.right(), fX + 1 ) );
-				boundingRectangle.setTop(
-					qMin( boundingRectangle.top(), fY ) );
-				boundingRectangle.setBottom(
-					qMax( boundingRectangle.bottom(), fY + 1 ) );
-			}//else point in bounding box -> do nothing
-		}else{//first point to add to the bounding box -> bounding box = point
-			boundingRectangle.setRect( fX, fY, 1, 1 );
-			bPointEvalued = true;
-		}
 	}else{//background point
+		DEBUG_OUT_L4(<<"cEvalueSimpleRGBA255QPainter("<<this<<")::drawPoint() draw background with color ("<<color.redF()<<", "<<color.greenF()<<", "<<color.blueF()<<",  "<<color.alphaF()<<")"<<endl<<flush);
 		pPainter->setBackground( QBrush( color ) );
 	}
-	
-	return true;
 }
 
 
@@ -369,6 +386,28 @@ qreal cEvalueSimpleRGBA255QPainter::getScalingFactorBlue() const{
 qreal cEvalueSimpleRGBA255QPainter::getScalingFactorGrayscale() const{
 	
 	return dScalingFactorGrayscale;
+}
+
+
+/**
+ * @return the height of the image so that it can be inverted
+ * 	All vertical positions y will be ( fHeight - position.getValue( 2 ) )
+ * 	@see fHeight
+ */
+qreal cEvalueSimpleRGBA255QPainter::getHeight() const{
+	
+	return fHeight;
+}
+
+
+/**
+ * @param fInHeight the height of the image so that it can be inverted
+ * 	All vertical positions y will be ( fHeight - position.getValue( 2 ) )
+ * 	@see fHeight
+ */
+void cEvalueSimpleRGBA255QPainter::setHeight( const qreal & fInHeight ){
+	
+	fHeight = fInHeight;
 }
 
 
