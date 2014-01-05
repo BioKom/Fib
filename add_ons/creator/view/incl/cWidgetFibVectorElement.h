@@ -88,6 +88,7 @@ namespace nCreator{
 //forward declarations
 class cFibVectorCreator;
 class eFibVectorChangedEvent;
+class cFibNode;
 
 
 class cWidgetFibVectorElement: public QWidget, public lFibVectorChanged,
@@ -384,6 +385,15 @@ protected:
 	 * @see mutexFibVectorElementWidget
 	 */
 	QList< cFibVariableCreator * > liDefinedVariables;
+	
+	/**
+	 * The top most node for the Fib object for the vector.
+	 * The widget needs to know it so it  can react if the defined
+	 * variables in node change.
+	 * @see liDefinedVariables
+	 * @see mutexFibVectorElementWidget
+	 */
+	cFibNode * pMasterNode;
 	
 	/**
 	 * If not NULL the widget for the element.

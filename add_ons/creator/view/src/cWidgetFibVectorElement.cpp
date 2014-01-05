@@ -84,6 +84,7 @@ History:
 #include "cFibVariableHandler.h"
 #include "cFibInputVariable.h"
 #include "cFibNodeHandler.h"
+#include "cFibNode.h"
 
 
 
@@ -107,7 +108,7 @@ cWidgetFibVectorElement::cWidgetFibVectorElement( cFibVectorCreator * pInFibVect
 		uiNumberOfElement( uiInNumberOfElement ),
 		pLastSetVariable( NULL ), dLastSetValue( 0.0 ),
 		pFibVector( pInFibVector ), pChooseType( NULL ),
-		pChooseVariable( NULL ), pElementWidget( NULL ), pLayoutMain( NULL ) {
+		pChooseVariable( NULL ), pMasterNode( NULL ), pElementWidget( NULL ), pLayoutMain( NULL ) {
 	
 	DEBUG_OUT_L2(<<"cWidgetFibVectorElement("<<this<<")::cWidgetFibVectorElement( pInFibVector="<<pInFibVector<<", uiInNumberOfElement="<<uiInNumberOfElement<<", pParent="<<pParent<<" ) called"<<endl<<flush);
 	
@@ -131,7 +132,8 @@ cWidgetFibVectorElement::cWidgetFibVectorElement( cFibVectorCreator * pInFibVect
 			
 			if ( pMasterFibRoot ){
 				//register this as node change listener
-				pNodeHandler->getNodeForFibObject( pMasterFibRoot, this );
+				pMasterNode = pNodeHandler->getNodeForFibObject(
+					pMasterFibRoot, this );
 			}
 		}
 	}
@@ -147,8 +149,18 @@ cWidgetFibVectorElement::cWidgetFibVectorElement( cFibVectorCreator * pInFibVect
  * destructor
  */
 cWidgetFibVectorElement::~cWidgetFibVectorElement() {
-	//nothing to do
+	
 	DEBUG_OUT_L2(<<"cWidgetFibVectorElement("<<this<<")::~cWidgetFibVectorElement() called"<<endl<<flush);
+	mutexFibVectorElement.lock();
+	if ( pFibVector ){
+		pFibVector->unregisterFibVectorChangeListener( this );
+	}
+	mutexFibVectorElement.unlock();
+	mutexFibVectorElementWidget.lock();
+	if ( pMasterNode ){
+		pMasterNode->unregisterNodeChangeListener( this );
+	}
+	mutexFibVectorElementWidget.unlock();
 }
 
 
@@ -346,6 +358,12 @@ void cWidgetFibVectorElement::fibVectorChangedEvent(
 		
 		mutexFibVectorElementWidget.lock();
 		liDefinedVariables.clear();
+		
+		if ( pMasterNode ){
+			//no vector -> no master node
+			pMasterNode->unregisterNodeChangeListener( this );
+			pMasterNode = NULL;
+		}
 		mutexFibVectorElementWidget.unlock();
 		
 		createFibVectorElementWidget();
@@ -478,6 +496,8 @@ void cWidgetFibVectorElement::fibNodeChangedEvent(
 	if ( pFibNodeChanged->bNodeDeleted ){
 		/*node for master Fib object for the Fib element of the the vector
 		 deleted*/
+		pMasterNode = NULL;
+		
 		mutexFibVectorElement.lock();
 		if ( pFibVector ){
 			//try to evalue new master node
@@ -490,7 +510,8 @@ void cWidgetFibVectorElement::fibNodeChangedEvent(
 				
 				if ( pMasterFibRoot ){
 					//register this as node change listener
-					pNodeHandler->getNodeForFibObject( pMasterFibRoot, this );
+					pMasterNode = pNodeHandler->getNodeForFibObject(
+						pMasterFibRoot, this );
 				}
 			}
 		}
@@ -889,7 +910,7 @@ void cWidgetFibVectorElement::clearDefinedVariables(){
  */
 QSize cWidgetFibVectorElement::sizeHint() const {
 	
-	DEBUG_OUT_L4(<<"cWidgetFibVectorElement("<<this<<")::sizeHint() called"<<endl<<flush);
+	//DEBUG_OUT_L4(<<"cWidgetFibVectorElement("<<this<<")::sizeHint() called"<<endl<<flush);
 	
 	QSize goodSize( 0, 0 );
 	
