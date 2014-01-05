@@ -113,6 +113,11 @@ public:
 	
 	
 	/**
+	 * @return the number of Fib object info objects in this handler
+	 */
+	unsigned int getNumberOfFibObjectInfos() const;
+
+	/**
 	 * This method returns the Fib object info object for the given identifier.
 	 *
 	 * @param ulIdentifier the identifer of the Fib object info object to return

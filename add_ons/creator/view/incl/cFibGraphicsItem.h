@@ -64,7 +64,8 @@ History:
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
 #include <QWidget>
-
+#include <QMutex>
+#include <QGraphicsSceneHoverEvent>
 
 
 namespace fib{
@@ -76,33 +77,6 @@ class cFibGraphicsScene;
 
 class cFibGraphicsItem: public QGraphicsItem{
 
-protected:
-	
-	
-	/**
-	 * A pointer to the Fib object for this widget / item.
-	 * (It should be a pointer to the Fib object, which defines the
-	 * Fib part object of this widget.)
-	 */
-	cFibElement * pFibObject;
-	
-	/**
-	 * The version of the Fib object, wich is displayed.
-	 * Every time the Fib object is changed the version number is counted up.
-	 * If this number is not equal to the Fib node version number the shown
-	 * Fib object needs to be updated.
-	 * @see cFibNode::ulVersion
-	 * @see cFibNode::fibObjectChanged()
-	 */
-	unsigned long ulFibNodeVersionDisplayed;
-	
-	/**
-	 * A pointer to the Fib graphic scene for this widget / item, or NULL if
-	 * non exists.
-	 * @see cFibGraphicsScene
-	 */
-	cFibGraphicsScene * pFibGraphicsScene;
-	
 public:
 
 	/**
@@ -210,7 +184,74 @@ public:
 	/*TODO eg
     painter->drawRect(-10, -10, 20, 20, 5, 5);*/
 	
+protected:
 	
+	/**
+	 * This method creats the main options widget (pWidgetMainOptions).
+	 *
+	 * @see pWidgetMainOptions
+	 * @return true if the main options widget was created
+	 * 	(pWidgetMainOptions != 0), else false
+	 */
+	virtual bool createMainOptions();
+	
+	/**
+	 * Event handler
+	 * When the mouse enters this graphical item, this event method is called.
+	 *
+	 * @see QGraphicsItem::hoverEnterEvent()
+	 * @param pEventGraphicsSceneHover a pointer to the hover event
+	 */
+	virtual void hoverEnterEvent( QGraphicsSceneHoverEvent * pEventGraphicsSceneHover );
+	
+	/**
+	 * Event handler
+	 * When the mouse leaves this graphical item, this event method is called.
+	 *
+	 * @see QGraphicsItem::hoverLeaveEvent()
+	 * @param pEventGraphicsSceneHover a pointer to the hover event
+	 */
+	virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent * pEventGraphicsSceneHover );
+	
+//members:
+	
+	/**
+	 * A pointer to the Fib object for this widget / item.
+	 * (It should be a pointer to the Fib object, which defines the
+	 * Fib part object of this widget.)
+	 */
+	cFibElement * pFibObject;
+	
+	/**
+	 * The version of the Fib object, wich is displayed.
+	 * Every time the Fib object is changed the version number is counted up.
+	 * If this number is not equal to the Fib node version number the shown
+	 * Fib object needs to be updated.
+	 * @see cFibNode::ulVersion
+	 * @see cFibNode::fibObjectChanged()
+	 */
+	unsigned long ulFibNodeVersionDisplayed;
+	
+	/**
+	 * A pointer to the Fib graphic scene for this widget / item, or NULL if
+	 * non exists.
+	 * @see cFibGraphicsScene
+	 */
+	cFibGraphicsScene * pFibGraphicsScene;
+	
+	/**
+	 * This widget contains the main options for tis Fib object item.
+	 * @see createMainOptions()
+	 */
+	QWidget * pWidgetMainOptions;
+	
+	/**
+	 * The mutex for the this widget main options.
+	 * @see pWidgetMainOptions
+	 */
+	mutable QMutex mutexMainOptions;
+	
+
 private slots:
 	
 	/**

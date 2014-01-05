@@ -1,6 +1,3 @@
-
-//TODO check
-
 /**
  * @file cWidgetFibObjectInfos
  * file name: cWidgetFibObjectInfos.h
@@ -49,7 +46,7 @@
  *    possibel category typs:
  *       - relative categories: same type (sameType), is contained (isContained), ...
  *       - absolute categories: all, typs like: objects, people, ...
- *       (first category list has just absolute)
+ *       (first Fib object info list category list has just absolute)
  *
  * @see cWidgetFibObjectInfo
  * @see cFibObjectInfo
@@ -100,16 +97,16 @@ class cWidgetFibObjectInfos: public QWidget,
 public:
 	
 	/**
-	 * The parameter constructor.
+	 * A parameter constructor.
 	 *
-	 * @see liInPossibleCategories a list with the possible categories for
+	 * @param liInPossibleCategories a list with the possible categories for
 	 * 	the Fib objects of this list.
 	 * 	Note: The first category of the list will be selected
 	 * 	@see liPossibleCategories
 	 * @param uiInMaxFibObjectInfos the maximal number of Fib object info
 	 * 	widgets to display ( liFibObjectInfos.size() <= uiMaxFibObjectInfos),
-	 * 	if 0 the default value will be taken
-	 * 	@see uiInMaxFibObjectInfos
+	 * 	If 0 the default value will be taken.
+	 * 	@see uiMaxFibObjectInfos
 	 * 	@see liFibObjectInfos
 	 * @param pParent a pointer the parent of this new Fib object info widget
 	 */
@@ -119,9 +116,9 @@ public:
 		QWidget * pParent = NULL );
 	
 	/**
-	 * The parameter constructor.
+	 * A parameter constructor.
 	 *
-	 * @see liInPossibleCategories a list with the possible categories for
+	 * @param liInPossibleCategories a list with the possible categories for
 	 * 	the Fib objects of this list.
 	 * 	Note: The first category of the list will be selected
 	 * 	@see liPossibleCategories
@@ -132,7 +129,7 @@ public:
 	 * @param uiInMaxFibObjectInfos the maximal number of Fib object info
 	 * 	widgets to display ( liFibObjectInfos.size() <= uiMaxFibObjectInfos),
 	 * 	if 0 the default value will be taken
-	 * 	@see uiInMaxFibObjectInfos
+	 * 	@see uiMaxFibObjectInfos
 	 * 	@see liFibObjectInfos
 	 * @param pParent a pointer the parent of this new Fib object info widget
 	 */
@@ -143,7 +140,7 @@ public:
 		QWidget * pParent = NULL );
 	
 	/**
-	 * The destructor
+	 * destructor
 	 */
 	virtual ~cWidgetFibObjectInfos();
 	
@@ -183,7 +180,7 @@ public:
 	virtual bool setSelectedCategory( const int inIndexSelectedCategory );
 
 	/**
-	 * @return the possible category for the Fib objects of this list
+	 * @return the possible categories for the Fib objects of this list
 	 * 	@see liPossibleCategories
 	 */
 	virtual QList< cFibObjectCategory > getPossibleCategories() const;
@@ -208,28 +205,39 @@ public:
 	/**
 	 * @see setMaxFibObjectInfos()
 	 * @return the maximal number of Fib object info widgets to display
-	 * 	( liFibObjectInfos.size() <= uiMaxFibObjectInfos)
-	 * 	@see uiInMaxFibObjectInfos
+	 * 	( liFibObjectInfos.size() <= uiMaxFibObjectInfos )
+	 * 	@see uiMaxFibObjectInfos
 	 * 	@see liFibObjectInfos
 	 */
 	unsigned int getMaxFibObjectInfos() const;
 	
 	/**
 	 * This method sets the maximum number of Fib object info widgets to
-	 * display ( liFibObjectInfos.size() <= uiMaxFibObjectInfos).
+	 * display ( liFibObjectInfos.size() <= uiMaxFibObjectInfos ).
 	 *
 	 * @see getMaxFibObjectInfos()
-	 * @see uiInMaxFibObjectInfos
+	 * @see uiMaxFibObjectInfos
 	 * @see liFibObjectInfos
 	 * @param uiInMaxFibObjectInfos the maximal number of Fib object info
-	 * 	widgets to display ( liFibObjectInfos.size() <= uiMaxFibObjectInfos),
+	 * 	widgets to display ( liFibObjectInfos.size() <= uiMaxFibObjectInfos ),
 	 * 	if 0 the default value will be taken
+	 * @return the new maximal number of Fib object info widgets to display
 	 */
 	unsigned int setMaxFibObjectInfos( const unsigned int uiInMaxFibObjectInfos = 0 );
 	
+	
 	/**
-	 * This method returns the uiNumberOfFibObjectInfo'th Fib object info widget
-	 * of this Fib object info widget list.
+	 * @see getMaxFibObjectInfos()
+	 * @see setMaxFibObjectInfos()
+	 * @return the default maximal number of Fib object info widgets to display
+	 * 	@see uiMaxFibObjectInfos
+	 * 	@see liFibObjectInfos
+	 */
+	static unsigned int getDefaultMaxFibObjectInfos();
+	
+	/**
+	 * This method returns the uiNumberOfFibObjectInfo'th Fib object info
+	 * widget of this Fib object info widget list.
 	 *
 	 * @see liFibObjectInfos
 	 * @see getNumberOfWidgetFibObjectInfos()
@@ -283,7 +291,7 @@ public:
 	 * @param pWidgetFibObjectInfo a pointer to the Fib object info widget to add
 	 * @param uiPosition the position where to add the Fib object info widget,
 	 * 	if 0 or greater the number of Fib object info widgets in this
-	 * 	widget list it will be added to the end of the Fib object info
+	 * 	widget list, it will be added to the end of the Fib object info
 	 * 	widget list (counting starts with 1)
 	 * @return true if the Fib object info widget was added, else false
 	 */
@@ -300,8 +308,8 @@ public:
 	 * @see replaceWidgetFibObjectInfo()
 	 * @param uiPosition the position where to remove the Fib object info
 	 * 	widget from (counting starts with 1)
-	 * @param bDeleteOld if true the removed Fib object info widgets will
-	 * 	be deleted from memory, else not (note: you have to delte it)
+	 * @param bDeleteOld if true the removed Fib object info widget will
+	 * 	be deleted from memory, else not (note: you have to delete it)
 	 * @return true if the Fib object info widget was removed, else false
 	 */
 	virtual bool removeWidgetFibObjectInfo( const unsigned int uiPosition,
@@ -316,8 +324,8 @@ public:
 	 * @see addWidgetFibObjectInfo()
 	 * @see replaceWidgetFibObjectInfo()
 	 * @param pWidgetFibObjectInfo the Fib object info widget to remove
-	 * @param bDeleteOld if true the removed Fib object info widgets will
-	 * 	be deleted from memory, else not (note: you have to delte it)
+	 * @param bDeleteOld if true the removed Fib object info widget will
+	 * 	be deleted from memory, else not (note: you have to delete it)
 	 * @return true if the Fib object info widget was removed, else false
 	 */
 	virtual bool removeWidgetFibObjectInfo(
@@ -325,7 +333,7 @@ public:
 	
 	/**
 	 * This method replaces a Fib object info widget in this Fib object info
-	 * widget list.  It will replace the uiPosition'th Fib object info
+	 * widget list. It will replace the uiPosition'th Fib object info
 	 * widget in the Fib object info list with the given Fib object info
 	 * widget pWidgetFibObjectInfo (if possible).
 	 *
@@ -338,8 +346,8 @@ public:
 	 * 	uiPosition'th position
 	 * @param uiPosition the position where to replace the Fib object info
 	 * 	widget (counting starts with 1)
-	 * @param bDeleteOld if true the replaced Fib object info widgets will
-	 * 	be deleted from memory, else not (note: you have to delte it)
+	 * @param bDeleteOld if true the replaced Fib object info widget will
+	 * 	be deleted from memory, else not (note: you have to delete it)
 	 * @return true if the Fib object info widget was replace, else false
 	 */
 	virtual bool replaceWidgetFibObjectInfo(
@@ -359,7 +367,7 @@ public:
 	 * @param liInWidgetFibObjectInfos a list of the Fib object info widgets
 	 * 	this object should display
 	 * @param bDeleteOld if true the old Fib object info widgets will be
-	 * 	deleted from memory, else not (note: you have to delte them)
+	 * 	deleted from memory, else not (note: you have to delete them)
 	 * @return true if the Fib object info widgets could be set, else false
 	 */
 	virtual bool setWidgetFibObjectInfos(
@@ -376,7 +384,7 @@ public:
 	 * the Fib object info widget list of this widget.
 	 *
 	 * @see cFibObjectInfoHandler
-	 * @return true if the Fib object info list could be updted, else false
+	 * @return true if the Fib object info list could be updated, else false
 	 */
 	virtual bool updateForCategory();
 	
@@ -384,7 +392,7 @@ public:
 	/**
 	 * This method sets the selected Fib object info.
 	 * It will be the base for all relativ categories.
-	 * Note: This object won't trigger an selected Fib object info widget event.
+	 * Note: This object won't trigger a selected Fib object info widget event.
 	 * 	(No registered listeners for changes for the selected Fib object
 	 * 	info widget lSelectedWidgetFibObjectInfo will notified.)
 	 *
@@ -397,10 +405,11 @@ public:
 	
 	/**
 	 * Event method
-	 * This method will be called if an Fib object info widget was
+	 * This method will be called if a Fib object info widget was
 	 * selected.
 	 *
 	 * @see lSelectedWidgetFibObjectInfo
+	 * @see setSelectedFibObjectInfo()
 	 * @param pWidgetFibObjectInfo a pointer to the Fib object info
 	 * 	widget which was selected
 	 */
@@ -408,7 +417,7 @@ public:
 		const cWidgetFibObjectInfo * pWidgetFibObjectInfo );
 	
 	/**
-	 * With this function you can register a listeners for changes for the
+	 * With this function you can register a listeners for changes of the
 	 * selected Fib object info widget.
 	 *
 	 * @see cWidgetFibObjectInfo::registerListenerSelectedFibObjectInfo()
@@ -424,7 +433,7 @@ public:
 		lSelectedWidgetFibObjectInfo * pSelectedFibObjectInfo );
 	
 	/**
-	 * With this function you can unregister a listeners for changes for the
+	 * With this function you can unregister a listeners for changes of the
 	 * selected Fib object info widget.
 	 *
 	 * @see cWidgetFibObjectInfo::unregisterListenerSelectedFibObjectInfo()
@@ -434,7 +443,7 @@ public:
 	 * @see setSelectedFibObjectInfo()
 	 * @see sendSelectedFibObjectInfoChange()
 	 * @param pSelectedFibObjectInfo a pointer to the listener for changes
-	 * @return true if the listener was registered, else false
+	 * @return true if the listener was unregistered, else false
 	 */
 	bool unregisterListenerSelectedFibObjectInfo(
 		lSelectedWidgetFibObjectInfo * pSelectedFibObjectInfo );
@@ -465,7 +474,7 @@ protected:
 	 * @see mutexListenersSelectedWidgetFibObjectInfo
 	 * @see setSelectedFibObjectInfo()
 	 */
-	void sendSelectedFibObjectInfoChange(
+	virtual void sendSelectedFibObjectInfoChange(
 		const cWidgetFibObjectInfo * pWidgetFibObjectInfo ) const;
 	
 	/**
@@ -481,13 +490,13 @@ protected:
 	 * This function checks if the Fib object info widget list contains a
 	 * widget for the given Fib object info.
 	 *
-	 * @param pFibObjectInfo the Fib object info for wich to search in the list
+	 * @param pFibObjectInfo the Fib object info for which to search in the list
 	 * @param liInWidgetFibObjectInfos the list with Fib object info widgets
-	 * 	in which the seach for the widget of the give Fib object info
+	 * 	in which to search for the widget of the give Fib object info
 	 * @return true if the Fib object info widget list contains a widget
 	 * 	for the given Fib object info, else false
 	 */
-	static bool containsFibObjectinfo(
+	static bool containsFibObjectInfo(
 		const cFibObjectInfo * pFibWidgetObjectInfo,
 		const QList< cWidgetFibObjectInfo * > & liInWidgetFibObjectInfos );
 	
@@ -544,30 +553,32 @@ protected:
 	 * @see setWidgetFibObjectInfos()
 	 */
 	QList< cWidgetFibObjectInfo * > liFibObjectInfos;
-
-	/**
-	 * Mutex to lock access to the list of Fib object info widgets to display.
-	 * Lock the mutex if you use one of the following containers:
-	 * @see liFibObjectInfos
-	 * @see uiMaxFibObjectInfos
-	 * @see getMaxFibObjectInfos()
-	 */
-	mutable QMutex mutexFibObjectInfos;
 	
 	/**
 	 * The maximal number of Fib object info widgets to display
-	 * ( liFibObjectInfos.size() <= uiMaxFibObjectInfos).
+	 * ( liFibObjectInfos.size() <= uiMaxFibObjectInfos ).
 	 * @see liFibObjectInfos
 	 * @see getMaxFibObjectInfos()
 	 * @see setMaxFibObjectInfos()
 	 */
 	unsigned int uiMaxFibObjectInfos;
+
+	/**
+	 * Mutex to lock access to the list of Fib object info widgets to display.
+	 * Lock the mutex if you use one of the following containers:
+	 * 	@see liFibObjectInfos
+	 * 	@see uiMaxFibObjectInfos
+	 *
+	 * @see getMaxFibObjectInfos()
+	 * @see setMaxFibObjectInfos()
+	 */
+	mutable QMutex mutexFibObjectInfos;
 	
 	
 	/**
 	 * The set with the listeners for changes of the selected Fib object
 	 * info widget.
-	 * @see cWidgetFibObjectInfo::unregisterListenerSelectedFibObjectInfo()
+	 * @see cWidgetFibObjectInfo::setListenersSelectedWidgetFibObjectInfo
 	 * @see registerListenerSelectedFibObjectInfo()
 	 * @see unregisterListenerSelectedFibObjectInfo()
 	 * @see sendSelectedFibObjectInfoChange()
@@ -580,11 +591,11 @@ protected:
 	 * Mutex to lock access to the listeners for changes of the selected
 	 * Fib object info widget.
 	 * Lock the mutex if you use one of the following containers:
-	 * @see setInputVariableChangeListener
+	 * 	@see setInputVariableChangeListener
 	 */
 	mutable QMutex mutexListenersSelectedWidgetFibObjectInfo;
 
-//elements to display this widget
+///elements to display this widget:
 	
 	/**
 	 * The combo box to choose the categories from.
@@ -633,12 +644,12 @@ protected:
 	/**
 	 * Mutex to lock access to the graphical elements to display.
 	 * Lock the mutex if you use one of the following containers:
-	 * @see pComboBoxCategories
-	 * @see pButtonClose
-	 * @see pLayoutTop
-	 * @see pScrollAreaFibObjectInfo
-	 * @see pSplitterFibObjectInfo
-	 * @see pLayoutMain
+	 * 	@see pComboBoxCategories
+	 * 	@see pButtonClose
+	 * 	@see pLayoutTop
+	 * 	@see pScrollAreaFibObjectInfo
+	 * 	@see pSplitterFibObjectInfo
+	 * 	@see pLayoutMain
 	 */
 	mutable QMutex mutexGraphicalElements;
 

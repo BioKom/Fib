@@ -1,14 +1,18 @@
+
+//TODO check
+
 /**
- * @file lFibNodeChanged
- * file name: lFibNodeChanged.h
+ * @file lFibVectorChanged
+ * file name: lFibVectorChanged.h
  * @author Betti Oesterholz
- * @date 12.06.2013
+ * @date 31.11.2013
  * @mail webmaster@BioKom.info
  *
  * System: C++, Qt4
  *
- * This file specifies a listener interface for listening for Fib object
- * node changes.
+ * This file specifies a listener interface for listening for Fib vectors
+ * changes.
+ *
  *
  * Copyright (C) @c GPL3 2013 Betti Oesterholz
  *
@@ -26,26 +30,25 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * This file specifies a listener interface for listening for Fib object
- * node changes. If a Fib object changes, the Fib object nodes (cFibNode)
- * for it will send a event to all registered listeners of this type.
+ * This file specifies a listener interface for listening for Fib vectors
+ * changes. If a Fib vector changes, the Fib vector object
+ * (cFibVector) for it will send a event to all registered listeners
+ * of this type.
  * @pattern listener
- * @see cFibNode
- * @see eFibNodeChangedEvent
+ * @see cFibVector
+ * @see eFibVectorChangedEvent
  */
 /*
 History:
-12.06.2013  Oesterholz  created
+31.11.2013  Oesterholz  created
 */
 
 
-#ifndef ___FIB__NCREATOR__L_FIB_NODE_CHANGED_H__
-#define ___FIB__NCREATOR__L_FIB_NODE_CHANGED_H__
+#ifndef ___FIB__NCREATOR__L_FIB_VECTOR_CHANGED_H__
+#define ___FIB__NCREATOR__L_FIB_VECTOR_CHANGED_H__
 
 
 #include "version.h"
-
-#include "eFibNodeChangedEvent.h"
 
 #include <string>
 
@@ -54,33 +57,34 @@ namespace fib{
 
 namespace nCreator{
 
+//forward declarations
+class eFibVectorChangedEvent;
 
-class lFibNodeChanged{
+class lFibVectorChanged{
 public:
 	
 	/**
 	 * Event method
-	 * It will be called every time a Fib node (cFibNode), at which
-	 * this object is registered, was changed.
+	 * It will be called every time a Fib vector (cFibVector), at which this
+	 * object is registered, was changed.
 	 *
-	 * @param pFibNodeChanged a pointer to the event, with the information
-	 * 	about the changed Fib node
+	 * @param pFibVectorEvent a pointer to the event with the information of
+	 * 	the change of the Fib vector
 	 */
-	virtual void fibNodeChangedEvent(
-		const eFibNodeChangedEvent * pFibNodeChanged ) = 0;
-	
+	virtual void fibVectorChangedEvent(
+		const eFibVectorChangedEvent * pFibVectorEvent ) = 0;
 	
 	/**
 	 * @return the name of this class
 	 */
 	virtual std::string getName() const = 0;
 	
-};//end class lFibNodeChanged
+};//end class lFibVectorChanged
 
 };//end namespace nCreator
 };//end namespace fib
 
-#endif //___FIB__NCREATOR__L_FIB_NODE_CHANGED_H__
+#endif //___FIB__NCREATOR__L_FIB_VECTOR_CHANGED_H__
 
 
 

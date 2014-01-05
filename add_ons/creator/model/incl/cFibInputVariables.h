@@ -49,69 +49,27 @@ History:
 
 #include "version.h"
 
-#include "cFibElement.h"
-
-#include "cFibInputVariable.h"
-#include "lInputVariableChanged.h"
-#include "eFibInputVariableChangedEvent.h"
-
 #include <string>
 
 #include <QObject>
 #include <QList>
 #include <QMutex>
 
+#include "cFibElement.h"
+
+#include "cFibInputVariable.h"
+#include "lScalarValueChanged.h"
+#include "templateRegisterChangeListener.h"
+
 
 namespace fib{
 
 namespace nCreator{
 
-class cFibInputVariables: public lInputVariableChanged,
-		public lInputVariableValueChanged{
-protected:
-	/**
-	 * A list with input variables.
-	 */
-	QList< cFibInputVariable * > inputVariables;
-	
-	/**
-	 * Mutex to lock access to the list of input variables.
-	 * Lock the mutex if you use one of the following containers:
-	 * @see inputVariables
-	 */
-	mutable QMutex mutexFibInputVariablesHandler;
-	
-	
-	/**
-	 * The Fib object for which the input variables are or NULL.
-	 */
-	cFibElement * pFibObject;
-	
-	
-	/**
-	 * The set with the listeners for input variables changes.
-	 */
-	set< lInputVariableChanged * > setInputVariableChangeListener;
-	
-	/**
-	 * Mutex to lock access to the listeners for input variables changes.
-	 * Lock the mutex if you use one of the following containers:
-	 * @see setInputVariableChangeListener
-	 */
-	mutable QMutex mutexInputVariableChangeListener;
-	
-	/**
-	 * The set with the listeners for input variables value changes.
-	 */
-	set< lInputVariableValueChanged * > setInputVariableValueChangeListener;
-	
-	/**
-	 * Mutex to lock access to the listeners for input variables value changes.
-	 * Lock the mutex if you use one of the following containers:
-	 * @see setInputVariableValueChangeListener
-	 */
-	mutable QMutex mutexInputVariableValueChangeListener;
-	
+class cFibInputVariables: public lFibVariableCreatorChanged,
+		public lScalarValueChanged,
+		public templateRegisterChangeListener<
+			lFibVariableCreatorChanged, eFibVariableCreatorChangedEvent >{
 public:
 
 	/**
@@ -350,78 +308,83 @@ public:
 	 * It will be called every time a input variable (cFibInputVariable),
 	 * at which this object is registered,was changed.
 	 *
-	 * @param pFibInputVariableEvent a pointer to the event with the
+	 * @param pFibVariableChangedEvent a pointer to the event with the
 	 * 	information of the change of the Fib input variable
 	 */
-	virtual void fibInputVariableChangedEvent(
-		const eFibInputVariableChangedEvent * pFibInputVariableEvent );
+	virtual void changedEvent(
+		const eFibVariableCreatorChangedEvent * pFibVariableChangedEvent );
 	
 	/**
 	 * Event method
 	 * It will be called every time a input variable value (cFibInputVariable),
 	 * at which this object is registered, was changed.
 	 *
-	 * @see cFibInputVariable::dValue
-	 * @param pFibInputVariable a pointer to the changed Fib input variable
+	 * @see cFibScalar::dValue
+	 * @param pFibScalar a pointer to the changed Fib input variable
 	 */
-	virtual void fibInputVariableValueChangedEvent(
-		const cFibInputVariable * pFibInputVariable );
-	
+	virtual void fibScalarValueChangedEvent(
+		const cFibScalar * pFibScalar );
 	
 	
 	/**
 	 * With this function you can register a listeners for changes for any
 	 * of the contained input variables.
 	 *
-	 * @see cFibInputVariable::registerInputVariableChangeListener()
-	 * @see unregisterInputVariableChangeListener()
-	 * @see setInputVariableChangeListener
-	 * @see sendInputVariableChange()
-	 * @param pInputVariableListener a pointer to the listener for changes
+	 * @see unregisterScalarValueChangeListener()
+	 * @see setInputVariableValueChangeListener
+	 * @see sendInputVariableValueChange()
+	 * @param pInputVariableValueListener a pointer to the listener for changes
 	 * @return true if the listener was registered, else false
 	 */
-	bool registerInputVariableChangeListener(
-		lInputVariableChanged * pInputVariableListener );
+	bool registerScalarValueChangeListener(
+		lScalarValueChanged * pInputVariableValueListener );
 	
 	/**
 	 * With this function you can unregister a listeners for changes for any
 	 * of the contained input variables.
 	 *
-	 * @see registerInputVariableChangeListener()
-	 * @see setInputVariableChangeListener
-	 * @see sendInputVariableChange()
-	 * @param pInputVariableListener a pointer to the listener for changes
+	 * @see registerScalarValueChangeListener()
+	 * @see setInputVariableValueChangeListener
+	 * @see sendInputVariableValueChange()
+	 * @param pInputVariableValueListener a pointer to the listener for changes
 	 * @return true if the listener was registered, else false
 	 */
-	bool unregisterInputVariableChangeListener(
-		lInputVariableChanged * pInputVariableListener );
+	bool unregisterScalarValueChangeListener(
+		lScalarValueChanged * pInputVariableValueListener );
+	
+protected:
+	/**
+	 * A list with input variables.
+	 */
+	QList< cFibInputVariable * > inputVariables;
+	
+	/**
+	 * Mutex to lock access to the list of input variables.
+	 * Lock the mutex if you use one of the following containers:
+	 * @see inputVariables
+	 */
+	mutable QMutex mutexFibInputVariables;
+	
+	
+	/**
+	 * The Fib object for which the input variables are or NULL.
+	 */
+	cFibElement * pFibObject;
+	
+	
+	/**
+	 * The set with the listeners for input variables value changes.
+	 */
+	set< lScalarValueChanged * > setInputVariableValueChangeListener;
+	
+	/**
+	 * Mutex to lock access to the listeners for input variables value changes.
+	 * Lock the mutex if you use one of the following containers:
+	 * @see setInputVariableValueChangeListener
+	 */
+	mutable QMutex mutexInputVariableValueChangeListener;
+	
 
-	/**
-	 * With this function you can register a listeners for changes for any
-	 * of the contained input variables.
-	 *
-	 * @see unregisterInputVariableValueChangeListener()
-	 * @see setInputVariableValueChangeListener
-	 * @see sendInputVariableValueChange()
-	 * @param pInputVariableValueListener a pointer to the listener for changes
-	 * @return true if the listener was registered, else false
-	 */
-	bool registerInputVariableValueChangeListener(
-		lInputVariableValueChanged * pInputVariableValueListener );
-	
-	/**
-	 * With this function you can unregister a listeners for changes for any
-	 * of the contained input variables.
-	 *
-	 * @see registerInputVariableValueChangeListener()
-	 * @see setInputVariableValueChangeListener
-	 * @see sendInputVariableValueChange()
-	 * @param pInputVariableValueListener a pointer to the listener for changes
-	 * @return true if the listener was registered, else false
-	 */
-	bool unregisterInputVariableValueChangeListener(
-		lInputVariableValueChanged * pInputVariableValueListener );
-	
 };//end class cFibInputVariables
 
 };//end namespace nCreator

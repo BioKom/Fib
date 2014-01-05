@@ -202,6 +202,18 @@ std::string cFibObjectInfoHandler::getName() const{
 
 
 /**
+ * @return the number of Fib object info objects in this handler
+ */
+unsigned int cFibObjectInfoHandler::getNumberOfFibObjectInfos() const{
+	
+	mutexFibObjectInfoHandler.lock();
+	const unsigned int uiNumberOfFibObjectInfos = setFibObjectInfos.size();
+	mutexFibObjectInfoHandler.unlock();
+	return uiNumberOfFibObjectInfos;
+}
+
+
+/**
  * This method returns the Fib object info object for the given identifier.
  *
  * @param ulIdentifier the identifer of the Fib object info object to return
@@ -243,6 +255,9 @@ cFibObjectInfo * cFibObjectInfoHandler::getFibObjectInfo(
 		mapUsedTimeSortedFibObjectInfos.insert( pair< double , cFibObjectInfo * >(
 			getLastUsedTimesWeightSum( pFibObjectInfo->getLastUsedTimes() ),
 			pFibObjectInfo ) );
+		
+		DEBUG_OUT_L2(<<"cFibObjectInfoHandler("<<this<<")::getFibObjectInfo() add to sorted \""<<pFibObjectInfo->getFibObjectName()<<"\" with weight "<<getLastUsedTimesWeightSum( pFibObjectInfo->getLastUsedTimes() )<<endl<<flush);
+
 		mutexUsedTimeSortedFibObjectInfos.unlock();
 		//add possible categories of new Fib object (info)
 		addPossibleCategories( pFibObjectInfo->getCategories() );
@@ -430,6 +445,9 @@ bool cFibObjectInfoHandler::addFibObjectInfo( const cFibObjectInfo & fibObjectIn
 	mapUsedTimeSortedFibObjectInfos.insert( pair< double , cFibObjectInfo * >(
 		getLastUsedTimesWeightSum( pFibObjectInfoToInsert->getLastUsedTimes() ),
 		pFibObjectInfoToInsert ) );
+	
+	DEBUG_OUT_L2(<<"cFibObjectInfoHandler("<<this<<")::addFibObjectInfo() add to sorted \""<<pFibObjectInfoToInsert->getFibObjectName()<<"\" with weight "<<getLastUsedTimesWeightSum( pFibObjectInfoToInsert->getLastUsedTimes() )<<endl<<flush);
+
 	mutexUsedTimeSortedFibObjectInfos.unlock();
 	
 	mutexFibObjectInfoHandler.unlock();
@@ -630,7 +648,7 @@ bool cFibObjectInfoHandler::loadListOfInfoObjects(){
 	setPossibleCategories.clear();
 	setPossibleCategories.insert( getCategoryForAll() );//all is always a category
 	
-	DEBUG_OUT_L2(<<"cFibObjectInfoHandlerDeleter("<<this<<")::loadListOfInfoObjects() extract the new entries form the Fib object info in there directory ("<<szPathToFibObjectInfos<<"):"<<endl<<flush);
+	DEBUG_OUT_L2(<<"cFibObjectInfoHandler("<<this<<")::loadListOfInfoObjects() extract the new entries form the Fib object info in there directory ("<<szPathToFibObjectInfos<<"):"<<endl<<flush);
 	//extract the new entries form the Fib object info in there directory
 	QStringList::const_iterator constIterator;
 	const QString szOStringPath( szPathToFibObjectInfos );
@@ -669,6 +687,9 @@ bool cFibObjectInfoHandler::loadListOfInfoObjects(){
 		mapUsedTimeSortedFibObjectInfos.insert( pair< double , cFibObjectInfo * >(
 			getLastUsedTimesWeightSum( pLoadedFibInfoObject->getLastUsedTimes() ),
 			pLoadedFibInfoObject ) );
+		
+		DEBUG_OUT_L2(<<"cFibObjectInfoHandler("<<this<<")::loadListOfInfoObjects() add to sorted \""<<pLoadedFibInfoObject->getFibObjectName()<<"\" with weight "<<getLastUsedTimesWeightSum( pLoadedFibInfoObject->getLastUsedTimes() )<<endl<<flush);
+		
 		mutexUsedTimeSortedFibObjectInfos.unlock();
 		
 		mapFibObjectInfoFiles.insert( pair< unsigned long , string >(
@@ -1075,6 +1096,8 @@ list< cFibObjectInfo * > cFibObjectInfoHandler::sortFibObjectInfo(
 		mapTmpUsedTimeSortedFibObjectInfos.insert( pair< double , cFibObjectInfo * >(
 			getLastUsedTimesWeightSum( (*itrFibObjectInfo)->getLastUsedTimes() ),
 			(*itrFibObjectInfo) ) );
+	
+		DEBUG_OUT_L2(<<"cFibObjectInfoHandler("<<this<<")::sortFibObjectInfo() add to sorted \""<<(*itrFibObjectInfo)->getFibObjectName()<<"\" with weight "<<getLastUsedTimesWeightSum( (*itrFibObjectInfo)->getLastUsedTimes() )<<endl<<flush);
 	}
 	//transfer the Fib object infos from the multimap into a list
 	list< cFibObjectInfo * > liSortedFibObjectInfos;
@@ -1115,6 +1138,8 @@ list< cFibObjectInfo * > cFibObjectInfoHandler::sortFibObjectInfo(
 		mapTmpUsedTimeSortedFibObjectInfos.insert( pair< double , cFibObjectInfo * >(
 			getLastUsedTimesWeightSum( (*itrFibObjectInfo)->getLastUsedTimes() ),
 			(*itrFibObjectInfo) ) );
+	
+		DEBUG_OUT_L2(<<"cFibObjectInfoHandler("<<this<<")::sortFibObjectInfo() add to sorted \""<<(*itrFibObjectInfo)->getFibObjectName()<<"\" with weight "<<getLastUsedTimesWeightSum( (*itrFibObjectInfo)->getLastUsedTimes() )<<endl<<flush);
 	}
 	//transfer the Fib object infos from the multimap into a list
 	list< cFibObjectInfo * > liSortedFibObjectInfos;
@@ -1157,6 +1182,8 @@ void cFibObjectInfoHandler::updateUsedTimeSortedFibObjectInfos(){
 		mapUsedTimeSortedFibObjectInfos.insert( pair< double , cFibObjectInfo * >(
 			getLastUsedTimesWeightSum( (*itrFibObjectInfo)->getLastUsedTimes() ),
 			(*itrFibObjectInfo) ) );
+	
+		DEBUG_OUT_L2(<<"cFibObjectInfoHandler("<<this<<")::updateUsedTimeSortedFibObjectInfos() add to sorted \""<<(*itrFibObjectInfo)->getFibObjectName()<<"\" with weight "<<getLastUsedTimesWeightSum( (*itrFibObjectInfo)->getLastUsedTimes() )<<endl<<flush);
 	}//end for all Fib object info objects
 	mutexFibObjectInfoHandler.unlock();
 	mutexUsedTimeSortedFibObjectInfos.unlock();
@@ -1304,6 +1331,8 @@ void cFibObjectInfoHandler::fibObjectInfoChanged(
 	mapUsedTimeSortedFibObjectInfos.insert( pair< double , cFibObjectInfo * >(
 		getLastUsedTimesWeightSum( pChangedFibObjectInfo->getLastUsedTimes() ),
 		pChangedFibObjectInfo ) );
+	
+	DEBUG_OUT_L2(<<"cFibObjectInfoHandler("<<this<<")::fibObjectInfoChanged() add to sorted \""<<pChangedFibObjectInfo->getFibObjectName()<<"\" with weight "<<getLastUsedTimesWeightSum( pChangedFibObjectInfo->getLastUsedTimes() )<<endl<<flush);
 	mutexUsedTimeSortedFibObjectInfos.unlock();
 	
 	//store changed Fib object infos
@@ -1362,7 +1391,7 @@ double cFibObjectInfoHandler::getLastUsedTimesWeightSum(
 			dWeightSum += 80000000.0 * itrActualTimestamp->second;
 			continue;
 		}//else
-		const double dMonth = ((double)( itrActualTimestamp->first - tmActual )) /
+		const double dMonth = ((double)( tmActual - itrActualTimestamp->first )) /
 			2592000.0;//about seconds per mounth
 		
 		dWeightSum += ( 1.0 / ( exp( dMonth ) * dMonth )) *

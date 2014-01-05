@@ -156,7 +156,7 @@ cDialogSelectFibObject::~cDialogSelectFibObject(){
 			itrListOfFibObjects = liListsOfFibObjects.begin();
 			itrListOfFibObjects != liListsOfFibObjects.end(); itrListOfFibObjects++ ){
 		
-		delete (*itrListOfFibObjects);
+		(*itrListOfFibObjects)->deleteLater();
 	}
 	liListsOfFibObjects.clear();
 	mutexFibObjectInfos.unlock();
@@ -483,7 +483,13 @@ void cDialogSelectFibObject::newFibObjectCategory(){
 	-> use no relativ categories (connections of selected Fib object)*/
 	//create new Fib object info list widget
 	cWidgetFibObjectInfos * pWidgetFibObjectInfos =
-		new cWidgetFibObjectInfos( liPossibleCategories , 0, this );
+		new cWidgetFibObjectInfos( liPossibleCategories ,
+			( liListsOfFibObjects.empty() ? //show all Fib object infos in first list
+				std::max( cWidgetFibObjectInfos::getDefaultMaxFibObjectInfos(),
+					cFibObjectInfoHandler::getInstance()->getNumberOfFibObjectInfos() +
+						32 ):
+				0 ),
+			this );
 	
 	connect( pWidgetFibObjectInfos,
 		SIGNAL( closeWidgetFibObjectInfos( cWidgetFibObjectInfos * ) ),
@@ -523,7 +529,7 @@ void cDialogSelectFibObject::closeWidgetFibObjectInfos(
 	mutexFibObjectInfos.lock();
 	liListsOfFibObjects.removeAll( pWidgetFibObjectInfos );
 	
-	delete pWidgetFibObjectInfos;
+	pWidgetFibObjectInfos->deleteLater();
 	
 	mutexFibObjectInfos.unlock();
 }
@@ -675,7 +681,11 @@ void cDialogSelectFibObject::createDialog(){
 			cWidgetFibObjectInfos * pFirstWidgetFibObjectInfos =
 				new cWidgetFibObjectInfos(
 					pFibObjectInfoHandler->getPossibleFibObjectCategories(),
-					0, this );
+					//show all Fib object infos in first list
+					std::max( cWidgetFibObjectInfos::getDefaultMaxFibObjectInfos(),
+						cFibObjectInfoHandler::getInstance()->getNumberOfFibObjectInfos() +
+							32 ),
+					this );
 			
 			pFirstWidgetFibObjectInfos->setSelectedCategory( categoryForAll );
 			

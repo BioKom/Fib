@@ -86,9 +86,9 @@ using namespace fib::nCreator;
  */
 cFibNode::cFibNode( cFibElement * pInFibObject, const bool bInIsChangebel ):
 		pFibObject( pInFibObject ), bIsChangebel( bInIsChangebel ),
-		ulVersion( 1 ), pMasterRoot( NULL ){
+		ulVersion( 1 ), pMasterRoot( NULL ) {
 	
-	if ( pFibObject ){
+	if ( pFibObject ) {
 		//get the master Root object
 		pMasterRoot = pFibObject->getMasterRoot();
 	}//end if Fib object exists
@@ -104,7 +104,7 @@ cFibNode::cFibNode( cFibElement * pInFibObject, const bool bInIsChangebel ):
  */
 cFibNode::cFibNode( cFibNode & fibNode ):pFibObject( fibNode.pFibObject ),
 		bIsChangebel( bIsChangebel ), ulVersion( 1 ),
-		pMasterRoot( fibNode.pMasterRoot ){
+		pMasterRoot( fibNode.pMasterRoot ) {
 	//nothing to do
 }
 
@@ -112,9 +112,9 @@ cFibNode::cFibNode( cFibNode & fibNode ):pFibObject( fibNode.pFibObject ),
 /**
  * destructor
  */
-cFibNode::~cFibNode(){
+cFibNode::~cFibNode() {
 	
-	DEBUG_OUT_L2(<<"cFibNode("<<this<<")::~cFibNode()"<<endl<<flush);
+	DEBUG_OUT_L2(<<"cFibNode("<<this<<")::~cFibNode() called"<<endl<<flush);
 	//send a Fib node deleted event
 	increaseFibObjectVersion();
 	eFibNodeChangedEvent fibNodeChangedEvent( this, ulVersion, NULL );
@@ -125,11 +125,11 @@ cFibNode::~cFibNode(){
 	 Fib object nodes, so they get notyfied if the Fib object for this node changes*/
 	DEBUG_OUT_L3(<<"cFibNode("<<this<<")::~cFibNode(): register all listeners for changes of this object in all next superior Fib object nodes"<<endl<<flush);
 	for ( set< cFibNode * >::iterator itrSuperiorNode = setNextSuperiorNodes.begin();
-			itrSuperiorNode != setNextSuperiorNodes.end(); itrSuperiorNode++ ){
+			itrSuperiorNode != setNextSuperiorNodes.end(); itrSuperiorNode++ ) {
 		
 		for ( set< lFibNodeChanged * >::iterator
 				itrChangeListener = liNodeChangedListeners.begin();
-				itrChangeListener != liNodeChangedListeners.end(); itrChangeListener++ ){
+				itrChangeListener != liNodeChangedListeners.end(); itrChangeListener++ ) {
 			
 			(*itrSuperiorNode)->registerNodeChangeListener( (*itrChangeListener) );
 		}//end for all change listeners
@@ -138,7 +138,7 @@ cFibNode::~cFibNode(){
 	//add the next superior nodes of this to the next lower nodes of this node
 	DEBUG_OUT_L3(<<"cFibNode("<<this<<")::~cFibNode(): add the next superior nodes of this to the next lower nodes of this node"<<endl<<flush);
 	for ( set< cFibNode * >::iterator itrLowerNode = setNextLowerNodes.begin();
-			itrLowerNode != setNextLowerNodes.end(); itrLowerNode++ ){
+			itrLowerNode != setNextLowerNodes.end(); itrLowerNode++ ) {
 		
 		(*itrLowerNode)->setNextSuperiorNodes.insert(
 			setNextSuperiorNodes.begin(), setNextSuperiorNodes.end() );
@@ -148,7 +148,7 @@ cFibNode::~cFibNode(){
 	//add the next lower nodes of this to the next superior nodes of this node
 	DEBUG_OUT_L3(<<"cFibNode("<<this<<")::~cFibNode(): add the next lower nodes of this to the next superior nodes of this node"<<endl<<flush);
 	for ( set< cFibNode * >::iterator itrSuperiorNode = setNextSuperiorNodes.begin();
-			itrSuperiorNode != setNextSuperiorNodes.end(); itrSuperiorNode++ ){
+			itrSuperiorNode != setNextSuperiorNodes.end(); itrSuperiorNode++ ) {
 		
 		(*itrSuperiorNode)->setNextLowerNodes.insert(
 			setNextLowerNodes.begin(), setNextLowerNodes.end() );
@@ -158,7 +158,7 @@ cFibNode::~cFibNode(){
 	//remove this node from the superior nodes of the next lower nodes of this node
 	DEBUG_OUT_L3(<<"cFibNode("<<this<<")::~cFibNode(): remove this node from the superior nodes of the next lower nodes of this node"<<endl<<flush);
 	for ( set< cFibNode * >::iterator itrNextLowerNode = setNextLowerNodes.begin();
-			itrNextLowerNode != setNextLowerNodes.end(); itrNextLowerNode++ ){
+			itrNextLowerNode != setNextLowerNodes.end(); itrNextLowerNode++ ) {
 		
 		(*itrNextLowerNode)->setNextSuperiorNodes.erase( this );
 		
@@ -167,7 +167,7 @@ cFibNode::~cFibNode(){
 	//remove this node from the lower nodes of the next superior nodes of this node
 	DEBUG_OUT_L3(<<"cFibNode("<<this<<")::~cFibNode(): remove this node from the lower nodes of the next superior nodes of this node"<<endl<<flush);
 	for ( set< cFibNode * >::iterator itrSuperiorNode = setNextSuperiorNodes.begin();
-			itrSuperiorNode != setNextSuperiorNodes.end(); itrSuperiorNode++ ){
+			itrSuperiorNode != setNextSuperiorNodes.end(); itrSuperiorNode++ ) {
 		
 		(*itrSuperiorNode)->setNextLowerNodes.erase( this );
 		
@@ -185,7 +185,7 @@ cFibNode::~cFibNode(){
  * 	@see pFibObject
  * 	@see bIsChangebel
  */
-cFibElement * cFibNode::getFibObject(){
+cFibElement * cFibNode::getFibObject() {
 	
 	return pFibObject;
 }
@@ -209,8 +209,9 @@ const cFibElement * cFibNode::getFibObjectConst() const{
  *
  * @param pChangedBy a pointer to the object which had changed the Fib node
  */
-bool cFibNode::fibObjectChanged( const QObject * pChangedBy ){
+bool cFibNode::fibObjectChanged( const QObject * pChangedBy ) {
 	
+	DEBUG_OUT_L2(<<"cFibNode("<<this<<")::fibObjectChanged( pChangedBy="<<pChangedBy<<" ) called"<<endl<<flush);
 	increaseFibObjectVersion();
 	const eFibNodeChangedEvent fibNodeChangedEvent( this, ulVersion, pChangedBy );
 	
@@ -230,8 +231,9 @@ bool cFibNode::fibObjectChanged( const QObject * pChangedBy ){
  *
  * @param fibNodeChangedEvent the event with the change information
  */
-bool cFibNode::fibObjectChanged( const eFibNodeChangedEvent & fibNodeChangedEvent ){
+bool cFibNode::fibObjectChanged( const eFibNodeChangedEvent & fibNodeChangedEvent ) {
 	
+	DEBUG_OUT_L2(<<"cFibNode("<<this<<")::fibObjectChanged( fibNodeChangedEvent ) called"<<endl<<flush);
 	increaseFibObjectVersion();
 	
 	//TODO in own tread (so it dosn't block)
@@ -259,7 +261,7 @@ unsigned long cFibNode::getFibObjectVersion() const{
  * 	@see pMasterRoot
  * 	@see bIsChangebel
  */
-cFibElement * cFibNode::getMasterRoot(){
+cFibElement * cFibNode::getMasterRoot() {
 	
 	return pMasterRoot;
 }
@@ -300,20 +302,20 @@ bool cFibNode::isChangebel() const{
  * 	the Fib object to insert
  * @return true if the Fib object could be inserted, else false
  */
-bool cFibNode::insertFibObjectInfo( cFibObjectInfo * pFibObjectInfo ){
+bool cFibNode::insertFibObjectInfo( cFibObjectInfo * pFibObjectInfo ) {
 	
 	DEBUG_OUT_L2(<<"cFibNode("<<this<<")::insertFibObjectInfo( pFibObjectInfo="<<pFibObjectInfo<<" ) started"<<endl<<flush);
-	if ( ( ! isChangebel() ) || ( pFibObject == NULL ) ){
+	if ( ( ! isChangebel() ) || ( pFibObject == NULL ) ) {
 		//Fib object for this node not changebel -> can't insert a Fib object in it
 		return false;
 	}
-	if ( pFibObjectInfo == NULL ){
+	if ( pFibObjectInfo == NULL ) {
 		//no Fib object for the new main window -> return false
 		return false;
 	}
 	cFibNodeHandler * pFibNodeHandler = cFibNodeHandler::getInstance();
 	
-	if ( pFibNodeHandler ){
+	if ( pFibNodeHandler ) {
 		pFibNodeHandler->lock( this );
 	}
 	
@@ -321,7 +323,7 @@ bool cFibNode::insertFibObjectInfo( cFibObjectInfo * pFibObjectInfo ){
 	cExtObject * pExternalSubobjectToInsert = NULL;
 	if ( ( pFibObjectInfo->getFibObjectSource() != NULL ) &&
 			( pFibObjectInfo->getFibObjectSource()->getName() ==
-				"cFibObjectSourceFibDb" ) ){
+				"cFibObjectSourceFibDb" ) ) {
 		DEBUG_OUT_L3(<<"cFibNode("<<this<<")::insertFibObjectInfo( pFibObjectInfo="<<pFibObjectInfo<<" ) using Fib database object"<<endl<<flush);
 		
 		cFibObjectSourceFibDb * pFibObjectSourceFibDb =
@@ -330,19 +332,19 @@ bool cFibNode::insertFibObjectInfo( cFibObjectInfo * pFibObjectInfo ){
 		const unsignedIntFib ulNumberOfInputVariables =
 			pFibObjectInfo->getNumberOfInputVariables();
 		cVectorExtObject vecInInputValues( ulNumberOfInputVariables );
-		if ( 0 < ulNumberOfInputVariables ){
+		if ( 0 < ulNumberOfInputVariables ) {
 			//evalue and set default values for the input variables
 			int iOutStatus = 0;
 			cFibElement * pLoadedFibObject =
 				pFibObjectInfo->loadFibObjectFromSource( &iOutStatus );
 			
 			if ( ( pLoadedFibObject != NULL ) && ( 0 <= iOutStatus ) &&
-					( pLoadedFibObject->getType() == 'r' ) ){
+					( pLoadedFibObject->getType() == 'r' ) ) {
 				
 				cRoot * pLoadedRootObject = (static_cast<cRoot*>(pLoadedFibObject));
 				
 				for ( unsignedIntFib uiActualInVar = 1;
-						uiActualInVar <= ulNumberOfInputVariables; uiActualInVar++ ){
+						uiActualInVar <= ulNumberOfInputVariables; uiActualInVar++ ) {
 					vecInInputValues.setValue( uiActualInVar,
 						pLoadedRootObject->getStandardValueOfInputVariable( uiActualInVar ) );
 				}
@@ -355,7 +357,7 @@ bool cFibNode::insertFibObjectInfo( cFibObjectInfo * pFibObjectInfo ){
 		pExternalSubobjectToInsert = new cExtObject(
 			pFibObjectSourceFibDb->getFibDbIdentifier(), vecInInputValues );
 		
-	}else if ( 2 < pFibObjectInfo->getNumberOfFibElements() ){
+	}else if ( 2 < pFibObjectInfo->getNumberOfFibElements() ) {
 		/*else the to integrate Fib object is not a database object
 		 and if the Fib object for the info object contains more than a root
 		 element and a other Fib element*/
@@ -364,11 +366,11 @@ bool cFibNode::insertFibObjectInfo( cFibObjectInfo * pFibObjectInfo ){
 		cFibElement * pLoadedFibObject =
 			pFibObjectInfo->loadFibObjectFromSource( &iOutStatus );
 		
-		if ( ( pLoadedFibObject == NULL ) || ( iOutStatus < 0 ) ){
+		if ( ( pLoadedFibObject == NULL ) || ( iOutStatus < 0 ) ) {
 			/* no Fib object for Fib object info or error while loading
 			 * Fib object for Fib object info
 			 * -> no main window can be created*/
-			if ( pFibNodeHandler ){
+			if ( pFibNodeHandler ) {
 				pFibNodeHandler->unlock( this );
 			}
 			return false;
@@ -378,13 +380,13 @@ bool cFibNode::insertFibObjectInfo( cFibObjectInfo * pFibObjectInfo ){
 			(static_cast<cRoot*>(pFibObject)) :
 			pFibObject->getSuperiorRootElement();
 		
-		if ( pNextSuperiorRoot != NULL ){
+		if ( pNextSuperiorRoot != NULL ) {
 			//more than root and one Fib element in the to integrate Fib object
 			//try to integrate Fib (root) object in next superior root element
 			const longFib lIdentifier = pNextSuperiorRoot->integrateSubRootObject(
 				pLoadedFibObject );
 			
-			if ( lIdentifier != 0 ){
+			if ( lIdentifier != 0 ) {
 				/*the Fib object could be inserted as a subroot object
 				 -> create external subobject for it*/
 				//if the to integrate Fib object is a database object
@@ -393,10 +395,10 @@ bool cFibNode::insertFibObjectInfo( cFibObjectInfo * pFibObjectInfo ){
 				const unsignedIntFib ulNumberOfInputVariables =
 					pSubRoot->getNumberOfInputVariables();
 				cVectorExtObject vecInInputValues( ulNumberOfInputVariables );
-				if ( 0 < ulNumberOfInputVariables ){
+				if ( 0 < ulNumberOfInputVariables ) {
 					//evalue and set default values for the input variables
 					for ( unsignedIntFib uiActualInVar = 1;
-							uiActualInVar <= ulNumberOfInputVariables; uiActualInVar++ ){
+							uiActualInVar <= ulNumberOfInputVariables; uiActualInVar++ ) {
 						vecInInputValues.setValue( uiActualInVar,
 							pSubRoot->getStandardValueOfInputVariable( uiActualInVar ) );
 					}
@@ -409,17 +411,17 @@ bool cFibNode::insertFibObjectInfo( cFibObjectInfo * pFibObjectInfo ){
 	}//end if Fib database object
 	DEBUG_OUT_L3(<<"cFibNode("<<this<<")::insertFibObjectInfo( pFibObjectInfo="<<pFibObjectInfo<<" ) integrating Fib object of info (pExternalSubobjectToInsert="<<pExternalSubobjectToInsert<<")"<<endl<<flush);
 	cFibElement * pFibObjectToInsert = pExternalSubobjectToInsert;
-	if ( pFibObjectToInsert == NULL ){
+	if ( pFibObjectToInsert == NULL ) {
 		//insert Fib object directly
 		int iOutStatus = 0;
 		cFibElement * pLoadedFibObject =
 			pFibObjectInfo->loadFibObjectFromSource( &iOutStatus );
 		
-		if ( ( pLoadedFibObject == NULL ) || ( iOutStatus < 0 ) ){
+		if ( ( pLoadedFibObject == NULL ) || ( iOutStatus < 0 ) ) {
 			/* no Fib object for Fib object info or error while loading
 			 * Fib object for Fib object info
 			 * -> no main window can be created*/
-			if ( pFibNodeHandler ){
+			if ( pFibNodeHandler ) {
 				pFibNodeHandler->unlock( this );
 			}
 			return false;
@@ -432,7 +434,7 @@ bool cFibNode::insertFibObjectInfo( cFibObjectInfo * pFibObjectInfo ){
 		cFunctionValue subFunValueNull( 0.0 );
 		for ( list< cFibVariable * >::const_reverse_iterator
 				itrActualVariable = liInputvariables.rbegin();
-				itrActualVariable != liInputvariables.rend(); itrActualVariable++ ){
+				itrActualVariable != liInputvariables.rend(); itrActualVariable++ ) {
 			
 			cFunction * pNewFunction = new cFunction( subFunValueNull,
 				pFibObjectToInsert );
@@ -446,15 +448,15 @@ bool cFibNode::insertFibObjectInfo( cFibObjectInfo * pFibObjectInfo ){
 	
 	const bool bExtObjectInserted = pFibObject->insertObjectInElement(
 		pFibObjectToInsert, 'u', 0, false );
-	if ( ! bExtObjectInserted ){
+	if ( ! bExtObjectInserted ) {
 		//external object could not be inserted -> delete it
-		if ( pFibNodeHandler ){
+		if ( pFibNodeHandler ) {
 			pFibNodeHandler->unlock( this );
 		}
 		pExternalSubobjectToInsert->deleteObject();
 		return false;
 	}
-	if ( pFibNodeHandler ){
+	if ( pFibNodeHandler ) {
 		pFibNodeHandler->unlock( this );
 	}
 	fibObjectChanged();
@@ -474,9 +476,9 @@ bool cFibNode::insertFibObjectInfo( cFibObjectInfo * pFibObjectInfo ){
  * @param pNodeListener a pointer to the listener for changes
  * @return true if the listener was registered, else false
  */
-bool cFibNode::registerNodeChangeListener( lFibNodeChanged * pNodeListener ){
+bool cFibNode::registerNodeChangeListener( lFibNodeChanged * pNodeListener ) {
 	
-	if ( pNodeListener == NULL ){
+	if ( pNodeListener == NULL ) {
 		//nothing to register
 		return false;
 	}
@@ -497,7 +499,7 @@ bool cFibNode::registerNodeChangeListener( lFibNodeChanged * pNodeListener ){
  * @param pNodeListener a pointer to the listener for changes
  * @return true if the listener was registered, else false
  */
-bool cFibNode::unregisterNodeChangeListener( lFibNodeChanged * pNodeListener ){
+bool cFibNode::unregisterNodeChangeListener( lFibNodeChanged * pNodeListener ) {
 	
 	return ( 0 < liNodeChangedListeners.erase( pNodeListener ) );
 }
@@ -510,15 +512,16 @@ bool cFibNode::unregisterNodeChangeListener( lFibNodeChanged * pNodeListener ){
  * @see ulVersion
  * @see fibObjectChanged()
  */
-void cFibNode::increaseFibObjectVersion(){
+void cFibNode::increaseFibObjectVersion() {
+	DEBUG_OUT_L2(<<"cFibNode("<<this<<")::increaseFibObjectVersion() called; actual "<<ulVersion<<endl<<flush);
 	//increase this Fib node version number
 	ulVersion++;
 	
 	//send node change to all superior nodes
 	for ( set< cFibNode * >::iterator itrSuperiorNode = setNextSuperiorNodes.begin();
-			itrSuperiorNode != setNextSuperiorNodes.end(); itrSuperiorNode++ ){
+			itrSuperiorNode != setNextSuperiorNodes.end(); itrSuperiorNode++ ) {
 		
-		if ( (*itrSuperiorNode)->pMasterRoot == pMasterRoot ){
+		if ( (*itrSuperiorNode)->pMasterRoot == pMasterRoot ) {
 			//node is for the same whole Fib object -> increase Version number
 			(*itrSuperiorNode)->increaseFibObjectVersion();
 		}
@@ -535,17 +538,18 @@ void cFibNode::increaseFibObjectVersion(){
  * @see fibObjectChanged()
  * @param pFibNodeChangedEvent the change event to send
  */
-void cFibNode::sendNodeChange( const eFibNodeChangedEvent * pFibNodeChangedEvent ){
+void cFibNode::sendNodeChange( const eFibNodeChangedEvent * pFibNodeChangedEvent ) {
 	
+	DEBUG_OUT_L2(<<"cFibNode("<<this<<")::sendNodeChange( pFibNodeChangedEvent="<<pFibNodeChangedEvent<<" ) called"<<endl<<flush);
 	for ( set< lFibNodeChanged * >::iterator
 			itrChangeListener = liNodeChangedListeners.begin();
-			itrChangeListener != liNodeChangedListeners.end(); itrChangeListener++ ){
+			itrChangeListener != liNodeChangedListeners.end(); itrChangeListener++ ) {
 		
 		(*itrChangeListener)->fibNodeChangedEvent( pFibNodeChangedEvent );
 	}
 	//send node change to all superior nodes
 	for ( set< cFibNode * >::iterator itrSuperiorNode = setNextSuperiorNodes.begin();
-			itrSuperiorNode != setNextSuperiorNodes.end(); itrSuperiorNode++ ){
+			itrSuperiorNode != setNextSuperiorNodes.end(); itrSuperiorNode++ ) {
 		
 		(*itrSuperiorNode)->sendNodeChange( pFibNodeChangedEvent );
 	}//end for all superior nodes

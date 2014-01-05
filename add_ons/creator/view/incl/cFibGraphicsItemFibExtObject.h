@@ -2,15 +2,15 @@
 //TODO check
 
 /**
- * @file cFibGraphicsItemFibObject
- * file name: cFibGraphicsItemFibObject.h
+ * @file cFibGraphicsItemFibExtObject
+ * file name: cFibGraphicsItemFibExtObject.h
  * @author Betti Oesterholz
  * @date 20.07.2013
  * @mail webmaster@BioKom.info
  *
  * System: C++, Qt4
  *
- * This file specifies a class for a graphics item for a Fib object.
+ * This file specifies a class for a graphics item for a Fib external object.
  *
  *
  * Copyright (C) @c GPL3 2013 Betti Oesterholz
@@ -29,11 +29,14 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * This file specifies a class for a graphics item for a Fib object.
- * It will display a (part) Fib object as a graphic item.
+ * This file specifies a class for a graphics item for a Fib external object.
+ * It will display a (part) Fib object with a external object element as
+ * its leaf element as a graphic item.
  * The item correspondents to a Fib object or a part of a Fib object. For
  * this Fib object the graphic / image representation will be shown by its
- * cFibGraphicsItemFibObject.
+ * cFibGraphicsItemFibExtObject.
+ * This grapical item enables the user to change input values of the
+ * lead external object it represents.
  *
  * @see cFibElement::evalueObject()
  * @see cFibGraphicsItem
@@ -47,8 +50,8 @@ History:
 */
 
 
-#ifndef ___FIB__NCREATOR__C_FIB_GRAPHICS_ITEM_FIB_OBJECT_H__
-#define ___FIB__NCREATOR__C_FIB_GRAPHICS_ITEM_FIB_OBJECT_H__
+#ifndef ___FIB__NCREATOR__C_FIB_GRAPHICS_ITEM_FIB_EXT_OBJECT_H__
+#define ___FIB__NCREATOR__C_FIB_GRAPHICS_ITEM_FIB_EXT_OBJECT_H__
 
 
 #include "version.h"
@@ -80,18 +83,20 @@ class cFibGraphicsScene;
 class cFibInputVariable;
 class cFibInputVariables;
 class cWidgetFibInputVariables;
+class cWidgetFibVector;
 class eFibNodeChangedEvent;
 class cFibNode;
 
-class cFibGraphicsItemFibObject: public cFibGraphicsItem,
+class cFibGraphicsItemFibExtObject: public cFibGraphicsItem,
 		public lScalarValueChanged, public lFibNodeChanged{
 public:
 
 	/**
-	 * parameter constructor for a graphics item for a Fib object
+	 * A parameter constructor for a graphics item for a Fib object.
 	 *
 	 * @param pInFibObject a pointer to the Fib object object for the
-	 * 	widget / item to construct
+	 * 	widget / item to construct;
+	 * 	It should have a Fib external object as its leaf element.
 	 * 	@see pFibObject
 	 * @param ulInFibNodeVersionDisplayed the Fib node version of the
 	 * 	Fib object, wich is displayed
@@ -103,16 +108,17 @@ public:
 	 * 	@see pFibObjectCopy
 	 * @param pParent a pointer to parent of this widget
 	 */
-	cFibGraphicsItemFibObject( cFibElement * pInFibObject,
+	cFibGraphicsItemFibExtObject( cFibElement * pInFibObject,
 		const unsigned long ulInFibNodeVersionDisplayed = 0,
 		cFibElement * pInFibObjectCopy = NULL,
 		QGraphicsItem * pParent = NULL );
 	
 	/**
-	 * parameter constructor for a graphics item for a Fib object
+	 * A parameter constructor for a graphics item for a Fib object.
 	 *
 	 * @param pInFibObject a pointer to the Fib object object for the
-	 * 	widget / item to construct
+	 * 	widget / item to construct, it should have a Fib external object
+	 * 	as its leaf element
 	 * 	@see pFibObject
 	 * @param ulInFibNodeVersionDisplayed the Fib node version of the
 	 * 	Fib object, wich is displayed
@@ -123,11 +129,12 @@ public:
 	 * @param pInFibObjectCopy a pointer to a copy of a Fib object to copy;
 	 * 	This Fib object will be shown by this object with evalueObject()
 	 * 	if present, else pFibObject will be used.
+	 * 	It should have a Fib external object as its leaf element.
 	 * 	This object is responsible for deleting the Fib object copy.
 	 * 	@see pFibObjectCopy
 	 * @param pParent a pointer to parent of this widget
 	 */
-	cFibGraphicsItemFibObject( cFibElement * pInFibObject,
+	cFibGraphicsItemFibExtObject( cFibElement * pInFibObject,
 		const unsigned long ulInFibNodeVersionDisplayed,
 		cFibGraphicsScene * pInFibGraphicsScene,
 		cFibElement * pInFibObjectCopy = NULL,
@@ -136,7 +143,7 @@ public:
 	/**
 	 * destructor
 	 */
-	virtual ~cFibGraphicsItemFibObject();
+	virtual ~cFibGraphicsItemFibExtObject();
 	
 	
 	/**
@@ -147,7 +154,7 @@ public:
 	
 	
 	/**
-	 * @return the name of this class "cFibGraphicsItemFibObject"
+	 * @return the name of this class "cFibGraphicsItemFibExtObject"
 	 */
 	virtual std::string getName() const;
 	
@@ -244,6 +251,15 @@ protected:
 	 */
 	void evalueInputVariables();
 	
+	
+	/**
+	 * This method creats the main options widget (pWidgetMainOptions).
+	 *
+	 * @see pWidgetMainOptions
+	 * @return true if the main options widget was created
+	 * 	(pWidgetMainOptions != 0), else false
+	 */
+	virtual bool createMainOptions();
 
 //members:
 	
@@ -314,17 +330,25 @@ protected:
 	QGraphicsPixmapItem * pGraphicsPixmapItemForFibObject;
 	
 	/**
-	 * The mutex for acessing pGraphicsPixmapItemForFibObject.
+	 * The mutex for accessing pGraphicsPixmapItemForFibObject.
 	 * @see pGraphicsPixmapItemForFibObject
 	 */
 	mutable QMutex mutexGraphicsPixmapItemForFibObject;
 	
-};//end class cFibGraphicsItemFibObject
+	
+	/**
+	 * The widget for the external object input vector.
+	 * @see createMainOptions()
+	 * @see pWidgetMainOptions
+	 */
+	cWidgetFibVector * pWidgetFibVector;
+	
+};//end class cFibGraphicsItemFibExtObject
 
 };//end namespace nCreator
 };//end namespace fib
 
-#endif //___FIB__NCREATOR__C_FIB_GRAPHICS_ITEM_FIB_OBJECT_H__
+#endif //___FIB__NCREATOR__C_FIB_GRAPHICS_ITEM_FIB_EXT_OBJECT_H__
 
 
 

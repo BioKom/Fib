@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fib_object
+			xmlns:xsd="http://www.w3.org/2001/XMLSchema-instance"
+			xmlns="http://www.biokom.info/"
+			xsd:schemaLocation="http://www.biokom.info/fib.xsd">
+<root>
+	<multimedia_info fib_version="3" db_version="2"/>
+	<optionalpart>
+		<pair key="name" value="quadrangle"/>
+		<pair key="description" value="This object is for creating a quadrangle ."/>
+	</optionalpart>
+	<input_variables>
+		<variable number="1" default="8"/>
+		<variable number="2" default="8"/>
+		<variable number="3" default="8"/>
+		<variable number="4" default="22"/>
+		<variable number="5" default="27"/>
+		<variable number="6" default="22"/>
+		<variable number="7" default="27"/>
+		<variable number="8" default="8"/>
+	</input_variables>
+	<domains>
+		<dim count="2">
+			<dimension number="1" direction="horizontal"/>
+			<dimension number="2" direction="vertical"/>
+			<vector elements="2">
+				<integer min="0" max="127"/>
+				<integer min="0" max="127"/>
+			</vector>
+		</dim>
+		<property name="colorRGB" >
+			<vector elements="3">
+				<naturalNumberB bit="8" />
+				<naturalNumberB bit="8" />
+				<naturalNumberB bit="8" />
+			</vector>
+		</property>
+		<property name="transparency" >
+			<vector elements="1">
+				<naturalNumberB bit="8" />
+			</vector>
+		</property>
+		<subfunction>
+			<naturalNumber max="250" />
+		</subfunction>
+		<externObject>
+			<vector elements="4">
+				<integer min="-10000" max="10000" /><!--Identifier-->
+				<naturalNumber max="32" /><!--number input values-->
+				<naturalNumber max="8" /><!--number subobjects-->
+				<naturalNumber max="16" /><!--number output values-->
+			</vector>
+		</externObject>
+	</domains>
+	<main_fib_object>
+		
+		<property>
+			<vector type="property.colorRGB">
+				<value>0</value>
+				<value>0</value>
+				<value>250</value>
+			</vector>
+			<obj identifier="-41">
+				<vector type="externObjectInput">
+					<variable>1</variable>
+					<variable>2</variable>
+					<variable>3</variable>
+					<variable>4</variable>
+					<variable>5</variable>
+					<variable>6</variable>
+					<variable>7</variable>
+					<variable>8</variable>
+				</vector>
+			</obj>
+		</property>
+		
+	</main_fib_object>
+</root>
+</fib_object>

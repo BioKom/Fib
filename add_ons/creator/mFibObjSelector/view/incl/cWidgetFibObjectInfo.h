@@ -1,6 +1,3 @@
-
-//TODO check
-
 /**
  * @file cWidgetFibObjectInfo
  * file name: cWidgetFibObjectInfo.h
@@ -10,7 +7,7 @@
  *
  * System: C++, Qt4
  *
- * This file specifies a class for the information about a Fib object.
+ * This file specifies a class for a widget for information about a Fib object.
  *
  *
  * Copyright (C) @c GPL3 2013 Betti Oesterholz
@@ -29,7 +26,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * This file specifies a class for the information about a Fib object.
+ * This file specifies a class for a widget for information about a Fib object.
  *
  * It should look like:
  * +-------------------------------------------------+
@@ -57,6 +54,7 @@ History:
 #include <QWidget>
 #include <QFrame>
 #include <QLabel>
+#include <QTextEdit>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QGraphicsView>
@@ -78,7 +76,7 @@ class cWidgetFibObjectInfo: public QFrame, public lFibObjectInfoChanged{
 public:
 	
 	/**
-	 * standard constructor for a Fib object info widget
+	 * The standard constructor for a Fib object info widget.
 	 *
 	 * @param pInFibObjectInfo a pointer to the Fib object info object for this widget
 	 * 	@see pFibObjectInfo
@@ -98,7 +96,7 @@ public:
 	 * Note: Don't delete the returned Fib object info object.
 	 *
 	 * @see pFibObjectInfo
-	 * @return a pointer to the Fib object info object of this widget
+	 * @return a const pointer to the Fib object info object of this widget
 	 */
 	const cFibObjectInfo * getFibObjectInfo() const;
 	
@@ -120,17 +118,19 @@ public:
 	/**
 	 * This method sets if this Fib object info widget is selected or not.
 	 *
-	 * @param bSelected true if this widget is selected, else false
+	 * @see bSelected
+	 * @see sendSelectedFibObjectInfoChange()
+	 * @param bInSelected true if this widget is selected, else false
 	 */
-	void setSelected( bool bSelected = true );
+	void setSelected( bool bInSelected = true );
 	
 	/**
 	 * Event method
-	 * It will be called every time a Fib Fib object info object
+	 * It will be called every time a Fib object info object
 	 * (cFibObjectInfo), at which this object is registered, was changed.
 	 *
-	 * @param pFibObjectInfoChanged a pointer to the event, with the information
-	 * 	about the changed Fib node
+	 * @param pFibObjectInfoChanged a pointer to the event, with the
+	 * 	information about the changed Fib node
 	 */
 	virtual void fibObjectInfoChanged(
 		const eFibObjectInfoChangedEvent * pFibObjectInfoChanged );
@@ -176,8 +176,11 @@ protected:
 	 * @see unregisterListenerSelectedFibObjectInfo()
 	 * @see liListenersSelectedWidgetFibObjectInfo
 	 * @see setSelectedFibObjectInfo()
+	 * @param pSelectedFibObjectInfo a pointer to the selected Fib object
+	 * 	info object (should be this), or NULL if non should be selected
 	 */
-	void sendSelectedFibObjectInfoChange();
+	void sendSelectedFibObjectInfoChange(
+		cWidgetFibObjectInfo * pSelectedFibObjectInfo );
 	
 	/**
 	 * This method will (re-)create this Fib object info widget
@@ -196,7 +199,7 @@ protected:
 	 */
 	virtual void mousePressEvent( QMouseEvent * );
 	
-protected:
+//members
 	
 	/**
 	 * A pointer to the Fib object info object this widget represents.
@@ -204,6 +207,12 @@ protected:
 	 * @see createFibObjectInfoWidget()
 	 */
 	cFibObjectInfo * pFibObjectInfo;
+	
+	/**
+	 * True if this Fib object info is selected, else (not selected) false.
+	 * @see setSelected()
+	 */
+	bool bSelected;
 	
 	/**
 	 * The label for the name of the Fib object.
@@ -216,8 +225,10 @@ protected:
 	 * @see pLayoutCenter
 	 */
 	enum edCenterViewMode{
-		ED_PREVIEW,//view preview picture in the center
-		ED_DESCRIPTION//view Fib object description in the center
+		///view preview picture in the center
+		ED_PREVIEW,
+		///view Fib object description in the center
+		ED_DESCRIPTION
 	}centerViewMode;
 	
 	
@@ -227,7 +238,7 @@ protected:
 	 * (edCenterViewMode::ED_DESCRIPTION)
 	 * @see edCenterViewMode
 	 */
-	QLabel * pLabelDescription;
+	QTextEdit * pTextDescription;
 	
 	/**
 	 * The preview image for the Fib object.
@@ -257,7 +268,7 @@ protected:
 	QLabel * pLabelNumberOfFibElements;
 	
 	/**
-	 * The label for the number of input variables of the Fib object.
+	 * The label for the number of external subobjects of the Fib object.
 	 * @see cRoot::getNumberOfExternSubobjects()
 	 */
 	QLabel * pLabelNumberOfExtSubobjects;
@@ -282,11 +293,9 @@ protected:
 	 * Mutex to lock access to the listeners for changes of the selected
 	 * Fib object info widget.
 	 * Lock the mutex if you use one of the following containers:
-	 * @see setInputVariableChangeListener
+	 * @see setListenersSelectedWidgetFibObjectInfo
 	 */
 	mutable QMutex mutexListenersSelectedWidgetFibObjectInfo;
-	
-private:
 	
 };//end class cWidgetFibObjectInfo
 

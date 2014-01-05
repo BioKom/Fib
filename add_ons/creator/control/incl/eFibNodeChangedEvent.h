@@ -32,6 +32,7 @@
  * This file specifies a event for Fib object node changes.
  * If a Fib object changes, the Fib object nodes (cFibNode) for it will
  * send a event of this type to all registered listeners of type.
+ * @pattern event
  * @see cFibNode
  * @see lFibNodeChanged
  */

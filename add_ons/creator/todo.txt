@@ -4,19 +4,19 @@
 -- try to implement sub windows for the different Fib object views
 
 
-- database functions -> into own database Fib object handler
-	- load Fib database object
+- database functions
+	- at init database -> load all Fib database objects (load Fib database object)
 	- load database object
 	- get database objects from database directory / source
 	- set database folder (+ recursive)
 	- store as database object into database
-	- connections betwean objects: used by, created from, similar (, used together)
 
 - object view (for database objects)
 -- connections betwean objects
 
 - draw background ( paint() ) correctly (cEvalueSimpleRGBA255QPainter)
 
+- Bugfix?: cFibInputVariables(0x1a2b888)::assignValues() called very often
 
 - build cFibElement elements for creator, e.g. cArea -> cAreaCreator
 -- implement converter from cFib* to cFib*Creator (cFib*Creator constructor + convert equal to copyElement() )
@@ -32,6 +32,11 @@ nice to have:
 cFibObjectSourcePath::loadFibObject() : "user can change" adapt for operating system users or/and with optional part entry
 
 cFibObjectInfo + tFibObjectInfo: extractInfoFromLoadedFibObject() ( + cFibObjectInfo( ulInIdentifier, pInFibObjectSource ) )
+
+cWidgetFibObjectInfo:
+	- description Text if mouse click -> select info
+	- picture for is changebel
+	- create and add mini pictures (for bottom line)
 
 
 - test drawing on areas greater +-2^15 (QPainter restrictions)

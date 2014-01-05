@@ -42,7 +42,7 @@ History:
 #include "nFibObjectTools.h"
 
 #include "cRoot.h"
-#include "cFibVariable.h"
+#include "fib/incl/cFibVariable.h"
 
 
 using namespace fib::nCreator;

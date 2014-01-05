@@ -113,9 +113,9 @@ namespace nFibNodeHandler{
 		/**
 		 * destructor which deletes the Fib node handler if not allready deleted
 		 */
-		~cFibNodeHandlerDeleter(){
+		~cFibNodeHandlerDeleter() {
 			
-			if ( cFibNodeHandler::pFibNodeHandler != NULL ){
+			if ( cFibNodeHandler::pFibNodeHandler != NULL ) {
 				//delete node handler
 				delete cFibNodeHandler::pFibNodeHandler;
 				cFibNodeHandler::pFibNodeHandler = NULL;
@@ -141,7 +141,7 @@ namespace nFibNodeHandler{
  * constructor for the Fib object node handler
  */
 cFibNodeHandler::cFibNodeHandler():
-		tmNextDeleteNodesAction( time( NULL ) + TM_DELAY_BETWEAN_DELETE_NODES_ACTION ){
+		tmNextDeleteNodesAction( time( NULL ) + TM_DELAY_BETWEAN_DELETE_NODES_ACTION ) {
 	
 	pFibNodeHandler = this;
 }
@@ -150,12 +150,12 @@ cFibNodeHandler::cFibNodeHandler():
 /**
  * destructor
  */
-cFibNodeHandler::~cFibNodeHandler(){
+cFibNodeHandler::~cFibNodeHandler() {
 	
 	DEBUG_OUT_L2(<<"cFibNodeHandler::~cFibNodeHandler() called"<<endl<<flush);
 	//delete all Fib object nodes
 	for ( set< cFibNode * >::iterator itrFibNode = setFibNodes.begin();
-			itrFibNode != setFibNodes.end(); itrFibNode++ ){
+			itrFibNode != setFibNodes.end(); itrFibNode++ ) {
 		
 		delete (*itrFibNode);
 	}
@@ -165,14 +165,14 @@ cFibNodeHandler::~cFibNodeHandler(){
 #ifdef DEBUG
 	DEBUG_OUT_L2(<<"cFibNodeHandler::~cFibNodeHandler() existing "<<setFibObjectsRoot.size()<<" root Fib objects"<<endl<<flush);
 	for ( set< cFibElement * >::iterator itrFibObject = setFibObjectsRoot.begin();
-			itrFibObject != setFibObjectsRoot.end(); itrFibObject++ ){
+			itrFibObject != setFibObjectsRoot.end(); itrFibObject++ ) {
 		
 		DEBUG_OUT_L3(<<"cFibNodeHandler::~cFibNodeHandler() existing Fib object root "<<(*itrFibObject)<<endl<<flush);
 	}
 #endif //DEBUG
 	DEBUG_OUT_L2(<<"cFibNodeHandler::~cFibNodeHandler() delete all "<<setFibObjectsRoot.size()<<" Fib objects"<<endl<<flush);
 	for ( set< cFibElement * >::iterator itrFibObject = setFibObjectsRoot.begin();
-			itrFibObject != setFibObjectsRoot.end(); itrFibObject++ ){
+			itrFibObject != setFibObjectsRoot.end(); itrFibObject++ ) {
 		
 		DEBUG_OUT_L3(<<"cFibNodeHandler::~cFibNodeHandler() delete Fib object root "<<(*itrFibObject)<<" (superior "<<flush<<(*itrFibObject)->getSuperiorFibElement()<<")"<<endl<<flush);
 		(*itrFibObject)->deleteObject();
@@ -188,7 +188,7 @@ cFibNodeHandler::~cFibNodeHandler(){
 	//delete the mutex for the Fib node
 	for ( map< cFibElement * , QMutex * >::iterator
 			itrFibObjectMutex = mapFibObjectRootsMutex.begin();
-			itrFibObjectMutex != mapFibObjectRootsMutex.end(); itrFibObjectMutex++ ){
+			itrFibObjectMutex != mapFibObjectRootsMutex.end(); itrFibObjectMutex++ ) {
 		
 		delete (itrFibObjectMutex->second);
 	}
@@ -200,9 +200,9 @@ cFibNodeHandler::~cFibNodeHandler(){
 /**
  * @return a instance of the Fib object node handler
  */
-cFibNodeHandler * cFibNodeHandler::getInstance(){
+cFibNodeHandler * cFibNodeHandler::getInstance() {
 	
-	if ( pFibNodeHandler == NULL ){
+	if ( pFibNodeHandler == NULL ) {
 		//create a new instance
 		pFibNodeHandler = new cFibNodeHandler();
 	}//else return existing instance
@@ -226,10 +226,10 @@ cFibNodeHandler * cFibNodeHandler::getInstance(){
  * @return the Fib node for the given Fib object
  */
 cFibNode * cFibNodeHandler::getNodeForFibObject( cFibElement * pFibObject,
-		lFibNodeChanged * pFibNodeChangeListener, const bool bIsChangebel ){
+		lFibNodeChanged * pFibNodeChangeListener, const bool bIsChangebel ) {
 	
 	DEBUG_OUT_L2(<<"cFibNodeHandler("<<this<<")::getNodeForFibObject( pFibObject="<<pFibObject<<", bIsChangebel="<<(bIsChangebel?"true":"false")<<") called"<<endl<<flush);
-	if ( pFibObject == NULL ){
+	if ( pFibObject == NULL ) {
 		//no Fib object -> no node
 		return NULL;
 	}
@@ -238,11 +238,11 @@ cFibNode * cFibNodeHandler::getNodeForFibObject( cFibElement * pFibObject,
 	map< cFibElement * , cFibNode * >::iterator itrFoundFibNode =
 		mapFibNodes.find( pFibObject );
 		
-	if ( itrFoundFibNode != mapFibNodes.end() ){
+	if ( itrFoundFibNode != mapFibNodes.end() ) {
 		//existing Fib node found
 		DEBUG_OUT_L2(<<"cFibNodeHandler("<<this<<")::getNodeForFibObject( "<<pFibObject<<") existing Fib node found"<<endl<<flush);
 		cFibNode * pFoundFibNode = itrFoundFibNode->second;
-		if ( pFibNodeChangeListener != NULL ){
+		if ( pFibNodeChangeListener != NULL ) {
 			//register the Fib node change listener
 			pFoundFibNode->registerNodeChangeListener( pFibNodeChangeListener );
 		}
@@ -253,7 +253,7 @@ cFibNode * cFibNodeHandler::getNodeForFibObject( cFibElement * pFibObject,
 	DEBUG_OUT_L2(<<"cFibNodeHandler("<<this<<")::getNodeForFibObject( "<<pFibObject<<") no existing Fib node found -> create a new Fib node"<<endl<<flush);
 	
 	cFibNode * pFibNode = new cFibNode( pFibObject, bIsChangebel );
-	if ( pFibNodeChangeListener != NULL ){
+	if ( pFibNodeChangeListener != NULL ) {
 		//register the Fib node change listener
 		pFibNode->registerNodeChangeListener( pFibNodeChangeListener );
 	}
@@ -263,7 +263,7 @@ cFibNode * cFibNodeHandler::getNodeForFibObject( cFibElement * pFibObject,
 	DEBUG_OUT_L2(<<"cFibNodeHandler::getNodeForFibObject() add root Fib object "<<pFibObjectRoot<<endl<<flush);
 	pair< set< cFibElement * >::iterator, bool > paRootInserted =
 		setFibObjectsRoot.insert( pFibObjectRoot );
-	if ( ! paRootInserted.second ){
+	if ( ! paRootInserted.second ) {
 #ifdef SWITCH_SUPERIOR_EVALUED_OBJECT
 
 		//find superior Fib objects
@@ -272,7 +272,7 @@ cFibNode * cFibNodeHandler::getNodeForFibObject( cFibElement * pFibObject,
 		list< cFibElement * > liSuperiorFibElements =
 			getSuperiorFibElement( pFibObject );
 		
-		while ( ! liSuperiorFibElements.empty ){
+		while ( ! liSuperiorFibElements.empty ) {
 			//check next superior Fib element
 			pActualSuperiorObject = liSuperiorFibElements.front();
 			liSuperiorFibElements.pop_front();
@@ -280,9 +280,9 @@ cFibNode * cFibNodeHandler::getNodeForFibObject( cFibElement * pFibObject,
 			//search the possible nodes
 			for ( set< cFibNode * >::iterator
 						itrActualNode = setFibNodes.begin();
-					itrActualNode != setFibNodes.end(); itrActualNode++ ){
+					itrActualNode != setFibNodes.end(); itrActualNode++ ) {
 				
-				if ( pActualSuperiorObject == ((*itrActualNode)->pFibObject) ){
+				if ( pActualSuperiorObject == ((*itrActualNode)->pFibObject) ) {
 					//superior node found
 					setSuperiorNodes.insert( *itrActualNode );
 					break;
@@ -291,14 +291,14 @@ cFibNode * cFibNodeHandler::getNodeForFibObject( cFibElement * pFibObject,
 		}//while superior Fib elements to check exists
 		
 		//find the next lower Fib objects
-		if ( ! setSuperiorNodes.empty() ){
+		if ( ! setSuperiorNodes.empty() ) {
 			
 			/*check which of the lower Fib objects of the superior Fib object is
 			 a lower Fib object of pFibObject and move them to the new node*/
 			set< cFibNode * > setNextSuperiorLowerNodes;
 			map< cFibElement *, cFibNode * > mapSuperiorNodeFibElements;
 			for ( set< cFibNode * >::iterator itrSuperiorNode = setSuperiorNodes.begin();
-					itrSuperiorNode != setSuperiorNodes.end(); itrSuperiorNode++ ){
+					itrSuperiorNode != setSuperiorNodes.end(); itrSuperiorNode++ ) {
 				setNextSuperiorLowerNodes.insert(
 					(*itrSuperiorNode)->setNextLowerNodes.begin(),
 					(*itrSuperiorNode->setNextLowerNodes.end() );
@@ -310,13 +310,13 @@ cFibNode * cFibNodeHandler::getNodeForFibObject( cFibElement * pFibObject,
 			for ( set< cFibNode * >::iterator
 						itrNextSupLower = setNextSuperiorLowerNodes.begin();
 					itrNextSupLower != setNextSuperiorLowerNodes.end();
-					itrNextSupLower++ ){
+					itrNextSupLower++ ) {
 				/* check the superior nodes of the actual lower Fib node (lower
 				 * to next superior)*/
 				//remove the link betwean lower node and next superior nodes
 				for (set< cFibNode * >::iterator
 							itrSuperiorNode = setSuperiorNodes.begin();
-						itrSuperiorNode != setSuperiorNodes.end(); itrSuperiorNode++ ){
+						itrSuperiorNode != setSuperiorNodes.end(); itrSuperiorNode++ ) {
 					//remove connection from actual lower node to superior node
 					(*itrSuperiorNode)->setNextLowerNodes.erase( *itrNextSupLower );
 					(*itrNextSupLower)->setNextSuperiorNodes.erase( *itrSuperiorNode );
@@ -326,7 +326,7 @@ cFibNode * cFibNodeHandler::getNodeForFibObject( cFibElement * pFibObject,
 				list< cFibElement * > liSuperiorObjects =
 					getSuperiorFibElements( (itrNextSupLower*)->pFibObject );
 				
-				while ( ! liSuperiorObjects.empty() ){
+				while ( ! liSuperiorObjects.empty() ) {
 					//check next superrior Fib element
 					cFibElement * pActualSuperiorObject =
 						liSuperiorObjects.front();
@@ -337,7 +337,7 @@ cFibNode * cFibNodeHandler::getNodeForFibObject( cFibElement * pFibObject,
 						itrFoundSuperiorNodeElement =
 							mapSuperiorNodeFibElements.find( pActualSuperiorObject );
 					
-					if ( itrFoundSuperiorNodeElement != mapSuperiorNodeFibElements.end() ){
+					if ( itrFoundSuperiorNodeElement != mapSuperiorNodeFibElements.end() ) {
 						// actual superior is also a next superior
 						//make the link betwean lower node and next superior node
 						itrFoundSuperiorNodeElement->second->setNextLowerNodes.insert(
@@ -348,7 +348,7 @@ cFibNode * cFibNodeHandler::getNodeForFibObject( cFibElement * pFibObject,
 						continue;
 					}
 					//check if the given superior is a superior of the new Fib node
-					if ( pActualSuperiorObject == pFibObject ){
+					if ( pActualSuperiorObject == pFibObject ) {
 						/* actual superior is Fib object for new node
 						 *-> move lower Fib node to new Fib node*/
 						pFibNode->setNextLowerNodes.insert( *itrNextSupLower );
@@ -368,7 +368,7 @@ cFibNode * cFibNodeHandler::getNodeForFibObject( cFibElement * pFibObject,
 			//make connection from new Fib node to all its superior nodes
 			for (set< cFibNode * >::iterator
 						itrSuperiorNode = setSuperiorNodes.begin();
-					itrSuperiorNode != setSuperiorNodes.end(); itrSuperiorNode++ ){
+					itrSuperiorNode != setSuperiorNodes.end(); itrSuperiorNode++ ) {
 				//make connection from superior node to new node
 				(*itrSuperiorNode)->setNextLowerNodes.insert( pFibNode );
 				pFibNode->setNextSuperiorNodes.insert( *itrSuperiorNode );
@@ -380,9 +380,9 @@ cFibNode * cFibNodeHandler::getNodeForFibObject( cFibElement * pFibObject,
 			//check for all Fib nodes in the root Fib object without superior nodes
 			list< cFibNode * > liPossibleLowerNodes;
 			for ( set< cFibNode * >::iterator itrActualNode = setFibNodes.begin();
-					itrActualNode != setFibNodes.end(); itrActualNode++ ){
+					itrActualNode != setFibNodes.end(); itrActualNode++ ) {
 				
-				if ( (*itrActualNode)->setNextSuperiorNodes.empty() ){
+				if ( (*itrActualNode)->setNextSuperiorNodes.empty() ) {
 					/*node has no superior nodes
 					-> it is possible a lower to the new node*/
 					liPossibleLowerNodes.push_back( (*itrActualNode) );
@@ -391,17 +391,17 @@ cFibNode * cFibNodeHandler::getNodeForFibObject( cFibElement * pFibObject,
 			if ( list< cFibNode * >::iterator
 						itrPossibleLowerNode = liPossibleLowerNodes.begin();
 					itrPossibleLowerNode != liPossibleLowerNodes.end();
-					itrPossibleLowerNode++ ){
+					itrPossibleLowerNode++ ) {
 				//check superior Fib elements of possible lower node
 				list< cFibElement * > liSuperiorObjects =
 					getSuperiorFibElements( (itrNextSupLower*)->pFibObject );
 				
-				while ( ! liSuperiorObjects.empty() ){
+				while ( ! liSuperiorObjects.empty() ) {
 					cFibElement * pActualSuperiorObject =
 						liSuperiorObjects.front();
 					liSuperiorObjects.pop_front();
 					
-					if ( pActualSuperiorObject == pFibObject ){
+					if ( pActualSuperiorObject == pFibObject ) {
 						/* actual superior is Fib object for new node
 						 *-> (mark lower Fib node to) move lower Fib node to new
 						 *  Fib node*/
@@ -435,7 +435,7 @@ cFibNode * cFibNodeHandler::getNodeForFibObject( cFibElement * pFibObject,
 		list< pair< cFibNode *, unsignedIntFib > > liPossibleNodes;
 		//fill liPossibleNodes with nodes from
 		for ( set< cFibNode * >::iterator itrActualNode = setNodesForRoot.begin();
-				itrActualNode != setNodesForRoot.end(); itrActualNode++ ){
+				itrActualNode != setNodesForRoot.end(); itrActualNode++ ) {
 			liPossibleNodes.push_back( pair< cFibNode *, unsignedIntFib >(
 				(*itrActualNode),
 				((*itrActualNode)->pFibObject)->getNumberOfElement() ) );
@@ -447,24 +447,24 @@ cFibNode * cFibNodeHandler::getNodeForFibObject( cFibElement * pFibObject,
 		
 		for ( cFibElement * pActualSuperiorObject =
 			pFibObject->getSuperiorFibElement(); pActualSuperiorObject != NULL;
-			pActualSuperiorObject = pActualSuperiorObject->getSuperiorFibElement() ){
+			pActualSuperiorObject = pActualSuperiorObject->getSuperiorFibElement() ) {
 			
 			const unsignedIntFib uiActualFibElementNumber =
 				pActualSuperiorObject->getNumberOfElement();
 			//search the possible nodes
-			if ( bCheckNodesIfPossible ){
+			if ( bCheckNodesIfPossible ) {
 				//check if nodes are still possible
 				for ( list< pair< cFibNode *, unsignedIntFib > >::iterator
 							itrActualNode = liPossibleNodes.begin();
-						itrActualNode != liPossibleNodes.end(); ){
+						itrActualNode != liPossibleNodes.end(); ) {
 					
-					if ( pActualSuperiorObject == (itrActualNode->first->pFibObject) ){
+					if ( pActualSuperiorObject == (itrActualNode->first->pFibObject) ) {
 						//superior node found
 						pSuperiorNode = itrActualNode->first;
 						break;
 					}
 					//check if the node is still possible
-					if ( itrActualNode->second < uiActualFibElementNumber ){
+					if ( itrActualNode->second < uiActualFibElementNumber ) {
 						//node is still possible
 						itrActualNode++;
 					}else{/*actual node Fib element number is greater/after actual
@@ -475,22 +475,22 @@ cFibNode * cFibNodeHandler::getNodeForFibObject( cFibElement * pFibObject,
 			}else{//don't check if nodes are still possible
 				for ( list< pair< cFibNode *, unsignedIntFib > >::iterator
 							itrActualNode = liPossibleNodes.begin();
-						itrActualNode != liPossibleNodes.end(); itrActualNode++ ){
+						itrActualNode != liPossibleNodes.end(); itrActualNode++ ) {
 					
-					if ( pActualSuperiorObject == (itrActualNode->first->pFibObject) ){
+					if ( pActualSuperiorObject == (itrActualNode->first->pFibObject) ) {
 						//superior node found
 						pSuperiorNode = itrActualNode->first;
 						break;
 					}
 				}
 			}
-			if ( pSuperiorNode ){
+			if ( pSuperiorNode ) {
 				//superior node found -> stop search
 				break;
 			}
 			bCheckNodesIfPossible = pActualSuperiorObject->isBranch();
 		}
-		if ( pSuperiorNode ){
+		if ( pSuperiorNode ) {
 			//superior node found
 			
 			/*check which of the lower Fib objects of the superior Fib object is
@@ -505,22 +505,22 @@ cFibNode * cFibNodeHandler::getNodeForFibObject( cFibElement * pFibObject,
 			for ( set< cFibNode * >::iterator
 						itrNextSupLower = setNextSuperiorLowerNodes.begin();
 					itrNextSupLower != setNextSuperiorLowerNodes.end();
-					itrNextSupLower++ ){
+					itrNextSupLower++ ) {
 				/* check the superior nodes of the actual lower Fib node (lower
 				 * to next superior)*/
 				
 				list< cFibElement * > liSuperiorObjects =
 					getSuperiorFibElements( (*itrNextSupLower)->pFibObject );
 				
-				while ( ! liSuperiorObjects.empty() ){
+				while ( ! liSuperiorObjects.empty() ) {
 					cFibElement * pActualSuperiorObject =
 						liSuperiorObjects.front();
 					liSuperiorObjects.pop_front();
-					if ( pActualSuperiorObject == pSuperiorNodeFibElement ){
+					if ( pActualSuperiorObject == pSuperiorNodeFibElement ) {
 						// actual superior is next superior -> check next superior element
 						continue;
 					}
-					if ( pActualSuperiorObject == pFibObject ){
+					if ( pActualSuperiorObject == pFibObject ) {
 						/* actual superior is Fib object for new node
 						 *-> (mark lower Fib node to) move lower Fib node to new
 						 *  Fib node*/
@@ -537,7 +537,7 @@ cFibNode * cFibNodeHandler::getNodeForFibObject( cFibElement * pFibObject,
 			}//end for all lower Fib nodes of the superior Fib nodes
 			//move the found nodes
 			for ( list< cFibNode * >::iterator itrLowerNode = liLowerNodesOfNewNode.begin();
-					itrLowerNode != liLowerNodesOfNewNode.end(); itrLowerNode++ ){
+					itrLowerNode != liLowerNodesOfNewNode.end(); itrLowerNode++ ) {
 				//move actual lower node from superior node to new node
 				setNextSuperiorLowerNodes.erase( *itrLowerNode );
 				(*itrLowerNode)->setNextSuperiorNodes.erase( pSuperiorNode );
@@ -553,9 +553,9 @@ cFibNode * cFibNodeHandler::getNodeForFibObject( cFibElement * pFibObject,
 			//check for all Fib nodes in the root Fib object without superior nodes
 			list< cFibNode * > liPossibleLowerNodes;
 			for ( set< cFibNode * >::iterator itrActualNode = setNodesForRoot.begin();
-					itrActualNode != setNodesForRoot.end(); itrActualNode++ ){
+					itrActualNode != setNodesForRoot.end(); itrActualNode++ ) {
 				
-				if ( (*itrActualNode)->setNextSuperiorNodes.empty() ){
+				if ( (*itrActualNode)->setNextSuperiorNodes.empty() ) {
 					/*node has no superior nodes
 					-> it is possible a lower to the new node*/
 					liPossibleLowerNodes.push_back( (*itrActualNode) );
@@ -564,17 +564,17 @@ cFibNode * cFibNodeHandler::getNodeForFibObject( cFibElement * pFibObject,
 			for ( list< cFibNode * >::iterator
 						itrPossibleLowerNode = liPossibleLowerNodes.begin();
 					itrPossibleLowerNode != liPossibleLowerNodes.end();
-					itrPossibleLowerNode++ ){
+					itrPossibleLowerNode++ ) {
 				//check superior Fib elements of possible lower node
 				list< cFibElement * > liSuperiorObjects =
 					getSuperiorFibElements( (*itrPossibleLowerNode)->pFibObject );
 				
-				while ( ! liSuperiorObjects.empty() ){
+				while ( ! liSuperiorObjects.empty() ) {
 					cFibElement * pActualSuperiorObject =
 						liSuperiorObjects.front();
 					liSuperiorObjects.pop_front();
 					
-					if ( pActualSuperiorObject == pFibObject ){
+					if ( pActualSuperiorObject == pFibObject ) {
 						/* actual superior is Fib object for new node
 						 *-> (mark lower Fib node to) move lower Fib node to new
 						 *  Fib node*/
@@ -608,7 +608,7 @@ cFibNode * cFibNodeHandler::getNodeForFibObject( cFibElement * pFibObject,
 	
 	/* start tread to call deleteNodesWithoutListeners() if the last start
 	 * was more than 10 seconds in the past*/
-	if ( tmNextDeleteNodesAction < time( NULL )  ){
+	if ( tmNextDeleteNodesAction < time( NULL )  ) {
 		//set the time when it should be tried to delete not needed nodes the next time
 		tmNextDeleteNodesAction = time( NULL ) + TM_DELAY_BETWEAN_DELETE_NODES_ACTION;
 		
@@ -642,7 +642,7 @@ cFibNode * cFibNodeHandler::getNodeForFibObject( cFibElement * pFibObject,
  * @return true if the given Fib node points to an existing Fib node
  * 	in this handler, else false
  */
-bool cFibNodeHandler::isValidNode( cFibNode * pFibNode ){
+bool cFibNodeHandler::isValidNode( cFibNode * pFibNode ) {
 	
 	//check if the Fib node exists
 	const set< cFibNode * >::const_iterator itrFoundFibNode =
@@ -664,15 +664,15 @@ bool cFibNodeHandler::isValidNode( cFibNode * pFibNode ){
  * @return the next Fib node which contains the given Fib object, or
  * 	NULL if non exists
  */
-cFibNode * cFibNodeHandler::getContainingNodeForFibObject( cFibElement * pFibObject ){
+cFibNode * cFibNodeHandler::getContainingNodeForFibObject( cFibElement * pFibObject ) {
 	
 	for ( cFibElement * pActualFibElement = pFibObject; pActualFibElement != NULL;
-			pActualFibElement = pActualFibElement->getSuperiorFibElement() ){
+			pActualFibElement = pActualFibElement->getSuperiorFibElement() ) {
 		//try to find a Fib node for the actual Fib element
 		map< cFibElement * , cFibNode * >::iterator itrActualFibElementNode =
 			mapFibNodes.find( pActualFibElement );
 		
-		if ( itrActualFibElementNode != mapFibNodes.end() ){
+		if ( itrActualFibElementNode != mapFibNodes.end() ) {
 			//node for Fib element found -> return it
 			return itrActualFibElementNode->second;
 		}
@@ -696,14 +696,14 @@ cFibNode * cFibNodeHandler::getContainingNodeForFibObject( cFibElement * pFibObj
  */
 bool cFibNodeHandler::integrateFibObjectIntoNode( cFibNode * pContainingNode,
 		cFibElement * pOriginalFibObjectToReplace, cFibElement * pNewFibObject,
-		const QObject * pChangedBy ){
+		const QObject * pChangedBy ) {
 	
 	DEBUG_OUT_L2(<<"bool cFibNodeHandler::integrateFibObjectIntoNode( pContainingNode="<<pContainingNode<<", pOriginalFibObjectToReplace="<<pOriginalFibObjectToReplace<<", pNewFibObject="<<pNewFibObject<<", pChangedBy="<<pChangedBy<<" ) called"<<endl<<flush);
 	
 	if ( ( pContainingNode == NULL ) || ( pOriginalFibObjectToReplace == NULL ) ||
-			( pNewFibObject == NULL ) ){
+			( pNewFibObject == NULL ) ) {
 		//can't integrate Fib object
-		if ( pNewFibObject != NULL ){
+		if ( pNewFibObject != NULL ) {
 			DEBUG_OUT_L2(<<"bool cFibNodeHandler::integrateFibObjectIntoNode() delete new Fib object ("<<pNewFibObject<<" delete Fib object)"<<endl<<flush);
 			pNewFibObject->deleteObject();
 		}
@@ -711,7 +711,7 @@ bool cFibNodeHandler::integrateFibObjectIntoNode( cFibNode * pContainingNode,
 		return false;
 	}
 	
-	if ( ! pContainingNode->bIsChangebel ){
+	if ( ! pContainingNode->bIsChangebel ) {
 		//original not changebel -> can't integrate new Fib object pNewFibObject
 		DEBUG_OUT_L2(<<"bool cFibNodeHandler::integrateFibObjectIntoNode() done original not changebel -> can't integrate new Fib object pNewFibObject -> delete Fib object pNewFibObject ("<<pNewFibObject<<")"<<endl<<flush);
 		pNewFibObject->deleteObject();
@@ -719,7 +719,7 @@ bool cFibNodeHandler::integrateFibObjectIntoNode( cFibNode * pContainingNode,
 	}
 	
 	
-	if ( pContainingNode->getFibObject() == NULL ){
+	if ( pContainingNode->getFibObject() == NULL ) {
 		//set new Fib object pNewFibObject
 		DEBUG_OUT_L2(<<"bool cFibNodeHandler::integrateFibObjectIntoNode() old Fib object NULL -> set new Fib object pNewFibObject"<<endl<<flush);
 		//lock Fib node
@@ -733,7 +733,7 @@ bool cFibNodeHandler::integrateFibObjectIntoNode( cFibNode * pContainingNode,
 		
 		unlock( pContainingNode );
 		
-	}else if ( ! pOriginalFibObjectToReplace->equal( *pNewFibObject, false ) ){
+	}else if ( ! pOriginalFibObjectToReplace->equal( *pNewFibObject, false ) ) {
 		
 		//transfer the node and all its subnodes
 		DEBUG_OUT_L2(<<"bool cFibNodeHandler::integrateFibObjectIntoNode() transfer the node and all its subnodes"<<endl<<flush);
@@ -761,12 +761,12 @@ bool cFibNodeHandler::integrateFibObjectIntoNode( cFibNode * pContainingNode,
 		set< cFibNode * > setNodesToTransfer;
 		cFibNode * pNodeToTransfer = NULL;
 		DEBUG_OUT_L3(<<"bool cFibNodeHandler::integrateFibObjectIntoNode() find all nodes to transfer"<<endl<<flush);
-		while ( ! liNodesToCheckIfTransfer.empty() ){
+		while ( ! liNodesToCheckIfTransfer.empty() ) {
 			//take next node
 			pNodeToTransfer = liNodesToCheckIfTransfer.front();
 			liNodesToCheckIfTransfer.pop_front();
 			
-			if ( pNodeToTransfer->pFibObject == NULL ){
+			if ( pNodeToTransfer->pFibObject == NULL ) {
 				//no Fib object -> skip node
 				continue;
 			}
@@ -775,7 +775,7 @@ bool cFibNodeHandler::integrateFibObjectIntoNode( cFibNode * pContainingNode,
 				pNodeToTransfer->pFibObject->getNumberOfElement();
 			
 			if ( ( uiOrgFibElementNumber <= uiNodeFibElementNumber ) &&
-					( uiNodeFibElementNumber <= uiOrgLastFibElementNumber ) ){
+					( uiNodeFibElementNumber <= uiOrgLastFibElementNumber ) ) {
 				/*next node in original Fib object (pOriginalFibObjectToReplace)
 				 -> next node is node to transfer*/
 				setNodesToTransfer.insert( pNodeToTransfer );
@@ -786,11 +786,11 @@ bool cFibNodeHandler::integrateFibObjectIntoNode( cFibNode * pContainingNode,
 				
 				for ( set< cFibNode * >::iterator
 						itrNextLowerNode = setNextLowerNodes.begin();
-						itrNextLowerNode != setNextLowerNodes.end(); itrNextLowerNode++ ){
+						itrNextLowerNode != setNextLowerNodes.end(); itrNextLowerNode++ ) {
 					
 					if ( ( (*itrNextLowerNode) != NULL ) &&
 							( (*itrNextLowerNode)->pMasterRoot ==
-								pOriginalFibObjectMasterRoot ) ){
+								pOriginalFibObjectMasterRoot ) ) {
 						//master root elements identical (in same Fib object)
 						liNodesToCheckIfTransfer.push_back( *itrNextLowerNode );
 					}//else next lower node is not a node to transfer
@@ -798,12 +798,12 @@ bool cFibNodeHandler::integrateFibObjectIntoNode( cFibNode * pContainingNode,
 			}//end if next node was not a node to transfer
 		}//end find all nodes to transfer
 		
-		if ( pOriginalFibObjectToReplace->getSuperiorFibElement() != NULL ){
+		if ( pOriginalFibObjectToReplace->getSuperiorFibElement() != NULL ) {
 			//replace the original Fib object with new Fib object
 			DEBUG_OUT_L3(<<"bool cFibNodeHandler::integrateFibObjectIntoNode() replace the original Fib object with new Fib object"<<endl<<flush);
 			const bool bFibObjectReplaced = pOriginalFibObjectToReplace->
 				overwriteObjectWithObject( pNewFibObject );
-			if ( ! bFibObjectReplaced ){
+			if ( ! bFibObjectReplaced ) {
 				//Error: Fib object could not be replaced
 				DEBUG_OUT_EL2(<<"bool cFibNodeHandler::integrateFibObjectIntoNode() Error: Fib object could not be replaced (delete Fib object "<<pNewFibObject<<" (new))"<<endl<<flush);
 				
@@ -819,11 +819,11 @@ bool cFibNodeHandler::integrateFibObjectIntoNode( cFibNode * pContainingNode,
 		//transfer nodes
 		DEBUG_OUT_L3(<<"bool cFibNodeHandler::integrateFibObjectIntoNode() transfer nodes"<<endl<<flush);
 		set< cFibNode * > setLowestNodesToNotify;
-		if ( ! setNodesToTransfer.empty() ){
+		if ( ! setNodesToTransfer.empty() ) {
 			//nodes to transfer
 			for ( set< cFibNode * >::iterator
 					itrActualNode = setNodesToTransfer.begin();
-					itrActualNode != setNodesToTransfer.end(); itrActualNode++ ){
+					itrActualNode != setNodesToTransfer.end(); itrActualNode++ ) {
 				
 				//transfer actual node
 				set< cFibNode * > setActualLowestNodesToNotify =
@@ -835,10 +835,10 @@ bool cFibNodeHandler::integrateFibObjectIntoNode( cFibNode * pContainingNode,
 			}
 		}
 		
-		if ( pOriginalFibObjectToReplace->getSuperiorFibElement() != NULL ){
+		if ( pOriginalFibObjectToReplace->getSuperiorFibElement() != NULL ) {
 			//check if given containing node needs to be rewired
 			DEBUG_OUT_L3(<<"bool cFibNodeHandler::integrateFibObjectIntoNode() check if given containing node needs to be rewired"<<endl<<flush);
-			if ( pNodeToTransfer->pFibObject == pOriginalFibObjectToReplace ){
+			if ( pNodeToTransfer->pFibObject == pOriginalFibObjectToReplace ) {
 				/*the original Fib object is the Fib object for the containing node needs
 				 -> replace Fib object with new one*/
 				pNodeToTransfer->pFibObject  = pNewFibObject;
@@ -857,7 +857,7 @@ bool cFibNodeHandler::integrateFibObjectIntoNode( cFibNode * pContainingNode,
 			
 			//for all changed roots update there master root object
 			if ( ( itrNodesForRoot != mapNodesForRoots.end() ) &&
-					( itrNodesForRoot->second.empty() ) ){
+					( itrNodesForRoot->second.empty() ) ) {
 				//no nodes for root remaining -> remove it from this class members
 				DEBUG_OUT_L3(<<"cFibNodeHandler::integrateFibObjectIntoNode() erase old root Fib object "<<pOldMasterRoot<<endl<<flush);
 				setFibObjectsRoot.erase( pOldMasterRoot );
@@ -877,7 +877,7 @@ bool cFibNodeHandler::integrateFibObjectIntoNode( cFibNode * pContainingNode,
 		
 		//for all lowest Fib nodes which contain changes -> notify them
 		DEBUG_OUT_L3(<<"bool cFibNodeHandler::integrateFibObjectIntoNode() for all lowest Fib nodes which contain changes -> notify them"<<endl<<flush);
-		if ( setLowestNodesToNotify.empty() ){
+		if ( setLowestNodesToNotify.empty() ) {
 			//notify given containing node of change
 			pContainingNode->fibObjectChanged( pChangedBy );
 			
@@ -885,7 +885,7 @@ bool cFibNodeHandler::integrateFibObjectIntoNode( cFibNode * pContainingNode,
 			//increase version number of all changed (lower nodes)
 			for ( set< cFibNode * >::iterator
 					itrActualNode = setLowestNodesToNotify.begin();
-					itrActualNode != setLowestNodesToNotify.end(); itrActualNode++ ){
+					itrActualNode != setLowestNodesToNotify.end(); itrActualNode++ ) {
 				//increase version number
 				(*itrActualNode)->increaseFibObjectVersion();
 				
@@ -893,7 +893,7 @@ bool cFibNodeHandler::integrateFibObjectIntoNode( cFibNode * pContainingNode,
 			
 			for ( set< cFibNode * >::iterator
 					itrActualNode = setLowestNodesToNotify.begin();
-					itrActualNode != setLowestNodesToNotify.end(); itrActualNode++ ){
+					itrActualNode != setLowestNodesToNotify.end(); itrActualNode++ ) {
 				
 				const eFibNodeChangedEvent fibNodeChangedEvent( (*itrActualNode),
 					(*itrActualNode)->getFibObjectVersion(), pChangedBy );
@@ -907,7 +907,7 @@ bool cFibNodeHandler::integrateFibObjectIntoNode( cFibNode * pContainingNode,
 		
 		set< cFibElement * >::iterator itrRootFibObject =
 			setFibObjectsRoot.find( pOriginalFibObjectToReplace );
-		if ( itrRootFibObject != setFibObjectsRoot.end() ){
+		if ( itrRootFibObject != setFibObjectsRoot.end() ) {
 			//original Fib object is a root Fib object
 			setFibObjectsRoot.erase( itrRootFibObject );
 			//erase entries from mapFibObjectRoots
@@ -915,10 +915,10 @@ bool cFibNodeHandler::integrateFibObjectIntoNode( cFibNode * pContainingNode,
 				itrNextElement;
 			for ( map< cFibElement * , cFibElement * >::iterator
 					itrActualFibElement = mapFibObjectRoots.begin();
-					itrActualFibElement != mapFibObjectRoots.end(); ){
+					itrActualFibElement != mapFibObjectRoots.end(); ) {
 				itrNextElement = itrActualFibElement;
 				itrNextElement++;
-				if ( (itrActualFibElement->second) == pOriginalFibObjectToReplace ){
+				if ( (itrActualFibElement->second) == pOriginalFibObjectToReplace ) {
 					//delete entry
 					mapFibObjectRoots.erase( itrActualFibElement );
 				}//else use next element
@@ -929,7 +929,7 @@ bool cFibNodeHandler::integrateFibObjectIntoNode( cFibNode * pContainingNode,
 			//delete the mutex for the root
 			map< cFibElement * , QMutex * > ::iterator itrMutexForRoot =
 				mapFibObjectRootsMutex.find( pOriginalFibObjectToReplace );
-			if ( itrMutexForRoot->second ){
+			if ( itrMutexForRoot->second ) {
 				//delete mutex for Fib object
 				delete (itrMutexForRoot->second);
 			}
@@ -1020,7 +1020,7 @@ public:
 			ulPathCostFromLastFound( 0 ),
 			pEndFibObject( NULL ),
 			liOpenElementsToFind( liPathToFind ),
-			bEndSubobjectsEqual( false ){
+			bEndSubobjectsEqual( false ) {
 		
 		integrateFibElementIntoPath( pFirstFibElement, 0 );
 	}
@@ -1036,7 +1036,7 @@ public:
 			ulPathCostFromLastFound( pPathToCopy->ulPathCostFromLastFound ),
 			pEndFibObject( pPathToCopy->pEndFibObject ),
 			liOpenElementsToFind( pPathToCopy->liOpenElementsToFind ),
-			bEndSubobjectsEqual( pPathToCopy->bEndSubobjectsEqual ){
+			bEndSubobjectsEqual( pPathToCopy->bEndSubobjectsEqual ) {
 		//nothing to do
 	}
 	
@@ -1058,7 +1058,7 @@ public:
 	 * 	Beware: you have to care that the returned pointer is deleted
 	 */
 	cOpenPathForTransferNode * integrateFibElementIntoPathClone(
-			cFibElement * pNextFibElement, unsigned int uiNumberOfSubobject = 1 ){
+			cFibElement * pNextFibElement, unsigned int uiNumberOfSubobject = 1 ) {
 		//clone this path
 		cOpenPathForTransferNode * pPathClone =
 			new cOpenPathForTransferNode( this );
@@ -1067,7 +1067,7 @@ public:
 			pPathClone->integrateFibElementIntoPath(
 				pNextFibElement, uiNumberOfSubobject );
 		
-		if ( bFibElementIntegrated ){
+		if ( bFibElementIntegrated ) {
 			//Fib element was integrated
 			return pPathClone;
 		}//else Fib element could not be integrated -> delete path clone and return NULL
@@ -1098,9 +1098,9 @@ public:
 	 * @return true if the given Fib element could be integrated, else false
 	 */
 	bool integrateFibElementIntoPath(
-			cFibElement * pNextFibElement, unsigned int uiNumberOfSubobject = 1 ){
+			cFibElement * pNextFibElement, unsigned int uiNumberOfSubobject = 1 ) {
 		
-		if ( pNextFibElement == NULL ){
+		if ( pNextFibElement == NULL ) {
 			//can't create new path with no Fib element
 			return false;
 		}
@@ -1110,14 +1110,14 @@ public:
 			itrFoundEqualFibElement;
 		for ( itrFoundEqualFibElement = liOpenElementsToFind.begin();
 				itrFoundEqualFibElement != liOpenElementsToFind.end();
-				itrFoundEqualFibElement++ ){
+				itrFoundEqualFibElement++ ) {
 			
-			if ( pNextFibElement->equalElement( *(itrFoundEqualFibElement->first) ) ){
+			if ( pNextFibElement->equalElement( *(itrFoundEqualFibElement->first) ) ) {
 				//equal Fib element found
 				break;
 			}
 		}//end search for equal Fib element
-		if ( itrFoundEqualFibElement != liOpenElementsToFind.end() ){
+		if ( itrFoundEqualFibElement != liOpenElementsToFind.end() ) {
 			//equal Fib element found
 			cFibElement * pEqualFibElement = itrFoundEqualFibElement->first;
 			ulPathCostFromLastFound = 0;
@@ -1129,25 +1129,25 @@ public:
 			  * 		for subobjects )*/
 			ulPathCost -= 32;//one Fib element less missing
 			//check Fib element in wrong order
-			if ( itrFoundEqualFibElement != liOpenElementsToFind.begin() ){
+			if ( itrFoundEqualFibElement != liOpenElementsToFind.begin() ) {
 				//next Fib element not first of path to find
 				ulPathCost += 2;//Fib elements in wrong order
 			}
 			//check Fib element in wrong subobject (of branch)
-			if ( itrFoundEqualFibElement->second != uiNumberOfSubobject ){
+			if ( itrFoundEqualFibElement->second != uiNumberOfSubobject ) {
 				ulPathCost += 1;//Fib element wrong subobject (of branch)
 			}
 			
 			//check not equal subobjects for new end object
-			if ( pNextFibElement->equal( *pEqualFibElement ) ){
+			if ( pNextFibElement->equal( *pEqualFibElement ) ) {
 				//Fib objects are equal -> subobjects are equal
-				if ( ! bEndSubobjectsEqual ){
+				if ( ! bEndSubobjectsEqual ) {
 					//end Fib objects not equal before, but now equal -> reduce cost
 					ulPathCost -= 4;
 					bEndSubobjectsEqual = true;
 				}
 			}else{//Fib objects are not equal
-				if ( bEndSubobjectsEqual ){
+				if ( bEndSubobjectsEqual ) {
 					//end Fib objects equal before, but now not equal -> increase cost
 					ulPathCost += 4;
 					bEndSubobjectsEqual = false;
@@ -1183,7 +1183,7 @@ public:
 		/* check end condition 1: leaf Fib element reached (last / end Fib
 		 * 	element has no subobjects)*/
 		if ( ( pEndFibObject == NULL ) ||
-				( pEndFibObject->getNumberOfSubobjects() == 0 ) ){
+				( pEndFibObject->getNumberOfSubobjects() == 0 ) ) {
 			//last / end Fib element of the path has no subobjects -> path ends
 			return true;
 		}
@@ -1194,7 +1194,7 @@ public:
 		 */
 		const unsigned long ulMaxPossibleGain =
 			liOpenElementsToFind.size() * 32;
-		if ( ulMaxPossibleGain < ulPathCostFromLastFound ){
+		if ( ulMaxPossibleGain < ulPathCostFromLastFound ) {
 			return true;
 		}//else
 		//end condition not true
@@ -1215,18 +1215,18 @@ public:
 	 */
 	bool operator<( const cOpenPathForTransferNode & otherPath ) const{
 		
-		if ( ulPathCost < otherPath.ulPathCost ){
+		if ( ulPathCost < otherPath.ulPathCost ) {
 			//this path is lower / better
 			return true;
 		}//else
-		if ( ulPathCost == otherPath.ulPathCost ){
-			if ( liOpenElementsToFind.size() < otherPath.liOpenElementsToFind.size() ){
+		if ( ulPathCost == otherPath.ulPathCost ) {
+			if ( liOpenElementsToFind.size() < otherPath.liOpenElementsToFind.size() ) {
 				//this path is lower / better
 				return true;
 			}//else
-			if ( liOpenElementsToFind.size() == otherPath.liOpenElementsToFind.size() ){
+			if ( liOpenElementsToFind.size() == otherPath.liOpenElementsToFind.size() ) {
 				
-				if ( ulPathCostFromLastFound < otherPath.ulPathCostFromLastFound ){
+				if ( ulPathCostFromLastFound < otherPath.ulPathCostFromLastFound ) {
 					//this path is lower / better
 					return true;
 				}//else
@@ -1272,11 +1272,11 @@ using namespace nFibNodeHandler::nTransferNode;
  */
 set< cFibNode * > cFibNodeHandler::transferNode(
 		cFibNode * pNodeToTransfer,
-		cFibElement * pFromFibObject, cFibElement * pToFibObject ){
+		cFibElement * pFromFibObject, cFibElement * pToFibObject ) {
 	
 	DEBUG_OUT_L3(<<"cFibNodeHandler::transferNode( pNodeToTransfer="<<pNodeToTransfer<<", pFromFibObject="<<pFromFibObject<<", pToFibObject="<<pToFibObject<<" ) started "<<endl<<flush);
 	if ( ( pNodeToTransfer == NULL ) || ( pFromFibObject == NULL ) ||
-			( pToFibObject == NULL ) ){
+			( pToFibObject == NULL ) ) {
 		//can't integrate Fib node, something is missing
 		return set< cFibNode * >();
 	}
@@ -1289,28 +1289,28 @@ set< cFibNode * > cFibNodeHandler::transferNode(
 	cFibElement * pNextSuperiorFibElement;
 	for ( cFibElement * pActualFibElement = pNodeFibElement;
 			( pActualFibElement != pFromFibObject ) &&
-			( pActualFibElement != NULL ); ){
+			( pActualFibElement != NULL ); ) {
 		//find number of subobject
 		pNextSuperiorFibElement = pActualFibElement->getSuperiorFibElement();
 		unsignedIntFib uiNumberOfSubobject = 0;
-		if ( pNextSuperiorFibElement ){
+		if ( pNextSuperiorFibElement ) {
 			//evalue the number of the subobject for the actual Fib object
 			list< cFibElement * > liNextFibElementsSubobjects =
 				pActualFibElement->getSubobjects();
-			if ( ! liNextFibElementsSubobjects.empty() ){
+			if ( ! liNextFibElementsSubobjects.empty() ) {
 				//search for pActualFibElement in the subobjects
 				uiNumberOfSubobject = 1;
 				for ( list< cFibElement * >::const_iterator
 						itrSubobject = liNextFibElementsSubobjects.begin();
 						itrSubobject != liNextFibElementsSubobjects.end();
-						itrSubobject++, uiNumberOfSubobject++ ){
+						itrSubobject++, uiNumberOfSubobject++ ) {
 					
-					if ( (*itrSubobject) == pActualFibElement ){
+					if ( (*itrSubobject) == pActualFibElement ) {
 						//pActualFibElement found
 						break;
 					}
 				}//end search for pActualFibElement
-				if ( liNextFibElementsSubobjects.size() < uiNumberOfSubobject ){
+				if ( liNextFibElementsSubobjects.size() < uiNumberOfSubobject ) {
 					//pActualFibElement not found
 					uiNumberOfSubobject = 0;
 				}
@@ -1337,7 +1337,7 @@ set< cFibNode * > cFibNodeHandler::transferNode(
 	setOpenPaths.insert( new cOpenPathForTransferNode( pBestFibObjectForNode ) );
 	
 	//find the best path
-	while ( ! setOpenPaths.empty() ){
+	while ( ! setOpenPaths.empty() ) {
 		//chose best path till now to enlarge it
 		set< cOpenPathForTransferNode * >::iterator
 			itrActualPath = setOpenPaths.begin();
@@ -1353,19 +1353,19 @@ set< cFibNode * > cFibNodeHandler::transferNode(
 		for ( list< cFibElement * >::iterator
 				itrNextFibElement = liNextFibElementsForPath.begin();
 				itrNextFibElement != liNextFibElementsForPath.end();
-				itrNextFibElement++, uiNumberOfSubobject++ ){
+				itrNextFibElement++, uiNumberOfSubobject++ ) {
 			
 			//evalue costs for path which ends with the actual next Fib element
 			cOpenPathForTransferNode * pNewPathForFibElement =
 				pActualPath->integrateFibElementIntoPathClone( *itrNextFibElement,
 					uiNumberOfSubobject );
-			if ( pNewPathForFibElement == NULL ){
+			if ( pNewPathForFibElement == NULL ) {
 				//no new path for Fib element -> check next
 				continue;
 			}
 			
 			//for new path + old best: choose the best path of the evalued paths
-			if ( (*pBestFibObjectForNode) < (*pNewPathForFibElement) ){
+			if ( (*pBestFibObjectForNode) < (*pNewPathForFibElement) ) {
 				//new path is better than old best path -> take it as new best path
 				
 				//old best path not needed anymore
@@ -1374,9 +1374,9 @@ set< cFibNode * > cFibNodeHandler::transferNode(
 				pBestFibObjectForNode = new cOpenPathForTransferNode( pNewPathForFibElement );
 			}
 			//check end condition for new paths
-			if ( pNewPathForFibElement->checkEndCondition() ){
+			if ( pNewPathForFibElement->checkEndCondition() ) {
 				//new path is path that ends -> don't add to open path
-				if ( pNewPathForFibElement != pBestFibObjectForNode ){
+				if ( pNewPathForFibElement != pBestFibObjectForNode ) {
 					//new path not needed anymore -> delete it
 					delete pNewPathForFibElement;
 				}
@@ -1424,19 +1424,19 @@ set< cFibNode * > cFibNodeHandler::transferNode(
 	list< cFibNode * > liNodesToTransfer;
 	for ( set< cFibNode * >::iterator
 			itrNextLowerNode = setNextLowerNodes.begin();
-			itrNextLowerNode != setNextLowerNodes.end(); itrNextLowerNode++ ){
+			itrNextLowerNode != setNextLowerNodes.end(); itrNextLowerNode++ ) {
 		
 		cFibElement * pNextLowerNodeFibElement =
 			(*itrNextLowerNode)->getFibObject();
 		
 		if ( (*itrNextLowerNode)->pMasterRoot ==
-				pOriginalFibObjectMasterRoot ){
+				pOriginalFibObjectMasterRoot ) {
 			//master root elements identical (in same Fib object)
 			const unsignedIntFib uiNextLowerNodeFibElementNumber =
 				pNextLowerNodeFibElement->getNumberOfElement();
 			
 			if ( ( uiOrgFibElementNumber < uiNextLowerNodeFibElementNumber ) &&
-					( uiNextLowerNodeFibElementNumber <= uiOrgLastFibElementNumber ) ){
+					( uiNextLowerNodeFibElementNumber <= uiOrgLastFibElementNumber ) ) {
 				/*next lower node in Fib object of actual Fib node
 				 -> next lower node is node to transfer*/
 				liNodesToTransfer.push_back( *itrNextLowerNode );
@@ -1449,14 +1449,14 @@ set< cFibNode * > cFibNodeHandler::transferNode(
 	const bool bNodeFibObjectEqual = pOldFibNodeObject->equal( *pNewFibNodeObject );
 	
 	set< cFibNode * > setChangedLowestNodes;
-	if ( bNodeFibObjectEqual || liNodesToTransfer.empty() ){
+	if ( bNodeFibObjectEqual || liNodesToTransfer.empty() ) {
 		//old and new Fib node Fib objects equal or no more lower nodes to transfer
 		
-		if ( ! liNodesToTransfer.empty() ){
+		if ( ! liNodesToTransfer.empty() ) {
 			/*old and new Fib node Fib objects equal + lower nodes exists
 			-> transfer lower nodes*/
 			for ( list< cFibNode * >::iterator itrLowerNode = liNodesToTransfer.begin();
-					itrLowerNode != liNodesToTransfer.end(); itrLowerNode++ ){
+					itrLowerNode != liNodesToTransfer.end(); itrLowerNode++ ) {
 				
 				transferNodeForEqualFibObject(
 					*itrLowerNode, pOldFibNodeObject, pNewFibNodeObject );
@@ -1469,12 +1469,12 @@ set< cFibNode * > cFibNodeHandler::transferNode(
 		
 	}else{//old and new Fib node Fib objects not equal -> transfer with path search
 		for ( list< cFibNode * >::iterator itrLowerNode = liNodesToTransfer.begin();
-				itrLowerNode != liNodesToTransfer.end(); itrLowerNode++ ){
+				itrLowerNode != liNodesToTransfer.end(); itrLowerNode++ ) {
 			
 			set< cFibNode * > setActualChangedNodes =
 				transferNode( *itrLowerNode, pOldFibNodeObject, pNewFibNodeObject );
 			
-			if ( ! setActualChangedNodes.empty() ){
+			if ( ! setActualChangedNodes.empty() ) {
 				//if Fib objects for nodes changed
 				setChangedLowestNodes.insert(
 					setActualChangedNodes.begin(), setActualChangedNodes.end() );
@@ -1508,11 +1508,11 @@ set< cFibNode * > cFibNodeHandler::transferNode(
  */
 bool cFibNodeHandler::transferNodeForEqualFibObject(
 		cFibNode * pNodeToTransfer,
-		cFibElement * pFromFibObject, cFibElement * pToFibObject ){
+		cFibElement * pFromFibObject, cFibElement * pToFibObject ) {
 	
 	DEBUG_OUT_L2(<<"cFibNodeHandler::transferNodeForEqualFibObject( pNodeToTransfer="<<pNodeToTransfer<<", pFromFibObject="<<pFromFibObject<<", pToFibObject="<<pToFibObject<<" ) started"<<endl<<flush);
 	if ( ( pNodeToTransfer == NULL ) || ( pFromFibObject == NULL ) ||
-			( pToFibObject == NULL ) ){
+			( pToFibObject == NULL ) ) {
 		//can't integrate Fib node, something is missing
 		return false;
 	}
@@ -1527,7 +1527,7 @@ bool cFibNodeHandler::transferNodeForEqualFibObject(
 		
 	list< cFibNode * > liNodesToTransfer;
 	liNodesToTransfer.push_back( pNodeToTransfer );
-	while ( ! liNodesToTransfer.empty() ){
+	while ( ! liNodesToTransfer.empty() ) {
 		//take next node
 		pNodeToTransfer = liNodesToTransfer.front();
 		liNodesToTransfer.pop_front();
@@ -1567,19 +1567,19 @@ bool cFibNodeHandler::transferNodeForEqualFibObject(
 		set< cFibNode * > & setNextLowerNodes = pNodeToTransfer->setNextLowerNodes;
 		for ( set< cFibNode * >::iterator
 				itrNextLowerNode = setNextLowerNodes.begin();
-				itrNextLowerNode != setNextLowerNodes.end(); itrNextLowerNode++ ){
+				itrNextLowerNode != setNextLowerNodes.end(); itrNextLowerNode++ ) {
 			
 			cFibElement * pNextLowerNodeFibElement =
 				(*itrNextLowerNode)->getFibObject();
 			
 			if ( (*itrNextLowerNode)->pMasterRoot ==
-						pOriginalFibObjectMasterRoot ){
+						pOriginalFibObjectMasterRoot ) {
 				//master root elements identical (in same Fib object)
 				const unsignedIntFib uiNextLowerNodeFibElementNumber =
 					pNextLowerNodeFibElement->getNumberOfElement();
 				
 				if ( ( uiOrgFibElementNumber < uiNextLowerNodeFibElementNumber ) &&
-						( uiNextLowerNodeFibElementNumber <= uiOrgLastFibElementNumber ) ){
+						( uiNextLowerNodeFibElementNumber <= uiOrgLastFibElementNumber ) ) {
 					/*next lower node in Fib object of actual Fib node
 					 -> next lower node is node to transfer*/
 					liNodesToTransfer.push_back( *itrNextLowerNode );
@@ -1603,15 +1603,15 @@ bool cFibNodeHandler::transferNodeForEqualFibObject(
  * @param pFibNode a pointer to the node for which to return the mutex
  * @return a pointer to the mutex for the given Fib node, or NULL if non exists
  */
-QMutex * cFibNodeHandler::getMutex( cFibNode * pFibNode ){
+QMutex * cFibNodeHandler::getMutex( cFibNode * pFibNode ) {
 	
-	if ( pFibNode == NULL ){
+	if ( pFibNode == NULL ) {
 		//no Fib node given -> no mutex
 		return NULL;
 	}
 	cFibElement * pMasterRootForNode = pFibNode->pMasterRoot;
 	
-	if ( pMasterRootForNode == NULL ){
+	if ( pMasterRootForNode == NULL ) {
 		//no master root object for given Fib node -> no mutex
 		return NULL;
 	}
@@ -1619,13 +1619,13 @@ QMutex * cFibNodeHandler::getMutex( cFibNode * pFibNode ){
 	map< cFibElement * , QMutex * >::iterator itrMutex =
 		mapFibObjectRootsMutex.find( pMasterRootForNode );
 	
-	if ( itrMutex == mapFibObjectRootsMutex.end() ){
+	if ( itrMutex == mapFibObjectRootsMutex.end() ) {
 		//master root element don't exists -> create new mutex
 		pair< map< cFibElement * , QMutex * >::iterator , bool > paInsertElement =
 			mapFibObjectRootsMutex.insert( pair< cFibElement * , QMutex * >(
 					pMasterRootForNode, new QMutex() ) );
 		
-		if ( paInsertElement.second ){
+		if ( paInsertElement.second ) {
 			return (paInsertElement.first->second);
 		}//else no new mutex created -> no mutex
 		return NULL;
@@ -1647,13 +1647,13 @@ QMutex * cFibNodeHandler::getMutex( cFibNode * pFibNode ){
  * @param pFibNode the node for which to lock the whole Fib object
  * @return true if the Fib object could be locked (whole Fib object exists)
  */
-bool cFibNodeHandler::lock( cFibNode * pFibNode ){
+bool cFibNodeHandler::lock( cFibNode * pFibNode ) {
 	
 	DEBUG_OUT_L3(<<"cFibNodeHandler("<<this<<")::lock( pFibNode="<<pFibNode<<") called"<<endl<<flush);
 	
 	QMutex * pMutexForNode = getMutex( pFibNode );
 	
-	if ( pMutexForNode == NULL ){
+	if ( pMutexForNode == NULL ) {
 		//no mutex for the node -> can't lock
 		DEBUG_OUT_L3(<<"cFibNodeHandler("<<this<<")::lock( pFibNode="<<pFibNode<<") done; no mutex for the node -> can't lock"<<endl<<flush);
 		return false;
@@ -1690,12 +1690,12 @@ bool cFibNodeHandler::lock( cFibNode * pFibNode ){
  * 	become available
  * @return true if the lock was obtained, otherwise it returns false
  */
-bool cFibNodeHandler::tryLock( cFibNode * pFibNode, int iTimeout ){
+bool cFibNodeHandler::tryLock( cFibNode * pFibNode, int iTimeout ) {
 	
 	DEBUG_OUT_L3(<<"cFibNodeHandler("<<this<<")::tryLock( pFibNode="<<pFibNode<<") called"<<endl<<flush);
 	QMutex * pMutexForNode = getMutex( pFibNode );
 	
-	if ( pMutexForNode == NULL ){
+	if ( pMutexForNode == NULL ) {
 		//no mutex for the node -> can't lock
 		DEBUG_OUT_L3(<<"cFibNodeHandler("<<this<<")::tryLock( pFibNode="<<pFibNode<<") done; no mutex for the node -> can't lock"<<endl<<flush);
 		return false;
@@ -1720,13 +1720,13 @@ bool cFibNodeHandler::tryLock( cFibNode * pFibNode, int iTimeout ){
  * @param pFibNode the node for which to unlock the whole Fib object
  * @return true if the Fib object could be unlocked (whole Fib object exists)
  */
-bool cFibNodeHandler::unlock( cFibNode * pFibNode ){
+bool cFibNodeHandler::unlock( cFibNode * pFibNode ) {
 	
 	DEBUG_OUT_L3(<<"cFibNodeHandler("<<this<<")::unlock( pFibNode="<<pFibNode<<") called"<<endl<<flush);
 	
 	QMutex * pMutexForNode = getMutex( pFibNode );
 	
-	if ( pMutexForNode == NULL ){
+	if ( pMutexForNode == NULL ) {
 		//no mutex for the node -> can't lock
 		DEBUG_OUT_L3(<<"cFibNodeHandler("<<this<<")::unlock( pFibNode="<<pFibNode<<") done; no mutex for the node -> can't lock"<<endl<<flush);
 		return false;
@@ -1753,7 +1753,7 @@ bool cFibNodeHandler::unlock( cFibNode * pFibNode ){
  * 	pFibObject
  */
 list<cFibElement *> cFibNodeHandler::getSuperiorFibElements(
-		cFibElement * pFibObject ){
+		cFibElement * pFibObject ) {
 	/*TODO? linkt sub roots to there external objects
 	 * (what if a external object changes its identifier?)
 	 * - implement list<cFibElement *> getSuperiorFibElements( cFibElement)
@@ -1776,12 +1776,12 @@ list<cFibElement *> cFibNodeHandler::getSuperiorFibElements(
 	//TODO
 	
 	
-	switch ( ucType ){
+	switch ( ucType ) {
 		case 'r':{//given Fib element is sub root element
 			//evalue if object is a sub-root object
 			cFibElement * pSuperiorFibElement =
 				pFibObject->getSuperiorFibElement();
-			if ( pSuperiorFibElement != NULL ){
+			if ( pSuperiorFibElement != NULL ) {
 				//evalue all external object elements which use the subroot object
 				//find the id for the given Fib (subroot) object pFibObject
 				//TODO
@@ -1801,7 +1801,7 @@ list<cFibElement *> cFibNodeHandler::getSuperiorFibElements(
 			
 			liSuperiorElements.push_back( pFibObject->getSuperiorFibElement() );
 			
-			if ( pSuperiorFibElement.getType() == 'o' ){
+			if ( pSuperiorFibElement.getType() == 'o' ) {
 				//the Fib object pFibObject is a external subobject
 				//evalue which (=number) of external subobject in superior external object
 				//TODO
@@ -1828,7 +1828,7 @@ list<cFibElement *> cFibNodeHandler::getSuperiorFibElements(
  * @see mapFibNodes
  * @see setFibObjectsRoot
  */
-void cFibNodeHandler::deleteNodesWithoutListeners(){
+void cFibNodeHandler::deleteNodesWithoutListeners() {
 	DEBUG_OUT_L2(<<"cFibNodeHandler::deleteNodesWithoutListeners() called"<<endl<<flush);
 	//set the time when it should be tried to delete not needed nodes the next time
 	tmNextDeleteNodesAction = time( NULL ) + TM_DELAY_BETWEAN_DELETE_NODES_ACTION;
@@ -1837,11 +1837,11 @@ void cFibNodeHandler::deleteNodesWithoutListeners(){
 	
 	//delete all nodes without a listener
 	for ( set< cFibNode * >::iterator itrActualNode = setFibNodes.begin();
-			itrActualNode != setFibNodes.end(); itrActualNode++ ){
+			itrActualNode != setFibNodes.end(); itrActualNode++ ) {
 		
 		//check if node can be deleted
 		DEBUG_OUT_L4(<<"cFibNodeHandler::deleteNodesWithoutListeners() checking if node "<<(*itrActualNode)<<" can be deleted"<<endl<<flush);
-		if ( (*itrActualNode)->liNodeChangedListeners.empty() ){
+		if ( (*itrActualNode)->liNodeChangedListeners.empty() ) {
 			//node can be deleted
 			DEBUG_OUT_L2(<<"cFibNodeHandler::deleteNodesWithoutListeners() node "<<(*itrActualNode)<<" can be deleted"<<endl<<flush);
 			cFibNode * pFibNodeToDelete = (*itrActualNode);
@@ -1864,7 +1864,7 @@ void cFibNodeHandler::deleteNodesWithoutListeners(){
 			DEBUG_OUT_L3(<<"cFibNodeHandler::deleteNodesWithoutListeners() delete the node "<<pFibNodeToDelete<<endl<<flush);
 			delete pFibNodeToDelete;
 			
-			if ( setNodesForRoot.empty() ){
+			if ( setNodesForRoot.empty() ) {
 				//no Fib node for root object -> delete root object
 				DEBUG_OUT_L3(<<"cFibNodeHandler::deleteNodesWithoutListeners() no Fib node ("<<(*itrActualNode)<<") for root object -> erase root object "<<pFibElementRoot<<""<<endl<<flush);
 				setFibObjectsRoot.erase( pFibElementRoot );
@@ -1873,7 +1873,7 @@ void cFibNodeHandler::deleteNodesWithoutListeners(){
 				map< cFibElement * , QMutex * >::iterator itrMutex =
 					mapFibObjectRootsMutex.find( pFibElementRoot );
 				
-				if ( itrMutex != mapFibObjectRootsMutex.end() ){
+				if ( itrMutex != mapFibObjectRootsMutex.end() ) {
 					//mutex found -> delete it
 					delete (itrMutex->second);
 					mapFibObjectRootsMutex.erase( itrMutex );

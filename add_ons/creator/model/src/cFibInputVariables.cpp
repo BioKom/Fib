@@ -33,6 +33,7 @@
  * If you have a Fib object, the input variables of it are root object
  * input variables or variables used in the Fib object but not defined in it.
  * With this class you can store these.
+ * @pattern Decorator
  *
  * @see cFibInputVariable
  * @see cFibVariable
@@ -44,13 +45,14 @@ History:
 
 
 //TODO switches for test proposes
-#define DEBUG
+//#define DEBUG
 
 
 #include "cFibInputVariables.h"
 
 #include "nFibObjectTools.h"
-#include "cFibInputVariableHandler.h"
+#include "cFibVariableHandler.h"
+#include "cFibVariableCreator.h"
 
 
 using namespace fib::nCreator;
@@ -89,8 +91,8 @@ cFibInputVariables::cFibInputVariables(
 			itrActualInVar = inputVariables.begin();
 			itrActualInVar != inputVariables.end(); itrActualInVar++ ){
 		
-		(*itrActualInVar)->registerInputVariableChangeListener( this );
-		(*itrActualInVar)->registerInputVariableValueChangeListener( this );
+		(*itrActualInVar)->registerChangeListener( this );
+		(*itrActualInVar)->registerScalarValueChangeListener( this );
 	}
 }
 
@@ -121,31 +123,37 @@ cFibInputVariables::cFibInputVariables( cFibElement * pInFibObject,
 	
 	DEBUG_OUT_L2(<<"cFibInputVariables("<<this<<")::cFibInputVariables( pInFibObject="<<pInFibObject<<", bFindInputVariables="<<(bFindInputVariables?"true":"false")<<") called"<<endl<<flush);
 	if ( bFindInputVariables && pFibObject != NULL ){
-		mutexFibInputVariablesHandler.lock();
+		mutexFibInputVariables.lock();
 		//evalue the input variables with nFibObjectTools::evalueInputVariables()
 		list< cFibVariable * > liFibInputVariables =
 			nFibObjectTools::evalueInputVariables( pFibObject, bTillRoot );
 		/*use handler to get cFibInputVariable for cFibVariable and add them
 		 *to inputVariables*/
-		cFibInputVariableHandler * pFibInputVariableHandler =
-			cFibInputVariableHandler::getInstance();
+		cFibVariableHandler * pFibVariableHandler =
+			cFibVariableHandler::getInstance();
 		for ( list< cFibVariable * > ::iterator
 				itrActualInVar = liFibInputVariables.begin();
 				itrActualInVar != liFibInputVariables.end();
 				itrActualInVar++ ){
 			/*get Fib input variable for Fib variable and register this as
 			 *input variable change listener at Fib input variables*/
-			cFibInputVariable * pActualInputVariable =
-				pFibInputVariableHandler->getFibInputVariableForFibVariable(
+			cFibVariableCreator * pActualInputVariable =
+				pFibVariableHandler->getFibVariableCreatorForFibVariable(
 					*itrActualInVar, this );
 			
-			if ( pActualInputVariable ){
-				pActualInputVariable->registerInputVariableValueChangeListener( this );
+			if ( ( pActualInputVariable != NULL ) &&
+					( pActualInputVariable->getName() == "cFibInputVariable" ) ){
 				
-				inputVariables.push_back( pActualInputVariable );
+				(static_cast<cFibInputVariable*>(pActualInputVariable))->
+					registerScalarValueChangeListener( this );
+				(static_cast<cFibInputVariable*>(pActualInputVariable))->
+					registerChangeListener( this );
+				
+				inputVariables.push_back( static_cast<cFibInputVariable*>(
+					pActualInputVariable) );
 			}
 		}
-		mutexFibInputVariablesHandler.unlock();
+		mutexFibInputVariables.unlock();
 	}
 }
 
@@ -161,15 +169,15 @@ cFibInputVariables::cFibInputVariables( cFibInputVariables & fibInputVariables )
 			
 	DEBUG_OUT_L2(<<"cFibInputVariables("<<this<<")::cFibInputVariables( &fibInputVariables="<<(&fibInputVariables)<<" ) called"<<endl<<flush);
 	//register this as input variable change listener at input variables
-	mutexFibInputVariablesHandler.lock();
+	mutexFibInputVariables.lock();
 	for ( QList< cFibInputVariable * >::iterator
 			itrActualInVar = inputVariables.begin();
 			itrActualInVar != inputVariables.end(); itrActualInVar++ ){
 		
-		(*itrActualInVar)->registerInputVariableChangeListener( this );
-		(*itrActualInVar)->registerInputVariableValueChangeListener( this );
+		(*itrActualInVar)->registerChangeListener( this );
+		(*itrActualInVar)->registerScalarValueChangeListener( this );
 	}
-	mutexFibInputVariablesHandler.unlock();
+	mutexFibInputVariables.unlock();
 }
 
 
@@ -180,15 +188,15 @@ cFibInputVariables::~cFibInputVariables(){
 	
 	DEBUG_OUT_L2(<<"cFibInputVariables("<<this<<")::~cFibInputVariables() called"<<endl<<flush);
 	//unregister this as input variable change listener at input variables
-	mutexFibInputVariablesHandler.lock();
+	mutexFibInputVariables.lock();
 	for ( QList< cFibInputVariable * >::iterator
 			itrActualInVar = inputVariables.begin();
 			itrActualInVar != inputVariables.end(); itrActualInVar++ ){
 		
-		(*itrActualInVar)->unregisterInputVariableChangeListener( this );
-		(*itrActualInVar)->unregisterInputVariableValueChangeListener( this );
+		(*itrActualInVar)->unregisterChangeListener( this );
+		(*itrActualInVar)->unregisterScalarValueChangeListener( this );
 	}
-	mutexFibInputVariablesHandler.unlock();
+	mutexFibInputVariables.unlock();
 	DEBUG_OUT_L2(<<"cFibInputVariables("<<this<<")::~cFibInputVariables() done"<<endl<<flush);
 }
 
@@ -226,10 +234,10 @@ unsigned int cFibInputVariables::getNumberOfInputVariables() const{
 cFibInputVariable * cFibInputVariables::getInputVariable(
 		const unsigned int uiNumberOfVariable ){
 	
-	mutexFibInputVariablesHandler.lock();
+	mutexFibInputVariables.lock();
 	cFibInputVariable * pInputVariable =
 		inputVariables.value( uiNumberOfVariable - 1, NULL );
-	mutexFibInputVariablesHandler.unlock();
+	mutexFibInputVariables.unlock();
 	return pInputVariable;
 }
 
@@ -248,10 +256,10 @@ cFibInputVariable * cFibInputVariables::getInputVariable(
 const cFibInputVariable * cFibInputVariables::getInputVariable(
 		const unsigned int uiNumberOfVariable ) const{
 	
-	mutexFibInputVariablesHandler.lock();
+	mutexFibInputVariables.lock();
 	const cFibInputVariable * pInputVariable =
 		inputVariables.value( uiNumberOfVariable - 1, NULL );
-	mutexFibInputVariablesHandler.unlock();
+	mutexFibInputVariables.unlock();
 	return pInputVariable;
 }
 
@@ -265,9 +273,9 @@ const cFibInputVariable * cFibInputVariables::getInputVariable(
  */
 QList< cFibInputVariable * > cFibInputVariables::getInputVariables(){
 	
-	mutexFibInputVariablesHandler.lock();
+	mutexFibInputVariables.lock();
 	QList< cFibInputVariable * > retInputVariables( inputVariables );
-	mutexFibInputVariablesHandler.unlock();
+	mutexFibInputVariables.unlock();
 	return retInputVariables;
 }
 
@@ -281,9 +289,9 @@ QList< cFibInputVariable * > cFibInputVariables::getInputVariables(){
  */
 const QList< cFibInputVariable * > cFibInputVariables::getInputVariables() const{
 	
-	mutexFibInputVariablesHandler.lock();
+	mutexFibInputVariables.lock();
 	const QList< cFibInputVariable * > retInputVariables( inputVariables );
-	mutexFibInputVariablesHandler.unlock();
+	mutexFibInputVariables.unlock();
 	return retInputVariables;
 }
 
@@ -305,24 +313,23 @@ const QList< cFibInputVariable * > cFibInputVariables::getInputVariables() const
 bool cFibInputVariables::addInputVariable( cFibInputVariable * pInputVariable,
 		const unsigned int uiPosition ){
 	
-	mutexFibInputVariablesHandler.lock();
 	if ( pInputVariable == NULL ){
 		//no input variable to add
-		mutexFibInputVariablesHandler.unlock();
-		return true;
+		return false;
 	}
+	mutexFibInputVariables.lock();
 	if ( ( uiPosition == 0 ) ||
-			( ((unsigned int)(inputVariables.size())) < uiPosition ) ){
+			( (static_cast<unsigned int>(inputVariables.size())) < uiPosition ) ){
 		//add input variable to the end of the input variable list
 		inputVariables.push_back( pInputVariable );
 	}else{//insert the input variable at the given position
 		inputVariables.insert( uiPosition - 1 , pInputVariable );
 	}
 	//register this as input variable change listener at input variables
-	pInputVariable->registerInputVariableChangeListener( this );
-	pInputVariable->registerInputVariableValueChangeListener( this );
+	pInputVariable->registerChangeListener( this );
+	pInputVariable->registerScalarValueChangeListener( this );
 	
-	mutexFibInputVariablesHandler.unlock();
+	mutexFibInputVariables.unlock();
 	return true;
 }
 
@@ -341,11 +348,11 @@ bool cFibInputVariables::addInputVariable( cFibInputVariable * pInputVariable,
  */
 bool cFibInputVariables::removeInputVariable( const unsigned int uiPosition ){
 	
-	mutexFibInputVariablesHandler.lock();
+	mutexFibInputVariables.lock();
 	if ( ( uiPosition < 1 ) ||
-			( ((unsigned int)(inputVariables.size())) < uiPosition ) ){
+			( (static_cast<unsigned int>(inputVariables.size())) < uiPosition ) ){
 		//no such input variable to remove
-		mutexFibInputVariablesHandler.unlock();
+		mutexFibInputVariables.unlock();
 		return false;
 	}
 	//evaluate the to remove input variable
@@ -355,11 +362,11 @@ bool cFibInputVariables::removeInputVariable( const unsigned int uiPosition ){
 	inputVariables.removeAt( uiPosition - 1 );
 	if ( ! inputVariables.contains( pRemovedInputVariable ) ){
 		//unregister this as input variable change listener at input variables
-		pRemovedInputVariable->unregisterInputVariableChangeListener( this );
-		pRemovedInputVariable->unregisterInputVariableValueChangeListener( this );
+		pRemovedInputVariable->unregisterChangeListener( this );
+		pRemovedInputVariable->unregisterScalarValueChangeListener( this );
 	}
 	
-	mutexFibInputVariablesHandler.unlock();
+	mutexFibInputVariables.unlock();
 	return true;
 }
 
@@ -378,20 +385,20 @@ bool cFibInputVariables::removeInputVariable( const unsigned int uiPosition ){
 bool cFibInputVariables::removeInputVariable(
 		cFibInputVariable * pInputVariable ){
 	
-	mutexFibInputVariablesHandler.lock();
+	mutexFibInputVariables.lock();
 	if ( ( pInputVariable == NULL ) ||
 			( ! inputVariables.contains( pInputVariable ) ) ){
 		//no such input variable to remove
-		mutexFibInputVariablesHandler.unlock();
+		mutexFibInputVariables.unlock();
 		return false;
 	}
 	
 	//remove input variable
 	inputVariables.removeAll( pInputVariable );
 	//unregister this as input variable change listener at input variables
-	pInputVariable->unregisterInputVariableChangeListener( this );
-	pInputVariable->unregisterInputVariableValueChangeListener( this );
-	mutexFibInputVariablesHandler.unlock();
+	pInputVariable->unregisterChangeListener( this );
+	pInputVariable->unregisterScalarValueChangeListener( this );
+	mutexFibInputVariables.unlock();
 	return true;
 }
 
@@ -414,11 +421,11 @@ bool cFibInputVariables::removeInputVariable(
 bool cFibInputVariables::replaceInputVariable( cFibInputVariable * pInputVariable,
 		const unsigned int uiPosition ){
 	
-	mutexFibInputVariablesHandler.lock();
+	mutexFibInputVariables.lock();
 	if ( ( pInputVariable == NULL ) || ( uiPosition < 1 ) ||
-			( ((unsigned int)(inputVariables.size())) < uiPosition ) ){
+			( (static_cast<unsigned int>(inputVariables.size())) < uiPosition ) ){
 		//no such input variable to replace
-		mutexFibInputVariablesHandler.unlock();
+		mutexFibInputVariables.unlock();
 		return false;
 	}
 	//evaluate the to remove input variable
@@ -428,22 +435,22 @@ bool cFibInputVariables::replaceInputVariable( cFibInputVariable * pInputVariabl
 	inputVariables.removeAt( uiPosition - 1 );
 	if ( ! inputVariables.contains( pRemovedInputVariable ) ){
 		//unregister this as input variable change listener at input variables
-		pRemovedInputVariable->unregisterInputVariableChangeListener( this );
-		pRemovedInputVariable->unregisterInputVariableValueChangeListener( this );
+		pRemovedInputVariable->unregisterChangeListener( this );
+		pRemovedInputVariable->unregisterScalarValueChangeListener( this );
 	}
 	
 	//add the given input variable on the position
-	if ( ((unsigned int)(inputVariables.size())) < uiPosition ){
+	if ( (static_cast<unsigned int>(inputVariables.size())) < uiPosition ){
 		//add input variable to the end of the input variable list
 		inputVariables.push_back( pInputVariable );
 	}else{//insert the input variable at the given position
 		inputVariables.insert( uiPosition - 1 , pInputVariable );
 	}
 	//register this as input variable change listener at new input variables
-	pInputVariable->registerInputVariableChangeListener( this );
-	pInputVariable->registerInputVariableValueChangeListener( this );
+	pInputVariable->registerChangeListener( this );
+	pInputVariable->registerScalarValueChangeListener( this );
 	
-	mutexFibInputVariablesHandler.unlock();
+	mutexFibInputVariables.unlock();
 	return true;
 }
 
@@ -465,14 +472,14 @@ bool cFibInputVariables::replaceInputVariable( cFibInputVariable * pInputVariabl
 bool cFibInputVariables::setInputVariables(
 		QList< cFibInputVariable * > & liInInputVariables ){
 	
-	mutexFibInputVariablesHandler.lock();
+	mutexFibInputVariables.lock();
 	//unregister this as input variable change listener at old input variables
 	for ( QList< cFibInputVariable * >::iterator
 			itrActualInVar = inputVariables.begin();
 			itrActualInVar != inputVariables.end(); itrActualInVar++ ){
 		
-		(*itrActualInVar)->unregisterInputVariableChangeListener( this );
-		(*itrActualInVar)->unregisterInputVariableValueChangeListener( this );
+		(*itrActualInVar)->unregisterChangeListener( this );
+		(*itrActualInVar)->unregisterScalarValueChangeListener( this );
 	}
 	//set the new input variables
 	inputVariables = liInInputVariables;
@@ -482,10 +489,10 @@ bool cFibInputVariables::setInputVariables(
 			itrActualInVar = inputVariables.begin();
 			itrActualInVar != inputVariables.end(); itrActualInVar++ ){
 		
-		(*itrActualInVar)->registerInputVariableChangeListener( this );
-		(*itrActualInVar)->registerInputVariableValueChangeListener( this );
+		(*itrActualInVar)->registerChangeListener( this );
+		(*itrActualInVar)->registerScalarValueChangeListener( this );
 	}
-	mutexFibInputVariablesHandler.unlock();
+	mutexFibInputVariables.unlock();
 	
 	return true;
 }
@@ -543,14 +550,14 @@ void cFibInputVariables::setFibObject( cFibElement * pInFibObject ){
 void cFibInputVariables::assignValues(){
 	
 	DEBUG_OUT_L2(<<"cFibInputVariables("<<this<<")::assignValues() called"<<endl<<flush);
-	mutexFibInputVariablesHandler.lock();
+	mutexFibInputVariables.lock();
 	for ( QList< cFibInputVariable * >::iterator
 			itrActualInVar = inputVariables.begin();
 			itrActualInVar != inputVariables.end(); itrActualInVar++ ){
 		
 		(*itrActualInVar)->assignValue();
 	}
-	mutexFibInputVariablesHandler.unlock();
+	mutexFibInputVariables.unlock();
 	DEBUG_OUT_L2(<<"cFibInputVariables("<<this<<")::assignValues() done"<<endl<<flush);
 }
 
@@ -561,35 +568,27 @@ void cFibInputVariables::assignValues(){
  * It will be called every time a input variable (cFibInputVariable),
  * at which this object is registered,was changed.
  *
- * @param pFibInputVariableEvent a pointer to the event with the
+ * @param pFibVariableChangedEvent a pointer to the event with the
  * 	information of the change of the Fib input variable
  */
-void cFibInputVariables::fibInputVariableChangedEvent(
-		const eFibInputVariableChangedEvent * pFibInputVariableEvent ){
+void cFibInputVariables::changedEvent(
+		const eFibVariableCreatorChangedEvent * pFibVariableChangedEvent ){
 	
-	DEBUG_OUT_L2(<<"cFibInputVariables("<<this<<")::fibInputVariableChangedEvent( pFibInputVariableEvent="<<pFibInputVariableEvent<<") called"<<endl<<flush);
-	if ( pFibInputVariableEvent == NULL ){
+	DEBUG_OUT_L2(<<"cFibInputVariables("<<this<<")::changedEvent( pFibVariableChangedEvent="<<pFibVariableChangedEvent<<") called"<<endl<<flush);
+	if ( pFibVariableChangedEvent == NULL ){
 		//no event given
 		return;
 	}
-	if ( pFibInputVariableEvent->bInputVariableDeleted ){
+	if ( pFibVariableChangedEvent->isDeleted() ){
 		//remove deleted input variable
-		mutexFibInputVariablesHandler.lock();
+		mutexFibInputVariables.lock();
 		inputVariables.removeAll( const_cast<cFibInputVariable*>(
-			pFibInputVariableEvent->pInputVariableChanged ) );
-		mutexFibInputVariablesHandler.unlock();
+			static_cast<const cFibInputVariable*>(
+				pFibVariableChangedEvent->getObject() ) ) );
+		mutexFibInputVariables.unlock();
 	}
 	//redirect event to all variables change listeners
-	mutexInputVariableChangeListener.lock();
-	for ( set< lInputVariableChanged * >::iterator
-			itrChangeListener = setInputVariableChangeListener.begin();
-			itrChangeListener != setInputVariableChangeListener.end();
-			itrChangeListener++ ){
-		
-		(*itrChangeListener)->fibInputVariableChangedEvent(
-			pFibInputVariableEvent );
-	}
-	mutexInputVariableChangeListener.unlock();
+	sendChangeEvent( pFibVariableChangedEvent );
 }
 
 
@@ -599,100 +598,50 @@ void cFibInputVariables::fibInputVariableChangedEvent(
  * at which this object is registered, was changed.
  *
  * @see cFibInputVariable::dValue
- * @param pFibInputVariable a pointer to the changed Fib input variable
+ * @param pFibScalar a pointer to the changed Fib input variable
  */
-void cFibInputVariables::fibInputVariableValueChangedEvent(
-		const cFibInputVariable * pFibInputVariable ){
+void cFibInputVariables::fibScalarValueChangedEvent(
+		const cFibScalar * pFibScalar ){
 	
-	DEBUG_OUT_L2(<<"cFibInputVariables("<<this<<")::fibInputVariableValueChangedEvent( pFibInputVariable="<<pFibInputVariable<<") called"<<endl<<flush);
-	if ( pFibInputVariable == NULL ){
+	DEBUG_OUT_L2(<<"cFibInputVariables("<<this<<")::fibScalarValueChangedEvent( pFibScalar="<<pFibScalar<<") called"<<endl<<flush);
+	if ( pFibScalar == NULL ){
 		//no variable given
 		return;
 	}
 	//redirect event to all variables change listeners
 	mutexInputVariableValueChangeListener.lock();
-	for ( set< lInputVariableValueChanged * >::iterator
+	for ( set< lScalarValueChanged * >::iterator
 			itrChangeListener = setInputVariableValueChangeListener.begin();
 			itrChangeListener != setInputVariableValueChangeListener.end();
 			itrChangeListener++ ){
 		
-		(*itrChangeListener)->fibInputVariableValueChangedEvent(
-			pFibInputVariable );
+		(*itrChangeListener)->fibScalarValueChangedEvent(
+			pFibScalar );
 	}
 	mutexInputVariableValueChangeListener.unlock();
 }
 
 
-
 /**
  * With this function you can register a listeners for changes for any
  * of the contained input variables.
  *
- * @see cFibInputVariable::registerInputVariableChangeListener()
- * @see unregisterInputVariableChangeListener()
- * @see setInputVariableChangeListener
- * @see sendInputVariableChange()
- * @param pInputVariableListener a pointer to the listener for changes
- * @return true if the listener was registered, else false
- */
-bool cFibInputVariables::registerInputVariableChangeListener(
-		lInputVariableChanged * pInputVariableListener ){
-	
-	DEBUG_OUT_L2(<<"cFibInputVariables("<<this<<")::registerInputVariableChangeListener( pInputVariableListener="<<pInputVariableListener<<") called"<<endl<<flush);
-	if ( pInputVariableListener == NULL ){
-		//nothing to register
-		return false;
-	}
-	mutexInputVariableChangeListener.lock();
-	const pair< set< lInputVariableChanged * >::iterator, bool > paListenerInserted =
-		setInputVariableChangeListener.insert( pInputVariableListener );
-	mutexInputVariableChangeListener.unlock();
-	return paListenerInserted.second;
-}
-
-
-/**
- * With this function you can unregister a listeners for changes for any
- * of the contained input variables.
- *
- * @see registerInputVariableChangeListener()
- * @see setInputVariableChangeListener
- * @see sendInputVariableChange()
- * @param pInputVariableListener a pointer to the listener for changes
- * @return true if the listener was registered, else false
- */
-bool cFibInputVariables::unregisterInputVariableChangeListener(
-		lInputVariableChanged * pInputVariableListener ){
-	
-	DEBUG_OUT_L2(<<"cFibInputVariables("<<this<<")::unregisterInputVariableChangeListener( pInputVariableListener="<<pInputVariableListener<<") called"<<endl<<flush);
-	mutexInputVariableChangeListener.lock();
-	const bool bUnregistered =
-		( 0 < setInputVariableChangeListener.erase( pInputVariableListener ) );
-	mutexInputVariableChangeListener.unlock();
-	return bUnregistered;
-}
-
-
-/**
- * With this function you can register a listeners for changes for any
- * of the contained input variables.
- *
- * @see unregisterInputVariableValueChangeListener()
+ * @see unregisterScalarValueChangeListener()
  * @see setInputVariableValueChangeListener
  * @see sendInputVariableValueChange()
  * @param pInputVariableValueListener a pointer to the listener for changes
  * @return true if the listener was registered, else false
  */
-bool cFibInputVariables::registerInputVariableValueChangeListener(
-		lInputVariableValueChanged * pInputVariableValueListener ){
+bool cFibInputVariables::registerScalarValueChangeListener(
+		lScalarValueChanged * pInputVariableValueListener ){
 	
-	DEBUG_OUT_L2(<<"cFibInputVariables("<<this<<")::registerInputVariableValueChangeListener( pInputVariableValueListener="<<pInputVariableValueListener<<") called"<<endl<<flush);
+	DEBUG_OUT_L2(<<"cFibInputVariables("<<this<<")::registerScalarValueChangeListener( pInputVariableValueListener="<<pInputVariableValueListener<<") called"<<endl<<flush);
 	if ( pInputVariableValueListener == NULL ){
 		//nothing to register
 		return false;
 	}
 	mutexInputVariableValueChangeListener.lock();
-	const pair< set< lInputVariableValueChanged * >::iterator, bool > paListenerInserted =
+	const pair< set< lScalarValueChanged * >::iterator, bool > paListenerInserted =
 		setInputVariableValueChangeListener.insert( pInputVariableValueListener );
 	mutexInputVariableValueChangeListener.unlock();
 	return paListenerInserted.second;
@@ -703,16 +652,16 @@ bool cFibInputVariables::registerInputVariableValueChangeListener(
  * With this function you can unregister a listeners for changes for any
  * of the contained input variables.
  *
- * @see registerInputVariableValueChangeListener()
+ * @see registerScalarValueChangeListener()
  * @see setInputVariableValueChangeListener
  * @see sendInputVariableValueChange()
  * @param pInputVariableValueListener a pointer to the listener for changes
  * @return true if the listener was registered, else false
  */
-bool cFibInputVariables::unregisterInputVariableValueChangeListener(
-		lInputVariableValueChanged * pInputVariableValueListener ){
+bool cFibInputVariables::unregisterScalarValueChangeListener(
+		lScalarValueChanged * pInputVariableValueListener ){
 	
-	DEBUG_OUT_L2(<<"cFibInputVariables("<<this<<")::unregisterInputVariableValueChangeListener( pInputVariableValueListener="<<pInputVariableValueListener<<") called"<<endl<<flush);
+	DEBUG_OUT_L2(<<"cFibInputVariables("<<this<<")::unregisterScalarValueChangeListener( pInputVariableValueListener="<<pInputVariableValueListener<<") called"<<endl<<flush);
 	mutexInputVariableValueChangeListener.lock();
 	const bool bUnregistered = ( 0 < setInputVariableValueChangeListener.erase(
 		pInputVariableValueListener ) );

@@ -1,6 +1,3 @@
-
-//TODO check
-
 /**
  * @file eFibObjectInfoChangedEvent
  * file name: eFibObjectInfoChangedEvent.cpp
@@ -33,6 +30,7 @@
  * If a Fib object info object changes, the Fib object info object object
  * (cFibObjectInfo) for it will send an event of this type to all
  * registered listeners of the type lFibObjectInfoChanged .
+ * @pattern event
  * @see cFibObjectInfo
  * @see lFibObjectInfoChanged
  */
@@ -53,7 +51,7 @@ using namespace fib::nCreator;
 
 
 /**
- * constructor
+ * The standard constructor.
  *
  * @param pInFibObjectInfoChanged a pointer to the Fib object info
  * 	object that was changed

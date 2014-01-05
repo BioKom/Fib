@@ -46,8 +46,14 @@ History:
 */
 
 
+//TODO switches for test proposes
+#define DEBUG
+
+
 
 #include "cFibGraphicsItem.h"
+
+#include <QGraphicsView>
 
 #include "cFibGraphicsScene.h"
 #include "cFibNode.h"
@@ -72,7 +78,7 @@ cFibGraphicsItem::cFibGraphicsItem( cFibElement * pInFibObject,
 		QGraphicsItem * pParent ):QGraphicsItem( pParent ),
 		pFibObject( pInFibObject ),
 		ulFibNodeVersionDisplayed( ulInFibNodeVersionDisplayed ),
-		pFibGraphicsScene( NULL ){
+		pFibGraphicsScene( NULL ), pWidgetMainOptions( NULL ){
 	
 	//nothing to do
 }
@@ -98,7 +104,8 @@ cFibGraphicsItem::cFibGraphicsItem( cFibElement * pInFibObject,
 		QGraphicsItem * pParent ):QGraphicsItem( pParent ),
 		pFibObject( pInFibObject ),
 		ulFibNodeVersionDisplayed( ulInFibNodeVersionDisplayed ),
-		pFibGraphicsScene( pInFibGraphicsScene ){
+		pFibGraphicsScene( pInFibGraphicsScene ),
+		pWidgetMainOptions( NULL ){
 	
 	//nothing to do
 }
@@ -109,7 +116,13 @@ cFibGraphicsItem::cFibGraphicsItem( cFibElement * pInFibObject,
  */
 cFibGraphicsItem::~cFibGraphicsItem(){
 	
-	//nothing to do
+	//delete the main options widget
+	mutexMainOptions.lock();
+	if ( pWidgetMainOptions ){
+		pWidgetMainOptions->deleteLater();
+		pWidgetMainOptions = NULL;
+	}
+	mutexMainOptions.unlock();
 }
 
 
@@ -167,7 +180,105 @@ void cFibGraphicsItem::notifyNodeForChange(){
 }
 
 
+/**
+ * This method creats the main options widget (pWidgetMainOptions).
+ *
+ * @see pWidgetMainOptions
+ * @return true if the main options widget was created
+ * 	(pWidgetMainOptions != 0), else false
+ */
+bool cFibGraphicsItem::createMainOptions(){
+	//no general main options
+	return false;
+}
 
+
+/**
+ * Event handler
+ * When the mouse enters this graphical item, this event method is called.
+ *
+ * @see QGraphicsItem::hoverEnterEvent()
+ * @param pEventGraphicsSceneHover a pointer to the hover event
+ */
+void cFibGraphicsItem::hoverEnterEvent(
+		QGraphicsSceneHoverEvent * /*pEventGraphicsSceneHover*/ ){
+	
+	DEBUG_OUT_L2(<<"cFibGraphicsItemFibExtObject("<<this<<")::hoverEnterEvent() started"<<endl<<flush);
+	//display main options of this item
+	mutexMainOptions.lock();
+	if ( pWidgetMainOptions == NULL ){
+		mutexMainOptions.unlock();
+		createMainOptions();
+		mutexMainOptions.lock();
+	}
+	if ( pWidgetMainOptions ){
+		DEBUG_OUT_L4(<<"cFibGraphicsItemFibExtObject("<<this<<")::hoverEnterEvent() display main options (center: ("<<boundingRect().center().x()<<", "<<boundingRect().center().y()<<") bounding box: ("<<boundingRect().x()<<", "<<boundingRect().y()<<", "<<boundingRect().right()<<", "<<boundingRect().bottom()<<") )"<<endl<<flush);
+		/*display widget with input values of external object and input
+		 *variables of part object in center of this item bounding rectange*/
+		/*TODO weg: pWidgetMainOptions->move( boundingRect().center() ).toPoint() );
+		pWidgetMainOptions->move( ( scenePos() + boundingRect().center() ).toPoint() );*/
+		
+		if( ( pFibGraphicsScene != NULL ) &&
+				( ! pFibGraphicsScene->views().isEmpty() ) ){
+			//the item belongs to a scene which is is displayed in a view
+			const QGraphicsView * pGraphicsView = scene()->views().first();
+			if ( ( pGraphicsView != NULL ) &&
+					( pGraphicsView->viewport() != NULL ) ){
+				//graphic view exists and has a viewport
+				const QPointF pointScene = mapToScene( boundingRect().center() );
+				const QPoint pointView = pGraphicsView->mapFromScene( pointScene );
+				
+				pWidgetMainOptions->move(
+					pGraphicsView->viewport()->mapToGlobal( pointView ) );
+			}
+		}
+		
+		pWidgetMainOptions->setVisible( true );
+	}
+	mutexMainOptions.unlock();
+	
+}
+
+
+/**
+ * Event handler
+ * When the mouse leaves this graphical item, this event method is called.
+ *
+ * @see QGraphicsItem::hoverLeaveEvent()
+ * @param pEventGraphicsSceneHover a pointer to the hover event
+ */
+void cFibGraphicsItem::hoverLeaveEvent(
+		QGraphicsSceneHoverEvent * pEventGraphicsSceneHover ){
+	
+	DEBUG_OUT_L2(<<"cFibGraphicsItemFibExtObject("<<this<<")::hoverLeaveEvent() started"<<endl<<flush);
+	/*TODO if not mouse click event on this widget occured
+	-> undisplay main options of this item*/
+	DEBUG_OUT_L4(<<"cFibGraphicsItemFibExtObject("<<this<<")::hoverLeaveEvent() undisplay main options (mouse pos=("<<pEventGraphicsSceneHover->scenePos().x()<<","<<pEventGraphicsSceneHover->scenePos().y()<<") options window: ("<<pWidgetMainOptions->frameGeometry().x()<<", "<<pWidgetMainOptions->frameGeometry().y()<<", "<<pWidgetMainOptions->frameGeometry().right()<<", "<<pWidgetMainOptions->frameGeometry().bottom()<<") )"<<endl<<flush);
+		
+	mutexMainOptions.lock();
+	if ( ( pWidgetMainOptions != NULL ) && ( pEventGraphicsSceneHover != NULL ) ){
+		
+		const QGraphicsView * pGraphicsView = scene()->views().first();
+		if ( ( pGraphicsView != NULL ) &&
+				( pGraphicsView->viewport() != NULL ) ){
+			//graphic view exists and has a viewport
+			const QPointF pointScene = mapToScene(
+				pEventGraphicsSceneHover->scenePos() );
+			const QPoint pointView = pGraphicsView->mapFromScene( pointScene );
+			
+			if ( pWidgetMainOptions->frameGeometry().contains(
+					pGraphicsView->viewport()->mapToGlobal( pointView ) ) ){
+				
+				mutexMainOptions.unlock();
+				return;
+			}
+		}//else undisplay options widget
+		pWidgetMainOptions->setVisible( false );
+	}
+	mutexMainOptions.unlock();
+	
+	update();
+}
 
 
 

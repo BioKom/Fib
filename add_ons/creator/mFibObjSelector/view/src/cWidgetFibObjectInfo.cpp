@@ -1,6 +1,3 @@
-
-//TODO check
-
 /**
  * @file cWidgetFibObjectInfo
  * file name: cWidgetFibObjectInfo.cpp
@@ -10,7 +7,8 @@
  *
  * System: C++, Qt4
  *
- * This file implements a class for the information about a Fib object.
+ * This file implements a class for a widget for the information about a
+ * Fib object.
  *
  *
  * Copyright (C) @c GPL3 2013 Betti Oesterholz
@@ -29,7 +27,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * This file implements a class for the information about a Fib object.
+ * This file implements a class for a widget for the information about a
+ * Fib object.
  *
  * It should look like:
  * +-------------------------------------------------+
@@ -48,22 +47,26 @@ History:
 */
 
 
-//TODO switches for test proposes
-#define DEBUG
+//switches for test proposes
+//#define DEBUG
 
 
 #include "cWidgetFibObjectInfo.h"
 
 #include <QWidget>
 #include <QLabel>
+#include <QTextEdit>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 
 #include "cFibElement.h"
 
-#include "cFibObjectInfo.h"
+#include "cTextField.h"
+
 #include "lSelectedWidgetFibObjectInfo.h"
 #include "cFibGraphicsScene.h"
+#include "cFibObjectSourcePath.h"
+#include "cFibObjectSourceFibDb.h"
 
 
 using namespace fib::nCreator;
@@ -73,17 +76,17 @@ using namespace std;
 
 
 /**
- * standard constructor for a Fib object info widget
+ * The standard constructor for a Fib object info widget.
  *
  * @param pInFibObjectInfo a pointer to the Fib object info object for this widget
  * 	@see pFibObjectInfo
  * @param pParent a pointer the parent of this new Fib object info widget
  */
 cWidgetFibObjectInfo::cWidgetFibObjectInfo( cFibObjectInfo * pInFibObjectInfo,
-		QWidget * pParent ):QFrame( pParent ),
-		pFibObjectInfo( pInFibObjectInfo ),
+		QWidget * pParent ): QFrame( pParent ),
+		pFibObjectInfo( pInFibObjectInfo ), bSelected( false ),
 		pLabelNameOfFibObject( NULL ), centerViewMode( ED_PREVIEW ),
-		pLabelDescription( NULL ),
+		pTextDescription( NULL ),
 		pScenePreviewPicture( NULL ), pViewPreviewPicture( NULL ),
 		pLabelNumberOfInputVariables( NULL ), pLabelNumberOfFibElements( NULL ), pLabelNumberOfExtSubobjects( NULL ),
 		pLayoutCenter( NULL ), pLayoutBottomLine( NULL ), pLayoutMain( NULL ){
@@ -143,10 +146,11 @@ std::string cWidgetFibObjectInfo::getName() const{
 /**
  * This method sets if this Fib object info widget is selected or not.
  *
- * @param bSelected true if this widget is selected, else false
+ * @param bInSelected true if this widget is selected, else false
  */
-void cWidgetFibObjectInfo::setSelected( bool bSelected ){
+void cWidgetFibObjectInfo::setSelected( bool bInSelected ){
 	
+	bSelected = bInSelected;
 	if ( bSelected ){
 		//highlight this widget
 		setBackgroundRole( QPalette::Highlight );
@@ -159,8 +163,8 @@ void cWidgetFibObjectInfo::setSelected( bool bSelected ){
 
 /**
  * Event method
- * It will be called every time a Fib Fib object info object
- * (cFibObjectInfo), at which this object is registered, was changed.
+ * It will be called every time a Fib object info object (cFibObjectInfo),
+ * at which this object is registered, was changed.
  *
  * @param pFibObjectInfoChanged a pointer to the event, with the information
  * 	about the changed Fib node
@@ -170,7 +174,7 @@ void cWidgetFibObjectInfo::fibObjectInfoChanged(
 	
 	if ( ( pFibObjectInfoChanged == NULL ) ||
 			( pFibObjectInfoChanged->getFibObjectInfo() == NULL ) ){
-		//no event of Fib object info -> nothing to do
+		//no Fib object info event -> nothing to do
 		return;
 	}
 	if ( pFibObjectInfoChanged->getFibObjectInfo() == pFibObjectInfo ){
@@ -201,6 +205,7 @@ void cWidgetFibObjectInfo::fibObjectInfoChanged(
 bool cWidgetFibObjectInfo::registerListenerSelectedFibObjectInfo(
 		lSelectedWidgetFibObjectInfo * pSelectedFibObjectInfo ){
 	
+	DEBUG_OUT_L2(<<"cWidgetFibObjectInfo("<<this<<")::registerListenerSelectedFibObjectInfo( pSelectedFibObjectInfo="<<pSelectedFibObjectInfo<<") called"<<endl<<flush);
 	if ( pSelectedFibObjectInfo == NULL ){
 		//nothing to register
 		return false;
@@ -239,15 +244,18 @@ bool cWidgetFibObjectInfo::unregisterListenerSelectedFibObjectInfo(
 
 /**
  * This method send a event that the selected Fib object info widget
- * has changed to this to all registered listeners for changes of the
- * selected Fib object info widget.
+ * has changed to all registered listeners for changes of the selected
+ * Fib object info widget.
  *
  * @see registerListenerSelectedFibObjectInfo()
  * @see unregisterListenerSelectedFibObjectInfo()
  * @see setListenersSelectedWidgetFibObjectInfo
  * @see setSelectedFibObjectInfo()
+ * @param pSelectedFibObjectInfo a pointer to the selected Fib object
+ * 	info object (should be this), or NULL if non should be selected
  */
-void cWidgetFibObjectInfo::sendSelectedFibObjectInfoChange(){
+void cWidgetFibObjectInfo::sendSelectedFibObjectInfoChange(
+		cWidgetFibObjectInfo * pSelectedFibObjectInfo ){
 	
 	mutexListenersSelectedWidgetFibObjectInfo.lock();
 	set< lSelectedWidgetFibObjectInfo * > setTmpListenersSelectedWidgetFibObjectInfo =
@@ -260,7 +268,7 @@ void cWidgetFibObjectInfo::sendSelectedFibObjectInfoChange(){
 			itrChangeListener != setTmpListenersSelectedWidgetFibObjectInfo.end();
 			itrChangeListener++ ){
 		
-		(*itrChangeListener)->selectWidgetFibObjectInfo( this );
+		(*itrChangeListener)->selectWidgetFibObjectInfo( pSelectedFibObjectInfo );
 	}
 }
 
@@ -279,8 +287,14 @@ QSize cWidgetFibObjectInfo::sizeHint() const{
  */
 void cWidgetFibObjectInfo::mousePressEvent( QMouseEvent * ){
 	
-	//this widget was clicked on -> it is selected
-	sendSelectedFibObjectInfoChange();
+	
+	//this widget was clicked on
+	if ( bSelected ){
+		//selected before -> it is not selected now
+		sendSelectedFibObjectInfoChange( NULL );
+	}else{ //not selected before -> it is selected now
+		sendSelectedFibObjectInfoChange( this );
+	}
 }
 
 
@@ -293,18 +307,18 @@ void cWidgetFibObjectInfo::createFibObjectInfoWidget(){
 	
 	//delete old members
 	if ( pScenePreviewPicture ){
-		delete pScenePreviewPicture;
+		pScenePreviewPicture->deleteLater();
 		pScenePreviewPicture = NULL;
 	}
 	if ( pViewPreviewPicture ){
-		delete pViewPreviewPicture;
+		pViewPreviewPicture->deleteLater();
 		pViewPreviewPicture = NULL;
 	}
 	
 	if ( pFibObjectInfo ){
 		//a Fib object info exists
 		
-		/*  Tis widget should look like:
+		/*  This widget should look like:
 		 * +-------------------------------------------------+
 		 * | - name @see szNameOfFibObject                   |
 		 * | - preview or description @see szDescription     |
@@ -314,23 +328,44 @@ void cWidgetFibObjectInfo::createFibObjectInfoWidget(){
 		 * |      changebel (=green or red for not changebel)|
 		 * +-------------------------------------------------+
 		 */
+		QString strNameOfFibObject =
+			QString( pFibObjectInfo->getFibObjectName().c_str() );
+		if ( strNameOfFibObject.isEmpty() ){
+			//try to use the file name as Fib object name
+			cFibObjectSource * pFibObjectSource =
+				pFibObjectInfo->getFibObjectSource();
+			if ( pFibObjectSource ){
+				const std::string szSourceTypeName = pFibObjectSource->getName();
+				if ( szSourceTypeName == "cFibObjectSourcePath" ){
+					
+					strNameOfFibObject = QString(
+						(static_cast<cFibObjectSourcePath*>(
+							pFibObjectSource))->getPath().c_str());
+					
+				}else if ( szSourceTypeName == "cFibObjectSourceFibDb" ){
+					
+					strNameOfFibObject = QString( "Db " ) + QString(
+						QString::number( (static_cast<cFibObjectSourceFibDb*>(
+							pFibObjectSource))->getFibDbIdentifier() ) );
+				}//else no name
+			}
+		}
 		if ( pLabelNameOfFibObject == NULL ){
 			//create new text label
-			pLabelNameOfFibObject = new QLabel(
-				QString( pFibObjectInfo->getFibObjectName().c_str() ), this );
+			pLabelNameOfFibObject = new QLabel( strNameOfFibObject, this );
 			pLabelNameOfFibObject->setWordWrap( true );
 		}else{//adapt text of existing text label
-			pLabelNameOfFibObject->setText(
-				QString( pFibObjectInfo->getFibObjectName().c_str() ) );
+			pLabelNameOfFibObject->setText( strNameOfFibObject );
 		}
 		
-		if ( pLabelDescription == NULL ){
+		if ( pTextDescription == NULL ){
 			//create new description label
-			pLabelDescription = new QLabel(
+			pTextDescription = new cTextField(
 				QString( pFibObjectInfo->getDescription().c_str() ), this );
-			pLabelDescription->setWordWrap( true );
+			//pTextDescription->setWordWrapMode( QTextOption::WordWrap );
+			pTextDescription->setReadOnly( true );
 		}else{//adapt text of existing description label
-			pLabelDescription->setText(
+			pTextDescription->setText(
 				QString( pFibObjectInfo->getDescription().c_str() ) );
 		}
 		
@@ -384,8 +419,9 @@ void cWidgetFibObjectInfo::createFibObjectInfoWidget(){
 				//show preview
 				pLayoutCenter->addWidget( pViewPreviewPicture );
 			}else{//show description in center view
-				//show preview
-				pLayoutCenter->addWidget( pLabelDescription );
+				//show description
+				centerViewMode = ED_DESCRIPTION;
+				pLayoutCenter->addWidget( pTextDescription );
 			}
 		}
 		if ( pLayoutBottomLine == NULL ){
@@ -403,18 +439,8 @@ void cWidgetFibObjectInfo::createFibObjectInfoWidget(){
 			pLayoutMain->setMargin( 1 );
 			pLayoutMain->addWidget( pLabelNameOfFibObject );
 			
-			/*TODO switch:*/
 			pLayoutMain->addLayout( pLayoutCenter );
 			pLayoutMain->addLayout( pLayoutBottomLine );
-			
-			/*TODO weg:
-			pLayoutMain->addWidget( pLabelDescription );
-			pLayoutMain->addWidget( pLabelNumberOfInputVariables );
-			pLayoutMain->addWidget( pLabelNumberOfExtSubobjects );
-			pLayoutMain->addWidget( pLabelNumberOfFibElements );
-			*/
-			
-			
 			
 			setLayout( pLayoutMain );
 		}
@@ -435,9 +461,9 @@ void cWidgetFibObjectInfo::createFibObjectInfoWidget(){
 			" pLayoutCenter: ("<<
 				(pLayoutCenter->sizeHint().width())<<", "<<
 				(pLayoutCenter->sizeHint().height())<<")"<<
-			"  pLabelDescription: ("<<
-				(pLabelDescription->sizeHint().width())<<", "<<
-				(pLabelDescription->sizeHint().height())<<
+			"  pTextDescription: ("<<
+				(pTextDescription->sizeHint().width())<<", "<<
+				(pTextDescription->sizeHint().height())<<
 			")"<<endl<<
 			" pLayoutBottomLine: ("<<
 				(pLayoutBottomLine->sizeHint().width())<<", "<<
@@ -460,26 +486,27 @@ void cWidgetFibObjectInfo::createFibObjectInfoWidget(){
 			//adapt text of existing text label
 			pLabelNameOfFibObject->setText( QString() );
 		}
-		if ( pLabelDescription ){
+		if ( pTextDescription ){
 			//adapt text of existing description label
-			pLabelDescription->setText( QString() );
+			pTextDescription->setText( QString() );
 		}
 		if ( pLabelNumberOfInputVariables ){
 			//adapt text of existing number of input variables label
-			pLabelNumberOfInputVariables->setText( QString::number( 0 ) );
+			pLabelNumberOfInputVariables->setText( QString() );
 		}
 		if ( pLabelNumberOfFibElements ){
 			//adapt text of existing number of Fib elements label
-			pLabelNumberOfFibElements->setText( QString::number( 0 ) );
+			pLabelNumberOfFibElements->setText( QString() );
 		}
 		if ( pLabelNumberOfExtSubobjects ){
 			//adapt text of existing number of external subelements label
-			pLabelNumberOfExtSubobjects->setText( QString::number( 0 ) );
+			pLabelNumberOfExtSubobjects->setText( QString() );
 		}
 		
 		//set tool tip to NULL
 		setToolTip( "" );
-		setAttribute( Qt::WA_AlwaysShowToolTips );
+		//don't show tool tips
+		setAttribute( Qt::WA_AlwaysShowToolTips, false );
 	}
 	setWhatsThis( tr( "This is a Fib object you can use in your image.\n Simply drag and drop it into the image.") );
 	

@@ -1,6 +1,3 @@
-
-//TODO check
-
 /**
  * @file eFibObjectInfoChangedEvent
  * file name: eFibObjectInfoChangedEvent.h
@@ -33,6 +30,7 @@
  * If a Fib object info object changes, the Fib object info object object
  * (cFibObjectInfo) for it will send an event of this type to all
  * registered listeners of the type lFibObjectInfoChanged .
+ * @pattern event
  * @see cFibObjectInfo
  * @see lFibObjectInfoChanged
  */
@@ -61,22 +59,10 @@ namespace nCreator{
 class cFibObjectInfo;
 
 class eFibObjectInfoChangedEvent{
-protected:
-	
-	/**
-	 * A pointer to the Fib object info object that was changed.
-	 */
-	const cFibObjectInfo * pFibObjectInfoChanged;
-	
-	/**
-	 * If true the Fib object info object was deleted.
-	 */
-	bool bFibObjectInfoDeleted;
-	
 public:
 	
 	/**
-	 * constructor
+	 * The standard constructor.
 	 *
 	 * @param pInFibObjectInfoChanged a pointer to the Fib object info
 	 * 	object that was changed
@@ -85,7 +71,7 @@ public:
 	 * 	deleted, else this event dosn't mark that it was deleted
 	 * 	@see bFibObjectInfoDeleted
 	 */
-	eFibObjectInfoChangedEvent( const cFibObjectInfo * pInFibObjectInfoChanged,
+	explicit eFibObjectInfoChangedEvent( const cFibObjectInfo * pInFibObjectInfoChanged,
 		const bool bInFibObjectInfoDeleted = false );
 	
 	
@@ -118,13 +104,25 @@ public:
 	bool isDeleted() const;
 	
 	/**
-	 * This method sets if the Fib object info object was delted.
+	 * This method sets if the Fib object info object was deleted.
 	 *
 	 * @param bInFibObjectInfoDeleted if true the Fib object info object was
 	 * 	deleted, else this event dosn't mark that it was deleted
 	 * 	@see bFibObjectInfoDeleted
 	 */
 	void setDeleted( const bool bInFibObjectInfoDeleted = true );
+	
+protected:
+	
+	/**
+	 * A pointer to the Fib object info object that was changed.
+	 */
+	const cFibObjectInfo * pFibObjectInfoChanged;
+	
+	/**
+	 * If true the Fib object info object was deleted.
+	 */
+	bool bFibObjectInfoDeleted;
 	
 };//end class eFibObjectInfoChangedEvent
 

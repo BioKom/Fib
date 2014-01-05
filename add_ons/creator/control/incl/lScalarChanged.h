@@ -1,17 +1,13 @@
-
-//TODO check
-
 /**
- * @file lInputVariableChanged
- * file name: lInputVariableChanged.h
+ * @file lScalarChanged
+ * file name: lScalarChanged.h
  * @author Betti Oesterholz
  * @date 19.08.2013
  * @mail webmaster@BioKom.info
  *
  * System: C++, Qt4
  *
- * This file specifies a listener interface for listening for input
- * variables changes.
+ * This file specifies a listener interface for listening for scalars changes.
  *
  *
  * Copyright (C) @c GPL3 2013 Betti Oesterholz
@@ -30,12 +26,13 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * This file specifies a listener interface for listening for input
- * variables changes. If a input variable changes, the input variable object
- * (cFibInputVariable) for it will send a event to all registered listeners
+ * This file specifies a listener interface for listening for scalars
+ * changes. If a scalar changes, the scalar object
+ * (cFibScalar) for it will send a event to all registered listeners
  * of this type.
- * @see cFibInputVariable
- * @see eFibInputVariableChangedEvent
+ * @pattern listener
+ * @see cFibScalar
+ * @see eFibScalarChangedEvent
  */
 /*
 History:
@@ -43,8 +40,8 @@ History:
 */
 
 
-#ifndef ___FIB__NCREATOR__L_INPUT_VARIABLE_CHANGED_H__
-#define ___FIB__NCREATOR__L_INPUT_VARIABLE_CHANGED_H__
+#ifndef ___FIB__NCREATOR__L_SCALAR_CHANGED_H__
+#define ___FIB__NCREATOR__L_SCALAR_CHANGED_H__
 
 
 #include "version.h"
@@ -57,33 +54,33 @@ namespace fib{
 namespace nCreator{
 
 //forward declarations
-class eFibInputVariableChangedEvent;
+class eFibScalarChangedEvent;
 
-class lInputVariableChanged{
+class lScalarChanged{
 public:
 	
 	/**
 	 * Event method
-	 * It will be called every time a input variable (cFibInputVariable),
-	 * at which this object is registered,was changed.
+	 * It will be called every time a scalar (cFibScalar), at which this
+	 * object is registered, was changed.
 	 *
-	 * @param pFibInputVariableEvent a pointer to the event with the
-	 * 	information of the change of the Fib input variable
+	 * @param pFibScalarEvent a pointer to the event with the
+	 * 	information of the change of the Fib scalar
 	 */
-	virtual void fibInputVariableChangedEvent(
-		const eFibInputVariableChangedEvent * pFibInputVariableEvent ) = 0;
+	virtual void fibScalarChangedEvent(
+		const eFibScalarChangedEvent * pFibScalarEvent ) = 0;
 	
 	/**
-	 * @return the name of the class
+	 * @return the name of this class
 	 */
 	virtual std::string getName() const = 0;
 	
-};//end class lInputVariableChanged
+};//end class lScalarChanged
 
 };//end namespace nCreator
 };//end namespace fib
 
-#endif //___FIB__NCREATOR__L_INPUT_VARIABLE_CHANGED_H__
+#endif //___FIB__NCREATOR__L_SCALAR_CHANGED_H__
 
 
 

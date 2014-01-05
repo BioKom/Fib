@@ -44,11 +44,10 @@ History:
 
 #include "cWidgetFibInputVariables.h"
 
-#include "cWidgetFibInputVariable.h"
+#include "cWidgetFibScalar.h"
 #include "cFlowLayout.h"
 #include "nFibObjectTools.h"
 #include "cFibInputVariable.h"
-#include "eFibInputVariableChangedEvent.h"
 
 
 using namespace fib::nCreator;
@@ -84,7 +83,7 @@ cWidgetFibInputVariables::cWidgetFibInputVariables(
 			
 	DEBUG_OUT_L2(<<"cWidgetFibInputVariables("<<this<<")::cWidgetFibInputVariables( liInInputVariables, pInFibObject="<<pInFibObject<<") called"<<endl<<flush);
 	//create input variable widgets
-	mutexFibInputVariablesHandler.lock();
+	mutexFibInputVariables.lock();
 	pInputVariableLayout = new cFlowLayout( this );
 	for ( QList< cFibInputVariable * >::iterator
 			itrActualInVar = inputVariables.begin();
@@ -94,12 +93,12 @@ cWidgetFibInputVariables::cWidgetFibInputVariables(
 				mapInputVariables.constEnd() ){
 			//the variable was not registered before
 			mapInputVariables.insert( *itrActualInVar,
-				new cWidgetFibInputVariable( *itrActualInVar, this ) );
+				(*itrActualInVar)->getWidget( this ) );
 		}
 		pInputVariableLayout->addWidget( mapInputVariables[ *itrActualInVar ] );
 	}
 	setLayout( pInputVariableLayout );
-	mutexFibInputVariablesHandler.unlock();
+	mutexFibInputVariables.unlock();
 }
 
 
@@ -129,7 +128,7 @@ cWidgetFibInputVariables::cWidgetFibInputVariables( cFibElement * pInFibObject,
 	
 	DEBUG_OUT_L2(<<"cWidgetFibInputVariables("<<this<<")::cWidgetFibInputVariables( pInFibObject="<<pInFibObject<<", bFindInputVariables="<<(bFindInputVariables?"true":"false")<<") called"<<endl<<flush);
 	//create input variable widgets
-	mutexFibInputVariablesHandler.lock();
+	mutexFibInputVariables.lock();
 	pInputVariableLayout = new cFlowLayout( this );
 	for ( QList< cFibInputVariable * >::iterator
 			itrActualInVar = inputVariables.begin();
@@ -139,12 +138,12 @@ cWidgetFibInputVariables::cWidgetFibInputVariables( cFibElement * pInFibObject,
 				mapInputVariables.constEnd() ){
 			//the variable was not registered before
 			mapInputVariables.insert( *itrActualInVar,
-				new cWidgetFibInputVariable( *itrActualInVar, this ) );
+				(*itrActualInVar)->getWidget( this ) );
 		}
 		pInputVariableLayout->addWidget( mapInputVariables[ *itrActualInVar ] );
 	}
 	setLayout( pInputVariableLayout );
-	mutexFibInputVariablesHandler.unlock();
+	mutexFibInputVariables.unlock();
 	DEBUG_OUT_L2(<<"cWidgetFibInputVariables("<<this<<")::cWidgetFibInputVariables( pInFibObject="<<pInFibObject<<", bFindInputVariables="<<(bFindInputVariables?"true":"false")<<") done "<<inputVariables.size()<<" input variables created"<<endl<<flush);
 }
 
@@ -161,7 +160,7 @@ cWidgetFibInputVariables::cWidgetFibInputVariables(
 		
 	DEBUG_OUT_L2(<<"cWidgetFibInputVariables("<<this<<")::cWidgetFibInputVariables( fibInputVariables ) called"<<endl<<flush);
 	//create input variable widgets
-	mutexFibInputVariablesHandler.lock();
+	mutexFibInputVariables.lock();
 	pInputVariableLayout = new cFlowLayout( this );
 	for ( QList< cFibInputVariable * >::iterator
 			itrActualInVar = inputVariables.begin();
@@ -171,12 +170,12 @@ cWidgetFibInputVariables::cWidgetFibInputVariables(
 				mapInputVariables.constEnd() ){
 			//the variable was not registered before
 			mapInputVariables.insert( *itrActualInVar,
-				new cWidgetFibInputVariable( *itrActualInVar, this ) );
+				(*itrActualInVar)->getWidget( this ) );
 		}
 		pInputVariableLayout->addWidget( mapInputVariables[ *itrActualInVar ] );
 	}
 	setLayout( pInputVariableLayout );
-	mutexFibInputVariablesHandler.unlock();
+	mutexFibInputVariables.unlock();
 }
 
 
@@ -187,14 +186,16 @@ cWidgetFibInputVariables::~cWidgetFibInputVariables(){
 	
 	DEBUG_OUT_L2(<<"cWidgetFibInputVariables("<<this<<")::~cWidgetFibInputVariables() called"<<endl<<flush);
 	//unregister this as input variable change listener at input variables
-	mutexFibInputVariablesHandler.lock();
-	for ( QMap< cFibInputVariable *, cWidgetFibInputVariable * >::iterator
+	mutexFibInputVariables.lock();
+	for ( QMap< cFibInputVariable *, QWidget * >::iterator
 			itrActualInVar = mapInputVariables.begin();
 			itrActualInVar != mapInputVariables.end(); itrActualInVar++ ){
 		//delete input variable widget
-		delete itrActualInVar.value();
+		if ( itrActualInVar.value() ){
+			delete itrActualInVar.value();
+		}
 	}
-	mutexFibInputVariablesHandler.unlock();
+	mutexFibInputVariables.unlock();
 	DEBUG_OUT_L2(<<"cWidgetFibInputVariables("<<this<<")::~cWidgetFibInputVariables() done"<<endl<<flush);
 }
 
@@ -228,16 +229,16 @@ bool cWidgetFibInputVariables::addInputVariable( cFibInputVariable * pInputVaria
 	DEBUG_OUT_L2(<<"cWidgetFibInputVariables("<<this<<")::addInputVariable( pInputVariable="<<pInputVariable<<") called"<<endl<<flush);
 	if ( cFibInputVariables::addInputVariable( pInputVariable, uiPosition ) ){
 	
-		mutexFibInputVariablesHandler.lock();
+		mutexFibInputVariables.lock();
 		if ( mapInputVariables.constFind( pInputVariable ) ==
 				mapInputVariables.constEnd() ){
 			//the variable was not registered before
 			mapInputVariables.insert( pInputVariable,
-				new cWidgetFibInputVariable( pInputVariable, this ) );
+				pInputVariable->getWidget( this ) );
 		}
 		pInputVariableLayout->addWidget(
 			mapInputVariables[ pInputVariable ], uiPosition - 1 );
-		mutexFibInputVariablesHandler.unlock();
+		mutexFibInputVariables.unlock();
 		return true;
 	}
 	return false;
@@ -259,29 +260,31 @@ bool cWidgetFibInputVariables::addInputVariable( cFibInputVariable * pInputVaria
 bool cWidgetFibInputVariables::removeInputVariable( const unsigned int uiPosition ){
 	
 	DEBUG_OUT_L2(<<"cWidgetFibInputVariables("<<this<<")::removeInputVariable( uiPosition="<<uiPosition<<") called"<<endl<<flush);
-	mutexFibInputVariablesHandler.lock();
+	mutexFibInputVariables.lock();
 	if ( ( uiPosition < 1 ) ||
 			( ((unsigned int)(inputVariables.size())) < uiPosition ) ){
 		//no such input variable to remove
-		mutexFibInputVariablesHandler.unlock();
+		mutexFibInputVariables.unlock();
 		return false;
 	}
 	cFibInputVariable * pInputVariable = inputVariables.at( uiPosition - 1 );
-	mutexFibInputVariablesHandler.unlock();
+	mutexFibInputVariables.unlock();
 	
 	if ( cFibInputVariables::removeInputVariable( uiPosition ) ){
 		//Fib input variable was removed
-		mutexFibInputVariablesHandler.lock();
+		mutexFibInputVariables.lock();
 		if ( ! inputVariables.contains( pInputVariable ) ){
 			//the input variable dosn't exist anymore -> remove the widget for it
-			QMap< cFibInputVariable *, cWidgetFibInputVariable * >::iterator
+			QMap< cFibInputVariable *, QWidget * >::iterator
 				itrVariable = mapInputVariables.find( pInputVariable );
 			
-			delete (itrVariable.value());
+			if ( itrVariable.value() ){
+				delete (itrVariable.value());
+			}
 			mapInputVariables.erase( itrVariable );
 		}
 		pInputVariableLayout->removeWidget( uiPosition - 1, false );
-		mutexFibInputVariablesHandler.unlock();
+		mutexFibInputVariables.unlock();
 		return true;
 	}
 	return false;
@@ -305,9 +308,9 @@ bool cWidgetFibInputVariables::removeInputVariable(
 	DEBUG_OUT_L2(<<"cWidgetFibInputVariables("<<this<<")::removeInputVariable( pInputVariable="<<pInputVariable<<") called"<<endl<<flush);
 	if ( cFibInputVariables::removeInputVariable( pInputVariable ) ){
 		//Fib input variable was removed
-		mutexFibInputVariablesHandler.lock();
+		mutexFibInputVariables.lock();
 		//the input variable dosn't exist anymore -> remove the widget for it
-		QMap< cFibInputVariable *, cWidgetFibInputVariable * >::iterator
+		QMap< cFibInputVariable *, QWidget * >::iterator
 			itrVariable = mapInputVariables.find( pInputVariable );
 		
 		delete (itrVariable.value());
@@ -321,7 +324,7 @@ bool cWidgetFibInputVariables::removeInputVariable(
 			pInputVariableLayout->addWidget( mapInputVariables[ *itrActualInVar ] );
 		}
 		
-		mutexFibInputVariablesHandler.unlock();
+		mutexFibInputVariables.unlock();
 		return true;
 	}
 	return false;
@@ -347,41 +350,43 @@ bool cWidgetFibInputVariables::replaceInputVariable( cFibInputVariable * pInputV
 		const unsigned int uiPosition ){
 	
 	DEBUG_OUT_L2(<<"cWidgetFibInputVariables("<<this<<")::replaceInputVariable( pInputVariable="<<pInputVariable<<", uiPosition="<<uiPosition<<") called"<<endl<<flush);
-	mutexFibInputVariablesHandler.lock();
+	mutexFibInputVariables.lock();
 	if ( ( uiPosition < 1 ) ||
 			( ((unsigned int)(inputVariables.size())) < uiPosition ) ){
 		//no such input variable to remove
-		mutexFibInputVariablesHandler.unlock();
+		mutexFibInputVariables.unlock();
 		return false;
 	}
 	cFibInputVariable * pRemovedInputVariable = inputVariables.at(
 		uiPosition - 1 );
-	mutexFibInputVariablesHandler.unlock();
+	mutexFibInputVariables.unlock();
 	if ( cFibInputVariables::replaceInputVariable( pInputVariable, uiPosition ) ){
 		//Fib input variable was removed
-		mutexFibInputVariablesHandler.lock();
+		mutexFibInputVariables.lock();
 		//update the layout
 		pInputVariableLayout->removeWidget( uiPosition - 1, false );
 		
 		if ( ! inputVariables.contains( pRemovedInputVariable ) ){
 			//the input variable dosn't exist anymore -> remove the widget for it
-			QMap< cFibInputVariable *, cWidgetFibInputVariable * >::iterator
+			QMap< cFibInputVariable *, QWidget * >::iterator
 				itrVariable = mapInputVariables.find( pRemovedInputVariable );
 			
-			delete (itrVariable.value());
+			if ( itrVariable.value() ){
+				delete (itrVariable.value());
+			}
 			mapInputVariables.erase( itrVariable );
 		}
 		if ( mapInputVariables.constFind( pInputVariable ) ==
 				mapInputVariables.constEnd() ){
 			//the variable was not registered before
 			mapInputVariables.insert( pInputVariable,
-				new cWidgetFibInputVariable( pInputVariable, this ) );
+				pInputVariable->getWidget( this ) );
 		}
 		//update the layout
 		pInputVariableLayout->addWidget(
 			mapInputVariables[ pInputVariable ], uiPosition - 1 );
 		
-		mutexFibInputVariablesHandler.unlock();
+		mutexFibInputVariables.unlock();
 		return true;
 	}
 	return false;
@@ -407,13 +412,15 @@ bool cWidgetFibInputVariables::setInputVariables(
 	
 	DEBUG_OUT_L2(<<"cWidgetFibInputVariables("<<this<<")::setInputVariables( liInInputVariables=#"<<liInInputVariables.size()<<") called"<<endl<<flush);
 	if ( cFibInputVariables::setInputVariables( liInInputVariables ) ){
-		mutexFibInputVariablesHandler.lock();
+		mutexFibInputVariables.lock();
 		//delete old input variable widgets
-		for ( QMap< cFibInputVariable *, cWidgetFibInputVariable * >::iterator
+		for ( QMap< cFibInputVariable *, QWidget * >::iterator
 				itrActualInVar = mapInputVariables.begin();
 				itrActualInVar != mapInputVariables.end(); itrActualInVar++ ){
 			//delete input variable widget
-			delete (itrActualInVar.value());
+			if ( itrActualInVar.value() ){
+				delete (itrActualInVar.value());
+			}
 		}
 		mapInputVariables.clear();
 		//update the layout
@@ -427,12 +434,12 @@ bool cWidgetFibInputVariables::setInputVariables(
 					mapInputVariables.constEnd() ){
 				//the variable was not registered before
 				mapInputVariables.insert( *itrActualInVar,
-					new cWidgetFibInputVariable( *itrActualInVar, this ) );
+					(*itrActualInVar)->getWidget( this ) );
 			}
 			//update the layout
 			pInputVariableLayout->addWidget( mapInputVariables[ *itrActualInVar ] );
 		}
-		mutexFibInputVariablesHandler.unlock();
+		mutexFibInputVariables.unlock();
 		return true;
 	}
 	return false;
@@ -444,29 +451,32 @@ bool cWidgetFibInputVariables::setInputVariables(
  * It will be called every time a input variable (cFibInputVariable),
  * at which this object is registered, was changed.
  *
- * @param pFibInputVariableEvent a pointer to the event with the
+ * @param pFibVariableChangedEvent a pointer to the event with the
  * 	information of the change of the Fib input variable
  */
-void cWidgetFibInputVariables::fibInputVariableChangedEvent(
-		const eFibInputVariableChangedEvent * pFibInputVariableEvent ){
+void cWidgetFibInputVariables::changedEvent(
+		const eFibVariableCreatorChangedEvent * pFibVariableChangedEvent ){
 	
-	DEBUG_OUT_L2(<<"cWidgetFibInputVariables("<<this<<")::fibInputVariableChangedEvent( pFibInputVariableEvent="<<pFibInputVariableEvent<<") called"<<endl<<flush);
-	if ( pFibInputVariableEvent == NULL ){
+	DEBUG_OUT_L2(<<"cWidgetFibInputVariables("<<this<<")::changedEvent( pFibVariableChangedEvent="<<pFibVariableChangedEvent<<") called"<<endl<<flush);
+	if ( pFibVariableChangedEvent == NULL ){
 		//no event given
 		return;
 	}
-	if ( pFibInputVariableEvent->bInputVariableDeleted ){
+	if ( pFibVariableChangedEvent->isDeleted() ){
 		//remove deleted input variable
-		DEBUG_OUT_L2(<<"cWidgetFibInputVariables("<<this<<")::fibInputVariableChangedEvent( pFibInputVariableEvent="<<pFibInputVariableEvent<<") remove deleted input variable"<<endl<<flush);
-		mutexFibInputVariablesHandler.lock();
+		DEBUG_OUT_L2(<<"cWidgetFibInputVariables("<<this<<")::changedEvent( pFibVariableChangedEvent="<<pFibVariableChangedEvent<<") remove deleted input variable"<<endl<<flush);
+		mutexFibInputVariables.lock();
 		cFibInputVariable * pInputVariable = const_cast<cFibInputVariable*>(
-			pFibInputVariableEvent->pInputVariableChanged );
+			static_cast<const cFibInputVariable * >(
+				pFibVariableChangedEvent->getObject()) );
 		inputVariables.removeAll( pInputVariable );
 		
 		//the input variable don't exist anymore -> remove the widget for it
-		QMap< cFibInputVariable *, cWidgetFibInputVariable * >::iterator
+		QMap< cFibInputVariable *, QWidget * >::iterator
 			itrVariable = mapInputVariables.find( pInputVariable );
-		delete (itrVariable.value());
+		if ( itrVariable.value() ){
+			delete (itrVariable.value());
+		}
 		mapInputVariables.erase( itrVariable );
 		//update the layout
 		pInputVariableLayout->clear();
@@ -477,10 +487,33 @@ void cWidgetFibInputVariables::fibInputVariableChangedEvent(
 			pInputVariableLayout->addWidget( mapInputVariables[ *itrActualInVar ] );
 		}
 		
-		mutexFibInputVariablesHandler.unlock();
+		mutexFibInputVariables.unlock();
 	}
-	cFibInputVariables::fibInputVariableChangedEvent( pFibInputVariableEvent );
-	DEBUG_OUT_L2(<<"cWidgetFibInputVariables("<<this<<")::fibInputVariableChangedEvent( pFibInputVariableEvent="<<pFibInputVariableEvent<<") done"<<endl<<flush);
+	cFibInputVariables::changedEvent( pFibVariableChangedEvent );
+	DEBUG_OUT_L2(<<"cWidgetFibInputVariables("<<this<<")::changedEvent( pFibVariableChangedEvent="<<pFibVariableChangedEvent<<") done"<<endl<<flush);
+}
+
+
+/**
+ * @return a hint for a good size of this widget
+ */
+QSize cWidgetFibInputVariables::sizeHint() const{
+	
+	mutexFibInputVariables.lock();
+	if ( inputVariables.empty() ){
+		//no input variables -> no space needed
+		mutexFibInputVariables.unlock();
+		return QSize( 0, 0 );
+	}
+	mutexFibInputVariables.unlock();
+	
+	if ( pInputVariableLayout ){
+		//use layout to evalue a good size
+		return pInputVariableLayout->sizeHint();
+	}
+	
+	//no input variables layout -> nothing to display -> no space needed
+	return QSize( 0, 0 );
 }
 
 

@@ -52,7 +52,7 @@
  * 	- int getDigits( long long llValue )
  * 	- void decomposeDoubleFib( const double dNumber, longFib * lMantissa, longFib * lExponent, intFib * iSizeMantissa = NULL, intFib * iSizeExponent = NULL )
  * 	- double composeDoubleFib( const longFib & lMantissa, const longFib & lExponent )
- * 	-TODO unsigned long roundUpToFullByte( unsigned long ulNumberOfBits );
+ * 	- unsigned long roundUpToFullByte( unsigned long ulNumberOfBits );
  * 	-TODO doubleFib gcd( doubleFib dValue1, doubleFib dValue2 );
  * 	-TODO float absF( const float & dValue );
  * 	-TODO double absF( const double & dValue );
@@ -105,6 +105,7 @@ int testMaxFibFunction( unsigned long &ulTestphase );
 int testRoundToLongFibFunction( unsigned long &ulTestphase );
 int testGetDigitsFunction( unsigned long &ulTestphase );
 int testComposeDoubleFibFunctions( unsigned long &ulTestphase );
+int testRoundUpToFullByte( unsigned long &ulTestphase );
 int testReadDouble( unsigned long &ulTestphase );
 int testReadDoubleFromFunction( unsigned long &ulTestphase );
 int testReadDoubleFromFunctionOnRandString( unsigned long &ulTestphase );
@@ -135,15 +136,18 @@ int main(int argc, char* argv[]){
 	//test the fibDatatyps functions
 	
 	//TODO more test
-	iReturn += testMaxFibFunction( ulTestphase );
 	/*TODO comment in:
+	iReturn += testMaxFibFunction( ulTestphase );
 	iReturn += testRoundToLongFibFunction( ulTestphase );
 	iReturn += testGetDigitsFunction( ulTestphase );
 	iReturn += testComposeDoubleFibFunctions( ulTestphase );
+	*/
+	
+	iReturn += testRoundUpToFullByte( ulTestphase );
+	
+	/*TODO comment in:
 	iReturn += testReadDouble( ulTestphase );
 	iReturn += testReadDoubleFromFunction( ulTestphase );
-	*/
-	/*TODO comment in:
 	iReturn += testReadDoubleFromFunctionOnRandString( ulTestphase );
 	iReturn += testStoreXmlDoubleFib( ulTestphase );
 	*/
@@ -860,8 +864,79 @@ int testComposeDoubleFibFunctions( unsigned long &ulTestphase ){
 }
 
 
-
-
+/**
+ * This function tests the roundUpToFullByte() functions for the given values.
+ *
+ * Methods tested:
+ * 	- unsigned long roundUpToFullByte( unsigned long ulNumberOfBits );
+ *
+ * @param ulTestphase a reference to the number for the test phase
+ * @return the number of errors occured in the test
+ */
+int testRoundUpToFullByte( unsigned long &ulTestphase ){
+	
+	int iReturn = 0;//return value of the test; the number of occured errors
+	
+	ulTestphase++;
+	cout<<endl<<"TESTPASE "<<ulTestphase<<" : Testing roundUpToFullByte()"<<endl;
+	
+	{//test value 0 bits
+		cout<<endl;
+		const unsigned long uiNumberOfBits = 0;
+		
+		const unsigned long uiRoundedNumberOfBits =
+			roundUpToFullByte( uiNumberOfBits );
+		
+		cout<<"roundUpToFullByte( \""<<uiNumberOfBits<<"\" ) = "<<
+			uiRoundedNumberOfBits<<endl;
+		
+		if ( ( uiRoundedNumberOfBits % 8 ) != 0 ){
+			cerr<<"Error: The rounded number of bits is not multiple of 8 ."<<endl;
+			iReturn++;
+		}
+		if ( uiRoundedNumberOfBits < uiNumberOfBits ){
+			cerr<<"Error: The rounded number of bits is lower than the given number of bits."<<endl;
+			iReturn++;
+		}
+		if ( static_cast<long>(uiNumberOfBits) <=
+				static_cast<long>(uiRoundedNumberOfBits) - 8 ){
+			cerr<<"Error: There is a number of bits lower the rounded number "<<
+				"of bits but still a full byte and greater the given number of bits."<<endl;
+			iReturn++;
+		}
+	}
+	
+	const unsigned int uiMaxNumberOfBits = 16 +
+		( MAX_ITERATION < 240 ) ? ( MAX_ITERATION ) : 240;
+	for ( unsigned int uiActualIteration = 0;
+			uiActualIteration < MAX_ITERATION; uiActualIteration++ ){
+		cout<<endl;
+		//generate random number of bits
+		const unsigned long uiNumberOfBits = ( rand() % uiMaxNumberOfBits );
+		
+		const unsigned long uiRoundedNumberOfBits =
+			roundUpToFullByte( uiNumberOfBits );
+		
+		cout<<"roundUpToFullByte( \""<<uiNumberOfBits<<"\" ) = "<<
+			uiRoundedNumberOfBits<<endl;
+		
+		if ( ( uiRoundedNumberOfBits % 8 ) != 0 ){
+			cerr<<"Error: The rounded number of bits is not multiple of 8 ."<<endl;
+			iReturn++;
+		}
+		if ( uiRoundedNumberOfBits < uiNumberOfBits ){
+			cerr<<"Error: The rounded number of bits is lower than the given number of bits."<<endl;
+			iReturn++;
+		}
+		if ( static_cast<long>(uiNumberOfBits) <=
+				static_cast<long>(uiRoundedNumberOfBits) - 8 ){
+			cerr<<"Error: There is a number of bits lower the rounded number "<<
+				"of bits but still a full byte and greater the given number of bits."<<endl;
+			iReturn++;
+		}
+	}
+	return iReturn;
+}
 
 
 /**

@@ -1,6 +1,6 @@
 /**
- * @file eFibInputVariableChangedEvent
- * file name: eFibInputVariableChangedEvent.h
+ * @file eFibScalarChangedEvent
+ * file name: eFibScalarChangedEvent.h
  * @author Betti Oesterholz
  * @date 19.08.2013
  * @mail webmaster@BioKom.info
@@ -27,11 +27,11 @@
  *
  *
  * This file implements a event for input variables changes.
- * If a input variable changes, the input variable object (cFibInputVariable)
+ * If a input variable changes, the input variable object (cFibScalar)
  * for it will send an event of this type to all registered listeners of
- * the type lInputVariableChanged .
- * @see cFibInputVariable
- * @see lInputVariableChanged
+ * the type lScalarChanged .
+ * @see cFibScalar
+ * @see lScalarChanged
  */
 /*
 History:
@@ -39,8 +39,8 @@ History:
 */
 
 
-#ifndef ___FIB__NCREATOR__E_FIB_INPUT_VARIABLE_CHANGED_EVENT_H__
-#define ___FIB__NCREATOR__E_FIB_INPUT_VARIABLE_CHANGED_EVENT_H__
+#ifndef ___FIB__NCREATOR__E_FIB_SCALAR_CHANGED_EVENT_H__
+#define ___FIB__NCREATOR__E_FIB_SCALAR_CHANGED_EVENT_H__
 
 
 #include "version.h"
@@ -55,41 +55,41 @@ namespace fib{
 namespace nCreator{
 
 //cyclic dependencies
-class cFibInputVariable;
+class cFibScalar;
 
-class eFibInputVariableChangedEvent{
+class eFibScalarChangedEvent{
 public:
 	
 	/**
 	 * A pointer to the input variable that was changed.
 	 */
-	const cFibInputVariable * pInputVariableChanged;
+	const cFibScalar * pScalarChanged;
 	
 	/**
 	 * If true the input variable was deleted.
 	 */
-	bool bInputVariableDeleted;
+	bool bScalarDeleted;
 	
 	
 	/**
 	 * constructor
 	 *
-	 * @param pInInputVariableChanged a pointer to the input variable that was changed
-	 * 	@see pInputVariableChanged
+	 * @param pInScalarChanged a pointer to the input variable that was changed
+	 * 	@see pScalarChanged
 	 */
-	eFibInputVariableChangedEvent( const cFibInputVariable * pInInputVariableChanged );
+	eFibScalarChangedEvent( const cFibScalar * pInScalarChanged );
 	
 	/**
-	 * @return the name of this class "eFibInputVariableChangedEvent"
+	 * @return the name of this class "eFibScalarChangedEvent"
 	 */
 	std::string getName() const;
 	
-};//end class eFibInputVariableChangedEvent
+};//end class eFibScalarChangedEvent
 
 };//end namespace nCreator
 };//end namespace fib
 
-#endif //___FIB__NCREATOR__E_FIB_INPUT_VARIABLE_CHANGED_EVENT_H__
+#endif //___FIB__NCREATOR__E_FIB_SCALAR_CHANGED_EVENT_H__
 
 
 

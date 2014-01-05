@@ -52,7 +52,7 @@ History:
 
 
 //TODO switches for test proposes
-//#define DEBUG
+#define DEBUG
 
 
 #include "cFibGraphicsScene.h"
@@ -61,6 +61,7 @@ History:
 #include "nFibObjectTools.h"
 #include "cFibGraphicsItemFibList.h"
 #include "cFibGraphicsItemFibObject.h"
+#include "cFibGraphicsItemFibExtObject.h"
 #include "cFibNode.h"
 #include "cFibNodeHandler.h"
 #include "cFibGraphicsItem.h"
@@ -749,6 +750,7 @@ bool cFibGraphicsScene::evalueGraphicsItemsFromFibNode(){
 	//remove old items
 	QList< QGraphicsItem * > liOldItems = items();
 	
+	DEBUG_OUT_L3(<<"cFibGraphicsScene("<<this<<")::evalueGraphicsItemsFromFibNode() deleting "<<items().size()<<" old items"<<endl<<flush);
 	for ( QList< QGraphicsItem * >::iterator
 			itrActualItem = liOldItems.begin();
 			itrActualItem != liOldItems.end(); itrActualItem++ ){
@@ -759,6 +761,7 @@ bool cFibGraphicsScene::evalueGraphicsItemsFromFibNode(){
 	//TODO add item for the Fib image size borders (dDirection1Minimum, ...)
 	
 	//set the input variables to there values, to create the graphics items
+	DEBUG_OUT_L3(<<"cFibGraphicsScene("<<this<<")::evalueGraphicsItemsFromFibNode() set the input variables to there values, to create the graphics items"<<endl<<flush);
 	setInputVariables();
 	
 	if ( ( pFibNode == NULL ) || ( pFibNode->getFibObject() == NULL ) ){
@@ -774,11 +777,13 @@ bool cFibGraphicsScene::evalueGraphicsItemsFromFibNode(){
 	cFibGraphicsItem * pFibGraphicsItem =
 		convertToFibGraphicsItem( pFibNode->getFibObject() );
 	
-	addItem( pFibGraphicsItem );
+	if ( pFibGraphicsItem ){
+		addItem( pFibGraphicsItem );
+	}
 	//update this grapic scene
 	update();
 	
-	DEBUG_OUT_L2(<<"cFibGraphicsScene("<<this<<")::evalueGraphicsItemsFromFibNode() done"<<endl<<flush);
+	DEBUG_OUT_L2(<<"cFibGraphicsScene("<<this<<")::evalueGraphicsItemsFromFibNode() done (#items "<<items().size()<<")"<<endl<<flush);
 	return true;
 }
 
@@ -868,6 +873,19 @@ cFibGraphicsItem * cFibGraphicsScene::convertToFibGraphicsItem(
 		case 'r':{//if Fib element is root element -> convert the main Fib object of it
 			DEBUG_OUT_L2(<<"cFibGraphicsScene("<<this<<")::convertToFibGraphicsItem( pFibObject="<<pFibObject<<") Fib element is root element"<<endl<<flush);
 			return convertToFibGraphicsItem( pFibObject->getNextFibElement() );
+		}break;
+		case 'o':{/*if Fib element is external object element
+			-> create a cFibGraphicsItemFibExtObject for it*/
+			DEBUG_OUT_L2(<<"cFibGraphicsScene("<<this<<")::convertToFibGraphicsItem( pFibObject="<<pFibObject<<") Fib element is external object element convert to cFibGraphicsItemFibExtObject"<<endl<<flush);
+			//evalue the object point for the Fib element
+			const unsignedIntFib uiObjectPoint =
+				pFibObject->getNumberOfObjectPoint();
+			
+			cFibElement * pPartObjectCopy =
+				pFibObject->getMasterRoot()->copy( uiObjectPoint );
+			
+			return new cFibGraphicsItemFibExtObject( pFibObject,
+				ulFibNodeVersionDisplayed, this, pPartObjectCopy );
 		}break;
 		default://else -> create cFibGraphicsItemFibObject for it
 			DEBUG_OUT_L2(<<"cFibGraphicsScene("<<this<<")::convertToFibGraphicsItem( pFibObject="<<pFibObject<<") else convert to cFibGraphicsItemFibObject"<<endl<<flush);

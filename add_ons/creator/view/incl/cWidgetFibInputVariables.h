@@ -1,6 +1,6 @@
 /**
  * @file cWidgetFibInputVariables
- * file name: cWidgetFibInputVariables.h
+ * file name: cWidgetFibScalars.h
  * @author Betti Oesterholz
  * @date 28.07.2013
  * @mail webmaster@BioKom.info
@@ -31,7 +31,7 @@
  * input variables or variables used in the Fib object but not defined in it.
  * With this class you can display these.
  *
- * @see cWidgetFibInputVariable
+ * @see cWidgetFibScalar
  * @see cFibInputVariable
  * @see cFibVariable
  */
@@ -65,25 +65,11 @@ namespace fib{
 namespace nCreator{
 
 //forward declarations
-class cWidgetFibInputVariable;
 class cFibInputVariable;
-class eFibInputVariableChangedEvent;
 
 
 class cWidgetFibInputVariables: public QWidget,
-	public cFibInputVariables{
-protected:
-	
-	/**
-	 * A list with input variables and there widgets.
-	 */
-	QMap< cFibInputVariable *, cWidgetFibInputVariable * > mapInputVariables;
-	
-	/**
-	 * The layout for the input variables.
-	 */
-	cFlowLayout * pInputVariableLayout;
-	
+		public cFibInputVariables{
 public:
 
 	/**
@@ -231,11 +217,28 @@ public:
 	 * It will be called every time a input variable (cFibInputVariable),
 	 * at which this object is registered, was changed.
 	 *
-	 * @param pFibInputVariableEvent a pointer to the event with the
+	 * @param pFibVariableChangedEvent a pointer to the event with the
 	 * 	information of the change of the Fib input variable
 	 */
-	virtual void fibInputVariableChangedEvent(
-		const eFibInputVariableChangedEvent * pFibInputVariableEvent );
+	virtual void changedEvent(
+		const eFibVariableCreatorChangedEvent * pFibVariableChangedEvent );
+	
+	/**
+	 * @return a hint for a good size of this widget
+	 */
+	virtual QSize sizeHint() const;
+	
+protected:
+	
+	/**
+	 * A list with input variables and there widgets.
+	 */
+	QMap< cFibInputVariable *, QWidget * > mapInputVariables;
+	
+	/**
+	 * The layout for the input variables.
+	 */
+	cFlowLayout * pInputVariableLayout;
 	
 	
 };//end class cWidgetFibInputVariables

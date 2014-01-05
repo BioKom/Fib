@@ -147,8 +147,8 @@ History:
 #include "nFibObjectTools.h"
 
 //debugging switches
-#define DEBUG
-#define DEBUG_RESTORE_XML
+//#define DEBUG
+//#define DEBUG_RESTORE_XML
 
 
 using namespace std;
