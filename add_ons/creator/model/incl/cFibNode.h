@@ -38,6 +38,11 @@
  * the next and previous existing Fib nodes (to be notified on changes).
  * You can register for listening if the node (or a Fib element contained
  * in the Fib object of the node) was changed.
+ * The Fib object for the node should always contain the relevant Fib
+ * object information. If for an object, which represents a part of the
+ * Fib object (e.g. a widget for a vector element), its members are change,
+ * the object should care, that this change is writen at once into the
+ * Fib object for this node, it should also send a Fib node change event.
  * TODO:
  * It also stores the area / window (cPlainArea) of the Fib object this
  * node represents and the variables the Fib object use, but which aren't
@@ -60,11 +65,13 @@ History:
 
 #include "version.h"
 
+#include <set>
+
+#include <QObject>
+
 #include "cFibElement.h"
 
 #include "lFibNodeChanged.h"
-
-#include <set>
 
 
 
@@ -81,65 +88,6 @@ class cFibNodeHandler;
 class cFibObjectInfo;
 
 class cFibNode{
-protected:
-	
-	/**
-	 * The node handler is a friend.
-	 */
-	friend class cFibNodeHandler;
-	
-	/**
-	 * A pointer to the Fib object of this node.
-	 * This node represents this Fib object.
-	 * Normally for every Fib object there should be just one node.
-	 */
-	cFibElement * pFibObject;
-	
-	/**
-	 * True if (the Fib element of) this node is changebel, else false.
-	 * (This node is not changebel if it is a Fib database object.)
-	 */
-	bool bIsChangebel;
-	
-	/**
-	 * The version of the Fib object for the node.
-	 * Every time the Fib object is changed the version number is counted up.
-	 * @see fibObjectChanged();
-	 */
-	unsigned long ulVersion;
-	
-	/**
-	 * The pointer to the master root object of the Fib object of this node.
-	 * @see pFibObject
-	 * @see cFibElement::getMasterRoot()
-	 */
-	cFibElement * pMasterRoot;
-	
-	/**
-	 * A list with the listeners for changes in the Fib object for this node.
-	 * @see lFibNodeChanged
-	 */
-	set< lFibNodeChanged * > liNodeChangedListeners;
-	
-	/**
-	 * A list with the existing next superior Fib element nodes of this node.
-	 * They will be notifyed if (the Fib element of) this node changes.
-	 * @see liNodeChangedListeners
-	 * @see setNextLowerNodes
-	 * For superior nodes external objects will be above / superior to the
-	 * sub roots they represents.
-	 */
-	set< cFibNode * > setNextSuperiorNodes;
-	
-	/**
-	 * A list with the existing next lower Fib element nodes of this node.
-	 * The Fib objects of this nodes will be contained in this Fib object.
-	 * @see setNextSuperiorNodes
-	 * For lower nodes external objects will be above / superior to the
-	 * sub roots they represents.
-	 */
-	set< cFibNode * > setNextLowerNodes;
-	
 public:
 	
 	/**
@@ -202,6 +150,7 @@ public:
 	 */
 	bool fibObjectChanged( const eFibNodeChangedEvent & fibNodeChangedEvent );
 	
+	
 	/**
 	 * @return the version of the Fib object for the node
 	 * 	Every time the Fib object is changed the version number is counted up.
@@ -240,7 +189,6 @@ public:
 	 *
 	 * @see cFibElement::insertObjectInElement()
 	 * @see cExtObject
-	 * TODO
 	 * @see cRoot::integrateSubRootObject()
 	 * @param pFibObjectInfo a pointer to the Fib object info object of
 	 * 	the Fib object to insert
@@ -248,6 +196,36 @@ public:
 	 */
 	bool insertFibObjectInfo( cFibObjectInfo * pFibObjectInfo );
 	
+	/**
+	 * This method evalues the changes needed for the Fib object of this
+	 * node to become the given Fib object and stores them in the Fib
+	 * node change event.
+	 * The method will try to evalue as less as possible changes, but if
+	 * the difference is to great, it will return not minimal changes.
+	 * The returned changes will always be enought to transform this
+	 * Fib nodes Fib object into the given Fib object.
+	 * Note: If pOutFibNodeChangedEvent is NULL, you have to care that the
+	 * 	returned Fib node changed event object will be deleted.
+	 * Note: This method won't use a mutex.
+	 *
+	 * @param pInFibObject a pointer to the Fib object, into which this
+	 * 	Fib node should be transformed
+	 * @param pOutFibNodeChangedEvent a pointer to the Fib node changed
+	 * 	event, into which the changes should be stored, or NULL, if a
+	 * 	new Fib node changed event object should be created
+	 * 	(Note: You have to set the Fib node for the event.)
+	 * @return A pointer to the Fib node changed event object, which
+	 * 	contains the information of the changes to transver this node into
+	 * 	the given Fib object, or NULL, if non could be created (e.g.
+	 * 	pInFibObject is NULL).
+	 * 	If pOutFibNodeChangedEvent is NULL (or not given), you have to
+	 * 	care that the returned Fib node changed event object will be deleted.
+	 * 	The Fib element and Fib objects, in the returned Fib node changed
+	 * 	event, will point to Fib elements in pInFibObject .
+	 */
+	eFibNodeChangedEvent * evalueChangesToFibObject(
+		const cFibElement * pInFibObject,
+		eFibNodeChangedEvent * pOutFibNodeChangedEvent = NULL ) const;
 	
 	/**
 	 * With this function you can register a listeners for changes in the
@@ -298,6 +276,65 @@ protected:
 	 * @param pFibNodeChangedEvent the change event to send
 	 */
 	void sendNodeChange( const eFibNodeChangedEvent * pFibNodeChangedEvent );
+	
+//members:
+	
+	/**
+	 * The node handler is a friend.
+	 */
+	friend class cFibNodeHandler;
+	
+	/**
+	 * A pointer to the Fib object of this node.
+	 * This node represents this Fib object.
+	 * Normally for every Fib object there should be just one node.
+	 */
+	cFibElement * pFibObject;
+	
+	/**
+	 * True if (the Fib element of) this node is changebel, else false.
+	 * (This node is not changebel if it is a Fib database object.)
+	 */
+	bool bIsChangebel;
+	
+	/**
+	 * The version of the Fib object for the node.
+	 * Every time the Fib object is changed the version number is counted up.
+	 * @see fibObjectChanged();
+	 */
+	unsigned long ulVersion;
+	
+	/**
+	 * The pointer to the master root object of the Fib object of this node.
+	 * @see pFibObject
+	 * @see cFibElement::getMasterRoot()
+	 */
+	cFibElement * pMasterRoot;
+	
+	/**
+	 * A list with the listeners for changes in the Fib object for this node.
+	 * @see lFibNodeChanged
+	 */
+	set< lFibNodeChanged * > liNodeChangedListeners;
+	
+	/**
+	 * A list with the existing next superior Fib element nodes of this node.
+	 * They will be notifyed if (the Fib element of) this node changes.
+	 * @see liNodeChangedListeners
+	 * @see setNextLowerNodes
+	 * For superior nodes external objects will be above / superior to the
+	 * sub roots they represents.
+	 */
+	set< cFibNode * > setNextSuperiorNodes;
+	
+	/**
+	 * A list with the existing next lower Fib element nodes of this node.
+	 * The Fib objects of this nodes will be contained in this Fib object.
+	 * @see setNextSuperiorNodes
+	 * For lower nodes external objects will be above / superior to the
+	 * sub roots they represents.
+	 */
+	set< cFibNode * > setNextLowerNodes;
 	
 	
 };//end class cFibNode

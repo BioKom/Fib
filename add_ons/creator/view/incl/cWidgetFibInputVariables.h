@@ -54,6 +54,8 @@ History:
 #include <QObject>
 #include <QWidget>
 #include <QMap>
+#include <QScrollArea>
+#include <QVBoxLayout>
 
 
 //forward declarations
@@ -224,9 +226,45 @@ public:
 		const eFibVariableCreatorChangedEvent * pFibVariableChangedEvent );
 	
 	/**
+	 * @see QWidget::minimumSize()
+	 * @return the minimum size of this widgte;
+	 * 	This is the smallest size that the widgte can have.
+	 */
+	virtual QSize minimumSize() const;
+	
+	/**
+	 * @see QWidget::minimumSizeHint()
+	 * @return the minimum size hint for this widgte;
+	 * 	This is a small size that the widgte should have.
+	 */
+	virtual QSize minimumSizeHint() const;
+	
+	/**
 	 * @return a hint for a good size of this widget
 	 */
 	virtual QSize sizeHint() const;
+	
+	/**
+	 * This method returns a size hint for this element, if the maximum width
+	 * is iMaxWidth (if -1 the maximum width is infinite).
+	 *
+	 * @param iMaxWidth the maximum width this widget should have,
+	 * 	if -1 the maximum width is infinite
+	 * @return a hint for a good size of this widget, if the maximum width
+	 * 	is iMaxWidth.
+	 */
+	virtual QSize sizeHint( const int iMaxWidth ) const;
+	
+	/**
+	 * This method returns a size hint for this element, if minimum
+	 * iMinNumberOfVariables of input variables are shown in one line.
+	 *
+	 * @param iMinNumberOfVariables the minimum number of input variables to
+	 * 	shown in one line
+	 * @return a hint for a good size of this widget, if minimum
+	 * 	iMinNumberOfVariables of input variables are shown in one line
+	 */
+	virtual QSize sizeHintForMinElementsInLine( const int iMinNumberOfVariables ) const;
 	
 protected:
 	
@@ -240,6 +278,18 @@ protected:
 	 */
 	cFlowLayout * pInputVariableLayout;
 	
+	/**
+	 * The scroll area widget which contains the input variables.
+	 * (If the input variables has to much variables to display in the
+	 * widget, a slider will provide access to all variables.)
+	 * @see pLayoutMain
+	 */
+	QScrollArea * pScrollArea;
+	
+	/**
+	 * The variables to organize the layout of the widget.
+	 */
+	QVBoxLayout * pLayoutMain;
 	
 };//end class cWidgetFibInputVariables
 

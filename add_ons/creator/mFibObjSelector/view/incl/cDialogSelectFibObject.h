@@ -166,6 +166,18 @@ public:
 		cFibObjectInfo * pSelectedFibObjectInfo = NULL );
 	
 	/**
+	 * This method sets the selected Fib object info widget.
+	 * It will be the base for all relativ categories.
+	 *
+	 * @see pBaseFibObjectInfo
+	 * @see getSelectedFibObjectInfo()
+	 * @param pWidgetFibObjectInfo a pointer to the selected widget of the
+	 * 	Fib object info to set
+	 */
+	void setSelectedFibObjectInfo(
+		cWidgetFibObjectInfo * pWidgetFibObjectInfo = NULL );
+	
+	/**
 	 * Event method
 	 * This method will be called if an Fib object info widget was
 	 * selected.

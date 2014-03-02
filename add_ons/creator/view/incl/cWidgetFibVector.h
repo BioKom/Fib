@@ -136,6 +136,47 @@ public:
 		const eFibVectorChangedEvent * pFibVectorChanged );
 	
 	
+	/**
+	 * @see QWidget::minimumSize()
+	 * @return the minimum size of this widgte;
+	 * 	This is the smallest size that the widgte can have.
+	 */
+	virtual QSize minimumSize() const;
+	
+	/**
+	 * @see QWidget::minimumSizeHint()
+	 * @return the minimum size hint for this widgte;
+	 * 	This is a small size that the widgte should have.
+	 */
+	virtual QSize minimumSizeHint() const;
+	
+	/**
+	 * @return a hint for a good size of this widget
+	 */
+	virtual QSize sizeHint() const;
+	
+	/**
+	 * This method returns a size hint for this element, if the maximum width
+	 * is iMaxWidth (if -1 the maximum width is infinite).
+	 *
+	 * @param iMaxWidth the maximum width this widget should have,
+	 * 	if -1 the maximum width is infinite
+	 * @return a hint for a good size of this widget, if the maximum width
+	 * 	is iMaxWidth.
+	 */
+	virtual QSize sizeHint( const int iMaxWidth ) const;
+	
+	/**
+	 * This method returns a size hint for this element, if minimum
+	 * iMinNumberOfElements of vector elements are shown in one line.
+	 *
+	 * @param iMinNumberOfElements the minimum number of vector elements to
+	 * 	shown in one line
+	 * @return a hint for a good size of this widget, if minimum
+	 * 	iMinNumberOfElements of vector elements are shown in one line
+	 */
+	virtual QSize sizeHintForMinElementsInLine( const int iMinNumberOfElements ) const;
+	
 protected:
 	
 	/**
@@ -144,11 +185,6 @@ protected:
 	 * @see pFibVector
 	 */
 	virtual void createFibVectorWidget();
-	
-	/**
-	 * @return a hint for a good size of this widget
-	 */
-	virtual QSize sizeHint() const;
 	
 	
 ///members:

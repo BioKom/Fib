@@ -1585,8 +1585,8 @@ unsignedIntFib cFibBranch::getNumberOfObjectPoints() const{
  * @return the number of the Fib element over wich the objectPoint
  * 	object point is defined
  */
-unsignedIntFib cFibBranch::objectPointToElementPoint( const unsignedIntFib 
-		uiObjectPoint, bool bAbsolute ) const{
+unsignedIntFib cFibBranch::objectPointToElementPoint(
+		const unsignedIntFib uiObjectPoint, bool bAbsolute ) const{
 
 	if ( uiObjectPoint == 0 ){
 		//no such objectpoint
@@ -2343,7 +2343,8 @@ bool cFibBranch::removeObject( const unsignedIntFib objectPoint,
 	}//else elementPoint is an relative value
 
 	DEBUG_OUT_L2(<<"calling objectPointToElementPoint( "<<objectPoint<<" )"<<endl<<flush);
-	unsignedIntFib uiDefiningElementPoint = objectPointToElementPoint( objectPoint );
+	const unsignedIntFib uiDefiningElementPoint =
+		objectPointToElementPoint( objectPoint );
 	if ( uiDefiningElementPoint == 0 ){
 		//no defining element point
 		return false;

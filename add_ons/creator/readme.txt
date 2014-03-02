@@ -14,6 +14,11 @@ Compile
 >make
 
 
+To create the test cases and test application call:
+>makeTest.sh
+(All test executables can be found in the subfolder "testcase/".)
+
+
 The compiling process will need the Fib language library.
 To create them you need to compile the fib language subsystem.
 Go to the directory fib and call:

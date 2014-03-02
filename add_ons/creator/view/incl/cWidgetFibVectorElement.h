@@ -92,7 +92,7 @@ class cFibNode;
 
 
 class cWidgetFibVectorElement: public QWidget, public lFibVectorChanged,
-		public lFibVariableCreatorChanged, public lFibNodeChanged{
+		public lFibVariableCreatorChanged, public lFibNodeChanged {
 		Q_OBJECT
 public:
 	
@@ -214,11 +214,11 @@ public:
 	 * It will be called every time a Fib node (cFibNode), at which
 	 * this object is registered, was changed.
 	 *
-	 * @param pFibNodeChanged a pointer to the event, with the information
+	 * @param pFibNodeChangedEvent a pointer to the event, with the information
 	 * 	about the changed Fib node
 	 */
 	virtual void fibNodeChangedEvent(
-		const eFibNodeChangedEvent * pFibNodeChanged );
+		const eFibNodeChangedEvent * pFibNodeChangedEvent );
 	
 protected slots:
 	
@@ -248,14 +248,24 @@ protected slots:
 	 */
 	bool slotSetSelectedVariable( const int iSelectedVariable );
 	
-protected:
-	
 	/**
 	 * This method will (re-)create this Fib vector element widget
 	 * correspondending to the actual Fib vector object.
+	 * @see signalCreateFibVectorElementWidget()
 	 * @see pFibVector
 	 */
 	virtual void createFibVectorElementWidget();
+	
+signals:
+	
+	/**
+	 * The signal to send if this Fib vector element widget should be
+	 * (re-)created.
+	 * @see createFibVectorElementWidget()
+	 */
+	void signalCreateFibVectorElementWidget();
+	
+protected:
 	
 	/**
 	 * This method creates the choose type subwidget of this widget.
@@ -340,10 +350,21 @@ protected:
 	
 	/**
 	 * A pointer to the Fib vector object this widget represents.
+	 * @see mutexFibVectorElement
+	 * @see pDefiningFibElement
 	 * @see getFibVector()
 	 * @see createFibVectorElementWidget()
 	 */
 	cFibVectorCreator * pFibVector;
+	
+	/**
+	 * A pointer to the Fib element which defines the vector for the vector
+	 * element.
+	 * @see mutexFibVectorElement
+	 * @see pFibVector
+	 * @see cFibVectorCreator::getFibElement()
+	 */
+	cFibElement * pDefiningFibElement;
 	
 	/**
 	 * Mutex to lock access to the (non widget) members of this class.
@@ -388,7 +409,7 @@ protected:
 	
 	/**
 	 * The top most node for the Fib object for the vector.
-	 * The widget needs to know it so it  can react if the defined
+	 * The widget needs to know it, so it can react if the defined
 	 * variables in node change.
 	 * @see liDefinedVariables
 	 * @see mutexFibVectorElementWidget

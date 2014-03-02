@@ -43,11 +43,14 @@
  * @see QGraphicsItem
  * @see QGraphicsView
  * @pattern Factory Method
- * @see convertToFibGraphicsItem()
+ * @see iFibGraphicsItemFactory
+ * @see cFibGraphicsItemImageFactory
  */
 /*
 History:
 18.07.2013  Oesterholz  created
+25.01.2013  Oesterholz  the graphical items will be updated, if possible,
+	with the information of the Fib node change event
 */
 
 
@@ -59,11 +62,10 @@ History:
 
 #include "cFibObjectMainWindow.h"
 #include "nFibObjectTools.h"
-#include "cFibGraphicsItemFibList.h"
-#include "cFibGraphicsItemFibObject.h"
-#include "cFibGraphicsItemFibExtObject.h"
+#include "cFibGraphicsItemImageFactory.h"
 #include "cFibNode.h"
 #include "cFibNodeHandler.h"
+#include "eFibNodeChangedEvent.h"
 #include "cFibGraphicsItem.h"
 #include "cWidgetFibInputVariables.h"
 #include "cEvalueSimpleRGBA255QPainter.h"
@@ -102,9 +104,14 @@ cFibGraphicsScene::cFibGraphicsScene( cFibNode * pInFibNode, QWidget * pParent )
 		pFibRootNode( NULL ),
 		dPointWidth( 1.0 ), dPointHeight( 1.0 ),
 		dDirection1Minimum( 0.0 ), dDirection1Maximum( 0.0 ),
-		dDirection2Minimum( 0.0 ), dDirection2Maximum( 0.0 ){
+		dDirection2Minimum( 0.0 ), dDirection2Maximum( 0.0 ) {
 	
 	DEBUG_OUT_L2(<<"cFibGraphicsScene("<<this<<")::cFibGraphicsScene( pInFibNode="<<pInFibNode<<", pParent="<<pParent<<" ) called"<<endl<<flush);
+	
+	connect( this, SIGNAL(signalEvalueInputVariable()),
+		this, SLOT(evalueInputVariables()) );
+	connect( this, SIGNAL(signalEvalueGraphicsItemsFromFibNode()),
+		this, SLOT(evalueGraphicsItemsFromFibNode()) );
 	
 	setFibObjectNode( pInFibNode );
 }
@@ -125,9 +132,14 @@ cFibGraphicsScene::cFibGraphicsScene( cFibNode * pInFibNode,
 		pMainWindow( pInMainWindow ), pEvalueSimpleRGBA255QPainter( NULL ),
 		pFibRootNode( NULL ), dPointWidth( 1.0 ), dPointHeight( 1.0 ),
 		dDirection1Minimum( 0.0 ), dDirection1Maximum( 0.0 ),
-		dDirection2Minimum( 0.0 ), dDirection2Maximum( 0.0 ){
+		dDirection2Minimum( 0.0 ), dDirection2Maximum( 0.0 ) {
 	
 	DEBUG_OUT_L2(<<"cFibGraphicsScene("<<this<<")::cFibGraphicsScene( pInFibNode="<<pInFibNode<<", pInMainWindow="<<pInMainWindow<<" ) called"<<endl<<flush);
+	
+	connect( this, SIGNAL(signalEvalueInputVariable()),
+		this, SLOT(evalueInputVariables()) );
+	connect( this, SIGNAL(signalEvalueGraphicsItemsFromFibNode()),
+		this, SLOT(evalueGraphicsItemsFromFibNode()) );
 	
 	setFibObjectNode( pInFibNode );
 }
@@ -151,9 +163,14 @@ cFibGraphicsScene::cFibGraphicsScene( cFibElement * pInFibObject,
 		pFibRootNode( NULL ),
 		dPointWidth( 1.0 ), dPointHeight( 1.0 ),
 		dDirection1Minimum( 0.0 ), dDirection1Maximum( 0.0 ),
-		dDirection2Minimum( 0.0 ), dDirection2Maximum( 0.0 ){
+		dDirection2Minimum( 0.0 ), dDirection2Maximum( 0.0 ) {
 	
 	DEBUG_OUT_L2(<<"cFibGraphicsScene("<<this<<")::cFibGraphicsScene( pInFibNode="<<pInFibObject<<", pParent="<<pParent<<" ) called"<<endl<<flush);
+	
+	connect( this, SIGNAL(signalEvalueInputVariable()),
+		this, SLOT(evalueInputVariables()) );
+	connect( this, SIGNAL(signalEvalueGraphicsItemsFromFibNode()),
+		this, SLOT(evalueGraphicsItemsFromFibNode()) );
 	
 	cFibNode * pInFibNode = cFibNodeHandler::getInstance()->
 		getNodeForFibObject( pInFibObject, this );
@@ -165,17 +182,17 @@ cFibGraphicsScene::cFibGraphicsScene( cFibElement * pInFibObject,
 /**
  * destructor
  */
-cFibGraphicsScene::~cFibGraphicsScene(){
+cFibGraphicsScene::~cFibGraphicsScene() {
 	
 	DEBUG_OUT_L2(<<"cFibGraphicsScene("<<this<<")::~cFibGraphicsScene() called"<<endl<<flush);
 	
-	if ( pFibNode ){
+	if ( pFibNode ) {
 		pFibNode->unregisterNodeChangeListener( this );
 	}
-	if ( pFibRootNode ){
+	if ( pFibRootNode ) {
 		pFibRootNode->unregisterNodeChangeListener( this );
 	}
-	if ( pWidgetFibInputVariables ){
+	if ( pWidgetFibInputVariables ) {
 		//delete the widget for the input variables
 		pWidgetFibInputVariables->deleteLater();
 	}
@@ -188,7 +205,7 @@ cFibGraphicsScene::~cFibGraphicsScene(){
  * @return a pointer to the Fib node object this widget shows / represents
  * 	@see pFibNode
  */
-cFibNode * cFibGraphicsScene::getFibNode(){
+cFibNode * cFibGraphicsScene::getFibNode() {
 	
 	return pFibNode;
 }
@@ -214,24 +231,24 @@ const cFibNode * cFibGraphicsScene::getFibNode() const{
  * @param pNewFibObject a pointer to the Fib object to set for this widget
  * @return true if the given Fib object was set, else false
  */
-bool cFibGraphicsScene::setFibObjectNode( cFibNode * pNewFibObjectNode ){
+bool cFibGraphicsScene::setFibObjectNode( cFibNode * pNewFibObjectNode ) {
 	
 	DEBUG_OUT_L2(<<"cFibGraphicsScene("<<this<<")::setFibObjectNode( pNewFibObjectNode="<<pNewFibObjectNode<<") called"<<endl<<flush);
 	
-	if ( pNewFibObjectNode == NULL ){
+	if ( pNewFibObjectNode == NULL ) {
 		
 		return false;
 	}
 	bool bReturnValue = true;
 	
-	if ( pFibNode ){
+	if ( pFibNode ) {
 		pFibNode->unregisterNodeChangeListener( this );
 	}
 	pFibNode = pNewFibObjectNode;
 	pFibNode->registerNodeChangeListener( this );
 	
 	//set pFibRootNode
-	if ( pFibRootNode ){
+	if ( pFibRootNode ) {
 		pFibRootNode->unregisterNodeChangeListener( this );
 	}
 	pFibRootNode = cFibNodeHandler::getInstance()->
@@ -257,17 +274,16 @@ bool cFibGraphicsScene::setFibObjectNode( cFibNode * pNewFibObjectNode ){
  * @param pFibNode a pointer to the changed Fib node
  */
 void cFibGraphicsScene::fibNodeChangedEvent(
-		const eFibNodeChangedEvent * pFibNodeChanged ){
+		const eFibNodeChangedEvent * pFibNodeChanged ) {
 	
 	DEBUG_OUT_L2(<<"cFibGraphicsScene("<<this<<")::fibNodeChangedEvent( pFibNodeChanged="<<pFibNodeChanged<<") called"<<endl<<flush);
 	
-	if ( ( pFibNodeChanged == NULL ) ||
-			( pFibNodeChanged->pFibNodeChanged == NULL ) ){
+	const cFibNode * pChangedNode = pFibNodeChanged->getChangedNode();
+	if ( ( pFibNodeChanged == NULL ) || ( pChangedNode == NULL ) ) {
 		//nothing changed
 		return;
 	}
-	if ( pFibNodeChanged->bNodeDeleted &&
-			( pFibNodeChanged->pFibNodeChanged == pFibNode ) ){
+	if ( pFibNodeChanged->isDeleted() && ( pChangedNode == pFibNode ) ) {
 		/*node of this graphic scene deleted
 		 *-> set NULL as this this graphic scene node*/
 		pFibNode = NULL;
@@ -275,22 +291,25 @@ void cFibGraphicsScene::fibNodeChangedEvent(
 		updateEvalueFibObjectForPainter();
 		updateForDimensionChange();
 		
-		evalueInputVariables();
-		evalueGraphicsItemsFromFibNode();
+		emit signalEvalueInputVariable();
+		emit signalEvalueGraphicsItemsFromFibNode();
 		
 		DEBUG_OUT_L2(<<"cFibGraphicsScene("<<this<<")::fibNodeChangedEvent( pFibNodeChanged="<<pFibNodeChanged<<") done node deleted"<<endl<<flush);
 		return;
 	}//else this graphic scene node was not deleted
 
-	if (  pFibNodeChanged->pChangedBy == this ){
+	if ( pFibNodeChanged->getChangeBy() == this ) {
 		//nothing changed
 		DEBUG_OUT_L2(<<"cFibGraphicsScene("<<this<<")::fibNodeChangedEvent( pFibNodeChanged="<<pFibNodeChanged<<") done nothing changed"<<endl<<flush);
 		return;
 	}
 	//check if the event is for pFibRootNode
-	if ( pFibRootNode != pFibNode ){
-		if ( pFibNodeChanged->pFibNodeChanged == pFibRootNode ){
-			//the Fib master root object was changed
+	if ( pFibRootNode != pFibNode ) {
+		//this graphical scene is not for the root node of the Fib object
+		if ( pChangedNode == pFibRootNode ) {
+			/*the Fib master root object was changed (there should be an
+			 *extra event if the node for this graphical scene changes,
+			 *so just update the dimensions in this event call)*/
 			updateEvalueFibObjectForPainter();
 			updateForDimensionChange();
 			
@@ -298,16 +317,16 @@ void cFibGraphicsScene::fibNodeChangedEvent(
 			DEBUG_OUT_L2(<<"cFibGraphicsScene("<<this<<")::fibNodeChangedEvent( pFibNodeChanged="<<pFibNodeChanged<<") done the Fib master root object was changed"<<endl<<flush);
 			return;
 		}
-		if ( ( pFibNodeChanged->pFibNodeChanged->getFibObjectVersion() ==
-					ulFibNodeVersionDisplayed ) ){
-			//nothing changed
+		if ( ( pChangedNode != pFibNode ) ||
+				( pChangedNode->getFibObjectVersion() == ulFibNodeVersionDisplayed ) ) {
+			//nothing changed for the Fib node of this graphical scene
 			DEBUG_OUT_L2(<<"cFibGraphicsScene("<<this<<")::fibNodeChangedEvent( pFibNodeChanged="<<pFibNodeChanged<<") done the Fib master root object nothing changed"<<endl<<flush);
 			return;
 		}
-	}else{//the Fib node and Fib rood node are the same
-		if ( ( pFibNodeChanged->pFibNodeChanged->getFibObjectVersion() ==
-					ulFibNodeVersionDisplayed ) ){
-			//nothing changed
+	}else{//the Fib node and Fib root node for this graphical scene are the same
+		if ( ( pChangedNode != pFibNode ) ||
+				( pChangedNode->getFibObjectVersion() == ulFibNodeVersionDisplayed ) ){
+			//nothing changed for the Fib node of this graphical scene
 			return;
 		}
 		//the Fib master root object was changed
@@ -315,69 +334,52 @@ void cFibGraphicsScene::fibNodeChangedEvent(
 		updateForDimensionChange();
 	}
 	
+	emit signalEvalueInputVariable();
 	
-	//TODO just update changed parts
+	//try to update the Fib graphic items
+	cFibGraphicsItemImageFactory fibGraphicsItemImageFactory(
+		ulFibNodeVersionDisplayed, this );
 	
-	evalueInputVariables();
-	evalueGraphicsItemsFromFibNode();
+	//for all sub graphic items
+	//TODO not all items, but top level items (add deleteObject() for items)
+	bool bAllUpdated = true;
+	//lock Fib node to create the Fib graphic items
+	cFibNodeHandler * pFibNodeHandler = cFibNodeHandler::getInstance();
+	if ( pFibNodeHandler ) {
+		pFibNodeHandler->lock( pChangedNode );
+		if ( ! pFibNodeHandler->isValidNode( pChangedNode ) ){
+			//can't update for not valid node
+			pFibNodeHandler->unlock( pChangedNode );
+			emit signalEvalueGraphicsItemsFromFibNode();
+			return;
+		}
+	}
+	mutexFibParts.lock();
+	const cFibElement * pUpdateForFibObject = pFibNode->getFibObject();
+	for ( QList< cFibGraphicsItem * >::iterator
+			itrActualItem = liFibParts.begin();
+			itrActualItem != liFibParts.end(); itrActualItem++ ) {
+		
+		DEBUG_OUT_L2(<<"cFibGraphicsScene("<<this<<")::fibNodeChangedEvent( pFibNodeChanged="<<pFibNodeChanged<<") update Fib graphic item "<<(*itrActualItem)<<" with type "<<(*itrActualItem)->type()<<" ("<<((*itrActualItem)->type() - (QGraphicsItem::UserType + 1024) )<<")"<<endl<<flush);
+		if ( ! (*itrActualItem)->updateForFibNodeChange( pFibNodeChanged,
+					&fibGraphicsItemImageFactory, pUpdateForFibObject ) ) {
+			//the Fib graphic item could not be updated -> update them (/all)
+			DEBUG_OUT_L2(<<"cFibGraphicsScene("<<this<<")::fibNodeChangedEvent( pFibNodeChanged="<<pFibNodeChanged<<") the Fib graphic item "<<(*itrActualItem)<<" could not be updated"<<endl<<flush);
+			bAllUpdated = false;
+			break;//done, all updated
+		}
+	}
+	mutexFibParts.unlock();
+	if ( pFibNodeHandler ) {
+		pFibNodeHandler->unlock( pChangedNode );
+	}
+	if ( ! bAllUpdated ) {
+		//recreate all graphic items
+		DEBUG_OUT_L2(<<"cFibGraphicsScene("<<this<<")::fibNodeChangedEvent( pFibNodeChanged="<<pFibNodeChanged<<") recreate all graphic items ( signalEvalueGraphicsItemsFromFibNode() )"<<endl<<flush);
+		emit signalEvalueGraphicsItemsFromFibNode();
+	}
 	
 	DEBUG_OUT_L2(<<"cFibGraphicsScene("<<this<<")::fibNodeChangedEvent( pFibNodeChanged="<<pFibNodeChanged<<") done"<<endl<<flush);
-}
-
-
-/**
- * This method evalue the input variables for the Fib object for the
- * Fib node.
- * It will evalue all variables used in the Fib object, but not defined
- * in it.
- * New input variables will be set to the default value 0 .
- *
- * @see pFibNode
- * @see pWidgetFibInputVariables
- * @see getNumberOfInputVariables()
- * @see getInputVariablesWidget()
- * @return true if the input variables for the Fib object for the node
- * 	could be set, else false (and no input variables set)
- */
-bool cFibGraphicsScene::evalueInputVariables(){
-	
-	DEBUG_OUT_L2(<<"cFibGraphicsScene("<<this<<")::evalueInputVariables() called"<<endl<<flush);
-	
-	if ( ( pFibNode == NULL ) || ( pFibNode->getFibObject() == NULL ) ){
-		//no Fib object -> no input variables
-		DEBUG_OUT_L2(<<"cFibGraphicsScene("<<this<<")::evalueInputVariables() done no Fib objects"<<endl<<flush);
-		
-		mutexFibParts.lock();
-		setInputVariablesWidget( NULL );
-		mutexFibParts.unlock();
-		return false;
-	}
-	cFibNodeHandler * pFibNodeHandler = cFibNodeHandler::getInstance();
-	
-	DEBUG_OUT_L3(<<"cFibGraphicsScene("<<this<<")::evalueInputVariables() lock node "<<pFibNode<<" mutex"<<endl<<flush);
-	pFibNodeHandler->lock( pFibNode );
-	DEBUG_OUT_L3(<<"cFibGraphicsScene("<<this<<")::evalueInputVariables() lock Fib parts mutex"<<endl<<flush);
-	mutexFibParts.lock();
-	//evalue the input variables of the Fib object
-	DEBUG_OUT_L3(<<"cFibGraphicsScene("<<this<<")::evalueInputVariables() evalue the input variables of the Fib object"<<endl<<flush);
-	
-	cWidgetFibInputVariables * pNewWidgetFibInputVariables = new
-		cWidgetFibInputVariables( pFibNode->getFibObject(), true );
-	
-	if ( pNewWidgetFibInputVariables->getNumberOfInputVariables() == 0 ){
-		//no input variables -> input variables widget not needed -> delete it
-		DEBUG_OUT_L3(<<"cFibGraphicsScene("<<this<<")::evalueInputVariables() no input variables -> input variables widget not needed -> delete it"<<endl<<flush);
-		delete pNewWidgetFibInputVariables;
-		pNewWidgetFibInputVariables = NULL;
-	}
-	
-	mutexFibParts.unlock();
-	pFibNodeHandler->unlock( pFibNode );
-	
-	setInputVariablesWidget( pNewWidgetFibInputVariables );
-	
-	DEBUG_OUT_L2(<<"cFibGraphicsScene("<<this<<")::evalueInputVariables() done"<<endl<<flush);
-	return true;
 }
 
 
@@ -414,17 +416,17 @@ unsigned int cFibGraphicsScene::getNumberOfInputVariables() const{
  * 	Beware: This object will handle the given widget object (e.g. it will delete it).
  */
 void cFibGraphicsScene::setInputVariablesWidget(
-		cWidgetFibInputVariables * pNewWidgetFibInputVariables ){
+		cWidgetFibInputVariables * pNewWidgetFibInputVariables ) {
 	
 	DEBUG_OUT_L2(<<"cFibGraphicsScene("<<this<<")::setInputVariablesWidget( pNewWidgetFibInputVariables="<<pNewWidgetFibInputVariables<<") called"<<endl<<flush);
-	if ( pNewWidgetFibInputVariables == pWidgetFibInputVariables ){
+	if ( pNewWidgetFibInputVariables == pWidgetFibInputVariables ) {
 		//input variables already set
 		DEBUG_OUT_L2(<<"cFibGraphicsScene("<<this<<")::setInputVariablesWidget( pNewWidgetFibInputVariables="<<pNewWidgetFibInputVariables<<") done input variables already set"<<endl<<flush);
 		return;
 	}
 	
 	//if NULL unset old widget
-	if ( pMainWindow ){
+	if ( pMainWindow ) {
 		//set new widget in main Fib object window
 		pMainWindow->setInputVariablesWidgetForCentralGrapical(
 			pNewWidgetFibInputVariables );
@@ -434,7 +436,7 @@ void cFibGraphicsScene::setInputVariablesWidget(
 		
 	pWidgetFibInputVariables = pNewWidgetFibInputVariables;
 	
-	if ( pOldWidgetFibInputVariables ){
+	if ( pOldWidgetFibInputVariables ) {
 		DEBUG_OUT_L2(<<"cFibGraphicsScene("<<this<<")::setInputVariablesWidget( pNewWidgetFibInputVariables="<<pNewWidgetFibInputVariables<<") delete old input variables ("<<pOldWidgetFibInputVariables<<")"<<endl<<flush);
 		pOldWidgetFibInputVariables->deleteLater();
 	}
@@ -449,7 +451,7 @@ void cFibGraphicsScene::setInputVariablesWidget(
  * @see getNumberOfInputVariables()
  * @return a pointer to the widget with the input variables
  */
-cWidgetFibInputVariables * cFibGraphicsScene::getInputVariablesWidget(){
+cWidgetFibInputVariables * cFibGraphicsScene::getInputVariablesWidget() {
 	
 	return pWidgetFibInputVariables;
 }
@@ -468,7 +470,14 @@ const cWidgetFibInputVariables * cFibGraphicsScene::getInputVariablesWidget() co
 }
 
 
-#ifdef TODO_WEG
+/**
+ * @return the name of this class "cFibGraphicsScene"
+ */
+std::string cFibGraphicsScene::getName() const{
+	
+	return std::string( "cFibGraphicsScene" );
+}
+
 
 /**
  * This method evalue the input variables for the Fib object for the
@@ -480,23 +489,20 @@ const cWidgetFibInputVariables * cFibGraphicsScene::getInputVariablesWidget() co
  * @see pFibNode
  * @see pWidgetFibInputVariables
  * @see getNumberOfInputVariables()
- * @see getInputVariables()
- * @see getInputVariable()
- * @see getValueForInputVariable()
- * @see setValueForInputVariable()
+ * @see getInputVariablesWidget()
  * @return true if the input variables for the Fib object for the node
  * 	could be set, else false (and no input variables set)
  */
-bool cFibGraphicsScene::evalueInputVariables(){
+bool cFibGraphicsScene::evalueInputVariables() {
 	
 	DEBUG_OUT_L2(<<"cFibGraphicsScene("<<this<<")::evalueInputVariables() called"<<endl<<flush);
 	
-	if ( ( pFibNode == NULL ) || ( pFibNode->getFibObject() == NULL ) ){
+	if ( ( pFibNode == NULL ) || ( pFibNode->getFibObject() == NULL ) ) {
 		//no Fib object -> no input variables
 		DEBUG_OUT_L2(<<"cFibGraphicsScene("<<this<<")::evalueInputVariables() done no Fib objects"<<endl<<flush);
 		
 		mutexFibParts.lock();
-		pWidgetFibInputVariables.clear();
+		setInputVariablesWidget( NULL );
 		mutexFibParts.unlock();
 		return false;
 	}
@@ -504,222 +510,28 @@ bool cFibGraphicsScene::evalueInputVariables(){
 	
 	DEBUG_OUT_L3(<<"cFibGraphicsScene("<<this<<")::evalueInputVariables() lock node "<<pFibNode<<" mutex"<<endl<<flush);
 	pFibNodeHandler->lock( pFibNode );
-	DEBUG_OUT_L3(<<"cFibGraphicsScene("<<this<<")::evalueInputVariables() lock Fib parts mutex"<<endl<<flush);
+	DEBUG_OUT_L3(<<"cFibGraphicsScene("<<this<<")::evalueInputVariables() Fib parts mutex lock"<<endl<<flush);
 	mutexFibParts.lock();
 	//evalue the input variables of the Fib object
 	DEBUG_OUT_L3(<<"cFibGraphicsScene("<<this<<")::evalueInputVariables() evalue the input variables of the Fib object"<<endl<<flush);
-	list< cFibVariable * > liNewInputVariables =
-		nFibObjectTools::evalueInputVariables( pFibNode->getFibObject() );
 	
-	//merge the new input variables with the old input variables
-	DEBUG_OUT_L3(<<"cFibGraphicsScene("<<this<<")::evalueInputVariables() merge the new input variables with the old input variable"<<endl<<flush);
-	list< pair< cFibVariable *, doubleFib > > pWidgetFibInputVariablesOld =
-		pWidgetFibInputVariables;
-	pWidgetFibInputVariables.clear();
+	cWidgetFibInputVariables * pNewWidgetFibInputVariables =
+		new cWidgetFibInputVariables( pFibNode->getFibObject(), true );
 	
-	for ( list< cFibVariable * >::iterator
-			itrNewVariable = liNewInputVariables.begin();
-			itrNewVariable != liNewInputVariables.end(); itrNewVariable++ ){
-		//try to evalue the old default value for the input variable
-		list< pair< cFibVariable *, doubleFib > >::iterator
-			itrOldInputVariable = pWidgetFibInputVariablesOld.begin();
-		for ( ; itrOldInputVariable != pWidgetFibInputVariablesOld.end();
-				itrOldInputVariable++ ){
-			
-			if ( itrOldInputVariable->first == (*itrNewVariable) ){
-				/*old input variable is new input variable
-				-> default value found -> stop search*/
-				break;
-			}
-		}//end for find old default value
-		if ( itrOldInputVariable != pWidgetFibInputVariablesOld.end() ){
-			//default value found for the input variable -> use it
-			pWidgetFibInputVariables.push_back( pair< cFibVariable *, doubleFib >(
-				(*itrNewVariable), itrOldInputVariable->second ) );
-			//don't need the old variable again -> delete it (to speed up the search)
-			pWidgetFibInputVariablesOld.erase( itrOldInputVariable );
-		}else{/*else no old default value found for the input variable
-			-> set 0 as default value */
-			pWidgetFibInputVariables.push_back( pair< cFibVariable *, doubleFib >(
-				(*itrNewVariable), 0 ) );
-		}
+	if ( pNewWidgetFibInputVariables->getNumberOfInputVariables() == 0 ) {
+		//no input variables -> input variables widget not needed -> delete it
+		DEBUG_OUT_L3(<<"cFibGraphicsScene("<<this<<")::evalueInputVariables() no input variables -> input variables widget not needed -> delete it"<<endl<<flush);
+		delete pNewWidgetFibInputVariables;
+		pNewWidgetFibInputVariables = NULL;
 	}
 	
 	mutexFibParts.unlock();
 	pFibNodeHandler->unlock( pFibNode );
 	
+	setInputVariablesWidget( pNewWidgetFibInputVariables );
+	
 	DEBUG_OUT_L2(<<"cFibGraphicsScene("<<this<<")::evalueInputVariables() done"<<endl<<flush);
 	return true;
-}
-
-
-/**
- * This method will return the number of input variables for the Fib
- * object for the Fib node.
- *
- * @see pFibNode
- * @see pWidgetFibInputVariables
- * @see evalueInputVariables()
- * @see getInputVariables()
- * @see getInputVariable()
- * @see getValueForInputVariable()
- * @see setValueForInputVariable()
- * @return the number of input variables for the Fib object for the Fib node
- */
-unsigned int cFibGraphicsScene::getNumberOfInputVariables() const{
-	
-	mutexFibParts.lock();
-	const unsigned int ulInputVariables = pWidgetFibInputVariables.size();
-	mutexFibParts.unlock();
-	
-	return ulInputVariables;
-}
-
-
-/**
- * This method will retur a list of all input variables for the Fib
- * object for the Fib node.
- *
- * @see pFibNode
- * @see pWidgetFibInputVariables
- * @see evalueInputVariables()
- * @see getNumberOfInputVariables()
- * @see getInputVariable()
- * @see getValueForInputVariable()
- * @see setValueForInputVariable()
- * @return a list of all input variables for the Fib object for the Fib node
- */
-list< cFibVariable * > cFibGraphicsScene::getInputVariables(){
-	//evalue list with input variables
-	mutexFibParts.lock();
-	list< cFibVariable * > liRetInputVariables;
-	
-	for ( list< pair< cFibVariable *, doubleFib > >::iterator
-			itrActualInputVariable = pWidgetFibInputVariables.begin();
-			itrActualInputVariable != pWidgetFibInputVariables.end(); itrActualInputVariable++ ){
-		
-		liRetInputVariables.push_back( itrActualInputVariable->first );
-	}
-	mutexFibParts.unlock();
-	
-	return liRetInputVariables;
-}
-
-
-/**
- * This method will return the uiNumberOfVariable'th input variable for
- * the Fib object for the Fib node.
- *
- * @see pFibNode
- * @see pWidgetFibInputVariables
- * @see evalueInputVariables()
- * @see getNumberOfInputVariables()
- * @see getInputVariables()
- * @see getValueForInputVariable()
- * @see setValueForInputVariable()
- * @param uiNumberOfVariable the number of the input variable to return
- * 	(counting starts at 1)
- * @return uiNumberOfVariable'th input variable for the Fib object for
- * 	the Fib node, or NULL if non exists
- */
-cFibVariable * cFibGraphicsScene::getInputVariable(
-		const unsigned int uiNumberOfVariable ){
-	//evalue input variable
-	mutexFibParts.lock();
-	
-	list< pair< cFibVariable *, doubleFib > >::iterator itrToReturnVariable =
-		getListElement( pWidgetFibInputVariables, uiNumberOfVariable );
-	
-	cFibVariable * pToReturnVariable =
-		( itrToReturnVariable != pWidgetFibInputVariables.end() ) ?
-		itrToReturnVariable->first ://input variable found
-		NULL;//else input variable not found -> return NULL
-		
-	mutexFibParts.unlock();
-	
-	return pToReturnVariable;
-}
-
-
-/**
- * This method returns the value for the uiNumberOfVariable'th input
- * variable.
- *
- * @see pFibNode
- * @see pWidgetFibInputVariables
- * @see evalueInputVariables()
- * @see getNumberOfInputVariables()
- * @see getInputVariables()
- * @see getInputVariable()
- * @see setValueForInputVariable()
- * @param uiNumberOfVariable the number of the input variable, which
- * 	value to return (counting starts at 1)
- * @return the value of the uiNumberOfVariable'th input variable, or 0
- * 	if no uiNumberOfVariable'th input variable exists
- */
-doubleFib cFibGraphicsScene::getValueForInputVariable(
-	const unsigned int uiNumberOfVariable ) const{
-	//evalue input variable
-	mutexFibParts.lock();
-	
-	list< pair< cFibVariable *, doubleFib > >::const_iterator itrToReturnVariable =
-		getListElement( pWidgetFibInputVariables, uiNumberOfVariable );
-	
-	doubleFib dToReturnValue =
-		( itrToReturnVariable != pWidgetFibInputVariables.end() ) ?
-		itrToReturnVariable->second ://input variable found
-		0;//else input variable not found -> return 0
-		
-	mutexFibParts.unlock();
-	
-	return dToReturnValue;
-}
-
-
-/**
- * This method sets the value for the uiNumberOfVariable'th input
- * variable.
- *
- * @see pFibNode
- * @see pWidgetFibInputVariables
- * @see evalueInputVariables()
- * @see getNumberOfInputVariables()
- * @see getInputVariables()
- * @see getInputVariable()
- * @see getValueForInputVariable()
- * @param uiNumberOfVariable the number of the input variable, which
- * 	value to set (counting starts at 1)
- * @param dValue the value for the uiNumberOfVariable'th input variable
- * @return true if the value could be set, else false (e. g. no such
- * 	input variablse)
- */
-bool cFibGraphicsScene::setValueForInputVariable(
-	const unsigned int uiNumberOfVariable, const doubleFib dValue ){
-	//evalue input variable
-	mutexFibParts.lock();
-	
-	list< pair< cFibVariable *, doubleFib > >::iterator itrToReturnVariable =
-		getListElement( pWidgetFibInputVariables, uiNumberOfVariable );
-	
-	const bool bVariableFound = ( itrToReturnVariable != pWidgetFibInputVariables.end() );
-	if ( bVariableFound ){
-		//input variable found -> set value
-		itrToReturnVariable->second = dValue;
-	}//else input variable not found -> can't set value
-		
-	mutexFibParts.unlock();
-	
-	return bVariableFound;
-}
-#endif //TODO_WEG
-
-
-/**
- * @return the name of this class "cFibGraphicsScene"
- */
-std::string cFibGraphicsScene::getName() const{
-	
-	return std::string( "cFibGraphicsScene" );
 }
 
 
@@ -733,53 +545,76 @@ QSize cFibGraphicsScene::sizeHint() const{
 
 
 /**
- * This method shows the Fib object of the Fib node of this object in
- * the Fib XML representation.
- * TODO: Just (re-)show parts of liFibParts, which have changed (or moved)
+ * This method will evalue the grapical items for the Fib object of this
+ * scene and include them in this grapical scene.
+ * At the end this graphical scene will display the Fib object.
  *
  * @see QList <QGraphicsItem *> QGraphicsScene::items()
  * @see liFibParts
- * @see convertToFibGraphicsItem()
+ * @see iFibGraphicsItemFactory
+ * @see cFibGraphicsItemImageFactory
  * @see cFibGraphicsItem
  * @return true if the Fib object was displayed, else false
  */
-bool cFibGraphicsScene::evalueGraphicsItemsFromFibNode(){
+bool cFibGraphicsScene::evalueGraphicsItemsFromFibNode() {
 	
 	DEBUG_OUT_L2(<<"cFibGraphicsScene("<<this<<")::evalueGraphicsItemsFromFibNode() called"<<endl<<flush);
 	
 	//remove old items
-	QList< QGraphicsItem * > liOldItems = items();
+	mutexFibParts.lock();
 	
 	DEBUG_OUT_L3(<<"cFibGraphicsScene("<<this<<")::evalueGraphicsItemsFromFibNode() deleting "<<items().size()<<" old items"<<endl<<flush);
-	for ( QList< QGraphicsItem * >::iterator
-			itrActualItem = liOldItems.begin();
-			itrActualItem != liOldItems.end(); itrActualItem++ ){
-		//remove the old item
-		removeItem( *itrActualItem );
+	for ( QList< cFibGraphicsItem * >::iterator
+			itrActualItem = liFibParts.begin();
+			itrActualItem != liFibParts.end(); itrActualItem++ ) {
+		//delete the old item (and all its childs and remove from this graphical scene)
 		delete *itrActualItem;
 	}
+	liFibParts.clear();
 	//TODO add item for the Fib image size borders (dDirection1Minimum, ...)
 	
 	//set the input variables to there values, to create the graphics items
 	DEBUG_OUT_L3(<<"cFibGraphicsScene("<<this<<")::evalueGraphicsItemsFromFibNode() set the input variables to there values, to create the graphics items"<<endl<<flush);
-	setInputVariables();
+	if ( pWidgetFibInputVariables ) {
+		pWidgetFibInputVariables->assignValues();
+	}
 	
-	if ( ( pFibNode == NULL ) || ( pFibNode->getFibObject() == NULL ) ){
+	if ( ( pFibNode == NULL ) || ( pFibNode->getFibObject() == NULL ) ) {
 		//no Fib object -> nothing to show
 		//update this grapic scene
+		mutexFibParts.unlock();
 		update();
 		
 		return false;
 	}
 	
 	
-	//create the graphics item
-	cFibGraphicsItem * pFibGraphicsItem =
-		convertToFibGraphicsItem( pFibNode->getFibObject() );
-	
-	if ( pFibGraphicsItem ){
-		addItem( pFibGraphicsItem );
+	//create the graphics items
+	cFibGraphicsItemImageFactory fibGraphicsItemImageFactory(
+		ulFibNodeVersionDisplayed, this );
+	//lock Fib node to create the Fib graphic items
+	cFibNodeHandler * pFibNodeHandler = cFibNodeHandler::getInstance();
+	if ( pFibNodeHandler ) {
+		pFibNodeHandler->lock( pFibNode );
+		if ( ! pFibNodeHandler->isValidNode( pFibNode ) ){
+			//can't update for not valid node
+			pFibNodeHandler->unlock( pFibNode );
+			mutexFibParts.unlock();
+			update();
+			return false;
+		}
 	}
+	cFibGraphicsItem * pFibGraphicsItem =
+		fibGraphicsItemImageFactory( pFibNode->getFibObject() );
+	if ( pFibNodeHandler ) {
+		pFibNodeHandler->unlock( pFibNode );
+	}
+	
+	if ( pFibGraphicsItem ) {
+		addItem( pFibGraphicsItem );
+		liFibParts.push_back( pFibGraphicsItem );
+	}
+	mutexFibParts.unlock();
 	//update this grapic scene
 	update();
 	
@@ -793,156 +628,15 @@ bool cFibGraphicsScene::evalueGraphicsItemsFromFibNode(){
  * Fib object can be evalued.
  * @see pWidgetFibInputVariables
  */
-void cFibGraphicsScene::setInputVariables(){
+void cFibGraphicsScene::setInputVariables() {
 	
 	DEBUG_OUT_L2(<<"cFibGraphicsScene("<<this<<")::setInputVariables() called"<<endl<<flush);
 	mutexFibParts.lock();
-	if ( pWidgetFibInputVariables ){
+	if ( pWidgetFibInputVariables ) {
 		pWidgetFibInputVariables->assignValues();
 	}
 	mutexFibParts.unlock();
 	DEBUG_OUT_L2(<<"cFibGraphicsScene("<<this<<")::setInputVariables() done"<<endl<<flush);
-}
-
-
-/**
- * This function will convert the given Fib object into Fib graphic
- * items, so that all Fib graphic items together will look like the
- * image the Fib object represents.
- *
- * @pattern Factory Method
- * @see cFibGraphicsItem
- * @see QGraphicsItem
- * @see pFibNode
- * @param pFibObject the Fib object to convert to Fib graphic items;
- * 	this Fib object should be part object of the Fib object of the
- * 	Fib node pFibNode of this class
- * @return a list of Fib graphic items cFibGraphicsItem for the given
- * 	Fib object or an empty list, if the Fib object could not be converted
- */
-cFibGraphicsItem * cFibGraphicsScene::convertToFibGraphicsItem(
-		cFibElement * pFibObject ){
-	
-	DEBUG_OUT_L2(<<"cFibGraphicsScene("<<this<<")::convertToFibGraphicsItem( pFibObject="<<pFibObject<<") called"<<endl<<flush);
-	if ( pFibObject == NULL ){
-		//nothing to convert
-		DEBUG_OUT_L2(<<"cFibGraphicsScene("<<this<<")::convertToFibGraphicsItem( pFibObject="<<pFibObject<<") done no Fib object"<<endl<<flush);
-		return NULL;
-	}
-	/* alt 1 use recursion
-	 * - for actual Fib element:
-	 * 	- if Fib element is limb element -> check next Fib element (getNextFibElement())
-	 * 	- if Fib element is list element -> create cFibGraphicsItemFibList
-	 * 		element for it and add the cFibGraphicsItem for every subobject
-	 * 		of it, the cFibGraphicsItem are creating by calling the method
-	 * 		recursively
-	 * 	- if Fib element is root element -> check main Fib object of it
-	 * 		(=next Fib element: getNextFibElement())
-	 * 	- else -> create cFibGraphicsItemFibObject for it
-	 * 
-	 */
-	if ( pFibObject->isLimb() ){
-		//if Fib element is limb element -> use next Fib element to convert
-		DEBUG_OUT_L2(<<"cFibGraphicsScene("<<this<<")::convertToFibGraphicsItem( pFibObject="<<pFibObject<<") Fib element is limb element"<<endl<<flush);
-		return convertToFibGraphicsItem( pFibObject->getNextFibElement() );
-	}//else
-	const char cType = pFibObject->getType();
-	
-	switch ( cType ){
-		case 'l':{/* if Fib element is list element
-			-> create cFibGraphicsItemFibList element for it and add the
-				cFibGraphicsItem for every subobject of it, the
-				cFibGraphicsItem are creating by calling the method recursively*/
-			DEBUG_OUT_L2(<<"cFibGraphicsScene("<<this<<")::convertToFibGraphicsItem( pFibObject="<<pFibObject<<") Fib element is list element"<<endl<<flush);
-			QList< cFibGraphicsItem * > liSubitems;
-			list< cFibElement * > liSubobjects = pFibObject->getSubobjects();
-			for ( list< cFibElement * >::iterator
-					itrActualSubobject = liSubobjects.begin();
-					itrActualSubobject != liSubobjects.end(); itrActualSubobject++ ){
-				
-				cFibGraphicsItem * pConvertedItem = convertToFibGraphicsItem(
-					*itrActualSubobject );
-				
-				if ( pConvertedItem ){
-					liSubitems.push_back( pConvertedItem );
-				}
-			}
-			return new cFibGraphicsItemFibList( pFibObject, ulFibNodeVersionDisplayed,
-				this, liSubitems );
-		}break;
-		case 'r':{//if Fib element is root element -> convert the main Fib object of it
-			DEBUG_OUT_L2(<<"cFibGraphicsScene("<<this<<")::convertToFibGraphicsItem( pFibObject="<<pFibObject<<") Fib element is root element"<<endl<<flush);
-			return convertToFibGraphicsItem( pFibObject->getNextFibElement() );
-		}break;
-		case 'o':{/*if Fib element is external object element
-			-> create a cFibGraphicsItemFibExtObject for it*/
-			DEBUG_OUT_L2(<<"cFibGraphicsScene("<<this<<")::convertToFibGraphicsItem( pFibObject="<<pFibObject<<") Fib element is external object element convert to cFibGraphicsItemFibExtObject"<<endl<<flush);
-			//evalue the object point for the Fib element
-			const unsignedIntFib uiObjectPoint =
-				pFibObject->getNumberOfObjectPoint();
-			
-			cFibElement * pPartObjectCopy =
-				pFibObject->getMasterRoot()->copy( uiObjectPoint );
-			
-			return new cFibGraphicsItemFibExtObject( pFibObject,
-				ulFibNodeVersionDisplayed, this, pPartObjectCopy );
-		}break;
-		default://else -> create cFibGraphicsItemFibObject for it
-			DEBUG_OUT_L2(<<"cFibGraphicsScene("<<this<<")::convertToFibGraphicsItem( pFibObject="<<pFibObject<<") else convert to cFibGraphicsItemFibObject"<<endl<<flush);
-			//evalue the object point for the Fib element
-			const unsignedIntFib uiObjectPoint =
-				pFibObject->getNumberOfObjectPoint();
-				
-			cFibElement * pTopMostFibElement = pFibObject->getMasterRoot();
-			//evalue the defining Fib element for the object point
-			const unsignedIntFib uiDefiningFibElementPoint =
-				pTopMostFibElement->objectPointToElementPoint( uiObjectPoint, true );
-			
-			cFibElement * pDefiningFibElement =
-				pTopMostFibElement->getFibElement( uiDefiningFibElementPoint );
-			
-			cFibElement * pPartObjectCopy =
-				pTopMostFibElement->copy( uiObjectPoint );
-			
-			return new cFibGraphicsItemFibObject( pDefiningFibElement,
-				ulFibNodeVersionDisplayed, this, pPartObjectCopy );
-	}//end switch Fib element type
-	//Error: should not happen
-	DEBUG_OUT_EL2(<<"cFibGraphicsScene("<<this<<")::convertToFibGraphicsItem( pFibObject="<<pFibObject<<") done no known Fib element"<<endl<<flush);
-	return NULL;
-	
-	
-	
-#ifdef DELETE_LATER
-//TODO delete later?
-	/* alt 2 use recursion
-	 * - for actual Fib element
-	 * 	- if Fib element is limb element -> check next Fib element (getNextFibElement())
-	 * 	- if Fib element is leaf element (one subobject) -> create
-	 * 		cFibGraphicsItem for it
-	 * 	- if Fib element is branch element -> create cFibGraphicsItemGroup
-	 * 		element for it and add the cFibGraphicsItem for every subobject
-	 * 		of it, the cFibGraphicsItem are creating by calling the method
-	 * 		recursively
-	 * 
-	 */
-	/* alt 3:
-	- if given Fib object is a root element use its main Fib object as the
-		starting point:
-	- for every start point search for all subobjects for leafs and convert
-		them to seperate cFibGraphicsItem's:
-		- serach for subobjects to convert:
-			- if limb (isLeaf()==true or one subobject) check next element
-			- if branch use every subobject as a new starting point
-			- if leaf or external object get the object point and mark it as
-				to use object point ( cFibElement::getNumberOfObjectPoint() )
-	- end if no Fib objects points to search exists anymore
-	- convert all found to use object points to cFibGraphicsItem's
-		- copy the object point ( cFibElement::copy( iObjectPoint ) )
-		- create a new cFibGraphicsItem with the copied Fib object
-	 */
-#endif //DELETE_LATER
-	
 }
 
 
@@ -956,10 +650,10 @@ cFibGraphicsItem * cFibGraphicsScene::convertToFibGraphicsItem(
  * it was changed.
  * @see fibNodeChangedEvent()
  */
-void cFibGraphicsScene::notifyNodeForChange(){
+void cFibGraphicsScene::notifyNodeForChange() {
 	//TODO
 	
-	if ( pFibNode ){
+	if ( pFibNode ) {
 		pFibNode->fibObjectChanged( this );
 	}
 	return;
@@ -979,10 +673,10 @@ void cFibGraphicsScene::notifyNodeForChange(){
  * @param fibNodeChangedEvent the information for the change event
  */
 void cFibGraphicsScene::notifyNodeForChange(
-		const eFibNodeChangedEvent & fibNodeChangedEvent ){
+		const eFibNodeChangedEvent & fibNodeChangedEvent ) {
 	//TODO
 	
-	if ( pFibNode ){
+	if ( pFibNode ) {
 		pFibNode->fibObjectChanged( fibNodeChangedEvent );
 	}
 	return;
@@ -1000,11 +694,11 @@ void cFibGraphicsScene::notifyNodeForChange(
  * @return true if the evalue Fib object with painter object
  * 	pEvalueSimpleRGBA255QPainter was changed, else false
  */
-bool cFibGraphicsScene::updateEvalueFibObjectForPainter(){
+bool cFibGraphicsScene::updateEvalueFibObjectForPainter() {
 	
 	DEBUG_OUT_L2(<<"cFibGraphicsScene("<<this<<")::updateEvalueFibObjectForPainter() called"<<endl<<flush);
 	//update pEvalueSimpleRGBA255QPainter
-	if ( pFibNode == NULL ){
+	if ( pFibNode == NULL ) {
 		//no Fib object with domains
 		DEBUG_OUT_L2(<<"cFibGraphicsScene("<<this<<")::updateEvalueFibObjectForPainter() done no Fib object with domains"<<endl<<flush);
 		return false;
@@ -1017,13 +711,13 @@ bool cFibGraphicsScene::updateEvalueFibObjectForPainter(){
 	DEBUG_OUT_L3(<<"cFibGraphicsScene("<<this<<")::updateEvalueFibObjectForPainter() Fib parts lock"<<endl<<flush);
 	mutexFibParts.lock();
 	cFibElement * pGraphicSceneFibObject = pFibNode->getFibObject();
-	if ( pGraphicSceneFibObject == NULL ){
+	if ( pGraphicSceneFibObject == NULL ) {
 		//no Fib object with domains
 		pFibNodeHandler->unlock( pFibNode );
 		mutexFibParts.unlock();
 		return false;
 	}
-	if ( pEvalueSimpleRGBA255QPainter == NULL ){
+	if ( pEvalueSimpleRGBA255QPainter == NULL ) {
 		//create a pEvalueSimpleRGBA255QPainter object
 		DEBUG_OUT_L2(<<"cFibGraphicsScene("<<this<<")::updateEvalueFibObjectForPainter() create a init pEvalueSimpleRGBA255QPainter object"<<endl<<flush);
 		pEvalueSimpleRGBA255QPainter = new cEvalueSimpleRGBA255QPainter( NULL );
@@ -1067,7 +761,7 @@ bool cFibGraphicsScene::updateEvalueFibObjectForPainter(){
 		cTypeProperty( cTypeProperty::COLOR_RGB ) );
 	
 	if ( ( pDomainRGBColor != NULL ) &&
-			( pDomainRGBColor->isVector() ) ){
+			( pDomainRGBColor->isVector() ) ) {
 		//get RGB color scaling factors
 		const cDomainVectorBasis * pVecDomainColorRgb =
 			(const cDomainVectorBasis*)pDomainRGBColor;
@@ -1096,7 +790,7 @@ bool cFibGraphicsScene::updateEvalueFibObjectForPainter(){
 	cDomain * pDomainGrayscaleNew = domainsValid.getDomainForElement(
 		cTypeProperty( cTypeProperty::COLOR_GRAYSCALE ) );
 	
-	if ( pDomainGrayscaleNew ){
+	if ( pDomainGrayscaleNew ) {
 		//get new grayscale color scaling factor
 		dNewScalingFactorGrayscale = 1.0 /
 			((cDomainSingle*)(pDomainGrayscaleNew))->getMaximum();
@@ -1106,7 +800,7 @@ bool cFibGraphicsScene::updateEvalueFibObjectForPainter(){
 	cDomain * pDomainTransparencyNew = domainsValid.getDomainForElement(
 		cTypeProperty( cTypeProperty::TRANSPARENCY ) );
 	
-	if ( pDomainTransparencyNew ){
+	if ( pDomainTransparencyNew ) {
 		//get new transparency scaling factor
 		dNewScalingFactorAlpha = 1.0 /
 			((cDomainSingle*)(pDomainTransparencyNew))->getMaximum();
@@ -1118,7 +812,7 @@ bool cFibGraphicsScene::updateEvalueFibObjectForPainter(){
 			( dOldScalingFactorRed != dNewScalingFactorRed ) ||
 			( dOldScalingFactorGreen != dNewScalingFactorGreen ) ||
 			( dOldScalingFactorBlue != dNewScalingFactorBlue ) ||
-			( dOldScalingFactorGrayscale != dNewScalingFactorGrayscale ) ){
+			( dOldScalingFactorGrayscale != dNewScalingFactorGrayscale ) ) {
 		
 		DEBUG_OUT_L2(<<"cFibGraphicsScene("<<this<<")::updateEvalueFibObjectForPainter() new pEvalueSimpleRGBA255QPainter(NULL, dNewScalingFactorAlpha="<<dNewScalingFactorAlpha<<", dNewScalingFactorRed="<<dNewScalingFactorRed<<", dNewScalingFactorGreen="<<dNewScalingFactorGreen<<", dNewScalingFactorBlue="<<dNewScalingFactorBlue<<", dNewScalingFactorGrayscale="<<dNewScalingFactorGrayscale<<" )"<<endl<<flush);
 	
@@ -1166,7 +860,7 @@ bool cFibGraphicsScene::updateEvalueFibObjectForPainter(){
 		cTypeProperty( cTypeProperty::COLOR_RGB ) );
 	
 	if ( ( pDomainRGBColor != NULL ) &&
-			( pDomainRGBColor->isVector() ) ){
+			( pDomainRGBColor->isVector() ) ) {
 		//get RGB color scaling factors
 		const cDomainVectorBasis * pVecDomainColorRgb =
 			(const cDomainVectorBasis*)pDomainRGBColor;
@@ -1176,7 +870,7 @@ bool cFibGraphicsScene::updateEvalueFibObjectForPainter(){
 		
 		const string szDomainElementTypeRed = pColorRedDomain->getType();
 		if ( ( szDomainElementTypeRed.compare( 0, 19, "DomainNaturalNumber" ) == 0 ) ||
-					(szDomainElementTypeRed.compare( 0, 13, "DomainInteger" ) == 0) ){
+					(szDomainElementTypeRed.compare( 0, 13, "DomainInteger" ) == 0) ) {
 			//cDomainIntegerBasis
 			dNewScalingFactorRed =
 				((cDomainIntegerBasis*)pColorRedDomain)->getScalingFactor();
@@ -1187,7 +881,7 @@ bool cFibGraphicsScene::updateEvalueFibObjectForPainter(){
 		
 		const string szDomainElementTypeGreen = pColorGreenDomain->getType();
 		if ( ( szDomainElementTypeGreen.compare( 0, 19, "DomainNaturalNumber" ) == 0 ) ||
-					(szDomainElementTypeGreen.compare( 0, 13, "DomainInteger" ) == 0) ){
+					(szDomainElementTypeGreen.compare( 0, 13, "DomainInteger" ) == 0) ) {
 			//cDomainIntegerBasis
 			dNewScalingFactorGreen =
 				((cDomainIntegerBasis*)pColorGreenDomain)->getScalingFactor();
@@ -1198,7 +892,7 @@ bool cFibGraphicsScene::updateEvalueFibObjectForPainter(){
 		
 		const string szDomainElementTypeBlue = pColorBlueDomain->getType();
 		if ( ( szDomainElementTypeBlue.compare( 0, 19, "DomainNaturalNumber" ) == 0 ) ||
-					(szDomainElementTypeBlue.compare( 0, 13, "DomainInteger" ) == 0) ){
+					(szDomainElementTypeBlue.compare( 0, 13, "DomainInteger" ) == 0) ) {
 			//cDomainIntegerBasis
 			dNewScalingFactorBlue =
 				((cDomainIntegerBasis*)pColorBlueDomain)->getScalingFactor();
@@ -1210,10 +904,10 @@ bool cFibGraphicsScene::updateEvalueFibObjectForPainter(){
 	cDomain * pDomainGrayscaleNew = domainsValid.getDomainForElement(
 		cTypeProperty( cTypeProperty::COLOR_GRAYSCALE ) );
 	
-	if ( pDomainGrayscaleNew ){
+	if ( pDomainGrayscaleNew ) {
 		const string szDomainElementTypeGrayscale = pDomainGrayscaleNew->getType();
 		if ( ( szDomainElementTypeGrayscale.compare( 0, 19, "DomainNaturalNumber" ) == 0 ) ||
-					(szDomainElementTypeGrayscale.compare( 0, 13, "DomainInteger" ) == 0) ){
+					(szDomainElementTypeGrayscale.compare( 0, 13, "DomainInteger" ) == 0) ) {
 			//get new grayscale color scaling factor
 			dNewScalingFactorGrayscale =
 				((cDomainIntegerBasis*)pDomainGrayscaleNew)->getScalingFactor();
@@ -1224,10 +918,10 @@ bool cFibGraphicsScene::updateEvalueFibObjectForPainter(){
 	cDomain * pDomainTransparencyNew = domainsValid.getDomainForElement(
 		cTypeProperty( cTypeProperty::TRANSPARENCY ) );
 	
-	if ( pDomainTransparencyNew ){
+	if ( pDomainTransparencyNew ) {
 		const string szDomainElementTypeTransparency = pDomainTransparencyNew->getType();
 		if ( ( szDomainElementTypeTransparency.compare( 0, 19, "DomainNaturalNumber" ) == 0 ) ||
-					(szDomainElementTypeTransparency.compare( 0, 13, "DomainInteger" ) == 0) ){
+					(szDomainElementTypeTransparency.compare( 0, 13, "DomainInteger" ) == 0) ) {
 			//get new transparency scaling factor
 			dNewScalingFactorAlpha =
 				((cDomainIntegerBasis*)pDomainTransparencyNew)->getScalingFactor();
@@ -1240,7 +934,7 @@ bool cFibGraphicsScene::updateEvalueFibObjectForPainter(){
 			( dOldScalingFactorRed != dNewScalingFactorRed ) ||
 			( dOldScalingFactorGreen != dNewScalingFactorGreen ) ||
 			( dOldScalingFactorBlue != dNewScalingFactorBlue ) ||
-			( dOldScalingFactorGrayscale != dNewScalingFactorGrayscale ) ){
+			( dOldScalingFactorGrayscale != dNewScalingFactorGrayscale ) ) {
 		
 		DEBUG_OUT_L2(<<"cFibGraphicsScene("<<this<<")::updateEvalueFibObjectForPainter() new pEvalueSimpleRGBA255QPainter(NULL, dNewScalingFactorAlpha="<<dNewScalingFactorAlpha<<", dNewScalingFactorRed="<<dNewScalingFactorRed<<", dNewScalingFactorGreen="<<dNewScalingFactorGreen<<", dNewScalingFactorBlue="<<dNewScalingFactorBlue<<", dNewScalingFactorGrayscale="<<dNewScalingFactorGrayscale<<" )"<<endl<<flush);
 	
@@ -1276,11 +970,11 @@ bool cFibGraphicsScene::updateEvalueFibObjectForPainter(){
  * @return true if the dimensions for the Fib object could be evaluated,
  * 	else false
  */
-bool cFibGraphicsScene::updateForDimensionChange(){
+bool cFibGraphicsScene::updateForDimensionChange() {
 
 	DEBUG_OUT_L2(<<"cFibGraphicsScene("<<this<<")::updateForDimensionChange() called"<<endl<<flush);
 	//update pEvalueSimpleRGBA255QPainter
-	if ( pFibNode == NULL ){
+	if ( pFibNode == NULL ) {
 		//no Fib object with domains -> set dimension to 0 and point size to 1
 		dPointWidth  = 1.0;
 		dPointHeight = 1.0;
@@ -1294,7 +988,7 @@ bool cFibGraphicsScene::updateForDimensionChange(){
 	}
 	
 	cFibElement * pGraphicSceneFibObject = pFibNode->getFibObject();
-	if ( pGraphicSceneFibObject == NULL ){
+	if ( pGraphicSceneFibObject == NULL ) {
 		//no Fib object with domains
 		return false;
 	}
@@ -1302,18 +996,18 @@ bool cFibGraphicsScene::updateForDimensionChange(){
 	cDomain * pDomainDimension = pGraphicSceneFibObject->
 		getValidDomains().getDomainForElement( cTypeDimension() );
 	
-	if ( pDomainDimension == NULL ){
+	if ( pDomainDimension == NULL ) {
 		DEBUG_OUT_EL1( <<"Error: No dimension domain."<<endl; );
 		return false;
 	}
 	cDomainVectorBasis * pVecDomainDimension = (cDomainVectorBasis*)pDomainDimension;
 	
-	if ( pVecDomainDimension->getNumberOfElements() != 2 ){
+	if ( pVecDomainDimension->getNumberOfElements() != 2 ) {
 		DEBUG_OUT_EL1( <<"Error: No 2 dimensional dimension domain in Fib object."<<endl; );
 		return false;
 	}
 	if ( ( ! pVecDomainDimension->getElementDomain( 1 )->isScalar() ) ||
-			( ! pVecDomainDimension->getElementDomain( 2 )->isScalar() ) ){
+			( ! pVecDomainDimension->getElementDomain( 2 )->isScalar() ) ) {
 		DEBUG_OUT_EL1( <<"Error: A dimension subdomain in the Fib object is not a scalar."<<endl; );
 		return false;
 	}
@@ -1329,13 +1023,13 @@ bool cFibGraphicsScene::updateForDimensionChange(){
 	dPointWidth = 1.0;
 	const string szDomainElementTypeDim1 = pDirection1Domain->getType();
 	if ( ( szDomainElementTypeDim1.compare( 0, 19, "DomainNaturalNumber" ) == 0 ) ||
-			( szDomainElementTypeDim1.compare( 0, 13, "DomainInteger" ) == 0 ) ){
+			( szDomainElementTypeDim1.compare( 0, 13, "DomainInteger" ) == 0 ) ) {
 		//cDomainIntegerBasis
 		dPointWidth = ((cDomainIntegerBasis*)pDirection1Domain)->getScalingFactor();
 	}
 	//check if the painter should be updated
 	if ( ( pEvalueSimpleRGBA255QPainter != NULL ) &&
-			( dDirection2Maximum != pDirection2Domain->getMaximum() ) ){
+			( dDirection2Maximum != pDirection2Domain->getMaximum() ) ) {
 		//height changed -> update painter
 		pEvalueSimpleRGBA255QPainter->setHeight(
 			pDirection2Domain->getMaximum() );
@@ -1348,7 +1042,7 @@ bool cFibGraphicsScene::updateForDimensionChange(){
 	dPointHeight = 1.0;
 	const string szDomainElementTypeDim2 = pDirection2Domain->getType();
 	if ( ( szDomainElementTypeDim2.compare( 0, 19, "DomainNaturalNumber" ) == 0 ) ||
-			( szDomainElementTypeDim2.compare( 0, 13, "DomainInteger" ) == 0 ) ){
+			( szDomainElementTypeDim2.compare( 0, 13, "DomainInteger" ) == 0 ) ) {
 		//cDomainIntegerBasis
 		dPointHeight = ((cDomainIntegerBasis*)pDirection2Domain)->getScalingFactor();
 	}
@@ -1401,7 +1095,7 @@ const cEvalueSimpleRGBA255QPainter *
  */
 bool cFibGraphicsScene::setPenForPointSize( QPainter * pPainter ) const{
 	
-	if ( pPainter == NULL ){
+	if ( pPainter == NULL ) {
 		//no painter given -> can't set pen
 		return false;
 	}

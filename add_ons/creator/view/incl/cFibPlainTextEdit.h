@@ -193,10 +193,20 @@ protected:
 	 */
 	virtual QSize sizeHint() const;
 	
+signals:
+	/**
+	 * This signal signals that the Fib node should be shown.
+	 * It will trigger showFibNode() .
+	 * @see showFibNode()
+	 */
+	void signalShowFibNode();
+	
+protected slots:
 	/**
 	 * This method shows the Fib object of the Fib node of this object in
 	 * the Fib XML representation.
 	 *
+	 * @see signalShowFibNode()
 	 * @return true if the Fib object was displayed, else false
 	 */
 	bool showFibNode();

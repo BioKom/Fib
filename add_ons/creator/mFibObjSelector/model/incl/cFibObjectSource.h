@@ -36,6 +36,7 @@
 /*
 History:
 16.09.2013  Oesterholz  created
+02.03.2014  Oesterholz  categories for Fib object source added: getCategories()
 */
 
 
@@ -129,6 +130,12 @@ public:
 	 * @return true if the source for the Fib object exists, else false
 	 */
 	virtual bool checkSource() const = 0;
+	
+	/**
+	 * @return the set with the categories this Fib object source is in
+	 * 	(e.g. "Fib database", "file")
+	 */
+	virtual std::set< std::string > getCategories() const;
 	
 	/**
 	 * This method will store this Fib object source object to the given

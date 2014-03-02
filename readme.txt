@@ -67,6 +67,7 @@ Dependencies
 
 fib/ depends on: tinyxml/; other_packages/zlib/
 add_ons/converter/ depends on: fib/; fib.algorithms/; add_ons/converter/FreeImage/
+add_ons/creator/ depends on: fib/
 enviroment/ depends on: tinyxml/
 enviroment.fib/ depends on: fib/; enviroment/; enviroment.fib/operators/;
 	tinyxml/

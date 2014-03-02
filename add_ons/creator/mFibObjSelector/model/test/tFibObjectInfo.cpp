@@ -1,7 +1,4 @@
 
-//TODO check
-
-
 /**
  * @file tFibObjectInfo
  * file name: tFibObjectInfo.cpp
@@ -92,8 +89,6 @@ History:
 */
 
 
-
-
 #include <QtTest/QtTest>
 
 #include "version.h"
@@ -129,6 +124,9 @@ History:
 using namespace fib::nCreator;
 using namespace fib;
 using namespace std;
+
+
+//TODO check
 
 
 class tFibObjectInfo: public QObject{
@@ -1328,7 +1326,7 @@ void tFibObjectInfo::testReStore_data(){
 	QTest::addColumn< set< string > >("setCategories");
 
 	set< string > setChangeableBy;
-	set< string > setCategories;//TODO
+	set< string > setCategories;
 	map< string, set< unsigned long > > mapConnectedTo;
 	list< time_t > liLastUsed;
 	

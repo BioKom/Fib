@@ -34,6 +34,7 @@
 #
 # History:
 # 26.09.2013   Oesterholz   created
+# 21.01.2014   Oesterholz   debug to test_debug
 #
 
 
@@ -50,10 +51,11 @@ DIR_TEST_OUTPUT="test_output/"
 FILE_MAKE_OUTPUT=out_makeTest.txt
 
 # the source files
-TEST_SOURCES=$(ls mFibObjSelector/model/${DIR_TEST}*.cpp)
+TEST_SOURCES=$(ls mFibObjSelector/model/${DIR_TEST}*.cpp\
+	control/${DIR_TEST}*.cpp)
+
 # TODO comment in if tests exists
 #		$${DIR_TEST}*.cpp model/$${DIR_TEST}*.cpp view/$${DIR_TEST}*.cpp\
-#		control/$${DIR_TEST}*.cpp\
 #		mFibObjSelector/view/$${DIR_TEST}*.cpp\
 #		mFibObjSelector/control/$${DIR_TEST}*.cpp
 
@@ -69,7 +71,7 @@ echo "============================" >> ${FILE_MAKE_OUTPUT} 2>&1
 #create the debugging executebel
 echo "create the debugging executebel"
 
-sed -e "/^CONFIG*=*/ s/$/ warn_on debug/" ${ORIGINALE_PRO_FILE} > ${TO_CREATE_PRO_FILE}
+sed -e "/^CONFIG*=*/ s/$/ warn_on test_debug/" ${ORIGINALE_PRO_FILE} > ${TO_CREATE_PRO_FILE}
 
 echo >> ${FILE_MAKE_OUTPUT} 2>&1
 echo >> ${FILE_MAKE_OUTPUT} 2>&1
@@ -108,7 +110,7 @@ do
 	echo "creating test \"${TARGET}\" from testcase source \"${TEST_SOURCE}\""
 	rm ${TO_CREATE_PRO_FILE}
 	
-	sed -e "/^CONFIG*=*/ s/$/ qtestlib warn_on debug/" \
+	sed -e "/^CONFIG*=*/ s/$/ qtestlib warn_on test_debug/" \
 		-e "/TARGET .*=*/s%.*%TARGET = ${TARGET}%g" \
 		-e "/^TARGET_SOURCE*=*/s%.*%TARGET_SOURCE = ${TEST_SOURCE}%g" \
 		${ORIGINALE_PRO_FILE} > ${TO_CREATE_PRO_FILE}

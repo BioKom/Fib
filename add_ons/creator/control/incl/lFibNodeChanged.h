@@ -45,14 +45,15 @@ History:
 
 #include "version.h"
 
-#include "eFibNodeChangedEvent.h"
-
 #include <string>
 
 
 namespace fib{
 
 namespace nCreator{
+
+//cyclic dependencies
+class eFibNodeChangedEvent;
 
 
 class lFibNodeChanged{

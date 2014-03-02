@@ -52,9 +52,11 @@ History:
 */
 
 
-//TODO switches for test proposes
+//switches for test proposes
 #define DEBUG
 
+
+#include <QScrollBar>
 
 #include "cWidgetFibVector.h"
 
@@ -84,7 +86,7 @@ cWidgetFibVector::cWidgetFibVector( cFibVectorCreator * pInFibVector,
 	setLineWidth( 1 );
 	setFrameStyle( QFrame::Panel | QFrame::Raised );
 	
-	if ( pFibVector ){
+	if ( pFibVector ) {
 		pFibVector->registerFibVectorChangeListener( this );
 	}
 	
@@ -98,7 +100,7 @@ cWidgetFibVector::cWidgetFibVector( cFibVectorCreator * pInFibVector,
 cWidgetFibVector::~cWidgetFibVector() {
 	DEBUG_OUT_L2(<<"cWidgetFibVector("<<this<<")::~cWidgetFibVector() called"<<endl<<flush);
 	
-	if ( pFibVector ){
+	if ( pFibVector ) {
 		pFibVector->unregisterFibVectorChangeListener( this );
 	}
 }
@@ -112,7 +114,7 @@ cWidgetFibVector::~cWidgetFibVector() {
  * @see pFibVector
  * @return a const pointer to the Fib vector object of this widget
  */
-const cFibVectorCreator * cWidgetFibVector::getFibVector() const{
+const cFibVectorCreator * cWidgetFibVector::getFibVector() const {
 	
 	DEBUG_OUT_L2(<<"cWidgetFibVector("<<this<<")::getFibVector() ="<<pFibVector<<" called"<<endl<<flush);
 	return pFibVector;
@@ -136,7 +138,7 @@ cFibVectorCreator * cWidgetFibVector::getFibVector() {
 /**
  * @return the name of this class "cWidgetFibVector"
  */
-string cWidgetFibVector::getName() const{
+string cWidgetFibVector::getName() const {
 	
 	return ((std::string)("cWidgetFibVector"));
 }
@@ -372,20 +374,158 @@ void cWidgetFibVector::createFibVectorWidget() {
 
 
 /**
- * @return a hint for a good size of this widget
+ * @see QWidget::minimumSize()
+ * @return the minimum size of this widgte;
+ * 	This is the smallest size that the widgte can have.
  */
-QSize cWidgetFibVector::sizeHint() const{
+QSize cWidgetFibVector::minimumSize() const{
 	
-	if ( pLayoutMain == NULL ) {
-		//nothing to display
+	DEBUG_OUT_L2(<<"cWidgetFibVector("<<this<<")::minimumSize() called"<<endl<<flush);
+	mutexFibVectorWidget.lock();
+	if ( liVectorElements.empty() || ( pLayoutBottomLine == NULL) ) {
+		/*no vector elements or no vector elements layout
+		 *-> minimum size of element is empty area*/
+		mutexFibVectorWidget.unlock();
 		return QSize( 0, 0 );
 	}
-	return pLayoutMain->sizeHint();
+	
+	QSize minimumSize = pLayoutBottomLine->minimumSize();
+	if ( pLabelNameOfFibVector ){
+		//add minimum size for vector name label
+		const QSize minSizeLabelName = pLabelNameOfFibVector->minimumSize();
+		minimumSize.setWidth( max( minimumSize.width(),
+			minSizeLabelName.width() ) );
+		minimumSize.setHeight( minimumSize.height() +
+			minSizeLabelName.height() );
+	}
+	mutexFibVectorWidget.unlock();
+	
+	DEBUG_OUT_L2(<<"cWidgetFibInputVariables("<<this<<")::minimumSize() done minimum size =("<<minimumSize.width()<<", "<<minimumSize.height()<<" )"<<endl<<flush);
+	return minimumSize;
 }
 
 
+/**
+ * @see QWidget::minimumSizeHint()
+ * @return the minimum size hint for this widgte;
+ * 	This is a small size that the widgte should have.
+ */
+QSize cWidgetFibVector::minimumSizeHint() const{
+	
+	DEBUG_OUT_L2(<<"cWidgetFibVector("<<this<<")::minimumSizeHint() called"<<endl<<flush);
+	return minimumSize();
+}
 
-/*TODO evalue good size Flow layout for min four variables + hight label vector name*/
+
+/**
+ * @return a hint for a good size of this widget
+ */
+QSize cWidgetFibVector::sizeHint() const {
+	
+	return sizeHint( -1 );
+}
+
+
+/**
+ * This method returns a size hint for this element, if the maximum width
+ * is iMaxWidth (if -1 the maximum width is infinite).
+ *
+ * @param iMaxWidth the maximum width this widget should have,
+ * 	if -1 the maximum width is infinite
+ * @return a hint for a good size of this widget, if the maximum width
+ * 	is iMaxWidth.
+ */
+QSize cWidgetFibVector::sizeHint( const int iMaxWidth ) const {
+	
+	DEBUG_OUT_L2(<<"cWidgetFibVector("<<this<<")::sizeHint( iMaxWidth="<<iMaxWidth<<" ) called"<<endl<<flush);
+	
+	QSize sizeWidget( 0, 0 );
+	
+	if ( pLayoutBottomLine ) {
+		if ( iMaxWidth == -1 ){
+			//evalue size for all widgets in pLayoutBottomLine
+			const int iWidthForElements = pLayoutBottomLine->
+				getMaxWidthForMinNumberOfElements( pLayoutBottomLine->count() );
+			
+			sizeWidget = pLayoutBottomLine->getSizeForMaxWidth( iWidthForElements );
+			
+			DEBUG_OUT_L2(<<"cWidgetFibVector("<<this<<")::sizeHint( iMaxWidth="<<iMaxWidth<<" ) size for "<<pLayoutBottomLine->count()<<" elements =("<<sizeWidget.width()<<", "<<sizeWidget.height()<<"), (max width for elements "<<iWidthForElements<<")"<<endl<<flush);
+		}else{//evalue size for maximum width iMaxWidth
+			sizeWidget = pLayoutBottomLine->getSizeForMaxWidth( iMaxWidth );
+			
+			DEBUG_OUT_L2(<<"cWidgetFibVector("<<this<<")::sizeHint( iMaxWidth="<<iMaxWidth<<" ) size for "<<iMaxWidth<<" max width =("<<sizeWidget.width()<<", "<<sizeWidget.height()<<")"<<endl<<flush);
+		}
+	}
+	if ( pLabelNameOfFibVector ) {
+		const QSize sizeLabelNameOfFibVector =
+			pLabelNameOfFibVector->sizeHint();
+		
+		sizeWidget.setHeight(
+			sizeWidget.height() + sizeLabelNameOfFibVector.height() );
+		sizeWidget.setWidth(
+			max( sizeWidget.width(), sizeLabelNameOfFibVector.width() ) );
+	}
+	
+	if ( pScrollArea ) {
+		const QScrollBar * pScrollBarVertical =
+			pScrollArea->verticalScrollBar();
+		if ( pScrollBarVertical ) {
+			sizeWidget.setWidth( sizeWidget.width() +
+				pScrollBarVertical->sizeHint().width() );
+		}
+	}
+	
+	DEBUG_OUT_L2(<<"cWidgetFibVector("<<this<<")::sizeHint( iMaxWidth="<<iMaxWidth<<" ) done size =("<<sizeWidget.width()<<", "<<sizeWidget.height()<<")"<<endl<<flush);
+	return sizeWidget;
+}
+
+
+/**
+ * This method returns a size hint for this element, if minimum
+ * iMinNumberOfElements of vector elements are shown in one line.
+ *
+ * @param iMinNumberOfElements the minimum number of vector elements to
+ * 	shown in one line
+ * @return a hint for a good size of this widget, if minimum
+ * 	iMinNumberOfElements of vector elements are shown in one line
+ */
+QSize cWidgetFibVector::sizeHintForMinElementsInLine(
+		const int iMinNumberOfElements ) const {
+	
+	DEBUG_OUT_L2(<<"cWidgetFibVector("<<this<<")::sizeHintForMinElementsInLine( iMinNumberOfElements="<<iMinNumberOfElements<<" ) called"<<endl<<flush);
+	
+	QSize sizeWidget( 0, 0 );
+	
+	if ( pLayoutBottomLine ) {
+		const int iWidthForElements = pLayoutBottomLine->
+			getMaxWidthForMinNumberOfElements( iMinNumberOfElements );
+		
+		sizeWidget = pLayoutBottomLine->getSizeForMaxWidth( iWidthForElements );
+		
+		DEBUG_OUT_L2(<<"cWidgetFibInputVariables("<<this<<")::sizeHintForMinElementsInLine( iMinNumberOfElements="<<iMinNumberOfElements<<" ) size for "<<iMinNumberOfElements<<" elements =("<<sizeWidget.width()<<", "<<sizeWidget.height()<<"), (max width for elements "<<iWidthForElements<<")"<<endl<<flush);
+	}
+	if ( pLabelNameOfFibVector ) {
+		const QSize sizeLabelNameOfFibVector =
+			pLabelNameOfFibVector->sizeHint();
+		
+		sizeWidget.setHeight(
+			sizeWidget.height() + sizeLabelNameOfFibVector.height() );
+		sizeWidget.setWidth(
+			max( sizeWidget.width(), sizeLabelNameOfFibVector.width() ) );
+	}
+	
+	if ( pScrollArea ) {
+		const QScrollBar * pScrollBarVertical =
+			pScrollArea->verticalScrollBar();
+		if ( pScrollBarVertical ) {
+			sizeWidget.setWidth( sizeWidget.width() +
+				pScrollBarVertical->sizeHint().width() );
+		}
+	}
+	
+	DEBUG_OUT_L2(<<"cWidgetFibVector("<<this<<")::sizeHintForMinElementsInLine( iMinNumberOfElements="<<iMinNumberOfElements<<" ) done size =("<<sizeWidget.width()<<", "<<sizeWidget.height()<<")"<<endl<<flush);
+	return sizeWidget;
+}
 
 
 

@@ -58,6 +58,7 @@ History:
 #include "cFibNode.h"
 #include "cFibNodeHandler.h"
 #include "cFibInputVariable.h"
+#include "eFibNodeChangedEvent.h"
 
 
 using namespace std;
@@ -98,23 +99,16 @@ cFibVariableHandler::~cFibVariableHandler(){
 	
 	DEBUG_OUT_L2(<<"cFibVariableHandler("<<this<<")::~cFibVariableHandler() called"<<endl<<flush);
 	//delete all variables
-	while ( true ){
-		/*delete sends delete event
-		-> which calls changedEvent()
-		-> which removes the pointer from the variable containers
-		   (including this)*/
-		mutexFibVariableHandler.lock();
-		if ( setFibVariables.empty() ){
-			//no more variables to delete
-			mutexFibVariableHandler.unlock();
-			break;
-		}
-		cFibVariableCreator * pInputVariableToDelete =
-			(*setFibVariables.begin());
-		setFibVariables.erase( pInputVariableToDelete );
-		mutexFibVariableHandler.unlock();
+	mutexFibVariableHandler.lock();
+	cFibVariableCreator * pInputVariableToDelete;
+	while ( ! setFibVariables.empty() ){
+		//delete input variable
+		pInputVariableToDelete = (*setFibVariables.begin());
+		pInputVariableToDelete->unregisterChangeListener( this );
 		delete pInputVariableToDelete;
+		removeVariableFromHandler( pInputVariableToDelete );
 	}
+	mutexFibVariableHandler.unlock();
 }
 
 
@@ -352,6 +346,8 @@ cFibVariableCreator * cFibVariableHandler::getFibVariableCreatorForFibVariable(
 	mapFibVariables.insert( pair< fib::cFibVariable * , cFibVariableCreator * >(
 		pFibVariable, pNewVariable ) );
 	mapVariablesForNodes[ pMasterNode ].insert( pNewVariable );
+	mapDefiningFibElements.insert( pair< cFibVariableCreator * , cFibElement * >(
+		pNewVariable, pDefiningFibElement ) );
 	
 	mutexFibVariableHandler.unlock();
 	
@@ -393,16 +389,19 @@ void cFibVariableHandler::fibNodeChangedEvent(
 	
 	DEBUG_OUT_L2(<<"cFibVariableHandler("<<this<<")::fibNodeChangedEvent( pFibNodeChanged="<<pFibNodeChanged<<" ) called"<<endl<<flush);
 	
-	if ( ( pFibNodeChanged == NULL ) ||
-			( pFibNodeChanged->pFibNodeChanged == NULL ) ){
+	if ( pFibNodeChanged == NULL ) {
+		//no Fib node change event
+		return;
+	}
+	cFibNode * pChangedFibNode =
+		const_cast< cFibNode* >( pFibNodeChanged->getChangedNode() );
+	if ( pChangedFibNode == NULL ){
 		//no node changed
 		DEBUG_OUT_L2(<<"cFibVariableHandler("<<this<<")::fibNodeChangedEvent( pFibNodeChanged="<<pFibNodeChanged<<" ) done no node changed"<<endl<<flush);
 		return;
 	}
 	//evalue the variables for the node
 	mutexFibVariableHandler.lock();
-	cFibNode * pChangedFibNode =
-		const_cast< cFibNode* >( pFibNodeChanged->pFibNodeChanged );
 	map< cFibNode * , set< cFibVariableCreator * > >::const_iterator
 		itrVarsForNode = mapVariablesForNodes.find( pChangedFibNode );
 	if ( itrVarsForNode == mapVariablesForNodes.end() ){
@@ -412,21 +411,34 @@ void cFibVariableHandler::fibNodeChangedEvent(
 		return;
 	}
 	set< cFibVariableCreator * > setVariableForNode = itrVarsForNode->second;
+	
+	//delete variables which defining Fib elements where deleted
+	set< cFibVariableCreator * >::iterator itrVariableNext;
+	for ( set< cFibVariableCreator * >::iterator
+			itrVariable = setVariableForNode.begin();
+			itrVariable != setVariableForNode.end(); ) {
 		
-	if ( pFibNodeChanged->bNodeDeleted ){
-		//if node got deleted -> delete all its variables
-		mutexFibVariableHandler.unlock();
+		std::map< cFibVariableCreator * , cFibElement * >::iterator
+			itrDefFibElement = mapDefiningFibElements.find( *itrVariable );
 		
-		DEBUG_OUT_L2(<<"cFibVariableHandler("<<this<<")::fibNodeChangedEvent( pFibNodeChanged="<<pFibNodeChanged<<" ) if node got deleted -> delete all "<<setVariableForNode.size()<<" variables for it"<<endl<<flush);
-		for ( set< cFibVariableCreator * >::iterator
-				itrVariables = setVariableForNode.begin();
-				itrVariables != setVariableForNode.end(); itrVariables++ ){
-			//TODO: can't do this variable could get deleted before
-			delete (*itrVariables);
+		if ( ( itrDefFibElement != mapDefiningFibElements.end() ) &&
+				( pFibNodeChanged->isElementChanged(
+					itrDefFibElement->second, eFibNodeChangedEvent::DELETED ) ) ) {
+			//the defining Fib element was deleted -> delete the variable
+			(*itrVariable)->unregisterChangeListener( this );
+			delete (*itrVariable);
+			removeVariableFromHandler( *itrVariable );
+			
+			//delete variable from set of variables to check setVariableForNode
+			itrVariableNext = itrVariable;
+			++itrVariableNext;
+			setVariableForNode.erase( itrVariable );
+			itrVariable = itrVariableNext;
+		}else{//check next variable
+			itrVariable++;
 		}
-		DEBUG_OUT_L2(<<"cFibVariableHandler("<<this<<")::fibNodeChangedEvent( pFibNodeChanged="<<pFibNodeChanged<<" ) done if node got deleted"<<endl<<flush);
-		return;
-	}
+	}//end for all variables of the event Fib node
+
 	
 	//check if all variables for the node still exists
 	cFibNodeHandler * pFibNodeHandler = cFibNodeHandler::getInstance();
@@ -437,11 +449,13 @@ void cFibVariableHandler::fibNodeChangedEvent(
 		
 		DEBUG_OUT_L2(<<"cFibVariableHandler("<<this<<")::fibNodeChangedEvent( pFibNodeChanged="<<pFibNodeChanged<<" ) node don't exists anymore -> delete all "<<setVariableForNode.size()<<" variables for it"<<endl<<flush);
 		for ( set< cFibVariableCreator * >::iterator
-				itrVariables = setVariableForNode.begin();
-				itrVariables != setVariableForNode.end(); itrVariables++ ){
-			//TODO: can't do this variable could get deleted before
-			delete (*itrVariables);
+				itrVariable = setVariableForNode.begin();
+				itrVariable != setVariableForNode.end(); itrVariable++ ){
+			(*itrVariable)->unregisterChangeListener( this );
+			delete (*itrVariable);
+			removeVariableFromHandler( *itrVariable );
 		}
+		mutexFibVariableHandler.unlock();
 		DEBUG_OUT_L2(<<"cFibVariableHandler("<<this<<")::fibNodeChangedEvent( pFibNodeChanged="<<pFibNodeChanged<<" ) done node don't exists anymore"<<endl<<flush);
 		return;
 	}
@@ -465,13 +479,14 @@ void cFibVariableHandler::fibNodeChangedEvent(
 	//delete all not defined variables
 	DEBUG_OUT_L2(<<"cFibVariableHandler("<<this<<")::fibNodeChangedEvent( pFibNodeChanged="<<pFibNodeChanged<<" ) delete all "<<setVariableForNode.size()<<" not defined variables"<<endl<<flush);
 	for ( set< cFibVariableCreator * >::iterator
-			itrVariables = setVariableForNode.begin();
-			itrVariables != setVariableForNode.end(); itrVariables++ ){
-		//TODO: can't do this variable could get deleted before
-		delete (*itrVariables);
+			itrVariable = setVariableForNode.begin();
+			itrVariable != setVariableForNode.end(); itrVariable++ ){
+		(*itrVariable)->unregisterChangeListener( this );
+		delete (*itrVariable);
+		removeVariableFromHandler( *itrVariable );
 	}
-	
 	mutexFibVariableHandler.unlock();
+	
 	DEBUG_OUT_L2(<<"cFibVariableHandler("<<this<<")::fibNodeChangedEvent( pFibNodeChanged="<<pFibNodeChanged<<" ) done"<<endl<<flush);
 }
 
@@ -499,44 +514,58 @@ void cFibVariableHandler::changedEvent(
 		//just needs the pointer, not the object
 		cFibVariableCreator * pInVarDeleted = const_cast< cFibVariableCreator *>(
 			static_cast< const cFibVariableCreator *>( pFibVariableChangedEvent->getObject() ) );
-		//update class members
-		setFibVariables.erase( pInVarDeleted );
-		for ( map< fib::cFibVariable * , cFibVariableCreator * >::iterator
-				itrActualVariable = mapFibVariables.begin();
-				itrActualVariable != mapFibVariables.end(); itrActualVariable++ ){
-			
-			if ( itrActualVariable->second == pInVarDeleted ){
-				//variable found -> delete it from container
-				mapFibVariables.erase( itrActualVariable );
-				break;
-			}
-		}
-		for ( map< cFibNode * , set< cFibVariableCreator * > >::iterator
-				itrActualNode = mapVariablesForNodes.begin();
-				itrActualNode != mapVariablesForNodes.end(); itrActualNode++ ){
-			
-			set< cFibVariableCreator * >::iterator itrFoundVariable =
-				itrActualNode->second.find( pInVarDeleted );
-			
-			if ( itrFoundVariable != itrActualNode->second.end() ){
-				//variable found -> delete it from container
-				itrActualNode->second.erase( itrFoundVariable );
-				if ( itrActualNode->second.empty() ){
-					//no variables for the node -> delete node from container
-					mapVariablesForNodes.erase( itrActualNode );
-				}
-				break;
-			}
-		}
+		
+		removeVariableFromHandler( pInVarDeleted );
 		mutexFibVariableHandler.unlock();
 		return;
 	}//else nothing to do
 	
 }
 
-
-
-
+/**
+ * This method will remove the given variable from this handler.
+ * Note: Tis method won't use any mutex.
+ *
+ * @see setFibVariables
+ * @see mapFibVariables
+ * @see mapVariablesForNodes
+ * @see mapDefiningFibElements
+ * @see mutexFibVariableHandler
+ * @param pVariable a pointer to the variable to delete from this handler
+ */
+void cFibVariableHandler::removeVariableFromHandler(
+		cFibVariableCreator * pVariable ) {
+	//update class members
+	setFibVariables.erase( pVariable );
+	mapDefiningFibElements.erase( pVariable );
+	for ( map< fib::cFibVariable * , cFibVariableCreator * >::iterator
+			itrActualVariable = mapFibVariables.begin();
+			itrActualVariable != mapFibVariables.end(); itrActualVariable++ ){
+		
+		if ( itrActualVariable->second == pVariable ){
+			//variable found -> delete it from container
+			mapFibVariables.erase( itrActualVariable );
+			break;
+		}
+	}
+	for ( map< cFibNode * , set< cFibVariableCreator * > >::iterator
+			itrActualNode = mapVariablesForNodes.begin();
+			itrActualNode != mapVariablesForNodes.end(); itrActualNode++ ){
+		
+		set< cFibVariableCreator * >::iterator itrFoundVariable =
+			itrActualNode->second.find( pVariable );
+		
+		if ( itrFoundVariable != itrActualNode->second.end() ){
+			//variable found -> delete it from container
+			itrActualNode->second.erase( itrFoundVariable );
+			if ( itrActualNode->second.empty() ){
+				//no variables for the node -> delete node from container
+				mapVariablesForNodes.erase( itrActualNode );
+			}
+			break;
+		}
+	}
+}
 
 
 

@@ -40,9 +40,11 @@ History:
 */
 
 //switches for debugging proposes
-//#define DEBUG
+#define DEBUG
 
 #include "cWidgetFibInputVariables.h"
+
+#include <QScrollBar>
 
 #include "cWidgetFibScalar.h"
 #include "cFlowLayout.h"
@@ -64,7 +66,15 @@ cWidgetFibInputVariables::cWidgetFibInputVariables():cFibInputVariables(){
 	
 	DEBUG_OUT_L2(<<"cWidgetFibInputVariables("<<this<<")::cWidgetFibInputVariables() called"<<endl<<flush);
 	pInputVariableLayout = new cFlowLayout( this );
-	setLayout( pInputVariableLayout );
+	//create scroll area
+	pScrollArea = new QScrollArea();
+	pScrollArea->setWidgetResizable( true );
+	pScrollArea->setWidget( new QWidget() );
+	pScrollArea->widget()->setLayout( pInputVariableLayout );
+	//create the frame layout
+	pLayoutMain = new QVBoxLayout();
+	pLayoutMain->addWidget( pScrollArea );
+	setLayout( pLayoutMain );
 }
 
 
@@ -97,7 +107,16 @@ cWidgetFibInputVariables::cWidgetFibInputVariables(
 		}
 		pInputVariableLayout->addWidget( mapInputVariables[ *itrActualInVar ] );
 	}
-	setLayout( pInputVariableLayout );
+	//create scroll area
+	pScrollArea = new QScrollArea();
+	pScrollArea->setWidgetResizable( true );
+	pScrollArea->setWidget( new QWidget() );
+	pScrollArea->widget()->setLayout( pInputVariableLayout );
+	//create the frame layout
+	pLayoutMain = new QVBoxLayout();
+	pLayoutMain->addWidget( pScrollArea );
+	setLayout( pLayoutMain );
+	
 	mutexFibInputVariables.unlock();
 }
 
@@ -142,7 +161,16 @@ cWidgetFibInputVariables::cWidgetFibInputVariables( cFibElement * pInFibObject,
 		}
 		pInputVariableLayout->addWidget( mapInputVariables[ *itrActualInVar ] );
 	}
-	setLayout( pInputVariableLayout );
+	//create scroll area
+	pScrollArea = new QScrollArea();
+	pScrollArea->setWidgetResizable( true );
+	pScrollArea->setWidget( new QWidget() );
+	pScrollArea->widget()->setLayout( pInputVariableLayout );
+	//create the frame layout
+	pLayoutMain = new QVBoxLayout();
+	pLayoutMain->addWidget( pScrollArea );
+	setLayout( pLayoutMain );
+
 	mutexFibInputVariables.unlock();
 	DEBUG_OUT_L2(<<"cWidgetFibInputVariables("<<this<<")::cWidgetFibInputVariables( pInFibObject="<<pInFibObject<<", bFindInputVariables="<<(bFindInputVariables?"true":"false")<<") done "<<inputVariables.size()<<" input variables created"<<endl<<flush);
 }
@@ -174,7 +202,16 @@ cWidgetFibInputVariables::cWidgetFibInputVariables(
 		}
 		pInputVariableLayout->addWidget( mapInputVariables[ *itrActualInVar ] );
 	}
-	setLayout( pInputVariableLayout );
+	//create scroll area
+	pScrollArea = new QScrollArea();
+	pScrollArea->setWidgetResizable( true );
+	pScrollArea->setWidget( new QWidget() );
+	pScrollArea->widget()->setLayout( pInputVariableLayout );
+	//create the frame layout
+	pLayoutMain = new QVBoxLayout();
+	pLayoutMain->addWidget( pScrollArea );
+	setLayout( pLayoutMain );
+
 	mutexFibInputVariables.unlock();
 }
 
@@ -262,7 +299,7 @@ bool cWidgetFibInputVariables::removeInputVariable( const unsigned int uiPositio
 	DEBUG_OUT_L2(<<"cWidgetFibInputVariables("<<this<<")::removeInputVariable( uiPosition="<<uiPosition<<") called"<<endl<<flush);
 	mutexFibInputVariables.lock();
 	if ( ( uiPosition < 1 ) ||
-			( ((unsigned int)(inputVariables.size())) < uiPosition ) ){
+			( static_cast<unsigned int>(inputVariables.size()) < uiPosition ) ){
 		//no such input variable to remove
 		mutexFibInputVariables.unlock();
 		return false;
@@ -352,7 +389,7 @@ bool cWidgetFibInputVariables::replaceInputVariable( cFibInputVariable * pInputV
 	DEBUG_OUT_L2(<<"cWidgetFibInputVariables("<<this<<")::replaceInputVariable( pInputVariable="<<pInputVariable<<", uiPosition="<<uiPosition<<") called"<<endl<<flush);
 	mutexFibInputVariables.lock();
 	if ( ( uiPosition < 1 ) ||
-			( ((unsigned int)(inputVariables.size())) < uiPosition ) ){
+			( static_cast<unsigned int>(inputVariables.size()) < uiPosition ) ){
 		//no such input variable to remove
 		mutexFibInputVariables.unlock();
 		return false;
@@ -495,26 +532,138 @@ void cWidgetFibInputVariables::changedEvent(
 
 
 /**
- * @return a hint for a good size of this widget
+ * @see QWidget::minimumSize()
+ * @return the minimum size of this widgte;
+ * 	This is the smallest size that the widgte can have.
  */
-QSize cWidgetFibInputVariables::sizeHint() const{
+QSize cWidgetFibInputVariables::minimumSize() const{
 	
+	DEBUG_OUT_L2(<<"cWidgetFibInputVariables("<<this<<")::minimumSize() called"<<endl<<flush);
 	mutexFibInputVariables.lock();
-	if ( inputVariables.empty() ){
-		//no input variables -> no space needed
+	if ( inputVariables.empty() || ( pInputVariableLayout == NULL) ) {
+		/*no input variable or no input variables layout
+		 *-> minimum size of element is empty area*/
 		mutexFibInputVariables.unlock();
+		DEBUG_OUT_L2(<<"cWidgetFibInputVariables("<<this<<")::minimumSize() done; minimum size of element is empty area"<<endl<<flush);
 		return QSize( 0, 0 );
 	}
 	mutexFibInputVariables.unlock();
 	
-	if ( pInputVariableLayout ){
-		//use layout to evalue a good size
-		return pInputVariableLayout->sizeHint();
+	DEBUG_OUT_L2(<<"cWidgetFibInputVariables("<<this<<")::minimumSize() done minimum size =("<<pInputVariableLayout->minimumSize().width()<<", "<<pInputVariableLayout->minimumSize().height()<<" )"<<endl<<flush);
+	return pInputVariableLayout->minimumSize();
+}
+
+
+/**
+ * @see QWidget::minimumSizeHint()
+ * @return the minimum size hint for this widgte;
+ * 	This is a small size that the widgte should have.
+ */
+QSize cWidgetFibInputVariables::minimumSizeHint() const{
+	
+	DEBUG_OUT_L2(<<"cWidgetFibInputVariables("<<this<<")::minimumSizeHint() called"<<endl<<flush);
+	return minimumSize();
+}
+
+
+/**
+ * @return a hint for a good size of this widget
+ */
+QSize cWidgetFibInputVariables::sizeHint() const {
+	
+	return sizeHint( -1 );
+}
+
+
+/**
+ * This method returns a size hint for this element, if the maximum width
+ * is iMaxWidth (if -1 the maximum width is infinite).
+ *
+ * @param iMaxWidth the maximum width this widget should have,
+ * 	if -1 the maximum width is infinite
+ * @return a hint for a good size of this widget, if the maximum width
+ * 	is iMaxWidth.
+ */
+QSize cWidgetFibInputVariables::sizeHint( const int iMaxWidth ) const {
+	
+	DEBUG_OUT_L2(<<"cWidgetFibInputVariables("<<this<<")::sizeHint( iMaxWidth="<<iMaxWidth<<" ) called"<<endl<<flush);
+	
+	QSize sizeWidget( 0, 0 );
+	
+	if ( pInputVariableLayout ) {
+		if ( iMaxWidth == -1 ){
+			//evalue size for all widgets in pInputVariableLayout
+			const int iWidthForElements = pInputVariableLayout->
+				getMaxWidthForMinNumberOfElements( pInputVariableLayout->count() );
+			
+			sizeWidget = pInputVariableLayout->getSizeForMaxWidth( iWidthForElements );
+			
+			DEBUG_OUT_L2(<<"cWidgetFibInputVariables("<<this<<")::sizeHint( iMaxWidth="<<iMaxWidth<<" ) size for "<<pInputVariableLayout->count()<<" elements =("<<sizeWidget.width()<<", "<<sizeWidget.height()<<"), (max width for elements "<<iWidthForElements<<")"<<endl<<flush);
+		}else{//evalue size for maximum width iMaxWidth
+			sizeWidget = pInputVariableLayout->getSizeForMaxWidth( iMaxWidth );
+			
+			DEBUG_OUT_L2(<<"cWidgetFibInputVariables("<<this<<")::sizeHint( iMaxWidth="<<iMaxWidth<<" ) size for "<<iMaxWidth<<" max width =("<<sizeWidget.width()<<", "<<sizeWidget.height()<<")"<<endl<<flush);
+		}
 	}
 	
-	//no input variables layout -> nothing to display -> no space needed
-	return QSize( 0, 0 );
+	if ( pScrollArea ) {
+		const QScrollBar * pScrollBarVertical =
+			pScrollArea->verticalScrollBar();
+		if ( pScrollBarVertical ) {
+			sizeWidget.setWidth( sizeWidget.width() +
+				pScrollBarVertical->sizeHint().width() );
+		}
+	}
+	
+	DEBUG_OUT_L2(<<"cWidgetFibInputVariables("<<this<<")::sizeHint( iMaxWidth="<<iMaxWidth<<" ) done size =("<<sizeWidget.width()<<", "<<sizeWidget.height()<<")"<<endl<<flush);
+	return sizeWidget;
 }
+
+
+/**
+ * This method returns a size hint for this element, if minimum
+ * iMinNumberOfVariables of input variables are shown in one line.
+ *
+ * @param iMinNumberOfVariables the minimum number of input variables to
+ * 	shown in one line
+ * @return a hint for a good size of this widget, if minimum
+ * 	iMinNumberOfVariables of input variables are shown in one line
+ */
+QSize cWidgetFibInputVariables::sizeHintForMinElementsInLine(
+		const int iMinNumberOfVariables ) const {
+	
+	DEBUG_OUT_L2(<<"cWidgetFibInputVariables("<<this<<")::sizeHintForMinElementsInLine( iMinNumberOfVariables="<<iMinNumberOfVariables<<" ) called"<<endl<<flush);
+	
+	QSize sizeWidget( 0, 0 );
+	
+	if ( pInputVariableLayout ) {
+		const int iWidthForElements = pInputVariableLayout->
+			getMaxWidthForMinNumberOfElements( iMinNumberOfVariables );
+		
+		sizeWidget = pInputVariableLayout->getSizeForMaxWidth( iWidthForElements );
+	}
+	
+	if ( pScrollArea ) {
+		const QScrollBar * pScrollBarVertical =
+			pScrollArea->verticalScrollBar();
+		if ( pScrollBarVertical ) {
+			sizeWidget.setWidth( sizeWidget.width() +
+				pScrollBarVertical->sizeHint().width() );
+		}
+	}
+	
+	DEBUG_OUT_L2(<<"cWidgetFibInputVariables("<<this<<")::sizeHintForMinElementsInLine( iMinNumberOfVariables="<<iMinNumberOfVariables<<" ) done size =("<<sizeWidget.width()<<", "<<sizeWidget.height()<<")"<<endl<<flush);
+	return sizeWidget;
+}
+
+
+
+
+
+
+
+
+
 
 
 

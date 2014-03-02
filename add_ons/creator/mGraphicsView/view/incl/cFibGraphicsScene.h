@@ -43,11 +43,14 @@
  * @see QGraphicsItem
  * @see QGraphicsView
  * @pattern Factory Method
- * @see convertToFibGraphicsItem()
+ * @see iFibGraphicsItemFactory
+ * @see cFibGraphicsItemImageFactory
  */
 /*
 History:
 15.07.2013  Oesterholz  created
+25.01.2013  Oesterholz  the graphical items will be updated, if possible,
+	with the information of the Fib node change event
 */
 
 
@@ -165,22 +168,6 @@ public:
 		const eFibNodeChangedEvent * pFibNodeChanged );
 	
 	
-	/**
-	 * This method evalue the input variables for the Fib object for the
-	 * Fib node.
-	 * It will evalue all variables used in the Fib object, but not defined
-	 * in it.
-	 * New input variables will be set to the default value 0 .
-	 *
-	 * @see pFibNode
-	 * @see pWidgetInputVariables
-	 * @see getNumberOfInputVariables()
-	 * @see getInputVariablesWidget()
-	 * @return true if the input variables for the Fib object for the node
-	 * 	could be set, else false (and no input variables set)
-	 */
-	bool evalueInputVariables();
-	
 	/*TODO? input variables into own class (?so they can be used by all views?)
 	 + input variables view: cInputVariablesView*/
 
@@ -228,81 +215,6 @@ public:
 	 * @return a pointer to the widget with the input variables
 	 */
 	const cWidgetFibInputVariables * getInputVariablesWidget() const;
-	
-#ifdef TODO_WEG
-	/**
-	 * This method will retur a list of all input variables for the Fib
-	 * object for the Fib node.
-	 *
-	 * @see pFibNode
-	 * @see pWidgetInputVariables
-	 * @see evalueInputVariables()
-	 * @see getNumberOfInputVariables()
-	 * @see getInputVariable()
-	 * @see getValueForInputVariable()
-	 * @see setValueForInputVariable()
-	 * @return a list of all input variables for the Fib object for the Fib node
-	 */
-	list< cFibVariable * > getInputVariables();
-	
-	/**
-	 * This method will return the uiNumberOfVariable'th input variable for
-	 * the Fib object for the Fib node.
-	 *
-	 * @see pFibNode
-	 * @see pWidgetInputVariables
-	 * @see evalueInputVariables()
-	 * @see getNumberOfInputVariables()
-	 * @see getInputVariables()
-	 * @see getValueForInputVariable()
-	 * @see setValueForInputVariable()
-	 * @param uiNumberOfVariable the number of the input variable to return
-	 * 	(counting starts at 1)
-	 * @return uiNumberOfVariable'th input variable for the Fib object for
-	 * 	the Fib node, or NULL if non exists
-	 */
-	cFibVariable * getInputVariable(
-		const unsigned int uiNumberOfVariable = 1 );
-	
-	/**
-	 * This method returns the value for the uiNumberOfVariable'th input
-	 * variable.
-	 *
-	 * @see pFibNode
-	 * @see pWidgetInputVariables
-	 * @see evalueInputVariables()
-	 * @see getNumberOfInputVariables()
-	 * @see getInputVariables()
-	 * @see getInputVariable()
-	 * @see setValueForInputVariable()
-	 * @param uiNumberOfVariable the number of the input variable, which
-	 * 	value to return (counting starts at 1)
-	 * @return the value of the uiNumberOfVariable'th input variable, or 0
-	 * 	if no uiNumberOfVariable'th input variable exists
-	 */
-	doubleFib getValueForInputVariable(
-		const unsigned int uiNumberOfVariable ) const;
-	
-	/**
-	 * This method sets the value for the uiNumberOfVariable'th input
-	 * variable.
-	 *
-	 * @see pFibNode
-	 * @see pWidgetInputVariables
-	 * @see evalueInputVariables()
-	 * @see getNumberOfInputVariables()
-	 * @see getInputVariables()
-	 * @see getInputVariable()
-	 * @see getValueForInputVariable()
-	 * @param uiNumberOfVariable the number of the input variable, which
-	 * 	value to set (counting starts at 1)
-	 * @param dValue the value for the uiNumberOfVariable'th input variable
-	 * @return true if the value could be set, else false (e. g. no such
-	 * 	input variablse)
-	 */
-	bool setValueForInputVariable(
-		const unsigned int uiNumberOfVariable, const doubleFib dValue );
-#endif //TODO_WEG
 	
 	/**
 	 * This method will return a pointer cEvalueSimpleRGBA255QPainter
@@ -355,6 +267,84 @@ public:
 	 */
 	virtual std::string getName() const;
 	
+	
+public slots:
+	
+	/**
+	 * This method evalue the input variables for the Fib object for the
+	 * Fib node.
+	 * It will evalue all variables used in the Fib object, but not defined
+	 * in it.
+	 * New input variables will be set to the default value 0 .
+	 *
+	 * @see signalEvalueInputVariable()
+	 * @see pFibNode
+	 * @see pWidgetInputVariables
+	 * @see getNumberOfInputVariables()
+	 * @see getInputVariablesWidget()
+	 * @return true if the input variables for the Fib object for the node
+	 * 	could be set, else false (and no input variables set)
+	 */
+	bool evalueInputVariables();
+	
+	/**
+	 * This slot will notify the Fib node that it was changed, if the scene
+	 * for the Fib object was changed.
+	 * This method should be called if the Fib object scene of this widget
+	 * changes. It will then try to create the Fib object of this scene.
+	 * If it was successfull, it will adapt / replace the Fib node
+	 * Fib object with the Fib object of this scene and notify the node that
+	 * it was changed.
+	 * @see fibNodeChangedEvent()
+	 */
+	void notifyNodeForChange();
+	
+	/**
+	 * This slot will notify the Fib node that it was changed, if the scene
+	 * for the Fib object was changed.
+	 * This method should be called if the Fib object scene of this widget
+	 * changes. It will then try to create the Fib object of this scene.
+	 * If it was successfull, it will adapt / replace the Fib node
+	 * Fib object with the Fib object of this scene and notify the node that
+	 * it was changed.
+	 * @see fibNodeChangedEvent()
+	 *
+	 * @param fibNodeChangedEvent the information for the change event
+	 */
+	void notifyNodeForChange( const eFibNodeChangedEvent & fibNodeChangedEvent );
+	
+signals:
+	
+	/**
+	 * Send this signal if the input variables should be (re-)evalued.
+	 * @see evalueInputVariables()
+	 */
+	void signalEvalueInputVariable();
+	
+	/**
+	 * Call this signal if the the Fib object of the Fib node of this object
+	 * should be converted to graphical items and they should be shown.
+	 * @see evalueGraphicsItemsFromFibNode()
+	 */
+	void signalEvalueGraphicsItemsFromFibNode();
+	
+protected slots:
+
+	
+	/**
+	 * This method will evalue the grapical items for the Fib object of this
+	 * scene and include them in this grapical scene.
+	 * At the end this graphical scene will display the Fib object.
+	 *
+	 * @see QList <QGraphicsItem *> QGraphicsScene::items()
+	 * @see iFibGraphicsItemFactory
+	 * @see signalEvalueGraphicsItemsFromFibNode()
+	 * @see cFibGraphicsItemImageFactory
+	 * @see cFibGraphicsItem
+	 * @return true if the Fib object was displayed, else false
+	 */
+	bool evalueGraphicsItemsFromFibNode();
+	
 protected:
 	
 	/**
@@ -363,40 +353,11 @@ protected:
 	virtual QSize sizeHint() const;
 	
 	/**
-	 * This method shows the Fib object of the Fib node of this object in
-	 * the Fib XML representation.
-	 * TODO: Just (re-)show parts of liFibParts, which have changed (or moved)
-	 *
-	 * @see QList <QGraphicsItem *> QGraphicsScene::items()
-	 * @see liFibParts
-	 * @see convertToFibGraphicsItem()
-	 * @see cFibGraphicsItem
-	 * @return true if the Fib object was displayed, else false
-	 */
-	bool evalueGraphicsItemsFromFibNode();
-	/*TODO use QList <QGraphicsItem *> QGraphicsScene::items()
-	 and QGraphicsItem::update()*/
-	
-	/**
 	 * This method sets the input variables to there values, so that the
 	 * Fib object can be evalued.
 	 * @see pWidgetInputVariables
 	 */
 	void setInputVariables();
-	
-	/**
-	 * This function will convert the given Fib object into Fib graphic
-	 * items, so that all Fib graphic items together will look like the
-	 * image the Fib object represents.
-	 *
-	 * @pattern Factory Method
-	 * @see cFibGraphicsItem
-	 * @see QGraphicsItem
-	 * @param pFibObject the Fib object to convert to Fib graphic items
-	 * @return a list of Fib graphic items cFibGraphicsItem for the given
-	 * 	Fib object or an empty list, if the Fib object could not be converted
-	 */
-	cFibGraphicsItem *  convertToFibGraphicsItem( cFibElement * pFibObject );
 	
 	/**
 	 * This method will update evalue Fib object with painter object
@@ -431,37 +392,7 @@ protected:
 	 */
 	bool updateForDimensionChange();
 	
-	
-public slots:
-	
-	/**
-	 * This slot will notify the Fib node that it was changed, if the scene
-	 * for the Fib object was changed.
-	 * This method should be called if the Fib object scene of this widget
-	 * changes. It will then try to create the Fib object of this scene.
-	 * If it was successfull, it will adapt / replace the Fib node
-	 * Fib object with the Fib object of this scene and notify the node that
-	 * it was changed.
-	 * @see fibNodeChangedEvent()
-	 */
-	void notifyNodeForChange();
-	
-	/**
-	 * This slot will notify the Fib node that it was changed, if the scene
-	 * for the Fib object was changed.
-	 * This method should be called if the Fib object scene of this widget
-	 * changes. It will then try to create the Fib object of this scene.
-	 * If it was successfull, it will adapt / replace the Fib node
-	 * Fib object with the Fib object of this scene and notify the node that
-	 * it was changed.
-	 * @see fibNodeChangedEvent()
-	 *
-	 * @param fibNodeChangedEvent the information for the change event
-	 */
-	void notifyNodeForChange( const eFibNodeChangedEvent & fibNodeChangedEvent );
-	
-
-protected:
+//members:
 	
 	/**
 	 * A pointer to the Fib node object for this widget.
@@ -508,9 +439,21 @@ protected:
 	cFibObjectMainWindow * pMainWindow;
 	
 	/**
-	 * This mutex is to controll access to liFibParts.
-	 * Lock this mutex befor using or changing liFibParts and unlock it afterwards.
-	 * @see liFibParts
+	 * The list with the Fib grapical items of the Fib object, which is
+	 * displayed.
+	 * @see mutexFibParts
+	 */
+	QList< cFibGraphicsItem * > liFibParts;
+	
+	/**
+	 * This mutex is to control access to Fib graphical item, which display
+	 * the Fib object.
+	 * Lock this mutex befor using or changing Fib graphical item and
+	 * unlock it afterwards.
+	 * Lock when using:
+	 * 	- @see liFibParts
+	 *
+	 * @see QGraphicsScene::items()
 	 */
 	mutable QMutex mutexFibParts;
 	

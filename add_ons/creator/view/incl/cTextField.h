@@ -1,6 +1,3 @@
-
-//TODO check
-
 /**
  * @file cTextField
  * file name: cTextField.h
@@ -83,7 +80,7 @@ protected:
 	
 	/**
 	 * This method sends the mouse press event to the parent of this object
-	 * and the paranet class (QTextEdit).
+	 * and the parent class (QTextEdit).
 	 *
 	 * @see QTextEdit::mousePressEvent()
 	 * @param pMouseEvent a pointer to the mouse press event

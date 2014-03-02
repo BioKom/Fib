@@ -63,6 +63,7 @@ History:
 
 #include "cFibNode.h"
 #include "cFibNodeHandler.h"
+#include "eFibNodeChangedEvent.h"
 #include "cMainWindowHandler.h"
 #include "cFibGraphicsScene.h"
 #include "cWidgetFibInputVariables.h"
@@ -93,13 +94,13 @@ cFibObjectMainWindow::cFibObjectMainWindow( cFibElement * pInFibObject,
 		pFibObjectGraphicsScene( NULL ), pFibObjectGraphicsView( NULL ),
 		pCentralWidget( NULL ),
 		pFibPlainTextEdit( NULL ), pDialogSelectFibObject( NULL ),
-		strCurFilePath(""){
+		strCurFilePath("") {
 	
 	DEBUG_OUT_L2(<<"cFibObjectMainWindow("<<this<<")::cFibObjectMainWindow( pInFibObject="<<pInFibObject<<") called"<<endl<<flush);
 	
 #ifdef DEBUG_FIB_OBJECT
 	cout<<"cFibObjectMainWindow("<<this<<")::cFibObjectMainWindow( pInFibObject ) pInFibObject:"<<endl;
-	if ( pInFibObject ){
+	if ( pInFibObject ) {
 		pInFibObject->storeXml( cout );
 	}else{
 		cout<<"NULL";
@@ -117,6 +118,9 @@ cFibObjectMainWindow::cFibObjectMainWindow( cFibElement * pInFibObject,
 	//restore the old session
 	readSettings();
 	
+	connect( this, SIGNAL(signalWindowModified( bool )),
+		this, SLOT(setWindowModified( bool )) );
+	
 	DEBUG_OUT_L3(<<"cFibObjectMainWindow("<<this<<")::cFibObjectMainWindow( pInFibObject="<<pInFibObject<<") done"<<endl<<flush);
 }
 
@@ -132,13 +136,13 @@ cFibObjectMainWindow::cFibObjectMainWindow( cFibNode * pInFibNode ):
 		pFibObjectGraphicsScene( NULL ), pFibObjectGraphicsView( NULL ),
 		pCentralWidget( NULL ),
 		pFibPlainTextEdit( NULL ), pDialogSelectFibObject( NULL ),
-		strCurFilePath(""){
+		strCurFilePath("") {
 	
 	DEBUG_OUT_L2(<<"cFibObjectMainWindow("<<this<<")::cFibObjectMainWindow( pInFibNode="<<pInFibNode<<") called"<<endl<<flush);
 	
 #ifdef DEBUG_FIB_OBJECT
 	cout<<"cFibObjectMainWindow("<<this<<")::cFibObjectMainWindow( pInFibNode ) Fib object :"<<endl;
-	if ( pInFibNode && ( pInFibNode->getFibObjectConst() ) ){
+	if ( pInFibNode && ( pInFibNode->getFibObjectConst() ) ) {
 		pInFibNode->getFibObjectConst()->storeXml( cout );
 	}else{
 		cout<<"NULL";
@@ -165,7 +169,7 @@ cFibObjectMainWindow::cFibObjectMainWindow( cFibNode * pInFibNode ):
 	//restore the old session
 	readSettings();
 	
-	if ( pFibNode ){
+	if ( pFibNode ) {
 		pFibNode->registerNodeChangeListener( this );
 	}
 }
@@ -174,14 +178,14 @@ cFibObjectMainWindow::cFibObjectMainWindow( cFibNode * pInFibNode ):
 /**
  * destructor
  */
-cFibObjectMainWindow::~cFibObjectMainWindow(){
+cFibObjectMainWindow::~cFibObjectMainWindow() {
 	
 	DEBUG_OUT_L2(<<"cFibObjectMainWindow("<<this<<")::~cFibObjectMainWindow() called"<<endl<<flush);
 	
 	//store the old session
 	writeSettings();
 	
-	if ( pFibNode ){
+	if ( pFibNode ) {
 		pFibNode->unregisterNodeChangeListener( this );
 	}
 	//unregister this window at the main window handler
@@ -195,7 +199,7 @@ cFibObjectMainWindow::~cFibObjectMainWindow(){
  * @return a pointer to the Fib node object this window shows represents
  * 	@see pFibNode
  */
-cFibNode * cFibObjectMainWindow::getFibNode(){
+cFibNode * cFibObjectMainWindow::getFibNode() {
 	
 	return pFibNode;
 }
@@ -205,7 +209,7 @@ cFibNode * cFibObjectMainWindow::getFibNode(){
  * @return a const pointer to the Fib node object this window shows represents
  * 	@see pFibNode
  */
-const cFibNode * cFibObjectMainWindow::getFibNode() const{
+const cFibNode * cFibObjectMainWindow::getFibNode() const {
 	
 	return pFibNode;
 }
@@ -220,25 +224,25 @@ const cFibNode * cFibObjectMainWindow::getFibNode() const{
  * @param pFibNode a pointer to the changed Fib node
  */
 void cFibObjectMainWindow::fibNodeChangedEvent(
-		const eFibNodeChangedEvent * pFibNodeChanged ){
+		const eFibNodeChangedEvent * pFibNodeChanged ) {
 	
 	
-	if ( ( pFibNodeChanged != NULL ) && pFibNodeChanged->bNodeDeleted &&
-			( pFibNodeChanged->pFibNodeChanged == pFibNode ) ){
+	if ( ( pFibNodeChanged != NULL ) && pFibNodeChanged->isDeleted() &&
+			( pFibNodeChanged->getChangedNode() == pFibNode ) ) {
 		/*node of this main window deleted
 		 *-> set NULL as this this main window node*/
 		pFibNode = NULL;
 		return;
 	}//else this main window node was not deleted
 	
-	setWindowModified( true );
+	emit signalWindowModified( true );
 }
 
 
 /**
  * @return the name of this class "cFibObjectMainWindow"
  */
-std::string cFibObjectMainWindow::getName() const{
+std::string cFibObjectMainWindow::getName() const {
 	
 	return std::string( "cFibObjectMainWindow" );
 }
@@ -251,15 +255,15 @@ std::string cFibObjectMainWindow::getName() const{
  *
  * @return true if a Fib plain text edit window is open, else false
  */
-bool cFibObjectMainWindow::openPlainTextEdit(){
+bool cFibObjectMainWindow::openPlainTextEdit() {
 	
 	DEBUG_OUT_L2(<<"cFibObjectMainWindow("<<this<<")::openPlainTextEdit() called"<<endl<<flush);
-	if ( pFibNode == NULL ){
+	if ( pFibNode == NULL ) {
 		//no Fib node to set
 		DEBUG_OUT_L3(<<"cFibObjectMainWindow("<<this<<")::openPlainTextEdit() done no Fib node to set"<<endl<<flush);
 		return false;
 	}//else Fib node for this window exists
-	if ( pFibPlainTextEdit == NULL ){
+	if ( pFibPlainTextEdit == NULL ) {
 		DEBUG_OUT_L3(<<"cFibObjectMainWindow("<<this<<")::openPlainTextEdit() create new plain text sub window"<<endl<<flush);
 		pFibPlainTextEdit = new cFibPlainTextEdit( pFibNode, this );
 		
@@ -274,7 +278,7 @@ bool cFibObjectMainWindow::openPlainTextEdit(){
 		return true;
 	}/*else Fib plain text edit window already exists for this window
 	-> just set node for it*/
-	if ( pFibPlainTextEdit->getFibNode() == pFibNode ){
+	if ( pFibPlainTextEdit->getFibNode() == pFibNode ) {
 		//correct node allready set -> nothing to do
 		DEBUG_OUT_L3(<<"cFibObjectMainWindow("<<this<<")::openPlainTextEdit() correct node allready set -> nothing to do"<<endl<<flush);
 		return true;
@@ -294,10 +298,10 @@ bool cFibObjectMainWindow::openPlainTextEdit(){
  *
  * @return true if a Fib plain text edit window is closed, else false
  */
-bool cFibObjectMainWindow::closePlainTextEdit(){
+bool cFibObjectMainWindow::closePlainTextEdit() {
 	
 	DEBUG_OUT_L2(<<"cFibObjectMainWindow("<<this<<")::closePlainTextEdit() called"<<endl<<flush);
-	if ( pFibPlainTextEdit == NULL ){
+	if ( pFibPlainTextEdit == NULL ) {
 		//Fib plain text edit window allready closed
 		return true;
 	}
@@ -309,7 +313,7 @@ bool cFibObjectMainWindow::closePlainTextEdit(){
 	DEBUG_OUT_L3(<<"cFibObjectMainWindow("<<this<<")::closePlainTextEdit() find dock widget to delete it"<<endl<<flush);
 	QMap< QWidget *, QDockWidget * >::iterator itrPlainTextDockWidget =
 		mapOpenDockWidgets.find( pFibPlainTextEdit );
-	if ( itrPlainTextDockWidget != mapOpenDockWidgets.end() ){
+	if ( itrPlainTextDockWidget != mapOpenDockWidgets.end() ) {
 		/*Error: no dock widget for Fib plain text edit window
 		-> Fib plain text edit window should not exists*/
 		return true;
@@ -337,10 +341,10 @@ bool cFibObjectMainWindow::closePlainTextEdit(){
  *
  * @return true if the choose Fib object dialog could be opened, else false
  */
-bool cFibObjectMainWindow::openDialogSelectFibObject(){
+bool cFibObjectMainWindow::openDialogSelectFibObject() {
 	
 	DEBUG_OUT_L2(<<"cFibObjectMainWindow("<<this<<")::openDialogSelectFibObject() called"<<endl<<flush);
-	if ( pDialogSelectFibObject == NULL ){
+	if ( pDialogSelectFibObject == NULL ) {
 		DEBUG_OUT_L3(<<"cFibObjectMainWindow("<<this<<")::openDialogSelectFibObject() create dialog to choose Fib object"<<endl<<flush);
 		pDialogSelectFibObject = new cDialogSelectFibObject( this, pFibNode );
 		
@@ -355,7 +359,7 @@ bool cFibObjectMainWindow::openDialogSelectFibObject(){
 		return true;
 	}/*else dialog to choose Fib object already exists for this window
 	-> just set node for it*/
-	if ( pDialogSelectFibObject->getAssociatedNode() == pFibNode ){
+	if ( pDialogSelectFibObject->getAssociatedNode() == pFibNode ) {
 		//correct node allready set -> nothing to do
 		DEBUG_OUT_L3(<<"cFibObjectMainWindow("<<this<<")::openDialogSelectFibObject() correct node allready set -> nothing to do"<<endl<<flush);
 		return true;
@@ -376,10 +380,10 @@ bool cFibObjectMainWindow::openDialogSelectFibObject(){
  *
  * @return true if the choose Fib object dialog could be closed, else false
  */
-bool cFibObjectMainWindow::closeDialogSelectFibObject(){
+bool cFibObjectMainWindow::closeDialogSelectFibObject() {
 	
 	DEBUG_OUT_L2(<<"cFibObjectMainWindow("<<this<<")::closeDialogSelectFibObject() called"<<endl<<flush);
-	if ( pDialogSelectFibObject == NULL ){
+	if ( pDialogSelectFibObject == NULL ) {
 		//dialog to choose Fib object allready closed
 		return true;
 	}
@@ -391,7 +395,7 @@ bool cFibObjectMainWindow::closeDialogSelectFibObject(){
 	DEBUG_OUT_L3(<<"cFibObjectMainWindow("<<this<<")::closeDialogSelectFibObject() find dock widget to delete it"<<endl<<flush);
 	QMap< QWidget *, QDockWidget * >::iterator itrPlainTextDockWidget =
 		mapOpenDockWidgets.find( pDialogSelectFibObject );
-	if ( itrPlainTextDockWidget != mapOpenDockWidgets.end() ){
+	if ( itrPlainTextDockWidget != mapOpenDockWidgets.end() ) {
 		/*Error: no dock widget for dialog to choose Fib object
 		-> dialog to choose Fib object should not exists*/
 		return true;
@@ -415,7 +419,7 @@ bool cFibObjectMainWindow::closeDialogSelectFibObject(){
 /**
  * This method creates the widgets used in this window.
  */
-void cFibObjectMainWindow::createSubWidgets(){
+void cFibObjectMainWindow::createSubWidgets() {
 	
 	//remember old widgets
 	cFibGraphicsScene * pOldFibObjectGraphicsScene = pFibObjectGraphicsScene;
@@ -431,7 +435,7 @@ void cFibObjectMainWindow::createSubWidgets(){
 	cWidgetFibInputVariables * pInputVariablesWidged =
 		pFibObjectGraphicsScene->getInputVariablesWidget();
 	
-	if ( pInputVariablesWidged ){
+	if ( pInputVariablesWidged ) {
 		
 		pCentralWidget = new QWidget( this );
 		QVBoxLayout * pLayoutCentralWidget = new QVBoxLayout( pCentralWidget );
@@ -445,15 +449,15 @@ void cFibObjectMainWindow::createSubWidgets(){
 		setCentralWidget( pFibObjectGraphicsView );
 	}
 	
-	if ( pOldFibObjectGraphicsScene != NULL ){
+	if ( pOldFibObjectGraphicsScene != NULL ) {
 		//delete the old graphic scene
 		pOldFibObjectGraphicsScene->deleteLater();
 	}
-	if ( pOldFibObjectGraphicsView != NULL ){
+	if ( pOldFibObjectGraphicsView != NULL ) {
 		//delete the old graphic view
 		pOldFibObjectGraphicsView->deleteLater();
 	}
-	if ( pOldCentralWidget != NULL ){
+	if ( pOldCentralWidget != NULL ) {
 		//delete central widget
 		pOldCentralWidget->deleteLater();
 	}
@@ -469,7 +473,7 @@ void cFibObjectMainWindow::createSubWidgets(){
 /**
  * This method creates the actions used in this window.
  */
-void cFibObjectMainWindow::createActions(){
+void cFibObjectMainWindow::createActions() {
 	//TODO include recources ":/images/*.png"
 	
 	
@@ -583,7 +587,7 @@ void cFibObjectMainWindow::createActions(){
 /**
  * This method creates the menu used in this window.
  */
-void cFibObjectMainWindow::createMenus(){
+void cFibObjectMainWindow::createMenus() {
 	//create file menu
 	pMenuFile = menuBar()->addMenu( tr("&File") );
 	pMenuFile->addAction( pActNew );
@@ -616,7 +620,7 @@ void cFibObjectMainWindow::createMenus(){
 /**
  * This method creates the tool bar used in this window.
  */
-void cFibObjectMainWindow::createToolBars(){
+void cFibObjectMainWindow::createToolBars() {
 	//tool bar for file actions
 	pToolBarFile = addToolBar( tr("File") );
 	pToolBarFile->addAction( pActNew);
@@ -635,7 +639,7 @@ void cFibObjectMainWindow::createToolBars(){
 /**
  * This method creates the status bar used in this window.
  */
-void cFibObjectMainWindow::createStatusBar(){
+void cFibObjectMainWindow::createStatusBar() {
 	statusBar()->showMessage(tr("Ready"));
 	/*show state of Fib object: valid,
 		 invalid: no root, Fib objects missing, Variables missing, ...
@@ -649,7 +653,7 @@ void cFibObjectMainWindow::createStatusBar(){
  * window to it.
  * @see QSettings
  */
-void cFibObjectMainWindow::readSettings(){
+void cFibObjectMainWindow::readSettings() {
 	
 	QSettings settings("Fib development", "Fib creator");
 	QPoint pos = settings.value("mainWindow/pos", QPoint( 0, 0 ) ).toPoint();
@@ -663,7 +667,7 @@ void cFibObjectMainWindow::readSettings(){
  * This method will write the settings of this window.
  * @see QSettings
  */
-void cFibObjectMainWindow::writeSettings(){
+void cFibObjectMainWindow::writeSettings() {
 	
 	QSettings settings("Fib development", "Fib creator");
 	settings.setValue("mainWindow/pos", pos() );
@@ -677,11 +681,11 @@ void cFibObjectMainWindow::writeSettings(){
  *
  * @param pEventClose a pointer to the close event to andle
  */
-void cFibObjectMainWindow::closeEvent( QCloseEvent * pEventClose ){
+void cFibObjectMainWindow::closeEvent( QCloseEvent * pEventClose ) {
 	
 	DEBUG_OUT_L2(<<"cFibObjectMainWindow("<<this<<")::closeEvent( pEventClose="<<pEventClose<<") called"<<endl<<flush);
 	//check if the Fib object should be saved
-	if ( maybeSave() ){
+	if ( maybeSave() ) {
 		//Fib object is save
 		writeSettings();
 		cMainWindowHandler::closeMainWindowStatic( this );
@@ -695,11 +699,11 @@ void cFibObjectMainWindow::closeEvent( QCloseEvent * pEventClose ){
 /**
  * This slot is called if a new file for a new Fib object should be crated.
  */
-void cFibObjectMainWindow::newFile(){
+void cFibObjectMainWindow::newFile() {
 	
 	//TODO? difference to newFibObject()
 	
-	if ( isWindowModified() ){
+	if ( isWindowModified() ) {
 		//if unsaved changes -> create new window with empty Fib object
 		cMainWindowHandler::createNewMainWindowForEmptyFibObjectStatic();
 		
@@ -708,14 +712,14 @@ void cFibObjectMainWindow::newFile(){
 			cMainWindowHandler::getEmptyFibObjectStatic();
 #ifdef DEBUG_FIB_OBJECT
 		cout<<"cFibObjectMainWindow("<<this<<")::newFile() created empty Fib object:"<<endl;
-		if ( pEmptyFibObject ){
+		if ( pEmptyFibObject ) {
 			pEmptyFibObject->storeXml( cout );
 		}else{
 			cout<<"NULL";
 		}
 		cout<<endl;
 #endif //DEBUG_FIB_OBJECT
-		if ( pEmptyFibObject == NULL ){
+		if ( pEmptyFibObject == NULL ) {
 			//no new Fib object created
 			return;
 		}
@@ -728,24 +732,24 @@ void cFibObjectMainWindow::newFile(){
 /**
  * This slot is called if a new Fib object should be crated.
  */
-void cFibObjectMainWindow::newFibObject(){
+void cFibObjectMainWindow::newFibObject() {
 	
 	//TODO? difference to newFibObject()
 	
-	if ( maybeSave() ){
+	if ( maybeSave() ) {
 		//old Fib object saved -> set empty Fib object in this window
 		cFibElement * pEmptyFibObject =
 			cMainWindowHandler::getEmptyFibObjectStatic();
 #ifdef DEBUG_FIB_OBJECT
 		cout<<"cFibObjectMainWindow("<<this<<")::newFibObject() created empty Fib object:"<<endl;
-		if ( pEmptyFibObject ){
+		if ( pEmptyFibObject ) {
 			pEmptyFibObject->storeXml( cout );
 		}else{
 			cout<<"NULL";
 		}
 		cout<<endl;
 #endif //DEBUG_FIB_OBJECT
-		if ( pEmptyFibObject == NULL ){
+		if ( pEmptyFibObject == NULL ) {
 			//no new Fib object created
 			return;
 		}
@@ -760,10 +764,10 @@ void cFibObjectMainWindow::newFibObject(){
  *
  * @return true if a new Fib object was loaded, else false
  */
-bool cFibObjectMainWindow::open(){
+bool cFibObjectMainWindow::open() {
 	
 	DEBUG_OUT_L2(<<"cFibObjectMainWindow("<<this<<")::open() called"<<endl<<flush);
-	if ( isWindowModified() ){
+	if ( isWindowModified() ) {
 		//if unsaved changes -> create new window with loaded Fib object
 		return ( cMainWindowHandler::openMainWindowForFibObjectFromFileStatic() != NULL );
 	}//else set loaded Fib object in this window
@@ -773,20 +777,20 @@ bool cFibObjectMainWindow::open(){
 		cMainWindowHandler::openFibObjectFromFileStatic( &strLoadedFibObject );
 #ifdef DEBUG_FIB_OBJECT
 	cout<<"cFibObjectMainWindow("<<this<<")::open() loaded Fib object:"<<endl;
-	if ( pLoadedFibObject ){
+	if ( pLoadedFibObject ) {
 		pLoadedFibObject->storeXml( cout );
 	}else{
 		cout<<"NULL";
 	}
 	cout<<endl;
 #endif //DEBUG_FIB_OBJECT
-	if ( pLoadedFibObject == NULL ){
+	if ( pLoadedFibObject == NULL ) {
 		//no new Fib object loaded
 		DEBUG_OUT_L2(<<"cFibObjectMainWindow("<<this<<")::open() done no new Fib object loaded"<<endl<<flush);
 		return false;
 	}//Fib object loaded
 	strCurFilePath = strLoadedFibObject.c_str();
-	if ( setFibObject( pLoadedFibObject ) ){
+	if ( setFibObject( pLoadedFibObject ) ) {
 		DEBUG_OUT_L2(<<"cFibObjectMainWindow("<<this<<")::open() done new Fib object loaded and set"<<endl<<flush);
 		return true;
 	}//else Fib object not set -> delete it
@@ -804,8 +808,8 @@ bool cFibObjectMainWindow::open(){
  *
  * @return true if the Fib object was saved, else false
  */
-bool cFibObjectMainWindow::save(){
-	if ( strCurFilePath.isEmpty() ){
+bool cFibObjectMainWindow::save() {
+	if ( strCurFilePath.isEmpty() ) {
 		//ask for file name
 		return saveAs();
 	}//else just save Fib object
@@ -822,7 +826,7 @@ bool cFibObjectMainWindow::save(){
  *
  * @return true if the Fib object was saved, else false
  */
-bool cFibObjectMainWindow::saveAs(){
+bool cFibObjectMainWindow::saveAs() {
 	//ask for a file name for the file where to store the Fib object
 	QFileDialog fileDialogSaveAs( this, tr("Save Fib object") );
 	fileDialogSaveAs.setNameFilter(tr("Fib XML (*.xml);;Fib compressed (*.fib)"));
@@ -830,15 +834,15 @@ bool cFibObjectMainWindow::saveAs(){
 	
 	fileDialogSaveAs.setFileMode( QFileDialog::AnyFile );
 	
-	if ( fileDialogSaveAs.exec() ){
+	if ( fileDialogSaveAs.exec() ) {
 		//a file was choosen
 		QStringList liFileNames = fileDialogSaveAs.selectedFiles();
-		if ( liFileNames.size() != 1 ){
+		if ( liFileNames.size() != 1 ) {
 			//not one file choosen -> return NULL
 			return NULL;
 		}
 		//store Fib object to file
-		if ( liFileNames.front().isEmpty() ){
+		if ( liFileNames.front().isEmpty() ) {
 			//no file name choosen -> can't save
 			return false;
 		}
@@ -852,10 +856,10 @@ bool cFibObjectMainWindow::saveAs(){
 /**
  * This slot will close this window.
  */
-bool cFibObjectMainWindow::closeWindow(){
+bool cFibObjectMainWindow::closeWindow() {
 	
 	DEBUG_OUT_L2(<<"cFibObjectMainWindow("<<this<<")::closeWindow() called"<<endl<<flush);
-	if ( maybeSave() ){
+	if ( maybeSave() ) {
 		//old Fib object saved -> close this window
 		cMainWindowHandler::closeMainWindowStatic( this );
 		
@@ -870,10 +874,10 @@ bool cFibObjectMainWindow::closeWindow(){
  *
  * @return true if the plain text view is shown, else false
  */
-bool cFibObjectMainWindow::toglePlainTextWindow(){
+bool cFibObjectMainWindow::toglePlainTextWindow() {
 	
 	DEBUG_OUT_L2(<<"cFibObjectMainWindow("<<this<<")::toglePlainTextWindow() called"<<endl<<flush);
-	if ( ( pFibPlainTextEdit == NULL ) || ( ! pFibPlainTextEdit->isVisible() ) ){
+	if ( ( pFibPlainTextEdit == NULL ) || ( ! pFibPlainTextEdit->isVisible() ) ) {
 		//no plain text view exists or is open -> open it
 		return openPlainTextEdit();
 	}//else close plain text view
@@ -889,11 +893,11 @@ bool cFibObjectMainWindow::toglePlainTextWindow(){
  * @see closeDialogSelectFibObject()
  * @return true if the dialog to choose Fib objects is shown, else false
  */
-bool cFibObjectMainWindow::togleDialogSelectFibObject(){
+bool cFibObjectMainWindow::togleDialogSelectFibObject() {
 	
 	DEBUG_OUT_L2(<<"cFibObjectMainWindow("<<this<<")::togleDialogSelectFibObject() called"<<endl<<flush);
 	if ( ( pDialogSelectFibObject == NULL ) ||
-			( ! pDialogSelectFibObject->isVisible() ) ){
+			( ! pDialogSelectFibObject->isVisible() ) ) {
 		//no the dialog to choose Fib objects exists or is open -> open it
 		return openDialogSelectFibObject();
 	}//else close the dialog to choose Fib objects
@@ -904,7 +908,7 @@ bool cFibObjectMainWindow::togleDialogSelectFibObject(){
 /**
  * This slot shows the about (this application) information.
  */
-void cFibObjectMainWindow::about(){
+void cFibObjectMainWindow::about() {
 	QMessageBox::about( this, tr("About Fib creator"),
 		tr("<b>Fib creator</b> is an application to create Fib objects."
 			"The Fib creator is free software (GNU GPL3 "
@@ -922,7 +926,7 @@ void cFibObjectMainWindow::about(){
  *
  * @return true if the user says it is Ok, else false (user cancels)
  */
-bool cFibObjectMainWindow::maybeSave(){
+bool cFibObjectMainWindow::maybeSave() {
 	
 	//check if the Fib object was modified
 	if ( isWindowModified() )  {
@@ -933,10 +937,10 @@ bool cFibObjectMainWindow::maybeSave(){
 				"Do you want to save your changes?"),
 			QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel );
 		//check pushed button result
-		if ( buttonMaybeSave == QMessageBox::Save ){
+		if ( buttonMaybeSave == QMessageBox::Save ) {
 			//try to save the Fib object
 			return save();
-		}else if ( buttonMaybeSave == QMessageBox::Cancel ){
+		}else if ( buttonMaybeSave == QMessageBox::Cancel ) {
 			//abort action
 			return false;
 		}else{//Fib object should not be saved (buttonMaybeSave==QMessageBox::Discard)
@@ -954,10 +958,10 @@ bool cFibObjectMainWindow::maybeSave(){
  * @param szFibObjectPath the path to the Fib object file to restore
  * @return true if a Fib object was restored, else false
  */
-bool cFibObjectMainWindow::loadFibObject( const QString & szFibObjectPath ){
+bool cFibObjectMainWindow::loadFibObject( const QString & szFibObjectPath ) {
 	
 	DEBUG_OUT_L2(<<"cFibObjectMainWindow("<<this<<")::loadFibObject() called"<<endl<<flush);
-	if ( ! maybeSave() ){
+	if ( ! maybeSave() ) {
 		//if unsaved changes -> create new window with loaded Fib object
 		return false;
 	}//else load the Fib object into this window
@@ -968,14 +972,14 @@ bool cFibObjectMainWindow::loadFibObject( const QString & szFibObjectPath ){
 		cout<<"cFibObjectMainWindow("<<this<<
 			")::loadFibObject( szFibObjectPath="<<
 			szFibObjectPath.toStdString()<<") loaded Fib object:"<<endl;
-		if ( pLoadedFibObject ){
+		if ( pLoadedFibObject ) {
 			pLoadedFibObject->storeXml( cout );
 		}else{
 			cout<<"NULL";
 		}
 		cout<<endl;
 #endif //DEBUG_FIB_OBJECT
-	if ( pLoadedFibObject == NULL ){
+	if ( pLoadedFibObject == NULL ) {
 		//no Fib object loaded
 		DEBUG_OUT_L2(<<"cFibObjectMainWindow("<<this<<")::loadFibObject() done no Fib object loaded"<<endl<<flush);
 		return false;
@@ -995,9 +999,9 @@ bool cFibObjectMainWindow::loadFibObject( const QString & szFibObjectPath ){
  * @param strFilePath the filename (and path) wher to store the Fib object to
  * @return true if the Fib object was store, else false
  */
-bool cFibObjectMainWindow::storeFibObject( const QString & strFilePath ){
+bool cFibObjectMainWindow::storeFibObject( const QString & strFilePath ) {
 	
-	if ( ( pFibNode == NULL ) || ( pFibNode->getMasterRoot() == NULL ) ){
+	if ( ( pFibNode == NULL ) || ( pFibNode->getMasterRoot() == NULL ) ) {
 		//no Fib object to store given
 		QMessageBox msgBox( this );
 		msgBox.setWindowTitle("Fib creator save Fib object");
@@ -1008,7 +1012,7 @@ bool cFibObjectMainWindow::storeFibObject( const QString & strFilePath ){
 		return false;
 	}
 	
-	if ( strFilePath.isEmpty() ){
+	if ( strFilePath.isEmpty() ) {
 		//no file name given
 		QMessageBox msgBox( this );
 		msgBox.setWindowTitle("Fib creator save Fib object");
@@ -1023,7 +1027,7 @@ bool cFibObjectMainWindow::storeFibObject( const QString & strFilePath ){
 #ifdef DEBUG_FIB_OBJECT
 	cout<<"cFibObjectMainWindow("<<this<<")::storeFibObject( strFilePath="<<
 		strFilePath.toStdString()<<") Fib object to store:"<<endl;
-	if ( pFibObjectToStore ){
+	if ( pFibObjectToStore ) {
 		pFibObjectToStore->storeXml( cout );
 	}else{
 		cout<<"NULL";
@@ -1032,7 +1036,7 @@ bool cFibObjectMainWindow::storeFibObject( const QString & strFilePath ){
 #endif //DEBUG_FIB_OBJECT
 	
 	//store depending on file ending
-	if ( strFilePath.endsWith( ".xml", Qt::CaseInsensitive ) ){
+	if ( strFilePath.endsWith( ".xml", Qt::CaseInsensitive ) ) {
 		//TODO if XML editor is given -> update editor text and write it
 		
 		//store to file in Xml format
@@ -1042,7 +1046,7 @@ bool cFibObjectMainWindow::storeFibObject( const QString & strFilePath ){
 		statusBar()->showMessage( tr("storing Fib object in XML") );
 		const bool bStoreSuccesfull = pFibObjectToStore->storeXml( outFile );
 		
-		if ( ! bStoreSuccesfull ){
+		if ( ! bStoreSuccesfull ) {
 			//Error
 			QMessageBox msgBox( this );
 			msgBox.setWindowTitle("Fib creator save Fib object");
@@ -1056,9 +1060,9 @@ bool cFibObjectMainWindow::storeFibObject( const QString & strFilePath ){
 			return false;
 		}//else storing OK
 	}else{//store to file in compressed format
-		if ( pFibNode->isChangebel() ){
+		if ( pFibNode->isChangebel() ) {
 			//generate the domains Fib object needs
-			if ( pFibObjectToStore->getType() == 'r' ){
+			if ( pFibObjectToStore->getType() == 'r' ) {
 				((cRoot*)pFibObjectToStore)->generateNeededDomains();
 				pFibNode->fibObjectChanged( this );
 			}
@@ -1070,7 +1074,7 @@ bool cFibObjectMainWindow::storeFibObject( const QString & strFilePath ){
 		statusBar()->showMessage( tr("storing Fib object in compressed format") );
 		const bool bStoreSuccesfull = pFibObjectToStore->store( outFile );
 		
-		if ( ! bStoreSuccesfull ){
+		if ( ! bStoreSuccesfull ) {
 			//Error
 			QMessageBox msgBox( this );
 			msgBox.setWindowTitle("Fib creator save Fib object");
@@ -1102,13 +1106,13 @@ bool cFibObjectMainWindow::storeFibObject( const QString & strFilePath ){
  *
  * @param strFileName the file name to set
  */
-void cFibObjectMainWindow::setCurrentFile( const QString & strFileName ){
+void cFibObjectMainWindow::setCurrentFile( const QString & strFileName ) {
 	
 	strCurFilePath = strFileName;
 	//Fib object not stored in new set file (use loadFibObject())
 	
 	QString strShownName = strippedName( strCurFilePath );
-	if ( strShownName.isEmpty() ){
+	if ( strShownName.isEmpty() ) {
 		//no valid file name given
 		strShownName = tr( "untitled" );
 	}
@@ -1124,7 +1128,7 @@ void cFibObjectMainWindow::setCurrentFile( const QString & strFileName ){
  * @param strFullFilePath the full file path (including folder part)
  * @return the file name without the folder path
  */
-QString cFibObjectMainWindow::strippedName( const QString & strFullFilePath ){
+QString cFibObjectMainWindow::strippedName( const QString & strFullFilePath ) {
 	
 	return QFileInfo( strFullFilePath ).fileName();
 }
@@ -1140,11 +1144,11 @@ QString cFibObjectMainWindow::strippedName( const QString & strFullFilePath ){
  * @param pNewFibObject a pointer to the Fib object to set for this window
  * @return true if the given Fib object was set, else false
  */
-bool cFibObjectMainWindow::setFibObject( cFibElement * pNewFibObject ){
+bool cFibObjectMainWindow::setFibObject( cFibElement * pNewFibObject ) {
 	
 #ifdef DEBUG_FIB_OBJECT
 	cout<<"cFibObjectMainWindow("<<this<<")::setFibObject( pNewFibObject ) new Fib object to set:"<<endl;
-	if ( pNewFibObject ){
+	if ( pNewFibObject ) {
 		pNewFibObject->storeXml( cout );
 	}else{
 		cout<<"NULL";
@@ -1155,7 +1159,7 @@ bool cFibObjectMainWindow::setFibObject( cFibElement * pNewFibObject ){
 	cFibNode * pNewFibNode = cFibNodeHandler::getInstance()->getNodeForFibObject(
 		pNewFibObject, this );
 	
-	if ( pNewFibNode == NULL ){
+	if ( pNewFibNode == NULL ) {
 		//no node for the Fib object
 		return false;
 	}
@@ -1174,24 +1178,24 @@ bool cFibObjectMainWindow::setFibObject( cFibElement * pNewFibObject ){
  * @param pNewFibObject a pointer to the Fib object to set for this window
  * @return true if the given Fib object was set, else false
  */
-bool cFibObjectMainWindow::setFibObjectNode( cFibNode * pNewFibObjectNode ){
+bool cFibObjectMainWindow::setFibObjectNode( cFibNode * pNewFibObjectNode ) {
 	
 	DEBUG_OUT_L2(<<"cFibObjectMainWindow("<<this<<")::setFibObjectNode( pNewFibObjectNode="<<pNewFibObjectNode<<" ) called"<<endl<<flush);
 #ifdef DEBUG_FIB_OBJECT
 	cout<<"cFibObjectMainWindow("<<this<<")::setFibObjectNode( pNewFibObjectNode ) Fib object :"<<endl;
-	if ( pNewFibObjectNode && ( pNewFibObjectNode->getFibObjectConst() ) ){
+	if ( pNewFibObjectNode && ( pNewFibObjectNode->getFibObjectConst() ) ) {
 		pNewFibObjectNode->getFibObjectConst()->storeXml( cout );
 	}else{
 		cout<<"NULL";
 	}
 	cout<<endl;
 #endif //DEBUG_FIB_OBJECT
-	if ( pNewFibObjectNode == NULL ){
+	if ( pNewFibObjectNode == NULL ) {
 		//no node given -> can't set
 		DEBUG_OUT_L2(<<"cFibObjectMainWindow("<<this<<")::setFibObjectNode( pNewFibObjectNode="<<pNewFibObjectNode<<" ) done: no node given -> can't set"<<endl<<flush);
 		return false;
 	}
-	if ( pFibNode == pNewFibObjectNode ){
+	if ( pFibNode == pNewFibObjectNode ) {
 		//correct node set -> nothing to do
 		DEBUG_OUT_L2(<<"cFibObjectMainWindow("<<this<<")::setFibObjectNode( pNewFibObjectNode="<<pNewFibObjectNode<<" ) done: correct node set (set="<<pFibNode<<" to set="<<pNewFibObjectNode<<") -> nothing to do"<<endl<<flush);
 		return true;
@@ -1200,23 +1204,23 @@ bool cFibObjectMainWindow::setFibObjectNode( cFibNode * pNewFibObjectNode ){
 	
 	pFibNode = pNewFibObjectNode;
 	pFibNode->registerNodeChangeListener( this );
-	if ( pFibNodeOld ){
+	if ( pFibNodeOld ) {
 		pFibNodeOld->unregisterNodeChangeListener( this );
 	}
 	//also set for all subwindows (= child elements)
-	if ( pFibPlainTextEdit ){
+	if ( pFibPlainTextEdit ) {
 		//set for Fib plain text edit window
 		DEBUG_OUT_L3(<<"cFibObjectMainWindow("<<this<<")::setFibObjectNode( pNewFibObjectNode="<<pNewFibObjectNode<<" ) set for Fib plain text edit window"<<endl<<flush);
 		pFibPlainTextEdit->setFibObjectNode( pFibNode );
 	}
 	//set and update pFibObjectGraphicsScene
-	if ( pFibObjectGraphicsScene ){
+	if ( pFibObjectGraphicsScene ) {
 		DEBUG_OUT_L3(<<"cFibObjectMainWindow("<<this<<")::setFibObjectNode( pNewFibObjectNode="<<pNewFibObjectNode<<" ) set and update pFibObjectGraphicsScene"<<endl<<flush);
 		pFibObjectGraphicsScene->setFibObjectNode( pNewFibObjectNode );
 		//addapt the size of the central widget
 		DEBUG_OUT_L3(<<"cFibObjectMainWindow("<<this<<")::setFibObjectNode( pNewFibObjectNode="<<pNewFibObjectNode<<" ) addapt the size of the central widget"<<endl<<flush);
 		QWidget * pLocalCentralWidget = centralWidget();
-		if ( pLocalCentralWidget ){
+		if ( pLocalCentralWidget ) {
 			//TODO dosn't work
 			//adapt size of central widget
 			const QSize sizeMainWindow  = size();
@@ -1226,7 +1230,7 @@ bool cFibObjectMainWindow::setFibObjectNode( cFibNode * pNewFibObjectNode ){
 			const int iWidthMainWindowHalf =  ( sizeMainWindow.width() / 2 );
 			const int iWidthGraphicsScene  = pFibObjectGraphicsScene->width();
 			if ( ( sizeMainCentralWidget.width() < iWidthMainWindowHalf ) &&
-					( sizeMainCentralWidget.width() < iWidthGraphicsScene ) ){
+					( sizeMainCentralWidget.width() < iWidthGraphicsScene ) ) {
 				/*new central widget width =
 				 *   min( iWidthMainWindowHalf, iWidthGraphicsScene )*/
 				DEBUG_OUT_L4(<<"new central widget width = min( iWidthMainWindowHalf="<<iWidthMainWindowHalf<<", iWidthGraphicsScene="<<iWidthGraphicsScene<<" )"<<endl<<flush);
@@ -1237,7 +1241,7 @@ bool cFibObjectMainWindow::setFibObjectNode( cFibNode * pNewFibObjectNode ){
 			const int iHeightMainWindowHalf =  ( sizeMainWindow.height() / 2 );
 			const int iHeightGraphicsScene  = pFibObjectGraphicsScene->height();
 			if ( ( sizeMainCentralWidget.height() < iHeightMainWindowHalf ) &&
-					( sizeMainCentralWidget.height() < iHeightGraphicsScene ) ){
+					( sizeMainCentralWidget.height() < iHeightGraphicsScene ) ) {
 				/*new central widget height =
 				 *   min( iHeightMainWindowHalf, iHeightGraphicsScene )*/
 				DEBUG_OUT_L4(<<"new central widget width = min( iHeightMainWindowHalf="<<iHeightMainWindowHalf<<", iHeightGraphicsScene="<<iHeightGraphicsScene<<" )"<<endl<<flush);
@@ -1273,7 +1277,7 @@ bool cFibObjectMainWindow::setFibObjectNode( cFibNode * pNewFibObjectNode ){
  * 		will delete it).
  */
 void cFibObjectMainWindow::setInputVariablesWidgetForCentralGrapical(
-		cWidgetFibInputVariables * pNewWidgetFibInputVariables ){
+		cWidgetFibInputVariables * pNewWidgetFibInputVariables ) {
 	
 	DEBUG_OUT_L2(<<"cFibObjectMainWindow("<<this <<")::setInputVariablesWidgetForCentralGrapical( pNewWidgetFibInputVariables="<<pNewWidgetFibInputVariables<<" ) called"<<endl<<flush);
 	//remember old widgets
@@ -1281,7 +1285,7 @@ void cFibObjectMainWindow::setInputVariablesWidgetForCentralGrapical(
 	
 	/*put the graphic view into a widged with the input variables of the
 	 *graphical scene if needed*/
-	if ( pNewWidgetFibInputVariables ){
+	if ( pNewWidgetFibInputVariables ) {
 		DEBUG_OUT_L2(<<"cFibObjectMainWindow("<<this <<")::setInputVariablesWidgetForCentralGrapical( pNewWidgetFibInputVariables="<<pNewWidgetFibInputVariables<<" ) central widged needed"<<endl<<flush);
 		
 		pCentralWidget = new QWidget( this );
@@ -1297,7 +1301,7 @@ void cFibObjectMainWindow::setInputVariablesWidgetForCentralGrapical(
 		setCentralWidget( pFibObjectGraphicsView );
 	}
 	
-	if ( pOldCentralWidget != NULL ){
+	if ( pOldCentralWidget != NULL ) {
 		//delete old central widget
 		DEBUG_OUT_L2(<<"cFibObjectMainWindow("<<this <<")::setInputVariablesWidgetForCentralGrapical( pNewWidgetFibInputVariables="<<pNewWidgetFibInputVariables<<" ) delete old central widget"<<endl<<flush);
 		pOldCentralWidget->deleteLater();
@@ -1309,7 +1313,7 @@ void cFibObjectMainWindow::setInputVariablesWidgetForCentralGrapical(
 /**
  * @return a hint for a good size of this window
  */
-QSize cFibObjectMainWindow::sizeHint() const{
+QSize cFibObjectMainWindow::sizeHint() const {
 	
 	return QSize( 640, 480 );
 }

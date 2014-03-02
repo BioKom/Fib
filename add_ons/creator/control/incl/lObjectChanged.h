@@ -1,6 +1,3 @@
-
-//TODO check
-
 /**
  * @file lObjectChanged
  * file name: lObjectChanged.h

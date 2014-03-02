@@ -53,16 +53,20 @@
 /*
 History:
 23.09.2013  Oesterholz  created
+02.03.2014  Oesterholz  categories for Fib object source added: getCategories()
 */
 
 
 #include "cFibObjectSourceFibDb.h"
 
+#include <cstring>
+#include <algorithm>
+
+#include <QObject>
+
 #include "cFibElement.h"
 #include "cFibDatabase.h"
 
-#include <cstring>
-#include <algorithm>
 
 //debugging switches
 //#define DEBUG_RESTORE_XML
@@ -270,6 +274,17 @@ bool cFibObjectSourceFibDb::checkSource() const{
 	return true;
 }
 
+
+/**
+ * @return the set with the categories this Fib object source is in
+ * 	(e.g. "Fib database", "file")
+ */
+std::set< std::string > cFibObjectSourceFibDb::getCategories() const {
+	
+	set< string > setCategories;
+	setCategories.insert( QObject::tr("Fib database").toStdString() );
+	return setCategories;
+}
 
 
 /**

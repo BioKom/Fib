@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fib_object
+xmlns:xsd="http://www.w3.org/2001/XMLSchema-instance"
+xmlns="http://www.biokom.info/"
+xsd:schemaLocation="http://www.biokom.info/fib.xsd">
+<root>
+	<domains>
+		<dim count="2">
+			<dimension number="1" direction="horizontal"/>
+			<dimension number="2" direction="vertical"/>
+			<vector elements="2">
+				<naturalNumber max="255" />
+				<naturalNumber max="255" />
+			</vector>
+		</dim>
+	</domains>
+	<main_fib_object>
+		<point>
+			<vector type="position">
+				<value>1</value>
+				<value>2</value>
+			</vector>
+		</point>
+	</main_fib_object>
+</root>
+</fib_object>

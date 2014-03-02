@@ -1,6 +1,3 @@
-
-//TODO check
-
 /**
  * @file cTextField
  * file name: cTextField.cpp
@@ -82,7 +79,7 @@ cTextField::~cTextField(){
 
 /**
  * This method sends the mouse press event to the parent of this object
- * and the paranet class (QTextEdit).
+ * and the parent class (QTextEdit).
  *
  * @see QTextEdit::mousePressEvent()
  * @param pMouseEvent a pointer to the mouse press event
@@ -94,11 +91,9 @@ void cTextField::mousePressEvent( QMouseEvent * pMouseEvent ){
 		return;
 	}
 	
-	QTextEdit::mousePressEvent( pMouseEvent );
-	
 	QWidget* pParent = parentWidget();
 	if ( pParent ) {
-		//parent widget exists -> send mouse press event to parrent widget
+		//parent widget exists -> send mouse press event to parent widget
 		QMouseEvent* pNewMouseEvent = new QMouseEvent(
 			pMouseEvent->type(), pMouseEvent->pos(),
 			pMouseEvent->button(), pMouseEvent->buttons(),
@@ -107,6 +102,8 @@ void cTextField::mousePressEvent( QMouseEvent * pMouseEvent ){
 			QApplication::postEvent( pParent, pNewMouseEvent );
 		}
 	}
+	//send mouse press event to parent class
+	QTextEdit::mousePressEvent( pMouseEvent );
 }
 
 

@@ -59,8 +59,9 @@ History:
 
 
 //switches for test proposes
-//#define DEBUG
+#define DEBUG
 
+#include <QValidator>
 
 #include "cWidgetFibObjectInfos.h"
 
@@ -81,29 +82,34 @@ using namespace fib::nCreator;
  * 	the Fib objects of this list.
  * 	Note: The first category of the list will be selected
  * 	@see liPossibleCategories
- * @param uiInMaxFibObjectInfos the maximal number of Fib object info
- * 	widgets to display ( liFibObjectInfos.size() <= uiMaxFibObjectInfos),
- * 	if 0 the default value will be taken
- * 	@see uiInMaxFibObjectInfos
- * 	@see liFibObjectInfos
  * @param pParent a pointer the parent of this new Fib object info widget
  */
 cWidgetFibObjectInfos::cWidgetFibObjectInfos(
 		const QList< cFibObjectCategory > & liInPossibleCategories,
-		const unsigned int uiInMaxFibObjectInfos, QWidget * pParent ):
+		QWidget * pParent ):
 		QWidget( pParent ),
 		liPossibleCategories( liInPossibleCategories ),
 		indexSelectedCategory( 0 ), pBaseFibObjectInfo( NULL ),
-		uiMaxFibObjectInfos( uiInMaxFibObjectInfos ),
+		uiMaxFibObjectInfos( getDefaultMaxFibObjectInfos() ),
 		pComboBoxCategories( NULL ), pButtonClose( NULL ), pLayoutTop( NULL ),
 		pScrollAreaFibObjectInfo( NULL ),
-		pSplitterFibObjectInfo( NULL ), pLayoutMain( NULL ) {
+		pSplitterFibObjectInfo( NULL ),
+		uiStartFibObjectInfo( 0 ), uiEndFibObjectInfo( 0 ),
+		uiCountFibObjectInfo( 0 ), pLabelCounterText( NULL ),
+		pButtonPrevious( NULL ), pLabelStart( NULL ), pStartNumber( NULL ),
+		pButtonNext( NULL ), pLayoutNavigator( NULL ),
+		pLayoutMain( NULL ) {
 			
-	DEBUG_OUT_L2(<<"cWidgetFibObjectInfos("<<this<<")::cWidgetFibObjectInfos( liInPossibleCategories, uiInMaxFibObjectInfos="<<uiInMaxFibObjectInfos<<", pParent="<<pParent<<" );"<<endl<<flush);
+	DEBUG_OUT_L2(<<"cWidgetFibObjectInfos("<<this<<")::cWidgetFibObjectInfos( liInPossibleCategories, pParent="<<pParent<<" );"<<endl<<flush);
 	
-	if ( uiMaxFibObjectInfos == 0 ) {
-		uiMaxFibObjectInfos = getDefaultMaxFibObjectInfos();
-	}
+	const int indexToSelectCategory =
+		liPossibleCategories.indexOf( cFibObjectCategory( QString(
+			cFibObjectInfoHandler::getCategoryForAll().c_str() ) , true ) );
+	if ( 0 <= indexToSelectCategory ) {
+		//set category for all
+		indexSelectedCategory = indexToSelectCategory;
+		DEBUG_OUT_L3(<<"cWidgetFibObjectInfos("<<this<<")::cWidgetFibObjectInfos( liInPossibleCategories, pParent="<<pParent<<" ); set index of selected category to "<<indexToSelectCategory<<endl<<flush);
+	}//else select first category
 	
 	updateForCategory();
 }
@@ -120,30 +126,35 @@ cWidgetFibObjectInfos::cWidgetFibObjectInfos(
  * 	the Fib object info object to which it is relativ (e. g. to which
  * 	it is the same type).
  * 	@see pBaseFibObjectInfo
- * @param uiInMaxFibObjectInfos the maximal number of Fib object info
- * 	widgets to display ( liFibObjectInfos.size() <= uiMaxFibObjectInfos),
- * 	if 0 the default value will be taken
- * 	@see uiInMaxFibObjectInfos
- * 	@see liFibObjectInfos
  * @param pParent a pointer the parent of this new Fib object info widget
  */
 cWidgetFibObjectInfos::cWidgetFibObjectInfos(
 		const QList< cFibObjectCategory > & liInPossibleCategories,
-		cFibObjectInfo * pInBaseFibObjectInfo,
-		const unsigned int uiInMaxFibObjectInfos, QWidget * pParent ):
+		cFibObjectInfo * pInBaseFibObjectInfo, QWidget * pParent ):
 		QWidget( pParent ),
 		liPossibleCategories( liInPossibleCategories ), indexSelectedCategory( 0 ),
 		pBaseFibObjectInfo( pInBaseFibObjectInfo ),
-		uiMaxFibObjectInfos( uiInMaxFibObjectInfos ),
+		uiMaxFibObjectInfos( getDefaultMaxFibObjectInfos() ),
 		pComboBoxCategories( NULL ), pButtonClose( NULL ), pLayoutTop( NULL ),
 		pScrollAreaFibObjectInfo( NULL ),
-		pSplitterFibObjectInfo( NULL ), pLayoutMain( NULL ) {
-			
-	DEBUG_OUT_L2(<<"cWidgetFibObjectInfos("<<this<<")::cWidgetFibObjectInfos( liInPossibleCategories, pInBaseFibObjectInfo="<<pInBaseFibObjectInfo<<" ,uiInMaxFibObjectInfos="<<uiInMaxFibObjectInfos<<", pParent="<<pParent<<" );"<<endl<<flush);
+		pSplitterFibObjectInfo( NULL ),
+		uiStartFibObjectInfo( 0 ), uiEndFibObjectInfo( 0 ),
+		uiCountFibObjectInfo( 0 ), pLabelCounterText( NULL ),
+		pButtonPrevious( NULL ), pLabelStart( NULL ), pStartNumber( NULL ),
+		pButtonNext( NULL ), pLayoutNavigator( NULL ),
+		pLayoutMain( NULL ) {
+		
+	DEBUG_OUT_L2(<<"cWidgetFibObjectInfos("<<this<<")::cWidgetFibObjectInfos( liInPossibleCategories, pInBaseFibObjectInfo="<<pInBaseFibObjectInfo<<", pParent="<<pParent<<" );"<<endl<<flush);
 	
-	if ( uiMaxFibObjectInfos == 0 ) {
-		uiMaxFibObjectInfos = getDefaultMaxFibObjectInfos();
-	}
+	const int indexToSelectCategory =
+		liPossibleCategories.indexOf( cFibObjectCategory( QString(
+			cFibObjectInfoHandler::getCategoryForAll().c_str() ) , true ) );
+	if ( 0 <= indexToSelectCategory ) {
+		//set category for all
+		indexSelectedCategory = indexToSelectCategory;
+		DEBUG_OUT_L3(<<"cWidgetFibObjectInfos("<<this<<")::cWidgetFibObjectInfos( liInPossibleCategories, pInBaseFibObjectInfo="<<pInBaseFibObjectInfo<<", pParent="<<pParent<<" ); set index of selected category to "<<indexToSelectCategory<<endl<<flush);
+	}//else select first category
+	
 	updateForCategory();
 }
 
@@ -241,13 +252,14 @@ bool cWidgetFibObjectInfos::setSelectedCategory(
 		return true;
 	}
 	indexSelectedCategory = indexToSelectCategory;
+	mutexPossibleCategories.unlock();
 	//adapt pComboBoxCategories if needed
 	if ( pComboBoxCategories ) {
 		//set selected category in the combo box
 		pComboBoxCategories->setCurrentIndex( indexSelectedCategory );
 	}
-	mutexPossibleCategories.unlock();
 	
+	uiStartFibObjectInfo = 1;
 	return updateForCategory();
 }
 
@@ -287,6 +299,7 @@ bool cWidgetFibObjectInfos::setSelectedCategory(
 	}
 	mutexPossibleCategories.unlock();
 	
+	uiStartFibObjectInfo = 1;
 	return updateForCategory();
 }
 
@@ -331,7 +344,7 @@ void cWidgetFibObjectInfos::setPossibleCategories(
 	const cFibObjectCategory selectedCategory(
 		( indexSelectedCategory < liPossibleCategories.size() ) ?
 		liPossibleCategories.at( indexSelectedCategory ) :
-		QString("") );//else set empty category
+		cFibObjectCategory( QString(""), true ) );//else set empty category
 	
 	liPossibleCategories  = liNewPossibleCategories;
 	
@@ -372,6 +385,7 @@ void cWidgetFibObjectInfos::setPossibleCategories(
 	//set the new selected category
 	if ( bUpdateFibObjectInfos ) {
 		//update Fib object infos for new categories
+		uiStartFibObjectInfo = 1;
 		updateForCategory();
 	}
 }
@@ -393,10 +407,13 @@ unsigned int cWidgetFibObjectInfos::getMaxFibObjectInfos() const{
 /**
  * This method sets the maximum number of Fib object info widgets to
  * display ( liFibObjectInfos.size() <= uiMaxFibObjectInfos).
+ * Note: more than 128 Fib objects infos can't be displayed. The QSplitter
+ * 	(pSplitterFibObjectInfo) has a limit there.
  *
  * @see getMaxFibObjectInfos()
  * @see uiInMaxFibObjectInfos
  * @see liFibObjectInfos
+ * @see pSplitterFibObjectInfo
  * @param uiInMaxFibObjectInfos the maximal number of Fib object info
  * 	widgets to display ( liFibObjectInfos.size() <= uiMaxFibObjectInfos),
  * 	if 0 the default value will be taken
@@ -428,7 +445,7 @@ unsigned int cWidgetFibObjectInfos::setMaxFibObjectInfos(
  */
 unsigned int cWidgetFibObjectInfos::getDefaultMaxFibObjectInfos() {
 	
-	return 1024;
+	return 100;
 }
 
 
@@ -750,22 +767,16 @@ bool cWidgetFibObjectInfos::setWidgetFibObjectInfos(
 		QList< cWidgetFibObjectInfo * > & liInWidgetFibObjectInfos,
 		const bool bDeleteOld ) {
 	
+	DEBUG_OUT_L2(<<"cWidgetFibObjectInfos("<<this<<")::setWidgetFibObjectInfos( liInWidgetFibObjectInfos=+"<<liInWidgetFibObjectInfos.size()<<", bDeleteOld="<<(bDeleteOld?"true":"false")<<") started"<<endl <<flush);
+	
 	mutexFibObjectInfos.lock();
 	/*unregister this as Fib object info widget change listener at old
 	Fib object info widgets*/
-	bool bDeselectSelectedFibObjectInfo = false;
 	for ( QList< cWidgetFibObjectInfo * >::iterator
 			itrActualFibInfoWidget = liFibObjectInfos.begin();
 			itrActualFibInfoWidget != liFibObjectInfos.end(); itrActualFibInfoWidget++ ) {
 		
 		(*itrActualFibInfoWidget)->unregisterListenerSelectedFibObjectInfo( this );
-		//if selected cWidgetFibObjectInfo is removed -> deselect it
-		if ( ( pBaseFibObjectInfo == (*itrActualFibInfoWidget)->getFibObjectInfo() ) &&
-				( ! containsFibObjectInfo(
-					pBaseFibObjectInfo, liInWidgetFibObjectInfos ) ) ) {
-			//set no selected cWidgetFibObjectInfo
-			bDeselectSelectedFibObjectInfo = true;
-		}
 		if ( bDeleteOld ) {
 			(*itrActualFibInfoWidget)->deleteLater();
 		}
@@ -784,16 +795,9 @@ bool cWidgetFibObjectInfos::setWidgetFibObjectInfos(
 		if ( (*itrActualFibInfoWidget)->getFibObjectInfo() == pBaseFibObjectInfo ) {
 			//mark Fib object info as selected
 			(*itrActualFibInfoWidget)->setSelected( true );
-			//don't deselect it
-			bDeselectSelectedFibObjectInfo = false;
 		}
 	}
 	mutexFibObjectInfos.unlock();
-	
-	if ( bDeselectSelectedFibObjectInfo ) {
-		//set no selected cWidgetFibObjectInfo
-		sendSelectedFibObjectInfoChange( NULL );
-	}
 	//recreate the widget list
 	createWidgetFibObjectInfosList();
 	
@@ -822,6 +826,7 @@ bool cWidgetFibObjectInfos::updateForCategory() {
 			( liPossibleCategories.size() <= indexSelectedCategory ) ) {
 		//no category selected
 		mutexPossibleCategories.unlock();
+		DEBUG_OUT_L2(<<"cWidgetFibObjectInfos("<<this<<")::updateForCategory() done no category selected"<<endl <<flush);
 		return false;
 	}
 	const cFibObjectCategory selectedCategory =
@@ -833,38 +838,70 @@ bool cWidgetFibObjectInfos::updateForCategory() {
 	
 	if ( pFibObjectInfoHandler == NULL ) {
 		//no Fib object info handler to get the Fib object info objects from
+		DEBUG_OUT_L2(<<"cWidgetFibObjectInfos("<<this<<")::updateForCategory() done no Fib object info handler to get the Fib object info objects from"<<endl <<flush);
 		return false;
 	}
 	//list with the new Fib object info objects
 	list< cFibObjectInfo * > liNewFibObjectInfos;
+	const string szCategory = selectedCategory.getCategoryName().toStdString();
+	
+	uiEndFibObjectInfo = uiStartFibObjectInfo + getMaxFibObjectInfos();
 	
 	if ( selectedCategory.isAbsolute() ) {
 		//category is absolute
+		DEBUG_OUT_L3(<<"cWidgetFibObjectInfos("<<this<<")::updateForCategory() category is absolute"<<endl <<flush);
+		uiCountFibObjectInfo = pFibObjectInfoHandler->
+			getNumberOfSortedFibObjectInfoIdsForCategory( szCategory );
+		if ( uiCountFibObjectInfo < uiEndFibObjectInfo ) {
+			//set the end point to the count of Fib object infos
+			uiEndFibObjectInfo   = uiCountFibObjectInfo;
+			//adapt the start point
+			uiStartFibObjectInfo = ( uiCountFibObjectInfo == 0 ) ? 0 :
+				( ( getMaxFibObjectInfos() < uiEndFibObjectInfo ) ?
+					( uiEndFibObjectInfo - getMaxFibObjectInfos() ) : 1 );
+		}
+		
 		const list< unsigned long > liSortedFibObjectInfoIds =
 			pFibObjectInfoHandler->getSortedFibObjectInfoIdsForCategory(
-				selectedCategory.getCategoryName().toStdString(),
-				getMaxFibObjectInfos() );
+				szCategory, uiEndFibObjectInfo, uiStartFibObjectInfo );
 		
 		liNewFibObjectInfos =
 			pFibObjectInfoHandler->getFibObjectInfos( liSortedFibObjectInfoIds );
-			
+		
 	}else{//category is relative
 		mutexFibObjectInfos.lock();
+		DEBUG_OUT_L3(<<"cWidgetFibObjectInfos("<<this<<")::updateForCategory() category is relative"<<endl <<flush);
 		if ( pBaseFibObjectInfo == NULL ) {
 			//no base Fib object info -> can't evalue realtiv Fib object infos
 			mutexFibObjectInfos.unlock();
+			DEBUG_OUT_L2(<<"cWidgetFibObjectInfos("<<this<<")::updateForCategory() done no base Fib object info -> can't evalue realtiv Fib object infos"<<endl <<flush);
 			return false;
 		}
 		//get via category connected Fib object infos
 		const set< unsigned long > setConnectedFibObjects =
-			pBaseFibObjectInfo->getConnectedFor(
-				selectedCategory.getCategoryName().toStdString() );
+			pBaseFibObjectInfo->getConnectedFor( szCategory );
 		mutexFibObjectInfos.unlock();
+		
+		uiCountFibObjectInfo = setConnectedFibObjects.size();
+		if ( uiCountFibObjectInfo < uiEndFibObjectInfo ) {
+			//set the end point to the count of Fib object infos
+			uiEndFibObjectInfo   = uiCountFibObjectInfo;
+			//adapt the start point
+			uiStartFibObjectInfo = ( uiCountFibObjectInfo == 0 ) ? 0 :
+				( ( getMaxFibObjectInfos() < uiEndFibObjectInfo ) ?
+					( uiEndFibObjectInfo - getMaxFibObjectInfos() ) : 1 );
+		}
 		
 		list< unsigned long > liSortedFibObjectInfoIds =
 			pFibObjectInfoHandler->sortFibObjectInfoIds( setConnectedFibObjects );
 		
-		while( liSortedFibObjectInfoIds.size() < getMaxFibObjectInfos() ) {
+		//remove first uiStartFibObjectInfo Fib object infos
+		for ( unsigned long ulActalInfo = 1;
+				ulActalInfo < uiStartFibObjectInfo; ++ulActalInfo ) {
+			liSortedFibObjectInfoIds.pop_back();
+		}
+		
+		while( getMaxFibObjectInfos() < liSortedFibObjectInfoIds.size() ) {
 			//reduce list of Fib object infos to maximum size
 			liSortedFibObjectInfoIds.pop_front();
 		}
@@ -873,6 +910,8 @@ bool cWidgetFibObjectInfos::updateForCategory() {
 			pFibObjectInfoHandler->getFibObjectInfos( liSortedFibObjectInfoIds );
 	}
 	mutexFibObjectInfos.lock();
+	
+	DEBUG_OUT_L3(<<"cWidgetFibObjectInfos("<<this<<")::updateForCategory() check if Fib objects are equal"<<endl <<flush);
 	/* if the Fib object infos don't change
 	 *-> don't change the Fib object info widget list*/
 	bool bFibObjectInfosEqual = true;
@@ -900,6 +939,7 @@ bool cWidgetFibObjectInfos::updateForCategory() {
 	mutexFibObjectInfos.unlock();
 	if ( bFibObjectInfosEqual ) {
 		//if the Fib object infos are the same -> done
+		DEBUG_OUT_L2(<<"cWidgetFibObjectInfos("<<this<<")::updateForCategory() done the Fib object infos are the same -> done"<<endl <<flush);
 		return true;
 	}//else
 	//replace existing Fib object info widgets
@@ -909,9 +949,11 @@ bool cWidgetFibObjectInfos::updateForCategory() {
 			itrFibObjectInfo = liNewFibObjectInfos.begin();
 			itrFibObjectInfo != liNewFibObjectInfos.end(); itrFibObjectInfo++ ) {
 		
-		liNewFibObjectInfoWidgets.push_front(
+		liNewFibObjectInfoWidgets.push_back(
 			new cWidgetFibObjectInfo( (*itrFibObjectInfo), this ) );
 	}
+	
+	DEBUG_OUT_L2(<<"cWidgetFibObjectInfos("<<this<<")::updateForCategory() displaying "<<liNewFibObjectInfoWidgets.size()<<" Fib object info widgets for category "<<selectedCategory.getCategoryName().toStdString()<<endl <<flush);
 	
 	setWidgetFibObjectInfos( liNewFibObjectInfoWidgets );
 	
@@ -928,7 +970,7 @@ bool cWidgetFibObjectInfos::updateForCategory() {
  *
  * @see pBaseFibObjectInfo
  * @see liPossibleCategories
- * @param pSelectedFibObjectInfo the selected Fib object info widget to set
+ * @param pSelectedFibObjectInfo the selected Fib object info to set
  */
 void cWidgetFibObjectInfos::setSelectedFibObjectInfo(
 		cFibObjectInfo * pSelectedFibObjectInfo ) {
@@ -936,6 +978,12 @@ void cWidgetFibObjectInfos::setSelectedFibObjectInfo(
 	DEBUG_OUT_L2(<<"cWidgetFibObjectInfos("<<this<<")::setSelectedFibObjectInfo( pSelectedFibObjectInfo="<<pSelectedFibObjectInfo<<") called"<<endl <<flush);
 	
 	mutexFibObjectInfos.lock();
+	if ( pBaseFibObjectInfo == pSelectedFibObjectInfo ) {
+		//Fib object info allready selected
+		mutexFibObjectInfos.unlock();
+		return;
+	}
+	
 	pBaseFibObjectInfo = pSelectedFibObjectInfo;
 	//mark just the selected base Fib object info
 	for ( QList< cWidgetFibObjectInfo * >::iterator
@@ -950,6 +998,52 @@ void cWidgetFibObjectInfos::setSelectedFibObjectInfo(
 	updateForCategory();
 }
 
+/**
+ * This method sets the selected Fib object info widgte.
+ * It will be the base for all relativ categories.
+ * Note: This object won't trigger a selected Fib object info widget event.
+ * 	(No registered listeners for changes for the selected Fib object
+ * 	info widget lSelectedWidgetFibObjectInfo will notified.)
+ *
+ * @see pBaseFibObjectInfo
+ * @see liPossibleCategories
+ * @param pSelectedFibObjectInfo the selected Fib object info widget to set
+ */
+void cWidgetFibObjectInfos::setSelectedFibObjectInfo(
+		cWidgetFibObjectInfo * pWidgetFibObjectInfo ) {
+	
+	cFibObjectInfo * pSelectedFibObjectInfo =
+		( pWidgetFibObjectInfo == NULL ) ? NULL :
+			(const_cast<cFibObjectInfo*>(pWidgetFibObjectInfo->getFibObjectInfo() ) );
+
+	DEBUG_OUT_L2(<<"cWidgetFibObjectInfos("<<this<<")::setSelectedFibObjectInfo( pWidgetFibObjectInfo="<<pWidgetFibObjectInfo<<" (pSelectedFibObjectInfo="<<pSelectedFibObjectInfo<<")) called"<<endl <<flush);
+	
+	mutexFibObjectInfos.lock();
+	if ( pBaseFibObjectInfo == pSelectedFibObjectInfo ) {
+		//Fib object info allready selected
+		mutexFibObjectInfos.unlock();
+		return;
+	}
+	
+	pBaseFibObjectInfo = pSelectedFibObjectInfo;
+	//mark just the selected base Fib object info
+	for ( QList< cWidgetFibObjectInfo * >::iterator
+			itrActualFibInfoWidget = liFibObjectInfos.begin();
+			itrActualFibInfoWidget != liFibObjectInfos.end(); itrActualFibInfoWidget++ ) {
+		
+		(*itrActualFibInfoWidget)->setSelected(
+			(*itrActualFibInfoWidget)->getFibObjectInfo() == pBaseFibObjectInfo );
+	}
+	if ( ( pWidgetFibObjectInfo != NULL ) &&
+			( liFibObjectInfos.indexOf( pWidgetFibObjectInfo ) != -1 ) ) {
+		//a Fib object info of this widget selected -> don't adapt this widget
+		mutexFibObjectInfos.unlock();
+		return;
+	}
+	
+	mutexFibObjectInfos.unlock();
+	updateForCategory();
+}
 
 /**
  * Event method
@@ -964,6 +1058,14 @@ void cWidgetFibObjectInfos::selectWidgetFibObjectInfo(
 		const cWidgetFibObjectInfo * pWidgetFibObjectInfo ) {
 	
 	DEBUG_OUT_L2(<<"cWidgetFibObjectInfos("<<this<<")::selectWidgetFibObjectInfo( pWidgetFibObjectInfo="<<pWidgetFibObjectInfo<<") called"<<endl <<flush);
+	mutexPossibleCategories.lock();
+	if ( ( pWidgetFibObjectInfo != NULL ) &&
+			( pBaseFibObjectInfo == pWidgetFibObjectInfo->getFibObjectInfo() ) ) {
+		//Fib object info allready selected
+		mutexPossibleCategories.unlock();
+		return;
+	}
+	mutexPossibleCategories.unlock();
 	/*don't adapt Fib object info widgets of this widget, but
 	 *relay change to all listeners for selected Fib info change*/
 	sendSelectedFibObjectInfoChange( pWidgetFibObjectInfo );
@@ -1043,7 +1145,16 @@ bool cWidgetFibObjectInfos::unregisterListenerSelectedFibObjectInfo(
 void cWidgetFibObjectInfos::sendSelectedFibObjectInfoChange(
 		const cWidgetFibObjectInfo * pWidgetFibObjectInfo ) const{
 	
-	DEBUG_OUT_L2(<<"cWidgetFibObjectInfos("<<this<<")::sendSelectedFibObjectInfoChange( pWidgetFibObjectInfo="<<pWidgetFibObjectInfo<<") called"<<endl <<flush);
+	DEBUG_OUT_L2(<<"cWidgetFibObjectInfos("<<this<<")::sendSelectedFibObjectInfoChange( pWidgetFibObjectInfo="<<pWidgetFibObjectInfo<<" ) called"<<endl <<flush);
+	
+	mutexPossibleCategories.lock();
+	if ( ( pWidgetFibObjectInfo != NULL ) &&
+			( pBaseFibObjectInfo == pWidgetFibObjectInfo->getFibObjectInfo() ) ) {
+		//Fib object info allready selected
+		mutexPossibleCategories.unlock();
+		return;
+	}
+	mutexPossibleCategories.unlock();
 	
 	mutexListenersSelectedWidgetFibObjectInfo.lock();
 	set< lSelectedWidgetFibObjectInfo * >
@@ -1114,6 +1225,71 @@ void cWidgetFibObjectInfos::createWidgetFibObjectInfosList() {
 	pLayoutTop->addWidget( pComboBoxCategories, 0, Qt::AlignLeft );
 	pLayoutTop->addWidget( pButtonClose, 0, Qt::AlignRight );
 	
+//TODO check
+	
+	//add the label for the number of Fib objects infos displayed
+	if ( pLabelCounterText == NULL ) {
+		//create new number of Fib objects label
+		pLabelCounterText = new QLabel();
+		pLabelCounterText->setWordWrap( true );
+	}
+	updateCounterText();
+	
+	//if to much Fib object info objects show navigator
+	if ( pLayoutNavigator == NULL ) {
+		pLayoutNavigator = new QHBoxLayout();
+	}
+	if ( ( 1 < uiStartFibObjectInfo ) ||
+			( uiEndFibObjectInfo < uiCountFibObjectInfo ) ) {
+		//display navigator part
+		
+		if ( pButtonPrevious == NULL ) {
+			//navigator part does not exists -> create navigator part
+			pButtonPrevious = new QPushButton( tr("&Prev") );
+			pButtonPrevious->setCheckable( true );
+			pButtonPrevious->setAutoDefault( false );
+			connect( pButtonPrevious, SIGNAL( pressed() ),
+				this, SLOT( previousFibObjectInfos() ) );
+			pLayoutNavigator->addWidget( pButtonPrevious );
+			
+			pLabelStart = new QLabel( tr( "first: " ) );
+			pLayoutNavigator->addWidget( pLabelStart );
+			
+			//create start number text field
+			QValidator * pValidatorSize = new QIntValidator( 1, 99999 );
+			
+			pStartNumber = new QLineEdit();
+			pStartNumber->setText( QString::number( uiStartFibObjectInfo ) );
+			pStartNumber->setValidator( pValidatorSize );
+			pLabelStart->setBuddy( pStartNumber );
+			connect( pStartNumber, SIGNAL( textEdited( const QString & ) ),
+				this, SLOT( setNumberStartFibObjectInfo( const QString & ) ) );
+			pLayoutNavigator->addWidget( pStartNumber );
+			
+			pButtonNext = new QPushButton( tr("&Next") );
+			pButtonNext->setCheckable( true );
+			pButtonNext->setAutoDefault( false );
+			connect( pButtonNext, SIGNAL( pressed() ),
+				this, SLOT( nextFibObjectInfos() ) );
+			pLayoutNavigator->addWidget( pButtonNext );
+		} else {
+			//show all navigation widgets
+			pButtonPrevious->setVisible( true );
+			pLabelStart->setVisible( true );
+			pStartNumber->setVisible( true );
+			pButtonNext->setVisible( true );
+		}
+		checkNavigationButtons();
+	} else {//undisplay navigator part
+		if ( pButtonPrevious != NULL ) {
+			//hide all navigation widgets
+			pButtonPrevious->setVisible( false );
+			pLabelStart->setVisible( false );
+			pStartNumber->setVisible( false );
+			pButtonNext->setVisible( false );
+		}//else no navigator part
+	}
+	
 	//create the list with the Fib object info widgets
 	pSplitterFibObjectInfo = new QSplitter( this );
 	pSplitterFibObjectInfo->setOrientation( Qt::Vertical );
@@ -1130,7 +1306,6 @@ void cWidgetFibObjectInfos::createWidgetFibObjectInfosList() {
 			//mark Fib object info as selected
 			pSelectedFibObjectInfo = (*itrFibInfo);
 			pSelectedFibObjectInfo->setSelected( true );
-			
 		}
 	}
 	
@@ -1154,6 +1329,8 @@ void cWidgetFibObjectInfos::createWidgetFibObjectInfosList() {
 		//create new main layout
 		pLayoutMain = new QVBoxLayout();
 		pLayoutMain->addLayout( pLayoutTop );
+		pLayoutMain->addWidget( pLabelCounterText );
+		pLayoutMain->addLayout( pLayoutNavigator );
 		pLayoutMain->addWidget( pScrollAreaFibObjectInfo );
 		//set the main layout
 		setLayout( pLayoutMain );
@@ -1161,8 +1338,9 @@ void cWidgetFibObjectInfos::createWidgetFibObjectInfosList() {
 	
 	mutexGraphicalElements.unlock();
 	
-	DEBUG_OUT_L2(<<"cWidgetFibObjectInfos("<<this<<")::createWidgetFibObjectInfosList() done"<<endl <<flush);
+	DEBUG_OUT_L2(<<"cWidgetFibObjectInfos("<<this<<")::createWidgetFibObjectInfosList() done ( elements in splitter: "<<pSplitterFibObjectInfo->count()<<", height: "<< pSplitterFibObjectInfo->height()<<" )"<<endl <<flush);
 }
+//TODO check end
 
 
 /**
@@ -1259,7 +1437,123 @@ void cWidgetFibObjectInfos::close() {
 }
 
 
+//TODO check
 
+/**
+ * This slot updates the counter text.
+ * @see pLabelCounterText
+ */
+void cWidgetFibObjectInfos::updateCounterText() {
+	//adapt text of Fib objects of existing number of Fib objects label
+	QString strNumberOfFibInfoObjects( tr("Displaying ",
+		"Full text: Displaying START till END from COUNT") );
+	strNumberOfFibInfoObjects.append( QString::number( uiStartFibObjectInfo ) );
+	strNumberOfFibInfoObjects.append( tr(" to ",
+		"Full text: Displaying START till END from COUNT") );
+	strNumberOfFibInfoObjects.append( QString::number( uiEndFibObjectInfo ) );
+	strNumberOfFibInfoObjects.append( tr(" from ",
+		"Full text: Displaying START till END from COUNT") );
+	strNumberOfFibInfoObjects.append( QString::number( uiCountFibObjectInfo ) );
+	
+	pLabelCounterText->setText( strNumberOfFibInfoObjects );
+	
+	//update the start number text field
+	if ( pStartNumber ) {
+		pStartNumber->setText( QString::number( uiStartFibObjectInfo ) );
+	}
+}
+
+
+/**
+ * This slot outputs the previous Fib object infos.
+ * @see pButtonPrevious
+ */
+void cWidgetFibObjectInfos::previousFibObjectInfos() {
+	
+	const unsigned int uiMaxFibObjectInfos = getMaxFibObjectInfos();
+	
+	if ( uiMaxFibObjectInfos < uiStartFibObjectInfo ) {
+		
+		uiStartFibObjectInfo -= uiMaxFibObjectInfos;
+		uiEndFibObjectInfo   -= uiMaxFibObjectInfos;
+	} else {
+		uiStartFibObjectInfo = 1;
+		uiEndFibObjectInfo   = uiMaxFibObjectInfos;
+	}
+	
+	updateForCategory();
+}
+
+
+/**
+ * This slot outputs the next Fib object infos.
+ * @see pButtonNext
+ */
+void cWidgetFibObjectInfos::nextFibObjectInfos() {
+	
+	const unsigned int uiMaxFibObjectInfos = getMaxFibObjectInfos();
+	
+	uiStartFibObjectInfo += uiMaxFibObjectInfos;
+	uiEndFibObjectInfo   += uiMaxFibObjectInfos;
+	
+	if ( uiCountFibObjectInfo < uiEndFibObjectInfo ) {
+		//set the end point to the count of Fib object infos
+		uiEndFibObjectInfo   = uiCountFibObjectInfo;
+		//adapt the start point
+		uiStartFibObjectInfo = ( uiCountFibObjectInfo == 0 ) ? 0 :
+			( ( uiMaxFibObjectInfos < uiEndFibObjectInfo ) ?
+				( uiEndFibObjectInfo - uiMaxFibObjectInfos ) : 1 );
+	}
+	updateForCategory();
+}
+
+
+/**
+ * This slot checks if the navigation buttons should be enabled or disabled.
+ * @see pButtonPrevious
+ * @see pButtonNext
+ */
+void cWidgetFibObjectInfos::checkNavigationButtons() {
+	
+	if ( pButtonPrevious ) {
+		pButtonPrevious->setEnabled( 1 < uiStartFibObjectInfo );
+	}
+	if ( pButtonNext ) {
+		pButtonNext->setEnabled( uiEndFibObjectInfo < uiCountFibObjectInfo );
+	}
+}
+
+
+/**
+ * This slot sets the start number for the first Fib object info to
+ * display to the given number.
+ * @see uiStartFibObjectInfo
+ */
+void cWidgetFibObjectInfos::setNumberStartFibObjectInfo(
+		const QString & strNewNumber ) {
+	
+	const unsigned long uiNewStartFibObjectInfo =
+		strNewNumber.toULong();
+	
+	if ( uiNewStartFibObjectInfo == uiStartFibObjectInfo ) {
+		//nothing changed -> done
+		return;
+	}
+	//update start number of Fib objects infos to display
+	const unsigned int uiMaxFibObjectInfos = getMaxFibObjectInfos();
+	
+	uiStartFibObjectInfo = uiNewStartFibObjectInfo;
+	uiEndFibObjectInfo   = uiStartFibObjectInfo + uiMaxFibObjectInfos;
+	if ( uiCountFibObjectInfo < uiEndFibObjectInfo ) {
+		//set the end point to the count of Fib object infos
+		uiEndFibObjectInfo   = uiCountFibObjectInfo;
+		//adapt the start point
+		uiStartFibObjectInfo = ( uiCountFibObjectInfo == 0 ) ? 0 :
+			( ( uiMaxFibObjectInfos < uiEndFibObjectInfo ) ?
+				( uiEndFibObjectInfo - uiMaxFibObjectInfos ) : 1 );
+	}
+	updateForCategory();
+}
 
 
 

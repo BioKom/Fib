@@ -107,7 +107,7 @@ cWidgetFibVectorElement::cWidgetFibVectorElement( cFibVectorCreator * pInFibVect
 		QWidget * pParent ) : QWidget( pParent ),
 		uiNumberOfElement( uiInNumberOfElement ),
 		pLastSetVariable( NULL ), dLastSetValue( 0.0 ),
-		pFibVector( pInFibVector ), pChooseType( NULL ),
+		pFibVector( pInFibVector ), pDefiningFibElement( NULL ), pChooseType( NULL ),
 		pChooseVariable( NULL ), pMasterNode( NULL ), pElementWidget( NULL ), pLayoutMain( NULL ) {
 	
 	DEBUG_OUT_L2(<<"cWidgetFibVectorElement("<<this<<")::cWidgetFibVectorElement( pInFibVector="<<pInFibVector<<", uiInNumberOfElement="<<uiInNumberOfElement<<", pParent="<<pParent<<" ) called"<<endl<<flush);
@@ -125,7 +125,7 @@ cWidgetFibVectorElement::cWidgetFibVectorElement( cFibVectorCreator * pInFibVect
 		/*this object should be adapted if the defined variable change
 		 *-> it needs to listen for changes of the defining Fib elements*/
 		//try to evalue master node for the change listener
-		cFibElement * pDefiningFibElement = pFibVector->getFibElement();
+		pDefiningFibElement = pFibVector->getFibElement();
 		cFibNodeHandler * pNodeHandler = cFibNodeHandler::getInstance();
 		if ( ( pDefiningFibElement != NULL ) && ( pNodeHandler != NULL) ){
 			cFibElement * pMasterFibRoot = pDefiningFibElement->getMasterRoot();
@@ -140,7 +140,10 @@ cWidgetFibVectorElement::cWidgetFibVectorElement( cFibVectorCreator * pInFibVect
 	liDefinedVariables = getDefinedVariables();
 	
 	//create elements of this widget
-	createFibVectorElementWidget();
+	connect( this, SIGNAL(signalCreateFibVectorElementWidget()),
+		this, SLOT(createFibVectorElementWidget()) );
+	emit signalCreateFibVectorElementWidget();
+	
 	DEBUG_OUT_L2(<<"cWidgetFibVectorElement("<<this<<")::cWidgetFibVectorElement( pInFibVector="<<pInFibVector<<", uiInNumberOfElement="<<uiInNumberOfElement<<", pParent="<<pParent<<" ) done"<<endl<<flush);
 }
 
@@ -353,6 +356,7 @@ void cWidgetFibVectorElement::fibVectorChangedEvent(
 		//the Fib vector object was deleted
 		DEBUG_OUT_L2(<<"cWidgetFibVectorElement("<<this<<")::fibVectorChangedEvent( pFibVectorChanged="<<pFibVectorChanged<<" ) the Fib vector object was deleted"<<endl<<flush);
 		pFibVector = NULL;
+		pDefiningFibElement = NULL;
 		uiNumberOfElement = 0;
 		mutexFibVectorElement.unlock();
 		
@@ -366,12 +370,13 @@ void cWidgetFibVectorElement::fibVectorChangedEvent(
 		}
 		mutexFibVectorElementWidget.unlock();
 		
-		createFibVectorElementWidget();
+		emit signalCreateFibVectorElementWidget();
 		return;
 	}//the Fib vector object was changed -> redraw this widget
 	
 	const unsigned int uiChangedElement =
 		pFibVectorChanged->getNumberOfElementChanged();
+	bool bSendSignalCreateFibVectorElementWidget = false;
 	if ( 0 < uiChangedElement ) {
 		//update vector element number
 		DEBUG_OUT_L3(<<"cWidgetFibVectorElement("<<this<<")::fibVectorChangedEvent( pFibVectorChanged="<<pFibVectorChanged<<" ) update vector element number "<<uiChangedElement<<endl<<flush);
@@ -391,7 +396,7 @@ void cWidgetFibVectorElement::fibVectorChangedEvent(
 			case eFibVectorChangedEvent::REPLACE:{
 				if ( uiChangedElement == uiNumberOfElement ) {
 					//this element was replaced -> update this widget
-					createFibVectorElementWidget();
+					bSendSignalCreateFibVectorElementWidget = true;
 				}
 			}break;
 			
@@ -407,8 +412,11 @@ void cWidgetFibVectorElement::fibVectorChangedEvent(
 		}
 	}
 	
-	DEBUG_OUT_L2(<<"cWidgetFibVectorElement("<<this<<")::fibVectorChangedEvent( pFibVectorChanged="<<pFibVectorChanged<<" ) done"<<endl<<flush);
 	mutexFibVectorElement.unlock();
+	if ( bSendSignalCreateFibVectorElementWidget ) {
+		emit signalCreateFibVectorElementWidget();
+	}
+	DEBUG_OUT_L2(<<"cWidgetFibVectorElement("<<this<<")::fibVectorChangedEvent( pFibVectorChanged="<<pFibVectorChanged<<" ) done"<<endl<<flush);
 }
 
 
@@ -466,7 +474,7 @@ void cWidgetFibVectorElement::changedEvent(
 				/* variable is shown
 				 * -> need to update widget for changed defined variables
 				 * -> recreate Fib vector element widget*/
-				createFibVectorElementWidget();
+				emit signalCreateFibVectorElementWidget();
 			}
 		}
 	}
@@ -479,29 +487,36 @@ void cWidgetFibVectorElement::changedEvent(
  * It will be called every time a Fib node (cFibNode), at which
  * this object is registered, was changed.
  *
- * @param pFibNodeChanged a pointer to the event, with the information
+ * @param pFibNodeChangedEvent a pointer to the event, with the information
  * 	about the changed Fib node
  */
 void cWidgetFibVectorElement::fibNodeChangedEvent(
-		const eFibNodeChangedEvent * pFibNodeChanged ) {
+		const eFibNodeChangedEvent * pFibNodeChangedEvent ) {
 	
 	
-	DEBUG_OUT_L2(<<"cWidgetFibVectorElement("<<this<<")::fibNodeChangedEvent( pFibNodeChanged="<<pFibNodeChanged<<") called"<<endl<<flush);
+	DEBUG_OUT_L2(<<"cWidgetFibVectorElement("<<this<<")::fibNodeChangedEvent( pFibNodeChangedEvent="<<pFibNodeChangedEvent<<") called"<<endl<<flush);
 	
-	if ( ( pFibNodeChanged == NULL ) ||
-			( pFibNodeChanged->pFibNodeChanged == NULL ) ){
+	if ( ( pFibNodeChangedEvent == NULL ) ||
+			( pFibNodeChangedEvent->getChangedNode() == NULL ) ){
 		//nothing changed
 		return;
 	}
-	if ( pFibNodeChanged->bNodeDeleted ){
+	if ( pFibNodeChangedEvent->isDeleted() ){
 		/*node for master Fib object for the Fib element of the the vector
 		 deleted*/
+		mutexFibVectorElement.lock();
 		pMasterNode = NULL;
-		
+		//if master node is deleted, Fib object is deleted
+		pFibVector  = NULL;
+		pDefiningFibElement = NULL;
+		mutexFibVectorElement.unlock();
+		//recreate Fib vector element widget
+		emit signalCreateFibVectorElementWidget();
+		/*TODO weg (if master node is deleted, Fib object is deleted)
 		mutexFibVectorElement.lock();
 		if ( pFibVector ){
 			//try to evalue new master node
-			DEBUG_OUT_L2(<<"cWidgetFibVectorElement("<<this<<")::fibNodeChangedEvent( pFibNodeChanged="<<pFibNodeChanged<<") try to evalue new master node for vector "<<pFibVector<<endl<<flush);
+			DEBUG_OUT_L2(<<"cWidgetFibVectorElement("<<this<<")::fibNodeChangedEvent( pFibNodeChangedEvent="<<pFibNodeChangedEvent<<") try to evalue new master node for vector "<<pFibVector<<endl<<flush);
 			
 			cFibElement * pDefiningFibElement = pFibVector->getFibElement();
 			cFibNodeHandler * pNodeHandler = cFibNodeHandler::getInstance();
@@ -516,43 +531,84 @@ void cWidgetFibVectorElement::fibNodeChangedEvent(
 			}
 		}
 		mutexFibVectorElement.unlock();
-	}
-
-	if ( pFibNodeChanged->pChangedBy == this ){
-		//nothing changed
-		DEBUG_OUT_L2(<<"cWidgetFibVectorElement("<<this<<")::fibNodeChangedEvent( pFibNodeChanged="<<pFibNodeChanged<<") done nothing changed"<<endl<<flush);
+		*/
 		return;
 	}
+
+	if ( pFibNodeChangedEvent->getChangeBy() == this ){
+		//nothing changed
+		DEBUG_OUT_L2(<<"cWidgetFibVectorElement("<<this<<")::fibNodeChangedEvent( pFibNodeChangedEvent="<<pFibNodeChangedEvent<<") done nothing changed"<<endl<<flush);
+		return;
+	}
+	/*check if the Fib object for this vector is superior or contained in a
+	 *changed Fib element or Fib object*/
+	const bool bIsContainedInChanged =
+		pFibNodeChangedEvent->isContainedInChanged( pDefiningFibElement  );
+	const bool bIsElementChanged =
+		pFibNodeChangedEvent->isElementChanged( pDefiningFibElement );
+	if ( ( ! bIsElementChanged ) && ( ! bIsContainedInChanged ) ) {
+		/*the Fib element for this vector is not contained in or a Fib element
+		 *which was changed
+		 -> this vector don't needs to be updated
+		 -> everything up to date
+		 -> nothing to do*/
+		DEBUG_OUT_L2(<<"cWidgetFibVectorElement("<<this<<")::fibNodeChangedEvent() done: everything up to date"<<endl<<flush);
+		return;
+	}
+	mutexFibVectorElement.lock();
+	bool bRecreateWidget = false;
+	if ( bIsElementChanged ) {
+		//the Fib element for the vector changed
+		if ( pFibNodeChangedEvent->isElementChanged( pDefiningFibElement,
+				eFibNodeChangedEvent::DELETED ) ) {
+			//the Fib element for this graphical item was deleted
+			DEBUG_OUT_L2(<<"cWidgetFibVectorElement("<<this<<")::fibNodeChangedEvent() done: the defining Fib element for this graphical item was deleted"<<endl<<flush);
+			pFibVector = NULL;
+			pDefiningFibElement = NULL;
+			mutexFibVectorElement.unlock();
+			//recreate Fib vector element widget
+			emit signalCreateFibVectorElementWidget();
+			return;
+		}
+		//the vector could be moved from Fib element
+		if ( pFibVector ) {
+			//reevalue the defining Fib element
+			pDefiningFibElement = pFibVector->getFibElement();
+		}
+		bRecreateWidget = true;
+	}
+	mutexFibVectorElement.unlock();
 	
 	//check if the defined variables need to be reevalued
-	
-	//TODO speed up with information in pFibNodeChanged
-	
-	
-	//evaluate new defined variables
-	mutexFibVectorElementWidget.lock();
-	QList< cFibVariableCreator * > liDefinedVariablesNew =
-		getDefinedVariables();
-	
-	if ( liDefinedVariables != liDefinedVariablesNew ){
-		//defined variables changed
-		liDefinedVariables = liDefinedVariablesNew;
-		mutexFibVectorElementWidget.unlock();
-		//evalue actual vector element
-		iGetWidget * pVectorElement = getFibVectorElement();
-		if ( ( pVectorElement != NULL ) &&
-				( ( pVectorElement->getName() == "cFibVariableCreator" ) ||
-					( pVectorElement->getName() == "cFibInputVariable" ) ) ) {
-			
-			/* defined variables changed + variable is shown
-			 * -> need to update widget for changed defined variables
-			 * -> recreate Fib vector element widget*/
-			createFibVectorElementWidget();
-		}//else not a vector element -> defined variables not relevant
-	}else{//defined variables not changed
+	if ( bIsContainedInChanged ) {
+		//evaluate new defined variables
+		mutexFibVectorElementWidget.lock();
+		QList< cFibVariableCreator * > liDefinedVariablesNew =
+			getDefinedVariables();
+		
+		if ( liDefinedVariables != liDefinedVariablesNew ){
+			//defined variables changed
+			liDefinedVariables = liDefinedVariablesNew;
+			//evalue actual vector element
+			iGetWidget * pVectorElement = ( pFibVector == NULL ) ? NULL :
+				pFibVector->getElement( uiNumberOfElement );
+			if ( ( pVectorElement != NULL ) &&
+					( ( pVectorElement->getName() == "cFibVariableCreator" ) ||
+						( pVectorElement->getName() == "cFibInputVariable" ) ) ) {
+				
+				/* defined variables changed + variable is shown
+				 * -> need to update widget for changed defined variables
+				 * -> recreate Fib vector element widget*/
+				bRecreateWidget = true;
+			}//else not a vector element -> defined variables not relevant
+		}
 		mutexFibVectorElementWidget.unlock();
 	}
-	DEBUG_OUT_L2(<<"cWidgetFibVectorElement("<<this<<")::fibNodeChangedEvent( pFibNodeChanged="<<pFibNodeChanged<<") done"<<endl<<flush);
+	if ( bRecreateWidget ) {
+		emit signalCreateFibVectorElementWidget();
+	}
+	
+	DEBUG_OUT_L2(<<"cWidgetFibVectorElement("<<this<<")::fibNodeChangedEvent( pFibNodeChangedEvent="<<pFibNodeChangedEvent<<") done"<<endl<<flush);
 }
 
 
@@ -599,7 +655,7 @@ bool cWidgetFibVectorElement::slotChangeTypeTo( const int iSelectedItem ) {
 					uiNumberOfElement, dLastSetValue );
 			}
 			
-			createFibVectorElementWidget();
+			emit signalCreateFibVectorElementWidget();
 			return bElementReplaced;
 		};
 		case 1:{//change to variable
@@ -617,7 +673,7 @@ bool cWidgetFibVectorElement::slotChangeTypeTo( const int iSelectedItem ) {
 					bElementReplaced = pFibVector->replaceElement(
 						uiNumberOfElement, pLastSetVariable );
 					
-					createFibVectorElementWidget();
+					emit signalCreateFibVectorElementWidget();
 				}else{//use new variable (last defined variable above)
 					createFibVectorElementWidget();
 					
@@ -790,9 +846,9 @@ void cWidgetFibVectorElement::createFibVectorElementWidget() {
 			
 			
 		}else{//display widget for element ( pVectorElement->getName() == "cFibScalar" )
-			DEBUG_OUT_L3(<<"cWidgetFibVectorElement("<<this<<")::createFibVectorElementWidget() display widget for element "<<pVectorElement->getName()<<endl<<flush);
 			//create and add element widget
 			pElementWidget = pVectorElement->getWidget();
+			DEBUG_OUT_L3(<<"cWidgetFibVectorElement("<<this<<")::createFibVectorElementWidget() display widget for element "<<pVectorElement->getName()<<"(widget pointer "<<pElementWidget<<")"<<endl<<flush);
 			if ( pElementWidget ) {
 				liVectorElement.push_back( pElementWidget );
 				pLayoutMain->addWidget( pElementWidget );
@@ -854,13 +910,12 @@ QComboBox * cWidgetFibVectorElement::createChooseType(
 QList< cFibVariableCreator * > cWidgetFibVectorElement::getDefinedVariables() {
 	//get all higher defined variables
 	list<cFibVariable*> liDefinedFibVariables;
-	if ( pFibVector ) {
-		cFibElement * pDefiningFibElement = pFibVector->getFibElement();
-		if ( pDefiningFibElement ) {
-			liDefinedFibVariables =
-				pDefiningFibElement->getDefinedVariables( ED_HIGHER );
-		}
+	mutexFibVectorElement.lock();
+	if ( pDefiningFibElement ) {
+		liDefinedFibVariables =
+			pDefiningFibElement->getDefinedVariables( ED_HIGHER );
 	}
+	mutexFibVectorElement.unlock();
 	cFibVariableHandler * pVariableHandler =
 		cFibVariableHandler::getInstance();
 	cFibVariableCreator * pNewVariableCreator = NULL;

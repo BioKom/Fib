@@ -50,13 +50,21 @@
 /*
 History:
 03.08.2013  Oesterholz  created
+25.01.2013  Oesterholz  the graphical items will be updated, if possible,
+	with the information of the Fib node change event
 */
 
+
+
+//switches for test proposes
+#define DEBUG
 
 
 #include "cFibGraphicsItemFibList.h"
 
 #include "cFibGraphicsScene.h"
+#include "iFibGraphicsItemFactory.h"
+#include "eFibNodeChangedEvent.h"
 
 
 using namespace fib::nCreator;
@@ -118,9 +126,70 @@ cFibGraphicsItemFibList::cFibGraphicsItemFibList( cFibElement * pInFibObject,
  * destructor
  */
 cFibGraphicsItemFibList::~cFibGraphicsItemFibList(){
-	//TODO what to do with the subitems liSubitems
+	//nothing to do
 }
 
+
+#ifdef TODO_WEG
+
+/**
+ * This method deletes the entire Fib object item tree.
+ * It will delete all subitems trees (call deleteItemTree() for all
+ * subitems) and will delete this item (destructor).
+ */
+void cFibGraphicsItemFibList::deleteItemTree() {
+	
+	//delete the subitems
+	for ( QList< cFibGraphicsItem * >::iterator
+			itrActualSubitem = liSubitems.begin();
+			itrActualSubitem != liSubitems.begin(); ++itrActualSubitem ) {
+		
+		if ( *itrActualSubitem ) {
+			(*itrActualSubitem)->deleteItemTree();
+		}
+	}
+	//delete this item
+	delete this;
+}
+#endif //TODO_WEG
+
+
+/**
+ * @see getSubItems()
+ * @return the number of subitems (child items) of this item
+ */
+int cFibGraphicsItemFibList::getNumberOfSubItems() const {
+	
+	return liSubitems.size();
+}
+
+
+/**
+ * This method returns the (direct) subitems (or child items) of this
+ * graphical item.
+ * Note: It will not return the subitems of the subitems.
+ *
+ * @return a list with the pointers to the subitems of this Fib
+ * 	graphical item
+ */
+QList< cFibGraphicsItem * > cFibGraphicsItemFibList::getSubItems() {
+	
+	return liSubitems;
+}
+
+
+/**
+ * This method returns the (direct) subitems (or child items) of this
+ * graphical item.
+ * Note: It will not return the subitems of the subitems.
+ *
+ * @return a list with the const pointers to the subitems of this Fib
+ * 	graphical item
+ */
+const QList< cFibGraphicsItem * > cFibGraphicsItemFibList::getSubItems() const {
+	
+	return liSubitems;
+}
 
 
 /**
@@ -129,6 +198,22 @@ cFibGraphicsItemFibList::~cFibGraphicsItemFibList(){
 std::string cFibGraphicsItemFibList::getName() const{
 	
 	return std::string( "cFibGraphicsItemFibList" );
+}
+
+
+/**
+ * This method returns a number for the type of the graphical item.
+ * Note: The type number of Fib graphical items is betwaen (including)
+ * 	 QGraphicsItem::UserType + 1024 and
+ * 	 QGraphicsItem::UserType + 2047
+ *
+ * @see typeFibGraphicsItems
+ * @see QGraphicsItem::type()
+ * @return a number for the type of the graphical item
+ */
+int cFibGraphicsItemFibList::type() const {
+	
+	return FibGraphicsItemFibList;
 }
 
 
@@ -208,6 +293,8 @@ void cFibGraphicsItemFibList::enlargeBoundingRect( const QRectF & rectangle ){
 }
 
 
+#ifdef TODO_WEG
+
 /**
  * This method will update this graphical item for a change in a
  * Fib element.
@@ -261,7 +348,7 @@ bool cFibGraphicsItemFibList::updateForFibElementChange(
 			
 			if ( *itrActualItem ){
 				(*itrActualItem)->updateForFibElementChange(
-						pFibNodeChangedEvent, liOutNotUpdatedItems );
+					pFibNodeChangedEvent, liOutNotUpdatedItems );
 			}
 		}
 	}
@@ -271,6 +358,220 @@ bool cFibGraphicsItemFibList::updateForFibElementChange(
 	
 	return false;
 }
+
+#endif //TODO_WEG
+
+//TODO check
+
+/**
+ * This method will update this graphical item for a change in a
+ * Fib Node / Fib element.
+ * It will update the bounding rectangle and other members of this class
+ * for the changed Fib object if possible.
+ * For that it will use the pFibNodeChangedEvent (e. g. reevaluate the
+ * bounding rectangle with it).
+ * Note: This method won't use a mutex.
+ *
+ * @see pFibObject
+ * @see boundingRect()
+ * @param pFibNodeChangedEvent a pointer to the change event with the
+ * 	information of the change
+ * @param pFibGraphicsItemFactory a pointer to the Fib graphical item
+ * 	factory, to create sub graphical items, which can not be updated
+ * @param pUpdateForFibObject the Fib object for which this graphical
+ * 	item should be updated (which it should represent)
+ * @return true if this element could be updated, else false
+ * 	If false is returned, you should create a new graphical item
+ * 	for the changed parts and replace this graphical item with it.
+ */
+bool cFibGraphicsItemFibList::updateForFibNodeChange(
+		const eFibNodeChangedEvent * pFibNodeChangedEvent,
+		const iFibGraphicsItemFactory * pFibGraphicsItemFactory,
+		const cFibElement * pUpdateForFibObject ) {
+	
+	DEBUG_OUT_L2(<<"cFibGraphicsItemFibList("<<this<<")::updateForFibNodeChange(pFibNodeChangedEvent, pFibGraphicsItemFactory, pUpdateForFibObject ) called"<<endl<<flush);
+	
+	if ( ( pFibNodeChangedEvent == NULL ) || ( pUpdateForFibObject == NULL ) ||
+			( pFibObject == NULL ) ) {
+		//nothing to update for -> can't update
+		DEBUG_OUT_L2(<<"cFibGraphicsItemFibList("<<this<<")::updateForFibNodeChange() done: nothing to update for"<<endl<<flush);
+		return false;
+	}
+	
+	/*check if the Fib object for this grapical item is superior or
+	 contained in a changed Fib element or Fib object*/
+	if ( ! pFibNodeChangedEvent->isChangedBranch( pFibObject ) ) {
+		/*the Fib object for this grapical item is not on a branch which
+		 *contains a changed Fib element or Fib object
+		 -> this graphical item don't need to be updated
+		 -> everything up to date
+		 -> nothing to do*/
+		DEBUG_OUT_L2(<<"cFibGraphicsItemFibList("<<this<<")::updateForFibNodeChange() done: everything up to date"<<endl<<flush);
+		return true;
+	}
+	if ( pFibNodeChangedEvent->isElementChanged( pFibObject,
+			eFibNodeChangedEvent::DELETED ) ) {
+		//the Fib element for this graphical item was deleted -> can't update
+		DEBUG_OUT_L2(<<"cFibGraphicsItemFibList("<<this<<")::updateForFibNodeChange() done: the Fib element for this graphical item was deleted -> can't update"<<endl<<flush);
+		return false;
+	}
+	/*check if the given Fib object can be converted into or can be
+	 *represented by this grapical item (it contains a list element and
+	 *above the list element just limb elements till the given Fib element
+	 *pUpdateForFibObject)*/
+	//search for Fib list element above given Fib element pUpdateForFibObject
+	for ( const cFibElement * pActualFibElement = pUpdateForFibObject;
+			pActualFibElement != NULL;
+			pActualFibElement = pActualFibElement->getNextFibElement() ) {
+		if ( pActualFibElement->getType() == 'l' ) {
+			//Fib list element above given Fib element pUpdateForFibObject found
+			if ( pActualFibElement != pFibObject ) {
+				/*the found Fib list element is not for this Fib graphical list element
+				 -> this Fib list graphical item can not be adapted*/
+				DEBUG_OUT_L2(<<"cFibGraphicsItemFibList("<<this<<")::updateForFibNodeChange() done: the found Fib list element is not for this Fib graphical list element"<<endl<<flush);
+				return false;
+			}
+			break;
+		}
+		if ( ( ! pActualFibElement->isLimb() ) &&
+				( pActualFibElement->getType() != 'r' ) ) {
+			/*the Fib element is not a limb, root or list element
+			-> this Fib list graphical item can not be adapted*/
+			DEBUG_OUT_L2(<<"cFibGraphicsItemFibList("<<this<<")::updateForFibNodeChange() done: the Fib element is not a limb, root or list element"<<endl<<flush);
+			return false;
+		}
+	}
+	
+	//update the subobjects
+	list< cFibElement * > liSubobjects = pFibObject->getSubobjects();
+	/*a list with the pairs for the Fib subpbjects and there representating
+	 Fib graphical items.
+		 first: a pointer to the Fib subobjects
+		 second: a pointer to the Fib graphical item for the Fib subobject,
+			if NULL no Fib graphical item for it exists (on have to be found
+			or created)*/
+	QList< pair< cFibElement * , cFibGraphicsItem * > > liSubobjectMapping;
+	
+	//initial fill of liSubobjectMapping (second is NULL for: still to find)
+	for ( list< cFibElement * >::iterator
+			itrActualSubobject = liSubobjects.begin();
+			itrActualSubobject != liSubobjects.end(); itrActualSubobject++ ){
+		
+		liSubobjectMapping.push_back( pair< cFibElement * , cFibGraphicsItem * >(
+			(*itrActualSubobject), NULL ) );
+	}
+	//a set for fast checking if a Fib element is a subobject of this list element
+	set< const cFibElement * > setSubobjects;
+	setSubobjects.insert( liSubobjects.begin(), liSubobjects.end() );
+	list< cFibGraphicsItem * > liErasedSubitems;
+	
+	//find the Fib subobjects for the Fib graphical items
+	for ( QList< cFibGraphicsItem * >::iterator itrSubitem = liSubitems.begin();
+			itrSubitem != liSubitems.end(); ++itrSubitem ) {
+		/*try to Fib the Fib subobject of the this Fib list element for the
+		 actual old Fib graphical subitem*/
+		const cFibElement * pSubitemSuperiorElement =
+			(*itrSubitem)->getFibObject();
+		if ( ( pSubitemSuperiorElement == NULL ) ||
+				pFibNodeChangedEvent->isElementChanged( pSubitemSuperiorElement,
+					eFibNodeChangedEvent::DELETED ) ) {
+			/*the Fib subobject for the graphical item was removed or
+			 *changed to much -> erase it*/
+			liErasedSubitems.push_back( *itrSubitem );
+			continue;
+		}
+		while ( true ) {
+			
+			if ( setSubobjects.find( pSubitemSuperiorElement ) != setSubobjects.end() ) {
+				//find the subobject in liSubobjectMapping to store the mapping
+				//Note: Because of the Fib object structur itrSubobject->first is unique
+				for ( QList< pair< cFibElement * , cFibGraphicsItem * > >::iterator
+						itrSubobject = liSubobjectMapping.begin();
+						itrSubobject != liSubobjectMapping.end(); ++itrSubobject ) {
+					if ( itrSubobject->first == pSubitemSuperiorElement ){
+						//subobject found -> store mapping to actual graphical item
+						itrSubobject->second = (*itrSubitem);
+						break;
+					}
+				}
+				break;
+			}//else check next superior Fib element
+			//Note: don't check if limb for (*itrSubitem)->getFibObject()
+			pSubitemSuperiorElement = pSubitemSuperiorElement->getSuperiorFibElement();
+			if ( ( pSubitemSuperiorElement == NULL ) ||
+					pFibNodeChangedEvent->isElementChanged(
+						pSubitemSuperiorElement, eFibNodeChangedEvent::DELETED ) ||
+					( ! pSubitemSuperiorElement->isLimb() ) ) {
+				/*the Fib subobject for the graphical item was removed or
+				 *changed to much -> erase it*/
+				liErasedSubitems.push_back( *itrSubitem );
+				break;
+			}
+		}//end for all superior Fib elements
+	}//end for all graphical subitems
+	//update or generate all grapical subitems for all Fib subobjects
+	bool bSubitemUpdated;
+	list< cFibGraphicsItem * > liGenertedGraphicalItems;
+	for ( QList< pair< cFibElement * , cFibGraphicsItem * > >::iterator
+			itrSubobject = liSubobjectMapping.begin();
+			itrSubobject != liSubobjectMapping.end(); ++itrSubobject ) {
+		
+		bSubitemUpdated = false;
+		if ( itrSubobject->second != NULL ) {
+			//try to update the subobjects and generate subobjects, which can not be updated
+			bSubitemUpdated = itrSubobject->second->updateForFibNodeChange(
+				pFibNodeChangedEvent, pFibGraphicsItemFactory, itrSubobject->first );
+		}
+		if ( ! bSubitemUpdated ) {
+			//the subitem can not be updated -> generate a new one
+			if ( itrSubobject->second ) {
+				liErasedSubitems.push_back( itrSubobject->second );
+			}
+			//generate a new Fib graphic subitem
+			cFibGraphicsItem * pGeneratedGraphicalItem =
+				(*pFibGraphicsItemFactory)( itrSubobject->first );
+			if ( pGeneratedGraphicalItem == NULL ) {
+				//Error: no fib graphical item could be generated for the Fib object
+				//delete other generted graphical items
+				for ( list< cFibGraphicsItem * >::iterator
+						itrGenertedGraphicalItem = liGenertedGraphicalItems.begin();
+						itrGenertedGraphicalItem != liGenertedGraphicalItems.end();
+						++itrGenertedGraphicalItem ) {
+					delete (*itrGenertedGraphicalItem);
+				}
+				DEBUG_OUT_L2(<<"cFibGraphicsItemFibList("<<this<<")::updateForFibNodeChange() done: Error: no fib graphical item could be generated for the Fib object"<<endl<<flush);
+				return false;
+			}//else a graphical item could be generated
+			liGenertedGraphicalItems.push_back( pGeneratedGraphicalItem );
+			
+			itrSubobject->second = pGeneratedGraphicalItem;
+		}
+	}
+	
+	//clear (for rebuild) subitem list
+	liSubitems.clear();
+	//erase Fib graphical subitems which where erased (liErasedSubitems)
+	for ( list< cFibGraphicsItem * >::iterator
+			itrErasedSubitem = liErasedSubitems.begin();
+			itrErasedSubitem != liErasedSubitems.end(); itrErasedSubitem++ ) {
+		delete (*itrErasedSubitem);
+	}
+	
+	//rebuild subitem list
+	for ( QList< pair< cFibElement * , cFibGraphicsItem * > >::iterator
+			itrSubobject = liSubobjectMapping.begin();
+			itrSubobject != liSubobjectMapping.end(); ++itrSubobject ) {
+		
+		liSubitems.push_back( itrSubobject->second );
+		itrSubobject->second->setParentItem( this );
+	}
+	
+	DEBUG_OUT_L2(<<"cFibGraphicsItemFibList("<<this<<")::updateForFibNodeChange() done"<<endl<<flush);
+	return true;
+}
+
+
+//TODO check end
 
 
 /**
@@ -505,7 +806,7 @@ bool cFibGraphicsItemFibList::deleteSubitem( const unsigned int uiPositionSubite
 	if ( ( 0 < uiPositionSubitem ) &&
 			( uiPositionSubitem <= ((unsigned int)liSubitems.size()) ) ){
 		const unsigned int index = uiPositionSubitem - 1;
-		if ( bDeleteOld ){
+		if ( bDeleteOld && ( liSubitems.at( index ) != NULL ) ){
 			delete liSubitems.at( index );
 		}
 		liSubitems.removeAt( index );

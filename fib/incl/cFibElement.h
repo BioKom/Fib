@@ -54,6 +54,9 @@ History:
 16.08.2013  Oesterholz  method getVariablesToReplace() added
 29.08.2013  Oesterholz  getMasterRoot() is now public
 13.11.2013  Oesterholz  FEATURE_INSERT_OBJECT_IN_ELEMENT implemented
+22.01.2014  Oesterholz  getSuperiorFibElement() const added
+13.02.2014  Oesterholz  getVariablesUsedButNotDefined() and
+	replaceVariablesWithEqualDefinedVariables() added
 */
 
 
@@ -88,13 +91,16 @@ using namespace fib;
 
 namespace fib{
 
+/**
+ * Directions in the Fib object
+ */
 enum edDirection{
-	ED_ALL,
-	ED_POSITION,
-	ED_BELOW,
-	ED_HIGHER,
-	ED_BELOW_EQUAL,
-	ED_HIGHER_EQUAL
+	ED_ALL,///in entire fib object
+	ED_POSITION,///on the given position
+	ED_BELOW,///all Fib elements contained in a Fib element
+	ED_HIGHER,///all Fib elements superior to a Fib element
+	ED_BELOW_EQUAL,///all Fib elements contained in a Fib element and the Fib element
+	ED_HIGHER_EQUAL///all Fib elements superior to a Fib element and the Fib element
 };
 
 class cRoot;//cyclic dependencie
@@ -244,10 +250,18 @@ public:
 	/**
 	 * This method returns the superior Fib element of this Fib element.
 	 *
-	 * @return the superior Fib element of this Fib element or the NULL 
+	 * @return the superior Fib element of this Fib element or the NULL
 	 * 	pointer, if non such exists
 	 */
 	virtual cFibElement * getSuperiorFibElement();
+	
+	/**
+	 * This method returns the superior Fib element of this Fib element.
+	 *
+	 * @return the superior Fib element of this Fib element or the NULL
+	 * 	pointer, if non such exists
+	 */
+	virtual const cFibElement * getSuperiorFibElement() const;
 
 
 #ifdef FEATURE_FAST_UPDATE
@@ -400,7 +414,7 @@ public:
 	 * @param direction the direction, beginning from the reference
 	 * 	Fib element, in which the to return Fib elements should stand
 	 * @param lNumberOfMaxReturnedElements the maximal number of
-	 * 	Fib elements to return
+	 * 	Fib elements to return (0 = return all or infinite)
 	 * @param bAbsolute if the lNumber is an absolute value for the wool
 	 * 	Fib object
 	 * @return a list with the pointers to the to returning Fib elements
@@ -657,6 +671,31 @@ public:
 	bool variablesAreDefined( const set<cFibVariable*> & setVariable ,
 		edDirection direction=ED_HIGHER ) const;
 
+	/**
+	 * This function returns the varaibles used in the given direction in this
+	 * Fib object, but not defined in it.
+	 *
+	 * @see cFibElement::getUsedVariables()
+	 * @see cFibElement::getDefinedVariables()
+	 * @param direction the direction, in which to search for the variables
+	 * @return all variables used in the direction of this Fib object, but not
+	 * 	defined in the direction
+	 */
+	set<cFibVariable*> getVariablesUsedButNotDefined(
+		const edDirection direction = ED_BELOW_EQUAL );
+	
+	/**
+	 * This method replaces all variables of the given set with equal variables
+	 * defined superior (ED_HIGHER) to this Fib object pFibObject, if possible.
+	 * If no equal defined variable is found, the varaible will not be replaced.
+	 *
+	 * @see getDefinedVariables()
+	 * @see getVariablesUsedButNotDefined()
+	 * @param setVariablesToReplace a set with the variables to replace
+	 * @return the number of variables, which where replaced
+	 */
+	unsigned int replaceVariablesWithEqualDefinedVariables(
+		set<cFibVariable*> setVariablesToReplace );
 #endif //SWITCH_JUST_STORE_AND_EVALUE
 
 	/**

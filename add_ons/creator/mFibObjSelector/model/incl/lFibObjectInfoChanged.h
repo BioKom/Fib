@@ -13,6 +13,7 @@
  * This file specifies a listener interface for listening for Fib object
  * info object changes.
  *
+ *
  * Copyright (C) @c GPL3 2013 Betti Oesterholz
  *
  * This program is free software: you can redistribute it and/or modify
@@ -65,8 +66,8 @@ public:
 	 * This method will be called every time a Fib Fib object info object
 	 * (cFibObjectInfo), at which this object is registered, was changed.
 	 *
-	 * @param pFibObjectInfoChanged a pointer to the event, with the information
-	 * 	about the changed Fib node
+	 * @param pFibObjectInfoChanged a pointer to the event, with the
+	 * 	information about the changed Fib object info object
 	 */
 	virtual void fibObjectInfoChanged(
 		const eFibObjectInfoChangedEvent * pFibObjectInfoChanged ) = 0;

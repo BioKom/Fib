@@ -345,7 +345,7 @@ $(TEST_FIB_LIBRARY): $(OBJ_TINYXML) $(OBJ_ZLIB) $(OBJ_TEST_FIB)
 #
 define generat_test_bin
 $(DIR_TESTCASE)$(1): $(DIR_OBJ_TEST)$(1).o $(TEST_TOOLS) $(TEST_FIB_LIBRARY)
-	$(CC) $$(CFLAG_TEST) $$(LDFLAGS) -o $$@ $$^ $$(LIBS)
+	$(CC) $$(CFLAG) $$(LDFLAGS) -o $$@ $$^ $$(LIBS)
 endef
 
 $(foreach TESTPROGRAM, $(TEST_PROGRAMS), $(eval $(call generat_test_bin,$(TESTPROGRAM)) ) )

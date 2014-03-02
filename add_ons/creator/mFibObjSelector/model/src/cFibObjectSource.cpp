@@ -36,6 +36,7 @@
 /*
 History:
 24.09.2013  Oesterholz  created
+02.03.2014  Oesterholz  categories for Fib object source added: getCategories()
 */
 
 
@@ -58,7 +59,7 @@ using namespace fib;
 /**
  * standard constructor for a Fib object source object
  */
-cFibObjectSource::cFibObjectSource(){
+cFibObjectSource::cFibObjectSource() {
 	//nothing to do
 }
 
@@ -66,7 +67,7 @@ cFibObjectSource::cFibObjectSource(){
 /**
  * destructor
  */
-cFibObjectSource::~cFibObjectSource(){
+cFibObjectSource::~cFibObjectSource() {
 	//nothing to do
 }
 
@@ -74,9 +75,19 @@ cFibObjectSource::~cFibObjectSource(){
 /**
  * @return the name of this class "cFibObjectSource"
  */
-string cFibObjectSource::getName() const{
+string cFibObjectSource::getName() const {
 	
 	return "cFibObjectSource";
+}
+
+
+/**
+ * @return the set with the categories this Fib object source is in
+ * 	(e.g. "Fib database", "file")
+ */
+std::set< std::string > cFibObjectSource::getCategories() const {
+	//default: no categories
+	return std::set< std::string >();
 }
 
 
@@ -100,15 +111,15 @@ string cFibObjectSource::getName() const{
  * 	non could be restored
  */
 cFibObjectSource * cFibObjectSource::restore(
-		istream & stream, int * iOutStatus ){
+		istream & stream, int * iOutStatus ) {
 	
 	TiXmlDocument xmlDocFibObject;
 	
 	stream >> xmlDocFibObject;
 	
-	if ( xmlDocFibObject.Error() ){
+	if ( xmlDocFibObject.Error() ) {
 		//error while loading to stream
-		if ( iOutStatus ){
+		if ( iOutStatus ) {
 			(*iOutStatus) = -1;
 		}
 		return NULL;
@@ -139,19 +150,19 @@ cFibObjectSource * cFibObjectSource::restore(
  * 	non could be restored
  */
 cFibObjectSource * cFibObjectSource::restore(
-		const TiXmlNode * pXmlNode, int * iOutStatus ){
+		const TiXmlNode * pXmlNode, int * iOutStatus ) {
 	
 #ifdef DEBUG_RESTORE_XML
 	//print debugging output
 	printf("restoring cFibObjectSource\n" );
 #endif//DEBUG_RESTORE_XML
-	if ( pXmlNode == NULL ){
+	if ( pXmlNode == NULL ) {
 		//nothing to restore
 #ifdef DEBUG_RESTORE_XML
 		//print debugging output
 		printf("nothing to restore\n" );
 #endif//DEBUG_RESTORE_XML
-		if ( iOutStatus != NULL ){
+		if ( iOutStatus != NULL ) {
 			//set the output status
 			(*iOutStatus) = -1;
 		}
@@ -159,21 +170,21 @@ cFibObjectSource * cFibObjectSource::restore(
 	}
 	
 	//as long no Fib object source object was read and no error occured
-	while ( ( pXmlNode != NULL ) && ( 0 <= (*iOutStatus) ) ){
+	while ( ( pXmlNode != NULL ) && ( 0 <= (*iOutStatus) ) ) {
 		//get type of XML element
 		const int iType = pXmlNode->Type();
-		switch ( iType ){
+		switch ( iType ) {
 			case TiXmlNode::ELEMENT:{
 				/*check if this is a valid Fib object source object XML element,
 				create the apropirate Fib object source and call its restoreXml() method*/
 				const TiXmlElement * pXmlElement = pXmlNode->ToElement();
-				if ( pXmlElement == NULL ){
+				if ( pXmlElement == NULL ) {
 					//Warning: nothing to load
 #ifdef DEBUG_RESTORE_XML
 					//print debugging output
 					printf("not valid xml sub element\n" );
 #endif//DEBUG_RESTORE_XML
-					if ( iOutStatus != NULL ){
+					if ( iOutStatus != NULL ) {
 						//set the output status
 						(*iOutStatus) = -1;
 					}
@@ -186,27 +197,27 @@ cFibObjectSource * cFibObjectSource::restore(
 					szElementType.c_str(), iOutStatus );
 #endif
 				//<fib_object_source type="..." ...>
-				if ( szElementType == "fib_object_source" ){
+				if ( szElementType == "fib_object_source" ) {
 					//if exists get "type" attribute
 					const char * szXmlName =
 						pXmlElement->Attribute( "type" );
-					if ( szXmlName == NULL ){
+					if ( szXmlName == NULL ) {
 						//Error: unknown element type (don't know what to restore)
-						if ( iOutStatus != NULL ){
+						if ( iOutStatus != NULL ) {
 							//set the output status
 							(*iOutStatus) = -2;
 						}
 						return NULL;
-					}else if ( strncmp( "Fib database", szXmlName, 12 ) == 0 ){
+					}else if ( strncmp( "Fib database", szXmlName, 12 ) == 0 ) {
 						//restore a Fib database source object
 						return new cFibObjectSourceFibDb( pXmlElement, iOutStatus );
 						
-					}else if ( strncmp( "path", szXmlName, 4 ) == 0 ){
+					}else if ( strncmp( "path", szXmlName, 4 ) == 0 ) {
 						//restore a Fib database source object
 						return new cFibObjectSourcePath( pXmlElement, iOutStatus );
 						
 					}else{//Error: unknown element type (don't know what to restore)
-						if ( iOutStatus != NULL ){
+						if ( iOutStatus != NULL ) {
 							//set the output status
 							(*iOutStatus) = -2;
 						}
@@ -214,7 +225,7 @@ cFibObjectSource * cFibObjectSource::restore(
 					}
 					
 				}else{//Error: unknown element type
-					if ( iOutStatus != NULL ){
+					if ( iOutStatus != NULL ) {
 						//set the output status
 						(*iOutStatus) = -2;
 					}
@@ -230,20 +241,20 @@ cFibObjectSource * cFibObjectSource::restore(
 					int iOutStatusLoc = 0;
 					cFibObjectSource * pRestoredFibObjectSource =
 						restore( pChild, &iOutStatusLoc );
-					if ( ( iOutStatus != NULL ) && ( iOutStatusLoc != 0 ) ){
+					if ( ( iOutStatus != NULL ) && ( iOutStatusLoc != 0 ) ) {
 						//transver output status
-						if ( (*iOutStatus) == 0 ){
+						if ( (*iOutStatus) == 0 ) {
 							
 							(*iOutStatus) = iOutStatusLoc;
 							
-						}else if ( ( 0 < (*iOutStatus) ) && ( iOutStatusLoc < 0 ) ){
+						}else if ( ( 0 < (*iOutStatus) ) && ( iOutStatusLoc < 0 ) ) {
 							
 							(*iOutStatus) = iOutStatusLoc;
 						}//else do not transver output status
 					}//end if transver output status
 					
 					if ( ( pRestoredFibObjectSource != NULL ) ||
-							( iOutStatusLoc < 0 ) ){
+							( iOutStatusLoc < 0 ) ) {
 						return pRestoredFibObjectSource;
 					}//else no Fib object source object loaded -> try next XML element
 				}//else nothing to load
@@ -251,7 +262,7 @@ cFibObjectSource * cFibObjectSource::restore(
 				//print debugging output
 				printf( "Error: nothing to load\n" );
 #endif//DEBUG_RESTORE_XML
-				if ( iOutStatus != NULL ){
+				if ( iOutStatus != NULL ) {
 					//set the output status
 					(*iOutStatus) = -2;
 				}
@@ -265,7 +276,7 @@ cFibObjectSource * cFibObjectSource::restore(
 			case TiXmlNode::UNKNOWN:
 			default:
 				//ignore; Warning: invalid Fib object
-				if ( ( iOutStatus != NULL ) && ( (*iOutStatus) == 0 ) ){
+				if ( ( iOutStatus != NULL ) && ( (*iOutStatus) == 0 ) ) {
 					(*iOutStatus) = 2;
 				}
 		}//end switch XML element type
@@ -273,7 +284,7 @@ cFibObjectSource * cFibObjectSource::restore(
 		pXmlNode = pXmlNode->NextSibling();
 	}//end as long no Fib element was read and no error occured
 	
-	if ( iOutStatus != NULL ){
+	if ( iOutStatus != NULL ) {
 		//set the output status
 		(*iOutStatus) = -2;
 	}

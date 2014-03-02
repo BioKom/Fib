@@ -40,11 +40,18 @@ History:
 */
 
 
+//switches for test proposes
+//#define DEBUG
+
 
 #include "cFlowLayout.h"
 
+#include <list>
+
 #include <QWidgetItem>
 
+
+using namespace std;
 
 
 /**
@@ -62,7 +69,7 @@ History:
 cFlowLayout::cFlowLayout( const int iMargin,
 		const int iInHorizontalSpacing, const int iInVerticalSpacing ):
 		iHorizontalSpacing( iInHorizontalSpacing ),
-		iVerticalSpacing( iInVerticalSpacing ){
+		iVerticalSpacing( iInVerticalSpacing ) {
 	//set contens margins of this layout (all margins are equal)
 	setContentsMargins( iMargin, iMargin, iMargin, iMargin );
 }
@@ -85,7 +92,7 @@ cFlowLayout::cFlowLayout( QWidget * pParent, const int iMargin,
 		const int iInHorizontalSpacing, const int iInVerticalSpacing ):
 		QLayout( pParent ),
 		iHorizontalSpacing( iInHorizontalSpacing ),
-		iVerticalSpacing( iInVerticalSpacing ){
+		iVerticalSpacing( iInVerticalSpacing ) {
 	//set contens margins of this layout (all margins are equal)
 	setContentsMargins( iMargin, iMargin, iMargin, iMargin );
 }
@@ -94,10 +101,10 @@ cFlowLayout::cFlowLayout( QWidget * pParent, const int iMargin,
 /**
  * destructor
  */
-cFlowLayout::~cFlowLayout(){
+cFlowLayout::~cFlowLayout() {
 	//delete all layout items
-	while ( ! liLayoutItems.empty() ){
-		if ( liLayoutItems.front() ){
+	while ( ! liLayoutItems.empty() ) {
+		if ( liLayoutItems.front() ) {
 			delete liLayoutItems.front();
 		}
 		liLayoutItems.pop_front();
@@ -140,7 +147,7 @@ QLayoutItem * cFlowLayout::itemAt( int index ) const{
  * @see count()
  * @param pItem a pointer to the layout item to add
  */
-void cFlowLayout::addItem( QLayoutItem * pItem ){
+void cFlowLayout::addItem( QLayoutItem * pItem ) {
 	//add the item to the end of the list
 	liLayoutItems.append( pItem );
 }
@@ -160,9 +167,9 @@ void cFlowLayout::addItem( QLayoutItem * pItem ){
  * 	if the index is greater or equal the number of layout items the
  * 	item pItem will be added to the end of the layout
  */
-void cFlowLayout::addItem( QLayoutItem * pItem, const unsigned int index ){
+void cFlowLayout::addItem( QLayoutItem * pItem, const unsigned int index ) {
 	//add the item to the list
-	if ( index < ((unsigned int)(liLayoutItems.size())) ){
+	if ( index < ((unsigned int)(liLayoutItems.size())) ) {
 		liLayoutItems.insert( index , pItem );
 	}else{
 		liLayoutItems.append( pItem );
@@ -182,17 +189,17 @@ void cFlowLayout::addItem( QLayoutItem * pItem, const unsigned int index ){
  * 	Note: If you give false, you have to care that the item will be deleted.
  * @return if true the item was removed, else false
  */
-bool cFlowLayout::removeItem( const unsigned int index, const bool bDeleteItem ){
+bool cFlowLayout::removeItem( const unsigned int index, const bool bDeleteItem ) {
 	
-	if ( ((unsigned int)liLayoutItems.size()) <= index ){
+	if ( ((unsigned int)liLayoutItems.size()) <= index ) {
 		//no such item
 		return false;
 	}
 	
-	if ( bDeleteItem ){
+	if ( bDeleteItem ) {
 		//remove item from item list and delete it
 		QLayoutItem * pItemToDelete = liLayoutItems.takeAt( index );
-		if ( pItemToDelete ){
+		if ( pItemToDelete ) {
 			delete pItemToDelete;
 		}
 	}else{//just remove item from item list
@@ -215,7 +222,7 @@ bool cFlowLayout::removeItem( const unsigned int index, const bool bDeleteItem )
  * @see count()
  * @param pWidget a pointer to the layout widget to add
  */
-void cFlowLayout::addWidget( QWidget * pWidget ){
+void cFlowLayout::addWidget( QWidget * pWidget ) {
 	
 	//add the item to the list
 	addItem( new QWidgetItem( pWidget ) );
@@ -238,7 +245,7 @@ void cFlowLayout::addWidget( QWidget * pWidget ){
  * 	if the index is greater or equal the number of layout items the
  * 	widget pWidget will be added to the end of the layout
  */
-void cFlowLayout::addWidget( QWidget * pWidget, const unsigned int index ){
+void cFlowLayout::addWidget( QWidget * pWidget, const unsigned int index ) {
 	
 	//add the item to the list
 	addItem( new QWidgetItem( pWidget ), index );
@@ -260,25 +267,25 @@ void cFlowLayout::addWidget( QWidget * pWidget, const unsigned int index ){
  * 	Note: If you give false, you have to care that the widget will be deleted.
  * @return if true the widget was removed, else false
  */
-bool cFlowLayout::removeWidget( const unsigned int index, const bool bDeleteItem ){
+bool cFlowLayout::removeWidget( const unsigned int index, const bool bDeleteItem ) {
 	
-	if ( ((unsigned int)liLayoutItems.size()) <= index ){
+	if ( ((unsigned int)liLayoutItems.size()) <= index ) {
 		//no such item
 		return false;
 	}
 	
 	QLayoutItem * pItemToRemove = liLayoutItems.at( index );
 	QWidget * pWidgetToRemove = pItemToRemove->widget();
-	if ( pWidgetToRemove == NULL ){
+	if ( pWidgetToRemove == NULL ) {
 		//the item is not a widget -> can't remove it
 		return false;
 	}
 	
-	if ( bDeleteItem ){
+	if ( bDeleteItem ) {
 		//delete widget
 		delete pWidgetToRemove;
 	}//else just remove item from item list
-	if ( pItemToRemove ){
+	if ( pItemToRemove ) {
 		delete pItemToRemove;
 	}
 	liLayoutItems.removeAt( index );
@@ -300,9 +307,9 @@ bool cFlowLayout::removeWidget( const unsigned int index, const bool bDeleteItem
  * @param index the index where to remove the item from (counting starts with 0)
  * @return a pointer to the removed item
  */
-QLayoutItem * cFlowLayout::takeAt( int index ){
+QLayoutItem * cFlowLayout::takeAt( int index ) {
 	
-	if ( ( index < 0 ) || ( liLayoutItems.size() <= index ) ){
+	if ( ( index < 0 ) || ( liLayoutItems.size() <= index ) ) {
 		//no such item
 		return NULL;
 	}
@@ -324,14 +331,14 @@ QLayoutItem * cFlowLayout::takeAt( int index ){
  * @param bDeleteItem if true the items will also be deleted from the memory;
  * 	Note: if you give false, you have to care that the item will be deleted.
  */
-void cFlowLayout::clear( const bool bDeleteItem ){
+void cFlowLayout::clear( const bool bDeleteItem ) {
 	
-	if ( bDeleteItem ){
+	if ( bDeleteItem ) {
 		//delete all layout items
 		for ( QList<QLayoutItem *>::iterator itrItem = liLayoutItems.begin();
-				itrItem != liLayoutItems.end(); itrItem++ ){
+				itrItem != liLayoutItems.end(); itrItem++ ) {
 			//delete item
-			if ( *itrItem ){
+			if ( *itrItem ) {
 				delete (*itrItem);
 			}
 		}
@@ -348,7 +355,7 @@ void cFlowLayout::clear( const bool bDeleteItem ){
  */
 int cFlowLayout::horizontalSpacing() const{
 	
-	if ( 0 <= iHorizontalSpacing ){
+	if ( 0 <= iHorizontalSpacing ) {
 		//use set horizontal spacing
 		return iHorizontalSpacing;
 	}//else horizontal spacing was not given -> use good spacing (evalueGoodSpacing())
@@ -362,7 +369,7 @@ int cFlowLayout::horizontalSpacing() const{
  */
 int cFlowLayout::verticalSpacing() const{
 	
-	if ( 0 <= iVerticalSpacing ){
+	if ( 0 <= iVerticalSpacing ) {
 		//use set horizontal spacing
 		return iVerticalSpacing;
 	}//else horizontal spacing was not given -> use good spacing (evalueGoodSpacing())
@@ -377,14 +384,15 @@ int cFlowLayout::verticalSpacing() const{
  */
 QSize cFlowLayout::minimumSize() const{
 	
-	QSize minSize;
-	QLayoutItem * pItem;
-	foreach ( pItem, liLayoutItems ){
+	QSize minSize( 0, 0 );
+	for ( QList<QLayoutItem *>::const_iterator itrItem = liLayoutItems.begin();
+			itrItem != liLayoutItems.end(); itrItem++ ) {
 		//expand the minimum size to the maximum size of the layout items
-		minSize = minSize.expandedTo( pItem->minimumSize() );
+		minSize = minSize.expandedTo( (*itrItem)->minimumSize() );
 	}
 	//add the margins (2 times in every direction)
 	minSize += QSize( 2 * margin(), 2 * margin() );
+	DEBUG_OUT_L2(<<"cFlowLayout("<<this<<")::minimumSize() done; min size=( "<<minSize.width()<<", "<<minSize.height()<<" )"<<endl<<flush);
 	return minSize;
 }
 
@@ -415,7 +423,7 @@ Qt::Orientations cFlowLayout::expandingDirections() const{
  * @see QLayout::setGeometry()
  * @return set this item's geometry to rectangle.
  */
-void cFlowLayout::setGeometry( const QRect & rectangle ){
+void cFlowLayout::setGeometry( const QRect & rectangle ) {
 	
 	QLayout::setGeometry( rectangle );
 	createLayout( rectangle, false );
@@ -442,8 +450,100 @@ bool cFlowLayout::hasHeightForWidth() const{
  */
 int cFlowLayout::heightForWidth( const int iWidth ) const{
 	//evalue the height with simulated created layout
-	//TODO use caching (use same value as long as nothing is changed in layout)
+	return createLayout( QRect( 0, 0, iWidth, 0 ), true ).height();
+}
+
+
+/**
+ * This method returns the preferred size for this layout item, given
+ * the maximum width iWidth.
+ * The returned size will have a smaaler width than iWidth (if
+ * possible) and a height, so that all elements of the layout can be
+ * displayed.
+ *
+ * @param iWidth the width for which to return the preferred size
+ * @return the preferred size for this layout, given the maximum width iWidth
+ */
+QSize cFlowLayout::getSizeForMaxWidth( const int iWidth ) const{
+	//evalue the height with simulated created layout
 	return createLayout( QRect( 0, 0, iWidth, 0 ), true );
+}
+
+
+/**
+ * This method returns the maximum width for iNumberOfElements following
+ * elements in this flow layout.
+ * It is to evalue fast a good width for this flow layout, if minimum
+ * iNumberOfElements should be shown on one line.
+ *
+ * @see heightForWidth
+ * @param iNumberOfElements the number of following elements for which
+ * 	to return the maximum width
+ * @return a width which is the maximum widht for all iNumberOfElements
+ * 	following elements in this flow layout
+ */
+int cFlowLayout::getMaxWidthForMinNumberOfElements(
+		const int iNumberOfElements ) const{
+	
+	DEBUG_OUT_L2(<<"cFlowLayout("<<this<<")::getMaxWidthForMinNumberOfElements( iNumberOfElements="<<iNumberOfElements<<" ) called"<<endl<<flush);
+	//evalue the width of all elements
+	list< int > liWidths;
+	
+	const int iXDefaultSpacing = horizontalSpacing();
+	int iXSpacing;
+	QWidget * pItemWidged;
+	for ( QList<QLayoutItem *>::const_iterator itrItem = liLayoutItems.begin();
+			itrItem != liLayoutItems.end(); itrItem++ ) {
+		//evalue spacing for the element
+		pItemWidged = (*itrItem)->widget();
+		if ( pItemWidged == NULL ) {
+			//layout item not a widget -> skip item
+			continue;
+		}
+		//get spacing for x direction
+		iXSpacing = iXDefaultSpacing;
+		if ( iXDefaultSpacing == -1 ) {
+			//use item spacing in x direction
+			iXSpacing = pItemWidged->style()->layoutSpacing(
+				QSizePolicy::DefaultType, QSizePolicy::DefaultType, Qt::Horizontal );
+		}
+		DEBUG_OUT_L4(<<"cFlowLayout("<<this<<")::getMaxWidthForMinNumberOfElements( iNumberOfElements="<<iNumberOfElements<<" ) width for element "<<liWidths.size()<<" is "<<(pItemWidged->sizeHint().width() + iXSpacing)<<endl<<flush);
+		//append width needed for the element to width list
+		liWidths.push_back( pItemWidged->sizeHint().width() + iXSpacing );
+	}
+	
+	//evalue the maximum widht for iNumberOfElements following elements
+	list< int >::const_iterator itrStartElement = liWidths.begin();
+	list< int >::const_iterator itrEndElement   = itrStartElement;
+	DEBUG_OUT_L4(<<"cFlowLayout("<<this<<")::getMaxWidthForMinNumberOfElements( iNumberOfElements="<<iNumberOfElements<<" ) width for fields: "<<flush);
+	int iActualFieldWidth = 0;
+	//evalue width of first iNumberOfElements elements
+	for ( int iActualItem = 0; ( iActualItem < iNumberOfElements ) &&
+			( itrEndElement != liWidths.end() );
+			iActualItem++, itrEndElement++ ) {
+		
+		iActualFieldWidth += (*itrEndElement);
+	}
+	DEBUG_OUT_L4(<<iActualFieldWidth<<endl<<flush);
+	
+	int iMaxFieldWidth = iActualFieldWidth;
+	/*evalue value of following iNumberOfElements element blocks;
+	 to get the next block width value subtract the first element of the
+	 old block and add the last of the new block*/
+	for ( ; itrEndElement != liWidths.end();
+			itrStartElement++, itrEndElement++ ) {
+		
+		iActualFieldWidth -= (*itrStartElement);
+		iActualFieldWidth += (*itrEndElement);
+		//evalue new max value
+		if ( iMaxFieldWidth < iActualFieldWidth ) {
+			iMaxFieldWidth = iActualFieldWidth;
+		}
+		DEBUG_OUT_L4(<<", "<<iActualFieldWidth<<endl<<flush);
+	}
+	DEBUG_OUT_L4(<<endl<<flush);
+	DEBUG_OUT_L2(<<"cFlowLayout("<<this<<")::getMaxWidthForMinNumberOfElements( iNumberOfElements="<<iNumberOfElements<<" ) done; max width = "<<iMaxFieldWidth<<endl<<flush);
+	return iMaxFieldWidth;
 }
 
 
@@ -457,7 +557,7 @@ int cFlowLayout::heightForWidth( const int iWidth ) const{
  * 	the layout (the return value is evaluated, but nothing else changed)
  * @return the hight of the layout in pixles
  */
-int cFlowLayout::createLayout(
+QSize cFlowLayout::createLayout(
 		const QRect & rectLayout, const bool bJustEvalue ) const{
 	//evalue a good start position
 	int iLeftBorder;
@@ -483,35 +583,43 @@ int cFlowLayout::createLayout(
 	int iXSpacing;
 	int iYSpacing;
 	int iXPositionNext;
+	//the maximal x position for an element in the created layout
+	int iMaxXPosition = 0;
 	//for each item -> add it to the layout
-	QLayoutItem * pItem;
-	foreach ( pItem, liLayoutItems ){
+	QWidget * pItemWidged;
+	for ( QList<QLayoutItem *>::const_iterator itrItem = liLayoutItems.begin();
+			itrItem != liLayoutItems.end(); itrItem++ ) {
 		//evalue spacing for the element
-		QWidget * pItemWidged = pItem->widget();
-		if ( pItemWidged == NULL ){
+		pItemWidged = (*itrItem)->widget();
+		if ( pItemWidged == NULL ) {
 			//layout item not a widget -> skip item
 			continue;
 		}
 		//get spacing for x direction
 		iXSpacing = iXDefaultSpacing;
-		if ( iXDefaultSpacing == -1 ){
+		if ( iXDefaultSpacing == -1 ) {
 			//use item spacing in x direction
 			iXSpacing = pItemWidged->style()->layoutSpacing(
 				QSizePolicy::DefaultType, QSizePolicy::DefaultType, Qt::Horizontal );
 		}
 		//get spacing for y direction
 		iYSpacing = iYDefaultSpacing;
-		if ( iYDefaultSpacing == -1 ){
+		if ( iYDefaultSpacing == -1 ) {
 			//use item spacing in y direction
 			iYSpacing = pItemWidged->style()->layoutSpacing(
 				QSizePolicy::DefaultType, QSizePolicy::DefaultType, Qt::Vertical );
 		}
 		//add the item to this layout
-		const QSize sizeActualItem = pItem->sizeHint();
+		const QSize sizeActualItem = pItemWidged->sizeHint();
 		iXPositionNext = iXPosition + sizeActualItem.width() + iXSpacing;
 		if ( ( iRightBorderLayout < ( iXPositionNext - iXSpacing ) ) &&
-				( 0 < iLineHeight ) ) {
+				( 0 < iLineHeight ) //-> minimum one element on each line
+				) {
 			//widget goes over right border -> go to next line
+			if ( iMaxXPosition < iXPosition ){
+				//this element has a grater x position than any element before
+				iMaxXPosition = iXPosition;
+			}
 			iXPosition = uiXStartPosition;
 			iYPosition += iLineHeight + iYSpacing;
 			iXPositionNext = uiXStartPosition + sizeActualItem.width() +
@@ -519,18 +627,23 @@ int cFlowLayout::createLayout(
 			iLineHeight = 0;
 		}
 		
-		if ( ! bJustEvalue ){
+		if ( ! bJustEvalue ) {
 			//change item geometry, so it matches into the layout
-			pItem->setGeometry( QRect( QPoint( iXPosition, iYPosition ),
+			pItemWidged->setGeometry( QRect( QPoint( iXPosition, iYPosition ),
 				sizeActualItem ) );
 		}
-		iXPosition  = iXPositionNext;
+		iXPosition = iXPositionNext;
 		//max( iLineHeight, sizeActualItem.height() )
 		iLineHeight = ( iLineHeight < sizeActualItem.height() ) ?
 			sizeActualItem.height() : iLineHeight ;
 	}
-	//return the hight of the layout
-	return ( iYPosition + iLineHeight ) - rectLayout.y() + iBottomBorder;
+	if ( iMaxXPosition < iXPosition ){
+		//the last element has a grater x position than any element before
+		iMaxXPosition = iXPosition;
+	}
+	//return the width and hight of the layout
+	return QSize( iMaxXPosition,
+		( iYPosition + iLineHeight ) - rectLayout.y() + iBottomBorder );
 }
 
 
@@ -548,7 +661,7 @@ int cFlowLayout::createLayout(
 int cFlowLayout::evalueGoodSpacing( QStyle::PixelMetric pixleMetric ) const{
 	
 	QObject * pParent = this->parent();
-	if ( pParent == 0 ){
+	if ( pParent == 0 ) {
 		//no parrent -> no good spacing
 		return -1;
 	}//else

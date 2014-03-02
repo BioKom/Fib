@@ -50,6 +50,8 @@
 /*
 History:
 28.07.2013  Oesterholz  created
+25.01.2013  Oesterholz  the graphical items will be updated, if possible,
+	with the information of the Fib node change event
 */
 
 
@@ -80,17 +82,6 @@ namespace nCreator{
 class cFibGraphicsScene;
 
 class cFibGraphicsItemFibList: public cFibGraphicsItem{
-	
-	/**
-	 * A list with the graphical subitems of this graphical list item.
-	 */
-	QList< cFibGraphicsItem * > liSubitems;
-	
-	/**
-	 * The bounding rectangle for the Fib object.
-	 */
-	QRectF boundingRectangle;
-	
 public:
 
 	/**
@@ -139,11 +130,57 @@ public:
 	virtual ~cFibGraphicsItemFibList();
 	
 	
+#ifdef TODO_WEG
+	/**
+	 * This method deletes the entire Fib object item tree.
+	 * It will delete all subitems trees (call deleteItemTree() for all
+	 * subitems) and will delete this item (destructor).
+	 */
+	virtual void deleteItemTree();
+#endif//TODO_WEG
+	
+	/**
+	 * @see getSubItems()
+	 * @return the number of subitems (child items) of this item
+	 */
+	virtual int getNumberOfSubItems() const;
+	
+	/**
+	 * This method returns the (direct) subitems (or child items) of this
+	 * graphical item.
+	 * Note: It will not return the subitems of the subitems.
+	 *
+	 * @return a list with the pointers to the subitems of this Fib
+	 * 	graphical item
+	 */
+	virtual QList< cFibGraphicsItem * > getSubItems();
+	
+	/**
+	 * This method returns the (direct) subitems (or child items) of this
+	 * graphical item.
+	 * Note: It will not return the subitems of the subitems.
+	 *
+	 * @return a list with the const pointers to the subitems of this Fib
+	 * 	graphical item
+	 */
+	virtual const QList< cFibGraphicsItem * > getSubItems() const;
+	
 	/**
 	 * @return the name of this class "cFibGraphicsItemFibList"
 	 */
 	virtual std::string getName() const;
 	
+	/**
+	 * This method returns a number for the type of the graphical item.
+	 * Note: The type number of Fib graphical items is betwaen (including)
+	 * 	 QGraphicsItem::UserType + 1024 and
+	 * 	 QGraphicsItem::UserType + 2047
+	 *
+	 * @see typeFibGraphicsItems
+	 * @see QGraphicsItem::type()
+	 * @return a number for the type of the graphical item
+	 */
+	virtual int type() const;
 	
 	/**
 	 * @return the outer bounds of this graphic item
@@ -171,6 +208,7 @@ public:
 	 */
 	void enlargeBoundingRect( const QRectF & rectangle );
 	
+#ifdef TODO_WEG
 	/**
 	 * This method will update this graphical item for a change in a
 	 * Fib element.
@@ -178,6 +216,7 @@ public:
 	 * for the changed Fib object if possible.
 	 * For that it will use the pFibObject (e. g. reevaluate the bounding
 	 * rectangle with it).
+	 * Note: This method won't use a mutex.
 	 *
 	 * @see pFibObject
 	 * @see boundingRect()
@@ -194,7 +233,32 @@ public:
 	virtual bool updateForFibElementChange(
 		const eFibNodeChangedEvent * pFibNodeChangedEvent = NULL,
 		QList< cFibGraphicsItem * > * liOutNotUpdatedItems = NULL );
+#endif //TODO_WEG
 	
+	/**
+	 * This method will update this graphical item for a change in a
+	 * Fib Node / Fib element.
+	 * It will update the bounding rectangle and other members of this class
+	 * for the changed Fib object if possible.
+	 * For that it will use the pFibNodeChangedEvent (e. g. reevaluate the
+	 * bounding rectangle with it).
+	 *
+	 * @see pFibObject
+	 * @see boundingRect()
+	 * @param pFibNodeChangedEvent a pointer to the change event with the
+	 * 	information of the change
+	 * @param pFibGraphicsItemFactory a pointer to the Fib graphical item
+	 * 	factory, to create sub graphical items, which can not be updated
+	 * @param pUpdateForFibObject the Fib object for which this graphical
+	 * 	item should be updated (which it should represent)
+	 * @return true if this element could be updated, else false
+	 * 	If false is returned, you should create a new graphical item
+	 * 	for the changed parts and replace this graphical item with it.
+	 */
+	virtual bool updateForFibNodeChange(
+		const eFibNodeChangedEvent * pFibNodeChangedEvent,
+		const iFibGraphicsItemFactory * pFibGraphicsItemFactory,
+		const cFibElement * pUpdateForFibObject );
 	
 	/**
 	 * This method paints the content of this graphic item in local
@@ -364,6 +428,18 @@ public:
 	virtual bool replaceAllSubitems( QList<cFibGraphicsItem*> liInSubitems,
 		const bool bDeleteOld = true );
 	
+protected:
+//members:
+	
+	/**
+	 * A list with the graphical subitems of this graphical list item.
+	 */
+	QList< cFibGraphicsItem * > liSubitems;
+	
+	/**
+	 * The bounding rectangle for the Fib object.
+	 */
+	QRectF boundingRectangle;
 	
 	
 private slots:

@@ -146,6 +146,19 @@ protected:
 	 */
 	cFibVariableHandler();
 	
+	/**
+	 * This method will remove the given variable from this handler.
+	 * Note: Tis method won't use any mutex.
+	 *
+	 * @see setFibVariables
+	 * @see mapFibVariables
+	 * @see mapVariablesForNodes
+	 * @see mapDefiningFibElements
+	 * @see mutexFibVariableHandler
+	 * @param pVariable a pointer to the variable to delete from this handler
+	 */
+	void removeVariableFromHandler( cFibVariableCreator * pVariable );
+	
 //members
 	
 	/**
@@ -174,6 +187,13 @@ protected:
 	 * 	value: a list with the Fib variables for the Fib object node
 	 */
 	std::map< cFibNode * , std::set< cFibVariableCreator * > > mapVariablesForNodes;
+	
+	/**
+	 * The map for the defining Fib elements of the Fib variables.
+	 * 	key: the Fib variable which the value Fib element defines
+	 * 	value: the Fib element which defines the key Fib variable
+	 */
+	std::map< cFibVariableCreator * , cFibElement * > mapDefiningFibElements;
 	
 	/**
 	 * A map with counters for variables, so they can get a unique name.

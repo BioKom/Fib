@@ -63,13 +63,10 @@ History:
 #include "lScalarChanged.h"
 #include "lScalarValueChanged.h"
 #include "eFibScalarChangedEvent.h"
+#include "lFibNodeChanged.h"
+#include "eFibNodeChangedEvent.h"
 #include "iGetWidget.h"
 
-/*TODO:
-- can't use input variable for all variables: how to adapt the function or area variable;
-	use variable selector (select defined variable)
-
-*/
 
 namespace fib{
 
@@ -87,9 +84,10 @@ class lFibVectorChanged;
 class eFibVectorChangedEvent;
 
 
-class cFibVectorCreator: public lScalarChanged,
+class cFibVectorCreator: public QObject, public lScalarChanged,
 		public lScalarValueChanged, public lFibVariableCreatorChanged,
-		public iGetWidget{
+		public lFibNodeChanged, public iGetWidget {
+		Q_OBJECT
 
 friend class cFibVectorHandler;
 
@@ -394,62 +392,17 @@ public:
 	virtual void changedEvent(
 		const eFibVariableCreatorChangedEvent * pFibVariableChangedEvent );
 	
-	
-#ifdef TODO_WEG
 	/**
-	 * With this function you can register a listeners for changes for any
-	 * of the contained scalars.
+	 * Event method
+	 * It will be called every time a Fib node (cFibNode), at which
+	 * this object is registered, was changed.
 	 *
-	 * @see cFibScalar::registerScalarChangeListener()
-	 * @see unregisterScalarChangeListener()
-	 * @see setScalarChangeListener
-	 * @see sendScalarChange()
-	 * @param pScalarListener a pointer to the listener for changes
-	 * @return true if the listener was registered, else false
+	 * @param pFibNodeChangedEvent a pointer to the event, with the information
+	 * 	about the changed Fib node
 	 */
-	bool registerScalarChangeListener(
-		lScalarChanged * pScalarListener );
+	virtual void fibNodeChangedEvent(
+		const eFibNodeChangedEvent * pFibNodeChangedEvent );
 	
-	/**
-	 * With this function you can unregister a listeners for changes for any
-	 * of the contained scalars.
-	 *
-	 * @see registerScalarChangeListener()
-	 * @see setScalarChangeListener
-	 * @see sendScalarChange()
-	 * @param pScalarListener a pointer to the listener for changes
-	 * @return true if the listener was registered, else false
-	 */
-	bool unregisterScalarChangeListener(
-		lScalarChanged * pScalarListener );
-
-	/**
-	 * With this function you can register a listeners for value changes for
-	 * any of the contained scalars.
-	 *
-	 * @see unregisterScalarValueChangeListener()
-	 * @see setScalarValueChangeListener
-	 * @see sendScalarValueChange()
-	 * @param pScalarValueListener a pointer to the listener for value changes
-	 * @return true if the listener was registered, else false
-	 */
-	bool registerScalarValueChangeListener(
-		lScalarValueChanged * pScalarValueListener );
-	
-	/**
-	 * With this function you can unregister a listeners for value changes
-	 * for any of the contained scalars.
-	 *
-	 * @see registerScalarValueChangeListener()
-	 * @see setScalarValueChangeListener
-	 * @see sendScalarValueChange()
-	 * @param pScalarValueListener a pointer to the listener for value changes
-	 * @return true if the listener was registered, else false
-	 */
-	bool unregisterScalarValueChangeListener(
-		lScalarValueChanged * pScalarValueListener );
-	
-#endif//TODO_WEG
 	
 	/**
 	 * With this function you can register a listeners for changes in this
@@ -531,30 +484,6 @@ protected:
 		fib::cFibVector * pInFibVector = NULL,
 		cFibElement * pInFibElement = NULL );
 	
-#ifdef TODO_WEG
-	/**
-	 * This method sents a scalar changed event to all scalar change
-	 * listeners of this object.
-	 *
-	 * @see setScalarChangeListener
-	 * @see registerScalarChangeListener()
-	 * @see unregisterScalarChangeListener()
-	 * @param pFibScalarChangedEvent the change event to send
-	 */
-	void sendScalarChange(
-		const eFibScalarChangedEvent * pFibScalarChangedEvent );
-
-	/**
-	 * This method sents a scalar value changed event to all scalar value
-	 * change listeners of this object.
-	 *
-	 * @see setScalarValueChangeListener
-	 * @see registerScalarValueChangeListener()
-	 * @see unregisterScalarValueChangeListener()
-	 */
-	void sendScalarValueChange( const cFibScalar * pFibScalar );
-#endif //TODO_WEG
-	
 	/**
 	 * This method sents a Fib vector changed event to all Fib vector change
 	 * listeners of this object.
@@ -584,6 +513,12 @@ protected:
 	 */
 	void removeElementFromVector( iGetWidget * pElement );
 	
+	/**
+	 * This method send a node changed event for the Fib node for the
+	 * Fib object which contains this vector.
+	 */
+	bool sendNodeChangedEvent() const;
+	
 //members:
 	
 	/**
@@ -593,6 +528,7 @@ protected:
 	
 	/**
 	 * The list with the vector elements.
+	 * @see mutexFibVector
 	 * @see getNumberOfElements()
 	 * @see getElements()
 	 * @see setElements()
@@ -609,7 +545,7 @@ protected:
 	 * 	@see liElements
 	 * 	@see strVectorName
 	 */
-	mutable QMutex mutexFibVectorHandler;
+	mutable QMutex mutexFibVector;
 	
 	
 	/**
@@ -626,39 +562,12 @@ protected:
 	 */
 	fib::cFibVector * pFibVector;
 	
-	
-#ifdef TODO_WEG
 	/**
-	 * The set with the listeners for scalar changes.
-	 * @see registerScalarChangeListener()
-	 * @see unregisterScalarChangeListener()
-	 * @see sendScalarChange()
+	 * The top most node for the Fib object for the vector.
+	 * The widget needs to know it, so it can react to domain changes.
+	 * @see mutexFibVector
 	 */
-	std::set< lScalarChanged * > setScalarChangeListener;
-	
-	/**
-	 * Mutex to lock access to the listeners for scalar changes.
-	 * Lock the mutex if you use one of the following containers:
-	 * 	@see setScalarChangeListener
-	 */
-	mutable QMutex mutexScalarChangeListener;
-	
-	/**
-	 * The set with the listeners for scalar value changes.
-	 * @see registerScalarValueChangeListener()
-	 * @see unregisterScalarValueChangeListener()
-	 * @see sendScalarValueChange()
-	 */
-	std::set< lScalarValueChanged * > setScalarValueChangeListener;
-	
-	/**
-	 * Mutex to lock access to the listeners for scalar value changes.
-	 * Lock the mutex if you use one of the following containers:
-	 * 	@see setScalarValueChangeListener
-	 */
-	mutable QMutex mutexScalarValueChangeListener;
-#endif //TODO_WEG
-	
+	cFibNode * pMasterNode;
 	
 	/**
 	 * The set with the listeners for Fib vectors changes.

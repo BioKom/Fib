@@ -232,7 +232,7 @@ void cFibVectorHandler::fibNodeChangedEvent(
 	DEBUG_OUT_L2(<<"cFibVectorHandler("<<this<<")::fibNodeChangedEvent( pFibNodeChanged="<<pFibNodeChanged<<" ) called"<<endl<<flush);
 	
 	if ( ( pFibNodeChanged == NULL ) ||
-			( pFibNodeChanged->pFibNodeChanged == NULL ) ){
+			( pFibNodeChanged->getChangedNode() == NULL ) ){
 		//no node changed
 		DEBUG_OUT_L2(<<"cFibVectorHandler("<<this<<")::fibNodeChangedEvent( pFibNodeChanged="<<pFibNodeChanged<<" ) done no node changed"<<endl<<flush);
 		return;
@@ -240,7 +240,7 @@ void cFibVectorHandler::fibNodeChangedEvent(
 	//evalue the vectors for the node
 	mutexFibVectorHandler.lock();
 	cFibNode * pChangedFibNode =
-		const_cast< cFibNode* >( pFibNodeChanged->pFibNodeChanged );
+		const_cast< cFibNode* >( pFibNodeChanged->getChangedNode() );
 	map< cFibNode * , set< cFibVectorCreator * > >::const_iterator
 		itrVectorsForNode = mapVectorsForNodes.find( pChangedFibNode );
 	if ( itrVectorsForNode == mapVectorsForNodes.end() ){
@@ -251,7 +251,7 @@ void cFibVectorHandler::fibNodeChangedEvent(
 	}
 	set< cFibVectorCreator * > setVectorForNode = itrVectorsForNode->second;
 	
-	if ( pFibNodeChanged->bNodeDeleted ){
+	if ( pFibNodeChanged->isDeleted() ){
 		//if node got deleted -> delete all its vectors
 		mutexFibVectorHandler.unlock();
 		
@@ -264,6 +264,11 @@ void cFibVectorHandler::fibNodeChangedEvent(
 			delete (*itrVector);
 		}
 		DEBUG_OUT_L2(<<"cFibVectorHandler("<<this<<")::fibNodeChangedEvent( pFibNodeChanged="<<pFibNodeChanged<<" ) done if node got deleted"<<endl<<flush);
+		return;
+	}
+	if ( pFibNodeChanged->isJustValuesChanged() ) {
+		//just values changed -> no vectors changed -> done
+		mutexFibVectorHandler.unlock();
 		return;
 	}
 	
@@ -284,6 +289,7 @@ void cFibVectorHandler::fibNodeChangedEvent(
 		DEBUG_OUT_L2(<<"cFibVectorHandler("<<this<<")::fibNodeChangedEvent( pFibNodeChanged="<<pFibNodeChanged<<" ) done node don't exists anymore"<<endl<<flush);
 		return;
 	}
+	
 	//get all defining Fib element for the Fib vectors
 	map< cFibElement*, cFibVectorCreator * > mapDefiningFibElements;
 	list< cFibVectorCreator * > liVectorsToDelete;

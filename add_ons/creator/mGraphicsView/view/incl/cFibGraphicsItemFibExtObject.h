@@ -47,6 +47,8 @@
 /*
 History:
 20.07.2013  Oesterholz  created
+25.01.2013  Oesterholz  the graphical items will be updated, if possible,
+	with the information of the Fib node change event
 */
 
 
@@ -56,12 +58,9 @@ History:
 
 #include "version.h"
 
-#include "cFibGraphicsItem.h"
-#include "lScalarValueChanged.h"
-#include "lFibNodeChanged.h"
-
 #include <string>
 
+#include <QObject>
 #include <QRectF>
 #include <QMap>
 #include <QPainter>
@@ -69,6 +68,10 @@ History:
 #include <QWidget>
 #include <QGraphicsPixmapItem>
 #include <QMutex>
+
+#include "cFibGraphicsItem.h"
+#include "lScalarValueChanged.h"
+#include "lFibNodeChanged.h"
 
 
 namespace fib{
@@ -87,8 +90,9 @@ class cWidgetFibVector;
 class eFibNodeChangedEvent;
 class cFibNode;
 
-class cFibGraphicsItemFibExtObject: public cFibGraphicsItem,
-		public lScalarValueChanged, public lFibNodeChanged{
+class cFibGraphicsItemFibExtObject: public QObject, public cFibGraphicsItem,
+		public lScalarValueChanged{
+		Q_OBJECT
 public:
 
 	/**
@@ -101,16 +105,10 @@ public:
 	 * @param ulInFibNodeVersionDisplayed the Fib node version of the
 	 * 	Fib object, wich is displayed
 	 * 	@see ulFibNodeVersionDisplayed
-	 * @param pInFibObjectCopy a pointer to a copy of a Fib object to copy;
-	 * 	This Fib object will be shown by this object with evalueObject()
-	 * 	if present, else pFibObject will be used.
-	 * 	This object is responsible for deleting the Fib object copy.
-	 * 	@see pFibObjectCopy
 	 * @param pParent a pointer to parent of this widget
 	 */
 	cFibGraphicsItemFibExtObject( cFibElement * pInFibObject,
 		const unsigned long ulInFibNodeVersionDisplayed = 0,
-		cFibElement * pInFibObjectCopy = NULL,
 		QGraphicsItem * pParent = NULL );
 	
 	/**
@@ -126,18 +124,11 @@ public:
 	 * @param pInFibGraphicsScene a pointer to the graphic scene for this
 	 * 	widget / item
 	 * 	@see pFibGraphicsScene
-	 * @param pInFibObjectCopy a pointer to a copy of a Fib object to copy;
-	 * 	This Fib object will be shown by this object with evalueObject()
-	 * 	if present, else pFibObject will be used.
-	 * 	It should have a Fib external object as its leaf element.
-	 * 	This object is responsible for deleting the Fib object copy.
-	 * 	@see pFibObjectCopy
 	 * @param pParent a pointer to parent of this widget
 	 */
 	cFibGraphicsItemFibExtObject( cFibElement * pInFibObject,
 		const unsigned long ulInFibNodeVersionDisplayed,
 		cFibGraphicsScene * pInFibGraphicsScene,
-		cFibElement * pInFibObjectCopy = NULL,
 		QGraphicsItem * pParent = NULL );
 	
 	/**
@@ -147,17 +138,21 @@ public:
 	
 	
 	/**
-	 * @return a pointer to the Fib object this widget / item represents
-	 * 	@see pFibObject
-	 */
-	const cFibElement * getFibObjectCopy() const;
-	
-	
-	/**
 	 * @return the name of this class "cFibGraphicsItemFibExtObject"
 	 */
 	virtual std::string getName() const;
 	
+	/**
+	 * This method returns a number for the type of the graphical item.
+	 * Note: The type number of Fib graphical items is betwaen (including)
+	 * 	 QGraphicsItem::UserType + 1024 and
+	 * 	 QGraphicsItem::UserType + 2047
+	 *
+	 * @see typeFibGraphicsItems
+	 * @see QGraphicsItem::type()
+	 * @return a number for the type of the graphical item
+	 */
+	virtual int type() const;
 	
 	/**
 	 * @return the outer bounds of this graphic item
@@ -174,6 +169,8 @@ public:
 	 * @return true if the point is in this item, else false
 	 */
 	virtual bool contains( const QPointF & point ) const;
+	
+#ifdef TODO_WEG
 	
 	/**
 	 * This method will update this graphical item for a change in a
@@ -198,6 +195,32 @@ public:
 	virtual bool updateForFibElementChange(
 		const eFibNodeChangedEvent * pFibNodeChangedEvent = NULL,
 		QList< cFibGraphicsItem * > * liOutNotUpdatedItems = NULL );
+#endif //TODO_WEG
+	
+	/**
+	 * This method will update this graphical item for a change in a
+	 * Fib Node / Fib element.
+	 * It will update the bounding rectangle and other members of this class
+	 * for the changed Fib object if possible.
+	 * For that it will use the pFibNodeChangedEvent (e. g. reevaluate the
+	 * bounding rectangle with it).
+	 *
+	 * @see pFibObject
+	 * @see boundingRect()
+	 * @param pFibNodeChangedEvent a pointer to the change event with the
+	 * 	information of the change
+	 * @param pFibGraphicsItemFactory a pointer to the Fib graphical item
+	 * 	factory, to create sub graphical items, which can not be updated
+	 * @param pUpdateForFibObject the Fib object for which this graphical
+	 * 	item should be updated (which it should represent)
+	 * @return true if this element could be updated, else false
+	 * 	If false is returned, you should create a new graphical item
+	 * 	for the changed parts and replace this graphical item with it.
+	 */
+	virtual bool updateForFibNodeChange(
+		const eFibNodeChangedEvent * pFibNodeChangedEvent,
+		const iFibGraphicsItemFactory * pFibGraphicsItemFactory,
+		const cFibElement * pUpdateForFibObject );
 	
 	/**
 	 * This method paints the content of this graphic item  in local
@@ -222,18 +245,24 @@ public:
 	virtual void fibScalarValueChangedEvent(
 		const cFibScalar * pFibScalar );
 	
+signals:
+	
 	/**
-	 * Event method
-	 * It will be called every time a Fib node (cFibNode), at which
-	 * this object is registered, was changed.
-	 *
-	 * @param pFibNodeChanged a pointer to the event, with the information
-	 * 	about the changed Fib node
+	 * This signal triggers the reevaluation of the bounding box.
+	 * @see reevaluateBoundingBox()
 	 */
-	virtual void fibNodeChangedEvent(
-		const eFibNodeChangedEvent * pFibNodeChanged );
+	void signalReevaluateBoundingBox();
 	
 private slots:
+	
+	/**
+	 * This method reevaluates the bounding box of this graphical item.
+	 *
+	 * @see boundingRect()
+	 * @see boundingRectangle
+	 * @see signalReevaluateBoundingBox()
+	 */
+	void reevaluateBoundingBox();
 	
 	/**
 	 * This slot will notify the Fib node, which contains this graphic item
@@ -263,27 +292,6 @@ protected:
 
 //members:
 	
-	/**
-	 * A pointer to a copy of a Fib object to copy.
-	 * This Fib object will be shown by this object with evalueObject() if
-	 * present, else pFibObject will be used.
-	 * This object is responsible for deleting the Fib object copy.
-	 * You can use this object if you want to display a part object of a
-	 * Fib object, by copying the part object and providing it.
-	 * Also if you want to make sure that the Fib object for this item
-	 * isn't change by other parts, you can provide a copy.
-	 *
-	 * @see pFibObject
-	 * @see cFibElement::evalueObject()
-	 */
-	cFibElement * pFibObjectCopy;
-	
-	/**
-	 * The node for the Fib object copy.
-	 * @see pFibObjectCopy
-	 */
-	cFibNode * pFibObjectCopyNode;
-	
 	
 	/**
 	 * A pointer to the input variables of the Fib object for this item, or
@@ -293,28 +301,8 @@ protected:
 	 * set to a value in order to evalue the Fib object.
 	 *
 	 * @see pFibObject
-	 * @see pFibInputVariablesCopy
 	 */
 	cWidgetFibInputVariables * pWidgetFibInputVariables;
-	
-	/**
-	 * A pointer to the input variables of the copy Fib object for this item,
-	 * or NULL if non exists.
-	 * Input variables of a Fib object are variables, which are used in the
-	 * Fib object, but not defined in it. So these variables need to be
-	 * set to a value in order to evalue the Fib object.
-	 *
-	 * @see pFibObjectCopy
-	 * @see pWidgetFibInputVariables
-	 */
-	cFibInputVariables * pFibInputVariablesCopy;
-	
-	/**
-	 * A map for the input variables.
-	 * 	key: a input variables from pWidgetFibInputVariables
-	 * 	value: a input variables from pFibInputVariablesCopy
-	 */
-	QMap< cFibInputVariable*, cFibInputVariable* > mapInVars;
 	
 	/**
 	 * The bounding rectangle for the Fib object.

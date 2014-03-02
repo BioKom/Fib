@@ -1,6 +1,3 @@
-
-//TODO check
-
 /**
  * @file cFibObjectCategory
  * file name: cFibObjectCategory.h
@@ -31,10 +28,10 @@
  *
  * This file specifies a class for a category for a Fib object.
  *
- * possibel category types:
+ * possible category types:
  *    - relative categories: same type (sameType), is contained (isContained), ...
- *      (the category is relativ to a (base) Fib object, e. g. the category
- *      of Fib object of the same type as a base Fib object)
+ *      (the category is relativ to a (base) Fib object, e. g. this object
+ *      is the category of Fib object of the same type as a base Fib object)
  *    - absolute categories: all, typs like: objects, people, ...
  *
  * @see cFibObjectInfos
@@ -55,7 +52,6 @@ History:
 
 #include <string>
 
-#include <QObject>
 #include <QString>
 
 
@@ -71,11 +67,11 @@ public:
 	 *
 	 * @param szInName the name of the category to create
 	 * 	@see szName
-	 * @param bInIsAbsolute if true true if the category is absolute,
-	 * 	else false, if it is relativ to a other fib object
+	 * @param bInIsAbsolute if true the category is absolute, else false,
+	 * 	if it is relativ to an other Fib object
 	 * 	@see bIsAbsolute
 	 */
-	cFibObjectCategory( const QString & szInName, const bool bInIsAbsolute = false );
+	explicit cFibObjectCategory( const QString & szInName, const bool bInIsAbsolute = false );
 	
 	/**
 	 * The copy constructor.
@@ -96,8 +92,8 @@ public:
 	QString getCategoryName() const;
 	
 	/**
-	 * @return true true if the category is absolute, else false, if
-	 * 	it is relativ to a other fib object
+	 * @return true if the category is absolute, else false, if
+	 * 	it is relativ to an other fib object
 	 * 	@see bIsAbsolute
 	 */
 	bool isAbsolute() const;
@@ -130,8 +126,8 @@ protected:
 	QString szName;
 	
 	/**
-	 * If true true if the category is absolute, else false, if it is
-	 * relativ to a other fib object.
+	 * True if this category is absolute, else false, if it is relativ to an
+	 * other Fib object.
 	 */
 	bool bIsAbsolute;
 	

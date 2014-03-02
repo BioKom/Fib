@@ -77,6 +77,8 @@ History:
 #include <QSplitter>
 #include <QPushButton>
 #include <QHBoxLayout>
+#include <QLabel>
+#include <QLineEdit>
 
 #include "lSelectedWidgetFibObjectInfo.h"
 
@@ -103,16 +105,10 @@ public:
 	 * 	the Fib objects of this list.
 	 * 	Note: The first category of the list will be selected
 	 * 	@see liPossibleCategories
-	 * @param uiInMaxFibObjectInfos the maximal number of Fib object info
-	 * 	widgets to display ( liFibObjectInfos.size() <= uiMaxFibObjectInfos),
-	 * 	If 0 the default value will be taken.
-	 * 	@see uiMaxFibObjectInfos
-	 * 	@see liFibObjectInfos
 	 * @param pParent a pointer the parent of this new Fib object info widget
 	 */
 	explicit cWidgetFibObjectInfos(
 		const QList< cFibObjectCategory > & liInPossibleCategories,
-		const unsigned int uiInMaxFibObjectInfos = 0,
 		QWidget * pParent = NULL );
 	
 	/**
@@ -126,17 +122,11 @@ public:
 	 * 	the Fib object info object to which it is relativ (e. g. to which
 	 * 	it is the same type).
 	 * 	@see pBaseFibObjectInfo
-	 * @param uiInMaxFibObjectInfos the maximal number of Fib object info
-	 * 	widgets to display ( liFibObjectInfos.size() <= uiMaxFibObjectInfos),
-	 * 	if 0 the default value will be taken
-	 * 	@see uiMaxFibObjectInfos
-	 * 	@see liFibObjectInfos
 	 * @param pParent a pointer the parent of this new Fib object info widget
 	 */
 	cWidgetFibObjectInfos(
 		const QList< cFibObjectCategory > & liInPossibleCategories,
 		cFibObjectInfo * pInBaseFibObjectInfo,
-		const unsigned int uiInMaxFibObjectInfos = 0,
 		QWidget * pParent = NULL );
 	
 	/**
@@ -214,6 +204,8 @@ public:
 	/**
 	 * This method sets the maximum number of Fib object info widgets to
 	 * display ( liFibObjectInfos.size() <= uiMaxFibObjectInfos ).
+	 * Note: more than 128 Fib objects infos can't be displayed. The QSplitter
+	 * 	(pSplitterFibObjectInfo) has a limit there.
 	 *
 	 * @see getMaxFibObjectInfos()
 	 * @see uiMaxFibObjectInfos
@@ -398,10 +390,24 @@ public:
 	 *
 	 * @see pBaseFibObjectInfo
 	 * @see liPossibleCategories
-	 * @param pSelectedFibObjectInfo the selected Fib object info widget to set
+	 * @param pSelectedFibObjectInfo the selected Fib object info to set
 	 */
 	void setSelectedFibObjectInfo(
 		cFibObjectInfo * pSelectedFibObjectInfo = NULL );
+	
+	/**
+	 * This method sets the selected Fib object info widgte.
+	 * It will be the base for all relativ categories.
+	 * Note: This object won't trigger a selected Fib object info widget event.
+	 * 	(No registered listeners for changes for the selected Fib object
+	 * 	info widget lSelectedWidgetFibObjectInfo will notified.)
+	 *
+	 * @see pBaseFibObjectInfo
+	 * @see liPossibleCategories
+	 * @param pSelectedFibObjectInfo the selected Fib object info widget to set
+	 */
+	void setSelectedFibObjectInfo(
+		cWidgetFibObjectInfo * pWidgetFibObjectInfo = NULL );
 	
 	/**
 	 * Event method
@@ -632,6 +638,87 @@ protected:
 	 */
 	QSplitter * pSplitterFibObjectInfo;
 	
+	//TODO check
+	/**
+	 * The number of the first Fib object info in the "used time" sorted
+	 * Fib object info list for the selected category to display.
+	 * (counting starts with 1 )
+	 */
+	unsigned long uiStartFibObjectInfo;
+	
+	/**
+	 * The number of the last Fib object info in the "used time" sorted
+	 * Fib object info list for the selected category to display.
+	 * (counting starts with 1 )
+	 */
+	unsigned long uiEndFibObjectInfo;
+	
+	/**
+	 * The number of the Fib object infos in the "used time" sorted
+	 * Fib object info list for the selected category to display.
+	 */
+	unsigned long uiCountFibObjectInfo;
+	
+	/**
+	 * The label with the text which Fib object info objects are shown.
+	 * (e.g. "Displaying from "+StartNr+" to "+EndNr+" from "+Total )
+	 * @see pLayoutMain
+	 * @see updateCounterText()
+	 */
+	QLabel * pLabelCounterText;
+	
+	/**
+	 * A button to show the Fib object infos before the displayed Fib object
+	 * infos.
+	 * (If not all Fib object infos can be displayed in pSplitterFibObjectInfo.)
+	 * @see pSplitterFibObjectInfo
+	 * @see pLabelStart
+	 * @see pButtonNext
+	 * @see previousFibObjectInfos()
+	 * @see checkNavigationButtons()
+	 */
+	QPushButton * pButtonPrevious;
+	
+	/**
+	 * The label for the start number.
+	 * @see pStartNumber
+	 */
+	QLabel * pLabelStart;
+	
+	/**
+	 * A text field to input the number (in the displayed order) of the
+	 * first Fib object info to display.
+	 * @see pLabelStart
+	 * @see pButtonPrevious
+	 * @see pButtonNext
+	 * @see updateCounterText()
+	 */
+	QLineEdit * pStartNumber;
+	
+	/**
+	 * A button to show the Fib object infos after the displayed Fib object
+	 * infos.
+	 * (If not all Fib object infos can be displayed in pSplitterFibObjectInfo.)
+	 * @see pSplitterFibObjectInfo
+	 * @see pLabelStart
+	 * @see pButtonPrevious
+	 * @see nextFibObjectInfos()
+	 * @see checkNavigationButtons()
+	 */
+	QPushButton * pButtonNext;
+	
+	/**
+	 * The layout for the widgets to navigate the fib object infos.
+	 * Contained elements:
+	 * @see pButtonPrevious
+	 * @see pLabelStart
+	 * @see pStartNumber
+	 * @see pButtonNext
+	 */
+	QHBoxLayout * pLayoutNavigator;
+	
+	//TODO check end
+	
 	/**
 	 * The layout for the Fib object info objects.
 	 * It contains the top layout at its top and the scroll area for the
@@ -672,6 +759,38 @@ private slots:
 	 * @see closeWidgetFibObjectInfos()
 	 */
 	void close();
+	
+	/**
+	 * This slot updates the counter text.
+	 * @see pLabelCounterText
+	 */
+	void updateCounterText();
+	
+	/**
+	 * This slot outputs the previous Fib object infos.
+	 * @see pButtonPrevious
+	 */
+	void previousFibObjectInfos();
+	
+	/**
+	 * This slot outputs the next Fib object infos.
+	 * @see pButtonNext
+	 */
+	void nextFibObjectInfos();
+	
+	/**
+	 * This slot checks if the navigation buttons should be enabled or disabled.
+	 * @see pButtonPrevious
+	 * @see pButtonNext
+	 */
+	void checkNavigationButtons();
+	
+	/**
+	 * This slot sets the start number for the first Fib object info to
+	 * display to the given number.
+	 * @see uiStartFibObjectInfo
+	 */
+	void setNumberStartFibObjectInfo( const QString & strNewNumber );
 	
 };//end class cWidgetFibObjectInfos
 

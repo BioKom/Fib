@@ -56,11 +56,14 @@
 #
 ##########################################################################
 
+# comment in for normal mode
+CONFIG += qt warn_on
+
 # comment in for debug mode
-# CONFIG += qt warn_on debug
+# CONFIG += qt warn_on test_debug
 
 # comment in for test mode
-CONFIG += qt warn_on debug qtestlib
+# CONFIG += qt warn_on test_debug qtestlib
 
 
 ##########################################################################
@@ -85,7 +88,7 @@ DIR_TRANSLATIONS=translations/
 DIR_OBJ =obj/
 
 # Folder of the test objects
-DIR_OBJ_TEST=obj_test/
+DIR_OBJ_TEST =obj_test/
 
 # Folder of the executebels
 DIR_BIN =bin/
@@ -120,9 +123,10 @@ TARGET_SOURCE = $${DIR_SRC}*.cpp
 
 TEMPLATE = app
 DEPENDPATH  += .
-INCLUDEPATH += $${DIR_INCL} model/$${DIR_INCL} view/$${DIR_INCL} control/$${DIR_INCL}\
+INCLUDEPATH += . $${DIR_INCL} model/$${DIR_INCL} view/$${DIR_INCL} control/$${DIR_INCL}\
 	mFibObjSelector/model/$${DIR_INCL} mFibObjSelector/view/$${DIR_INCL}\
 	mFibObjSelector/control/$${DIR_INCL}\
+	mGraphicsView/view/$${DIR_INCL}\
 	$${DIR_PROJECT_BASE} $${DIR_FIB_LANGUAGE_INCL} $${DIR_TINY_XML}
 
 OBJECTS_DIR = $${DIR_OBJ}obj
@@ -135,8 +139,9 @@ DEFINES += TIXML_USE_STL
 
 
 
-debug {
+test_debug {
 	TARGET = $${DIR_TESTCASE}test_fibCreator
+	CONFIG += debug
 	OBJECTS_DIR = $${DIR_OBJ_TEST}obj
 	MOC_DIR = $${DIR_OBJ_TEST}moc
 	RCC_DIR = $${DIR_OBJ_TEST}rcc
@@ -153,12 +158,14 @@ LIBS += $${LIBS_ADDITIONAL}
 SOURCES += $${TARGET_SOURCE} \
 	model/$${DIR_SRC}*.cpp view/$${DIR_SRC}*.cpp control/$${DIR_SRC}*.cpp\
 	mFibObjSelector/model/$${DIR_SRC}*.cpp mFibObjSelector/view/$${DIR_SRC}*.cpp\
-	mFibObjSelector/control/$${DIR_SRC}*.cpp
+	mFibObjSelector/control/$${DIR_SRC}*.cpp\
+	mGraphicsView/view/$${DIR_SRC}*.cpp\
 	
-HEADERS +=  model/$${DIR_INCL}*.h view/$${DIR_INCL}*.h\
+HEADERS += versionCreator.h model/$${DIR_INCL}*.h view/$${DIR_INCL}*.h\
 	control/$${DIR_INCL}*.h\
 	mFibObjSelector/model/$${DIR_INCL}*.h mFibObjSelector/view/$${DIR_INCL}*.h\
-	mFibObjSelector/control/$${DIR_INCL}*.h
+	mFibObjSelector/control/$${DIR_INCL}*.h\
+	mGraphicsView/view/$${DIR_INCL}*.h\
 
 
 

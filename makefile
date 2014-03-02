@@ -39,6 +39,7 @@
 #
 # History:
 # 16.03.2011   Oesterholz   windows included
+# 20.01.2014   Oesterholz   the Fib creator application included
 
 ##########################################################################
 #
@@ -49,6 +50,8 @@
 SUB_PROJECT_PATHS:=fib/ enviroment/ enviroment.fib/ add_ons/converter/ \
    fib.algorithms/
 
+# Folder of the Fib creator application
+DIR_CREATOR:=add_ons/creator/
 
 ##########################################################################
 #
@@ -56,11 +59,11 @@ SUB_PROJECT_PATHS:=fib/ enviroment/ enviroment.fib/ add_ons/converter/ \
 #
 ##########################################################################
 
-.PHONY: all test clean help $(SUB_PROJECT_PATHS)
+.PHONY: all test clean help $(SUB_PROJECT_PATHS) creator creator_test
 
-all: $(SUB_PROJECT_PATHS)
+all: $(SUB_PROJECT_PATHS) creator
 
-test: $(SUB_PROJECT_PATHS)
+test: $(SUB_PROJECT_PATHS) creator_test
 
 win: $(SUB_PROJECT_PATHS)
 
@@ -68,6 +71,9 @@ win_test: $(SUB_PROJECT_PATHS)
 
 clean: $(SUB_PROJECT_PATHS)
 	rm -fr $(FOLDER_EXTRACT)
+	rm -fr $(DIR_CREATOR)/obj_test
+	rm -fr $(DIR_CREATOR)/obj
+	cd $(DIR_CREATOR); make clean
 
 
 ##########################################################################
@@ -87,6 +93,17 @@ $(1):
 endef
 
 $(foreach SUB_PROJECT, $(SUB_PROJECT_PATHS), $(eval $(call generat_sub_project,$(SUB_PROJECT)) ) )
+
+
+creator: fib/
+	cd $(DIR_CREATOR);\
+	qmake fibCreator.pro;\
+	make
+
+creator_test: fib/
+	cd $(DIR_CREATOR);\
+	makeTest.sh
+
 
 
 ##########################################################################

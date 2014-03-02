@@ -52,6 +52,7 @@
 /*
 History:
 29.09.2013  Oesterholz  created
+02.03.2014  Oesterholz  categories for Fib object source added: getCategories()
 */
 
 
@@ -62,12 +63,14 @@ History:
 
 #include "cFibObjectSourcePath.h"
 
-#include "cFibElement.h"
-
 #include <cstring>
 #include <iostream>
 #include <fstream>
 #include <stdio.h>
+
+#include <QObject>
+
+#include "cFibElement.h"
 
 
 
@@ -82,7 +85,7 @@ using namespace fib::nCreator;
  * 	@see szPath
  */
 cFibObjectSourcePath::cFibObjectSourcePath( const std::string & szInPath ):
-		szPath( szInPath ){
+		szPath( szInPath ) {
 	//nothing to do
 }
 
@@ -94,7 +97,7 @@ cFibObjectSourcePath::cFibObjectSourcePath( const std::string & szInPath ):
  */
 cFibObjectSourcePath::cFibObjectSourcePath(
 		const cFibObjectSourcePath & fibObjectSourcePath ):
-		szPath( fibObjectSourcePath.szPath ){
+		szPath( fibObjectSourcePath.szPath ) {
 	//nothing to do
 }
 
@@ -116,9 +119,9 @@ cFibObjectSourcePath::cFibObjectSourcePath(
  * 			object is wrong
  */
 cFibObjectSourcePath::cFibObjectSourcePath( istream & stream,
-		int * iOutStatus ):szPath( "" ){
+		int * iOutStatus ):szPath( "" ) {
 	
-	if ( iOutStatus != NULL ){
+	if ( iOutStatus != NULL ) {
 		(*iOutStatus) = restoreFibObjectSource( stream );
 	}else{//don't use iOutStatus
 		restoreFibObjectSource( stream );
@@ -143,9 +146,9 @@ cFibObjectSourcePath::cFibObjectSourcePath( istream & stream,
  * 			object is wrong
  */
 cFibObjectSourcePath::cFibObjectSourcePath( const TiXmlNode * pXmlNode,
-		int * iOutStatus ):szPath( "" ){
+		int * iOutStatus ):szPath( "" ) {
 	
-	if ( iOutStatus != NULL ){
+	if ( iOutStatus != NULL ) {
 		(*iOutStatus) = restoreFibObjectSource( pXmlNode );
 	}else{//don't use iOutStatus
 		restoreFibObjectSource( pXmlNode );
@@ -156,7 +159,7 @@ cFibObjectSourcePath::cFibObjectSourcePath( const TiXmlNode * pXmlNode,
 /**
  * destructor
  */
-cFibObjectSourcePath::~cFibObjectSourcePath(){
+cFibObjectSourcePath::~cFibObjectSourcePath() {
 	//nothing to do
 }
 
@@ -165,7 +168,7 @@ cFibObjectSourcePath::~cFibObjectSourcePath(){
 /**
  * @return the name of this class "cFibObjectSourcePath"
  */
-string cFibObjectSourcePath::getName() const{
+string cFibObjectSourcePath::getName() const {
 	
 	return string( "cFibObjectSourcePath" );
 }
@@ -174,7 +177,7 @@ string cFibObjectSourcePath::getName() const{
  * @return the path to the to load Fib object
  * 	@see szPath
  */
-string cFibObjectSourcePath::getPath() const{
+string cFibObjectSourcePath::getPath() const {
 	
 	return szPath;
 }
@@ -185,7 +188,7 @@ string cFibObjectSourcePath::getPath() const{
  *
  * @return a pointer to a copy of this object
  */
-cFibObjectSourcePath * cFibObjectSourcePath::clone() const{
+cFibObjectSourcePath * cFibObjectSourcePath::clone() const {
 	
 	return new cFibObjectSourcePath( *this );
 }
@@ -214,25 +217,25 @@ cFibObjectSourcePath * cFibObjectSourcePath::clone() const{
  * 	loaded
  */
 cFibElement * cFibObjectSourcePath::loadFibObject( int * iOutStatus,
-		set< string > * pOutSetChangebelBy ) const{
+		set< string > * pOutSetChangebelBy ) const {
 	
-	if ( pOutSetChangebelBy ){
+	if ( pOutSetChangebelBy ) {
 		pOutSetChangebelBy->clear();
 	}
-	if ( szPath.empty() ){
+	if ( szPath.empty() ) {
 		//no file name exists -> nothing to load
 		return NULL;
 	}
 	
 	cFibElement * pRestoredFibObject = NULL;
 	int iOutStatusIntern;
-	if ( szPath.compare( szPath.size() - 4, 4, ".xml" ) == 0 ){
+	if ( szPath.compare( szPath.size() - 4, 4, ".xml" ) == 0 ) {
 		//restore to file in xml -format
 		ifstream inFile( szPath.c_str() );
 		
-		if ( ! inFile.good() ){
+		if ( ! inFile.good() ) {
 			DEBUG_OUT_EL2(<<"Error: Can't open file."<<endl<<flush);
-			if ( iOutStatus ){
+			if ( iOutStatus ) {
 				//remember output status
 				(*iOutStatus) = -1;
 			}
@@ -242,10 +245,10 @@ cFibElement * cFibObjectSourcePath::loadFibObject( int * iOutStatus,
 		pRestoredFibObject = cFibElement::restoreXml( inFile , &iOutStatusIntern );
 		
 #ifdef DEBUG
-		if ( iOutStatusIntern == 0 ){
+		if ( iOutStatusIntern == 0 ) {
 			cout<<"Restoring Fib object in the Xml format from the file \""<<
 				szPath <<"\" successfull. "<<endl;
-		}else if ( 0 < iOutStatusIntern ){
+		}else if ( 0 < iOutStatusIntern ) {
 			cerr<<"Warning: Restoring Fib object in the Xml format from the file \""<<
 				szPath <<"\" not successfull. (return status="<< iOutStatusIntern <<")"<<endl;
 		}else{//( iOutStatusIntern < 0 )
@@ -256,9 +259,9 @@ cFibElement * cFibObjectSourcePath::loadFibObject( int * iOutStatus,
 	}else{//restore to file in compressed format
 		ifstream inFile( szPath.c_str(), ios_base::in | ios_base::binary );
 		
-		if ( ! inFile.good() ){
+		if ( ! inFile.good() ) {
 			DEBUG_OUT_EL2(<<"Error: Can't open file."<<endl<<flush);
-			if ( iOutStatus ){
+			if ( iOutStatus ) {
 				//remember output status
 				(*iOutStatus) = -1;
 			}
@@ -268,10 +271,10 @@ cFibElement * cFibObjectSourcePath::loadFibObject( int * iOutStatus,
 		pRestoredFibObject = cFibElement::restore( inFile , &iOutStatusIntern );
 		
 #ifdef DEBUG
-		if ( iOutStatusIntern == 0 ){
+		if ( iOutStatusIntern == 0 ) {
 			cout<<"Restoring Fib object in the compressed format from the file \""<<
 				szPath <<"\" successfull. "<<endl;
-		}else if ( 0 < iOutStatusIntern ){
+		}else if ( 0 < iOutStatusIntern ) {
 			cerr<<"Warning: Restoring Fib object in the compressed format from the file \""<<
 				szPath <<"\" not successfull. (return status="<< iOutStatusIntern <<")"<<endl;
 		}else{
@@ -280,22 +283,22 @@ cFibElement * cFibObjectSourcePath::loadFibObject( int * iOutStatus,
 		}
 #endif //DEBUG
 	}
-	if ( iOutStatus ){
+	if ( iOutStatus ) {
 		//remember output status
 		(*iOutStatus) = iOutStatusIntern;
 	}
-	if ( iOutStatusIntern < 0 ){
-		if ( pRestoredFibObject != NULL ){
+	if ( iOutStatusIntern < 0 ) {
+		if ( pRestoredFibObject != NULL ) {
 			//delete loaded Fib object
 			pRestoredFibObject->deleteObject();
 		}
 		return NULL;
 	}
-	if ( pRestoredFibObject == NULL ){
+	if ( pRestoredFibObject == NULL ) {
 		cerr<<"Error: No Fib object restored."<<endl;
 		return NULL;
 	}
-	if ( pOutSetChangebelBy ){
+	if ( pOutSetChangebelBy ) {
 		//TODO adapt for operating system users or/and with optional part entry
 		pOutSetChangebelBy->insert("all");
 	}
@@ -313,18 +316,18 @@ cFibElement * cFibObjectSourcePath::loadFibObject( int * iOutStatus,
  * @param pFibObject a pointer to the Fib object to store
  * @return true if the given Fib object could be stored, else false
  */
-bool cFibObjectSourcePath::storeFibObject( const cFibElement * pFibObject ) const{
+bool cFibObjectSourcePath::storeFibObject( const cFibElement * pFibObject ) const {
 	
-	if ( pFibObject == NULL ){
+	if ( pFibObject == NULL ) {
 		//no Fib object to store given
 		return false;
 	}
-	if ( szPath.empty() ){
+	if ( szPath.empty() ) {
 		//no file name exists
 		return false;
 	}
 	//store depending on file ending
-	if ( szPath.compare( szPath.size() - 4, 4, ".xml" ) == 0 ){
+	if ( szPath.compare( szPath.size() - 4, 4, ".xml" ) == 0 ) {
 		//store to file in Xml format
 		ofstream outFile( szPath.c_str() );
 		
@@ -332,7 +335,7 @@ bool cFibObjectSourcePath::storeFibObject( const cFibElement * pFibObject ) cons
 		
 		const bool bStoreSuccesfull = pFibObject->storeXml( outFile );
 		
-		if ( ! bStoreSuccesfull ){
+		if ( ! bStoreSuccesfull ) {
 			
 			DEBUG_OUT_EL2(<<"Error: Storing the data of the converted Fib object "<<
 				"in the Xml format to the file "<< szPath <<" failed."<<endl<<flush);
@@ -345,7 +348,7 @@ bool cFibObjectSourcePath::storeFibObject( const cFibElement * pFibObject ) cons
 		
 		const bool bStoreSuccesfull = pFibObject->store( outFile );
 		
-		if ( ! bStoreSuccesfull ){
+		if ( ! bStoreSuccesfull ) {
 	
 			DEBUG_OUT_EL2(<<"Error: Storing the data of the converted Fib object "<<
 				"in the compressed Fib format to the file "<< szPath <<" failed."<<endl<<flush);
@@ -361,15 +364,15 @@ bool cFibObjectSourcePath::storeFibObject( const cFibElement * pFibObject ) cons
  *
  * @return true if the source for the Fib object exists, else false
  */
-bool cFibObjectSourcePath::checkSource() const{
+bool cFibObjectSourcePath::checkSource() const {
 	
-	if ( szPath.empty() ){
+	if ( szPath.empty() ) {
 		//no file name exists -> nothing to load
 		return false;
 	}
 	//try to open the Fib object file / path
 	FILE * pFibObjectFile = fopen( szPath.c_str() , "r" );
-	if ( pFibObjectFile == NULL ){
+	if ( pFibObjectFile == NULL ) {
 		//no such file
 		return false;
 	}//else Fib object file exists
@@ -379,6 +382,16 @@ bool cFibObjectSourcePath::checkSource() const{
 }
 
 
+/**
+ * @return the set with the categories this Fib object source is in
+ * 	(e.g. "Fib database", "file")
+ */
+std::set< std::string > cFibObjectSourcePath::getCategories() const {
+	
+	set< string > setCategories;
+	setCategories.insert( QObject::tr("file").toStdString() );
+	return setCategories;
+}
 
 /**
  * This method will store this path Fib object source object to
@@ -389,9 +402,9 @@ bool cFibObjectSourcePath::checkSource() const{
  * @return true if this path Fib object source object could be
  * 	stored, else false
  */
-bool cFibObjectSourcePath::store( ostream & stream ) const{
+bool cFibObjectSourcePath::store( ostream & stream ) const {
 	
-	if ( ( &stream == NULL ) || ( ! stream.good() ) ){
+	if ( ( &stream == NULL ) || ( ! stream.good() ) ) {
 		//no good stream -> return false
 		return false;
 	}
@@ -416,13 +429,13 @@ bool cFibObjectSourcePath::store( ostream & stream ) const{
  * 		- 2 loading warning, invalid data in stream, maybe the loaded
  * 			object is wrong
  */
-int cFibObjectSourcePath::restoreFibObjectSource( istream & stream ){
+int cFibObjectSourcePath::restoreFibObjectSource( istream & stream ) {
 	
 	TiXmlDocument xmlDocFibObject;
 
 	stream >> xmlDocFibObject;
 	
-	if ( xmlDocFibObject.Error() ){
+	if ( xmlDocFibObject.Error() ) {
 		//error while loading from stream
 		return -1;
 	}
@@ -447,13 +460,13 @@ int cFibObjectSourcePath::restoreFibObjectSource( istream & stream ){
  * 		- 2 loading warning, invalid data in pXmlNode, maybe the loaded
  * 			object is wrong
  */
-int cFibObjectSourcePath::restoreFibObjectSource( const TiXmlNode * pXmlNode ){
+int cFibObjectSourcePath::restoreFibObjectSource( const TiXmlNode * pXmlNode ) {
 	
 #ifdef DEBUG_RESTORE_XML
 	//print debugging output
 	printf("restoring cFibObjectSourcePath\n" );
 #endif//DEBUG_RESTORE_XML
-	if ( pXmlNode == NULL ){
+	if ( pXmlNode == NULL ) {
 		//nothing to restore
 #ifdef DEBUG_RESTORE_XML
 		//print debugging output
@@ -464,14 +477,14 @@ int cFibObjectSourcePath::restoreFibObjectSource( const TiXmlNode * pXmlNode ){
 	int iRestoreStatus = 0;
 	
 	//as long no Fib element was read and no error occured
-	while ( ( pXmlNode != NULL ) && ( 0 <= iRestoreStatus ) ){
+	while ( ( pXmlNode != NULL ) && ( 0 <= iRestoreStatus ) ) {
 		//get type of XML element
 		const int iType = pXmlNode->Type();
-		switch ( iType ){
+		switch ( iType ) {
 			case TiXmlNode::ELEMENT:{
 				//read Fib object source path object from XML element
 				const TiXmlElement * pXmlElement = pXmlNode->ToElement();
-				if ( pXmlElement == NULL ){
+				if ( pXmlElement == NULL ) {
 					//Warning: nothing to load
 #ifdef DEBUG_RESTORE_XML
 					//print debugging output
@@ -486,26 +499,26 @@ int cFibObjectSourcePath::restoreFibObjectSource( const TiXmlNode * pXmlNode ){
 					szElementType.c_str(), iRestoreStatus );
 #endif
 				//<fib_object_source type="path" path="/home/biokom/fib_objects">
-				if ( szElementType == "fib_object_source" ){
+				if ( szElementType == "fib_object_source" ) {
 					//if exists get "type" and "path" attributes
 					//if exists get "type" attribute
 					const char * szXmlName =
 						pXmlElement->Attribute( "type" );
-					if ( szXmlName == NULL ){
-						if ( iRestoreStatus == 0 ){
+					if ( szXmlName == NULL ) {
+						if ( iRestoreStatus == 0 ) {
 							//Warning: unknown element type
 							iRestoreStatus = 1;
 						}
-					}else if ( strncmp( "path", szXmlName, 4 ) != 0 ){
+					}else if ( strncmp( "path", szXmlName, 4 ) != 0 ) {
 						//type not "path"
-						if ( iRestoreStatus == 0 ){
+						if ( iRestoreStatus == 0 ) {
 							//Warning: unknown element type
 							iRestoreStatus = 1;
 						}
 					}
 					//if exists get "path" attribute
 					const char * szXmlPath = pXmlElement->Attribute( "path" );
-					if ( szXmlPath ){
+					if ( szXmlPath ) {
 						//"path" attribute exists
 						szPath = string( szXmlPath );
 					}else{//no path -> invalid data in pXmlElement
@@ -514,7 +527,7 @@ int cFibObjectSourcePath::restoreFibObjectSource( const TiXmlNode * pXmlNode ){
 					//all read whats needed
 					return iRestoreStatus;
 				}else{//unknown element type
-					if ( iRestoreStatus == 0 ){
+					if ( iRestoreStatus == 0 ) {
 						//Warning: unknown element type
 						iRestoreStatus = 1;
 					}
@@ -562,15 +575,15 @@ int cFibObjectSourcePath::restoreFibObjectSource( const TiXmlNode * pXmlNode ){
  * 	if non could be restored
  */
 cFibObjectSourcePath * cFibObjectSourcePath::restore(
-		istream & stream, int * iOutStatus ){
+		istream & stream, int * iOutStatus ) {
 	
 	TiXmlDocument xmlDocFibObject;
 
 	stream >> xmlDocFibObject;
 	
-	if ( xmlDocFibObject.Error() ){
+	if ( xmlDocFibObject.Error() ) {
 		//error while loading to stream
-		if ( iOutStatus ){
+		if ( iOutStatus ) {
 			(*iOutStatus) = -1;
 		}
 		return NULL;
@@ -601,19 +614,19 @@ cFibObjectSourcePath * cFibObjectSourcePath::restore(
  * 	if non could be restored
  */
 cFibObjectSourcePath * cFibObjectSourcePath::restore(
-		const TiXmlNode * pXmlNode, int * iOutStatus ){
+		const TiXmlNode * pXmlNode, int * iOutStatus ) {
 	
 	int iInternalOutStatus = 0;
 	
 	cFibObjectSourcePath * pRestoreFibObjectSource =
 		new cFibObjectSourcePath( pXmlNode, &iInternalOutStatus );
 	
-	if ( iOutStatus != NULL ){
+	if ( iOutStatus != NULL ) {
 		//transfer the output status
 		(*iOutStatus) = iInternalOutStatus;
 	}
 	
-	if ( iInternalOutStatus < 0 ){
+	if ( iInternalOutStatus < 0 ) {
 		//error while restoring -> return NULL
 		delete pRestoreFibObjectSource;
 		return NULL;
@@ -631,7 +644,7 @@ cFibObjectSourcePath * cFibObjectSourcePath::restore(
  * @return true if the given Fib object source object is equal
  * 	to this path Fib object source object, else false
  */
-bool cFibObjectSourcePath::equal( const cFibObjectSource & fibObjectSource ) const{
+bool cFibObjectSourcePath::equal( const cFibObjectSource & fibObjectSource ) const {
 	
 	return ( (*this) == fibObjectSource );
 }
@@ -647,9 +660,9 @@ bool cFibObjectSourcePath::equal( const cFibObjectSource & fibObjectSource ) con
  * 	to this path Fib object source object, else false
  */
 bool cFibObjectSourcePath::operator==(
-		const cFibObjectSource & fibObjectSource ) const{
+		const cFibObjectSource & fibObjectSource ) const {
 	
-	if ( getName() != fibObjectSource.getName() ){
+	if ( getName() != fibObjectSource.getName() ) {
 		//not Fib object source object not of same type
 		return false;
 	}

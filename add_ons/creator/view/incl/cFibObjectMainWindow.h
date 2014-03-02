@@ -46,8 +46,6 @@ History:
 
 #include "version.h"
 
-#include "lFibNodeChanged.h"
-
 #include <QMap>
 
 #include <QMainWindow>
@@ -56,6 +54,8 @@ History:
 #include <QMenu>
 #include <QCloseEvent>
 #include <QGraphicsView>
+
+#include "lFibNodeChanged.h"
 
 
 namespace fib{
@@ -164,6 +164,18 @@ public:
 	 */
 	virtual void setInputVariablesWidgetForCentralGrapical(
 		cWidgetFibInputVariables * pNewWidgetFibInputVariables );
+	
+signals:
+	/**
+	 * This signal signals whether the document shown in the window has
+	 * unsaved changes.
+	 *
+	 * @see QWidget::windowModified
+	 * @see QWidget::setWindowModified()
+	 * @param bWindowModified if true the document shown in the window has
+	 * 	unsaved changes, else not
+	 */
+	void signalWindowModified( const bool bWindowModified );
 	
 protected:
 	

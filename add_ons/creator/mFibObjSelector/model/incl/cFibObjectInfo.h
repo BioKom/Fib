@@ -194,9 +194,13 @@ public:
 	 * 	Fib object for this Fib object info object;
 	 * 	This class will try to read all needed data from the source Fib object.
 	 * 	@see pFibObjectSource
+	 * @param bExtractInfo if true the information for the Fib object info
+	 * 	will be extracted from the Fib object
+	 * 	@see extractInfoFromLoadedFibObject()
 	 */
 	cFibObjectInfo( const unsigned long ulInIdentifier,
-		const cFibObjectSource * pInFibObjectSource );
+		const cFibObjectSource * pInFibObjectSource,
+		const bool bExtractInfo = true );
 	
 	/**
 	 * This method will restore the Fib object info object from the given
@@ -893,6 +897,13 @@ protected:
 	unsigned long ulIdentifier;
 	
 	/**
+	 * The mutex to lock access to this Fib object info object identifer.
+	 * Lock the mutex if you use one of the following containers:
+	 * @see ulIdentifier
+	 */
+	mutable QMutex mutexIdentifier;
+	
+	/**
 	 * The name of this Fib object.
 	 */
 	std::string szNameOfFibObject;
@@ -907,6 +918,13 @@ protected:
 	 * object for this info is stored.
 	 */
 	cFibObjectSource * pFibObjectSource;
+	
+	/**
+	 * The mutex to lock access to this Fib object info object source.
+	 * Lock the mutex if you use one of the following containers:
+	 * @see pFibObjectSource
+	 */
+	mutable QMutex mutexFibObjectSource;
 	
 	/**
 	 * A pointer ot the loaded Fib object for this Fib object info or NULL
@@ -1015,10 +1033,8 @@ protected:
 	/**
 	 * The mutex to lock access to this Fib object info object data.
 	 * Lock the mutex if you use one of the following containers:
-	 * @see ulIdentifier
 	 * @see szNameOfFibObject
 	 * @see szDescription
-	 * @see pFibObjectSource
 	 * @see pLoadedFibObject
 	 * @see setInCategories
 	 * @see mapConnectedTo

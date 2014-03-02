@@ -316,9 +316,35 @@ public:
 	 *
 	 * @see QLayout::heightForWidth()
 	 * @param iWidth the width for which to return the preferred height
-	 * @return the preferred height for this layout item, given the width iWidth
+	 * @return the preferred height for this layout, given the width iWidth
 	 */
 	virtual int heightForWidth( const int iWidth ) const;
+	
+	/**
+	 * This method returns the preferred size for this layout item, given
+	 * the maximum width iWidth.
+	 * The returned size will have a smaaler width than iWidth (if
+	 * possible) and a height, so that all elements of the layout can be
+	 * displayed.
+	 *
+	 * @param iWidth the width for which to return the preferred size
+	 * @return the preferred size for this layout, given the maximum width iWidth
+	 */
+	virtual QSize getSizeForMaxWidth( const int iWidth ) const;
+	
+	/**
+	 * This method returns the maximum width for iNumberOfElements following
+	 * elements in this flow layout.
+	 * It is to evalue fast a good width for this flow layout, if minimum
+	 * iNumberOfElements should be shown on one line.
+	 *
+	 * @see heightForWidth
+	 * @param iNumberOfElements the number of following elements for which
+	 * 	to return the maximum width
+	 * @return a width wich is the maximum widht for all iNumberOfElements
+	 * 	following elements in this flow layout
+	 */
+	int getMaxWidthForMinNumberOfElements( const int iNumberOfElements ) const;
 	
 
 protected:
@@ -333,7 +359,7 @@ protected:
 	 * 	the layout (the return value is evaluated, but nothing else changed)
 	 * @return the hight of the layout in pixles
 	 */
-	virtual int createLayout( const QRect & rectLayout,
+	virtual QSize createLayout( const QRect & rectLayout,
 		const bool bJustEvalue = true ) const;
 	
 	/**

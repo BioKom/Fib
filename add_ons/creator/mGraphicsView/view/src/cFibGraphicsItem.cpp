@@ -43,6 +43,8 @@
 /*
 History:
 17.07.2013  Oesterholz  created
+25.01.2013  Oesterholz  the graphical items will be updated, if possible,
+	with the information of the Fib node change event
 */
 
 
@@ -55,8 +57,12 @@ History:
 
 #include <QGraphicsView>
 
+#include "cFibElement.h"
+
 #include "cFibGraphicsScene.h"
 #include "cFibNode.h"
+#include "eFibNodeChangedEvent.h"
+#include "iFibGraphicsItemFactory.h"
 
 
 using namespace fib::nCreator;
@@ -140,18 +146,115 @@ cFibElement * cFibGraphicsItem::getFibObject(){
  * @return a pointer to the Fib object this widget / item represents
  * 	@see pFibObject
  */
-const cFibElement * cFibGraphicsItem::getFibObject() const{
+const cFibElement * cFibGraphicsItem::getFibObject() const {
 	
 	return pFibObject;
+}
+
+#ifdef TODO_WEG
+/**
+ * This method deletes the entire Fib object item tree.
+ * It will delete all subitems trees (call deleteItemTree() for all
+ * subitems) and will delete this item (destructor).
+ */
+void cFibGraphicsItem::deleteItemTree() {
+	
+	//delete this item
+	delete this;
+}
+#endif //TODO_WEG
+
+
+/**
+ * @see getSubItems()
+ * @return the number of subitems (child items) of this item
+ */
+int cFibGraphicsItem::getNumberOfSubItems() const {
+	//default: no subitems
+	return 0;
+}
+
+
+/**
+ * This method returns the (direct) subitems (or child items) of this
+ * graphical item.
+ * Note: It will not return the subitems of the subitems.
+ *
+ * @return a list with the pointers to the subitems of this Fib
+ * 	graphical item
+ */
+QList< cFibGraphicsItem * > cFibGraphicsItem::getSubItems() {
+	//default: no subitems
+	return QList< cFibGraphicsItem * >();
+}
+
+
+/**
+ * This method returns the (direct) subitems (or child items) of this
+ * graphical item.
+ * Note: It will not return the subitems of the subitems.
+ *
+ * @return a list with the const pointers to the subitems of this Fib
+ * 	graphical item
+ */
+const QList< cFibGraphicsItem * > cFibGraphicsItem::getSubItems() const {
+	//default: no subitems
+	return QList< cFibGraphicsItem * >();
 }
 
 
 /**
  * @return the name of this class "cFibGraphicsItem"
  */
-std::string cFibGraphicsItem::getName() const{
+std::string cFibGraphicsItem::getName() const {
 	
 	return std::string( "cFibGraphicsItem" );
+}
+
+
+/**
+ * This method returns a number for the type of the graphical item.
+ * Note: The type number of Fib graphical items is betwaen (including)
+ * 	 QGraphicsItem::UserType + 1024 and
+ * 	 QGraphicsItem::UserType + 2047
+ *
+ * @see typeFibGraphicsItems
+ * @see QGraphicsItem::type()
+ * @return a number for the type of the graphical item
+ */
+int cFibGraphicsItem::type() const {
+	
+	return FibGraphicsItem;
+}
+
+
+/**
+ * This method will update this graphical item for a change in a
+ * Fib Node / Fib element.
+ * It will update the bounding rectangle and other members of this class
+ * for the changed Fib object if possible.
+ * For that it will use the pFibNodeChangedEvent (e. g. reevaluate the
+ * bounding rectangle with it).
+ * Note: This method won't use a mutex.
+ *
+ * @see pFibObject
+ * @see boundingRect()
+ * @param pFibNodeChangedEvent a pointer to the change event with the
+ * 	information of the change
+ * @param pFibGraphicsItemFactory a pointer to the Fib graphical item
+ * 	factory, to create sub graphical items, which can not be updated
+ * @param pUpdateForFibObject the Fib object for which this graphical
+ * 	item should be updated (which it should represent)
+ * @return true if this element could be updated, else false
+ * 	If false is returned, you should create a new graphical item
+ * 	for the changed parts and replace this graphical item with it.
+ */
+bool cFibGraphicsItem::updateForFibNodeChange(
+		const eFibNodeChangedEvent * /*pFibNodeChangedEvent*/,
+		const iFibGraphicsItemFactory * /*pFibGraphicsItemFactory*/,
+		const cFibElement * /*pUpdateForFibObject*/ ) {
+	//default: recreate this graphical item
+	return false;
 }
 
 

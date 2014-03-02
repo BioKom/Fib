@@ -47,6 +47,8 @@
 /*
 History:
 28.07.2013  Oesterholz  created
+25.01.2013  Oesterholz  the graphical items will be updated, if possible,
+	with the information of the Fib node change event
 */
 
 
@@ -78,6 +80,7 @@ History:
 #include "eFibNodeChangedEvent.h"
 #include "cFibNode.h"
 #include "cFibNodeHandler.h"
+#include "eFibNodeChangedEvent.h"
 #include "cFibVectorCreator.h"
 #include "cFibVectorHandler.h"
 
@@ -86,8 +89,6 @@ using namespace std;
 using namespace fib::nCreator;
 using namespace fib;
 
-
-//TODO rework
 
 /*TODO implements
  * A graphical items should react to mouse events:
@@ -106,37 +107,27 @@ using namespace fib;
  * @param ulInFibNodeVersionDisplayed the Fib node version of the
  * 	Fib object, wich is displayed
  * 	@see ulFibNodeVersionDisplayed
- * @param pInFibObjectCopy a pointer to a copy of a Fib object to copy;
- * 	This Fib object will be shown by this object with evalueObject()
- * 	if present, else pFibObject will be used.
- * 	This object is responsible for deleting the Fib object copy.
- * 	@see pFibObjectCopy
  * @param pParent a pointer to parent of this widget
  */
 cFibGraphicsItemFibExtObject::cFibGraphicsItemFibExtObject( cFibElement * pInFibObject,
 		const unsigned long ulInFibNodeVersionDisplayed,
-		cFibElement * pInFibObjectCopy,
 		QGraphicsItem * pParent ):
 		cFibGraphicsItem( pInFibObject, ulInFibNodeVersionDisplayed, pParent ),
-		pFibObjectCopy( pInFibObjectCopy ), pFibObjectCopyNode( NULL ),
-		pWidgetFibInputVariables( NULL ), pFibInputVariablesCopy( NULL ),
+		pWidgetFibInputVariables( NULL ),
 		pGraphicsPixmapItemForFibObject( NULL ), pWidgetFibVector( NULL ){
-			
-	DEBUG_OUT_L2(<<"cFibGraphicsItemFibExtObject("<<this<<")::cFibGraphicsItemFibExtObject( pInFibObject="<<pInFibObject<<", ulInFibNodeVersionDisplayed="<<ulInFibNodeVersionDisplayed<<", pInFibObjectCopy="<<pInFibObjectCopy<<", pParent="<<pParent<<" ) called"<<endl<<flush);
+		
+	DEBUG_OUT_L2(<<"cFibGraphicsItemFibExtObject("<<this<<")::cFibGraphicsItemFibExtObject( pInFibObject="<<pInFibObject<<", ulInFibNodeVersionDisplayed="<<ulInFibNodeVersionDisplayed<<", pParent="<<pParent<<" ) called"<<endl<<flush);
 	
-	if ( pFibObjectCopy ){
-		//if a Fib object copy exists -> get node object for it
-		pFibObjectCopyNode = cFibNodeHandler::getInstance()->
-			getNodeForFibObject( pFibObjectCopy, this );
-		DEBUG_OUT_L3(<<"cFibGraphicsItemFibExtObject("<<this<<")::cFibGraphicsItemFibExtObject( pInFibObject="<<pInFibObject<<", ulInFibNodeVersionDisplayed="<<ulInFibNodeVersionDisplayed<<", pInFibObjectCopy="<<pInFibObjectCopy<<", pParent="<<pParent<<" ) Fib node for copy Fib object: "<<pFibObjectCopyNode<<endl<<flush);
-	}
 	//accept events that the mouse is over this item
 	setAcceptHoverEvents( true );
 	
+	//evaluate the bounding box (boundingRectangle)
+	QObject::connect( this, SIGNAL(signalReevaluateBoundingBox()),
+		this, SLOT(reevaluateBoundingBox()) );
+	emit signalReevaluateBoundingBox();
+	
 	//evalue input variables
 	evalueInputVariables();
-	//reevaluate the bounding box (boundingRectangle)
-	paint( NULL, NULL );
 }
 
 
@@ -153,41 +144,29 @@ cFibGraphicsItemFibExtObject::cFibGraphicsItemFibExtObject( cFibElement * pInFib
  * @param pInFibGraphicsScene a pointer to the graphic scene for this
  * 	widget / item
  * 	@see pFibGraphicsScene
- * @param pInFibObjectCopy a pointer to a copy of a Fib object to copy;
- * 	This Fib object will be shown by this object with evalueObject()
- * 	if present, else pFibObject will be used.
- * 	It should have a Fib external object as its leaf element.
- * 	This object is responsible for deleting the Fib object copy.
- * 	@see pFibObjectCopy
  * @param pParent a pointer to parent of this widget
  */
 cFibGraphicsItemFibExtObject::cFibGraphicsItemFibExtObject( cFibElement * pInFibObject,
 		const unsigned long ulInFibNodeVersionDisplayed,
 		cFibGraphicsScene * pInFibGraphicsScene,
-		cFibElement * pInFibObjectCopy,
 		QGraphicsItem * pParent ):
 		cFibGraphicsItem( pInFibObject, ulInFibNodeVersionDisplayed,
 			pInFibGraphicsScene, pParent ),
-		pFibObjectCopy( pInFibObjectCopy ), pFibObjectCopyNode( NULL ),
-		pWidgetFibInputVariables( NULL ), pFibInputVariablesCopy( NULL ),
+		pWidgetFibInputVariables( NULL ),
 		pGraphicsPixmapItemForFibObject( NULL ), pWidgetFibVector( NULL ){
 	
-	DEBUG_OUT_L2(<<"cFibGraphicsItemFibExtObject("<<this<<")::cFibGraphicsItemFibExtObject( pInFibObject="<<pInFibObject<<", pInFibGraphicsScene="<<pInFibGraphicsScene<<", ulInFibNodeVersionDisplayed="<<ulInFibNodeVersionDisplayed<<", pInFibObjectCopy="<<pInFibObjectCopy<<", pParent="<<pParent<<" ) called"<<endl<<flush);
-	
-	if ( pFibObjectCopy ){
-		//if a Fib object copy exists -> get node object for it
-		pFibObjectCopyNode = cFibNodeHandler::getInstance()->
-			getNodeForFibObject( pFibObjectCopy, this );
-		DEBUG_OUT_L3(<<"cFibGraphicsItemFibExtObject("<<this<<")::cFibGraphicsItemFibExtObject( pInFibObject="<<pInFibObject<<", pInFibGraphicsScene="<<pInFibGraphicsScene<<", ulInFibNodeVersionDisplayed="<<ulInFibNodeVersionDisplayed<<", pInFibObjectCopy="<<pInFibObjectCopy<<", pParent="<<pParent<<" ) Fib node for copy Fib object: "<<pFibObjectCopyNode<<endl<<flush);
-	}
+	DEBUG_OUT_L2(<<"cFibGraphicsItemFibExtObject("<<this<<")::cFibGraphicsItemFibExtObject( pInFibObject="<<pInFibObject<<", pInFibGraphicsScene="<<pInFibGraphicsScene<<", ulInFibNodeVersionDisplayed="<<ulInFibNodeVersionDisplayed<<", pParent="<<pParent<<" ) called"<<endl<<flush);
 	
 	//accept events that the mouse is over this item
 	setAcceptHoverEvents( true );
 	
+	//evaluate the bounding box (boundingRectangle)
+	QObject::connect( this, SIGNAL(signalReevaluateBoundingBox()),
+		this, SLOT(reevaluateBoundingBox()) );
+	emit signalReevaluateBoundingBox();
+	
 	//evalue input variables
 	evalueInputVariables();
-	//reevaluate the bounding box (boundingRectangle)
-	paint( NULL, NULL );
 }
 
 
@@ -197,13 +176,6 @@ cFibGraphicsItemFibExtObject::cFibGraphicsItemFibExtObject( cFibElement * pInFib
 cFibGraphicsItemFibExtObject::~cFibGraphicsItemFibExtObject(){
 	
 	DEBUG_OUT_L2(<<"cFibGraphicsItemFibExtObject("<<this<<")::~cFibGraphicsItemFibExtObject() called"<<endl<<flush);
-	if ( pFibObjectCopyNode ){
-		//the Fib node handler will delete the copy Fib object
-		DEBUG_OUT_L3(<<"cFibGraphicsItemFibExtObject("<<this<<")::~cFibGraphicsItemFibExtObject() unregister this at Fib node "<<pFibObjectCopyNode<<endl<<flush);
-		pFibObjectCopyNode->unregisterNodeChangeListener( this );
-		pFibObjectCopyNode = NULL;
-		pFibObjectCopy = NULL;
-	}
 	if ( pWidgetFibInputVariables ){
 		//unregister this object as a value change listener of them
 		pWidgetFibInputVariables->unregisterScalarValueChangeListener( this );
@@ -211,9 +183,6 @@ cFibGraphicsItemFibExtObject::~cFibGraphicsItemFibExtObject(){
 		if ( pWidgetMainOptions == NULL ){
 			pWidgetFibInputVariables->deleteLater();
 		}//else the input variables will be deleted by pWidgetMainOptions
-	}
-	if ( pFibInputVariablesCopy ){
-		delete pFibInputVariablesCopy;
 	}
 	mutexGraphicsPixmapItemForFibObject.lock();
 	if ( pGraphicsPixmapItemForFibObject ){
@@ -225,21 +194,27 @@ cFibGraphicsItemFibExtObject::~cFibGraphicsItemFibExtObject(){
 
 
 /**
- * @return a pointer to the Fib object this widget / item represents
- * 	@see pFibObject
- */
-const cFibElement * cFibGraphicsItemFibExtObject::getFibObjectCopy() const{
-	
-	return pFibObjectCopy;
-}
-
-
-/**
  * @return the name of this class "cFibGraphicsItemFibExtObject"
  */
 std::string cFibGraphicsItemFibExtObject::getName() const{
 	
 	return std::string( "cFibGraphicsItemFibExtObject" );
+}
+
+
+/**
+ * This method returns a number for the type of the graphical item.
+ * Note: The type number of Fib graphical items is betwaen (including)
+ * 	 QGraphicsItem::UserType + 1024 and
+ * 	 QGraphicsItem::UserType + 2047
+ *
+ * @see typeFibGraphicsItems
+ * @see QGraphicsItem::type()
+ * @return a number for the type of the graphical item
+ */
+int cFibGraphicsItemFibExtObject::type() const {
+	
+	return FibGraphicsItemFibExtObject;
 }
 
 
@@ -279,6 +254,7 @@ bool cFibGraphicsItemFibExtObject::contains( const QPointF & point ) const{
 	return true;
 }
 
+#ifdef TODO_WEG
 
 /**
  * This method will update this graphical item for a change in a
@@ -306,7 +282,7 @@ bool cFibGraphicsItemFibExtObject::updateForFibElementChange(
 	
 	DEBUG_OUT_L2(<<"cFibGraphicsItemFibExtObject("<<this<<")::updateForFibElementChange( const eFibNodeChangedEvent * pFibNodeChangedEvent, QList< cFibGraphicsItem * > * liOutNotUpdatedItems ) called"<<endl<<flush);
 	if ( ( pFibNodeChangedEvent == NULL ) ||
-			( pFibNodeChangedEvent->pFibNodeChanged == NULL ) ){
+			( pFibNodeChangedEvent->getChangedNode() == NULL ) ){
 		//no Fib node -> can not update
 		return false;
 	}
@@ -326,6 +302,7 @@ bool cFibGraphicsItemFibExtObject::updateForFibElementChange(
 		 *actual Fib element*/
 		cFibElement * pActualFibElement = pFibObjectCopy;
 		for (  ; ( pActualFibElement != NULL ) &&
+					( pActualFibElement->getType() != 'o' )
 					( pActualFibElement->getNumberOfSubobjects() == 1 );
 				pActualFibElement = pActualFibElement->getNextFibElement() ){
 			//nothing to do
@@ -400,7 +377,7 @@ bool cFibGraphicsItemFibExtObject::updateForFibElementChange(
 				break;
 			}
 			
-			if ( pOrgFibElementToCheck->equalElement( *pCopyFibElementToCheck ) ){
+			if ( ! pOrgFibElementToCheck->equalElement( *pCopyFibElementToCheck ) ){
 				//Fib elements not equal
 				if ( pOrgFibElementToCheck->getType() != pCopyFibElementToCheck->getType() ){
 					//Fib elements have not the same type -> can't adapt copy Fib object
@@ -460,10 +437,118 @@ bool cFibGraphicsItemFibExtObject::updateForFibElementChange(
 	}
 	mutexGraphicsPixmapItemForFibObject.unlock();
 	//reevaluate the bounding box (boundingRectangle)
-	paint( NULL, NULL );
+	emit signalReevaluateBoundingBox();
 	return bReturnValue;
 }
 
+#endif //TODO_WEG
+
+
+/**
+ * This method will update this graphical item for a change in a
+ * Fib Node / Fib element.
+ * It will update the bounding rectangle and other members of this class
+ * for the changed Fib object if possible.
+ * For that it will use the pFibNodeChangedEvent (e. g. reevaluate the
+ * bounding rectangle with it).
+ * Note: This method won't use a mutex.
+ *
+ * @see pFibObject
+ * @see boundingRect()
+ * @param pFibNodeChangedEvent a pointer to the change event with the
+ * 	information of the change
+ * @param pFibGraphicsItemFactory a pointer to the Fib graphical item
+ * 	factory, to create sub graphical items, which can not be updated
+ * @param pUpdateForFibObject the Fib object for which this graphical
+ * 	item should be updated (which it should represent)
+ * @return true if this element could be updated, else false
+ * 	If false is returned, you should create a new graphical item
+ * 	for the changed parts and replace this graphical item with it.
+ */
+bool cFibGraphicsItemFibExtObject::updateForFibNodeChange(
+		const eFibNodeChangedEvent * pFibNodeChangedEvent,
+		const iFibGraphicsItemFactory * /*pFibGraphicsItemFactory*/,
+		const cFibElement * pUpdateForFibObject ) {
+	
+	DEBUG_OUT_L2(<<"cFibGraphicsItemFibExtObject("<<this<<")::updateForFibNodeChange( const eFibNodeChangedEvent * pFibNodeChangedEvent, pFibGraphicsItemFactorys, pUpdateForFibObject ) called"<<endl<<flush);
+	if ( ( pFibNodeChangedEvent == NULL ) || ( pUpdateForFibObject == NULL ) ||
+			( pFibObject == NULL ) ) {
+		//nothing to update for -> can't update
+		DEBUG_OUT_L2(<<"cFibGraphicsItemFibExtObject("<<this<<")::updateForFibNodeChange() done: nothing to update for -> can't update"<<endl<<flush);
+		return false;
+	}
+	
+	/*check if the Fib object for this grapical item is superior or
+	 contained in a changed Fib element or Fib object*/
+	if ( ! pFibNodeChangedEvent->isChangedBranch( pFibObject ) ) {
+		/*the Fib object for this grapical item is not on a branch which
+		 *contains a changed Fib element or Fib object
+		 -> this graphical item don't need to be updated
+		 -> everything up to date
+		 -> nothing to do*/
+		if ( pFibObject->getType() == 'o' ){
+			//get external object
+			const cRoot * pExternalObjectRoot =
+				pFibObject->getAccessibleRootObject(
+					static_cast< cExtObject * >( pFibObject )->getIdentifier() );
+			
+			if ( ! pFibNodeChangedEvent->isChangedBranch( pExternalObjectRoot ) ) {
+				DEBUG_OUT_L2(<<"cFibGraphicsItemFibExtObject("<<this<<")::updateForFibNodeChange() done: everything up to date"<<endl<<flush);
+				return true;
+			}
+		} else {
+			DEBUG_OUT_L2(<<"cFibGraphicsItemFibExtObject("<<this<<")::updateForFibNodeChange() done: not an external object element"<<endl<<flush);
+			return false;
+		}
+	}//else this branch or the external object where chenged
+	if ( pFibNodeChangedEvent->isElementChanged( pFibObject,
+			eFibNodeChangedEvent::DELETED ) ) {
+		//the Fib element for this graphical item was deleted -> can't update
+		DEBUG_OUT_L2(<<"cFibGraphicsItemFibExtObject("<<this<<")::updateForFibNodeChange() done: the Fib element for this graphical item was deleted -> can't update"<<endl<<flush);
+		return false;
+	}
+	
+	/*check if the given Fib object can be converted into or can be
+	 *represented by this grapical item (it contains a external object
+	 *element and above the external object element just limb elements till
+	 *the given Fib element pUpdateForFibObject)*/
+	//search for Fib list element above given Fib element pUpdateForFibObject
+	for ( const cFibElement * pActualFibElement = pUpdateForFibObject;
+			pActualFibElement != NULL;
+			pActualFibElement = pActualFibElement->getNextFibElement() ) {
+		if ( pActualFibElement->getType() == 'o' ) {
+			//Fib external object element above given Fib element pUpdateForFibObject found
+			if ( pActualFibElement != pFibObject ) {
+				/*the found Fib external object element is not for this
+				 *Fib graphical external object element
+				 -> this Fib external object graphical item can not be adapted*/
+				DEBUG_OUT_L2(<<"cFibGraphicsItemFibExtObject("<<this<<")::updateForFibNodeChange() done: no topmost external object element"<<endl<<flush);
+				return false;
+			}
+			break;
+		}
+		if ( ( ! pActualFibElement->isLimb() ) &&
+				( pActualFibElement->getType() != 'r' ) ) {
+			/*the Fib element is not a limb, root or external object element
+			-> this Fib external object graphical item can not be adapted*/
+			DEBUG_OUT_L2(<<"cFibGraphicsItemFibExtObject("<<this<<")::updateForFibNodeChange() done: the Fib element is not a limb, root or external object element"<<endl<<flush);
+			return false;
+		}
+	}
+	
+	mutexGraphicsPixmapItemForFibObject.lock();
+	if ( pGraphicsPixmapItemForFibObject ){
+		//Fib object needs to be reevaluated -> delete pGraphicsPixmapItemForFibObject
+		delete pGraphicsPixmapItemForFibObject;
+		pGraphicsPixmapItemForFibObject = NULL;
+	}
+	mutexGraphicsPixmapItemForFibObject.unlock();
+	//reevaluate the bounding box (boundingRectangle)
+	emit signalReevaluateBoundingBox();
+	
+	DEBUG_OUT_L2(<<"cFibGraphicsItemFibExtObject("<<this<<")::updateForFibNodeChange() done"<<endl<<flush);
+	return true;
+}
 
 
 /**
@@ -578,37 +663,13 @@ void cFibGraphicsItemFibExtObject::paint( QPainter * pPainter,
 	if ( pWidgetFibInputVariables ){
 		pWidgetFibInputVariables->assignValues();
 	}
-	if ( pFibInputVariablesCopy ){
-		pFibInputVariablesCopy->assignValues();
-	}
 	//assign input vector values
 	if ( ( pWidgetFibVector != NULL ) &&
 			( pWidgetFibVector->getFibVector() != NULL ) ){
 		pWidgetFibVector->getFibVector()->assignValues();
 	}
 	
-	if ( pFibObjectCopy ){
-		DEBUG_OUT_L3(<<"cFibGraphicsItemFibExtObject("<<this<<")::paint( pPainter="<<pPainter<<", pOption="<<pOption<<", pWidget="<<pWidget<<" ) evalue pFibObjectCopy"<<endl<<flush);
-		/*TODO adapt: skip root objects so they don't set the input variables
-		bFibObjectEvalued = pFibObjectCopy->evalueObjectSimple(
-			*pEvalueSimpleRGBA255QPainter );
-		*/
-		//skip root objects
-		cFibElement * pObjectToEvalue = pFibObjectCopy;
-		while ( pObjectToEvalue->getType() == 'r' ){
-			//top most element is root element -> skip root element
-			if ( pObjectToEvalue->getNextFibElement() == NULL ){
-				//no next Fib object ->can't use it
-				break;
-			}
-			pObjectToEvalue = pObjectToEvalue->getNextFibElement();
-		}
-		bFibObjectEvalued =
-			pObjectToEvalue->evalueObjectSimple( *pEvalueSimpleRGBA255QPainter );
-		
-		//TODO adapt end
-		
-	}else if ( pFibObject ){
+	if ( pFibObject ){
 		DEBUG_OUT_L3(<<"cFibGraphicsItemFibExtObject("<<this<<")::paint( pPainter="<<pPainter<<", pOption="<<pOption<<", pWidget="<<pWidget<<" ) evalue pFibObject"<<endl<<flush);
 		bFibObjectEvalued = pFibObject->evalueObjectSimple(
 			*pEvalueSimpleRGBA255QPainter );
@@ -698,6 +759,19 @@ void cFibGraphicsItemFibExtObject::notifyNodeForChange(){
 
 
 /**
+ * This method reevaluates the bounding box of this graphical item.
+ *
+ * @see boundingRect()
+ * @see boundingRectangle
+ * @see signalReevaluateBoundingBox()
+ */
+void cFibGraphicsItemFibExtObject::reevaluateBoundingBox() {
+	
+	paint( NULL, NULL );
+}
+
+
+/**
  * Event method
  * It will be called every time a input variable value (cFibInputVariable),
  * at which this object is registered, was changed.
@@ -713,15 +787,6 @@ void cFibGraphicsItemFibExtObject::fibScalarValueChangedEvent(
 		//no input variable changed -> nothing to do
 		return;
 	}
-	//try to set the value of the input variable for the copy Fib object
-	cFibInputVariable * pFibScalarCopy =
-		mapInVars.value( const_cast<cFibInputVariable *>(
-			dynamic_cast<const cFibInputVariable *>(pFibScalar)), NULL );
-	if ( pFibScalarCopy != NULL ){
-		//set the value also for the input variable copy
-		DEBUG_OUT_L2(<<"cFibGraphicsItemFibExtObject("<<this <<")::fibInputVariableValueChangedEvent( pFibScalar="<<pFibScalar<<") set the value also for the input variable copy to "<<pFibScalar->getValue()<<endl<<flush);
-		pFibScalarCopy->setValue( pFibScalar->getValue() );
-	}
 	mutexGraphicsPixmapItemForFibObject.lock();
 	if ( pGraphicsPixmapItemForFibObject ){
 		//Fib object needs to be reevaluated -> delete pGraphicsPixmapItemForFibObject
@@ -730,9 +795,9 @@ void cFibGraphicsItemFibExtObject::fibScalarValueChangedEvent(
 	}
 	mutexGraphicsPixmapItemForFibObject.unlock();
 	//reevaluate the bounding box (boundingRectangle)
-	paint( NULL, NULL );
-	//redraw this item
-	update( boundingRectangle );
+	emit signalReevaluateBoundingBox();
+	//TODO needed? redraw this item
+	//update( boundingRectangle );
 	
 	DEBUG_OUT_L2(<<"cFibGraphicsItemFibExtObject("<<this <<")::fibInputVariableValueChangedEvent( pFibScalar="<<pFibScalar<<") done"<<endl<<flush);
 }
@@ -763,28 +828,6 @@ void cFibGraphicsItemFibExtObject::evalueInputVariables(){
 		}
 		mutexMainOptions.unlock();
 	}
-	if ( pFibInputVariablesCopy ){
-		delete pFibInputVariablesCopy;
-		pFibInputVariablesCopy = NULL;
-	}
-	if ( pFibObjectCopy ){
-		//evalue the input variables for the copy
-		pFibInputVariablesCopy = new cFibInputVariables(
-			pFibObjectCopy, true, true );
-	}
-	if ( ( pWidgetFibInputVariables != NULL ) && ( pFibInputVariablesCopy != NULL ) ){
-		//create input variables map
-		const unsigned int uiNumberOfInputVariables =
-			pWidgetFibInputVariables->getNumberOfInputVariables();
-		
-		for ( unsigned int uiActualInVar = 1;
-				uiActualInVar <= uiNumberOfInputVariables; uiActualInVar++ ){
-			
-			mapInVars.insert(
-				pWidgetFibInputVariables->getInputVariable( uiActualInVar ),
-				pFibInputVariablesCopy->getInputVariable( uiActualInVar ) );
-		}//end for all input variables
-	}
 	
 	if ( pWidgetFibInputVariables ){
 		//register this object as a value change listener of them
@@ -793,36 +836,6 @@ void cFibGraphicsItemFibExtObject::evalueInputVariables(){
 	
 	DEBUG_OUT_L2(<<"cFibGraphicsItemFibExtObject("<<this<<")::evalueInputVariables() done"<<endl<<flush);
 }
-
-
-/**
- * Event method
- * It will be called every time a Fib node (cFibNode), at which
- * this object is registered, was changed.
- *
- * @param pFibNodeChanged a pointer to the event, with the information
- * 	about the changed Fib node
- */
-void cFibGraphicsItemFibExtObject::fibNodeChangedEvent(
-		const eFibNodeChangedEvent * pFibNodeChanged ){
-	
-	if ( ( pFibNodeChanged != NULL ) &&
-			( pFibNodeChanged->pFibNodeChanged != NULL ) &&
-			( pFibNodeChanged->pFibNodeChanged == pFibObjectCopyNode ) &&
-			( pFibNodeChanged->bNodeDeleted ) ){
-		
-		DEBUG_OUT_L2(<<"cFibGraphicsItemFibExtObject("<<this<<")::fibNodeChangedEvent( pFibNodeChanged="<<pFibNodeChanged<<" ) the Fib node object for the Fib object copy was deleted"<<endl<<flush);
-		/*the Fib node object for the Fib object copy was deleted
-		 -> don't use it or the Fib object copy anymore*/
-		pFibObjectCopy = NULL;
-		pFibObjectCopyNode = NULL;
-		if ( pFibInputVariablesCopy ){
-			delete pFibInputVariablesCopy;
-			pFibInputVariablesCopy = NULL;
-		}
-	}
-}
-
 
 
 /**
@@ -866,33 +879,129 @@ bool cFibGraphicsItemFibExtObject::createMainOptions(){
 		mutexMainOptions.unlock();
 		return false;
 	}
-	//TODO use splitter only if more than two subwindows
+	//create the splitter widget for the subwidgets (vector + input variables)
 	QSplitter * pSplitterMainOptions = new QSplitter();
 	pWidgetMainOptions = pSplitterMainOptions;
 	pSplitterMainOptions->setOrientation( Qt::Vertical );
+	
+	//evalue a good maximum size
+	int iMaximumWidth  = 400;
+	int iMaximumHeight = 400;
+	if ( pFibGraphicsScene != NULL ) {
+		const QGraphicsView * pGraphicsView =
+			pFibGraphicsScene->views().first();
+		if ( pGraphicsView ) {
+			const QSize sizeGraphicView = pGraphicsView->size();
+			iMaximumWidth = max( sizeGraphicView.width() , iMaximumWidth );
+			iMaximumHeight = max( sizeGraphicView.height() , iMaximumWidth );
+		}
+	}
+	DEBUG_OUT_L3(<<"cFibGraphicsItemFibExtObject("<<this<<")::createMainOptions() the maximum width is "<<iMaximumWidth<<endl<<flush);
+	
+	//size with which to enlarge the widget size
+	const QSize sizeEnlargeBy( 32, 32 );
 	
 	if ( pWidgetFibVector ){
 		//add widget for the external object vector
 		pSplitterMainOptions->addWidget( pWidgetFibVector );
 		
-		//TODO evalue good size
-		if ( pWidgetFibVector->getFibVector() != NULL ){
-			pSplitterMainOptions->resize( min( 540U,
-				min( pWidgetFibVector->getFibVector()->getNumberOfElements() , 8U ) * 64U ) ,
-				96 );
+		//resize to a good size; not to big, not to smaal
+		QSize sizeVectorWidget = pWidgetFibVector->sizeHint( -1 );
+		
+		sizeVectorWidget += sizeEnlargeBy;
+		//check if inside maximum width
+		if ( ( iMaximumWidth < sizeVectorWidget.width() ) &&
+				( pWidgetFibVector->getFibVector() != NULL ) ) {
+			//reduce width to maximum width -> do a binary search for a good size
+			int iLowerBoundOfElements = 1;
+			int iUpperBoundOfElements = pWidgetFibVector->getFibVector()->
+				getNumberOfElements();
+			int iActuaNumberOfElements;
+			while ( iLowerBoundOfElements < iUpperBoundOfElements ) {
+				
+				if ( iLowerBoundOfElements + 1 != iUpperBoundOfElements ) {
+					iActuaNumberOfElements =
+						( iLowerBoundOfElements + iUpperBoundOfElements ) / 2;
+				}else{/*difference of one betwean upper and lower bound
+					-> last iteration -> evalue values for lower bound*/
+					iActuaNumberOfElements = iLowerBoundOfElements;
+					iUpperBoundOfElements  = iLowerBoundOfElements;
+				}
+				
+				sizeVectorWidget = pWidgetFibVector->
+					sizeHintForMinElementsInLine( iActuaNumberOfElements );
+				sizeVectorWidget += sizeEnlargeBy;
+				
+				if ( iMaximumWidth < sizeVectorWidget.width() ) {
+					/*width for iActuaNumberOfElements elements to big
+					 -> iActuaNumberOfElements is new upper bound of width*/
+					DEBUG_OUT_L3(<<"cFibGraphicsItemFibExtObject("<<this<<")::createMainOptions() width for "<<iActuaNumberOfElements<<" elements to big "<<sizeVectorWidget.width()<<endl<<flush);
+					
+					iUpperBoundOfElements = iActuaNumberOfElements;
+				}else{/*width for iActuaNumberOfElements elements OK
+					 -> iActuaNumberOfElements is new lower bound of width*/
+					DEBUG_OUT_L3(<<"cFibGraphicsItemFibExtObject("<<this<<")::createMainOptions() width for "<<iActuaNumberOfElements<<" elements OK "<<sizeVectorWidget.width()<<endl<<flush);
+					
+					iLowerBoundOfElements = iActuaNumberOfElements;
+				}
+			}
+		}
+		if ( iMaximumHeight < sizeVectorWidget.height() ){
+			//reduce height to maximum height
+			sizeVectorWidget.setHeight( iMaximumHeight );
 		}
 		
+		pSplitterMainOptions->resize( sizeVectorWidget );
 	}
 	if ( pWidgetFibInputVariables ){
 		//add input variables widget
 		pSplitterMainOptions->addWidget( pWidgetFibInputVariables );
+		//enlarge for input variable widget
+		QSize sizeInputVariablesWidget =
+			pWidgetFibInputVariables->sizeHint( -1 );
 		
-		//TODO evalue good size
-		pSplitterMainOptions->resize( max(
-			static_cast<unsigned int>(pSplitterMainOptions->size().width()),
-				min( 540U, min(
-					pWidgetFibInputVariables->getNumberOfInputVariables() , 8U ) * 64U ) ) ,
-			96 );
+		sizeInputVariablesWidget += sizeEnlargeBy;
+		//check if inside maximum width
+		if ( iMaximumWidth < sizeInputVariablesWidget.width() ) {
+			//reduce width to maximum width -> do a binary search for a good size
+			int iLowerBoundOfVariables = 1;
+			int iUpperBoundOfVariables = pWidgetFibInputVariables->
+				getNumberOfInputVariables();
+			int iActuaNumberOfVariables;
+			while ( iLowerBoundOfVariables < iUpperBoundOfVariables ) {
+				
+				if ( iLowerBoundOfVariables + 1 != iUpperBoundOfVariables ) {
+					iActuaNumberOfVariables =
+						( iLowerBoundOfVariables + iUpperBoundOfVariables ) / 2;
+				}else{/*difference of one betwean upper and lower bound
+					-> last iteration -> evalue values for lower bound*/
+					iActuaNumberOfVariables = iLowerBoundOfVariables;
+					iUpperBoundOfVariables  = iLowerBoundOfVariables;
+				}
+				
+				sizeInputVariablesWidget = pWidgetFibInputVariables->
+					sizeHintForMinElementsInLine( iActuaNumberOfVariables );
+				sizeInputVariablesWidget += sizeEnlargeBy;
+				
+				if ( iMaximumWidth < sizeInputVariablesWidget.width() ) {
+					/*width for iActuaNumberOfVariables elements to big
+					 -> iActuaNumberOfVariables is new upper bound of width*/
+					iUpperBoundOfVariables = iActuaNumberOfVariables;
+				}else{/*width for iActuaNumberOfVariables elements OK
+					 -> iActuaNumberOfVariables is new lower bound of width*/
+					iLowerBoundOfVariables = iActuaNumberOfVariables;
+				}
+			}
+		}
+		//add input variables widget size to splitter size
+		QSize sizeSplitterWidget = pSplitterMainOptions->size();
+		
+		sizeSplitterWidget.setWidth(
+			max( sizeSplitterWidget.width(), sizeInputVariablesWidget.width() ) );
+		sizeSplitterWidget.setHeight( min( iMaximumHeight,
+			sizeSplitterWidget.height() + sizeInputVariablesWidget.height() ) );
+		
+		pSplitterMainOptions->resize( sizeSplitterWidget );
 	}
 	
 	DEBUG_OUT_L2(<<"cFibGraphicsItemFibExtObject("<<this<<")::createMainOptions() done"<<endl<<flush);

@@ -65,7 +65,7 @@ public:
 	 */
 	explicit eObjectDeleted( const tObject * pInObject,
 			const bool bInFibVectorDeleted = false ):
-			pObject( pInObject ), bDeleted( bInFibVectorDeleted ){
+			pObject( pInObject ), bDeleted( bInFibVectorDeleted ) {
 		//nothing to do
 	}
 	
@@ -73,7 +73,7 @@ public:
 	/**
 	 * @return the name of this class "eObjectDeleted"
 	 */
-	virtual std::string getName() const{
+	virtual std::string getName() const {
 		
 		return std::string( "eObjectDeleted" );
 	}
@@ -83,7 +83,7 @@ public:
 	 * @return a pointer to the object that was changed
 	 * 	@see pObject
 	 */
-	const tObject * getObject() const{
+	const tObject * getObject() const {
 		
 		return pObject;
 	}
@@ -93,7 +93,7 @@ public:
 	 * @return a pointer to the object that was changed
 	 * 	@see pObject
 	 */
-	tObject * getObject(){
+	tObject * getObject() {
 		
 		return pObject;
 	}
@@ -105,7 +105,7 @@ public:
 	 * @param pInObject a pointer to the object that was changed
 	 * 	@see pObject
 	 */
-	void setObject( const tObject * pInObject ){
+	void setObject( const tObject * pInObject ) {
 		
 		pObject = pInObject;
 	}
@@ -116,7 +116,7 @@ public:
 	 * 	event dosn't mark that it was deleted
 	 * 	@see bDeleted
 	 */
-	bool isDeleted() const{
+	bool isDeleted() const {
 		
 		return bDeleted;
 	}
@@ -129,7 +129,7 @@ public:
 	 * 	event dosn't mark that it was deleted
 	 * 	@see bDeleted
 	 */
-	void setDeleted( const bool bInObjectDeleted = true ){
+	void setDeleted( const bool bInObjectDeleted = true ) {
 		
 		bDeleted = bInObjectDeleted;
 	}

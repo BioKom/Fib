@@ -1,6 +1,3 @@
-
-//TODO check
-
 /**
  * @file cFibObjectCategory
  * file name: cFibObjectCategory.cpp
@@ -31,7 +28,7 @@
  *
  * This file implements a class for a category for a Fib object.
  *
- * possibel category types:
+ * possible category types:
  *    - relative categories: same type (sameType), is contained (isContained), ...
  *      (the category is relativ to a (base) Fib object, e. g. the category
  *      of Fib object of the same type as a base Fib object)
@@ -47,7 +44,6 @@ History:
 */
 
 
-
 #include "cFibObjectCategory.h"
 
 
@@ -58,8 +54,8 @@ using namespace fib::nCreator;
  *
  * @param szInName the name of the category to create
  * 	@see szName
- * @param bInIsAbsolute if true true if the category is absolute,
- * 	else false, if it is relativ to a other fib object
+ * @param bInIsAbsolute if true the category is absolute, else false, if it
+ * 	is relativ to an other Fib object
  * 	@see bIsAbsolute
  */
 cFibObjectCategory::cFibObjectCategory( const QString & szInName,
@@ -86,7 +82,7 @@ cFibObjectCategory::cFibObjectCategory( const cFibObjectCategory & fibObjectCate
  */
 std::string cFibObjectCategory::getName() const{
 	
-	return "cFibObjectCategory";
+	return std::string("cFibObjectCategory");
 }
 
 
@@ -101,8 +97,8 @@ QString cFibObjectCategory::getCategoryName() const{
 
 
 /**
- * @return true true if the category is absolute, else false, if
- * 	it is relativ to a other fib object
+ * @return true if the category is absolute, else false, if
+ * 	it is relativ to an other fib object
  * 	@see bIsAbsolute
  */
 bool cFibObjectCategory::isAbsolute() const{

@@ -183,6 +183,8 @@ testen (prio 7):
 	- cVector* ::getValueDomain()
 	- cTypeElement and children classes check isInherited()
 	- cDomains::getDomainForReferenceDomain( pReferenceDomain, NULL );
+	- cFibElement::getVariablesUsedButNotDefined()
+	- cFibElement::replaceVariablesWithEqualDefinedVariables()
 
 
 neue Fib-Elemente einfuegen:

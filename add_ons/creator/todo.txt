@@ -1,4 +1,9 @@
 
+tFibNodeHandler_integrateFibObjectIntoNode testcases:
+	- one limb changed
+	- one branch changed
+	- new subobject
+
 
 - main window
 -- try to implement sub windows for the different Fib object views
@@ -28,6 +33,8 @@
 
 nice to have:
 -------------
+
+- cFibNodeHandler: implement SWITCH_SUPERIOR_EVALUED_OBJECT
 
 cFibObjectSourcePath::loadFibObject() : "user can change" adapt for operating system users or/and with optional part entry
 

@@ -47,18 +47,20 @@ History:
 
 
 //TODO switches for test proposes
-#define DEBUG
+//#define DEBUG
 
 #include "cFibVectorCreator.h"
 
 #include <list>
 
 #include <QObject>
+#include <QThread>
 
 #include "cExtObject.h"
 #include "cExtSubobject.h"
 #include "cTypeProperty.h"
 #include "cTypeElement.h"
+#include "cFibVariable.h"
 
 #include "cFibVectorHandler.h"
 #include "cFibVariableHandler.h"
@@ -66,9 +68,11 @@ History:
 #include "cFibInputVariable.h"
 #include "lFibVectorChanged.h"
 #include "eFibVectorChangedEvent.h"
+#include "eFibNodeChangedEvent.h"
 #include "cWidgetFibVector.h"
 #include "cFibNodeHandler.h"
 #include "cFibNode.h"
+#include "cThreadSendFibElementChangedViaFibNode.h"
 
 
 using namespace std;
@@ -80,7 +84,7 @@ using namespace fib::nCreator;
  * It constructs a vector with no elements. (So you can add them later.)
  */
 cFibVectorCreator::cFibVectorCreator(): strVectorName(""), pFibElement( NULL ),
-		pFibVector( NULL ) {
+		pFibVector( NULL ), pMasterNode( NULL ) {
 	//nothing to do
 	DEBUG_OUT_L2(<<"cFibVectorCreator("<<this<<")::cFibVectorCreator() called"<<endl<<flush);
 }
@@ -96,14 +100,14 @@ cFibVectorCreator::cFibVectorCreator(): strVectorName(""), pFibElement( NULL ),
  * 	@see pFibVector
  */
 cFibVectorCreator::cFibVectorCreator( fib::cFibVector * pInFibVector ): strVectorName(""),
-		pFibElement( NULL ), pFibVector( pInFibVector ) {
-	//nothing to do
+		pFibElement( NULL ), pFibVector( pInFibVector ), pMasterNode( NULL ) {
+	
 	DEBUG_OUT_L2(<<"cFibVectorCreator("<<this<<")::cFibVectorCreator( pInFibVector="<<pInFibVector<<" ) called"<<endl<<flush);
 	
 	if ( pInFibVector ) {
 		pFibElement = pInFibVector->getDefiningFibElement();
 		
-		mutexFibVectorHandler.lock();
+		mutexFibVector.lock();
 		
 		cFibVariableHandler * pFibVariableHandler =
 			cFibVariableHandler::getInstance();
@@ -159,6 +163,10 @@ cFibVectorCreator::cFibVectorCreator( fib::cFibVector * pInFibVector ): strVecto
 				//TODO more vector types
 			};//end switch vector type
 		}
+		if ( pVectorType ) {
+			//delete vector element type
+			delete pVectorType;
+		}
 		
 		for ( unsignedIntFib uiActualElement = 1;
 				uiActualElement <= uiNumberOfElements; uiActualElement++ ) {
@@ -170,13 +178,6 @@ cFibVectorCreator::cFibVectorCreator( fib::cFibVector * pInFibVector ): strVecto
 						pInFibVector->getVariable( uiActualElement ), this );
 				
 				if ( pElementVariable ) {
-/*TODO weg:
-					//variable name= variable name -> vector element name
-					pElementVariable->setVariableName(
-						pElementVariable->getVariableName() +
-						QString(" -> ") + vecElementName );
-					
-*/
 					registerForElement( pElementVariable );
 					
 					liElements.push_back( pElementVariable );
@@ -205,11 +206,20 @@ cFibVectorCreator::cFibVectorCreator( fib::cFibVector * pInFibVector ): strVecto
 				registerForElement( pElementScalar );
 			}
 		}
-		if ( pVectorType ) {
-			//delete vector element type
-			delete pVectorType;
+		/*this object should be adapted if the domains change change
+		 *-> it needs to listen for changes of the defining Fib elements*/
+		//try to evalue master node for the change listener
+		cFibNodeHandler * pNodeHandler = cFibNodeHandler::getInstance();
+		if ( ( pFibElement != NULL ) && ( pNodeHandler != NULL) ){
+			cFibElement * pMasterFibRoot = pFibElement->getMasterRoot();
+			
+			if ( pMasterFibRoot ){
+				//register this as node change listener
+				pMasterNode = pNodeHandler->getNodeForFibObject(
+					pMasterFibRoot, this );
+			}
 		}
-		mutexFibVectorHandler.unlock();
+		mutexFibVector.unlock();
 	}
 }
 
@@ -231,18 +241,34 @@ cFibVectorCreator::cFibVectorCreator( QList< iGetWidget * > & liInElements,
 		const QString szVectorName, fib::cFibVector * pInFibVector,
 		cFibElement * pInFibElement ):
 		strVectorName( szVectorName ), liElements( liInElements ),
-		pFibElement( pInFibElement ), pFibVector( pInFibVector ) {
+		pFibElement( pInFibElement ), pFibVector( pInFibVector ),
+		pMasterNode( NULL ) {
 	
 	DEBUG_OUT_L2(<<"cFibVectorCreator("<<this<<")::cFibVectorCreator( liInElements, szVectorName=\""<<szVectorName.toStdString()<<"\", pInFibElement="<<pInFibElement<<" ) called"<<endl<<flush);
 	
-	mutexFibVectorHandler.lock();
+	mutexFibVector.lock();
 	//register this vector as a listener for element changes
 	for ( QList< iGetWidget * >::iterator itrElement = liElements.begin();
 			itrElement != liElements.end(); itrElement++ ) {
 		
 		registerForElement( *itrElement );
 	}
-	mutexFibVectorHandler.unlock();
+	if ( pFibElement != NULL ) {
+		/*this object should be adapted if the domains change change
+		 *-> it needs to listen for changes of the defining Fib elements*/
+		//try to evalue master node for the change listener
+		cFibNodeHandler * pNodeHandler = cFibNodeHandler::getInstance();
+		if ( pNodeHandler != NULL ){
+			cFibElement * pMasterFibRoot = pFibElement->getMasterRoot();
+			
+			if ( pMasterFibRoot ){
+				//register this as node change listener
+				pMasterNode = pNodeHandler->getNodeForFibObject(
+					pMasterFibRoot, this );
+			}
+		}
+	}
+	mutexFibVector.unlock();
 }
 
 
@@ -255,14 +281,17 @@ cFibVectorCreator::~cFibVectorCreator() {
 	const eFibVectorChangedEvent fibVectorChangedEvent( this, true );
 	sendFibVectorChange( &fibVectorChangedEvent );
 	
-	mutexFibVectorHandler.lock();
+	mutexFibVector.lock();
 	//register this vector as a listener for element changes
 	while ( ! liElements.empty() ) {
 		
 		removeElementFromVector( liElements.front() );
 	}
 	cFibVectorHandler::getInstance()->removeVector( this );
-	mutexFibVectorHandler.unlock();
+	if ( pMasterNode ){
+		pMasterNode->unregisterNodeChangeListener( this );
+	}
+	mutexFibVector.unlock();
 }
 
 
@@ -282,9 +311,9 @@ std::string cFibVectorCreator::getName() const{
  */
 QString cFibVectorCreator::getVectorName() const{
 	
-	mutexFibVectorHandler.lock();
+	mutexFibVector.lock();
 	const QString strRetVectorName = strVectorName;
-	mutexFibVectorHandler.unlock();
+	mutexFibVector.unlock();
 	return strRetVectorName;
 }
 
@@ -298,16 +327,16 @@ QString cFibVectorCreator::getVectorName() const{
 void cFibVectorCreator::setVectorName( const QString & strName ) {
 	
 	DEBUG_OUT_L2(<<"cFibVectorCreator("<<this<<")::setVectorName( strName=\""<<strName.toStdString()<<"\") called"<<endl<<flush);
-	mutexFibVectorHandler.lock();
+	mutexFibVector.lock();
 	if ( strVectorName != strName ) {
 		strVectorName = strName;
-		mutexFibVectorHandler.unlock();
+		mutexFibVector.unlock();
 		
 		const eFibVectorChangedEvent fibVectorChangedEvent(
 			this, eFibVectorChangedEvent::NAME );
 		sendFibVectorChange( &fibVectorChangedEvent );
 	}else{
-		mutexFibVectorHandler.unlock();
+		mutexFibVector.unlock();
 	}
 }
 
@@ -318,9 +347,9 @@ void cFibVectorCreator::setVectorName( const QString & strName ) {
  */
 unsigned int cFibVectorCreator::getNumberOfElements() const{
 	
-	mutexFibVectorHandler.lock();
+	mutexFibVector.lock();
 	const unsigned int uiNumberOfScalars = liElements.size();
-	mutexFibVectorHandler.unlock();
+	mutexFibVector.unlock();
 	return uiNumberOfScalars;
 }
 
@@ -337,9 +366,9 @@ unsigned int cFibVectorCreator::getNumberOfElements() const{
  */
 iGetWidget * cFibVectorCreator::getElement( const unsigned int uiNumberOfElement ) {
 	
-	mutexFibVectorHandler.lock();
+	mutexFibVector.lock();
 	iGetWidget * pElement = liElements.value( uiNumberOfElement - 1, NULL );
-	mutexFibVectorHandler.unlock();
+	mutexFibVector.unlock();
 	return pElement;
 }
 
@@ -357,10 +386,10 @@ iGetWidget * cFibVectorCreator::getElement( const unsigned int uiNumberOfElement
 const iGetWidget * cFibVectorCreator::getElement(
 		const unsigned int uiNumberOfElement ) const{
 	
-	mutexFibVectorHandler.lock();
+	mutexFibVector.lock();
 	const iGetWidget * pElement =
 		liElements.value( uiNumberOfElement - 1, NULL );
-	mutexFibVectorHandler.unlock();
+	mutexFibVector.unlock();
 	return pElement;
 }
 
@@ -373,9 +402,9 @@ const iGetWidget * cFibVectorCreator::getElement(
  */
 QList< iGetWidget * > cFibVectorCreator::getElements() {
 	
-	mutexFibVectorHandler.lock();
+	mutexFibVector.lock();
 	const QList< iGetWidget * > liElementsRet = liElements;
-	mutexFibVectorHandler.unlock();
+	mutexFibVector.unlock();
 	return liElementsRet;
 }
 
@@ -388,9 +417,9 @@ QList< iGetWidget * > cFibVectorCreator::getElements() {
  */
 const QList< iGetWidget * > cFibVectorCreator::getElements() const{
 	
-	mutexFibVectorHandler.lock();
+	mutexFibVector.lock();
 	const QList< iGetWidget * > liElementsRet = liElements;
-	mutexFibVectorHandler.unlock();
+	mutexFibVector.unlock();
 	return liElementsRet;
 }
 
@@ -411,43 +440,12 @@ const QList< iGetWidget * > cFibVectorCreator::getElements() const{
  * 	(counting starts with 1)
  * @return true if the element was added, else false
  */
-bool cFibVectorCreator::addElement( iGetWidget * pElement,
+bool cFibVectorCreator::addElement( iGetWidget * /*pElement*/,
 		const unsigned int /*uiPosition*/ ) {
 	//can't add elements to this vector type
 	DEBUG_OUT_L2(<<"cFibVectorCreator("<<this<<")::addElement( pElement="<<pElement<<" ) called"<<endl<<flush);
 	return false;
 }
-/*TODO weg
-bool cFibVectorCreator::addElement( iGetWidget * pElement,
-		const unsigned int uiPosition ) {
-	DEBUG_OUT_L2(<<"cFibVectorCreator("<<this<<")::addElement( pElement="<<pElement<<" ) called"<<endl<<flush);
-	if ( pElement == NULL ) {
-		//nothing to insert
-		return false;
-	}
-	mutexFibVectorHandler.lock();
-	if ( ( uiPosition < 1 ) || (
-			(static_cast<unsigned int>(liElements.size())) < uiPosition ) ) {
-		//add to end of element list
-		liElements.append( pElement );
-	}else{//insert on position
-		liElements.insert( uiPosition - 1 , pElement );
-	}
-	
-	registerForElement( pElement );
-	
-	//TODO adapt Fib vector
-	
-	
-	mutexFibVectorHandler.unlock();
-	
-	const eFibVectorChangedEvent fibVectorChangedEvent(
-		this, eFibVectorChangedEvent::ADD, uiPosition );
-	sendFibVectorChange( &fibVectorChangedEvent );
-	
-	return true;
-}
-*/
 
 
 /**
@@ -463,39 +461,12 @@ bool cFibVectorCreator::addElement( iGetWidget * pElement,
  * 	(counting starts with 1)
  * @return true if the element was removed, else false
  */
-bool cFibVectorCreator::removeElement( const unsigned int uiPosition ) {
+bool cFibVectorCreator::removeElement( const unsigned int /*uiPosition*/ ) {
 	
 	DEBUG_OUT_L2(<<"cFibVectorCreator("<<this<<")::removeElement( uiPosition="<<uiPosition<<" ) called"<<endl<<flush);
 	//can't remove elements from this vector type
 	return false;
 }
-/*TODO weg
-bool cFibVectorCreator::removeElement( const unsigned int uiPosition ) {
-	DEBUG_OUT_L2(<<"cFibVectorCreator("<<this<<")::removeElement( uiPosition="<<uiPosition<<" ) called"<<endl<<flush);
-	mutexFibVectorHandler.lock();
-	if ( ( uiPosition < 1 ) ||
-			( (static_cast<unsigned int>(liElements.size())) < uiPosition ) ) {
-		//no such element to remove
-		mutexFibVectorHandler.unlock();
-		return false;
-	}
-	//evaluate the to remove element
-	iGetWidget * pRemovedElement = liElements.value( uiPosition - 1, NULL );
-	//remove the element
-	liElements.removeAt( uiPosition - 1 );
-	if ( ! liElements.contains( pRemovedElement ) ) {
-		//remove from entire vector
-		removeElementFromVector( pRemovedElement );
-	}
-	mutexFibVectorHandler.unlock();
-	
-	const eFibVectorChangedEvent fibVectorChangedEvent(
-		this, eFibVectorChangedEvent::REMOVE, uiPosition );
-	sendFibVectorChange( &fibVectorChangedEvent );
-	
-	return true;
-}
-*/
 
 
 /**
@@ -510,55 +481,12 @@ bool cFibVectorCreator::removeElement( const unsigned int uiPosition ) {
  * @param pElement the element to remove
  * @return true if the element was removed, else false
  */
-bool cFibVectorCreator::removeElement( iGetWidget * pElement ) {
+bool cFibVectorCreator::removeElement( iGetWidget * /*pElement*/ ) {
 	
 	DEBUG_OUT_L2(<<"cFibVectorCreator("<<this<<")::removeElement( pElement="<<pElement<<" ) called"<<endl<<flush);
 	//can't remove elements from this vector type
 	return false;
 }
-/*TODO weg
-bool cFibVectorCreator::removeElement( iGetWidget * pElement ) {
-	DEBUG_OUT_L2(<<"cFibVectorCreator("<<this<<")::removeElement( pElement="<<pElement<<" ) called"<<endl<<flush);
-	mutexFibVectorHandler.lock();
-	if ( ( pElement == NULL ) || ( ! liElements.contains( pElement ) ) ) {
-		//no such element to remove
-		mutexFibVectorHandler.unlock();
-		return false;
-	}
-	
-	int uiLastFoundIndex = 0;
-	list< int > liFoundIndex;
-	while ( true ) {
-		uiLastFoundIndex = liElements.indexOf( pElement , uiLastFoundIndex );
-		if ( uiLastFoundIndex < 0 ) {
-			//element not found -> stop search
-			break;
-		}//else element found -> add index to found index and search for next
-		liFoundIndex.push_back( uiLastFoundIndex );
-	}
-	if ( liFoundIndex.empty() ) {
-		//no such element to remove
-		mutexFibVectorHandler.unlock();
-		return false;
-	}
-	
-	//remove element
-	removeElementFromVector( pElement );
-	
-	mutexFibVectorHandler.unlock();
-	//send information about removed elements
-	for ( list< int >::iterator itrRemovedElement = liFoundIndex.begin();
-			itrRemovedElement != liFoundIndex.end(); itrRemovedElement++ ) {
-		
-		const eFibVectorChangedEvent fibVectorChangedEvent(
-			this, eFibVectorChangedEvent::REMOVE,
-			(*itrRemovedElement + 1 ) );
-		sendFibVectorChange( &fibVectorChangedEvent );
-	}
-	
-	return true;
-}
-*/
 
 
 /**
@@ -582,27 +510,41 @@ bool cFibVectorCreator::replaceElement( const unsigned int uiPosition,
 		iGetWidget * pElement ) {
 	
 	DEBUG_OUT_L2(<<"cFibVectorCreator("<<this<<")::replaceElement( uiPosition="<<uiPosition<<" ,pElement="<<pElement<<" ) called"<<endl<<flush);
-	mutexFibVectorHandler.lock();
+	mutexFibVector.lock();
 	if ( ( pElement == NULL ) || ( uiPosition < 1 ) ||
 			( (static_cast<unsigned int>(liElements.size())) < uiPosition ) ) {
 		//no such element to replace
-		mutexFibVectorHandler.unlock();
+		mutexFibVector.unlock();
 		return false;
 	}
 	//adapt Fib vector
-	if ( pFibVector ){
-		if ( pElement->getName() == "cFibScalar" ){
+	if ( pFibVector ) {
+		
+		if ( pElement->getName() == "cFibScalar" ) {
 			//change to value
-			pFibVector->setValue( uiPosition, static_cast<cFibScalar*>(
-				pElement)->getValue() );
+			
+			const doubleFib dNewValue =
+				static_cast<cFibScalar*>(pElement)->getValue();
+			if ( ( pFibVector->isVariable( uiPosition ) ) ||
+					( pFibVector->getValue( uiPosition ) != dNewValue ) ) {
+				
+				pFibVector->setValue( uiPosition, dNewValue );
+				sendNodeChangedEvent();
+			}
 			
 		}else if ( ( pElement->getName() == "cFibVectorCreator" ) ||
-				( pElement->getName() == "cFibInputVariable" ) ){
+				( pElement->getName() == "cFibInputVariable" ) ) {
 			//change to variable
-			pFibVector->setVariable( uiPosition, static_cast<cFibVariableCreator*>(
-				pElement)->getFibVariable() );
+			cFibVariable * pNewVariable =
+				static_cast<cFibVariableCreator*>(pElement)->getFibVariable();
+			if ( ( ! pFibVector->isVariable( uiPosition ) ) ||
+					( pFibVector->getVariable( uiPosition ) != pNewVariable ) ) {
+				
+				pFibVector->setVariable( uiPosition, pNewVariable );
+				sendNodeChangedEvent();
+			}
 		}else{//can't adapt vector element
-			mutexFibVectorHandler.unlock();
+			mutexFibVector.unlock();
 			return false;
 		}
 	}//else no vector to adapt
@@ -627,7 +569,7 @@ bool cFibVectorCreator::replaceElement( const unsigned int uiPosition,
 	//register this as element change listener at new elements
 	registerForElement( pElement );
 	
-	mutexFibVectorHandler.unlock();
+	mutexFibVector.unlock();
 	
 	const eFibVectorChangedEvent fibVectorChangedEvent(
 		this, eFibVectorChangedEvent::REPLACE, uiPosition );
@@ -657,21 +599,21 @@ bool cFibVectorCreator::replaceElement( iGetWidget * pElementToReplace,
 		iGetWidget * pNewElement ) {
 	
 	DEBUG_OUT_L2(<<"cFibVectorCreator("<<this<<")::replaceElement( pElementToReplace="<<pElementToReplace<<", pNewElement="<<pNewElement<<" ) called"<<endl<<flush);
-	mutexFibVectorHandler.lock();
+	mutexFibVector.lock();
 	if ( ( pNewElement == NULL ) || ( pElementToReplace == NULL ) ||
 			( pNewElement == pElementToReplace ) ||
 			( liElements.contains( pElementToReplace ) ) ) {
 		//no such element to replace
-		mutexFibVectorHandler.unlock();
+		mutexFibVector.unlock();
 		return false;
 	}
 	//check if element in vector can be replaced
-	if ( pFibVector ){
+	if ( pFibVector ) {
 		if ( ( pNewElement->getName() != "cFibScalar" ) &&
 				( pNewElement->getName() != "cFibVectorCreator" ) &&
-				( pNewElement->getName() != "cFibInputVariable" ) ){
+				( pNewElement->getName() != "cFibInputVariable" ) ) {
 			//can't adapt vector element
-			mutexFibVectorHandler.unlock();
+			mutexFibVector.unlock();
 			return false;
 		}
 	}
@@ -688,14 +630,21 @@ bool cFibVectorCreator::replaceElement( iGetWidget * pElementToReplace,
 		liFoundIndex.push_back( uiLastFoundIndex );
 	}
 	//adapt Fib vector
-	if ( pFibVector ){
-		if ( pNewElement->getName() == "cFibScalar" ){
+	if ( pFibVector ) {
+		bool bVectorChanged = false;
+		if ( pNewElement->getName() == "cFibScalar" ) {
 			//change to value
 			for ( list< int >::iterator itrRemovedElement = liFoundIndex.begin();
 					itrRemovedElement != liFoundIndex.end(); itrRemovedElement++ ) {
 				
-				pFibVector->setValue( (*itrRemovedElement) + 1,
-					static_cast<cFibScalar*>(pNewElement)->getValue() );
+				const doubleFib dNewValue =
+					static_cast<cFibScalar*>(pNewElement)->getValue();
+				if ( ( pFibVector->isVariable( (*itrRemovedElement) + 1 ) ) ||
+						( pFibVector->getValue( (*itrRemovedElement) + 1 ) != dNewValue ) ) {
+					
+					pFibVector->setValue( (*itrRemovedElement) + 1, dNewValue );
+					bVectorChanged = true;
+				}
 			}
 			
 		}else{/* if ( ( pNewElement->getName() == "cFibVectorCreator" ) ||
@@ -704,10 +653,20 @@ bool cFibVectorCreator::replaceElement( iGetWidget * pElementToReplace,
 			for ( list< int >::iterator itrRemovedElement = liFoundIndex.begin();
 					itrRemovedElement != liFoundIndex.end(); itrRemovedElement++ ) {
 				
-				pFibVector->setVariable( (*itrRemovedElement) + 1,
-					static_cast<cFibVariableCreator*>(pNewElement)->getFibVariable() );
+				cFibVariable * pNewVariable =
+					static_cast<cFibVariableCreator*>(pNewElement)->getFibVariable();
+				if ( ( ! pFibVector->isVariable( (*itrRemovedElement) + 1 ) ) ||
+						( pFibVector->getVariable( (*itrRemovedElement) + 1 ) != pNewVariable ) ) {
+					
+					pFibVector->setVariable( (*itrRemovedElement) + 1, pNewVariable );
+					bVectorChanged = true;
+				}
 			}
 		}
+		if ( bVectorChanged ) {
+			sendNodeChangedEvent();
+		}
+		
 	}//else no vector to adapt
 	
 	//register this as element change listener at new elements
@@ -717,7 +676,7 @@ bool cFibVectorCreator::replaceElement( iGetWidget * pElementToReplace,
 	unregister this as element change listener at elements*/
 	removeElementFromVector( pElementToReplace );
 	
-	mutexFibVectorHandler.unlock();
+	mutexFibVector.unlock();
 	
 	//send information about removed elements
 	for ( list< int >::iterator itrRemovedElement = liFoundIndex.begin();
@@ -753,18 +712,24 @@ bool cFibVectorCreator::replaceElement( const unsigned int uiPosition,
 		const doubleFib dValue ) {
 	
 	DEBUG_OUT_L2(<<"cFibVectorCreator("<<this<<")::replaceElement( uiPosition="<<uiPosition<<" , dValue="<<dValue<<" ) called"<<endl<<flush);
-	mutexFibVectorHandler.lock();
+	mutexFibVector.lock();
 	
 	if ( ( uiPosition < 1 ) ||
 			( (static_cast<unsigned int>(liElements.size())) < uiPosition ) ) {
 		//no such element to replace
-		mutexFibVectorHandler.unlock();
+		mutexFibVector.unlock();
 		return false;
 	}
 	//adapt Fib vector
-	if ( pFibVector ){
+	if ( pFibVector ) {
 		//change to value
-		pFibVector->setValue( uiPosition, dValue );
+		if ( pFibVector->isVariable( uiPosition ) ||
+				( pFibVector->getValue( uiPosition ) != dValue ) ) {
+			
+			pFibVector->setValue( uiPosition, dValue );
+			
+			sendNodeChangedEvent();
+		}
 	}//else no vector to adapt
 	
 	//evaluate the to remove element
@@ -796,7 +761,7 @@ bool cFibVectorCreator::replaceElement( const unsigned int uiPosition,
 	//register this as element change listener at new elements
 	registerForElement( pElementScalar );
 	
-	mutexFibVectorHandler.unlock();
+	mutexFibVector.unlock();
 	
 	const eFibVectorChangedEvent fibVectorChangedEvent(
 		this, eFibVectorChangedEvent::REPLACE, uiPosition );
@@ -824,14 +789,14 @@ bool cFibVectorCreator::replaceElement( const unsigned int uiPosition,
 bool cFibVectorCreator::setElements( QList< iGetWidget * > & liInElements ) {
 	
 	DEBUG_OUT_L2(<<"cFibVectorCreator("<<this<<")::setElements( #liInElements="<<liInElements.size()<<" ) called"<<endl<<flush);
-	mutexFibVectorHandler.lock();
+	mutexFibVector.lock();
 	
-	if ( pFibVector ){
+	if ( pFibVector ) {
 		//check if Fib vector can be adapted
 		if ( pFibVector->getNumberOfElements() !=
-				static_cast<unsignedIntFib>(liInElements.size()) ){
+				static_cast<unsignedIntFib>(liInElements.size()) ) {
 			//vectors not of the same size -> can't adapt Fib vector
-			mutexFibVectorHandler.unlock();
+			mutexFibVector.unlock();
 			return false;
 		}
 		for ( QList< iGetWidget * >::iterator
@@ -841,30 +806,48 @@ bool cFibVectorCreator::setElements( QList< iGetWidget * > & liInElements ) {
 			const string strElementType = (*itrActualElement)->getName();
 			if ( ( strElementType != "cFibScalar" ) &&
 					( strElementType != "cFibVectorCreator" ) &&
-					( strElementType != "cFibInputVariable" ) ){
+					( strElementType != "cFibInputVariable" ) ) {
 				//can't adapt vector element -> can't adapt Fib vector
-				mutexFibVectorHandler.unlock();
+				mutexFibVector.unlock();
 				return false;
 			}
 		}
 		//adapt Fib vector
 		unsignedIntFib uiActualElement = 1;
+		
+		bool bVectorChanged = false;
 		for ( QList< iGetWidget * >::iterator
 				itrActualElement = liElements.begin();
 				itrActualElement != liElements.end();
 				itrActualElement++, uiActualElement++ ) {
 			
-			if ( (*itrActualElement)->getName() == "cFibScalar" ){
+			if ( (*itrActualElement)->getName() == "cFibScalar" ) {
 				//change to value
-				pFibVector->setValue( uiActualElement,
-					static_cast<cFibScalar*>(*itrActualElement)->getValue() );
+				const doubleFib dNewValue =
+					static_cast<cFibScalar*>(*itrActualElement)->getValue();
+				if ( ( pFibVector->isVariable( uiActualElement ) ) ||
+						( pFibVector->getValue( uiActualElement ) != dNewValue ) ) {
+					
+					pFibVector->setValue( uiActualElement, dNewValue );
+					bVectorChanged = true;
+				}
 				
 			}else{/* if ( ( (*itrActualElement)->getName() == "cFibVectorCreator" ) ||
 					( (*itrActualElement)->getName() == "cFibInputVariable" ) )*/
 				//change to variable
-				pFibVector->setVariable( uiActualElement,
-					static_cast<cFibVariableCreator*>(*itrActualElement)->getFibVariable() );
+				
+				cFibVariable * pNewVariable =
+					static_cast<cFibVariableCreator*>(*itrActualElement)->getFibVariable();
+				if ( ( ! pFibVector->isVariable( uiActualElement ) ) ||
+						( pFibVector->getVariable( uiActualElement ) != pNewVariable ) ) {
+					
+					pFibVector->setVariable( uiActualElement, pNewVariable );
+					bVectorChanged = true;
+				}
 			}
+		}
+		if ( bVectorChanged ) {
+			sendNodeChangedEvent();
 		}
 	}
 	//unregister this as element change listener at old elements
@@ -882,7 +865,7 @@ bool cFibVectorCreator::setElements( QList< iGetWidget * > & liInElements ) {
 		
 		registerForElement( *itrActualElement );
 	}
-	mutexFibVectorHandler.unlock();
+	mutexFibVector.unlock();
 	//send all elements replaced
 	const eFibVectorChangedEvent fibVectorChangedEvent(
 		this, eFibVectorChangedEvent::REPLACE );
@@ -928,18 +911,40 @@ const cFibElement * cFibVectorCreator::getFibElement() const{
 void cFibVectorCreator::setFibElement( cFibElement * pInFibElement ) {
 	
 	DEBUG_OUT_L2(<<"cFibVectorCreator("<<this<<")::setFibElement( pInFibElement="<<pInFibElement<<" ) called"<<endl<<flush);
-	mutexFibVectorHandler.lock();
+	mutexFibVector.lock();
 	if ( pFibElement != pInFibElement ) {
 		//Fib element changed
 		pFibElement = pInFibElement;
-		mutexFibVectorHandler.unlock();
+		
+		//update master root element
+		if ( pMasterNode ){
+			pMasterNode->unregisterNodeChangeListener( this );
+			pMasterNode = NULL;
+		}
+		if ( pFibElement != NULL ) {
+			/*this object should be adapted if the domains change change
+			 *-> it needs to listen for changes of the defining Fib elements*/
+			//try to evalue master node for the change listener
+			cFibNodeHandler * pNodeHandler = cFibNodeHandler::getInstance();
+			if ( pNodeHandler != NULL ){
+				cFibElement * pMasterFibRoot = pFibElement->getMasterRoot();
+				
+				if ( pMasterFibRoot ){
+					//register this as node change listener
+					pMasterNode = pNodeHandler->getNodeForFibObject(
+						pMasterFibRoot, this );
+				}
+			}
+		}
+		
+		mutexFibVector.unlock();
 		
 		//send Fib element was changed
 		const eFibVectorChangedEvent fibVectorChangedEvent(
 			this, eFibVectorChangedEvent::FIB_ELEMENT );
 		sendFibVectorChange( &fibVectorChangedEvent );
 	}else{//nothing changed
-		mutexFibVectorHandler.unlock();
+		mutexFibVector.unlock();
 	}
 }
 
@@ -979,18 +984,18 @@ const fib::cFibVector * cFibVectorCreator::getFibVector() const{
 void cFibVectorCreator::setFibVector( fib::cFibVector * pInFibVector ) {
 	
 	DEBUG_OUT_L2(<<"cFibVectorCreator("<<this<<")::setFibVector( pInFibVector="<<pInFibVector<<" ) called"<<endl<<flush);
-	mutexFibVectorHandler.lock();
+	mutexFibVector.lock();
 	if ( pFibVector != pInFibVector ) {
 		//Fib vector changed
 		pFibVector = pInFibVector;
-		mutexFibVectorHandler.unlock();
+		mutexFibVector.unlock();
 		
 		//send Fib vector was changed
 		const eFibVectorChangedEvent fibVectorChangedEvent(
 			this, eFibVectorChangedEvent::FIB_VECTOR );
 		sendFibVectorChange( &fibVectorChangedEvent );
 	}else{//nothing changed
-		mutexFibVectorHandler.unlock();
+		mutexFibVector.unlock();
 	}
 	
 }
@@ -1008,7 +1013,7 @@ void cFibVectorCreator::setFibVector( fib::cFibVector * pInFibVector ) {
 void cFibVectorCreator::assignValues() {
 	
 	DEBUG_OUT_L2(<<"cFibVectorCreator("<<this<<")::assignValues() called"<<endl<<flush);
-	mutexFibVectorHandler.lock();
+	mutexFibVector.lock();
 	//call assign value for all elements in the vector
 	iGetWidget * pActualElement;
 	if ( pFibVector ) {
@@ -1030,29 +1035,13 @@ void cFibVectorCreator::assignValues() {
 							(static_cast<cFibScalar*>(pActualElement))->getValue() );
 						bVectorChanged = true;
 					}
-				}else if ( pActualElement->getName() == "cFibScalar" ) {
-					//vector element is a scalar / value -> set value in Fib vector
-					const doubleFib dValueToSet =
-						(static_cast<cFibScalar*>(pActualElement))->getValue();
-					if ( dValueToSet != pFibVector->getValue( uiActualElement ) ) {
-						pFibVector->setValue( uiActualElement, dValueToSet );
-						bVectorChanged = true;
-					}
 				}
 			}
 		}
-		mutexFibVectorHandler.unlock();
-		if ( bVectorChanged && ( pFibElement != NULL ) ) {
-			//send node changed event
-			cFibNode * pChangedNode = cFibNodeHandler::getInstance()->
-				getContainingNodeForFibObject( pFibElement );
-			DEBUG_OUT_L2(<<"cFibVectorCreator("<<this<<")::assignValues() send node changed event to node "<<pChangedNode<<endl<<flush);
-			//TODO give eFibNodeChangedEvent
-			if ( pChangedNode ){
-				pChangedNode->fibObjectChanged();
-			}
+		mutexFibVector.unlock();
+		if ( bVectorChanged ) {
+			sendNodeChangedEvent();
 		}
-		
 	}else{//no Fib vector for this vector exists
 		for ( QList< iGetWidget * >::iterator itrElement = liElements.begin();
 				itrElement != liElements.end(); itrElement++ ) {
@@ -1066,7 +1055,7 @@ void cFibVectorCreator::assignValues() {
 				}
 			}
 		}
-		mutexFibVectorHandler.unlock();
+		mutexFibVector.unlock();
 	}
 	DEBUG_OUT_L2(<<"cFibVectorCreator("<<this<<")::assignValues() done"<<endl<<flush);
 }
@@ -1090,7 +1079,7 @@ void cFibVectorCreator::fibScalarChangedEvent(
 	}
 	if ( pFibScalarEvent->bScalarDeleted ) {
 		//remove deleted scalar
-		mutexFibVectorHandler.lock();
+		mutexFibVector.lock();
 		list< int > liReplacedElements;
 		bool bVectorChanged = false;
 		while ( true ) {
@@ -1113,13 +1102,9 @@ void cFibVectorCreator::fibScalarChangedEvent(
 				bVectorChanged = true;
 			}
 		}
-		mutexFibVectorHandler.unlock();
-		if ( bVectorChanged && ( pFibElement != NULL ) ) {
-			//send node changed event
-			cFibNode * pChangedNode = cFibNodeHandler::getInstance()->
-				getContainingNodeForFibObject( pFibElement );
-			//TODO give eFibNodeChangedEvent
-			pChangedNode->fibObjectChanged();
+		mutexFibVector.unlock();
+		if ( bVectorChanged ) {
+			sendNodeChangedEvent();
 		}
 		
 		//send Fib vector element changed/replaced
@@ -1132,10 +1117,6 @@ void cFibVectorCreator::fibScalarChangedEvent(
 		}
 	}
 	//redirect event to all variables change listeners
-#ifdef TODO_WEG
-	//send the scalar change event to all scalar change listeners
-	sendScalarChange( pFibScalarEvent );
-#endif //TODO_WEG
 	DEBUG_OUT_L2(<<"cFibVectorCreator("<<this<<")::fibScalarChangedEvent( pFibScalarEvent="<<pFibScalarEvent<<") done"<<endl<<flush);
 }
 
@@ -1156,14 +1137,39 @@ void cFibVectorCreator::fibScalarValueChangedEvent(
 		//no variable given
 		return;
 	}
-	//TODO: set the vector value to the new value of the scalar
-	assignValues();
+	//set the vector value to the new value of the scalar
 	
-	//redirect event to all scalar value change listeners
-#ifdef TODO_WEG
-	//send the scalar value change event to all scalar value change listeners
-	sendScalarValueChange( pFibScalar );
-#endif //TODO_WEG
+	//find the scalar in the vector
+	mutexFibVector.lock();
+	if ( pFibVector == NULL ) {
+		//no vector where to set the value
+		mutexFibVector.unlock();
+		return;
+	}
+	
+	unsignedIntFib uiActualElement = 1;
+	QList< iGetWidget * >::const_iterator itrActualElement;
+	for ( itrActualElement = liElements.begin();
+			( itrActualElement != liElements.end() ) &&
+			( (*itrActualElement) != pFibScalar );
+			++itrActualElement, ++uiActualElement ) {
+		//nothing to do
+	}
+	bool bFibObjectChanged = false;
+	if ( itrActualElement != liElements.end() ) {
+		/*vector element was found
+		-> set the vector value to the new value of the scalar*/
+		const doubleFib dScalarValue = pFibScalar->getValue();
+		if ( pFibVector->getValue( uiActualElement ) != dScalarValue ) {
+			bFibObjectChanged =
+				pFibVector->setValue( uiActualElement, dScalarValue );
+		}
+	}//else vector element not found
+	mutexFibVector.unlock();
+	
+	if ( bFibObjectChanged ) {
+		sendNodeChangedEvent();
+	}
 	DEBUG_OUT_L2(<<"cFibVectorCreator("<<this<<")::fibScalarValueChangedEvent( pFibScalar="<<pFibScalar<<") done"<<endl<<flush);
 }
 
@@ -1186,7 +1192,7 @@ void cFibVectorCreator::changedEvent(
 	}
 	if ( pFibVariableChangedEvent->isDeleted() ) {
 		//remove deleted variable
-		mutexFibVectorHandler.lock();
+		mutexFibVector.lock();
 		cFibVariableCreator * pElement = const_cast<cFibVariableCreator*>(
 				pFibVariableChangedEvent->getObject() );
 		
@@ -1202,14 +1208,14 @@ void cFibVectorCreator::changedEvent(
 		}
 		if ( liFoundIndex.empty() ) {
 			//no such element to remove
-			mutexFibVectorHandler.unlock();
+			mutexFibVector.unlock();
 			return;
 		}
 		
 		//remove element
 		removeElementFromVector( pElement );
 		
-		mutexFibVectorHandler.unlock();
+		mutexFibVector.unlock();
 		//send information about removed elements
 		for ( list< int >::iterator itrRemovedElement = liFoundIndex.begin();
 				itrRemovedElement != liFoundIndex.end(); itrRemovedElement++ ) {
@@ -1224,153 +1230,207 @@ void cFibVectorCreator::changedEvent(
 }
 
 
-#ifdef TODO_WEG
 /**
- * With this function you can register a listeners for changes for any
- * of the contained scalars.
+ * Event method
+ * It will be called every time a Fib node (cFibNode), at which
+ * this object is registered, was changed.
  *
- * @see cFibScalar::registerScalarChangeListener()
- * @see unregisterScalarChangeListener()
- * @see setScalarChangeListener
- * @see sendScalarChange()
- * @param pScalarListener a pointer to the listener for changes
- * @return true if the listener was registered, else false
+ * @param pFibNodeChangedEvent a pointer to the event, with the information
+ * 	about the changed Fib node
  */
-bool cFibVectorCreator::registerScalarChangeListener(
-		lScalarChanged * pScalarListener ) {
+void cFibVectorCreator::fibNodeChangedEvent(
+		const eFibNodeChangedEvent * pFibNodeChangedEvent ) {
 	
-	DEBUG_OUT_L2(<<"cFibVectorCreator("<<this<<")::registerScalarChangeListener( pScalarListener="<<pScalarListener<<") called"<<endl<<flush);
-	if ( pScalarListener == NULL ) {
-		//nothing to register
-		return false;
+	DEBUG_OUT_L2(<<"cFibVectorCreator("<<this<<")::fibNodeChangedEvent( pFibNodeChangedEvent="<<pFibNodeChangedEvent<<") called"<<endl<<flush);
+	
+	if ( ( pFibNodeChangedEvent == NULL ) ||
+			( pFibNodeChangedEvent->getChangedNode() == NULL ) ){
+		//nothing changed
+		return;
 	}
-	mutexScalarChangeListener.lock();
-	const pair< set< lScalarChanged * >::iterator, bool > paListenerInserted =
-		setScalarChangeListener.insert( pScalarListener );
-	mutexScalarChangeListener.unlock();
-	return paListenerInserted.second;
-}
+	if ( pFibNodeChangedEvent->isDeleted() ){
+		/*node for master Fib object for the Fib element of the the vector
+		 deleted*/
+		mutexFibVector.lock();
+		pMasterNode = NULL;
+		//if Fib node is deleted, Fib object / element is deleted
+		pFibVector  = NULL;
+		pFibElement = NULL;
+		mutexFibVector.unlock();
+		return;
+	}
 
-
-
-/**
- * With this function you can unregister a listeners for changes for any
- * of the contained scalars.
- *
- * @see registerScalarChangeListener()
- * @see setScalarChangeListener
- * @see sendScalarChange()
- * @param pScalarListener a pointer to the listener for changes
- * @return true if the listener was registered, else false
- */
-bool cFibVectorCreator::unregisterScalarChangeListener(
-		lScalarChanged * pScalarListener ) {
+	if ( pFibNodeChangedEvent->getChangeBy() == this ) {
+		//nothing changed
+		DEBUG_OUT_L2(<<"cFibVectorCreator("<<this<<")::fibNodeChangedEvent( pFibNodeChangedEvent="<<pFibNodeChangedEvent<<") done nothing changed"<<endl<<flush);
+		return;
+	}
 	
-	DEBUG_OUT_L2(<<"cFibVectorCreator("<<this<<")::unregisterScalarChangeListener( pScalarListener="<<pScalarListener<<") called"<<endl<<flush);
-	mutexScalarChangeListener.lock();
-	const bool bUnregistered =
-		( 0 < setScalarChangeListener.erase( pScalarListener ) );
-	mutexScalarChangeListener.unlock();
-	return bUnregistered;
-}
-
-
-/**
- * This method sents a scalar changed event to all scalar change
- * listeners of this object.
- *
- * @see setScalarChangeListener
- * @see registerScalarChangeListener()
- * @see unregisterScalarChangeListener()
- * @param pFibScalarChangedEvent the change event to send
- */
-void cFibVectorCreator::sendScalarChange(
-		const eFibScalarChangedEvent * pFibScalarChangedEvent ) {
+	/*check if the Fib object for this vector is superior or contained in a
+	 *changed Fib element or Fib object*/
+	const bool bIsElementChanged =
+		pFibNodeChangedEvent->isElementChanged( pFibElement );
 	
-	mutexScalarChangeListener.lock();
-	for ( set< lScalarChanged * >::iterator
-			itrListenerScalarChanged = setScalarChangeListener.begin();
-			itrListenerScalarChanged != setScalarChangeListener.end();
-			itrListenerScalarChanged++ ) {
+	//adapt domains if the containing root element changed
+	bool bIsContainingRootChanged = false;
+	if ( pFibElement ) {
+		//check if a superior root element (domains) was changed
+		cRoot * pSupperiorRoot = pFibElement->getSuperiorRootElement();
+		if ( pSupperiorRoot ) {
+			bIsContainingRootChanged =
+				pFibNodeChangedEvent->isContainedInChanged( pSupperiorRoot  );
+			bIsContainingRootChanged |=
+				pFibNodeChangedEvent->isElementChanged( pSupperiorRoot );
+		}
+	}
+	
+	if ( ( ! bIsElementChanged ) && ( ! bIsContainingRootChanged ) ) {
+		/*the Fib element for this vector is not a Fib element which was changed
+		 -> this vector don't needs to be updated
+		 -> everything up to date
+		 -> nothing to do*/
+		DEBUG_OUT_L2(<<"cFibVectorCreator("<<this<<")::fibNodeChangedEvent() done: everything up to date"<<endl<<flush);
+		return;
+	}//else
+	mutexFibVector.lock();
+	if ( bIsElementChanged ) {
+		//the Fib element for the vector changed
+		if ( pFibNodeChangedEvent->isElementChanged( pFibElement,
+					eFibNodeChangedEvent::DELETED ) ) {
+			//the Fib element for this graphical item was deleted
+			DEBUG_OUT_L2(<<"cFibVectorCreator("<<this<<")::fibNodeChangedEvent() done: the defining Fib element for this graphical item was deleted"<<endl<<flush);
+			pFibVector  = NULL;
+			pFibElement = NULL;
+			mutexFibVector.unlock();
+			return;
+		}
+		//the vector could be moved from Fib element
+		if ( pFibVector != NULL ) {
+			//reevalue the defining Fib element
+			pFibElement = pFibVector->getDefiningFibElement();
+		}
+	}
+	//get actual vector elements
+	const unsignedIntFib uiNumberOfElements =
+		pFibVector->getNumberOfElements();
+	QList< eFibVectorChangedEvent > liFibVectorChangeEvents;
+	for ( unsignedIntFib uiActualElement = 1;
+			uiActualElement <= uiNumberOfElements; uiActualElement++ ) {
 		
-		(*itrListenerScalarChanged)->fibScalarChangedEvent(
-				pFibScalarChangedEvent );
+		if ( pFibVector->isVariable( uiActualElement ) ) {
+			
+			cFibVariableHandler * pFibVariableHandler =
+				cFibVariableHandler::getInstance();
+			cFibVariableCreator * pElementVariable =
+				pFibVariableHandler->getFibVariableCreatorForFibVariable(
+					pFibVector->getVariable( uiActualElement ), this );
+			
+			if ( liElements.value( uiActualElement - 1 ) != pElementVariable ) {
+				//element was changed
+				DEBUG_OUT_L3(<<"cFibVectorCreator("<<this<<")::fibNodeChangedEvent( pFibNodeChangedEvent="<<pFibNodeChangedEvent<<") setting "<<uiActualElement<<" element to variable "<<pElementVariable<<endl<<flush);
+				//evaluate the to remove element
+				iGetWidget * pRemovedElement =
+					liElements.value( uiActualElement - 1, NULL );
+				//remove the old element
+				liElements.removeAt( uiActualElement - 1 );
+				if ( ! liElements.contains( pRemovedElement ) ) {
+					//unregister this as element change listener at elements
+					removeElementFromVector( pRemovedElement );
+				}
+				
+				if ( pElementVariable ) {
+					//add the given element on the position
+					if ( (static_cast<unsigned int>(liElements.size())) < uiActualElement ) {
+						//add element to the end of the element list
+						liElements.push_back( pElementVariable );
+					}else{//insert the element at the given position
+						liElements.insert( uiActualElement - 1 , pElementVariable );
+					}
+					//register this as element change listener at new elements
+					registerForElement( pElementVariable );
+					
+					//create change event for the change
+					liFibVectorChangeEvents.push_back( eFibVectorChangedEvent(
+						this, eFibVectorChangedEvent::REPLACE, uiActualElement ) );
+				}//else Error: can't create input variable
+			}//else element not changed
+			
+		}else{//element is a scalar
+			DEBUG_OUT_L3(<<"cFibVectorCreator("<<this<<")::fibNodeChangedEvent( pFibNodeChangedEvent="<<pFibNodeChangedEvent<<") setting "<<uiActualElement<<" element to value "<<pRemovedScalarElement->getValue()<<endl<<flush);
+			
+			cDomain * pElementScalarDomain =
+				pFibVector->getDomain( uiActualElement );
+			//check if element has changed
+			iGetWidget * pRemovedElement =
+				liElements.value( uiActualElement - 1, NULL );
+			
+			if ( ( pRemovedElement != NULL ) &&
+					( pRemovedElement->getName() == "cFibScalar" ) ) {
+				
+				cFibScalar * pRemovedScalarElement =
+					static_cast<cFibScalar*>(pRemovedElement);
+				
+				const cDomain * pRemovedElementScalarDomain =
+					pRemovedScalarElement->getDomain();
+				
+				if ( ( pRemovedScalarElement->getValue() ==
+							pFibVector->getValue( uiActualElement ) ) &&
+						//check if domains are equal
+						( ( //check if bouth domains are NULL
+							( pRemovedElementScalarDomain == NULL ) &&
+							( pElementScalarDomain == NULL ) ) ||
+						(//check if both domains are equal objects
+							( pRemovedElementScalarDomain != NULL ) &&
+							( pElementScalarDomain != NULL ) &&
+							( pRemovedElementScalarDomain->equal(
+								*pElementScalarDomain ) ) ) ) ) {
+					//element not changed
+					continue;  //check next element
+				}//else element changed
+			}
+			cDomainSingle * pScalarDomain =
+				( ( pElementScalarDomain == NULL ) || ( ! pElementScalarDomain->isScalar() ) ) ?
+					NULL : ( static_cast<cDomainSingle*>(pElementScalarDomain->clone()) );
+			
+			cFibScalar * pElementScalar = new cFibScalar(
+				pFibVector->getValue( uiActualElement ),
+				getVectorElementName( uiActualElement ), pScalarDomain );
+			
+			//remove the old element
+			liElements.removeAt( uiActualElement - 1 );
+			if ( ! liElements.contains( pRemovedElement ) ) {
+				//unregister this as element change listener at elements
+				removeElementFromVector( pRemovedElement );
+			}
+			
+			//add the scalar element on the position
+			if ( (static_cast<unsigned int>(liElements.size())) < uiActualElement ) {
+				//add element to the end of the element list
+				liElements.push_back( pElementScalar );
+			}else{//insert the element at the given position
+				liElements.insert( uiActualElement - 1 , pElementScalar );
+			}
+			//register this as element change listener at new elements
+			registerForElement( pElementScalar );
+			//create change event for the change
+			liFibVectorChangeEvents.push_back( eFibVectorChangedEvent(
+				this, eFibVectorChangedEvent::REPLACE, uiActualElement ) );
+		}
 	}
-	mutexScalarChangeListener.unlock();
-}
-
-
-/**
- * With this function you can register a listeners for value changes for
- * any of the contained scalars.
- *
- * @see unregisterScalarValueChangeListener()
- * @see setScalarValueChangeListener
- * @see sendScalarValueChange()
- * @param pScalarValueListener a pointer to the listener for value changes
- * @return true if the listener was registered, else false
- */
-bool cFibVectorCreator::registerScalarValueChangeListener(
-		lScalarValueChanged * pScalarValueListener ) {
 	
-	DEBUG_OUT_L2(<<"cFibVectorCreator("<<this<<")::registerScalarValueChangeListener( pScalarValueListener="<<pScalarValueListener<<") called"<<endl<<flush);
-	if ( pScalarValueListener == NULL ) {
-		//nothing to register
-		return false;
+	mutexFibVector.unlock();
+	
+	//for all changes send change events
+	for ( QList< eFibVectorChangedEvent >::iterator
+			itrChangeEvent = liFibVectorChangeEvents.begin();
+			itrChangeEvent != liFibVectorChangeEvents.end();
+			++itrChangeEvent ) {
+		sendFibVectorChange( &(*itrChangeEvent) );
 	}
-	mutexScalarValueChangeListener.lock();
-	const pair< set< lScalarValueChanged * >::iterator, bool > paListenerInserted =
-		setScalarValueChangeListener.insert( pScalarValueListener );
-	mutexScalarValueChangeListener.unlock();
-	return paListenerInserted.second;
+	DEBUG_OUT_L2(<<"cFibVectorCreator("<<this<<")::fibNodeChangedEvent( pFibNodeChangedEvent="<<pFibNodeChangedEvent<<") done"<<endl<<flush);
 }
 
 
-/**
- * With this function you can unregister a listeners for value changes
- * for any of the contained scalars.
- *
- * @see registerScalarValueChangeListener()
- * @see setScalarValueChangeListener
- * @see sendScalarValueChange()
- * @param pScalarValueListener a pointer to the listener for value changes
- * @return true if the listener was registered, else false
- */
-bool cFibVectorCreator::unregisterScalarValueChangeListener(
-		lScalarValueChanged * pScalarValueListener ) {
-	
-	DEBUG_OUT_L2(<<"cFibVectorCreator("<<this<<")::unregisterScalarValueChangeListener( pScalarValueListener="<<pScalarValueListener<<") called"<<endl<<flush);
-	mutexScalarValueChangeListener.lock();
-	const bool bUnregistered = ( 0 < setScalarValueChangeListener.erase(
-		pScalarValueListener ) );
-	mutexScalarValueChangeListener.unlock();
-	return bUnregistered;
-}
-
-
-/**
- * This method sents a scalar value changed event to all scalar value
- * change listeners of this object.
- *
- * @see setScalarValueChangeListener
- * @see registerScalarValueChangeListener()
- * @see unregisterScalarValueChangeListener()
- */
-void cFibVectorCreator::sendScalarValueChange( const cFibScalar * pFibScalar ) {
-	
-	mutexScalarValueChangeListener.lock();
-	for ( set< lScalarValueChanged * >::iterator
-			itrListenerScalarValueChanged = setScalarValueChangeListener.begin();
-			itrListenerScalarValueChanged != setScalarValueChangeListener.end();
-			itrListenerScalarValueChanged++ ) {
-		
-		(*itrListenerScalarValueChanged)->fibScalarValueChangedEvent(
-			pFibScalar );
-	}
-	mutexScalarValueChangeListener.unlock();
-}
-
-#endif //TODO_WEG
 
 
 /**
@@ -1687,6 +1747,34 @@ void cFibVectorCreator::removeElementFromVector( iGetWidget * pElement ) {
 		
 		liElements.removeAll( pElement );
 	}
+}
+
+
+
+/**
+ * This method send a node changed event for the Fib node for the
+ * Fib object which contains this vector.
+ */
+bool cFibVectorCreator::sendNodeChangedEvent() const {
+	
+	DEBUG_OUT_L2(<<"cFibInputVariables("<<this<<")::sendNodeChangedEvent() called"<<endl<<flush);
+	mutexFibVector.lock();
+	if ( pFibElement == NULL ) {
+		//no Fib element for the vector -> no node to send the change for
+		mutexFibVector.unlock();
+		return false;
+	}
+	cThreadSendFibElementChangedViaFibNode * pSendVectorChanged =
+		new cThreadSendFibElementChangedViaFibNode( pFibElement );
+	
+	mutexFibVector.unlock();
+	
+	QObject::connect( pSendVectorChanged, SIGNAL( finished() ),
+		pSendVectorChanged, SLOT( deleteLater() ) );
+	//start the thread with low piority
+	pSendVectorChanged->start( QThread::LowestPriority );
+	
+	return true;
 }
 
 

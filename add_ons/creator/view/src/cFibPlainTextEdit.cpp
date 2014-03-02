@@ -47,14 +47,16 @@ History:
 
 #include "cFibPlainTextEdit.h"
 
-#include "cFibObjectMainWindow.h"
+#include <sstream>
 
 #include <QSettings>
 #include <QStatusBar>
 #include <QPoint>
 #include <QSize>
 
-#include <sstream>
+#include "cFibObjectMainWindow.h"
+#include "eFibNodeChangedEvent.h"
+
 
 using namespace std;
 
@@ -69,18 +71,19 @@ using namespace fib::nCreator;
  * @param pParent a pointer to parent of this widget
  */
 cFibPlainTextEdit::cFibPlainTextEdit( cFibNode * pInFibNode, QWidget * pParent ):
-		QPlainTextEdit( pParent ), pFibNode( pInFibNode ){
+		QPlainTextEdit( pParent ), pFibNode( pInFibNode ) {
 	
 	DEBUG_OUT_L2(<<"cFibPlainTextEdit("<<this<<")::cFibPlainTextEdit( pInFibNode="<<pInFibNode<<", pParent="<<pParent<<") called"<<endl<<flush);
 
-	if ( pFibNode ){
+	if ( pFibNode ) {
 		pFibNode->registerNodeChangeListener( this );
 	}
 	//restore the old session
 	readSettings();
 	
 	//show the set Fib object
-	showFibNode();
+	connect( this, SIGNAL(signalShowFibNode()), this, SLOT(showFibNode()) );
+	emit signalShowFibNode();
 	
 	//connect document changes with the slot for updating the Fib object
 	connect( document(), SIGNAL( contentsChanged() ),
@@ -98,18 +101,19 @@ cFibPlainTextEdit::cFibPlainTextEdit( cFibNode * pInFibNode, QWidget * pParent )
 cFibPlainTextEdit::cFibPlainTextEdit( cFibNode * pInFibNode,
 			cFibObjectMainWindow * pInMainWindow ):
 		QPlainTextEdit( pInMainWindow ), pFibNode( pInFibNode ),
-		pMainWindow( pInMainWindow ){
+		pMainWindow( pInMainWindow ) {
 	
 	DEBUG_OUT_L2(<<"cFibPlainTextEdit("<<this<<")::cFibPlainTextEdit( pInFibNode="<<pInFibNode<<", pInMainWindow="<<pInMainWindow<<") called"<<endl<<flush);
 	
-	if ( pFibNode ){
+	if ( pFibNode ) {
 		pFibNode->registerNodeChangeListener( this );
 	}
 	//restore the old session
 	readSettings();
 	
 	//show the set Fib object
-	showFibNode();
+	connect( this, SIGNAL(signalShowFibNode()), this, SLOT(showFibNode()) );
+	emit signalShowFibNode();
 	
 	//connect document changes with the slot for updating the Fib object
 	connect( document(), SIGNAL( contentsChanged() ),
@@ -121,10 +125,10 @@ cFibPlainTextEdit::cFibPlainTextEdit( cFibNode * pInFibNode,
 /**
  * destructor
  */
-cFibPlainTextEdit::~cFibPlainTextEdit(){
+cFibPlainTextEdit::~cFibPlainTextEdit() {
 	//nothing to do
 	DEBUG_OUT_L2(<<"cFibPlainTextEdit("<<this<<")::~cFibPlainTextEdit() called"<<endl<<flush);
-	if ( pFibNode ){
+	if ( pFibNode ) {
 		pFibNode->unregisterNodeChangeListener( this );
 	}
 }
@@ -134,7 +138,7 @@ cFibPlainTextEdit::~cFibPlainTextEdit(){
  * @return a pointer to the Fib node object this widget shows / represents
  * 	@see pFibNode
  */
-cFibNode * cFibPlainTextEdit::getFibNode(){
+cFibNode * cFibPlainTextEdit::getFibNode() {
 	
 	return pFibNode;
 }
@@ -158,14 +162,18 @@ const cFibNode * cFibPlainTextEdit::getFibNode() const{
  * @param pFibNode a pointer to the changed Fib node
  */
 void cFibPlainTextEdit::fibNodeChangedEvent(
-	const eFibNodeChangedEvent * pFibNodeChanged ){
+	const eFibNodeChangedEvent * pFibNodeChanged ) {
 	
 	DEBUG_OUT_L4(<<"cFibPlainTextEdit("<<this<<")::fibNodeChangedEvent( pFibNodeChanged="<<pFibNodeChanged<<") called"<<endl<<flush);
+	if ( pFibNodeChanged == NULL ) {
+		//no Fib node change event
+		return;
+	}
 	//evalue if change should be displayed
-	if ( pFibNodeChanged && ( pFibNodeChanged->pFibNodeChanged ) ){
+	const cFibNode * pChangedNode = pFibNodeChanged->getChangedNode();
+	if ( pChangedNode ) {
 		
-		if ( pFibNodeChanged->bNodeDeleted &&
-				( pFibNodeChanged->pFibNodeChanged == pFibNode ) ){
+		if ( pFibNodeChanged->isDeleted() && ( pChangedNode == pFibNode ) ) {
 			/*node of this plain text view deleted
 			 *-> set NULL as this this plain text view node*/
 			DEBUG_OUT_L4(<<"cFibPlainTextEdit("<<this<<")::fibNodeChangedEvent( pFibNodeChanged="<<pFibNodeChanged<<") done set NULL as this this plain text view node"<<endl<<flush);
@@ -176,13 +184,13 @@ void cFibPlainTextEdit::fibNodeChangedEvent(
 			return;
 		}//else this plain text view node not deleted
 		
-		if ( pFibNodeChanged->pChangedBy != this ){
+		if ( pFibNodeChanged->getChangeBy() != this ) {
 			//if not this node called
 			//check the node version getFibObjectVersion()
-			if ( pFibNodeChanged->pFibNodeChanged->getFibObjectVersion() !=
-					ulFibNodeVersionDisplayed ){
+			if ( pChangedNode->getFibObjectVersion() !=
+					ulFibNodeVersionDisplayed ) {
 				//version is not equal to displayed Fib object version
-				showFibNode();
+				emit signalShowFibNode();
 			}
 		}
 	}//else don't display node again
@@ -209,13 +217,13 @@ string cFibPlainTextEdit::getName() const{
  * @param pNewFibObject a pointer to the Fib object to set for this widget
  * @return true if the given Fib object was set, else false
  */
-bool cFibPlainTextEdit::setFibObjectNode( cFibNode * pNewFibObjectNode ){
+bool cFibPlainTextEdit::setFibObjectNode( cFibNode * pNewFibObjectNode ) {
 	
 	DEBUG_OUT_L2(<<"cFibPlainTextEdit("<<this<<")::setFibObjectNode( pNewFibObjectNode="<<pNewFibObjectNode<<") called"<<endl<<flush);
 	
 #ifdef DEBUG_FIB_OBJECT
 	cout<<"cFibPlainTextEdit("<<this<<")::setFibObjectNode( pNewFibObjectNode ) pNewFibObjectNode:"<<endl;
-	if ( pNewFibObjectNode && ( pNewFibObjectNode->getFibObject() != NULL ) ){
+	if ( pNewFibObjectNode && ( pNewFibObjectNode->getFibObject() != NULL ) ) {
 		pNewFibObjectNode->getFibObject()->storeXml( cout );
 	}else{
 		cout<<"NULL";
@@ -223,14 +231,15 @@ bool cFibPlainTextEdit::setFibObjectNode( cFibNode * pNewFibObjectNode ){
 	cout<<"done"<<endl<<flush;
 #endif //DEBUG_FIB_OBJECT
 	
-	if ( pFibNode ){
+	if ( pFibNode ) {
 		pFibNode->unregisterNodeChangeListener( this );
 	}
 	pFibNode = pNewFibObjectNode;
-	if ( pFibNode ){
+	if ( pFibNode ) {
 		pFibNode->registerNodeChangeListener( this );
 	}
-	return showFibNode();
+	emit signalShowFibNode();
+	return true;
 }
 
 
@@ -240,7 +249,7 @@ bool cFibPlainTextEdit::setFibObjectNode( cFibNode * pNewFibObjectNode ){
  * widget to it.
  * @see QSettings
  */
-void cFibPlainTextEdit::readSettings(){
+void cFibPlainTextEdit::readSettings() {
 	
 	QSettings settings("Fib development", "Fib creator");
 	QPoint pos = settings.value("fibPlainTextWindow/pos", QPoint( 0, 0 ) ).toPoint();
@@ -254,7 +263,7 @@ void cFibPlainTextEdit::readSettings(){
  * This method will write the settings of this widget.
  * @see QSettings
  */
-void cFibPlainTextEdit::writeSettings(){
+void cFibPlainTextEdit::writeSettings() {
 	
 	QSettings settings("Fib development", "Fib creator");
 	settings.setValue("fibPlainTextWindow/pos", pos() );
@@ -267,13 +276,13 @@ void cFibPlainTextEdit::writeSettings(){
  *
  * @param pEventClose a pointer to the close event to andle
  */
-void cFibPlainTextEdit::closeEvent( QCloseEvent * pEventClose ){
+void cFibPlainTextEdit::closeEvent( QCloseEvent * pEventClose ) {
 	
 	DEBUG_OUT_L2(<<"cFibPlainTextEdit("<<this<<")::closeEvent() called"<<endl<<flush);
 	
 	//TODO check if the Fib object was stored in node
 	
-	//if ( fibObjectDataSave() ){
+	//if ( fibObjectDataSave() ) {
 		//Fib object is save
 		writeSettings();
 		pEventClose->accept();
@@ -298,13 +307,13 @@ QSize cFibPlainTextEdit::sizeHint() const{
  *
  * @return true if the Fib object was displayed, else false
  */
-bool cFibPlainTextEdit::showFibNode(){
+bool cFibPlainTextEdit::showFibNode() {
 	
 	DEBUG_OUT_L2(<<"cFibPlainTextEdit("<<this<<")::showFibNode() called"<<endl<<flush);
 	
 #ifdef DEBUG_FIB_OBJECT
 	cout<<"cFibPlainTextEdit("<<this<<")::showFibNode() pFibNode:"<<endl;
-	if ( pFibNode && ( pFibNode->getFibObject() != NULL ) ){
+	if ( pFibNode && ( pFibNode->getFibObject() != NULL ) ) {
 		pFibNode->getFibObject()->storeXml( cout );
 	}else{
 		cout<<"NULL";
@@ -313,12 +322,12 @@ bool cFibPlainTextEdit::showFibNode(){
 #endif //DEBUG_FIB_OBJECT
 	
 	QTextDocument * pDocument = document();
-	if ( pDocument == NULL ){
+	if ( pDocument == NULL ) {
 		//no document -> cant set text
 		DEBUG_OUT_EL2(<<"cFibPlainTextEdit("<<this<<")::showFibNode() done no document -> cant set text"<<endl<<flush);
 		return false;
 	}
-	if ( ( pFibNode == NULL ) || ( pFibNode->getFibObject() == NULL ) ){
+	if ( ( pFibNode == NULL ) || ( pFibNode->getFibObject() == NULL ) ) {
 		//create emty document
 		DEBUG_OUT_L2(<<"cFibPlainTextEdit("<<this<<")::showFibNode() create emty document"<<endl<<flush);
 		pDocument->setPlainText( QString() );
@@ -339,7 +348,7 @@ bool cFibPlainTextEdit::showFibNode(){
 	
 	pFibNodeHandler->unlock( pFibNode );
 	
-	if ( bFibObjectStored ){
+	if ( bFibObjectStored ) {
 		//Fib object stored in XML -> show the stores Fib object
 		pDocument->setPlainText( QString( streamFibObject.str().c_str() ) );
 		//update displayed Fib object version number
@@ -370,12 +379,12 @@ bool cFibPlainTextEdit::showFibNode(){
  * @see fibNodeChangedEvent()
  * @see QPlainTextEdit::textChanged()
  */
-void cFibPlainTextEdit::notifyNodeForChange(){
+void cFibPlainTextEdit::notifyNodeForChange() {
 	
 	DEBUG_OUT_L2(<<"cFibPlainTextEdit("<<this<<")::notifyNodeForChange() called"<<endl<<flush);
 	
 	QTextDocument * pDocument = document();
-	if ( pDocument == NULL ){
+	if ( pDocument == NULL ) {
 		//no document -> can't set text
 		DEBUG_OUT_L4(<<"cFibPlainTextEdit("<<this<<")::notifyNodeForChange() no document -> can't set text"<<endl<<flush);
 		return;
@@ -391,9 +400,9 @@ void cFibPlainTextEdit::notifyNodeForChange(){
 		cFibElement::restoreXml( streamFibObject, &iOutStatus );
 	DEBUG_OUT_L4(<<"   done"<<endl<<flush);
 	
-	if ( ( pRestoredFibObject == NULL ) || ( iOutStatus < 0 ) ){
+	if ( ( pRestoredFibObject == NULL ) || ( iOutStatus < 0 ) ) {
 		//error while restoring -> don't set Fib object
-		if ( pMainWindow ){
+		if ( pMainWindow ) {
 			//set status text in the main window
 			pMainWindow->statusBar()->showMessage(
 				tr("Fib object in text window contains errors"), 2000 );
@@ -401,9 +410,9 @@ void cFibPlainTextEdit::notifyNodeForChange(){
 		DEBUG_OUT_L4(<<"cFibPlainTextEdit("<<this<<")::notifyNodeForChange() error while restoring -> don't set Fib object"<<endl<<flush);
 		return;
 	}
-	if ( 0 < iOutStatus ){
+	if ( 0 < iOutStatus ) {
 		// if warning -> write status message
-		if ( pMainWindow ){
+		if ( pMainWindow ) {
 			//set status text in the main window
 			pMainWindow->statusBar()->showMessage(
 				tr("Fib object in text window contains warnings"), 2000 );
@@ -415,12 +424,12 @@ void cFibPlainTextEdit::notifyNodeForChange(){
 	DEBUG_OUT_L4(<<"cFibNodeHandler * pFibNodeHandler = cFibNodeHandler::getInstance();"<<endl<<flush);
 	cFibNodeHandler * pFibNodeHandler = cFibNodeHandler::getInstance();
 	
-	if ( pFibNode == NULL ){
+	if ( pFibNode == NULL ) {
 		//create new Fib node
 		cFibNode * pNewFibNode = pFibNodeHandler->getNodeForFibObject(
 			pRestoredFibObject, this );
 		//register as Fib node in parent, if no Fib node is registered in it
-		if ( pMainWindow ){
+		if ( pMainWindow ) {
 			//set status text in the main window
 			pMainWindow->setFibObjectNode( pNewFibNode );
 		}

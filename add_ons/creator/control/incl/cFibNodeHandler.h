@@ -54,9 +54,11 @@ History:
 #define ___FIB__NCREATOR__C_FIB_NODE_HANDLER_H__
 
 #include "version.h"
+#include "versionCreator.h"
 
 #include "cFibNode.h"
 
+#include <string>
 #include <map>
 #include <set>
 #include <ctime>
@@ -65,6 +67,8 @@ History:
 #include <QObject>
 
 #include "cFibElement.h"
+
+#include "lFibNodeChanged.h"
 
 
 
@@ -81,7 +85,7 @@ namespace nFibNodeHandler{
 	class cThreadDeleteNodesWithoutListener;
 }
 
-class cFibNodeHandler{
+class cFibNodeHandler: public lFibNodeChanged{
 
 friend class nFibNodeHandler::cFibNodeHandlerDeleter;
 friend class nFibNodeHandler::cThreadDeleteNodesWithoutListener;
@@ -98,6 +102,11 @@ public:
 	 */
 	static cFibNodeHandler * getInstance();
 	
+	
+	/**
+	 * @return the name of this class "cFibNodeHandler"
+	 */
+	virtual std::string getName() const;
 	
 	/**
 	 * This method returns the Fib node for the given Fib object.
@@ -126,14 +135,11 @@ public:
 	 * @return true if the given Fib node points to an existing Fib node
 	 * 	in this handler, else false
 	 */
-	bool isValidNode( cFibNode * pFibNode );
+	bool isValidNode( const cFibNode * pFibNode );
 	
 	/**
 	 * This method returns the next Fib node, which contains the given Fib
 	 * object.
-	 * Beware: Nodes without a listener will be deleted.
-	 * 	Also root Fib objects, wich don't contain a Fib object, to which
-	 * 	a node points, will be deleted.
 	 *
 	 * @see mapFibNodes
 	 * @see getNodeForFibObject()
@@ -146,7 +152,7 @@ public:
 	
 	/**
 	 * This method integrates the given Fib object into the given other Fib object.
-	 * All not needed parts of the Fib objects will be deleted.
+	 * Note: All not needed parts of the Fib objects will be deleted.
 	 *
 	 * @param pContainingNode a pointer to the node which contains the
 	 * 	Fib object to replace
@@ -161,6 +167,7 @@ public:
 		cFibElement * pOriginalFibObjectToReplace, cFibElement * pNewFibObject,
 		const QObject * pChangedBy = NULL );
 	
+	
 	/**
 	 * This method locks the whole Fib object (the Fib master root object)
 	 * for the given Fib node. If another thread has locked one of the
@@ -174,7 +181,7 @@ public:
 	 * @param pFibNode the node for which to lock the whole Fib object
 	 * @return true if the Fib object could be locked (whole Fib object exists)
 	 */
-	bool lock( cFibNode * pFibNode );
+	bool lock( const cFibNode * pFibNode );
 	
 	/**
 	 * This method attempts to lock the whole Fib object (the Fib master
@@ -201,7 +208,7 @@ public:
 	 * 	become available
 	 * @return true if the lock was obtained, otherwise it returns false
 	 */
-	bool tryLock( cFibNode * pFibNode, int iTimeout = 0 );
+	bool tryLock( const cFibNode * pFibNode, int iTimeout = 0 );
 	
 	/**
 	 * This method unlocks the whole Fib object (the Fib master root object)
@@ -218,8 +225,18 @@ public:
 	 * @param pFibNode the node for which to unlock the whole Fib object
 	 * @return true if the Fib object could be unlocked (whole Fib object exists)
 	 */
-	bool unlock( cFibNode * pFibNode );
+	bool unlock( const cFibNode * pFibNode );
 	
+	
+	/**
+	 * Event method
+	 * It will be called every time a Fib node (cFibNode), at which
+	 * this object is registered, was changed.
+	 *
+	 * @param pFibNode a pointer to the changed Fib node
+	 */
+	virtual void fibNodeChangedEvent(
+		const eFibNodeChangedEvent * pFibNodeChanged );
 	
 protected:
 	
@@ -238,7 +255,7 @@ protected:
 	 * @param pFibNode a pointer to the node for which to return the mutex
 	 * @return a pointer to the mutex for the given Fib node, or NULL if non exists
 	 */
-	QMutex * getMutex( cFibNode * pFibNode );
+	QMutex * getMutex( const cFibNode * pFibNode );
 	
 	
 	/**
@@ -267,6 +284,28 @@ protected:
 	void deleteNodesWithoutListeners();
 	
 	
+	/**
+	 * This method transfers the nodes of the given Fib object
+	 * pOriginalFibObjectToReplace into the other given Fib object pNewFibObject.
+	 * It will try to put the nodes in pNewFibObject to similar places as
+	 * they where in pOriginalFibObjectToReplace.
+	 * Note: No mutex will be used.
+	 *
+	 * @param pContainingNode a pointer to the node, which contains the
+	 * 	Fib object, from which to transfer
+	 * @param pOriginalFibObjectToReplace the Fib object from which to
+	 * 	transfer the nodes
+	 * @param pNewFibObject the Fib object, in which the Fib nodes should
+	 * 	be integrated
+	 * @param pOutSetLowestNodesToNotify a pointer to a set, to output the
+	 * 	lowest nodes to notify of a change
+	 * @return true if the Fib object pOriginalFibObjectToReplace was replaced
+	 * 	by pNewFibObject, else false
+	 * 	(if true delete pNewFibObject, else delete pOriginalFibObjectToReplace)
+	 */
+	bool replaceFibObjectInNode( cFibNode * pContainingNode,
+		cFibElement * pOriginalFibObjectToReplace, cFibElement * pNewFibObject,
+		set< cFibNode * > * pOutSetLowestNodesToNotify  );
 	
 	/**
 	 * This method will transfer the given Fib node and all Fib nodes for
@@ -317,6 +356,42 @@ protected:
 			cFibNode * pNodeToTransfer,
 			cFibElement * pFromFibObject, cFibElement * pToFibObject );
 
+#ifdef FEATURE_INTEGRATE_FIB_OBJECT_INTO_NODE
+	/**
+	 * This method evalues the Fib nodes for Fib external object elements,
+	 * which uses external objects, which depend on the given nodes.
+	 * If a node is for a external object (sub root object), the external
+	 * object elements, which uses the external object, depend on the node. To
+	 * evalue, which such nodes of external elements to notify, you can use
+	 * this method.
+	 * Just dependent nodes for Fib elements in the same entire Fib objects
+	 * as the entire Fib object of the given nodes will be evalued.
+	 * Note: This method won't use any mutex.
+	 *
+	 * @param setNodes a set with the nodes, for which to evalue the depended
+	 * 	external element nodes
+	 * @return a set with the Fib nodes for Fib external object elements,
+	 * 	which depend on the given nodes for external objects
+	 */
+	set< cFibNode * > evalueExternalElementNodes(
+		set< cFibNode * > setNodes );
+	
+	/**
+	 * This method evalues the lowest nodes (to notify) of the set of nodes.
+	 * A Fib node, which is lower as a other Fib node, will also send
+	 * Fib node change event to the other node. So you don't need to notify
+	 * the higher node for the Fib node change.
+	 * Note: This method will lock and unlock the used Fib nodes.
+	 *
+	 * @param setNodes the set of Fib nodes of which to evalue
+	 * 	the lowest nodes (for the lowest Fib elements)
+	 * @return the set of lowest nodes of the given Fib nodes
+	 */
+	set< cFibNode * > evalueLowestNodes( const set< cFibNode * > & setNodes );
+	
+#endif //FEATURE_INTEGRATE_FIB_OBJECT_INTO_NODE
+	
+	
 //members
 	
 	/**
@@ -343,8 +418,8 @@ protected:
 	
 	/**
 	 * The map for the existing Fib object roots.
-	 * 	key: the Fib objects for the Fib object roots
-	 * 	value: the Fib object roots for the key Fib objects
+	 * 	key: the Fib objects for the Fib object root
+	 * 	value: the Fib object root for the key Fib object
 	 * 		@see setFibObjectsRoot
 	 */
 	map< cFibElement * , cFibElement * > mapFibObjectRoots;
@@ -376,7 +451,7 @@ protected:
 	 * @see tryLock()
 	 * @see unlock()
 	 */
-	map< cFibElement * , QMutex * > mapFibObjectRootsMutex;
+	map< const cFibElement * , QMutex * > mapFibObjectRootsMutex;
 
 	/**
 	 * The next time it should be tried to delete not needed nodes.

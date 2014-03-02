@@ -107,7 +107,7 @@ cDialogSelectFibObject::cDialogSelectFibObject( QWidget * pParent,
 		pButtonLoadFibObject( NULL ), pButtonSearchForFibObject( NULL ),
 		pButtonNewCategory( NULL ), pLayoutTopMenue( NULL ),
 		pButtonShowSelectedFibObject( NULL ), pButtonInsertSelectedFibObject( NULL ),
-		pLayoutBottomMenue( NULL ), pLayoutMain( NULL ){
+		pLayoutBottomMenue( NULL ), pLayoutMain( NULL ) {
 	
 	DEBUG_OUT_L2(<<"cDialogSelectFibObject("<<this<<")::cDialogSelectFibObject( pParent="<<pParent<<", pInAssociatedNode="<<pInAssociatedNode<<" );"<<endl<<flush);
 	
@@ -131,7 +131,7 @@ cDialogSelectFibObject::cDialogSelectFibObject( cFibNode * pInAssociatedNode ):
 		pButtonLoadFibObject( NULL ), pButtonSearchForFibObject( NULL ),
 		pButtonNewCategory( NULL ), pLayoutTopMenue( NULL ),
 		pButtonShowSelectedFibObject( NULL ), pButtonInsertSelectedFibObject( NULL ),
-		pLayoutBottomMenue( NULL ), pLayoutMain( NULL ){
+		pLayoutBottomMenue( NULL ), pLayoutMain( NULL ) {
 	
 	DEBUG_OUT_L2(<<"cDialogSelectFibObject("<<this<<")::cDialogSelectFibObject(pInAssociatedNode="<<pInAssociatedNode<<" );"<<endl<<flush);
 	
@@ -144,7 +144,7 @@ cDialogSelectFibObject::cDialogSelectFibObject( cFibNode * pInAssociatedNode ):
 /**
  * The destructor.
  */
-cDialogSelectFibObject::~cDialogSelectFibObject(){
+cDialogSelectFibObject::~cDialogSelectFibObject() {
 	
 	DEBUG_OUT_L2(<<"cDialogSelectFibObject("<<this <<")::~cDialogSelectFibObject();"<<endl <<flush);
 	//TODO store setting with actual categories
@@ -154,8 +154,9 @@ cDialogSelectFibObject::~cDialogSelectFibObject(){
 	//delete all list of Fib objects infos
 	for ( QList< cWidgetFibObjectInfos * >::iterator
 			itrListOfFibObjects = liListsOfFibObjects.begin();
-			itrListOfFibObjects != liListsOfFibObjects.end(); itrListOfFibObjects++ ){
+			itrListOfFibObjects != liListsOfFibObjects.end(); itrListOfFibObjects++ ) {
 		
+		(*itrListOfFibObjects)->unregisterListenerSelectedFibObjectInfo( this );
 		(*itrListOfFibObjects)->deleteLater();
 	}
 	liListsOfFibObjects.clear();
@@ -166,7 +167,7 @@ cDialogSelectFibObject::~cDialogSelectFibObject(){
 /**
  * @return the name of this class "cDialogSelectFibObject"
  */
-string cDialogSelectFibObject::getName() const{
+string cDialogSelectFibObject::getName() const {
 	
 	return "cDialogSelectFibObject";
 }
@@ -180,7 +181,7 @@ string cDialogSelectFibObject::getName() const{
  * @see setSelectedFibObjectInfo()
  * @return a pointer to the selected Fib object info
  */
-cFibObjectInfo * cDialogSelectFibObject::getSelectedFibObjectInfo(){
+cFibObjectInfo * cDialogSelectFibObject::getSelectedFibObjectInfo() {
 	
 	mutexFibObjectInfos.lock();
 	cFibObjectInfo * pSelectedFibObjectInfo = pBaseFibObjectInfo;
@@ -197,7 +198,7 @@ cFibObjectInfo * cDialogSelectFibObject::getSelectedFibObjectInfo(){
  * @see setSelectedFibObjectInfo()
  * @return a const pointer to the selected Fib object info
  */
-const cFibObjectInfo * cDialogSelectFibObject::getSelectedFibObjectInfo() const{
+const cFibObjectInfo * cDialogSelectFibObject::getSelectedFibObjectInfo() const {
 	
 	mutexFibObjectInfos.lock();
 	const cFibObjectInfo * pSelectedFibObjectInfo = pBaseFibObjectInfo;
@@ -215,34 +216,34 @@ const cFibObjectInfo * cDialogSelectFibObject::getSelectedFibObjectInfo() const{
  * @param pSelectedFibObjectInfo the selected Fib object info to set
  */
 void cDialogSelectFibObject::setSelectedFibObjectInfo(
-		cFibObjectInfo * pSelectedFibObjectInfo ){
+		cFibObjectInfo * pSelectedFibObjectInfo ) {
 	
 	DEBUG_OUT_L2(<<"cDialogSelectFibObject("<<this <<")::setSelectedFibObjectInfo( pSelectedFibObjectInfo="<<pSelectedFibObjectInfo<<");"<<endl <<flush);
 	
 	mutexFibObjectInfos.lock();
-	if ( pBaseFibObjectInfo == pSelectedFibObjectInfo ){
+	if ( pBaseFibObjectInfo == pSelectedFibObjectInfo ) {
 		//correct selected Fib object info allready set
 		mutexFibObjectInfos.unlock();
 		return;
 	}//else set selected Fib object info
 	//activate bottons for using selected Fib object just if a Fib object is selected
-	if ( pSelectedFibObjectInfo == NULL ){// && ( pBaseFibObjectInfo != NULL )
+	if ( pSelectedFibObjectInfo == NULL ) {// && ( pBaseFibObjectInfo != NULL )
 		//deactivate buttons for using selected Fib object
 		mutexGraphicalElements.lock();
-		if ( pButtonShowSelectedFibObject ){
+		if ( pButtonShowSelectedFibObject ) {
 			pButtonShowSelectedFibObject->setEnabled( false );
 		}
-		if ( pButtonInsertSelectedFibObject ){
+		if ( pButtonInsertSelectedFibObject ) {
 			pButtonInsertSelectedFibObject->setEnabled( false );
 		}
 		mutexGraphicalElements.unlock();
-	}else if ( pBaseFibObjectInfo == NULL ){// && ( pSelectedFibObjectInfo != NULL )
+	}else if ( pBaseFibObjectInfo == NULL ) {// && ( pSelectedFibObjectInfo != NULL )
 		//activate buttons for using selected Fib object
 		mutexGraphicalElements.lock();
-		if ( pButtonShowSelectedFibObject ){
+		if ( pButtonShowSelectedFibObject ) {
 			pButtonShowSelectedFibObject->setEnabled( true );
 		}
-		if ( pButtonInsertSelectedFibObject ){
+		if ( pButtonInsertSelectedFibObject ) {
 			pButtonInsertSelectedFibObject->setEnabled( true );
 		}
 		mutexGraphicalElements.unlock();
@@ -257,7 +258,7 @@ void cDialogSelectFibObject::setSelectedFibObjectInfo(
 	//set just absolute categories in first Fib object info list
 	QList< cWidgetFibObjectInfos * >::iterator
 		itrListOfFibObjects = liListsOfFibObjects.begin();
-	if ( itrListOfFibObjects == liListsOfFibObjects.end() ){
+	if ( itrListOfFibObjects == liListsOfFibObjects.end() ) {
 		//no first Fib object info list -> done
 		mutexFibObjectInfos.unlock();
 		return;
@@ -268,19 +269,19 @@ void cDialogSelectFibObject::setSelectedFibObjectInfo(
 	(*itrListOfFibObjects)->setSelectedFibObjectInfo( pBaseFibObjectInfo );
 	
 	itrListOfFibObjects++;
-	if ( itrListOfFibObjects == liListsOfFibObjects.end() ){
+	if ( itrListOfFibObjects == liListsOfFibObjects.end() ) {
 		//no second Fib object info list -> done
 		mutexFibObjectInfos.unlock();
 		return;
 	}
 	//get relativ categories (connections of selected Fib object)
-	if ( pBaseFibObjectInfo != NULL ){
+	if ( pBaseFibObjectInfo != NULL ) {
 		
 		const std::map< string, std::set< unsigned long > > mapConnections =
 			pBaseFibObjectInfo->getConnectedToMap();
 		for ( std::map< string, std::set< unsigned long > >::const_reverse_iterator
 				itrConnection = mapConnections.rbegin();
-				itrConnection != mapConnections.rend(); itrConnection++ ){
+				itrConnection != mapConnections.rend(); itrConnection++ ) {
 			//insert the relative categories at the front
 			liPossibleCategories.push_front( cFibObjectCategory(
 				QString( itrConnection->first.c_str() ), false ) );
@@ -288,12 +289,108 @@ void cDialogSelectFibObject::setSelectedFibObjectInfo(
 		
 	}/*else if no base Fib object info or first Fib object info list
 	-> use no relativ categories (connections of selected Fib object)*/
-	for ( ; itrListOfFibObjects != liListsOfFibObjects.end(); itrListOfFibObjects++ ){
+	for ( ; itrListOfFibObjects != liListsOfFibObjects.end(); itrListOfFibObjects++ ) {
 		
 		//set possible categories
 		(*itrListOfFibObjects)->setPossibleCategories( liPossibleCategories, false );
 		//set selected Fib object
 		(*itrListOfFibObjects)->setSelectedFibObjectInfo( pBaseFibObjectInfo );
+	}
+	mutexFibObjectInfos.unlock();
+}
+
+
+/**
+ * This method sets the selected Fib object info widget.
+ * It will be the base for all relativ categories.
+ *
+ * @see pBaseFibObjectInfo
+ * @see getSelectedFibObjectInfo()
+ * @param pWidgetFibObjectInfo a pointer to the selected widget of the
+ * 	Fib object info to set
+ */
+void cDialogSelectFibObject::setSelectedFibObjectInfo(
+		cWidgetFibObjectInfo * pWidgetFibObjectInfo ) {
+	
+	DEBUG_OUT_L2(<<"cDialogSelectFibObject("<<this <<")::setSelectedFibObjectInfo( pWidgetFibObjectInfo="<<pWidgetFibObjectInfo<<");"<<endl <<flush);
+	
+	mutexFibObjectInfos.lock();
+	cFibObjectInfo * pFibObjectInfo = ( pWidgetFibObjectInfo == NULL ) ? NULL :
+		(const_cast<cFibObjectInfo*>(pWidgetFibObjectInfo->getFibObjectInfo() ) );
+	if ( pBaseFibObjectInfo == pFibObjectInfo ) {
+		//correct selected Fib object info allready set
+		mutexFibObjectInfos.unlock();
+		return;
+	}//else set selected Fib object info
+	//activate bottons for using selected Fib object just if a Fib object is selected
+	if ( pFibObjectInfo == NULL ) {// && ( pBaseFibObjectInfo != NULL )
+		//deactivate buttons for using selected Fib object
+		mutexGraphicalElements.lock();
+		if ( pButtonShowSelectedFibObject ) {
+			pButtonShowSelectedFibObject->setEnabled( false );
+		}
+		if ( pButtonInsertSelectedFibObject ) {
+			pButtonInsertSelectedFibObject->setEnabled( false );
+		}
+		mutexGraphicalElements.unlock();
+	}else if ( pBaseFibObjectInfo == NULL ) {// && ( pFibObjectInfo != NULL )
+		//activate buttons for using selected Fib object
+		mutexGraphicalElements.lock();
+		if ( pButtonShowSelectedFibObject ) {
+			pButtonShowSelectedFibObject->setEnabled( true );
+		}
+		if ( pButtonInsertSelectedFibObject ) {
+			pButtonInsertSelectedFibObject->setEnabled( true );
+		}
+		mutexGraphicalElements.unlock();
+	}
+	pBaseFibObjectInfo = pFibObjectInfo;
+	
+	/* set base Fib object info in all Fib object info lists +
+	 * adapt there possible categories*/
+	//the possible categories are all absolute categories plus the relativ categories
+	QList< cFibObjectCategory > liPossibleCategories =
+		cFibObjectInfoHandler::getInstance()->getPossibleFibObjectCategories();
+	//set just absolute categories in first Fib object info list
+	QList< cWidgetFibObjectInfos * >::iterator
+		itrListOfFibObjects = liListsOfFibObjects.begin();
+	if ( itrListOfFibObjects == liListsOfFibObjects.end() ) {
+		//no first Fib object info list -> done
+		mutexFibObjectInfos.unlock();
+		return;
+	}
+	//set possible categories
+	(*itrListOfFibObjects)->setPossibleCategories( liPossibleCategories, false );
+	//set selected Fib object
+	(*itrListOfFibObjects)->setSelectedFibObjectInfo( pWidgetFibObjectInfo );
+	
+	itrListOfFibObjects++;
+	if ( itrListOfFibObjects == liListsOfFibObjects.end() ) {
+		//no second Fib object info list -> done
+		mutexFibObjectInfos.unlock();
+		return;
+	}
+	//get relativ categories (connections of selected Fib object)
+	if ( pBaseFibObjectInfo != NULL ) {
+		
+		const std::map< string, std::set< unsigned long > > mapConnections =
+			pBaseFibObjectInfo->getConnectedToMap();
+		for ( std::map< string, std::set< unsigned long > >::const_reverse_iterator
+				itrConnection = mapConnections.rbegin();
+				itrConnection != mapConnections.rend(); itrConnection++ ) {
+			//insert the relative categories at the front
+			liPossibleCategories.push_front( cFibObjectCategory(
+				QString( itrConnection->first.c_str() ), false ) );
+		}//end for all connections
+		
+	}/*else if no base Fib object info or first Fib object info list
+	-> use no relativ categories (connections of selected Fib object)*/
+	for ( ; itrListOfFibObjects != liListsOfFibObjects.end(); itrListOfFibObjects++ ) {
+		
+		//set possible categories
+		(*itrListOfFibObjects)->setPossibleCategories( liPossibleCategories, false );
+		//set selected Fib object
+		(*itrListOfFibObjects)->setSelectedFibObjectInfo( pWidgetFibObjectInfo );
 	}
 	mutexFibObjectInfos.unlock();
 }
@@ -309,17 +406,21 @@ void cDialogSelectFibObject::setSelectedFibObjectInfo(
  * 	widget which was selected
  */
 void cDialogSelectFibObject::selectWidgetFibObjectInfo(
-		const cWidgetFibObjectInfo * pWidgetFibObjectInfo ){
+		const cWidgetFibObjectInfo * pWidgetFibObjectInfo ) {
 	
 	DEBUG_OUT_L2(<<"cDialogSelectFibObject("<<this <<")::selectWidgetFibObjectInfo( pWidgetFibObjectInfo="<<pWidgetFibObjectInfo<<");"<<endl <<flush);
 	
+	//set new selected Fib object info
+	setSelectedFibObjectInfo( const_cast<cWidgetFibObjectInfo*>(
+		pWidgetFibObjectInfo ) );
+/*TODO weg old
 	if ( ( pWidgetFibObjectInfo != NULL ) &&
-			( pWidgetFibObjectInfo->getFibObjectInfo() != NULL ) ){
+			( pWidgetFibObjectInfo->getFibObjectInfo() != NULL ) ) {
 		//set new selected Fib object info
 		setSelectedFibObjectInfo( const_cast<cFibObjectInfo*>(
 			pWidgetFibObjectInfo->getFibObjectInfo() ) );
 	}//else nothing to set
-	
+*/
 }
 
 
@@ -332,7 +433,7 @@ void cDialogSelectFibObject::selectWidgetFibObjectInfo(
  * @see setAssociatedNode()
  * @return a pointer to the associated Fib object node
  */
-cFibNode * cDialogSelectFibObject::getAssociatedNode(){
+cFibNode * cDialogSelectFibObject::getAssociatedNode() {
 	
 	mutexFibObjectInfos.lock();
 	cFibNode * pRetAssociatedNode = pAssociatedNode;
@@ -350,7 +451,7 @@ cFibNode * cDialogSelectFibObject::getAssociatedNode(){
  * @see setAssociatedNode()
  * @return a const pointer to the associated Fib object node
  */
-const cFibNode * cDialogSelectFibObject::getAssociatedNode() const{
+const cFibNode * cDialogSelectFibObject::getAssociatedNode() const {
 	
 	mutexFibObjectInfos.lock();
 	const cFibNode * pRetAssociatedNode = pAssociatedNode;
@@ -367,7 +468,7 @@ const cFibNode * cDialogSelectFibObject::getAssociatedNode() const{
  * @see getAssociatedNode()
  * @param pAssociatedNode a pointer to the the associated Fib object node
  */
-void cDialogSelectFibObject::setAssociatedNode( cFibNode * pAssociatedNode ){
+void cDialogSelectFibObject::setAssociatedNode( cFibNode * pAssociatedNode ) {
 	
 	mutexFibObjectInfos.lock();
 	pAssociatedNode = pAssociatedNode;
@@ -380,7 +481,7 @@ void cDialogSelectFibObject::setAssociatedNode( cFibNode * pAssociatedNode ){
  * This slot opens a dialog to select a Fib database.
  * @see pButtonSelectDatabase
  */
-void cDialogSelectFibObject::selectDatabase(){
+void cDialogSelectFibObject::selectDatabase() {
 	//TODO open dialog to select a database
 	
 }
@@ -390,7 +491,7 @@ void cDialogSelectFibObject::selectDatabase(){
  * This slot opens a dialog to load a Fib object database.
  * @see pButtonLoadDatabase
  */
-void cDialogSelectFibObject::loadDatabase(){
+void cDialogSelectFibObject::loadDatabase() {
 	//TODO open dialog to load a database
 	
 }
@@ -400,7 +501,7 @@ void cDialogSelectFibObject::loadDatabase(){
  * This slot opens a dialog to load a Fib object.
  * @see pButtonLoadFibObject
  */
-void cDialogSelectFibObject::loadFibObject(){
+void cDialogSelectFibObject::loadFibObject() {
 	
 	DEBUG_OUT_L2(<<"cDialogSelectFibObject("<<this <<")::loadFibObject() started"<<endl <<flush);
 	
@@ -413,7 +514,7 @@ void cDialogSelectFibObject::loadFibObject(){
 	
 	fileDialog.setFileMode( QFileDialog::ExistingFile );
 	
-	if ( fileDialog.exec() ){
+	if ( fileDialog.exec() ) {
 		//file(s) was/(where) choosen, add Fib object infos from the choosen files
 		const QStringList liFileNames = fileDialog.selectedFiles();
 		
@@ -421,7 +522,7 @@ void cDialogSelectFibObject::loadFibObject(){
 			cFibObjectInfoHandler::getInstance();
 		
 		for ( QStringList::const_iterator itrFileName = liFileNames.begin();
-				itrFileName != liFileNames.end(); itrFileName++ ){
+				itrFileName != liFileNames.end(); itrFileName++ ) {
 			
 			DEBUG_OUT_L2(<<"cDialogSelectFibObject("<<this<<")::loadFibObject() opening Fib object info from file "<<(itrFileName->toStdString())<<endl<<flush);
 			cFibObjectSourcePath fibObjectSourcePath( itrFileName->toStdString() );
@@ -431,7 +532,7 @@ void cDialogSelectFibObject::loadFibObject(){
 			//update all Fib object info lists
 			for ( QList< cWidgetFibObjectInfos * >::const_iterator
 					itrFibInfos = liListsOfFibObjects.begin();
-					itrFibInfos != liListsOfFibObjects.end(); itrFibInfos++ ){
+					itrFibInfos != liListsOfFibObjects.end(); itrFibInfos++ ) {
 				//update Fib object info widget lists
 				(*itrFibInfos)->updateForCategory();
 			}
@@ -445,7 +546,7 @@ void cDialogSelectFibObject::loadFibObject(){
  * This slot opens a dialog to search for a Fib object.
  * @see pButtonSearchForFibObject
  */
-void cDialogSelectFibObject::searchForFibObject(){
+void cDialogSelectFibObject::searchForFibObject() {
 	
 	DEBUG_OUT_L2(<<"cDialogSelectFibObject("<<this <<")::searchForFibObject() started"<<endl <<flush);
 	//TODO open dialog to search for a Fib object
@@ -457,7 +558,7 @@ void cDialogSelectFibObject::searchForFibObject(){
  * This slot creates a Fib object list for a new category.
  * @see pButtonNewCategory
  */
-void cDialogSelectFibObject::newFibObjectCategory(){
+void cDialogSelectFibObject::newFibObjectCategory() {
 	
 	DEBUG_OUT_L2(<<"cDialogSelectFibObject("<<this <<")::newFibObjectCategory() started"<<endl <<flush);
 	
@@ -467,13 +568,13 @@ void cDialogSelectFibObject::newFibObjectCategory(){
 	
 	//get relativ categories (connections of selected Fib object)
 	mutexFibObjectInfos.lock();
-	if ( ( pBaseFibObjectInfo != NULL ) && ( ! liListsOfFibObjects.empty() ) ){
+	if ( ( pBaseFibObjectInfo != NULL ) && ( ! liListsOfFibObjects.empty() ) ) {
 		
 		const std::map< string, std::set< unsigned long > > mapConnections =
 			pBaseFibObjectInfo->getConnectedToMap();
 		for ( std::map< string, std::set< unsigned long > >::const_reverse_iterator
 				itrConnection = mapConnections.rbegin();
-				itrConnection != mapConnections.rend(); itrConnection++ ){
+				itrConnection != mapConnections.rend(); itrConnection++ ) {
 			//insert the relative categories at the front
 			liPossibleCategories.push_front( cFibObjectCategory(
 				QString( itrConnection->first.c_str() ), false ) );
@@ -483,12 +584,7 @@ void cDialogSelectFibObject::newFibObjectCategory(){
 	-> use no relativ categories (connections of selected Fib object)*/
 	//create new Fib object info list widget
 	cWidgetFibObjectInfos * pWidgetFibObjectInfos =
-		new cWidgetFibObjectInfos( liPossibleCategories ,
-			( liListsOfFibObjects.empty() ? //show all Fib object infos in first list
-				std::max( cWidgetFibObjectInfos::getDefaultMaxFibObjectInfos(),
-					cFibObjectInfoHandler::getInstance()->getNumberOfFibObjectInfos() +
-						32 ):
-				0 ),
+		new cWidgetFibObjectInfos( liPossibleCategories, pBaseFibObjectInfo,
 			this );
 	
 	connect( pWidgetFibObjectInfos,
@@ -499,7 +595,7 @@ void cDialogSelectFibObject::newFibObjectCategory(){
 	pWidgetFibObjectInfos->registerListenerSelectedFibObjectInfo( this );
 	//add to pSplitterFibObjectInfos
 	mutexGraphicalElements.lock();
-	if ( pSplitterFibObjectInfos ){
+	if ( pSplitterFibObjectInfos ) {
 		pSplitterFibObjectInfos->addWidget( pWidgetFibObjectInfos );
 	}
 	mutexGraphicalElements.unlock();
@@ -518,11 +614,11 @@ void cDialogSelectFibObject::newFibObjectCategory(){
  * 	widget which should be closed
  */
 void cDialogSelectFibObject::closeWidgetFibObjectInfos(
-		cWidgetFibObjectInfos * pWidgetFibObjectInfos ){
+		cWidgetFibObjectInfos * pWidgetFibObjectInfos ) {
 	
 	DEBUG_OUT_L2(<<"cDialogSelectFibObject("<<this <<")::closeWidgetFibObjectInfos() started"<<endl <<flush);
 	
-	if ( pWidgetFibObjectInfos == NULL ){
+	if ( pWidgetFibObjectInfos == NULL ) {
 		//nothing to remove
 		return;
 	}
@@ -542,13 +638,13 @@ void cDialogSelectFibObject::closeWidgetFibObjectInfos(
  * @see cMainWindowHandler
  * @see cFibObjectMainWindow
  */
-void cDialogSelectFibObject::showSelectedFibObject(){
+void cDialogSelectFibObject::showSelectedFibObject() {
 	
 	DEBUG_OUT_L2(<<"cDialogSelectFibObject("<<this <<")::showSelectedFibObject() started"<<endl <<flush);
 	
 	//open selected Fib object info with main window handler
 	mutexFibObjectInfos.lock();
-	if ( pBaseFibObjectInfo ){
+	if ( pBaseFibObjectInfo ) {
 		cMainWindowHandler * pMainWindowHandler =
 			cMainWindowHandler::getInstance();
 		
@@ -566,14 +662,14 @@ void cDialogSelectFibObject::showSelectedFibObject(){
  * @see pBaseFibObjectInfo
  * @see cFibNode
  */
-void cDialogSelectFibObject::insertSelectedFibObject(){
+void cDialogSelectFibObject::insertSelectedFibObject() {
 	
 	DEBUG_OUT_L2(<<"cDialogSelectFibObject("<<this <<")::insertSelectedFibObject() started"<<endl <<flush);
 	
 	mutexFibObjectInfos.lock();
 	cFibObjectInfo * pToInsertFibObjectInfo = pBaseFibObjectInfo;
 	mutexFibObjectInfos.unlock();
-	if ( ( pToInsertFibObjectInfo != NULL ) && ( pAssociatedNode != NULL ) ){
+	if ( ( pToInsertFibObjectInfo != NULL ) && ( pAssociatedNode != NULL ) ) {
 		//insert Fib object into with this associated Fib object node (of main window)
 		pAssociatedNode->insertFibObjectInfo( pToInsertFibObjectInfo );
 	}//else if associated Fib object node or selected Fib object exists -> do nothing
@@ -585,7 +681,7 @@ void cDialogSelectFibObject::insertSelectedFibObject(){
 /**
  * This method will create this dialog.
  */
-void cDialogSelectFibObject::createDialog(){
+void cDialogSelectFibObject::createDialog() {
 	
 	DEBUG_OUT_L2(<<"cDialogSelectFibObject("<<this <<")::createDialog() started"<<endl <<flush);
 	
@@ -665,14 +761,14 @@ void cDialogSelectFibObject::createDialog(){
 	 */
 	
 	mutexFibObjectInfos.lock();
-	if ( liListsOfFibObjects.empty() ){
+	if ( liListsOfFibObjects.empty() ) {
 		DEBUG_OUT_L2(<<"cDialogSelectFibObject("<<this <<")::createDialog() add minimum one list with Fib object infos"<<endl <<flush);
 	
 		//add minimum one list with Fib object infos
 		cFibObjectInfoHandler * pFibObjectInfoHandler =
 			cFibObjectInfoHandler::getInstance();
 		
-		if ( pFibObjectInfoHandler ){
+		if ( pFibObjectInfoHandler ) {
 			const std::string szCategoryForAll =
 				cFibObjectInfoHandler::getCategoryForAll();
 			const cFibObjectCategory categoryForAll(
@@ -681,11 +777,7 @@ void cDialogSelectFibObject::createDialog(){
 			cWidgetFibObjectInfos * pFirstWidgetFibObjectInfos =
 				new cWidgetFibObjectInfos(
 					pFibObjectInfoHandler->getPossibleFibObjectCategories(),
-					//show all Fib object infos in first list
-					std::max( cWidgetFibObjectInfos::getDefaultMaxFibObjectInfos(),
-						cFibObjectInfoHandler::getInstance()->getNumberOfFibObjectInfos() +
-							32 ),
-					this );
+					pBaseFibObjectInfo, this );
 			
 			pFirstWidgetFibObjectInfos->setSelectedCategory( categoryForAll );
 			
@@ -705,7 +797,7 @@ void cDialogSelectFibObject::createDialog(){
 	//add all lists of Fib object info widgets
 	for ( QList< cWidgetFibObjectInfos * >::const_iterator
 			itrFibInfos = liListsOfFibObjects.begin();
-			itrFibInfos != liListsOfFibObjects.end(); itrFibInfos++ ){
+			itrFibInfos != liListsOfFibObjects.end(); itrFibInfos++ ) {
 		//add Fib object info widget
 		pSplitterFibObjectInfos->addWidget( *itrFibInfos );
 	}
@@ -734,7 +826,7 @@ void cDialogSelectFibObject::createDialog(){
 	pButtonShowSelectedFibObject->setEnabled( pBaseFibObjectInfo != NULL );
 	pLayoutBottomMenue->addWidget( pButtonShowSelectedFibObject );
 	
-	if ( pAssociatedNode ){
+	if ( pAssociatedNode ) {
 		//insert button to insert selected Fib object in associated node
 		pButtonInsertSelectedFibObject = new QPushButton(tr("&Insert"), this );
 		pButtonInsertSelectedFibObject->setCheckable( true );

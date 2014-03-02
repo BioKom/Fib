@@ -132,6 +132,7 @@
 /*
 History:
 13.09.2013  Oesterholz  created
+02.03.2014  Oesterholz  categories for Fib object source added
 */
 
 
@@ -143,11 +144,13 @@ History:
 #include "cOptionalPart.h"
 
 #include "cFibObjectSource.h"
+#include "cFibObjectSourceFibDb.h"
 #include "eFibObjectInfoChangedEvent.h"
 #include "nFibObjectTools.h"
+#include "cFibObjectInfoHandler.h"
 
 //debugging switches
-//#define DEBUG
+#define DEBUG
 //#define DEBUG_RESTORE_XML
 
 
@@ -171,21 +174,27 @@ QMutex cFibObjectInfo::mutexCheckCyclicPreviewFibObjectInf;
  * 	Fib object for this Fib object info object;
  * 	This class will try to read all needed data from the source Fib object.
  * 	@see pFibObjectSource
+ * @param bExtractInfo if true the information for the Fib object info
+ * 	will be extracted from the Fib object
+ * 	@see extractInfoFromLoadedFibObject()
  */
 cFibObjectInfo::cFibObjectInfo( const unsigned long ulInIdentifier,
-		const cFibObjectSource * pInFibObjectSource ):ulIdentifier( ulInIdentifier ),
+		const cFibObjectSource * pInFibObjectSource, const bool bExtractInfo ):
+		ulIdentifier( ulInIdentifier ),
 		szNameOfFibObject(""), pFibObjectSource( NULL ), pLoadedFibObject( NULL ),
 		pPreviewFibObject( NULL ), ulNumberOfInputVariables( 0 ),
-		ulNumberOfExtSubobjects( 0 ), ulNumberOfFibElements( 0 ){
+		ulNumberOfExtSubobjects( 0 ), ulNumberOfFibElements( 0 ) {
 		
 	DEBUG_OUT_L2(<<"cFibObjectInfo("<<this<<")::cFibObjectInfo( ulInIdentifier="<<ulInIdentifier<<", pInFibObjectSource="<<pInFibObjectSource<<" ) called"<<endl<<flush);
-	if ( pInFibObjectSource ){
+	if ( pInFibObjectSource ) {
 		//clone the given Fib object source
 		pFibObjectSource = pInFibObjectSource->clone();
 	}
 	
-	loadFibObjectFromSource();
-	extractInfoFromLoadedFibObject();
+	if ( bExtractInfo ) {
+		loadFibObjectFromSource();
+		extractInfoFromLoadedFibObject();
+	}
 }
 
 
@@ -208,10 +217,10 @@ cFibObjectInfo::cFibObjectInfo( istream & stream, int * iOutStatus ):
 		ulIdentifier( 0 ), szNameOfFibObject(""),
 		pFibObjectSource( NULL ), pLoadedFibObject( NULL ),
 		pPreviewFibObject( NULL ), ulNumberOfInputVariables( 0 ),
-		ulNumberOfExtSubobjects( 0 ), ulNumberOfFibElements( 0 ){
+		ulNumberOfExtSubobjects( 0 ), ulNumberOfFibElements( 0 ) {
 	
 	DEBUG_OUT_L2(<<"cFibObjectInfo("<<this<<")::cFibObjectInfo( stream, iOutStatus="<<iOutStatus<<" ) called"<<endl<<flush);
-	if ( iOutStatus != NULL ){
+	if ( iOutStatus != NULL ) {
 		(*iOutStatus) = restoreFibObjectInfo( stream );
 	}else{//don't use iOutStatus
 		restoreFibObjectInfo( stream );
@@ -239,10 +248,10 @@ cFibObjectInfo::cFibObjectInfo( const TiXmlNode * pXmlNode,
 		int * iOutStatus ): ulIdentifier( 0 ), szNameOfFibObject(""),
 		pFibObjectSource( NULL ), pLoadedFibObject( NULL ),
 		pPreviewFibObject( NULL ), ulNumberOfInputVariables( 0 ),
-		ulNumberOfExtSubobjects( 0 ), ulNumberOfFibElements( 0 ){
+		ulNumberOfExtSubobjects( 0 ), ulNumberOfFibElements( 0 ) {
 	
 	DEBUG_OUT_L2(<<"cFibObjectInfo("<<this<<")::cFibObjectInfo( pXmlNode, iOutStatus="<<iOutStatus<<" ) called"<<endl<<flush);
-	if ( iOutStatus != NULL ){
+	if ( iOutStatus != NULL ) {
 		(*iOutStatus) = restoreFibObjectInfo( pXmlNode );
 	}else{//don't use iOutStatus
 		restoreFibObjectInfo( pXmlNode );
@@ -277,10 +286,10 @@ cFibObjectInfo::cFibObjectInfo( const unsigned long ulInIdentifier,
 		pFibObjectSource( NULL ), pLoadedFibObject( NULL ),
 		changeableBy( setChangeableBy ),
 		pPreviewFibObject( NULL ), ulNumberOfInputVariables( 0 ),
-		ulNumberOfExtSubobjects( 0 ), ulNumberOfFibElements( 0 ){
+		ulNumberOfExtSubobjects( 0 ), ulNumberOfFibElements( 0 ) {
 	
 	DEBUG_OUT_L2(<<"cFibObjectInfo("<<this<<")::cFibObjectInfo( ulInIdentifier="<<ulInIdentifier<<", szInNameOfFibObject="<<szInNameOfFibObject<<", szInDescription="<<szInDescription<<", pInFibObjectSource="<<pInFibObjectSource<<", setChangeableBy ) called"<<endl<<flush);
-	if ( pInFibObjectSource ){
+	if ( pInFibObjectSource ) {
 		//clone the given Fib object source
 		pFibObjectSource = pInFibObjectSource->clone();
 	}
@@ -303,10 +312,10 @@ cFibObjectInfo::cFibObjectInfo( const cFibObjectInfo & fibObjectInfo ):
 		pPreviewFibObject( fibObjectInfo.pPreviewFibObject ),
 		ulNumberOfInputVariables( fibObjectInfo.ulNumberOfInputVariables ),
 		ulNumberOfExtSubobjects( fibObjectInfo.ulNumberOfExtSubobjects ),
-		ulNumberOfFibElements( fibObjectInfo.ulNumberOfFibElements ){
+		ulNumberOfFibElements( fibObjectInfo.ulNumberOfFibElements ) {
 	
 	DEBUG_OUT_L2(<<"cFibObjectInfo("<<this<<")::cFibObjectInfo( fibObjectInfo ) called"<<endl<<flush);
-	if ( fibObjectInfo.pFibObjectSource ){
+	if ( fibObjectInfo.pFibObjectSource ) {
 		pFibObjectSource = fibObjectInfo.pFibObjectSource->clone();
 	}
 }
@@ -332,10 +341,10 @@ cFibObjectInfo::cFibObjectInfo( const unsigned long ulInIdentifier,
 		pPreviewFibObject( fibObjectInfo.pPreviewFibObject ),
 		ulNumberOfInputVariables( fibObjectInfo.ulNumberOfInputVariables ),
 		ulNumberOfExtSubobjects( fibObjectInfo.ulNumberOfExtSubobjects ),
-		ulNumberOfFibElements( fibObjectInfo.ulNumberOfFibElements ){
+		ulNumberOfFibElements( fibObjectInfo.ulNumberOfFibElements ) {
 	
 	DEBUG_OUT_L2(<<"cFibObjectInfo("<<this<<")::cFibObjectInfo( ulInIdentifier="<<ulInIdentifier<<", fibObjectInfo ) called"<<endl<<flush);
-	if ( fibObjectInfo.pFibObjectSource ){
+	if ( fibObjectInfo.pFibObjectSource ) {
 		pFibObjectSource = fibObjectInfo.pFibObjectSource->clone();
 	}
 }
@@ -344,14 +353,14 @@ cFibObjectInfo::cFibObjectInfo( const unsigned long ulInIdentifier,
 /**
  * destructor
  */
-cFibObjectInfo::~cFibObjectInfo(){
+cFibObjectInfo::~cFibObjectInfo() {
 	
 	DEBUG_OUT_L2(<<"cFibObjectInfo("<<this<<")::~cFibObjectInfo() called"<<endl<<flush);
 	mutexFibObjectInfoData.lock();
-	if ( pFibObjectSource ){
+	if ( pFibObjectSource ) {
 		delete pFibObjectSource;
 	}
-	if ( pLoadedFibObject ){
+	if ( pLoadedFibObject ) {
 		pLoadedFibObject->deleteObject();
 	}
 	mutexFibObjectInfoData.unlock();
@@ -366,7 +375,7 @@ cFibObjectInfo::~cFibObjectInfo(){
  *
  * @return a pointer to a copy of this object
  */
-cFibObjectInfo * cFibObjectInfo::clone() const{
+cFibObjectInfo * cFibObjectInfo::clone() const {
 	
 	DEBUG_OUT_L2(<<"cFibObjectInfo("<<this<<")::clone() called"<<endl<<flush);
 	mutexFibObjectInfoData.lock();
@@ -385,7 +394,7 @@ cFibObjectInfo * cFibObjectInfo::clone() const{
  * 	@see ulIdentifier
  * @return a pointer to a copy of this object
  */
-cFibObjectInfo * cFibObjectInfo::clone( const unsigned long ulInIdentifier ) const{
+cFibObjectInfo * cFibObjectInfo::clone( const unsigned long ulInIdentifier ) const {
 	
 	mutexFibObjectInfoData.lock();
 	cFibObjectInfo * pFibObjectInfoClone =
@@ -398,7 +407,7 @@ cFibObjectInfo * cFibObjectInfo::clone( const unsigned long ulInIdentifier ) con
 /**
  * @return the name of this class "cFibObjectInfo"
  */
-string cFibObjectInfo::getName() const{
+string cFibObjectInfo::getName() const {
 	
 	return string( "cFibObjectInfo" );
 }
@@ -409,11 +418,11 @@ string cFibObjectInfo::getName() const{
  * @return the identifiers of this Fib object
  * 	@see ulIdentifier
  */
-unsigned long cFibObjectInfo::getIdentifier() const{
+unsigned long cFibObjectInfo::getIdentifier() const {
 	
-	mutexFibObjectInfoData.lock();
+	mutexIdentifier.lock();
 	const unsigned long ulIdentifierToReturn = ulIdentifier;
-	mutexFibObjectInfoData.unlock();
+	mutexIdentifier.unlock();
 	
 	return ulIdentifierToReturn;
 }
@@ -426,11 +435,11 @@ unsigned long cFibObjectInfo::getIdentifier() const{
  * @see getIdentifier()
  * @param ulNewIdentifier the identifiers of this Fib object
  */
-void cFibObjectInfo::setIdentifier( const unsigned long ulNewIdentifier ){
+void cFibObjectInfo::setIdentifier( const unsigned long ulNewIdentifier ) {
 	
-	mutexFibObjectInfoData.lock();
+	mutexIdentifier.lock();
 	ulIdentifier = ulNewIdentifier;
-	mutexFibObjectInfoData.unlock();
+	mutexIdentifier.unlock();
 	//send event that this Fib object info object has changed
 	sendFibObjectInfoChange();
 }
@@ -441,7 +450,7 @@ void cFibObjectInfo::setIdentifier( const unsigned long ulNewIdentifier ){
  * @return the name of the Fib object
  * 	@see szNameOfFibObject
  */
-string cFibObjectInfo::getFibObjectName() const{
+string cFibObjectInfo::getFibObjectName() const {
 	
 	mutexFibObjectInfoData.lock();
 	const string szRetNameOfFibObject = szNameOfFibObject;
@@ -457,7 +466,7 @@ string cFibObjectInfo::getFibObjectName() const{
  * @see getFibObjectName()
  * @param szFibObjectName the name of the Fib object to set
  */
-void cFibObjectInfo::setFibObjectName( const string & szFibObjectName ){
+void cFibObjectInfo::setFibObjectName( const string & szFibObjectName ) {
 	
 	mutexFibObjectInfoData.lock();
 	szNameOfFibObject = szFibObjectName;
@@ -472,7 +481,7 @@ void cFibObjectInfo::setFibObjectName( const string & szFibObjectName ){
  * @return the description of the Fib object
  * 	@see szDescription
  */
-string cFibObjectInfo::getDescription() const{
+string cFibObjectInfo::getDescription() const {
 	
 	mutexFibObjectInfoData.lock();
 	const string szRetDescription = szDescription;
@@ -488,7 +497,7 @@ string cFibObjectInfo::getDescription() const{
  * @see getDescription()
  * @param szFibObjectDescription the description of the Fib object to set
  */
-void cFibObjectInfo::setDescription( const string & szFibObjectDescription ){
+void cFibObjectInfo::setDescription( const string & szFibObjectDescription ) {
 	
 	mutexFibObjectInfoData.lock();
 	szDescription = szFibObjectDescription;
@@ -503,11 +512,11 @@ void cFibObjectInfo::setDescription( const string & szFibObjectDescription ){
  * @return a pointer to the Fib object source object
  * 	@see pFibObjectSource
  */
-cFibObjectSource * cFibObjectInfo::getFibObjectSource(){
+cFibObjectSource * cFibObjectInfo::getFibObjectSource() {
 	
-	mutexFibObjectInfoData.lock();
+	mutexFibObjectSource.lock();
 	cFibObjectSource * pRetFibObjectSource = pFibObjectSource;
-	mutexFibObjectInfoData.unlock();
+	mutexFibObjectSource.unlock();
 	return pRetFibObjectSource;
 }
 
@@ -517,11 +526,11 @@ cFibObjectSource * cFibObjectInfo::getFibObjectSource(){
  * @return a const pointer to the Fib object source object
  * 	@see pFibObjectSource
  */
-const cFibObjectSource * cFibObjectInfo::getFibObjectSource() const{
+const cFibObjectSource * cFibObjectInfo::getFibObjectSource() const {
 	
-	mutexFibObjectInfoData.lock();
+	mutexFibObjectSource.lock();
 	const cFibObjectSource * pRetFibObjectSource = pFibObjectSource;
-	mutexFibObjectInfoData.unlock();
+	mutexFibObjectSource.unlock();
 	return pRetFibObjectSource;
 }
 
@@ -535,23 +544,19 @@ const cFibObjectSource * cFibObjectInfo::getFibObjectSource() const{
  * @see getFibObjectSource()
  * @return a pointer to the Fib object source object to set
  */
-bool cFibObjectInfo::setFibObjectSource( const cFibObjectSource * pInFibObjectSource ){
+bool cFibObjectInfo::setFibObjectSource( const cFibObjectSource * pInFibObjectSource ) {
 	
-	mutexFibObjectInfoData.lock();
-	if ( pFibObjectSource ){
+	mutexFibObjectSource.lock();
+	if ( pFibObjectSource ) {
 		//delete old Fib object source object
 		delete pFibObjectSource;
 		pFibObjectSource = NULL;
 	}
-	if ( pLoadedFibObject ){
-		//the source object changes -> so delete the loaded Fib object
-		pLoadedFibObject->deleteObject();
-		pLoadedFibObject = NULL;
-	}
-	if ( pInFibObjectSource ){
+	if ( pInFibObjectSource ) {
 		pFibObjectSource = pInFibObjectSource->clone();
 	}
-	mutexFibObjectInfoData.unlock();
+	mutexFibObjectSource.unlock();
+	deleteLoadedFibObject();
 	//send event that this Fib object info object has changed
 	sendFibObjectInfoChange();
 	
@@ -583,27 +588,29 @@ bool cFibObjectInfo::setFibObjectSource( const cFibObjectSource * pInFibObjectSo
  * 			object is wrong
  * @return a pointer to the loaded Fib object, or NULL if non could be loaded
  */
-cFibElement * cFibObjectInfo::loadFibObjectFromSource( int * iOutStatus ){
+cFibElement * cFibObjectInfo::loadFibObjectFromSource( int * iOutStatus ) {
 	
 	//the Fib object for this Fib object info is used now
 	setFibObjectUsed();
 	
 	mutexFibObjectInfoData.lock();
-	if ( pLoadedFibObject ){
+	if ( pLoadedFibObject ) {
 		//the source object loaded allready -> return pointer to it
 		cFibElement * pRetLoadedFibObject = pLoadedFibObject;
 		mutexFibObjectInfoData.unlock();
 		return pRetLoadedFibObject;
 	}//else
-	if ( pFibObjectSource ){
+	mutexFibObjectSource.lock();
+	if ( pFibObjectSource ) {
 		//load the Fib object from its source
 		int iLoadStatus = 0;
 		set< string > setChangebelBy;
 		
 		pLoadedFibObject = pFibObjectSource->loadFibObject(
 			&iLoadStatus, &setChangebelBy );
+		mutexFibObjectSource.unlock();
 		
-		if ( iOutStatus ){
+		if ( iOutStatus ) {
 			(*iOutStatus) = iLoadStatus;
 		}
 		changeableBy = setChangebelBy;
@@ -611,6 +618,7 @@ cFibElement * cFibObjectInfo::loadFibObjectFromSource( int * iOutStatus ){
 		mutexFibObjectInfoData.unlock();
 		return pLoadedFibObject;
 	}//else can't load the Fib object
+	mutexFibObjectSource.unlock();
 	mutexFibObjectInfoData.unlock();
 	return NULL;
 }
@@ -626,10 +634,10 @@ cFibElement * cFibObjectInfo::loadFibObjectFromSource( int * iOutStatus ){
  * @return ture if the loaded Fib object was deleted, else false (no
  * 	Fib object loaded)
  */
-bool cFibObjectInfo::deleteLoadedFibObject(){
+bool cFibObjectInfo::deleteLoadedFibObject() {
 	
 	mutexFibObjectInfoData.lock();
-	if ( pLoadedFibObject ){
+	if ( pLoadedFibObject ) {
 		//loaded Fib object exists -> delete it
 		pLoadedFibObject->deleteObject();
 		pLoadedFibObject = NULL;
@@ -648,18 +656,20 @@ bool cFibObjectInfo::deleteLoadedFibObject(){
  *
  * @param true if information could be extracted, else false
  */
-bool cFibObjectInfo::extractInfoFromLoadedFibObject(){
+bool cFibObjectInfo::extractInfoFromLoadedFibObject() {
 	
+	DEBUG_OUT_L2(<<"cFibObjectInfo("<<this<<")::extractInfoFromLoadedFibObject() called"<<endl<<flush);
 	mutexFibObjectInfoData.lock();
-	if ( pLoadedFibObject == NULL ){
+	if ( pLoadedFibObject == NULL ) {
 		//nothing to evaluate the information from
 		mutexFibObjectInfoData.unlock();
 		return false;
 	}
 	//evalue the number of Fib elements
 	ulNumberOfFibElements = pLoadedFibObject->getNumberOfElements();
+	DEBUG_OUT_L2(<<"cFibObjectInfo("<<this<<")::extractInfoFromLoadedFibObject() number of elements "<<ulNumberOfFibElements<<endl<<flush);
 	
-	if ( pLoadedFibObject->getType() == 'r' ){
+	if ( pLoadedFibObject->getType() == 'r' ) {
 		
 		cRoot * pLoadedRootElement = ((cRoot*)(pLoadedFibObject));
 		//evalue the number of input variables
@@ -669,46 +679,49 @@ bool cFibObjectInfo::extractInfoFromLoadedFibObject(){
 		//get the optional part for the top most root element
 		cOptionalPart * pOptionalPart =
 			pLoadedRootElement->getOptionalPart();
-		if ( pOptionalPart != NULL ){
+		if ( pOptionalPart != NULL ) {
 			const list< pair<string,string> > liAllEntries =
 				pOptionalPart->getEntries();
 			
 			for ( list< pair<string,string> >::const_iterator
 					itrEntry = liAllEntries.begin();
-					itrEntry != liAllEntries.end(); itrEntry++ ){
+					itrEntry != liAllEntries.end(); itrEntry++ ) {
 				
 				const string szKey = itrEntry->first;
-				if ( szKey.size() < 2 ){
+				if ( szKey.size() < 2 ) {
 					//not a entry to extract -> skip it
 					continue;
 				}
 				const char * pSzKey = szKey.c_str();
-				switch ( pSzKey[ 0 ] ){
+				switch ( pSzKey[ 0 ] ) {
 					case 'n':{
 						//extract the Fib object name from the optional part "name" entry?
-						if ( szKey == "name" ){
+						if ( szKey == "name" ) {
 							//read the name of the Fib object
 							szNameOfFibObject = itrEntry->second;
+							DEBUG_OUT_L2(<<"cFibObjectInfo("<<this<<")::extractInfoFromLoadedFibObject() name readed: "<<szNameOfFibObject<<endl<<flush);
 						}
 					}break;
 					case 'd':{
 						//extract the Fib object description from the optional part "description" entry?
-						if ( szKey == "description" ){
+						if ( szKey == "description" ) {
 							//read the description of the Fib object
 							szDescription = itrEntry->second;
+							DEBUG_OUT_L2(<<"cFibObjectInfo("<<this<<")::extractInfoFromLoadedFibObject() description readed: "<<szDescription<<endl<<flush);
 						}
 					}break;
 					case 'i':{
-						if ( pSzKey[ 1 ] == 's' ){
+						if ( pSzKey[ 1 ] == 's' ) {
 							/*the key begins with "is" (e.g. "isPointElement")
 							 *-> add to categories*/
 							setInCategories.insert( szKey );
+							DEBUG_OUT_L2(<<"cFibObjectInfo("<<this<<")::extractInfoFromLoadedFibObject() categories readed: "<<szKey<<endl<<flush);
 						}
 					}break;
 					case 'D':{
-						if ( szKey.compare( 0, 10, "DbObject::" ) == 0 ){
+						if ( szKey.compare( 0, 10, "DbObject::" ) == 0 ) {
 							/*extract information about the connections to other Fib objects:
-							 * (Beware: how to map external identifiers to identifiers of this
+							 * (Note: map external identifiers to identifiers of this
 							 * database (try to find equal cFibObjectSource))
 								- DbObject::isPointElement
 								- DbObject::isPointSubObject
@@ -716,21 +729,49 @@ bool cFibObjectInfo::extractInfoFromLoadedFibObject(){
 								- DbObject::isNotAntialiased
 								- DbObject::XXX
 							*/
-							//TODO use Fib Db source object
-							//cFibObjectInfoHandler::getIdentifierForSource()
-							
+							//read Fib database identifier
+							const longFib ulFibDbIdentifier = atol(
+								itrEntry->second.c_str() );
+							DEBUG_OUT_L2(<<"cFibObjectInfo("<<this<<")::extractInfoFromLoadedFibObject() read connected to for: \""<<szKey<<"\" with db identifer: "<<ulFibDbIdentifier<<"("<<itrEntry->second<<")"<<endl<<flush);
+							if ( ulFibDbIdentifier != 0 ) {
+								//get Fib info object handler identifier for Fib database identifer
+								cFibObjectSourceFibDb fibDatabaseSource( ulFibDbIdentifier );
+								
+								const unsigned long ulFibInfoHandlerId =
+									cFibObjectInfoHandler::getInstance()->
+										getIdentifierForSource( &fibDatabaseSource );
+								DEBUG_OUT_L3(<<"   Fib object info handler identifier "<<ulFibInfoHandlerId<<endl<<flush);
+								if ( 0 < ulFibInfoHandlerId ) {
+									//Fib info object for Fib database identifier exists
+									mapConnectedTo[ szKey ].insert( ulFibInfoHandlerId );
+								}
+							}
 						}
 					}break;
 					case 'c':{
-						if ( szKey.compare( 0, 13, "connectedTo::" ) == 0 ){
+						if ( szKey.compare( 0, 13, "connectedTo::" ) == 0 ) {
 							/*extract information about the connections to other Fib objects:
 							 * (Beware: how to map external identifiers to identifiers of this
 							 * database (try to find equal cFibObjectSource))
 								- connectedTo::KEY (TODO docu)
 							*/
-							//TODO if number from Fib Db else path
-							//cFibObjectInfoHandler::getIdentifierForSource()
-							
+							//read Fib database identifier
+							const longFib ulFibDbIdentifier = atol(
+								itrEntry->second.c_str() );
+							DEBUG_OUT_L2(<<"cFibObjectInfo("<<this<<")::extractInfoFromLoadedFibObject() read connected to for: \""<<szKey<<"\" with db identifer: "<<ulFibDbIdentifier<<"("<<itrEntry->second<<")"<<endl<<flush);
+							if ( ulFibDbIdentifier != 0 ) {
+								//get Fib info object handler identifier for Fib database identifer
+								cFibObjectSourceFibDb fibDatabaseSource( ulFibDbIdentifier );
+								
+								const unsigned long ulFibInfoHandlerId =
+									cFibObjectInfoHandler::getInstance()->
+										getIdentifierForSource( &fibDatabaseSource );
+								DEBUG_OUT_L3(<<"   Fib object info handler identifier "<<ulFibInfoHandlerId<<endl<<flush);
+								if ( 0 < ulFibInfoHandlerId ) {
+									//Fib info object for Fib database identifier exists
+									mapConnectedTo[ szKey ].insert( ulFibInfoHandlerId );
+								}
+							}
 						}
 					}break;
 					
@@ -772,10 +813,19 @@ bool cFibObjectInfo::extractInfoFromLoadedFibObject(){
  * @return the set with the categories this Fib object is in
  * 	@see setInCategories
  */
-std::set< std::string > cFibObjectInfo::getCategories() const{
+std::set< std::string > cFibObjectInfo::getCategories() const {
 	
 	mutexFibObjectInfoData.lock();
-	const std::set< std::string > setInCategoriesRet = setInCategories;
+	mutexFibObjectSource.lock();
+	std::set< std::string > setInCategoriesRet = setInCategories;
+	if ( pFibObjectSource ) {
+		//add the categories for the Fib object source
+		 const std::set< std::string > setSourceCategories =
+			 pFibObjectSource->getCategories();
+		setInCategoriesRet.insert(
+			setSourceCategories.begin(), setSourceCategories.end() );
+	}
+	mutexFibObjectSource.unlock();
 	mutexFibObjectInfoData.unlock();
 	return setInCategoriesRet;
 }
@@ -790,7 +840,7 @@ std::set< std::string > cFibObjectInfo::getCategories() const{
  * @see removeCategory()
  * @param setInputCategories the set with the categories this Fib object is in
  */
-void cFibObjectInfo::setCategories( const std::set< std::string > & setInputCategories ){
+void cFibObjectInfo::setCategories( const std::set< std::string > & setInputCategories ) {
 	
 	mutexFibObjectInfoData.lock();
 	setInCategories = setInputCategories;
@@ -810,7 +860,7 @@ void cFibObjectInfo::setCategories( const std::set< std::string > & setInputCate
  * @param strCategory the category to add to the set with the categories
  * 	this Fib object is in
  */
-void cFibObjectInfo::addCategory( const std::string & strCategory ){
+void cFibObjectInfo::addCategory( const std::string & strCategory ) {
 	
 	mutexFibObjectInfoData.lock();
 	setInCategories.insert( strCategory );
@@ -831,7 +881,7 @@ void cFibObjectInfo::addCategory( const std::string & strCategory ){
  * 	categories this Fib object is in
  * @return true if the category could be removed, else false
  */
-bool cFibObjectInfo::removeCategory( const std::string & strCategory ){
+bool cFibObjectInfo::removeCategory( const std::string & strCategory ) {
 	
 	mutexFibObjectInfoData.lock();
 	const bool bCouldBeRemoved = ( 0 < setInCategories.erase( strCategory ) );
@@ -850,7 +900,7 @@ bool cFibObjectInfo::removeCategory( const std::string & strCategory ){
  * 		@see ulIdentifier
  * 	@see mapConnectedTo
  */
-map< string, set< unsigned long > > cFibObjectInfo::getConnectedToMap() const{
+map< string, set< unsigned long > > cFibObjectInfo::getConnectedToMap() const {
 	
 	mutexFibObjectInfoData.lock();
 	const map< string, set< unsigned long > > mapRetConnectedTo = mapConnectedTo;
@@ -868,12 +918,12 @@ map< string, set< unsigned long > > cFibObjectInfo::getConnectedToMap() const{
  * @return a set with identifiers of Fib objects which are connected
  * 	to this Fib object via the given key
  */
-set< unsigned long > cFibObjectInfo::getConnectedFor( const string & szKey ) const{
+set< unsigned long > cFibObjectInfo::getConnectedFor( const string & szKey ) const {
 	
 	mutexFibObjectInfoData.lock();
 	map< string, set< unsigned long > >::const_iterator
 		itrConnectionEntry = mapConnectedTo.find( szKey );
-	if ( itrConnectionEntry == mapConnectedTo.end() ){
+	if ( itrConnectionEntry == mapConnectedTo.end() ) {
 		//no entry exists for the given key
 		mutexFibObjectInfoData.unlock();
 		return set< unsigned long >();
@@ -895,7 +945,7 @@ set< unsigned long > cFibObjectInfo::getConnectedFor( const string & szKey ) con
  * 	connected to this Fib object via the given key
  */
 void cFibObjectInfo::addConnectionTo( const string & szKey,
-		const unsigned long ulConnectedId ){
+		const unsigned long ulConnectedId ) {
 	
 	mutexFibObjectInfoData.lock();
 	mapConnectedTo[ szKey ].insert( ulConnectedId );
@@ -916,7 +966,7 @@ void cFibObjectInfo::addConnectionTo( const string & szKey,
  * 	which are connected to this Fib object via the given key
  */
 void cFibObjectInfo::addConnectionTo( const string & szKey,
-		const set< unsigned long > & setNotConnectedIds ){
+		const set< unsigned long > & setNotConnectedIds ) {
 	
 	mutexFibObjectInfoData.lock();
 	set< unsigned long > & setListForKey = mapConnectedTo[ szKey ];
@@ -939,12 +989,12 @@ void cFibObjectInfo::addConnectionTo( const string & szKey,
  * 	(which to remove)
  */
 bool cFibObjectInfo::removeConnectionTo( const string & szKey,
-		const unsigned long ulConnectedId ){
+		const unsigned long ulConnectedId ) {
 	
 	mutexFibObjectInfoData.lock();
 	map< string, set< unsigned long > >::iterator
 		itrConnectionEntry = mapConnectedTo.find( szKey );
-	if ( itrConnectionEntry == mapConnectedTo.end() ){
+	if ( itrConnectionEntry == mapConnectedTo.end() ) {
 		//no entry exists for the given key -> nothing to erase
 		mutexFibObjectInfoData.unlock();
 		return false;
@@ -952,7 +1002,7 @@ bool cFibObjectInfo::removeConnectionTo( const string & szKey,
 	
 	set< unsigned long > & setIdentifiers = itrConnectionEntry->second;
 	const bool bIdentifierRemoved = ( 0 < setIdentifiers.erase( ulConnectedId ) );
-	if ( setIdentifiers.empty() ){
+	if ( setIdentifiers.empty() ) {
 		//no connections remaining -> remove connection type
 		mapConnectedTo.erase( itrConnectionEntry );
 	}
@@ -976,12 +1026,12 @@ bool cFibObjectInfo::removeConnectionTo( const string & szKey,
  * 	(which to remove)
  */
 unsigned int cFibObjectInfo::removeConnectionTo( const string & szKey,
-		const set< unsigned long > & setNotConnectedIds ){
+		const set< unsigned long > & setNotConnectedIds ) {
 	
 	mutexFibObjectInfoData.lock();
 	map< string, set< unsigned long > >::iterator
 		itrConnectionEntry = mapConnectedTo.find( szKey );
-	if ( itrConnectionEntry == mapConnectedTo.end() ){
+	if ( itrConnectionEntry == mapConnectedTo.end() ) {
 		//no entry exists for the given key -> nothing to erase
 		mutexFibObjectInfoData.unlock();
 		return false;
@@ -989,11 +1039,11 @@ unsigned int cFibObjectInfo::removeConnectionTo( const string & szKey,
 	unsigned int uiNumberErasedIds = 0;
 	set< unsigned long > & setIdentifiers = itrConnectionEntry->second;
 	for ( set< unsigned long >::iterator itrActualId = setNotConnectedIds.begin();
-			itrActualId != setNotConnectedIds.end(); itrActualId++ ){
+			itrActualId != setNotConnectedIds.end(); itrActualId++ ) {
 		//erase actual identifier
 		uiNumberErasedIds += setIdentifiers.erase( *itrActualId );
 	}
-	if ( setIdentifiers.empty() ){
+	if ( setIdentifiers.empty() ) {
 		//no connections remaining -> remove connection type
 		mapConnectedTo.erase( itrConnectionEntry );
 	}
@@ -1016,7 +1066,7 @@ unsigned int cFibObjectInfo::removeConnectionTo( const string & szKey,
  * @see vecLastUsed
  * @return a vector with information when the Fib object was last used
  */
-vector< pair< time_t, unsigned long > > cFibObjectInfo::getLastUsedTimes() const{
+vector< pair< time_t, unsigned long > > cFibObjectInfo::getLastUsedTimes() const {
 	
 	mutexFibObjectInfoData.lock();
 	const vector< pair< time_t, unsigned long > > vecRetLastUsed = vecLastUsed;
@@ -1033,7 +1083,7 @@ vector< pair< time_t, unsigned long > > cFibObjectInfo::getLastUsedTimes() const
  * @param timestamp the timestamp when the Fib object was last used;
  * 	if 0 (default) the timestamp will be set to the actual time
  */
-void cFibObjectInfo::setFibObjectUsed( time_t timestamp ){
+void cFibObjectInfo::setFibObjectUsed( time_t timestamp ) {
 	
 	mutexFibObjectInfoData.lock();
 	//if timestamp is 0 use actual time, else use timestamp
@@ -1043,15 +1093,15 @@ void cFibObjectInfo::setFibObjectUsed( time_t timestamp ){
 	
 	for ( vector< pair< time_t, unsigned long > >::iterator
 			itrTimestamp = vecLastUsed.begin(); ;
-			itrTimestamp++, ulActualMaxNumber *= 2 ){
+			itrTimestamp++, ulActualMaxNumber *= 2 ) {
 		
-		if ( itrTimestamp == vecLastUsed.end() ){
-			if ( vecLastUsed.size() < 9 ){
+		if ( itrTimestamp == vecLastUsed.end() ) {
+			if ( vecLastUsed.size() < 9 ) {
 				//less than 9 entries -> can add new entry
 				vecLastUsed.push_back( paActualTimestamp );
 			}else{//add actual time stamp to last entry
 				itrTimestamp--;
-				if ( paActualTimestamp.first < itrTimestamp->first ){
+				if ( paActualTimestamp.first < itrTimestamp->first ) {
 					/*time for last timestamp entry after actual time stamp
 					 -> set time of actual timestamp entry*/
 					itrTimestamp->first = paActualTimestamp.first;
@@ -1061,7 +1111,7 @@ void cFibObjectInfo::setFibObjectUsed( time_t timestamp ){
 			//done
 			break;
 		}//else not last entry reached
-		if ( paActualTimestamp.first < itrTimestamp->first ){
+		if ( paActualTimestamp.first < itrTimestamp->first ) {
 			/*time for actual entry after time for actual time stamp
 			 -> check next time stamp*/
 			continue;
@@ -1069,7 +1119,7 @@ void cFibObjectInfo::setFibObjectUsed( time_t timestamp ){
 		-> put actual time stamp to actual entry*/
 		const unsigned long ulCountSum =
 			itrTimestamp->second + paActualTimestamp.second;
-		if ( ulCountSum <= ulActualMaxNumber ){
+		if ( ulCountSum <= ulActualMaxNumber ) {
 			//maximum number would not be reached -> simple add cound and done
 			itrTimestamp->second = ulCountSum;
 			break;
@@ -1093,7 +1143,7 @@ void cFibObjectInfo::setFibObjectUsed( time_t timestamp ){
  * 	Fib object (e. g. "non", "all", "biokom")
  * 	@see changeableBy
  */
-set< string > cFibObjectInfo::getChangeableBy() const{
+set< string > cFibObjectInfo::getChangeableBy() const {
 	
 	mutexFibObjectInfoData.lock();
 	const set< string > retChangeableBy = changeableBy;
@@ -1107,7 +1157,7 @@ set< string > cFibObjectInfo::getChangeableBy() const{
  * 	Fib object info
  * 	@see changeableBy
  */
-bool cFibObjectInfo::canChange( const string & szUser ) const{
+bool cFibObjectInfo::canChange( const string & szUser ) const {
 	//check if szUser or ""all" is in changeableBy
 	mutexFibObjectInfoData.lock();
 	const bool bCanChange =
@@ -1126,7 +1176,7 @@ bool cFibObjectInfo::canChange( const string & szUser ) const{
  * @param szUser the user which can change the Fib object for this
  * 	Fib object info
  */
-void cFibObjectInfo::addUserWhichCanChange( const string & szUser ){
+void cFibObjectInfo::addUserWhichCanChange( const string & szUser ) {
 	
 	mutexFibObjectInfoData.lock();
 	changeableBy.insert( szUser );
@@ -1146,7 +1196,7 @@ void cFibObjectInfo::addUserWhichCanChange( const string & szUser ){
  * @return true if the user was removed (he could change the Fib object
  * 	befor), else false
  */
-bool cFibObjectInfo::removeUserWhichCanChange( const string & szUser ){
+bool cFibObjectInfo::removeUserWhichCanChange( const string & szUser ) {
 	
 	mutexFibObjectInfoData.lock();
 	const bool bUserRemoved = ( 0 < changeableBy.erase( szUser ) );
@@ -1168,7 +1218,7 @@ bool cFibObjectInfo::removeUserWhichCanChange( const string & szUser ){
  * 	to set
  */
 void cFibObjectInfo::setNumberOfFibElements(
-		const unsigned long ulInNumberOfFibElements ){
+		const unsigned long ulInNumberOfFibElements ) {
 	
 	mutexFibObjectInfoData.lock();
 	ulNumberOfFibElements = ulInNumberOfFibElements;
@@ -1183,7 +1233,7 @@ void cFibObjectInfo::setNumberOfFibElements(
  * @return the number of Fib elements value
  * 	@see ulNumberOfFibElements
  */
-unsigned long cFibObjectInfo::getNumberOfFibElements() const{
+unsigned long cFibObjectInfo::getNumberOfFibElements() const {
 	
 	mutexFibObjectInfoData.lock();
 	const unsigned long ulRetNumberOfFibElements = ulNumberOfFibElements;
@@ -1202,7 +1252,7 @@ unsigned long cFibObjectInfo::getNumberOfFibElements() const{
  * 	to set
  */
 void cFibObjectInfo::setNumberOfInputVariables(
-		const unsigned long ulInNumberOfInputVariables ){
+		const unsigned long ulInNumberOfInputVariables ) {
 	
 	mutexFibObjectInfoData.lock();
 	ulNumberOfInputVariables = ulInNumberOfInputVariables;
@@ -1217,7 +1267,7 @@ void cFibObjectInfo::setNumberOfInputVariables(
  * @return the number of input variables value
  * 	@see ulNumberOfInputVariables
  */
-unsigned long cFibObjectInfo::getNumberOfInputVariables() const{
+unsigned long cFibObjectInfo::getNumberOfInputVariables() const {
 	
 	mutexFibObjectInfoData.lock();
 	const unsigned long ulRetNumberOfInputVariables = ulNumberOfInputVariables;
@@ -1236,7 +1286,7 @@ unsigned long cFibObjectInfo::getNumberOfInputVariables() const{
  * 	value to set
  */
 void cFibObjectInfo::setNumberOfExtSubobjects(
-		const unsigned long ulInNumberOfExtSubobjects ){
+		const unsigned long ulInNumberOfExtSubobjects ) {
 	
 	mutexFibObjectInfoData.lock();
 	ulNumberOfExtSubobjects = ulInNumberOfExtSubobjects;
@@ -1251,7 +1301,7 @@ void cFibObjectInfo::setNumberOfExtSubobjects(
  * @return the number of external subobjects value
  * 	@see ulNumberOfExtSubobjects
  */
-unsigned long cFibObjectInfo::getNumberOfExtSubobjects() const{
+unsigned long cFibObjectInfo::getNumberOfExtSubobjects() const {
 	
 	mutexFibObjectInfoData.lock();
 	const unsigned long ulRetNumberOfExtSubobjects = ulNumberOfExtSubobjects;
@@ -1270,15 +1320,15 @@ unsigned long cFibObjectInfo::getNumberOfExtSubobjects() const{
  * 	object for the preview Fib object for this Fib object info object
  * @return true if the preview Fib object could be set, else false
  */
-bool cFibObjectInfo::setPreviewFibObjectInfo( cFibObjectInfo * pInPreviewFibObject ){
+bool cFibObjectInfo::setPreviewFibObjectInfo( cFibObjectInfo * pInPreviewFibObject ) {
 	
 	mutexCheckCyclicPreviewFibObjectInf.lock();
 	//check that there are no cyclic dependencies
 	for ( cFibObjectInfo * pSubPreviewFibObject = pInPreviewFibObject;
 			pSubPreviewFibObject != NULL;
-			pSubPreviewFibObject = pSubPreviewFibObject->getPreviewFibObjectInfo() ){
+			pSubPreviewFibObject = pSubPreviewFibObject->getPreviewFibObjectInfo() ) {
 	
-		if ( pSubPreviewFibObject == this ){
+		if ( pSubPreviewFibObject == this ) {
 			mutexCheckCyclicPreviewFibObjectInf.unlock();
 			return false;
 		}
@@ -1300,7 +1350,7 @@ bool cFibObjectInfo::setPreviewFibObjectInfo( cFibObjectInfo * pInPreviewFibObje
  * 	Fib object for this Fib object info object
  * 	@see pPreviewFibObject
  */
-const cFibObjectInfo * cFibObjectInfo::getPreviewFibObjectInfo() const{
+const cFibObjectInfo * cFibObjectInfo::getPreviewFibObjectInfo() const {
 	
 	mutexFibObjectInfoData.lock();
 	const cFibObjectInfo * pRetPreviewFibObject = pPreviewFibObject;
@@ -1315,7 +1365,7 @@ const cFibObjectInfo * cFibObjectInfo::getPreviewFibObjectInfo() const{
  * 	Fib object for this Fib object info object
  * 	@see pPreviewFibObject
  */
-cFibObjectInfo * cFibObjectInfo::getPreviewFibObjectInfo(){
+cFibObjectInfo * cFibObjectInfo::getPreviewFibObjectInfo() {
 	
 	mutexFibObjectInfoData.lock();
 	cFibObjectInfo * pRetPreviewFibObject = pPreviewFibObject;
@@ -1332,44 +1382,46 @@ cFibObjectInfo * cFibObjectInfo::getPreviewFibObjectInfo(){
  * @param stream the output stream to which to store the Fib object info
  * @return true if this Fib object info object could be stored, else false
  */
-bool cFibObjectInfo::store( ostream & stream ){
+bool cFibObjectInfo::store( ostream & stream ) {
 	//store header
 	mutexFibObjectInfoData.lock();
 	
-	if ( ( &stream == NULL ) || ( ! stream.good() ) ){
+	if ( ( &stream == NULL ) || ( ! stream.good() ) ) {
 		//no good stream -> return false
 		return false;
 	}
 	
 	stream<<"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"<<endl;
-	stream<<"<fib_object_info identifier=\""<<ulIdentifier<<
+	stream<<"<fib_object_info identifier=\""<<getIdentifier()<<
 		"\" name=\""<<szNameOfFibObject<<
 		"\" countFibElements=\""<<ulNumberOfFibElements<<
 		"\" countInVariables=\""<<ulNumberOfInputVariables<<
 		"\" countExtSubobjects=\""<<ulNumberOfExtSubobjects<<"\">"<<endl;
 	
-	if ( ! szDescription.empty() ){
+	if ( ! szDescription.empty() ) {
 		//store description
 		stream<<"<description>"<<szDescription<<"</description>"<<endl;
 	}
 	bool bStoreOk = true;
-	if ( pFibObjectSource != NULL ){
+	mutexFibObjectSource.lock();
+	if ( pFibObjectSource != NULL ) {
 		//store the Fib object source object
 		bStoreOk &= pFibObjectSource->store( stream );
 	}
+	mutexFibObjectSource.unlock();
 	stream<<"<categories>"<<endl;
 	for ( set< string >::const_iterator itrCategory = setInCategories.begin();
-			itrCategory != setInCategories.end(); itrCategory++ ){
+			itrCategory != setInCategories.end(); itrCategory++ ) {
 		
 		stream<<"<category name=\""<<(*itrCategory)<<"\"/>"<<endl;
 	}
 	stream<<"</categories>"<<endl;
-	if ( ! mapConnectedTo.empty() ){
+	if ( ! mapConnectedTo.empty() ) {
 		stream<<"<connected_to>"<<endl;
 		//store the existing connections
 		for ( map< string, set< unsigned long > >::const_iterator
 				itrConnection = mapConnectedTo.begin();
-				itrConnection != mapConnectedTo.end(); itrConnection++ ){
+				itrConnection != mapConnectedTo.end(); itrConnection++ ) {
 			
 			stream<<"	<connection name=\""<<itrConnection->first<<"\">"<<endl;
 			//store the identifiers
@@ -1377,7 +1429,7 @@ bool cFibObjectInfo::store( ostream & stream ){
 				itrConnection->second;
 			for ( set< unsigned long >::const_iterator
 					itrIdentifier = setConnectionIds.begin();
-					itrIdentifier != setConnectionIds.end(); itrIdentifier++ ){
+					itrIdentifier != setConnectionIds.end(); itrIdentifier++ ) {
 				
 				stream<<"		<identifier>"<<(*itrIdentifier)<<"</identifier>"<<endl;
 			}
@@ -1390,7 +1442,7 @@ bool cFibObjectInfo::store( ostream & stream ){
 	stream<<"<last_used>"<<endl;
 	for ( vector< pair< time_t, unsigned long > >::const_iterator
 			itrTimestamp = vecLastUsed.begin();
-			itrTimestamp != vecLastUsed.end(); itrTimestamp++ ){
+			itrTimestamp != vecLastUsed.end(); itrTimestamp++ ) {
 		
 		stream<<"<used_till timestamp=\""<<itrTimestamp->first<<
 			"\" count_uses=\""<<itrTimestamp->second<<"\"/>"<<endl;
@@ -1399,13 +1451,13 @@ bool cFibObjectInfo::store( ostream & stream ){
 	//store users who can change the Fib object
 	stream<<"<changeable_by>"<<endl;
 	for ( set< string >::const_iterator itrUser = changeableBy.begin();
-			itrUser != changeableBy.end(); itrUser++ ){
+			itrUser != changeableBy.end(); itrUser++ ) {
 		
 		stream<<"<user name=\""<<(*itrUser)<<"\"/>"<<endl;
 	}
 	stream<<"</changeable_by>"<<endl;
 	
-	if ( pPreviewFibObject != NULL ){
+	if ( pPreviewFibObject != NULL ) {
 		//store the information for the preview picture
 		//TODO? use handler
 		stream<<"<preview>"<<endl;
@@ -1436,13 +1488,13 @@ bool cFibObjectInfo::store( ostream & stream ){
  * 		- 2 loading warning, invalid data in stream, maybe the loaded
  * 			object is wrong
  */
-int cFibObjectInfo::restoreFibObjectInfo( istream & stream ){
+int cFibObjectInfo::restoreFibObjectInfo( istream & stream ) {
 	
 	TiXmlDocument xmlDocFibObject;
 	
 	stream >> xmlDocFibObject;
 	
-	if ( xmlDocFibObject.Error() ){
+	if ( xmlDocFibObject.Error() ) {
 		//error while loading to stream
 		return -1;
 	}
@@ -1468,13 +1520,13 @@ int cFibObjectInfo::restoreFibObjectInfo( istream & stream ){
  * 		- 2 loading warning, invalid data in pXmlNode, maybe the loaded
  * 			object is wrong
  */
-int cFibObjectInfo::restoreFibObjectInfo( const TiXmlNode * pXmlNode ){
+int cFibObjectInfo::restoreFibObjectInfo( const TiXmlNode * pXmlNode ) {
 
 #ifdef DEBUG_RESTORE_XML
 	//print debugging output
 	printf("restoring cFibObjectInfo\n" );
 #endif//DEBUG_RESTORE_XML
-	if ( pXmlNode == NULL ){
+	if ( pXmlNode == NULL ) {
 		//nothing to restore
 #ifdef DEBUG_RESTORE_XML
 		//print debugging output
@@ -1511,13 +1563,13 @@ int cFibObjectInfo::restoreFibObjectInfo( const TiXmlNode * pXmlNode ){
  * 		- 2 loading warning, invalid data in pXmlElement, maybe the loaded
  * 			object is wrong
  */
-int cFibObjectInfo::restoreFibObjectInfoInternal( const TiXmlNode * pXmlNode ){
+int cFibObjectInfo::restoreFibObjectInfoInternal( const TiXmlNode * pXmlNode ) {
 
 #ifdef DEBUG_RESTORE_XML
 	//print debugging output
 	printf("restoring cFibObjectInfo\n" );
 #endif//DEBUG_RESTORE_XML
-	if ( pXmlNode == NULL ){
+	if ( pXmlNode == NULL ) {
 		//nothing to restore
 #ifdef DEBUG_RESTORE_XML
 		//print debugging output
@@ -1527,22 +1579,22 @@ int cFibObjectInfo::restoreFibObjectInfoInternal( const TiXmlNode * pXmlNode ){
 	}
 	int iRestoreStatus = 0;
 	
-	if ( pPreviewFibObject ){
+	if ( pPreviewFibObject ) {
 		//delete old preview Fib object
 		//TODO don't delete
 		delete pPreviewFibObject;
 		pPreviewFibObject = NULL;
 	}
 	//as long no Fib element was read and no error occured
-	while ( ( pXmlNode != NULL ) && ( 0 <= iRestoreStatus ) ){
+	while ( ( pXmlNode != NULL ) && ( 0 <= iRestoreStatus ) ) {
 		//get type of XML element
 		const int iType = pXmlNode->Type();
-		switch ( iType ){
+		switch ( iType ) {
 			case TiXmlNode::ELEMENT:{
 				/*check if this is a valid Fib element XML element, create
 				the apropirate Fib element and call its restoreXml() method*/
 				const TiXmlElement * pXmlElement = pXmlNode->ToElement();
-				if ( pXmlElement == NULL ){
+				if ( pXmlElement == NULL ) {
 					//Warning: nothing to load
 #ifdef DEBUG_RESTORE_XML
 					//print debugging output
@@ -1557,14 +1609,16 @@ int cFibObjectInfo::restoreFibObjectInfoInternal( const TiXmlNode * pXmlNode ){
 					szElementType.c_str(), iRestoreStatus );
 #endif
 				
-				if ( szElementType == "fib_object_info" ){
+				if ( szElementType == "fib_object_info" ) {
 					/*if exists get "identifier", "name", "countFibElements", "countInVariables" and "countExtSubobjects" attributes*/
 					//if exists get "identifier" attribute
 					const char * szXmlIdentifier =
 						pXmlElement->Attribute( "identifier" );
-					if ( szXmlIdentifier ){
+					if ( szXmlIdentifier ) {
 						//"identifier" attribute exists
+						mutexIdentifier.lock();
 						ulIdentifier = atol( szXmlIdentifier );
+						mutexIdentifier.unlock();
 #ifdef DEBUG_RESTORE_XML
 						//print debugging output
 						printf("   identifier %lu\n", ulIdentifier );
@@ -1573,28 +1627,28 @@ int cFibObjectInfo::restoreFibObjectInfoInternal( const TiXmlNode * pXmlNode ){
 					//if exists get "name" attribute
 					const char * szXmlName =
 						pXmlElement->Attribute( "name" );
-					if ( szXmlName ){
+					if ( szXmlName ) {
 						//"name" attribute exists
 						szNameOfFibObject = string( szXmlName );
 					}
 					//if exists get "countFibElements" attribute
 					const char * szXmlNumberOfFibElements =
 						pXmlElement->Attribute( "countFibElements" );
-					if ( szXmlNumberOfFibElements ){
+					if ( szXmlNumberOfFibElements ) {
 						//"countFibElements" attribute exists
 						ulNumberOfFibElements = atol( szXmlNumberOfFibElements );
 					}
 					//if exists get "countInVariables" attribute
 					const char * szXmlNumberOfInputVariables =
 						pXmlElement->Attribute( "countInVariables" );
-					if ( szXmlNumberOfInputVariables ){
+					if ( szXmlNumberOfInputVariables ) {
 						//"countInVariables" attribute exists
 						ulNumberOfInputVariables = atol( szXmlNumberOfInputVariables );
 					}
 					//if exists get "countExtSubobjects" attribute
 					const char * szXmlNumberOfExtSubobjects =
 						pXmlElement->Attribute( "countExtSubobjects" );
-					if ( szXmlNumberOfExtSubobjects ){
+					if ( szXmlNumberOfExtSubobjects ) {
 						//"countExtSubobjects" attribute exists
 						ulNumberOfExtSubobjects = atol( szXmlNumberOfExtSubobjects );
 					}
@@ -1606,24 +1660,24 @@ int cFibObjectInfo::restoreFibObjectInfoInternal( const TiXmlNode * pXmlNode ){
 					const int iSubStatusRestore = restoreFibObjectInfoInternal(
 						pXmlElement->FirstChild() );
 					
-					if ( iSubStatusRestore < 0 ){
+					if ( iSubStatusRestore < 0 ) {
 						//Error: while restoring
 						return iSubStatusRestore;
 					}//else
-					if ( ( 0 < iSubStatusRestore ) && ( iRestoreStatus == 0 ) ){
+					if ( ( 0 < iSubStatusRestore ) && ( iRestoreStatus == 0 ) ) {
 						//Warning: while restoring -> remember first warning
 						iRestoreStatus = iSubStatusRestore;
 					}//else everything OK
-				}else if ( szElementType == "description" ){
+				}else if ( szElementType == "description" ) {
 					//read description element
 					const char * pcXmlDescriptionText = pXmlElement->GetText();
-					if ( pcXmlDescriptionText ){
+					if ( pcXmlDescriptionText ) {
 						//description text extists
 						szDescription = string( pcXmlDescriptionText );
 					}else{//no description text extists
 						szDescription = string( "" );
 					}
-				}else if ( szElementType == "fib_object_source" ){
+				}else if ( szElementType == "fib_object_source" ) {
 					//restore (correct) Fib object source object
 #ifdef DEBUG_RESTORE_XML
 					//print debugging output
@@ -1633,33 +1687,35 @@ int cFibObjectInfo::restoreFibObjectInfoInternal( const TiXmlNode * pXmlNode ){
 					cFibObjectSource * pRestoredFibObjectSource =
 						cFibObjectSource::restore( pXmlElement, &iOutStatusFibObjectSource );
 					
-					if ( iOutStatusFibObjectSource < 0 ){
+					if ( iOutStatusFibObjectSource < 0 ) {
 						//Error: while restoring
-						if ( pRestoredFibObjectSource ){
+						if ( pRestoredFibObjectSource ) {
 							//delete created Fib object source object
 							delete pRestoredFibObjectSource;
 						}
 						return iOutStatusFibObjectSource;
 					}//else
-					if ( ( 0 < iOutStatusFibObjectSource ) && ( iRestoreStatus == 0 ) ){
+					if ( ( 0 < iOutStatusFibObjectSource ) && ( iRestoreStatus == 0 ) ) {
 						//Warning: while restoring -> remember first warning
 						iRestoreStatus = iOutStatusFibObjectSource;
 					}//else everything OK
 					/*set the new Fib object source, like in:
 					 @see setFibObjectSource( pRestoredFibObjectSource ); */
-					if ( pFibObjectSource ){
+					mutexFibObjectSource.lock();
+					if ( pFibObjectSource ) {
 						//delete old Fib object source object
 						delete pFibObjectSource;
 						pFibObjectSource = NULL;
 					}
-					if ( pLoadedFibObject ){
+					if ( pLoadedFibObject ) {
 						//the source object changes -> so delete the loaded Fib object
 						pLoadedFibObject->deleteObject();
 						pLoadedFibObject = NULL;
 					}
 					pFibObjectSource = pRestoredFibObjectSource;
+					mutexFibObjectSource.unlock();
 					
-				}else if ( szElementType == "categories" ){
+				}else if ( szElementType == "categories" ) {
 					/*read the "changeable_by" subelements; example:
 			       <categories>
 			          <category name="all">
@@ -1674,25 +1730,25 @@ int cFibObjectInfo::restoreFibObjectInfoInternal( const TiXmlNode * pXmlNode ){
 							pActualUserElement = pXmlElement->FirstChildElement();
 							pActualUserElement != NULL;
 							pActualUserElement =
-								pActualUserElement->NextSiblingElement() ){
+								pActualUserElement->NextSiblingElement() ) {
 						//check the type of the sibling element
 						const string szActualUsedSubElementType(
 							pActualUserElement->Value() );
-						if ( szActualUsedSubElementType == "category" ){
+						if ( szActualUsedSubElementType == "category" ) {
 							//if exists get "name" attribute
 							const char * szXmlName =
 								pActualUserElement->Attribute( "name" );
-							if ( szXmlName != NULL ){
+							if ( szXmlName != NULL ) {
 								//"name" attribute exists -> add it
 								setInCategories.insert( string( szXmlName ) );
 								
 							}//else OK, because "name" attribute is optional
-						}else if ( iRestoreStatus == 0 ){
+						}else if ( iRestoreStatus == 0 ) {
 							//Warning: unknown "category" subelement
 							iRestoreStatus = 1;
 						}
 					}//end for all subelements of "category"
-				}else if ( szElementType == "connected_to" ){
+				}else if ( szElementType == "connected_to" ) {
 					//restore connection data from Xml element
 #ifdef DEBUG_RESTORE_XML
 					//print debugging output
@@ -1700,15 +1756,15 @@ int cFibObjectInfo::restoreFibObjectInfoInternal( const TiXmlNode * pXmlNode ){
 #endif//DEBUG_RESTORE_XML
 					const int iStatusRestoreConnectedTo =
 						restoreConnectedTo( pXmlElement );
-					if ( iStatusRestoreConnectedTo < 0 ){
+					if ( iStatusRestoreConnectedTo < 0 ) {
 						//Error: while restoring
 						return iStatusRestoreConnectedTo;
 					}//else
-					if ( ( 0 < iStatusRestoreConnectedTo ) && ( iRestoreStatus == 0 ) ){
+					if ( ( 0 < iStatusRestoreConnectedTo ) && ( iRestoreStatus == 0 ) ) {
 						//Warning: while restoring -> remember first warning
 						iRestoreStatus = iStatusRestoreConnectedTo;
 					}//else everything OK
-				}else if ( szElementType == "last_used" ){
+				}else if ( szElementType == "last_used" ) {
 					//restore "last used" data
 					//clear the old data
 					vecLastUsed.clear();
@@ -1729,11 +1785,11 @@ int cFibObjectInfo::restoreFibObjectInfoInternal( const TiXmlNode * pXmlNode ){
 							pActualUsedSubElement = pXmlElement->FirstChildElement();
 							pActualUsedSubElement != NULL;
 							pActualUsedSubElement =
-								pActualUsedSubElement->NextSiblingElement() ){
+								pActualUsedSubElement->NextSiblingElement() ) {
 						//check the type of the sibling element
 						const string szActualUsedSubElementType(
 							pActualUsedSubElement->Value() );
-						if ( szActualUsedSubElementType == "used_till" ){
+						if ( szActualUsedSubElementType == "used_till" ) {
 							
 							//if exists get "timestamp" attribute
 							const char * szXmlTimestamp =
@@ -1741,26 +1797,26 @@ int cFibObjectInfo::restoreFibObjectInfoInternal( const TiXmlNode * pXmlNode ){
 							//if exists get "count_uses" attribute
 							const char * szXmlCountUses =
 								pActualUsedSubElement->Attribute( "count_uses" );
-							if ( ( szXmlTimestamp != NULL ) && ( szXmlCountUses != NULL ) ){
+							if ( ( szXmlTimestamp != NULL ) && ( szXmlCountUses != NULL ) ) {
 								//"timestamp" and "count_uses" attribute exists
 								const time_t timestamp = atol( szXmlTimestamp );
 								const unsigned long ulCount = atol( szXmlCountUses );
 								//push new entry with data to end of vecLastUsed
 								vecLastUsed.push_back( pair< time_t, unsigned long >(
 									timestamp, ulCount ) );
-							}else if ( iRestoreStatus == 0 ){
+							}else if ( iRestoreStatus == 0 ) {
 								/*Warning: "timestamp" or "count_uses" attribute missing
 								 -> can't restore entry*/
 								iRestoreStatus = 2;
 							}
 							
 							
-						}else if ( iRestoreStatus == 0 ){
+						}else if ( iRestoreStatus == 0 ) {
 							//Warning: unknown "last_used" subelement
 							iRestoreStatus = 1;
 						}
 					}//end for all subelements of "last_used"
-				}else if ( szElementType == "changeable_by" ){
+				}else if ( szElementType == "changeable_by" ) {
 					/*read the "changeable_by" subelements; example:
 					<changeable_by>
 					   <user name="all">
@@ -1775,25 +1831,25 @@ int cFibObjectInfo::restoreFibObjectInfoInternal( const TiXmlNode * pXmlNode ){
 							pActualUserElement = pXmlElement->FirstChildElement();
 							pActualUserElement != NULL;
 							pActualUserElement =
-								pActualUserElement->NextSiblingElement() ){
+								pActualUserElement->NextSiblingElement() ) {
 						//check the type of the sibling element
 						const string szActualUsedSubElementType(
 							pActualUserElement->Value() );
-						if ( szActualUsedSubElementType == "user" ){
+						if ( szActualUsedSubElementType == "user" ) {
 							//if exists get "name" attribute
 							const char * szXmlName =
 								pActualUserElement->Attribute( "name" );
-							if ( szXmlName != NULL ){
+							if ( szXmlName != NULL ) {
 								//"name" attribute exists -> add it
 								changeableBy.insert( string( szXmlName ) );
 								
 							}//else OK, because "name" attribute is optional
-						}else if ( iRestoreStatus == 0 ){
+						}else if ( iRestoreStatus == 0 ) {
 							//Warning: unknown "changeable_by" subelement
 							iRestoreStatus = 1;
 						}
 					}//end for all subelements of "changeable_by"
-				}else if ( szElementType == "preview" ){
+				}else if ( szElementType == "preview" ) {
 					//read the "preview" subelement
 #ifdef DEBUG_RESTORE_XML
 					//print debugging output
@@ -1803,7 +1859,7 @@ int cFibObjectInfo::restoreFibObjectInfoInternal( const TiXmlNode * pXmlNode ){
 							pActualUserElement = pXmlElement->FirstChildElement();
 							pActualUserElement != NULL;
 							pActualUserElement =
-								pActualUserElement->NextSiblingElement() ){
+								pActualUserElement->NextSiblingElement() ) {
 						
 						int iOutStatusPreviewFibObject = 0;
 						//TODO? use handler
@@ -1811,19 +1867,19 @@ int cFibObjectInfo::restoreFibObjectInfoInternal( const TiXmlNode * pXmlNode ){
 							cFibObjectInfo::restore(
 								pActualUserElement, &iOutStatusPreviewFibObject );
 						
-						if ( iOutStatusPreviewFibObject < 0 ){
+						if ( iOutStatusPreviewFibObject < 0 ) {
 							//Error: while restoring
-							if ( pLoadedPreviewFibObject ){
+							if ( pLoadedPreviewFibObject ) {
 								//delete created Fib object source object
 								delete pLoadedPreviewFibObject;
 							}
 							return iOutStatusPreviewFibObject;
 						}//else
-						if ( ( 0 < iOutStatusPreviewFibObject ) && ( iRestoreStatus == 0 ) ){
+						if ( ( 0 < iOutStatusPreviewFibObject ) && ( iRestoreStatus == 0 ) ) {
 							//Warning: while restoring -> remember first warning
 							iRestoreStatus = iOutStatusPreviewFibObject;
 						}//else everything OK
-						if ( pLoadedPreviewFibObject ){
+						if ( pLoadedPreviewFibObject ) {
 							//preview Fib object loaded -> don't load more of this XML element
 							mutexCheckCyclicPreviewFibObjectInf.lock();
 							//check that there are no cyclic dependencies
@@ -1832,16 +1888,16 @@ int cFibObjectInfo::restoreFibObjectInfoInternal( const TiXmlNode * pXmlNode ){
 									pSubPreviewFibObject = pLoadedPreviewFibObject;
 									pSubPreviewFibObject != NULL;
 									pSubPreviewFibObject =
-										pSubPreviewFibObject->getPreviewFibObjectInfo() ){
+										pSubPreviewFibObject->getPreviewFibObjectInfo() ) {
 							
-								if ( pSubPreviewFibObject == this ){
+								if ( pSubPreviewFibObject == this ) {
 									bCyclicDependency = true;
 									break;
 								}
 							}
-							if ( ! bCyclicDependency ){
+							if ( ! bCyclicDependency ) {
 								//set preview Fib object info
-								if ( pPreviewFibObject ){
+								if ( pPreviewFibObject ) {
 									//Warning: preview object exists allready -> delete old
 									delete pPreviewFibObject;
 									iRestoreStatus = 2;
@@ -1856,7 +1912,7 @@ int cFibObjectInfo::restoreFibObjectInfoInternal( const TiXmlNode * pXmlNode ){
 						}
 					}//end for all "preview" subelements
 				}else{//unknown element type
-					if ( iRestoreStatus == 0 ){
+					if ( iRestoreStatus == 0 ) {
 						//Warning: unknown element type
 						iRestoreStatus = 1;
 					}
@@ -1919,15 +1975,15 @@ int cFibObjectInfo::restoreFibObjectInfoInternal( const TiXmlNode * pXmlNode ){
  * 	non could be restored
  */
 cFibObjectInfo * cFibObjectInfo::restore( istream & stream,
-		int * iOutStatus ){
+		int * iOutStatus ) {
 	
 	TiXmlDocument xmlDocFibObject;
 
 	stream >> xmlDocFibObject;
 	
-	if ( xmlDocFibObject.Error() ){
+	if ( xmlDocFibObject.Error() ) {
 		//error while loading to stream
-		if ( iOutStatus ){
+		if ( iOutStatus ) {
 			(*iOutStatus) = -1;
 		}
 		return NULL;
@@ -1958,18 +2014,18 @@ cFibObjectInfo * cFibObjectInfo::restore( istream & stream,
  * 	non could be restored
  */
 cFibObjectInfo * cFibObjectInfo::restore(
-		const TiXmlNode * pXmlNode, int * iOutStatus ){
+		const TiXmlNode * pXmlNode, int * iOutStatus ) {
 	
 	int iInternalOutStatus = 0;
 	cFibObjectInfo * pRestoreFibObjectInfo =
 		new cFibObjectInfo( pXmlNode, &iInternalOutStatus );
 	
-	if ( iOutStatus != NULL ){
+	if ( iOutStatus != NULL ) {
 		//transfer the output status
 		(*iOutStatus) = iInternalOutStatus;
 	}
 	
-	if ( iInternalOutStatus < 0 ){
+	if ( iInternalOutStatus < 0 ) {
 		//error while restoring -> return NULL
 		delete pRestoreFibObjectInfo;
 		return NULL;
@@ -1997,7 +2053,7 @@ cFibObjectInfo * cFibObjectInfo::restore(
  * 		- 2 loading warning, invalid data in pXmlElement, maybe the loaded
  * 			object is wrong
  */
-int cFibObjectInfo::restoreConnectedTo( const TiXmlElement * pXmlElement ){
+int cFibObjectInfo::restoreConnectedTo( const TiXmlElement * pXmlElement ) {
 	
 	/*read the connected_to element;
 	example:
@@ -2013,7 +2069,7 @@ int cFibObjectInfo::restoreConnectedTo( const TiXmlElement * pXmlElement ){
 	*/
 	int iRestoreStatus = 0;
 	const string szElementType( pXmlElement->Value() );
-	if ( szElementType == "connected_to" ){
+	if ( szElementType == "connected_to" ) {
 		//clear the old data
 		mapConnectedTo.clear();
 		//read the "connection" subelements
@@ -2021,17 +2077,17 @@ int cFibObjectInfo::restoreConnectedTo( const TiXmlElement * pXmlElement ){
 				pActualConnectionElement = pXmlElement->FirstChildElement();
 				pActualConnectionElement != NULL;
 				pActualConnectionElement =
-					pActualConnectionElement->NextSiblingElement() ){
+					pActualConnectionElement->NextSiblingElement() ) {
 			//check the type of the sibling element
 			const string szActualConnectionElementType(
 				pActualConnectionElement->Value() );
-			if ( szActualConnectionElementType == "connection" ){
+			if ( szActualConnectionElementType == "connection" ) {
 				//a connection element found
 				const char * szXmlName =
 					pActualConnectionElement->Attribute( "name" );
-				if ( szXmlName == NULL ){
+				if ( szXmlName == NULL ) {
 					//no name attribue -> can't create a connected to entry
-					if ( iRestoreStatus == 0 ){
+					if ( iRestoreStatus == 0 ) {
 						//Warning: unknown "connected_to" subelement
 						iRestoreStatus = 2;
 					}
@@ -2043,23 +2099,23 @@ int cFibObjectInfo::restoreConnectedTo( const TiXmlElement * pXmlElement ){
 							pActualConnectionElement->FirstChildElement();
 						pActualIdentifierElement != NULL;
 						pActualIdentifierElement =
-							pActualIdentifierElement->NextSiblingElement() ){
+							pActualIdentifierElement->NextSiblingElement() ) {
 					//check the type of the sibling element
 					const string szActualIdentifierElementType(
 						pActualIdentifierElement->Value() );
-					if ( szActualIdentifierElementType == "identifier" ){
+					if ( szActualIdentifierElementType == "identifier" ) {
 						//a identifer element found
 						const char * pcXmlIdentifier =
 							pActualIdentifierElement->GetText();
-						if ( pcXmlIdentifier ){
+						if ( pcXmlIdentifier ) {
 							//set the read identifer
 							setConnectionIdentifiers.insert( atol( pcXmlIdentifier ) );
-						}else if ( iRestoreStatus == 0 ){
+						}else if ( iRestoreStatus == 0 ) {
 							//Warning: no "identifier" given
 							iRestoreStatus = 1;
 						}
 						
-					}else if ( iRestoreStatus == 0 ){
+					}else if ( iRestoreStatus == 0 ) {
 						//Warning: unknown "connection" subelement
 						iRestoreStatus = 1;
 					}
@@ -2068,13 +2124,13 @@ int cFibObjectInfo::restoreConnectedTo( const TiXmlElement * pXmlElement ){
 				mapConnectedTo[ (string(szXmlName)) ].insert(
 					setConnectionIdentifiers.begin(), setConnectionIdentifiers.end() );
 				
-			}else if ( iRestoreStatus == 0 ){
+			}else if ( iRestoreStatus == 0 ) {
 				//Warning: unknown "connected_to" subelement
 				iRestoreStatus = 1;
 			}
 		}//end for all subelements of "connected_to"
 	}else{//wrong element
-		if ( iRestoreStatus == 0 ){
+		if ( iRestoreStatus == 0 ) {
 			//Warning: unknown element type
 			return 1;
 		}
@@ -2094,9 +2150,9 @@ int cFibObjectInfo::restoreConnectedTo( const TiXmlElement * pXmlElement ){
  * @return true if the listener was registered, else false
  */
 bool cFibObjectInfo::registerFibObjectInfoChangeListener(
-		lFibObjectInfoChanged * pFibObjectInfoListener ){
+		lFibObjectInfoChanged * pFibObjectInfoListener ) {
 	
-	if ( pFibObjectInfoListener == NULL ){
+	if ( pFibObjectInfoListener == NULL ) {
 		return false;
 	}
 	mutexFibObjectInfoData.lock();
@@ -2118,7 +2174,7 @@ bool cFibObjectInfo::registerFibObjectInfoChangeListener(
  * @return true if the listener was registered, else false
  */
 bool cFibObjectInfo::unregisterFibObjectInfoChangeListener(
-		lFibObjectInfoChanged * pFibObjectInfoListener ){
+		lFibObjectInfoChanged * pFibObjectInfoListener ) {
 	
 	mutexFibObjectInfoData.lock();
 	const bool bListenerRemoved = ( 0 < setListenersFibNodeChanged.erase(
@@ -2137,17 +2193,17 @@ bool cFibObjectInfo::unregisterFibObjectInfoChangeListener(
  * 	about the changed Fib node
  */
 void cFibObjectInfo::fibObjectInfoChanged(
-	const eFibObjectInfoChangedEvent * pFibObjectInfoChanged ){
+	const eFibObjectInfoChangedEvent * pFibObjectInfoChanged ) {
 	
 	if ( ( pFibObjectInfoChanged == NULL ) ||
-			( pFibObjectInfoChanged->getFibObjectInfo() == NULL ) ){
+			( pFibObjectInfoChanged->getFibObjectInfo() == NULL ) ) {
 		//nothing changed
 		return;
 	}
 	
 	mutexFibObjectInfoData.lock();
 	if ( ( pFibObjectInfoChanged->getFibObjectInfo() == pPreviewFibObject ) &&
-			pFibObjectInfoChanged->isDeleted() ){
+			pFibObjectInfoChanged->isDeleted() ) {
 		//if the preview Fib object info object was deleted -> cut connection to it
 		pPreviewFibObject = NULL;
 	}
@@ -2162,7 +2218,7 @@ void cFibObjectInfo::fibObjectInfoChanged(
  *
  * @see setListenersFibNodeChanged
  */
-void cFibObjectInfo::sendFibObjectInfoChange(){
+void cFibObjectInfo::sendFibObjectInfoChange() {
 	
 	const eFibObjectInfoChangedEvent fibObjectInfoChangedEvent( this );
 	sendFibObjectInfoChange( &fibObjectInfoChangedEvent );
@@ -2177,7 +2233,7 @@ void cFibObjectInfo::sendFibObjectInfoChange(){
  * @param pFibNodeChangedEvent the change event to send
  */
 void cFibObjectInfo::sendFibObjectInfoChange(
-		const eFibObjectInfoChangedEvent * pFibObjectInfoChanged ){
+		const eFibObjectInfoChangedEvent * pFibObjectInfoChanged ) {
 	
 	mutexFibObjectInfoData.lock();
 	set< lFibObjectInfoChanged * > setListenersFibNodeChangedCopy(
@@ -2187,7 +2243,7 @@ void cFibObjectInfo::sendFibObjectInfoChange(
 	for ( set< lFibObjectInfoChanged * >::iterator
 			itrChangeListener = setListenersFibNodeChangedCopy.begin();
 			itrChangeListener != setListenersFibNodeChangedCopy.end();
-			itrChangeListener++ ){
+			itrChangeListener++ ) {
 		
 		(*itrChangeListener)->fibObjectInfoChanged( pFibObjectInfoChanged );
 	}

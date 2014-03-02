@@ -34,6 +34,7 @@
 #History:
 # 30.09.2013   Oesterholz   created
 # 17.10.2013   Oesterholz   tFibObjectInfo added
+# 27.02.2014   Oesterholz   tFibNodeHandler_integrateFibObjectIntoNode added
 #
 
 first(){
@@ -84,7 +85,10 @@ ERRORS=$?
 ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
 echo "Errors in tFibObjectInfo : ${ERRORS}" >> ${SUM_OUTPUT}
 
-
+./control/testcase/tFibNodeHandler_integrateFibObjectIntoNode >> ${OUTPUT} 2>> ${ERROR_OUTPUT}
+ERRORS=$?
+ERROR_SUM=$(expr ${ERROR_SUM} + ${ERRORS})
+echo "Errors in tFibNodeHandler_integrateFibObjectIntoNode  : ${ERRORS}" >> ${SUM_OUTPUT}
 
 echo "---------------------" >>${SUM_OUTPUT}
 echo "all Errors : ${ERROR_SUM}" >>${SUM_OUTPUT}

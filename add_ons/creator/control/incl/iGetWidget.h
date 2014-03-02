@@ -1,6 +1,3 @@
-
-//TODO check
-
 /**
  * @file iGetWidget
  * file name: iGetWidget.h
@@ -10,7 +7,7 @@
  *
  * System: C++, Qt4
  *
- * This file specifies a interface for classes wich create there own widget.
+ * This file specifies a interface for classes which create there own widget.
  *
  *
  * Copyright (C) @c GPL3 2013 Betti Oesterholz
@@ -29,7 +26,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * This file specifies a interface for classes wich create there own widget.
+ * This file specifies a interface for classes which create there own widget.
  * For some objects (which are not widgets) you will need a widget to
  * display them. These objects can provide a method to create the widget
  * for them. This interface can be used to identify all such objects.
@@ -65,7 +62,7 @@ public:
 	 * This method will create a widget, which displays this object.
 	 * ATTENTION: You have to care that the returned widget is deleted.
 	 *
-	 * @param pParent a pointer the parent of this new Fib scalar widget
+	 * @param pParent a pointer the parent of the to create widget
 	 * @return a pointer to the created widget, or NULL if non could be created
 	 */
 	virtual QWidget * getWidget( QWidget * pParent = NULL ) = 0;

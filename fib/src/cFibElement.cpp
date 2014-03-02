@@ -60,6 +60,9 @@ History:
 	-> search the Fib database
 19.05.2013  Oesterholz  SWITCH_JUST_STORE_AND_EVALUE implemented
 16.08.2013  Oesterholz  method getVariablesToReplace() added
+22.01.2014  Oesterholz  getSuperiorFibElement() const added
+13.02.2014  Oesterholz  getVariablesUsedButNotDefined() and
+	replaceVariablesWithEqualDefinedVariables() added
 */
 
 
@@ -128,31 +131,31 @@ cFibElement::cFibElement( cFibElement * pInSuperiorElement, cFibElement * pInPre
 		pSuperiorElement( pInSuperiorElement ),
 		pPreviousFibElement( pInPreviousFibElement ),
 		pNextFibElement( pInNextFibElement ),
-		pNextRootElement( NULL ){
+		pNextRootElement( NULL ) {
 
-	if ( (pSuperiorElement != NULL) && (pPreviousFibElement == NULL) ){
+	if ( (pSuperiorElement != NULL) && (pPreviousFibElement == NULL) ) {
 		/*find pPreviousFibElement, which is the last Fib element in the
 		order of Fib elements which is below this Fib element*/
 		pPreviousFibElement = pSuperiorElement;
 		
 		while ( (pPreviousFibElement->getNextFibElement() != NULL) &&
-				 (pPreviousFibElement->getNextFibElement() != this) ){
+				 (pPreviousFibElement->getNextFibElement() != this) ) {
 		
 			pPreviousFibElement = pPreviousFibElement->getNextFibElement();
 		}
 	}
-	if ( pPreviousFibElement ){
+	if ( pPreviousFibElement ) {
 		pPreviousFibElement->pNextFibElement = this;
 	}
-	if ( pSuperiorElement == this ){
+	if ( pSuperiorElement == this ) {
 		//this element can't be it's own superior
 		pSuperiorElement = NULL;
 	}
-	if ( pPreviousFibElement == this ){
+	if ( pPreviousFibElement == this ) {
 		//this element can't be it's own previous Fib element
 		pPreviousFibElement = NULL;
 	}
-	if ( pNextFibElement == this ){
+	if ( pNextFibElement == this ) {
 		//this element can't be it's own next Fib element
 		pNextFibElement = NULL;
 	}
@@ -162,14 +165,14 @@ cFibElement::cFibElement( cFibElement * pInSuperiorElement, cFibElement * pInPre
 	cFibElement * actualFibElement = pPreviousFibElement;
 	
 	//go troug all previous Fib elements
-	while ( actualFibElement != NULL ){
+	while ( actualFibElement != NULL ) {
 		/*count the number of Fib elements befor this Fib element to get
 		the number this Fib element has in the order of all Fib elements*/
 		uINumberOfFibElement++;
 		
 		/*set the next root element to the first found Fib element in the
 		previous Fib elements*/
-		if ( (pNextRootElement == NULL) && (actualFibElement->getType() == 'r') ){
+		if ( (pNextRootElement == NULL) && (actualFibElement->getType() == 'r') ) {
 			pNextRootElement = (cRoot*)actualFibElement;
 		}
 		/*go to previous Fib element*/
@@ -202,9 +205,9 @@ cFibElement::cFibElement( const cFibElement &fibElement ):
 /**
  * desstructor
  */
-cFibElement::~cFibElement(){
+cFibElement::~cFibElement() {
 
-	if ( pSuperiorElement != NULL ){
+	if ( pSuperiorElement != NULL ) {
 		//incorrect underobject
 		pSuperiorElement->cutConnectionsTo( this );
 	}
@@ -228,9 +231,9 @@ cFibElement::~cFibElement(){
  *		getTyp() returns it
  * @return a string with the name of the Fib element for the given character
  */
-string cFibElement::getTypeName( char cType ){
+string cFibElement::getTypeName( char cType ) {
 
-	switch ( cType ){
+	switch ( cType ) {
 		case 'u': return "unknown";
 		case 'p': return "point";
 		case 'l': return "list element";
@@ -252,10 +255,21 @@ string cFibElement::getTypeName( char cType ){
 /**
  * This method returns the superior Fib element of this Fib element.
  *
- * @return the superior Fib element of this Fib element or the NULL 
+ * @return the superior Fib element of this Fib element or the NULL
  * 	pointer, if non such exists
  */
-cFibElement * cFibElement::getSuperiorFibElement(){
+cFibElement * cFibElement::getSuperiorFibElement() {
+	return pSuperiorElement;
+}
+
+
+/**
+ * This method returns the superior Fib element of this Fib element.
+ *
+ * @return the superior Fib element of this Fib element or the NULL
+ * 	pointer, if non such exists
+ */
+const cFibElement * cFibElement::getSuperiorFibElement() const {
 	return pSuperiorElement;
 }
 
@@ -266,7 +280,7 @@ cFibElement * cFibElement::getSuperiorFibElement(){
  * @return a pointer to the next Fib element in the order of Fib elements
  * 	or the NULL pointer if non such exists
  */
-const cFibElement * cFibElement::getNextFibElement() const{
+const cFibElement * cFibElement::getNextFibElement() const {
 
 	return const_cast< cFibElement* >(this)->getNextFibElement();
 }
@@ -280,7 +294,7 @@ const cFibElement * cFibElement::getNextFibElement() const{
  * @return a pointer to the next Fib element in the order of Fib elements
  *		or the NULL pointer if non such exists
  */
-cFibElement *cFibElement::getNextFibElement(){
+cFibElement *cFibElement::getNextFibElement() {
 	return pNextFibElement;
 }
 
@@ -294,14 +308,14 @@ cFibElement *cFibElement::getNextFibElement(){
  * 	Fib elements with the given type or the NULL pointer if non such
  * 	exists
  */
-cFibElement *cFibElement::getNextFibElement( char cType ){
+cFibElement *cFibElement::getNextFibElement( char cType ) {
 
-	if ( pNextFibElement == NULL ){
+	if ( pNextFibElement == NULL ) {
 		//no next Fib element
 		return NULL;
 	}
 
-	if (  (cType == 'u') || (pNextFibElement->getType() == cType) ){
+	if (  (cType == 'u') || (pNextFibElement->getType() == cType) ) {
 		//next Fib element has the correct type
 		return pNextFibElement;
 	}//else
@@ -321,11 +335,11 @@ cFibElement *cFibElement::getNextFibElement( char cType ){
  * 	Fib elements or the NULL pointer if non such exists
  */
 cFibElement * cFibElement::getConstFibElement( longFib lNumber,
-		bool bAbsolute ) const{
+		bool bAbsolute ) const {
 
 	DEBUG_OUT_L2(<<"cFibElement::getConstFibElement( "<<lNumber<<", "<<bAbsolute<<" ) called"<<endl<<flush);
 
-	if ( lNumber == 0 ){
+	if ( lNumber == 0 ) {
 		//this is the correct Fib element
 		DEBUG_OUT_L2(<<"cFibElement::getConstFibElement( "<<lNumber<<", "<<bAbsolute<<" ) done lNumber is 0 returning this="<<this<<endl<<flush);
 		return const_cast<cFibElement*>( this );
@@ -334,21 +348,21 @@ cFibElement * cFibElement::getConstFibElement( longFib lNumber,
 #define BUGFIX_GET_FIB_ELEMENT_NON_RECURSIV
 
 #ifdef BUGFIX_GET_FIB_ELEMENT_NON_RECURSIV
-	if ( bAbsolute ){
+	if ( bAbsolute ) {
 		DEBUG_OUT_L2(<<"searching absolute"<<endl<<flush);
 		//lNumber is an absolute value
 		unsignedIntFib ulNumberOfThisElement = getNumberOfElement();
-		if ( lNumber == ulNumberOfThisElement ){
+		if ( lNumber == ulNumberOfThisElement ) {
 			//element found
 			DEBUG_OUT_L2(<<"cFibElement::getConstFibElement( "<<lNumber<<", "<<bAbsolute<<" ) done returning this="<<this<<endl<<flush);
 			return const_cast<cFibElement*>( this );
-		}else if ( lNumber < ulNumberOfThisElement ){
+		}else if ( lNumber < ulNumberOfThisElement ) {
 			//Fib element is an previouse Fib element
 			const cFibElement * pActualPrevElement = NULL;
 			for ( pActualPrevElement = pPreviousFibElement;
 					(pActualPrevElement != NULL) &&
 					( lNumber < pActualPrevElement->getNumberOfElement() );
-					pActualPrevElement = pActualPrevElement->pPreviousFibElement ){
+					pActualPrevElement = pActualPrevElement->pPreviousFibElement ) {
 				//nothing to do
 			}
 			DEBUG_OUT_L2(<<"cFibElement::getConstFibElement( "<<lNumber<<", "<<bAbsolute<<" ) done go in direction pPreviousFibElement found: "<<pActualPrevElement<<")"<<endl<<flush);
@@ -359,7 +373,7 @@ cFibElement * cFibElement::getConstFibElement( longFib lNumber,
 		for ( pActualNextElement = pNextFibElement;
 				(pActualNextElement != NULL) &&
 				( pActualNextElement->getNumberOfElement() < lNumber );
-				pActualNextElement = pActualNextElement->pNextFibElement ){
+				pActualNextElement = pActualNextElement->pNextFibElement ) {
 			//nothing to do
 		}
 		DEBUG_OUT_L2(<<"cFibElement::getConstFibElement( "<<lNumber<<", "<<bAbsolute<<" ) done go in direction pNextFibElement found: "<<pActualNextElement<<")"<<endl<<flush);
@@ -367,12 +381,12 @@ cFibElement * cFibElement::getConstFibElement( longFib lNumber,
 	}//lNumber is an relative value
 	DEBUG_OUT_L2(<<"searching not absolute"<<endl<<flush);
 	
-	if ( 0 < lNumber ){
+	if ( 0 < lNumber ) {
 		//search the next Fib elements
 		const cFibElement * pActualNextElement = NULL;
 		for ( pActualNextElement = this;
 				(pActualNextElement != NULL) && ( 1 < lNumber );
-				pActualNextElement = pActualNextElement->pNextFibElement, lNumber-- ){
+				pActualNextElement = pActualNextElement->pNextFibElement, lNumber-- ) {
 			//nothing to do
 		}
 		DEBUG_OUT_L2(<<"cFibElement::getConstFibElement( "<<lNumber<<", "<<bAbsolute<<" ) done go in direction pNextFibElement found: "<<pActualNextElement<<")"<<endl<<flush);
@@ -382,7 +396,7 @@ cFibElement * cFibElement::getConstFibElement( longFib lNumber,
 	const cFibElement * pActualPrevElement = NULL;
 	for ( pActualPrevElement = pPreviousFibElement;
 			(pActualPrevElement != NULL) && ( lNumber < -1 );
-			pActualPrevElement = pActualPrevElement->pPreviousFibElement, lNumber++ ){
+			pActualPrevElement = pActualPrevElement->pPreviousFibElement, lNumber++ ) {
 		//nothing to do
 	}
 	DEBUG_OUT_L2(<<"cFibElement::getConstFibElement( "<<lNumber<<", "<<bAbsolute<<" ) done go in direction pPreviousFibElement found: "<<pActualPrevElement<<")"<<endl<<flush);
@@ -390,17 +404,17 @@ cFibElement * cFibElement::getConstFibElement( longFib lNumber,
 
 #else
 	
-	if ( bAbsolute ){
+	if ( bAbsolute ) {
 		DEBUG_OUT_L2(<<"searching absolute"<<endl<<flush);
 		//lNumber is an absolute value
 		unsignedIntFib ulNumberOfThisElement = getNumberOfElement();
-		if ( lNumber == ulNumberOfThisElement ){
+		if ( lNumber == ulNumberOfThisElement ) {
 			//element found
 			DEBUG_OUT_L2(<<"cFibElement::getConstFibElement( "<<lNumber<<", "<<bAbsolute<<" ) done returning this="<<this<<endl<<flush);
 			return const_cast<cFibElement*>( this );
-		}else if ( lNumber < ulNumberOfThisElement ){
+		}else if ( lNumber < ulNumberOfThisElement ) {
 			//Fib element is an previouse Fib element
-			if ( pPreviousFibElement ){
+			if ( pPreviousFibElement ) {
 				DEBUG_OUT_L2(<<"cFibElement::getConstFibElement( "<<lNumber<<", "<<bAbsolute<<" ) done go in direction pPreviousFibElement (Type="<<flush<<pNextFibElement->getType()<<")"<<endl<<flush);
 				return pPreviousFibElement->getConstFibElement( lNumber, true );
 			}//else no such fib element
@@ -408,7 +422,7 @@ cFibElement * cFibElement::getConstFibElement( longFib lNumber,
 			return NULL;
 		}//else ulNumberOfThisElement<lNumber
 		//Fib element is an next Fib element
-		if ( pNextFibElement ){
+		if ( pNextFibElement ) {
 			DEBUG_OUT_L2(<<"cFibElement::getConstFibElement( "<<lNumber<<", "<<bAbsolute<<" ) done go in direction pNextFibElement (Type="<<flush<<pNextFibElement->getType()<<")"<<endl<<flush);
 			return pNextFibElement->getConstFibElement( lNumber, true );
 		}//else no such fib element
@@ -417,15 +431,15 @@ cFibElement * cFibElement::getConstFibElement( longFib lNumber,
 	}//lNumber is an relative value
 	DEBUG_OUT_L2(<<"searching not absolute"<<endl<<flush);
 
-	if ( (lNumber == 0) || (lNumber == 1) ){
+	if ( (lNumber == 0) || (lNumber == 1) ) {
 		//this is the correct Fib element
 		DEBUG_OUT_L2(<<"cFibElement::getConstFibElement( "<<lNumber<<", "<<bAbsolute<<" ) done returning this="<<this<<endl<<flush);
 		return const_cast<cFibElement*>( this );
 	}//else
 	
-	if ( 1 < lNumber ){
+	if ( 1 < lNumber ) {
 		//search the next Fib elements
-		if ( pNextFibElement == NULL ){
+		if ( pNextFibElement == NULL ) {
 			//no next Fib element
 			DEBUG_OUT_L2(<<"cFibElement::getConstFibElement( "<<lNumber<<", "<<bAbsolute<<" ) done direction pNextFibElement is NULL"<<endl<<flush);
 			return NULL;
@@ -434,9 +448,9 @@ cFibElement * cFibElement::getConstFibElement( longFib lNumber,
 		return pNextFibElement->getConstFibElement( --lNumber );
 	}//else
 	
-	if ( lNumber < 0 ){
+	if ( lNumber < 0 ) {
 		//search the previous Fib elements
-		if ( pPreviousFibElement == NULL ){
+		if ( pPreviousFibElement == NULL ) {
 			//no previous Fib element
 			DEBUG_OUT_L2(<<"cFibElement::getConstFibElement( "<<lNumber<<", "<<bAbsolute<<" ) done direction pPreviousFibElement is NULL"<<endl<<flush);
 			return NULL;
@@ -465,38 +479,38 @@ cFibElement * cFibElement::getConstFibElement( longFib lNumber,
  * 	exists
  */
 cFibElement *cFibElement::getConstFibElement( char cType, longFib lNumber,
-		bool bAbsolute ) const{
+		bool bAbsolute ) const {
 
-	if ( lNumber == 0 ){
+	if ( lNumber == 0 ) {
 		//this is the correct Fib element
 		return const_cast<cFibElement*>( this );
 	}//else
-	if ( cType == 'u' ){
+	if ( cType == 'u' ) {
 		//return of all types
 		return getConstFibElement( lNumber, bAbsolute );
 	}
 	
-	if ( bAbsolute ){
+	if ( bAbsolute ) {
 		return getMasterRoot()->getConstFibElement( cType, lNumber );
 	}//else lNumber is an relative value
 	
 	if ( ( lNumber == 1 ) &&
-			(getType() == cType) ){
+			(getType() == cType) ) {
 		//this is the Fib element to return
 		return const_cast<cFibElement*>( this );
 	}
 #ifdef BUGFIX_GET_FIB_ELEMENT_NON_RECURSIV
 	
-	if ( 0 < lNumber ){
+	if ( 0 < lNumber ) {
 		//search the next Fib elements
 		const cFibElement * pActualNextElement = NULL;
 		for ( pActualNextElement = this;
 				(pActualNextElement != NULL) && ( 0 < lNumber );
-				pActualNextElement = pActualNextElement->pNextFibElement ){
+				pActualNextElement = pActualNextElement->pNextFibElement ) {
 			
-			if ( pActualNextElement->getType() == cType ){
+			if ( pActualNextElement->getType() == cType ) {
 				lNumber--;
-				if ( lNumber == 0 ){
+				if ( lNumber == 0 ) {
 					break;
 				}
 			}
@@ -508,11 +522,11 @@ cFibElement *cFibElement::getConstFibElement( char cType, longFib lNumber,
 	const cFibElement * pActualPrevElement = NULL;
 	for ( pActualPrevElement = pPreviousFibElement;
 			(pActualPrevElement != NULL) && ( lNumber < 0 );
-			pActualPrevElement = pActualPrevElement->pPreviousFibElement ){
+			pActualPrevElement = pActualPrevElement->pPreviousFibElement ) {
 		
-		if ( pActualPrevElement->getType() == cType ){
+		if ( pActualPrevElement->getType() == cType ) {
 			lNumber++;
-			if ( lNumber == 0 ){
+			if ( lNumber == 0 ) {
 				break;
 			}
 		}
@@ -521,26 +535,26 @@ cFibElement *cFibElement::getConstFibElement( char cType, longFib lNumber,
 	return const_cast<cFibElement*>( pActualPrevElement );
 
 #else
-	if ( lNumber > 0 ){
+	if ( lNumber > 0 ) {
 		//search the next Fib elements
-		if ( pNextFibElement == NULL ){
+		if ( pNextFibElement == NULL ) {
 			//no next Fib element
 			return NULL;
 		}//else
-		if ( getType() == cType ){
+		if ( getType() == cType ) {
 			return pNextFibElement->getConstFibElement( cType, --lNumber );
 		}else{
 			return pNextFibElement->getConstFibElement( cType, lNumber );
 		}
 	}
 	
-	if ( lNumber < 0 ){
+	if ( lNumber < 0 ) {
 		//search the previous Fib elements
-		if ( pPreviousFibElement == NULL ){
+		if ( pPreviousFibElement == NULL ) {
 			//no previous Fib element
 			return NULL;
 		}//else
-		if ( pPreviousFibElement->getType() == cType ){
+		if ( pPreviousFibElement->getType() == cType ) {
 			return pPreviousFibElement->getConstFibElement( cType, ++lNumber );
 		}else{
 			return pPreviousFibElement->getConstFibElement( cType, lNumber );
@@ -564,7 +578,7 @@ cFibElement *cFibElement::getConstFibElement( char cType, longFib lNumber,
  * 	Fib elements or the NULL pointer if non such exists
  */
 cFibElement * cFibElement::getFibElement( longFib lNumber,
-		bool bAbsolute ){
+		bool bAbsolute ) {
 	
 	return getConstFibElement( lNumber, bAbsolute );
 }
@@ -583,7 +597,7 @@ cFibElement * cFibElement::getFibElement( longFib lNumber,
  * 	exists
  */
 cFibElement * cFibElement::getFibElement( char cType, longFib lNumber,
-		bool bAbsolute ){
+		bool bAbsolute ) {
 	
 	return getConstFibElement( cType, lNumber, bAbsolute );
 }
@@ -608,9 +622,9 @@ cFibElement * cFibElement::getFibElement( char cType, longFib lNumber,
  */
 list<cFibElement*> cFibElement::getAllFibElements( char cTypeBasis,
 		longFib lNumber, char cType, edDirection direction,
-		unsignedLongFib lNumberOfMaxReturnedElements, bool bAbsolute ){
+		unsignedLongFib lNumberOfMaxReturnedElements, bool bAbsolute ) {
 	
-	if ( bAbsolute ){
+	if ( bAbsolute ) {
 		return getMasterRoot()->getAllFibElements( cTypeBasis, lNumber, cType,
 			direction, lNumberOfMaxReturnedElements );
 	}//else lNumber is an relative value
@@ -618,29 +632,29 @@ list<cFibElement*> cFibElement::getAllFibElements( char cTypeBasis,
 	//get the reference Fib element
 	cFibElement* pRefernceElement = getFibElement( cTypeBasis, lNumber );
 	
-	if ( pRefernceElement == NULL ){
+	if ( pRefernceElement == NULL ) {
 		//no reference element
 		return list<cFibElement*>();
 	}
 	
-	if ( (cType == 'u') || (pRefernceElement->getType() == cType) ){
+	if ( (cType == 'u') || (pRefernceElement->getType() == cType) ) {
 		//pRefernceElement element has the correct type
 		if ( (direction == ED_ALL) || (direction == ED_POSITION)
-				|| (direction == ED_BELOW_EQUAL) || (direction == ED_HIGHER_EQUAL) ){
+				|| (direction == ED_BELOW_EQUAL) || (direction == ED_HIGHER_EQUAL) ) {
 			/*if the direction is ED_ALL, ED_POSITION, ED_BELOW_EQUAL or
 			ED_HIGHER_EQUAL add the referenc element to the list, if it
 			has the correct type*/
 			list<cFibElement*> liFoundedElements;
 			bool bFindMoreFibElements = true;
-			if ( lNumberOfMaxReturnedElements != 0 ){
+			if ( lNumberOfMaxReturnedElements != 0 ) {
 				//the referenc element will be added
 				lNumberOfMaxReturnedElements--;
-				if ( lNumberOfMaxReturnedElements == 0 ){
+				if ( lNumberOfMaxReturnedElements == 0 ) {
 					bFindMoreFibElements = false;
 				}
 			}
 			
-			if ( (direction != ED_POSITION) && bFindMoreFibElements ){
+			if ( (direction != ED_POSITION) && bFindMoreFibElements ) {
 				liFoundedElements = pRefernceElement->getAllFibElementsFromPosition(
 					cType, direction, lNumberOfMaxReturnedElements );
 			}//else yust give back the referenc element
@@ -650,7 +664,7 @@ list<cFibElement*> cFibElement::getAllFibElements( char cTypeBasis,
 
 		}
 	}//else pRefernceElement has not the correct type -> don't add it
-	if ( direction != ED_POSITION){
+	if ( direction != ED_POSITION) {
 		return pRefernceElement->getAllFibElementsFromPosition(
 			cType, direction, lNumberOfMaxReturnedElements );
 	}//else direction == ED_POSITION ->done
@@ -672,7 +686,7 @@ list<cFibElement*> cFibElement::getAllFibElements( char cTypeBasis,
  * @return if the evalueation was successfull true, else false
  */
 bool cFibElement::evalueObjectSimple( iEvaluePosition & evaluePosition,
-		const unsignedIntFib objectPoint ) const{
+		const unsignedIntFib objectPoint ) const {
 	
 	list<cVectorProperty> liPropertyList;
 	return evalueObject( evaluePosition, objectPoint, liPropertyList );
@@ -700,7 +714,7 @@ bool cFibElement::evalueObjectSimple( iEvaluePosition & evaluePosition,
  */
 bool cFibElement::evalueObjectSimple( iEvalueFibElement & evalueFibElement,
 		const unsignedIntFib objectPoint,
-		const list<char> liCFibElementTyps ){
+		const list<char> liCFibElementTyps ) {
 	
 	list<cVectorProperty> liPropertyList;
 	return evalueObject( evalueFibElement, objectPoint, liPropertyList,
@@ -721,7 +735,7 @@ bool cFibElement::evalueObjectSimple( iEvalueFibElement & evalueFibElement,
  * @return true if the variable is defined, else false
  */
 bool cFibElement::isDefinedVariable( const cFibVariable *variable ,
-		edDirection direction ) const{
+		edDirection direction ) const {
 	
 	return isDefinedVariableInternal( variable, direction );
 }
@@ -740,7 +754,7 @@ bool cFibElement::isDefinedVariable( const cFibVariable *variable ,
  * @return the set with all variables defined in the given direction from
  * 	this Fib element
  */
-list<cFibVariable*> cFibElement::getDefinedVariables( edDirection direction ){
+list<cFibVariable*> cFibElement::getDefinedVariables( edDirection direction ) {
 	
 	return getDefinedVariablesInternal( direction );
 }
@@ -759,24 +773,24 @@ list<cFibVariable*> cFibElement::getDefinedVariables( edDirection direction ){
  * @return true if the variables is are all defined, else false
  */
 bool cFibElement::variablesAreDefined( const set<cFibVariable*> & setVariable ,
-	edDirection direction ) const{
+	edDirection direction ) const {
 	
 	//check if the variables used in the to insert Fib element are defined higer
 
-	if ( setVariable.empty() ){
+	if ( setVariable.empty() ) {
 		return true;
 	}
 	const list<cFibVariable*> liDefinedVariables =
 		(const_cast<cFibElement*>(this))->getDefinedVariables( direction );
 
 	for ( set<cFibVariable*>::const_iterator itrVariable = setVariable.begin();
-			itrVariable != setVariable.end(); itrVariable++ ){
+			itrVariable != setVariable.end(); itrVariable++ ) {
 		
 		const list<cFibVariable*>::const_iterator itrFoundedVariable = std::find(
 			liDefinedVariables.begin(), liDefinedVariables.end(),
 			(*itrVariable) );
 		
-		if ( itrFoundedVariable == liDefinedVariables.end() ){
+		if ( itrFoundedVariable == liDefinedVariables.end() ) {
 			/*variable not found in the defined variables ->
 			can't insert the Fib element*/
 			return false;
@@ -784,6 +798,82 @@ bool cFibElement::variablesAreDefined( const set<cFibVariable*> & setVariable ,
 	}
 	return true;
 }
+
+
+
+/**
+ * This function returns the varaibles used in the given direction in this
+ * Fib object, but not defined in it.
+ *
+ * @see cFibElement::getUsedVariables()
+ * @see cFibElement::getDefinedVariables()
+ * @param direction the direction, in which to search for the variables
+ * @return all variables used in the direction of this Fib object, but not
+ * 	defined in the direction
+ */
+set<cFibVariable*> cFibElement::getVariablesUsedButNotDefined(
+		const edDirection direction ) {
+	/*get variables used in new Fib object, but defined above it, to replace
+	 *them with variables defined above the old Fib object.*/
+	set<cFibVariable*> setVariablesToReplace = getUsedVariables( direction );
+		
+	const list<cFibVariable*> liVariablesDefinedInNew =
+		getDefinedVariables( direction );
+	
+	setVariablesToReplace.erase( NULL );
+	for ( list<cFibVariable*>::const_iterator
+			itrDefinedVarible = liVariablesDefinedInNew.begin();
+			itrDefinedVarible != liVariablesDefinedInNew.end();
+			++itrDefinedVarible ) {
+		
+		setVariablesToReplace.erase( *itrDefinedVarible );
+	}
+	return setVariablesToReplace;
+}
+
+
+/**
+ * This method replaces all variables of the given set with equal variables
+ * defined superior (ED_HIGHER) to this Fib object pFibObject, if possible.
+ * If no equal defined variable is found, the varaible will not be replaced.
+ *
+ * @see getDefinedVariables()
+ * @see getVariablesUsedButNotDefined()
+ * @param setVariablesToReplace a set with the variables to replace
+ * @return the number of variables, which where replaced
+ */
+unsigned int cFibElement::replaceVariablesWithEqualDefinedVariables(
+		set<cFibVariable*> setVariablesToReplace ) {
+	/*setVariablesToReplace contains variables used in the new Fib object,
+	 *but not defined in it. Try to find matching pairs for them defined
+	 *above the new Fib object (in the old Fib object).*/
+	unsigned int uiVariablesReplaced = 0;
+	const list<cFibVariable*> liDefinedVariablesAbove =
+		getDefinedVariables( ED_HIGHER );
+	list<cFibVariable*>::const_reverse_iterator itrDefinedVarible;
+	cFibVariable * pActualUsedVariable;
+	for ( set<cFibVariable*>::iterator
+			itrVarToReplace = setVariablesToReplace.begin();
+			itrVarToReplace != setVariablesToReplace.end(); ++itrVarToReplace ) {
+		
+		pActualUsedVariable = (*itrVarToReplace);
+		//try to find an equal variable defined above
+		for ( list<cFibVariable*>::const_reverse_iterator
+				itrDefinedVarible = liDefinedVariablesAbove.rbegin();
+				itrDefinedVarible != liDefinedVariablesAbove.rend();
+				++itrDefinedVarible ) {
+			if ( pActualUsedVariable->equal( **itrDefinedVarible, false ) ) {
+				//equal variable found -> replace actual variable with equal variable
+				replaceVariable(
+					pActualUsedVariable, *itrDefinedVarible );
+				uiVariablesReplaced++;
+				break;  //check next variable to replace
+			}
+		}//end for all defined variables
+	}//end for all variables to replace
+	return uiVariablesReplaced;
+}
+
 
 #endif //SWITCH_JUST_STORE_AND_EVALUE
 
@@ -799,8 +889,8 @@ bool cFibElement::variablesAreDefined( const set<cFibVariable*> & setVariable ,
  * @return the number of the next connected object point for this Fib 
  * 	element
  */
-unsignedIntFib cFibElement::getNumberOfObjectPoint() const{
-	if ( pSuperiorElement != NULL ){
+unsignedIntFib cFibElement::getNumberOfObjectPoint() const {
+	if ( pSuperiorElement != NULL ) {
 		return pSuperiorElement->getNumberOfObjectPointUp( this );
 	}//else this is the beginning of the wool object
 	return 0;
@@ -826,18 +916,18 @@ unsignedIntFib cFibElement::getNumberOfObjectPoint() const{
  * 	cType in this Fib object has in the order of all Fib elements
  */
 unsignedIntFib cFibElement::typeElementPointToElementPoint( const char cType,
-		const unsignedIntFib elementPoint, bool bAbsolute ) const{
+		const unsignedIntFib elementPoint, bool bAbsolute ) const {
 	
-	if ( elementPoint == 0 ){
+	if ( elementPoint == 0 ) {
 		return 1;
 	}
 	const cFibElement * pFibElement =
 		getConstFibElement( cType, elementPoint, bAbsolute );
 	
-	if ( pFibElement == NULL ){
+	if ( pFibElement == NULL ) {
 		return 0;
 	}
-	if ( bAbsolute ){
+	if ( bAbsolute ) {
 		return pFibElement->getNumberOfElement();
 	}//else lNumber is an relative value
 	return pFibElement->getNumberOfElement() - getNumberOfElement() + 1;
@@ -862,25 +952,25 @@ unsignedIntFib cFibElement::typeElementPointToElementPoint( const char cType,
  * 	elementPoint Fib element of the type cType
  */
 list<unsignedIntFib> cFibElement::elementPointToObjectPoints( const char cType,
-		const unsignedIntFib elementPoint, bool bAbsolute ) const{
+		const unsignedIntFib elementPoint, bool bAbsolute ) const {
 	
 	DEBUG_OUT_L2(<<"cFibElement::elementPointToObjectPoints("<<cType<<", "<<elementPoint<<", "<<bAbsolute<<") started"<<endl<<flush);
 	
 	const cFibElement * pActualElement = this;
 	
-	if ( bAbsolute ){
+	if ( bAbsolute ) {
 		pActualElement = getMasterRoot();
 	}//else lNumber is an relative value
 	
 	DEBUG_OUT_L2(<<"actual fib element: "<<pActualElement<<endl<<flush);
-	if ( elementPoint <= pActualElement->getNumberOfElements( cType ) ){
+	if ( elementPoint <= pActualElement->getNumberOfElements( cType ) ) {
 		
 		DEBUG_OUT_L2(<<"evaluing reference Fib object "<<endl<<flush);
 		const cFibElement * pRefernceElement = pActualElement->
 			getConstFibElement( cType, elementPoint );
 		
 		if ( ( pRefernceElement != NULL ) && (pRefernceElement != pActualElement) &&
-				( pRefernceElement->pSuperiorElement != NULL ) ){
+				( pRefernceElement->pSuperiorElement != NULL ) ) {
 			DEBUG_OUT_L2(<<"cFibElement::elementPointToObjectPointsUp("<<cType<<", "<<elementPoint<<", "<<bAbsolute<<") done"<<endl<<flush);
 			return pRefernceElement->pSuperiorElement->elementPointToObjectPointsUp(
 				pRefernceElement, pActualElement );
@@ -908,21 +998,21 @@ list<unsignedIntFib> cFibElement::elementPointToObjectPoints( const char cType,
  * 	elementPoint Fib element of the type cType
  */
 list<unsignedIntFib> cFibElement::getObjectPointsForElement(
-		const cFibElement * pRefernceElement, bool bAbsolute ) const{
+		const cFibElement * pRefernceElement, bool bAbsolute ) const {
 	
 	DEBUG_OUT_L2(<<"cFibElement::getObjectPointsForElement("<<pRefernceElement<<", "<<bAbsolute<<") started"<<endl<<flush);
 	
-	if ( pRefernceElement == NULL ){
+	if ( pRefernceElement == NULL ) {
 		//no Fib element -> no object points
 		return list<unsignedIntFib>();
 	}
 	cFibElement * pActualElement = const_cast<cFibElement *>( this );
 	
-	if ( bAbsolute ){
+	if ( bAbsolute ) {
 		pActualElement = getMasterRoot();
 	}//else lNumber is an relative value
 	
-	if ( ( pRefernceElement != NULL ) && ( pRefernceElement->pSuperiorElement != NULL ) ){
+	if ( ( pRefernceElement != NULL ) && ( pRefernceElement->pSuperiorElement != NULL ) ) {
 		DEBUG_OUT_L2(<<"cFibElement::getObjectPointsForElement("<<pRefernceElement<<", "<<bAbsolute<<") done"<<endl<<flush);
 		return pRefernceElement->pSuperiorElement->elementPointToObjectPointsUp(
 			pRefernceElement, pActualElement );
@@ -941,7 +1031,7 @@ list<unsignedIntFib> cFibElement::getObjectPointsForElement(
  *
  * @param fibObject the Fib object to delete
  */
-void cFibElement::deleteObject( cFibElement * fibObject ){
+void cFibElement::deleteObject( cFibElement * fibObject ) {
 	
 	cFibElement * pFibElementToDelete = fibObject->getMasterRoot();
 	
@@ -964,18 +1054,18 @@ void cFibElement::deleteObject( cFibElement * fibObject ){
  * 	-Elements or order of Fib Elements of the same type if bOfType
  * 	is true
  */
-unsignedIntFib cFibElement::getNumberOfElement( bool bOfType ) const{
+unsignedIntFib cFibElement::getNumberOfElement( bool bOfType ) const {
 
-	if ( !bOfType ){//of any type
+	if ( !bOfType ) {//of any type
 		return uINumberOfFibElement;
 	}//else
 	
 	unsignedIntFib ulNumberOfElement=1;
 	
 	cFibElement *actualFibElement = pPreviousFibElement;
-	while ( actualFibElement != NULL ){
+	while ( actualFibElement != NULL ) {
 		
-		if ( actualFibElement->getType() == getType() ){
+		if ( actualFibElement->getType() == getType() ) {
 			//actual Fib element and this are of the same type
 			ulNumberOfElement++;
 		}
@@ -993,9 +1083,9 @@ unsignedIntFib cFibElement::getNumberOfElement( bool bOfType ) const{
  * @see getNumberOfMovePoints()
  * @return the number of this Fib element in the order of move points
  */
-unsignedIntFib cFibElement::getNumberOfMovePoint() const{
+unsignedIntFib cFibElement::getNumberOfMovePoint() const {
 	
-	if ( ! isMovable() ){
+	if ( ! isMovable() ) {
 		//this Fib element is not movable -> it is no move point
 		return 0;
 	}
@@ -1003,9 +1093,9 @@ unsignedIntFib cFibElement::getNumberOfMovePoint() const{
 	unsignedIntFib ulNumberOfMovePoint = 1;
 	
 	cFibElement *actualFibElement = pPreviousFibElement;
-	while ( actualFibElement != NULL ){
+	while ( actualFibElement != NULL ) {
 		
-		if ( actualFibElement->isMovable() ){
+		if ( actualFibElement->isMovable() ) {
 			//actual Fib element and this are of the same type
 			ulNumberOfMovePoint++;
 		}
@@ -1025,8 +1115,8 @@ unsignedIntFib cFibElement::getNumberOfMovePoint() const{
  * @return the number of the next connected object point for this Fib 
  * 	element
  */
-unsignedIntFib cFibElement::getNumberOfObjectPoint() const{
-	if ( pSuperiorElement != NULL ){
+unsignedIntFib cFibElement::getNumberOfObjectPoint() const {
+	if ( pSuperiorElement != NULL ) {
 		return pSuperiorElement->getNumberOfObjectPoint( uINumberOfFibElement );
 	}//else this is the beginning of the wool object
 	return 0;
@@ -1051,25 +1141,25 @@ unsignedIntFib cFibElement::getNumberOfObjectPoint() const{
  * 	cType in this Fib object has in the order of all Fib elements
  */
 unsignedIntFib cFibElement::typeElementPointToElementPoint( const char cType,
-		const unsignedIntFib elementPoint, bool bAbsolute ) const{
+		const unsignedIntFib elementPoint, bool bAbsolute ) const {
 	
-	if ( elementPoint == 0 ){
+	if ( elementPoint == 0 ) {
 		return 0;
 	}
 	
-	if ( bAbsolute ){
+	if ( bAbsolute ) {
 		return getMasterRoot()->typeElementPointToElementPoint( cType, elementPoint );
 	}//else lNumber is an relative value
 	
-	if ( pNextFibElement == NULL ){
+	if ( pNextFibElement == NULL ) {
 		return 0;
 	}
 
 	unsignedIntFib elementPointAll;
 	
-	if ( (getType() == cType) || (cType == 'u') ){
+	if ( (getType() == cType) || (cType == 'u') ) {
 		//this element has the correct type -> count it
-		if ( 1 < elementPoint ){
+		if ( 1 < elementPoint ) {
 			elementPointAll = pNextFibElement->typeElementPointToElementPoint(
 				cType, elementPoint - 1 );
 		}else{//this is the correct element point
@@ -1080,7 +1170,7 @@ unsignedIntFib cFibElement::typeElementPointToElementPoint( const char cType,
 			cType, elementPoint );
 	}
 
-	if ( elementPointAll == 0 ){
+	if ( elementPointAll == 0 ) {
 		//no such element point
 		return 0;
 	}
@@ -1109,24 +1199,24 @@ unsignedIntFib cFibElement::typeElementPointToElementPoint( const char cType,
  * 	elementPoint Fib element of the type cType
  */
 list<unsignedIntFib> cFibElement::elementPointToObjectPoints( const char cType,
-		const unsignedIntFib elementPoint, bool bAbsolute ) const{
+		const unsignedIntFib elementPoint, bool bAbsolute ) const {
 	
 	DEBUG_OUT_L2(<<"cFibElement::elementPointToObjectPoints("<<cType<<", "<<elementPoint<<", "<<bAbsolute<<") started"<<endl<<flush);
 	
 	cFibElement * pActualElement = const_cast<cFibElement *>( this );
 	
-	if ( bAbsolute ){
+	if ( bAbsolute ) {
 		pActualElement = getMasterRoot();
 	}//else lNumber is an relative value
 	
 	DEBUG_OUT_L2(<<"actual fib element: "<<pActualElement<<endl<<flush);
-	if ( elementPoint <= pActualElement->getNumberOfElements( cType ) ){
+	if ( elementPoint <= pActualElement->getNumberOfElements( cType ) ) {
 		
 		DEBUG_OUT_L2(<<"evaluing reference Fib object "<<endl<<flush);
 		cFibElement * pRefernceElement = pActualElement->
 			getConstFibElement( cType, elementPoint );
 		
-		if ( pRefernceElement != NULL ){
+		if ( pRefernceElement != NULL ) {
 			DEBUG_OUT_L2(<<"cFibElement::elementPointToObjectPoints("<<cType<<", "<<elementPoint<<", "<<bAbsolute<<") done"<<endl<<flush);
 			return pActualElement->elementPointToObjectPoints( pRefernceElement, 0 );
 		}//else no reference Fib element
@@ -1153,22 +1243,22 @@ list<unsignedIntFib> cFibElement::elementPointToObjectPoints( const char cType,
  * 	elementPoint Fib element of the type cType
  */
 list<unsignedIntFib> cFibElement::getObjectPointsForElement(
-		const cFibElement * pFibElement, bool bAbsolute ) const{
+		const cFibElement * pFibElement, bool bAbsolute ) const {
 	
 	DEBUG_OUT_L2(<<"cFibElement::getObjectPointsForElement("<<pFibElement<<", "<<bAbsolute<<") started"<<endl<<flush);
 	
-	if ( pFibElement == NULL ){
+	if ( pFibElement == NULL ) {
 		//no Fib element -> no object points
 		return list<unsignedIntFib>();
 	}
 	cFibElement * pActualElement = const_cast<cFibElement *>( this );
 	
-	if ( bAbsolute ){
+	if ( bAbsolute ) {
 		pActualElement = getMasterRoot();
 	}//else lNumber is an relative value
 	
 	DEBUG_OUT_L2(<<"actual fib element: "<<pActualElement<<endl<<flush);
-	if ( pFibElement->getNumberOfElements()  <= pActualElement->getNumberOfElements() ){
+	if ( pFibElement->getNumberOfElements()  <= pActualElement->getNumberOfElements() ) {
 		
 		DEBUG_OUT_L2(<<"cFibElement::getObjectPointsForElement("<<pFibElement<<", "<<bAbsolute<<") done"<<endl<<flush);
 		return pActualElement->elementPointToObjectPoints( pFibElement, 0 );
@@ -1187,19 +1277,19 @@ list<unsignedIntFib> cFibElement::getObjectPointsForElement(
  *
  * @param fibObject the Fib object to delete
  */
-void cFibElement::deleteObject( cFibElement * fibObject ){
+void cFibElement::deleteObject( cFibElement * fibObject ) {
 	
 	cFibElement * pFibElementToDelete = fibObject;
 	
 	/*go to the first element in the object tree*/
-	while ( pFibElementToDelete->pPreviousFibElement != NULL ){
+	while ( pFibElementToDelete->pPreviousFibElement != NULL ) {
 		pFibElementToDelete = pFibElementToDelete->pPreviousFibElement;
 	}
 	
 	cFibElement * pFibElementNext;
 	/*delete all Fib elements, by stepping to the next Fib element and
 	deleting the actual Fib element*/
-	while ( pFibElementToDelete != NULL ){
+	while ( pFibElementToDelete != NULL ) {
 		pFibElementNext = pFibElementToDelete->pNextFibElement;
 		delete pFibElementToDelete;
 		pFibElementToDelete = pFibElementNext;
@@ -1214,7 +1304,7 @@ void cFibElement::deleteObject( cFibElement * fibObject ){
 /**
  * @return true if this Fib element is movebel else false
  */
-bool cFibElement::isMovable() const{
+bool cFibElement::isMovable() const {
 	//the default is that the Fib element is not movable
 	return false;
 }
@@ -1239,26 +1329,26 @@ bool cFibElement::isMovable() const{
  * @return true if the Fib element is deletable, else false
  */
 bool cFibElement::isRemovableElement( const char cType,
-		const unsignedIntFib elementPoint, bool bAbsolute, bool bCheckVariables ) const{
+		const unsignedIntFib elementPoint, bool bAbsolute, bool bCheckVariables ) const {
 	
-	if ( elementPoint == 0 ){
+	if ( elementPoint == 0 ) {
 		//check this Fib element
 		
-		if ( pSuperiorElement == NULL ){
+		if ( pSuperiorElement == NULL ) {
 			//can't remove the topmost Fib element
 			return false;
 		}
 		
-		if ( bCheckVariables ){
+		if ( bCheckVariables ) {
 			//check if the variables this Fib element defines are needed
 			
 			const list<cFibVariable*> liDefinedVariables =
 				const_cast<cFibElement*>(this)->getDefinedVariables( ED_POSITION );
 			
 			for ( list<cFibVariable*>::const_iterator actualVariable = liDefinedVariables.begin();
-					actualVariable != liDefinedVariables.end(); actualVariable++ ){
+					actualVariable != liDefinedVariables.end(); actualVariable++ ) {
 				
-				if ( (*actualVariable)->getNumberOfUsingElements() != 0 ){
+				if ( (*actualVariable)->getNumberOfUsingElements() != 0 ) {
 					return false;
 				}
 			}
@@ -1269,7 +1359,7 @@ bool cFibElement::isRemovableElement( const char cType,
 	const cFibElement * pFibElementToCheck = getConstFibElement( cType,
 		elementPoint, bAbsolute );
 	
-	if ( pFibElementToCheck != NULL ){
+	if ( pFibElementToCheck != NULL ) {
 		return pFibElementToCheck->isRemovableElement( 'u', 0, false, bCheckVariables );
 	}//else no element ->can't remove
 	return false;
@@ -1292,10 +1382,10 @@ bool cFibElement::isRemovableElement( const char cType,
  * @return true if the Fib element was removed, else false
  */
 bool cFibElement::removeElement(  const char cType, const unsignedIntFib
-		elementPoint, bool bAbsolute, bool bCheckVariables ){
+		elementPoint, bool bAbsolute, bool bCheckVariables ) {
 	
 	cFibElement * pCutElement = cutElement( cType, elementPoint, bAbsolute, bCheckVariables );
-	if ( pCutElement == NULL ){
+	if ( pCutElement == NULL ) {
 		return false;
 	}//else
 	delete pCutElement;
@@ -1310,7 +1400,7 @@ bool cFibElement::removeElement(  const char cType, const unsignedIntFib
  *
  * @return the cloned/ duplicates Fib object
  */
-cFibElement * cFibElement::clone() const{
+cFibElement * cFibElement::clone() const {
 	//go to the topmost fib element
 	return getMasterRoot()->copy();
 }
@@ -1327,11 +1417,11 @@ cFibElement * cFibElement::clone() const{
  * 	the standartvalue is 0 for coping the complet actual object
  * @return the copy of the connected object or NULL if non such exists
  */
-cFibElement * cFibElement::copy( const unsignedIntFib iObjectPoint ) const{
+cFibElement * cFibElement::copy( const unsignedIntFib iObjectPoint ) const {
 
 	cFibElement * pCopiedElement = copyInternal( iObjectPoint );
 #ifndef FEATURE_FAST_UPDATE
-	if ( pCopiedElement ){
+	if ( pCopiedElement ) {
 		pCopiedElement->updateAllValues();
 	}
 #endif //FEATURE_FAST_UPDATE
@@ -1359,15 +1449,15 @@ cFibElement * cFibElement::copy( const unsignedIntFib iObjectPoint ) const{
  * @return the readed Fib object or the Nullpointer NULL, if reading
  * 	was not possible
  */
-cFibElement *cFibElement::restoreXml( istream &stream, intFib *outStatus ){
+cFibElement *cFibElement::restoreXml( istream &stream, intFib *outStatus ) {
 	
 	
 	TiXmlDocument xmlDocFibObject;
 
 	stream >> xmlDocFibObject;
 	
-	if ( xmlDocFibObject.Error() ){
-		if ( outStatus ){
+	if ( xmlDocFibObject.Error() ) {
+		if ( outStatus ) {
 			*outStatus = -1;
 		}
 		return NULL;
@@ -1398,10 +1488,10 @@ cFibElement *cFibElement::restoreXml( istream &stream, intFib *outStatus ){
  * @return the readed Fib object or the Nullpointer NULL, if reading
  * 	was not possible
  */
-cFibElement * cFibElement::restoreXml( const TiXmlNode * pXmlNode, intFib *outStatus ){
+cFibElement * cFibElement::restoreXml( const TiXmlNode * pXmlNode, intFib *outStatus ) {
 	
-	if ( pXmlNode == NULL ){
-		if (outStatus != NULL){
+	if ( pXmlNode == NULL ) {
+		if (outStatus != NULL) {
 			*outStatus = -1;
 		}
 		return NULL;
@@ -1413,25 +1503,25 @@ cFibElement * cFibElement::restoreXml( const TiXmlNode * pXmlNode, intFib *outSt
 		outStatusInt, liDefinedVariables );
 	
 #ifdef FEATURE_FAST_UPDATE
-	if ( pRestoredFibObject == NULL ){
+	if ( pRestoredFibObject == NULL ) {
 		//Error: nothing restored
 		outStatusInt = -2;
 	}
 #else //FEATURE_FAST_UPDATE
-	if ( pRestoredFibObject ){
+	if ( pRestoredFibObject ) {
 		pRestoredFibObject->updateAllValues();
 	}else{//Error: nothing restored
 		outStatusInt = -2;
 	}
 #endif //FEATURE_FAST_UPDATE
-	if (outStatus != NULL){
+	if (outStatus != NULL) {
 		//copy error status
 		*outStatus = outStatusInt;
 	}
 #ifndef TEST
-	if ( outStatusInt < 0 ){
+	if ( outStatusInt < 0 ) {
 		//an error occured
-		if ( pRestoredFibObject ){
+		if ( pRestoredFibObject ) {
 			cFibElement::deleteObject( pRestoredFibObject );
 		}
 		return NULL;
@@ -1463,9 +1553,9 @@ cFibElement * cFibElement::restoreXml( const TiXmlNode * pXmlNode, intFib *outSt
  * 	was not possible
  */
 cFibElement * cFibElement::restoreXml( const TiXmlNode * pXmlNode,
-		intFib &outStatus, list<cFibVariable*> & liDefinedVariables ){
+		intFib &outStatus, list<cFibVariable*> & liDefinedVariables ) {
 	
-	if ( pXmlNode == NULL ){
+	if ( pXmlNode == NULL ) {
 		outStatus = -1;
 		return NULL;
 	}
@@ -1474,21 +1564,21 @@ cFibElement * cFibElement::restoreXml( const TiXmlNode * pXmlNode,
 		outStatus, liDefinedVariables );
 	
 #ifdef FEATURE_FAST_UPDATE
-	if ( pRestoredFibObject == NULL ){
+	if ( pRestoredFibObject == NULL ) {
 		//Error: nothing restored
 		outStatus = -2;
 	}
 #else //FEATURE_FAST_UPDATE
-	if ( pRestoredFibObject ){
+	if ( pRestoredFibObject ) {
 		pRestoredFibObject->updateAllValues();
 	}else{//Error: nothing restored
 		outStatus = -2;
 	}
 #endif //FEATURE_FAST_UPDATE
 #ifndef TEST
-	if ( outStatus < 0 ){
+	if ( outStatus < 0 ) {
 		//an error occured
-		if ( pRestoredFibObject ){
+		if ( pRestoredFibObject ) {
 			cFibElement::deleteObject( pRestoredFibObject );
 		}
 		return NULL;
@@ -1520,23 +1610,23 @@ cFibElement * cFibElement::restoreXml( const TiXmlNode * pXmlNode,
  * 	was not possible
  */
 cFibElement * cFibElement::restoreXmlInternal( const TiXmlNode * pXmlNode,
-		intFib &outStatus, list<cFibVariable*> & liDefinedVariables ){
+		intFib &outStatus, list<cFibVariable*> & liDefinedVariables ) {
 	
 	cFibElement * pRestoredFibObject = NULL;
 	
-	if ( pXmlNode == NULL ){
+	if ( pXmlNode == NULL ) {
 		//Error: nothing to load
 		outStatus = -1;
 		return NULL;
 	}
 	//as long no Fib element was read and no error occured
-	while ( ( pXmlNode != NULL ) && ( 0 <= outStatus ) ){
+	while ( ( pXmlNode != NULL ) && ( 0 <= outStatus ) ) {
 		//get type of XML element
 		const int iType = pXmlNode->Type();
 
 #ifdef DEBUG_RESTORE_XML
 		//print debugging output
-		switch ( iType ){
+		switch ( iType ) {
 			case TiXmlNode::ELEMENT:
 				printf( "Element \"%s\" (outStatus now %i)\n", pXmlNode->Value(), outStatus );
 			break;
@@ -1561,29 +1651,29 @@ cFibElement * cFibElement::restoreXmlInternal( const TiXmlNode * pXmlNode,
 				printf( "No known XML element\n" );
 		}
 #endif
-		switch ( iType ){
+		switch ( iType ) {
 			case TiXmlNode::ELEMENT:{
 				/*check if this is a valid Fib element XML element, create
 				the apropirate Fib element and call its restoreXml() method*/
 				const TiXmlElement * pXmlElement = pXmlNode->ToElement();
-				if ( pXmlElement == NULL ){
+				if ( pXmlElement == NULL ) {
 					//Error: nothing to load
 					outStatus = 2;
 					return NULL;
 				}
 				string szElementType( pXmlElement->Value() );
 				
-				if ( szElementType == "fib_object" ){
+				if ( szElementType == "fib_object" ) {
 					
 					for ( const TiXmlNode * pChild = pXmlNode->FirstChild();
 							pChild != NULL; pChild = pChild->NextSibling() ) {
 						
 						pRestoredFibObject = restoreXmlInternal(
 							pChild, outStatus, liDefinedVariables );
-						if ( pRestoredFibObject != NULL ){
+						if ( pRestoredFibObject != NULL ) {
 							return pRestoredFibObject;
 						}
-						if ( outStatus < 0 ){
+						if ( outStatus < 0 ) {
 							//an error occured
 							return NULL;
 						}
@@ -1591,32 +1681,32 @@ cFibElement * cFibElement::restoreXmlInternal( const TiXmlNode * pXmlNode,
 					//nothing to load
 					outStatus = -2;
 					return NULL;
-				}else if ( szElementType == "root" ){
+				}else if ( szElementType == "root" ) {
 					pRestoredFibObject = new cRoot( pXmlElement, outStatus, liDefinedVariables );
-				}else if ( szElementType == "point" ){
+				}else if ( szElementType == "point" ) {
 					pRestoredFibObject = new cPoint( pXmlElement, outStatus, liDefinedVariables );
-				}else if ( szElementType == "background" ){
+				}else if ( szElementType == "background" ) {
 					cVectorPosition pVectorPosition( 0 );
 					pRestoredFibObject = new cPoint( &pVectorPosition );
-				}else if ( szElementType == "list" ){
+				}else if ( szElementType == "list" ) {
 					pRestoredFibObject = new cList( pXmlElement, outStatus, liDefinedVariables );
-				}else if ( szElementType == "property" ){
+				}else if ( szElementType == "property" ) {
 					pRestoredFibObject = new cProperty( pXmlElement, outStatus, liDefinedVariables );
-				}else if ( szElementType == "area" ){
+				}else if ( szElementType == "area" ) {
 					pRestoredFibObject = new cArea( pXmlElement, outStatus, liDefinedVariables );
-				}else if ( szElementType == "function" ){
+				}else if ( szElementType == "function" ) {
 					pRestoredFibObject = new cFunction( pXmlElement, outStatus, liDefinedVariables );
-				}else if ( szElementType == "if" ){
+				}else if ( szElementType == "if" ) {
 					pRestoredFibObject = new cIf( pXmlElement, outStatus, liDefinedVariables );
-				}else if ( szElementType == "comment" ){
+				}else if ( szElementType == "comment" ) {
 					pRestoredFibObject = new cComment( pXmlElement, outStatus, liDefinedVariables );
-				}else if ( szElementType == "obj" ){
+				}else if ( szElementType == "obj" ) {
 					pRestoredFibObject = new cExtObject( pXmlElement, outStatus, liDefinedVariables );
-				}else if ( szElementType == "subobject" ){
+				}else if ( szElementType == "subobject" ) {
 					pRestoredFibObject = new cExtSubobject( pXmlElement, outStatus, liDefinedVariables );
-				}else if ( szElementType == "set" ){
+				}else if ( szElementType == "set" ) {
 					pRestoredFibObject = new cFibSet( pXmlElement, outStatus, liDefinedVariables );
-				}else if ( szElementType == "matrix" ){
+				}else if ( szElementType == "matrix" ) {
 					pRestoredFibObject = new cFibMatrix( pXmlElement, outStatus, liDefinedVariables );
 				}else{//Error: no Fib element to load
 #ifdef DEBUG_RESTORE_XML
@@ -1628,7 +1718,7 @@ cFibElement * cFibElement::restoreXmlInternal( const TiXmlNode * pXmlNode,
 				}//TODO more Fib elements
 #ifdef DEBUG_RESTORE_XML
 				//print debugging output
-				if ( pRestoredFibObject == NULL ){
+				if ( pRestoredFibObject == NULL ) {
 					printf( "Error: No Fib object restored (NULL)\n" );
 				}
 				printf( "Restoring element %s done, outStatus now: %i\n",
@@ -1644,10 +1734,10 @@ cFibElement * cFibElement::restoreXmlInternal( const TiXmlNode * pXmlNode,
 					
 					pRestoredFibObject = restoreXmlInternal(
 						pChild, outStatus, liDefinedVariables );
-					if ( pRestoredFibObject != NULL ){
+					if ( pRestoredFibObject != NULL ) {
 						return pRestoredFibObject;
 					}
-					if ( outStatus < 0 ){
+					if ( outStatus < 0 ) {
 						//an error occured
 						return NULL;
 					}
@@ -1686,12 +1776,12 @@ cFibElement * cFibElement::restoreXmlInternal( const TiXmlNode * pXmlNode,
  * @param stream the stream where this Fib object should be stored to
  * @return true if this Fib object is stored, else false
  */
-bool cFibElement::store( ostream &stream ) const{
+bool cFibElement::store( ostream &stream ) const {
 	char cRestBits = 0;
 	unsigned char uiRestBitPosition = 0;
 	bool bObjectStored = storeBit( stream, cRestBits, uiRestBitPosition );
 	
-	if ( bObjectStored && ( uiRestBitPosition != 0 ) ){
+	if ( bObjectStored && ( uiRestBitPosition != 0 ) ) {
 		//store the restbits
 		stream << cRestBits;
 	}
@@ -1718,10 +1808,10 @@ bool cFibElement::store( ostream &stream ) const{
  * @return the readed Fib object or the Nullpointer NULL, if reading
  * 	was not possible
  */
-cFibElement *cFibElement::restore( istream &stream, intFib *outStatus ){
+cFibElement *cFibElement::restore( istream &stream, intFib *outStatus ) {
 
-	if ( ! stream.good() ){
-		if (outStatus != NULL){
+	if ( ! stream.good() ) {
+		if (outStatus != NULL) {
 			*outStatus = -1;
 		}
 		return NULL;
@@ -1734,25 +1824,25 @@ cFibElement *cFibElement::restore( istream &stream, intFib *outStatus ){
 		outStatusInt, NULL );
 	
 #ifdef FEATURE_FAST_UPDATE
-	if ( pRestoredFibObject == NULL ){
+	if ( pRestoredFibObject == NULL ) {
 		//Error: nothing restored
 		outStatusInt = -2;
 	}
 #else //FEATURE_FAST_UPDATE
-	if ( pRestoredFibObject ){
+	if ( pRestoredFibObject ) {
 		pRestoredFibObject->updateAllValues();
 	}else{//Error: nothing restored
 		outStatusInt = -2;
 	}
 #endif //FEATURE_FAST_UPDATE
-	if (outStatus != NULL){
+	if (outStatus != NULL) {
 		//copy error status
 		*outStatus = outStatusInt;
 	}
 #ifndef TEST
-	if ( outStatusInt < 0 ){
+	if ( outStatusInt < 0 ) {
 		//an error occured
-		if ( pRestoredFibObject ){
+		if ( pRestoredFibObject ) {
 			cFibElement::deleteObject( pRestoredFibObject );
 		}
 		return NULL;
@@ -1789,9 +1879,9 @@ cFibElement *cFibElement::restore( istream &stream, intFib *outStatus ){
  * 	was not possible
  */
 cRoot * cFibElement::restoreRootInternal( cReadBits & iBitStream, intFib & outStatus,
-		cRoot * pNextRoot ){
+		cRoot * pNextRoot ) {
 	
-	if ( ! iBitStream.getStream()->good() ){
+	if ( ! iBitStream.getStream()->good() ) {
 		outStatus = -1;
 		return NULL;
 	}
@@ -1833,9 +1923,9 @@ cRoot * cFibElement::restoreRootInternal( cReadBits & iBitStream, intFib & outSt
  */
 cFibElement * cFibElement::restoreInternal( cReadBits & iBitStream, intFib & outStatus,
 		list<cFibVariable*> & liDefinedVariables, const cDomains & validDomains,
-		cRoot * pNextRoot ){
+		cRoot * pNextRoot ) {
 
-	if ( ! iBitStream.getStream()->good() ){
+	if ( ! iBitStream.getStream()->good() ) {
 		outStatus = -1;
 		return NULL;
 	}
@@ -1845,14 +1935,14 @@ cFibElement * cFibElement::restoreInternal( cReadBits & iBitStream, intFib & out
 	char cTypeNextFibElement = 0x00;
 	int iBitsRead = iBitStream.readBits( &cTypeNextFibElement, 4 );
 	
-	if ( iBitsRead != 4 ){
+	if ( iBitsRead != 4 ) {
 		outStatus = -2;
 		DEBUG_OUT_EL2(<<"Error type Fib element: 4 bits to read, but "<<iBitsRead<<" bits readed"<<endl);
 		return NULL;
 	}
 	DEBUG_OUT_L4(<<"outStatus="<<outStatus<<endl);
 	
-	switch ( cTypeNextFibElement ){
+	switch ( cTypeNextFibElement ) {
 		case 0x00:{//read NULL
 			DEBUG_OUT_L4(<<"reading NULL"<<endl);
 			pRestoredFibObject = NULL;
@@ -1867,11 +1957,11 @@ cFibElement * cFibElement::restoreInternal( cReadBits & iBitStream, intFib & out
 			char cTypePointElement = 0x00;
 			iBitsRead = iBitStream.readBits( &cTypePointElement, 1 );
 			
-			if ( iBitsRead != 1 ){
+			if ( iBitsRead != 1 ) {
 				outStatus = -2;
 				return NULL;
 			}
-			if ( cTypePointElement == 0x00 ){
+			if ( cTypePointElement == 0x00 ) {
 				//empty positionsvector
 				DEBUG_OUT_L4(<<"reading point with empty positions vector"<<endl);
 				cVectorPosition pVectorPosition( 0 );
@@ -1940,20 +2030,20 @@ cFibElement * cFibElement::restoreInternal( cReadBits & iBitStream, intFib & out
 			cTypeNextFibElement12Bit[ 1 ] = 0x00;
 			int iBitsRead = iBitStream.readBits( cTypeNextFibElement12Bit, 12 );
 			
-			if ( iBitsRead != 12 ){
+			if ( iBitsRead != 12 ) {
 				outStatus = -2;
 				DEBUG_OUT_EL2(<<"Error type Fib element: 12 bits more to read, but "<<iBitsRead<<" bits readed"<<endl);
 				return NULL;
 			}
 			
-			if ( cTypeNextFibElement12Bit[ 1 ] == 0x00 ){
-				if ( cTypeNextFibElement12Bit[ 0 ] == 0x01 ){
+			if ( cTypeNextFibElement12Bit[ 1 ] == 0x00 ) {
+				if ( cTypeNextFibElement12Bit[ 0 ] == 0x01 ) {
 					//0x1F, 0x00: read an set-element
 					DEBUG_OUT_L4(<<"reading set-element"<<endl);
 					
 					pRestoredFibObject = new cFibSet( iBitStream, outStatus,
 						liDefinedVariables, validDomains, pNextRoot );
-				}else if ( cTypeNextFibElement12Bit[ 0 ] == 0x02 ){
+				}else if ( cTypeNextFibElement12Bit[ 0 ] == 0x02 ) {
 					//0x2F, 0x00: read an matrix element
 					DEBUG_OUT_L4(<<"reading matrix element"<<endl);
 					
@@ -1980,14 +2070,14 @@ cFibElement * cFibElement::restoreInternal( cReadBits & iBitStream, intFib & out
  * @return a pointer to the next superior root element or NULL, if non
  * 	such exists
  */
-cRoot * cFibElement::getSuperiorRootElement(){
+cRoot * cFibElement::getSuperiorRootElement() {
 	
 	
 	for ( cFibElement * pActualSuperiorElement = this->pSuperiorElement;
 			pActualSuperiorElement != NULL;
-			pActualSuperiorElement = pActualSuperiorElement->pSuperiorElement ){
+			pActualSuperiorElement = pActualSuperiorElement->pSuperiorElement ) {
 		
-		if ( pActualSuperiorElement->getType() == 'r' ){
+		if ( pActualSuperiorElement->getType() == 'r' ) {
 			return ((cRoot*)(pActualSuperiorElement));
 		}
 	}
@@ -1998,14 +2088,14 @@ cRoot * cFibElement::getSuperiorRootElement(){
  * @return a pointer to the next superior root element or NULL, if non
  * 	such exists
  */
-const cRoot * cFibElement::getSuperiorRootElement() const{
+const cRoot * cFibElement::getSuperiorRootElement() const {
 	
 	
 	for ( const cFibElement * pActualSuperiorElement = this->pSuperiorElement;
 			pActualSuperiorElement != NULL;
-			pActualSuperiorElement = pActualSuperiorElement->pSuperiorElement ){
+			pActualSuperiorElement = pActualSuperiorElement->pSuperiorElement ) {
 		
-		if ( pActualSuperiorElement->getType() == 'r' ){
+		if ( pActualSuperiorElement->getType() == 'r' ) {
 			return ((const cRoot*)(pActualSuperiorElement));
 		}
 	}
@@ -2018,7 +2108,7 @@ const cRoot * cFibElement::getSuperiorRootElement() const{
  * @return a pointer to the next superior root element or NULL, if non
  * 	such exists
  */
-cRoot * cFibElement::getSuperiorRootElement(){
+cRoot * cFibElement::getSuperiorRootElement() {
 
 	return pNextRootElement;
 }
@@ -2027,7 +2117,7 @@ cRoot * cFibElement::getSuperiorRootElement(){
  * @return a pointer to the next superior root element or NULL, if non
  * 	such exists
  */
-const cRoot * cFibElement::getSuperiorRootElement() const{
+const cRoot * cFibElement::getSuperiorRootElement() const {
 
 	return pNextRootElement;
 }
@@ -2041,10 +2131,10 @@ const cRoot * cFibElement::getSuperiorRootElement() const{
  *
  * @return the identifiers of all root objects of this object
  */
-list<longFib> cFibElement::getAllRootObjectIdentifiers() const{
+list<longFib> cFibElement::getAllRootObjectIdentifiers() const {
 	//the root element will implement the functionality for this method
 	const cFibElement * pNextRootElement = getSuperiorRootElement();
-	if ( pNextRootElement != NULL ){
+	if ( pNextRootElement != NULL ) {
 		return pNextRootElement->getAllRootObjectIdentifiers();
 	}else{//no next root element -> no root object identifiers
 		return list<longFib>();
@@ -2058,7 +2148,7 @@ list<longFib> cFibElement::getAllRootObjectIdentifiers() const{
  *
  * @return the identifiers of all database objects
  */
-list<longFib> cFibElement::getAllDatabaseObjectIdentifiers() const{
+list<longFib> cFibElement::getAllDatabaseObjectIdentifiers() const {
 
 	//return database identifiers
 	return cFibDatabase::getInstance()->getAllDatabaseObjectIdentifiers();
@@ -2073,10 +2163,10 @@ list<longFib> cFibElement::getAllDatabaseObjectIdentifiers() const{
  * @return the root object for the given identifier or NULL if non
  * 	such exists
  */
-cRoot * cFibElement::getRootObject( longFib lIdentifier ){
+cRoot * cFibElement::getRootObject( longFib lIdentifier ) {
 	//the root element will implement the functionality for this method
 	cRoot * pNextRootElement = getSuperiorRootElement();
-	if ( pNextRootElement != NULL ){
+	if ( pNextRootElement != NULL ) {
 		return pNextRootElement->getRootObject( lIdentifier );
 	}else{
 #ifdef FEATURE_FIB_ELEMENT_CHECKS_DATABASE_FOR_EXTERNAL_OBJECTS
@@ -2096,10 +2186,10 @@ cRoot * cFibElement::getRootObject( longFib lIdentifier ){
  *
  * @return the identifiers of all accessible root objects
  */
-list<longFib> cFibElement::getAllAccessibleRootObjectIdentifiers() const{
+list<longFib> cFibElement::getAllAccessibleRootObjectIdentifiers() const {
 	//the root element will implement the functionality for this method
 	const cRoot * pNextRootElement = getSuperiorRootElement();
-	if ( pNextRootElement != NULL ){
+	if ( pNextRootElement != NULL ) {
 		return pNextRootElement->getAllAccessibleRootObjectIdentifiers();
 	}else{
 #ifdef FEATURE_FIB_ELEMENT_CHECKS_DATABASE_FOR_EXTERNAL_OBJECTS
@@ -2122,10 +2212,10 @@ list<longFib> cFibElement::getAllAccessibleRootObjectIdentifiers() const{
  * @return the accessible root object for the given identifier or NULL
  * 	if non such exists
  */
-cRoot * cFibElement::getAccessibleRootObject( longFib lIdentifier ){
+cRoot * cFibElement::getAccessibleRootObject( longFib lIdentifier ) {
 	//the root element will implement the functionality for this method
 	cRoot * pNextRootElement = getSuperiorRootElement();
-	if ( pNextRootElement != NULL ){
+	if ( pNextRootElement != NULL ) {
 		return pNextRootElement->getAccessibleRootObject( lIdentifier );
 	}else{
 #ifdef FEATURE_FIB_ELEMENT_CHECKS_DATABASE_FOR_EXTERNAL_OBJECTS
@@ -2144,10 +2234,10 @@ cRoot * cFibElement::getAccessibleRootObject( longFib lIdentifier ){
  *
  * @return the domains that are valid for this Fib element
  */
-cDomains cFibElement::getValidDomains() const{
+cDomains cFibElement::getValidDomains() const {
 	//the root element will implement the functionality for this method
 	const cRoot * pNextRootElement = getSuperiorRootElement();
-	if ( pNextRootElement != NULL ){
+	if ( pNextRootElement != NULL ) {
 		return pNextRootElement->getValidDomains();
 	}else{//no next root element -> no domains
 		return cDomains();
@@ -2160,10 +2250,10 @@ cDomains cFibElement::getValidDomains() const{
  *
  * @return the value domains that are valid for this Fib element
  */
-cDomains cFibElement::getValidValueDomains() const{
+cDomains cFibElement::getValidValueDomains() const {
 	//the root element will implement the functionality for this method
 	const cRoot * pNextRootElement = getSuperiorRootElement();
-	if ( pNextRootElement != NULL ){
+	if ( pNextRootElement != NULL ) {
 		return pNextRootElement->getValidValueDomains();
 	}else{//no next root element -> no domains
 		return cDomains();
@@ -2177,10 +2267,10 @@ cDomains cFibElement::getValidValueDomains() const{
  *
  * @return the number of dimensions in
  */
-unsignedIntFib cFibElement::getNumberOfDimensions() const{
+unsignedIntFib cFibElement::getNumberOfDimensions() const {
 	//the root element will implement the functionality for this method
 	const cRoot * pNextRootElement = getSuperiorRootElement();
-	if ( pNextRootElement != NULL ){
+	if ( pNextRootElement != NULL ) {
 		return pNextRootElement->getNumberOfDimensions();
 	}else{//no next root element -> no dimensions
 		return (unsignedIntFib)(0);
@@ -2196,10 +2286,10 @@ unsignedIntFib cFibElement::getNumberOfDimensions() const{
  * @return the direction in which the iDimensionNumber dimension is
  * 	mapped
  */
-unsignedIntFib cFibElement::getDimensionMapping( unsignedIntFib iDimensionNumber ) const{
+unsignedIntFib cFibElement::getDimensionMapping( unsignedIntFib iDimensionNumber ) const {
 	//the root element will implement the functionality for this method
 	const cRoot * pNextRootElement = getSuperiorRootElement();
-	if ( pNextRootElement != NULL ){
+	if ( pNextRootElement != NULL ) {
 		return pNextRootElement->getDimensionMapping( iDimensionNumber );
 	}else{//no next root element -> no dimensions
 		return (unsignedIntFib)(0);
@@ -2212,7 +2302,7 @@ unsignedIntFib cFibElement::getDimensionMapping( unsignedIntFib iDimensionNumber
  * @return this method returns true if this Fib element is an
  * 	branchelement, alse false
  */
-bool cFibElement::isBranch() const{
+bool cFibElement::isBranch() const {
 	return false;
 }
 
@@ -2221,7 +2311,7 @@ bool cFibElement::isBranch() const{
  * @return this method returns true if this Fib element is an
  * 	limbelement, alse false
  */
-bool cFibElement::isLimb() const{
+bool cFibElement::isLimb() const {
 	return false;
 }
 
@@ -2230,7 +2320,7 @@ bool cFibElement::isLimb() const{
  * @return this method returns true if this Fib element is an
  * 	leafelement, alse false
  */
-bool cFibElement::isLeaf() const{
+bool cFibElement::isLeaf() const {
 	return false;
 }
 
@@ -2251,9 +2341,9 @@ bool cFibElement::isLeaf() const{
  * 	Fib element
  */
 unsignedIntFib cFibElement::getNumberOfObjectPointUp(
-		const cFibElement * pLastFibElement ) const{
+		const cFibElement * pLastFibElement ) const {
 	
-	if ( pSuperiorElement != NULL ){
+	if ( pSuperiorElement != NULL ) {
 		return pSuperiorElement->getNumberOfObjectPointUp( this );
 	}//the object point is the wool object
 	return 0;
@@ -2276,8 +2366,8 @@ unsignedIntFib cFibElement::getNumberOfObjectPointUp(
  * 	element
  */
 unsignedIntFib cFibElement::getNumberOfObjectPoint(
-		unsignedIntFib uINumberOfStartFibElement ) const{
-	if ( pSuperiorElement != NULL ){
+		unsignedIntFib uINumberOfStartFibElement ) const {
+	if ( pSuperiorElement != NULL ) {
 		return pSuperiorElement->getNumberOfObjectPoint( uINumberOfStartFibElement );
 	}//the object point is the wool object
 	return 0;
@@ -2304,13 +2394,13 @@ unsignedIntFib cFibElement::getNumberOfObjectPoint(
  * 	else false
  */
 bool cFibElement::equal( const cFibElement & fibObject,
-		const bool bCheckExternalObjects ) const{
+		const bool bCheckExternalObjects ) const {
 	
 	map< const cRoot *, const cRoot * > mapEqualRootObjects;
 	map< const cFibElement *, const cFibElement * > mapEqualDefinedVariables;
 	
 	if ( ( pSuperiorElement == NULL ) &&
-			( fibObject.pSuperiorElement == NULL ) ){
+			( fibObject.pSuperiorElement == NULL ) ) {
 		//external objects will be compared in the rootelements
 		return equalInternal( fibObject,
 			mapEqualRootObjects, mapEqualDefinedVariables, false );
@@ -2334,7 +2424,7 @@ bool cFibElement::equal( const cFibElement & fibObject,
  * 	else false
  */
 bool cFibElement::equalElement( const cFibElement & fibElement,
-		const bool bCheckExternalObjects ) const{
+		const bool bCheckExternalObjects ) const {
 	
 	map< const cRoot *, const cRoot * > mapEqualRootObjects;
 	map< const cFibElement *, const cFibElement * > mapEqualDefinedVariables;
@@ -2363,7 +2453,7 @@ bool cFibElement::equalElement( const cFibElement & fibElement,
 bool cFibElement::equalValuesSet( const cFibVariable * variableOwn,
 		const cFibElement & fibElement,
 		const cFibVariable * variable,
-		const bool bCheckExternalObjects ) const{
+		const bool bCheckExternalObjects ) const {
 	
 	map< const cRoot *, const cRoot * > mapEqualRootObjects;
 	map< const cFibElement *, const cFibElement * > mapEqualDefinedVariables;
@@ -2409,7 +2499,7 @@ bool cFibElement::equalValuesSetInternal( const cFibVariable * variableOwn,
 		const cFibVariable * variable,
 		map< const cRoot *, const cRoot * > & mapEqualRootObjects,
 		map< const cFibElement *, const cFibElement * > & mapEqualDefinedVariables,
-		const bool bCheckExternalObjects ) const{
+		const bool bCheckExternalObjects ) const {
 	/*most Fib elements don't define variables, so the set them to the
 	same values*/
 	return true;
@@ -2433,7 +2523,7 @@ bool cFibElement::equalValuesSetInternal( const cFibVariable * variableOwn,
  */
 bool cFibElement::equalValuesSet( const cFibVariable * variableOwn,
 		const cFibElement & fibElement,
-		const cFibVariable * variable ) const{
+		const cFibVariable * variable ) const {
 	/*most Fib elements don't define variables, so the set them to the
 	same values*/
 	return true;
@@ -2466,9 +2556,9 @@ bool cFibElement::equalValuesSet( const cFibVariable * variableOwn,
  */
 list<unsignedIntFib> cFibElement::elementPointToObjectPointsUp(
 		const cFibElement * pLastFibElement,
-		const cFibElement * pFirstFibElement ) const{
+		const cFibElement * pFirstFibElement ) const {
 	
-	if ( ( pSuperiorElement != NULL ) && ( this != pFirstFibElement ) ){
+	if ( ( pSuperiorElement != NULL ) && ( this != pFirstFibElement ) ) {
 		//search for more objectpoints
 		return pSuperiorElement->elementPointToObjectPointsUp( this, pFirstFibElement );
 	}//else all object points found
@@ -2485,13 +2575,13 @@ list<unsignedIntFib> cFibElement::elementPointToObjectPointsUp(
  * The highest Fib element needs to be reachebel from this
  * Fib element and every underobject should have all it's underobjects.
  */
-bool cFibElement::updateAllValues(){
+bool cFibElement::updateAllValues() {
 
 	/*go to the next higher branch element and update the values ther*/
 	cFibElement * pActualElement = this;
 	
-	while (pActualElement != NULL){
-		if ( pActualElement->isBranch() ){
+	while (pActualElement != NULL) {
+		if ( pActualElement->isBranch() ) {
 			((cFibBranch*)(pActualElement))->updateAllCounters();
 			return true;
 		}
@@ -2507,9 +2597,9 @@ bool cFibElement::updateAllValues(){
  *
  * @param pFibElement the Fib element to which to cut the connection
  */
-void cFibElement::cutConnectionsTo( const cFibElement * pFibElement ){
+void cFibElement::cutConnectionsTo( const cFibElement * pFibElement ) {
 	
-	if ( pSuperiorElement == pFibElement ){
+	if ( pSuperiorElement == pFibElement ) {
 		pSuperiorElement = NULL;
 	}
 }
@@ -2538,9 +2628,9 @@ void cFibElement::cutConnectionsTo( const cFibElement * pFibElement ){
  */
 list<unsignedIntFib> cFibElement::elementPointToObjectPoints(
 		const cFibElement *referenceFibObject,
-		const unsignedIntFib uiLastObjectPoint  ) const{
+		const unsignedIntFib uiLastObjectPoint  ) const {
 	
-	if ( (pNextFibElement != NULL) && (this != referenceFibObject) ){
+	if ( (pNextFibElement != NULL) && (this != referenceFibObject) ) {
 	
 		return pNextFibElement->elementPointToObjectPoints( referenceFibObject, uiLastObjectPoint );
 	}//else this==referenceFibObject or no pSuperiorElement -> all object points found
@@ -2557,22 +2647,22 @@ list<unsignedIntFib> cFibElement::elementPointToObjectPoints(
  * The highest Fib element needs to be reachebel from this
  * Fib element and every underobject should have all it's underobjects.
  */
-bool cFibElement::updateAllValues(){
+bool cFibElement::updateAllValues() {
 
 	/*go to the most top/ superior Fib element and call this method non
 	absolute*/
 	cFibElement * pActualElement = this;
 
 	while ( (pActualElement->pSuperiorElement != NULL) ||
-			(pActualElement->pPreviousFibElement != NULL) ){
+			(pActualElement->pPreviousFibElement != NULL) ) {
 		
-		if ( pActualElement->pSuperiorElement != NULL ){
-			if ( pActualElement->pSuperiorElement->pNextFibElement == NULL ){
+		if ( pActualElement->pSuperiorElement != NULL ) {
+			if ( pActualElement->pSuperiorElement->pNextFibElement == NULL ) {
 				pActualElement->pSuperiorElement->pNextFibElement = pActualElement;
 			}
 			pActualElement = pActualElement->pSuperiorElement;
 		}else{
-			if ( pActualElement->pPreviousFibElement->pNextFibElement == NULL ){
+			if ( pActualElement->pPreviousFibElement->pNextFibElement == NULL ) {
 				pActualElement->pPreviousFibElement->pNextFibElement = pActualElement;
 			}
 			pActualElement = pActualElement->pPreviousFibElement;
@@ -2580,7 +2670,7 @@ bool cFibElement::updateAllValues(){
 	}
 	cFibElement* pLastFibElement = pActualElement->updateValues( NULL );
 	
-	if ( pLastFibElement != NULL ){
+	if ( pLastFibElement != NULL ) {
 		return true;
 	}//else an error has occured
 	return false;
@@ -2601,23 +2691,23 @@ bool cFibElement::updateAllValues(){
  * 	if NULL an error has occured
  */
 cFibElement* cFibElement::updateValues( cFibElement *previosFibElement,
-		cFibElement * pNextArm ){
+		cFibElement * pNextArm ) {
 	//BEWARE: This method works yust updates this Fib element and not more
-	if ( previosFibElement != NULL ){
+	if ( previosFibElement != NULL ) {
 		pPreviousFibElement = previosFibElement;
 	}
-	if ( pNextFibElement != NULL ){
+	if ( pNextFibElement != NULL ) {
 		pNextFibElement->pPreviousFibElement = this;
 	}
-	if ( (pSuperiorElement != NULL) && (pPreviousFibElement == NULL) ){
+	if ( (pSuperiorElement != NULL) && (pPreviousFibElement == NULL) ) {
 		pPreviousFibElement = pSuperiorElement;
 	}
-	if ( pPreviousFibElement == NULL ){
+	if ( pPreviousFibElement == NULL ) {
 		pNextRootElement = NULL;
 		uINumberOfFibElement = 1;
 	}else{
-		if ( pSuperiorElement ){
-			if ( pSuperiorElement->getType() == 'r' ){
+		if ( pSuperiorElement ) {
+			if ( pSuperiorElement->getType() == 'r' ) {
 				//superior Fib element is the next root element
 				pNextRootElement = (cRoot*)pSuperiorElement;
 			}else{
@@ -2645,16 +2735,16 @@ cFibElement* cFibElement::updateValues( cFibElement *previosFibElement,
  * 	ED_BELOW, ED_BELOW_EQUAL, ED_ALL: will cut the conection to
  * 		next- Fib element and the underobjects
  */
-void cFibElement::cutConnections( edDirection direction ){
+void cFibElement::cutConnections( edDirection direction ) {
 	
 	if ( (direction == ED_ALL) || (direction == ED_HIGHER) ||
-			(direction == ED_HIGHER_EQUAL) ){
+			(direction == ED_HIGHER_EQUAL) ) {
 		pSuperiorElement     = NULL;
 		pPreviousFibElement  = NULL;
 		uINumberOfFibElement = 1;
 	}
 	if ( (direction == ED_ALL) || (direction == ED_BELOW) ||
-			(direction == ED_BELOW_EQUAL) ){
+			(direction == ED_BELOW_EQUAL) ) {
 		pNextFibElement = NULL;
 	}
 }
@@ -2687,9 +2777,9 @@ void cFibElement::cutConnections( edDirection direction ){
  * 	element was moved
  */
 intFib cFibElement::moveLimbElementUp( const char cType, const unsignedIntFib
-		elementPoint, const unsignedIntFib uiHowfar, bool bAbsolute ){
+		elementPoint, const unsignedIntFib uiHowfar, bool bAbsolute ) {
 	
-	if ( uiHowfar == 0 ){
+	if ( uiHowfar == 0 ) {
 		//moved enougth
 		return 0;
 	}
@@ -2697,11 +2787,11 @@ intFib cFibElement::moveLimbElementUp( const char cType, const unsignedIntFib
 	cFibElement * pFibElementToMove = getFibElement( cType, elementPoint, bAbsolute );
 	//check if the Fib element is moveble
 	if ( (pFibElementToMove == NULL) ||
-			( ! pFibElementToMove->isMovable() ) ){
+			( ! pFibElementToMove->isMovable() ) ) {
 		//can't move the Fib element
 		return 0;
 	}
-	if ( pFibElementToMove->pSuperiorElement == NULL ){
+	if ( pFibElementToMove->pSuperiorElement == NULL ) {
 		//no element to move up over
 		return 0;
 	}
@@ -2711,28 +2801,28 @@ intFib cFibElement::moveLimbElementUp( const char cType, const unsignedIntFib
 	cFibElement * pFibElementToReplace = pFibElementToMove;
 	set<cFibVariable*> liUsedVariables = pFibElementToMove->getUsedVariables();
 	
-	while ( uiRemainingElementsToMoveUp != 0 ){
+	while ( uiRemainingElementsToMoveUp != 0 ) {
 		//check if the pFibElementToMove can be moved over the next superior Fib element
-		if ( pFibElementToReplace->pSuperiorElement->pSuperiorElement == NULL ){
+		if ( pFibElementToReplace->pSuperiorElement->pSuperiorElement == NULL ) {
 			//can't move pFibElementToMove to the topmost position
 			break;
 		}
-		if ( pFibElementToReplace->pSuperiorElement->getType() == 'r' ){
+		if ( pFibElementToReplace->pSuperiorElement->getType() == 'r' ) {
 			//can't to move up over an root element
 			break;
 		}
 		//check if a used variable is defined an an element to move over
-		if ( ! liUsedVariables.empty() ){
+		if ( ! liUsedVariables.empty() ) {
 			set<cFibVariable*>::const_iterator itrVariable;
 			for ( itrVariable = liUsedVariables.begin();
-					itrVariable != liUsedVariables.end(); itrVariable++ ){
+					itrVariable != liUsedVariables.end(); itrVariable++ ) {
 				
 				if ( pFibElementToReplace->pSuperiorElement->isDefinedVariable(
-						*itrVariable, ED_POSITION ) ){
+						*itrVariable, ED_POSITION ) ) {
 					break;
 				}
 			}
-			if ( itrVariable != liUsedVariables.end() ){
+			if ( itrVariable != liUsedVariables.end() ) {
 				/*some varibles used in the pFibElementToMove are defined in the
 				next superior Fib element -> cant move over the superior Fib element*/
 				break;
@@ -2742,7 +2832,7 @@ intFib cFibElement::moveLimbElementUp( const char cType, const unsignedIntFib
 		pFibElementToReplace = pFibElementToReplace->pSuperiorElement;
 		uiRemainingElementsToMoveUp--;
 	}
-	if ( pFibElementToReplace == pFibElementToMove ){
+	if ( pFibElementToReplace == pFibElementToMove ) {
 		//can't move up
 		return 0;
 	}
@@ -2753,14 +2843,14 @@ intFib cFibElement::moveLimbElementUp( const char cType, const unsignedIntFib
 	cFibElement * pCutFibElement = pFibElementToMove->pSuperiorElement->
 		cutElement( 'u', uiFibElementToMovePosition, true, false );
 		
-	if ( pCutFibElement == NULL ){
+	if ( pCutFibElement == NULL ) {
 		return 0;
 	}
 	const bool bFibElementInserted = pFibElementToReplace->pSuperiorElement->
 		insertElement( pCutFibElement, 'u', pFibElementToReplace->
 			getNumberOfElement(), true, false );
 	
-	if ( ! bFibElementInserted ){
+	if ( ! bFibElementInserted ) {
 		//error on inserting -> try to insert the cuted Fib element on the old position
 		insertElement( pCutFibElement, 'u', uiFibElementToMovePosition, true, false );
 		return 0;
@@ -2776,11 +2866,11 @@ intFib cFibElement::moveLimbElementUp( const char cType, const unsignedIntFib
  * @return the highest Fib element in the wool Fib object this
  * 	Fib element is part of
  */
-cFibElement * cFibElement::getMasterRoot(){
+cFibElement * cFibElement::getMasterRoot() {
 	/*go to the most top/ superior Fib element and call this method non
 	absolute*/
 	cFibElement * pActualElement = this;
-	while ( pActualElement->pSuperiorElement != NULL ){
+	while ( pActualElement->pSuperiorElement != NULL ) {
 		pActualElement = pActualElement->pSuperiorElement;
 	}
 	return pActualElement;
@@ -2791,11 +2881,11 @@ cFibElement * cFibElement::getMasterRoot(){
  * @return the highest Fib element in the wool Fib object this
  * 	Fib element is part of
  */
-cFibElement * cFibElement::getMasterRoot() const{
+cFibElement * cFibElement::getMasterRoot() const {
 	/*go to the most top/ superior Fib element and call this method non
 	absolute*/
 	cFibElement * pActualElement = const_cast<cFibElement *>( this );
-	while ( pActualElement->pSuperiorElement != NULL ){
+	while ( pActualElement->pSuperiorElement != NULL ) {
 		pActualElement = pActualElement->pSuperiorElement;
 	}
 	return pActualElement;
@@ -2822,10 +2912,10 @@ cFibElement * cFibElement::getMasterRoot() const{
  */
 bool cFibElement::getVariablesToReplace(
 		const set< cFibVariable* > & setNeededVariables,
-		list< pair< cFibVariable * ,cFibVariable * > > & liOutVariablesToReplace ){
+		list< pair< cFibVariable * ,cFibVariable * > > & liOutVariablesToReplace ) {
 	
 	
-	if ( setNeededVariables.empty() ){
+	if ( setNeededVariables.empty() ) {
 		//no variables needed -> don't need to replace anything
 		return true;
 	}//else needed variables exists
@@ -2842,10 +2932,10 @@ bool cFibElement::getVariablesToReplace(
 	list< cFibVariable* > liVariablesNeededButNotDefined;
 	for ( set< cFibVariable* >::const_iterator
 			itrUsedVariable = setNeededVariables.begin();
-			itrUsedVariable != setNeededVariables.end(); itrUsedVariable++ ){
+			itrUsedVariable != setNeededVariables.end(); itrUsedVariable++ ) {
 		
 		if ( setDefinedVariables.find( *itrUsedVariable ) ==
-				setDefinedVariables.end() ){
+				setDefinedVariables.end() ) {
 			//variable needed but not defined above
 			liVariablesNeededButNotDefined.push_back( *itrUsedVariable );
 		}
@@ -2855,12 +2945,12 @@ bool cFibElement::getVariablesToReplace(
 	for ( list< cFibVariable* >::const_iterator
 			itrUsedVariable = liVariablesNeededButNotDefined.begin();
 			itrUsedVariable != liVariablesNeededButNotDefined.end();
-			itrUsedVariable++ ){
+			itrUsedVariable++ ) {
 		
 		for ( itrDefVariable = liDefinedVariables.rbegin();
 				itrDefVariable != liDefinedVariables.rend();
-				itrDefVariable++ ){
-			if ( (*itrUsedVariable)->equal( **itrDefVariable ) ){
+				itrDefVariable++ ) {
+			if ( (*itrUsedVariable)->equal( **itrDefVariable ) ) {
 				//equal defined variable found -> add pair
 				liOutVariablesToReplace.push_back(
 					pair< cFibVariable * ,cFibVariable * >(
@@ -2869,7 +2959,7 @@ bool cFibElement::getVariablesToReplace(
 			}
 			
 		}//end for all defined variables
-		if ( itrDefVariable == liDefinedVariables.rend() ){
+		if ( itrDefVariable == liDefinedVariables.rend() ) {
 			/*can't find equivalent defined variable for needed variable above
 			 -> can't assign values*/
 			return false;
