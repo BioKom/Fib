@@ -127,6 +127,8 @@ int main(int argc, char **argv){
 	// Das Fenster anzeigen, die Anwendung starten und ihr Ergebnis (an das Betriebssystem) zurückliefern
 	window.show();
 	*/
+	//TODO needed?: qApp->setAttribute(Qt::AA_DontShowIconsInMenus, false);
+	
 	return app.exec();
 }
 

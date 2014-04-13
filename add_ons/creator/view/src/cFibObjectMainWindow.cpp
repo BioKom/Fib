@@ -37,6 +37,7 @@
 /*
 History:
 21.06.2013  Oesterholz  created
+13.04.2014  Oesterholz  insertSelectedFibObject() added
 */
 
 
@@ -63,6 +64,7 @@ History:
 
 #include "cFibNode.h"
 #include "cFibNodeHandler.h"
+#include "cFibCreatorStatiHandler.h"
 #include "eFibNodeChangedEvent.h"
 #include "cMainWindowHandler.h"
 #include "cFibGraphicsScene.h"
@@ -497,7 +499,7 @@ void cFibObjectMainWindow::createActions() {
 	
 	//action for new Fib object
 	//TODO
-	pActNew = new QAction( QIcon(":/images/new.png"), tr("&New"), this );
+	pActNew = new QAction( QIcon(":/images/icon/iconNew.png"), tr("&New"), this );
 	//pActNew = new QAction( style.standardIcon(  ), tr("&New"), this );
 	
 	pActNew->setShortcuts( QKeySequence::New );
@@ -505,7 +507,7 @@ void cFibObjectMainWindow::createActions() {
 	connect( pActNew, SIGNAL( triggered() ), this, SLOT( newFibObject() ) );
 	//action for open file for loading Fib object
 	//TODO
-	pActOpen = new QAction( QIcon(":/images/open.png"), tr("&Open..."), this );
+	pActOpen = new QAction( QIcon(":/images/icon/iconOpen.png"), tr("&Open..."), this );
 	//pActOpen = new QAction( style.standardIcon( QStyle::SP_FileIcon ), tr("&Open"), this );
 	
 	pActOpen->setShortcuts( QKeySequence::Open );
@@ -513,17 +515,19 @@ void cFibObjectMainWindow::createActions() {
 	connect( pActOpen, SIGNAL( triggered() ), this, SLOT( open() ) );
 	//action for saving Fib object
 	//TODO
-	pActSave = new QAction( QIcon(":/images/save.png"), tr("&Save"), this );
+	pActSave = new QAction( QIcon::fromTheme("document-save", QIcon(":images/icon/iconSave.png") ),
+		tr("&Save"), this );
 	//pActSave = new QAction( style.standardIcon( QStyle::SP_DialogSaveButton ), tr("&Save"), this );
 	
 	pActSave->setShortcuts( QKeySequence::Save );
 	pActSave->setStatusTip( tr("Save the Fib object to disk") );
 	connect( pActSave, SIGNAL( triggered() ), this, SLOT( save() ) );
 	//action for saving Fib object with given file name
-	pActSaveAs = new QAction( tr("Save &As..."), this );
+	pActSaveAs = new QAction( QIcon(":/images/icon/iconSaveAs.png"), tr("Save &As..."), this );
 	pActSaveAs->setShortcuts( QKeySequence::SaveAs );
 	pActSaveAs->setStatusTip( tr("Save the Fib object under a new name") );
 	connect( pActSaveAs, SIGNAL( triggered() ), this, SLOT( saveAs() ) );
+	//TODO
 	//action for exit the application
 	pActExit = new QAction( tr("E&xit"), this );
 	pActExit->setShortcuts( QKeySequence::Quit );
@@ -535,30 +539,33 @@ void cFibObjectMainWindow::createActions() {
 	//pActCloseWindow->setShortcuts( QKeySequence::Quit );
 	pActCloseWindow->setStatusTip( tr("Close the window") );
 	connect ( pActCloseWindow, SIGNAL( triggered() ), this, SLOT( closeWindow() ) );
-	
+	/*TODO implement?
 	//action for cuting part Fib object
-	pActCut = new QAction( QIcon(":/images/cut.png"), tr("Cu&t"), this );
+	pActCut = new QAction( QIcon(":/images/icon/iconCut.png"), tr("Cu&t"), this );
 	pActCut->setShortcuts( QKeySequence::Cut);
 	pActCut->setStatusTip( tr("Cut the current selection's contents to the "
 		"clipboard") );
 	//TODO implement actions connections:
 	//connect( pActCut, SIGNAL( triggered() ), pFibObjectGraphicsScene, SLOT( cut() ) );
 	//action for copy part Fib object
-	pActCopy = new QAction( QIcon(":/images/copy.png"), tr("&Copy"), this );
+	pActCopy = new QAction( QIcon(":/images/icon/iconCopy.png"), tr("&Copy"), this );
 	pActCopy->setShortcuts( QKeySequence::Copy);
 	pActCopy->setStatusTip( tr("Copy the current selection's contents to the "
 		"clipboard") );
 	//connect( pActCopy, SIGNAL( triggered() ), pFibObjectGraphicsScene, SLOT( copy() ) );
 	//action for inserting a copied part Fib object
-	pActPaste = new QAction( QIcon(":/images/paste.png"), tr("&Paste"), this );
+	pActPaste = new QAction( QIcon(":/images/icon/iconPaste.png"), tr("&Paste"), this );
 	pActPaste->setShortcuts( QKeySequence::Paste);
 	pActPaste->setStatusTip( tr("Paste the clipboard's contents into the current "
 		"selection") );
 	//connect( pActPaste, SIGNAL( triggered() ), pFibObjectGraphicsScene, SLOT( paste() ) );
 	
+	//TODO delete Fib object
+	*/
 	
 	//create action to togle the Fib plain text view
-	pActTogleShowPlaintext = new QAction( QIcon(":/images/plaintext.png"), tr("&Plain text view"), this );
+	pActTogleShowPlaintext = new QAction( QIcon::fromTheme("accessories-text-editor",
+		QIcon(":/images/icon/iconPlaintext.png") ), tr("&Plain text view"), this );
 	//TODO?: pActTogleShowPlaintext->setShortcuts( QKeySequence::Paste);
 	pActTogleShowPlaintext->setStatusTip( tr("Togels the plain text view ") );
 	connect( pActTogleShowPlaintext, SIGNAL( triggered() ), this, SLOT( toglePlainTextWindow() ) );
@@ -575,12 +582,38 @@ void cFibObjectMainWindow::createActions() {
 	/*TODO impement signals in pFibObjectGraphicsScene copyAvailable()
 	 ? The Fib node should hold the copyAvailable() signal ?
 	 */
+	/*TODO implement?
 	pActCut->setEnabled( false );
 	connect( pFibObjectGraphicsScene, SIGNAL( copyAvailable(bool) ),
 		pActCut, SLOT( setEnabled(bool) ) );
 	pActCopy->setEnabled( false );
 	connect( pFibObjectGraphicsScene, SIGNAL( copyAvailable(bool) ),
 		pActCopy, SLOT( setEnabled(bool) ) );
+	*/
+	
+	
+	//action for saving Fib object
+	//TODO
+	/*two modes:
+	 *	- select item: ":images/icon/iconMousePointing.png"
+	 * - draw object: QIcon::fromTheme("insert-object") or ":images/icon/iconMouseDrawing.png"*/
+	pActMouseModePointing = new QAction( QIcon(":images/icon/iconMousePointing.png"),
+		tr("Mouse &pointing"), this );
+	//pActMouseModePointing->setShortcuts( QKeySequence::Save );
+	pActMouseModePointing->setStatusTip( tr("Change mouse mode to pointer (for selecting objects)") );
+	connect( pActMouseModePointing, SIGNAL( triggered() ),
+		cFibCreatorStatiHandler::getInstance(),
+		SLOT( setMouseModeToPointing() ) );
+	
+	pActMouseModeDrawing = new QAction( QIcon::fromTheme( "insert-object",
+		QIcon(":images/icon/iconMouseDrawing.png") ),
+		tr("Mouse &drawing"), this );
+	//pActMouseModeDrawing->setShortcuts( QKeySequence::Save );
+	pActMouseModeDrawing->setStatusTip( tr("Change mouse mode to drawing (for drawing objects)") );
+	connect( pActMouseModeDrawing, SIGNAL( triggered() ),
+		cFibCreatorStatiHandler::getInstance(),
+		SLOT( setMouseModeToDrawing() ) );
+	
 }
 
 
@@ -599,13 +632,21 @@ void cFibObjectMainWindow::createMenus() {
 	pMenuFile->addAction( pActExit );
 	//create edit menu
 	pMenuEdit = menuBar()->addMenu( tr("&Edit") );
+	/*TODO implement?
 	pMenuEdit->addAction( pActCut );
 	pMenuEdit->addAction( pActCopy );
 	pMenuEdit->addAction( pActPaste );
+	*/
 	//TODO add menu for other Fib object views
 	//create edit menu
 	pMenuEdit = menuBar()->addMenu( tr("&Window") );
 	pMenuEdit->addAction( pActTogleShowPlaintext );
+	
+	
+	//create modus menu
+	pMenuModus = menuBar()->addMenu( tr("&Modus") );
+	pMenuModus->addAction( pActMouseModePointing );
+	pMenuModus->addAction( pActMouseModeDrawing );
 	
 	
 	//add seperator (for Motif-based styles, there help should be on right side)
@@ -614,6 +655,8 @@ void cFibObjectMainWindow::createMenus() {
 	pMenuHelp = menuBar()->addMenu( tr("&Help") );
 	//TODO help page: pMenuHelp->addAction(aboutQtAct);
 	pMenuHelp->addAction( pActAbout);
+	
+	
 }
 
 
@@ -621,17 +664,25 @@ void cFibObjectMainWindow::createMenus() {
  * This method creates the tool bar used in this window.
  */
 void cFibObjectMainWindow::createToolBars() {
+	//tool bar for mode actions
+	pToolBarFile = addToolBar( tr("Modus") );
+	pToolBarFile->addAction( pActMouseModePointing );
+	pToolBarFile->addAction( pActMouseModeDrawing );
 	//tool bar for file actions
 	pToolBarFile = addToolBar( tr("File") );
-	pToolBarFile->addAction( pActNew);
-	pToolBarFile->addAction( pActOpen);
-	pToolBarFile->addAction( pActSave);
+	pToolBarFile->addAction( pActNew );
+	pToolBarFile->addAction( pActOpen );
+	pToolBarFile->addAction( pActSave );
 	//tool bar for edit actions
 	pToolBarEdit = addToolBar( tr("Edit") );
+	/*TODO implement?
 	pToolBarEdit->addAction( pActCut );
 	pToolBarEdit->addAction( pActCopy );
 	pToolBarEdit->addAction( pActPaste );
+	*/
 	//TODO add tool bar for other Fib object views
+	//TODO into  tool bar for other Fib object views
+	pToolBarFile->addAction( pActTogleShowPlaintext );
 	
 }
 
@@ -1308,6 +1359,55 @@ void cFibObjectMainWindow::setInputVariablesWidgetForCentralGrapical(
 	}
 	DEBUG_OUT_L2(<<"cFibObjectMainWindow("<<this<<")::setInputVariablesWidgetForCentralGrapical( pNewWidgetFibInputVariables="<<pNewWidgetFibInputVariables<<" ) done"<<endl<<flush);
 }
+
+
+/**
+ * This method will insert the selected Fib object into the associated
+ * (/represented) Fib Node.
+ * If possible the inserted Fib object will be inserted on the given position.
+ *
+ * @see cFibNode::insertSelectedFibObject()
+ * @see pFibNode
+ * @see pDialogSelectFibObject
+ * @see getFibNode()
+ * @param poiInsertPosition the position on which the Fib object should
+ * 	be inserted
+ * @return true if the Fib object was inserted, else false
+ */
+bool cFibObjectMainWindow::insertSelectedFibObject(
+		const QPoint & poiInsertPosition ) {
+	
+	if ( pDialogSelectFibObject ) {
+		//redirect call to  pDialogSelectFibObject
+		return pDialogSelectFibObject->insertSelectedFibObject( poiInsertPosition );
+	}//no selected Fib object -> can't insert
+	return false;
+}
+
+
+/**
+ * This method will insert the selected Fib object into the associated
+ * (/represented) Fib Node.
+ * If possible the inserted Fib object will be inserted on the given position.
+ *
+ * @see cFibNode::insertSelectedFibObject()
+ * @see pFibNode
+ * @see pDialogSelectFibObject
+ * @see getFibNode()
+ * @param poiInsertPosition the position on which the Fib object should
+ * 	be inserted
+ * @return true if the Fib object was inserted, else false
+ */
+bool cFibObjectMainWindow::insertSelectedFibObject(
+		const QPointF & poiInsertPosition ) {
+	
+	if ( pDialogSelectFibObject ) {
+		//redirect call to  pDialogSelectFibObject
+		return pDialogSelectFibObject->insertSelectedFibObject( poiInsertPosition );
+	}//no selected Fib object -> can't insert
+	return false;
+}
+
 
 
 /**

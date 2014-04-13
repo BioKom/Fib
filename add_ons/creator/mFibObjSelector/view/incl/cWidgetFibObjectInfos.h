@@ -638,11 +638,16 @@ protected:
 	 */
 	QSplitter * pSplitterFibObjectInfo;
 	
-	//TODO check
 	/**
 	 * The number of the first Fib object info in the "used time" sorted
 	 * Fib object info list for the selected category to display.
 	 * (counting starts with 1 )
+	 * The Fib object info list will display all Fib object infos of the
+	 * category from uiStartFibObjectInfo to uiEndFibObjectInfo, which
+	 * are uiCountFibObjectInfo Fib object infos.
+	 * @see liFibObjectInfos
+	 * @see uiEndFibObjectInfo
+	 * @see uiCountFibObjectInfo
 	 */
 	unsigned long uiStartFibObjectInfo;
 	
@@ -650,12 +655,24 @@ protected:
 	 * The number of the last Fib object info in the "used time" sorted
 	 * Fib object info list for the selected category to display.
 	 * (counting starts with 1 )
+	 * The Fib object info list will display all Fib object infos of the
+	 * category from uiStartFibObjectInfo to uiEndFibObjectInfo, which
+	 * are uiCountFibObjectInfo Fib object infos.
+	 * @see liFibObjectInfos
+	 * @see uiStartFibObjectInfo
+	 * @see uiCountFibObjectInfo
 	 */
 	unsigned long uiEndFibObjectInfo;
 	
 	/**
 	 * The number of the Fib object infos in the "used time" sorted
 	 * Fib object info list for the selected category to display.
+	 * The Fib object info list will display all Fib object infos of the
+	 * category from uiStartFibObjectInfo to uiEndFibObjectInfo, which
+	 * are uiCountFibObjectInfo Fib object infos.
+	 * @see liFibObjectInfos
+	 * @see uiStartFibObjectInfo
+	 * @see uiEndFibObjectInfo
 	 */
 	unsigned long uiCountFibObjectInfo;
 	
@@ -689,6 +706,7 @@ protected:
 	 * A text field to input the number (in the displayed order) of the
 	 * first Fib object info to display.
 	 * @see pLabelStart
+	 * @see uiStartFibObjectInfo
 	 * @see pButtonPrevious
 	 * @see pButtonNext
 	 * @see updateCounterText()
@@ -708,7 +726,7 @@ protected:
 	QPushButton * pButtonNext;
 	
 	/**
-	 * The layout for the widgets to navigate the fib object infos.
+	 * The layout for the widgets to navigate the Fib object infos.
 	 * Contained elements:
 	 * @see pButtonPrevious
 	 * @see pLabelStart
@@ -716,8 +734,6 @@ protected:
 	 * @see pButtonNext
 	 */
 	QHBoxLayout * pLayoutNavigator;
-	
-	//TODO check end
 	
 	/**
 	 * The layout for the Fib object info objects.

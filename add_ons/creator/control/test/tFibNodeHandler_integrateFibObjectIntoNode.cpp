@@ -561,9 +561,11 @@ int main(int argc, char* argv[]) {
 	
 	if ( iReturn == 0 ) {
 	
-		cout<<endl<<endl<<"Test successfull: no errors occoured"<<endl;
+		cout<<endl<<endl<<"Test successfull: no errors occoured in "<<
+			mapTestCases.size()<<" testcases"<<endl;
 	}else{
-		cerr<<endl<<endl<<"Test failed: "<<iReturn<<" errors occoured in "<<iFailedTestphases<<" folders"<<endl;
+		cerr<<endl<<endl<<"Test failed: "<<iReturn<<" errors occoured in "<<
+			iFailedTestphases<<" folders"<<endl;
 		
 		cerr<<"Errors wher in test cases: ";
 		for ( list< pair< string, string > >::const_iterator

@@ -58,6 +58,7 @@ History:
 11.06.2013  Oesterholz  created
 26.01.2014  Oesterholz  insertFibObjectInfo() send Fib node change event
 	with information about the changed Fib object parts
+06.04.2014  Oesterholz  insertFibObjectInfo(): insert Fib object on given position
 */
 
 
@@ -316,6 +317,9 @@ bool cFibNode::isChangebel() const{
  */
 bool cFibNode::insertFibObjectInfo( cFibObjectInfo * pFibObjectInfo ) {
 	
+	return insertFibObjectInfo( pFibObjectInfo, map< unsigned int, double >() );
+	
+#ifdef TODO_WEG
 	DEBUG_OUT_L2(<<"cFibNode("<<this<<")::insertFibObjectInfo( pFibObjectInfo="<<pFibObjectInfo<<" ) started"<<endl<<flush);
 	if ( ( ! isChangebel() ) || ( pFibObject == NULL ) ) {
 		//Fib object for this node not changebel -> can't insert a Fib object in it
@@ -447,15 +451,15 @@ bool cFibNode::insertFibObjectInfo( cFibObjectInfo * pFibObjectInfo ) {
 			}
 			return false;
 		}
-		const list< cFibVariable * > liInputvariables =
+		const list< cFibVariable * > liInputVariables =
 			nFibObjectTools::evalueInputVariables( pLoadedFibObject );
 		
 		pFibObjectToInsert = pLoadedFibObject->clone();
 		//define every input variable (create a function element with value 0 for it)
 		cFunctionValue subFunValueNull( 0.0 );
 		for ( list< cFibVariable * >::const_reverse_iterator
-				itrActualVariable = liInputvariables.rbegin();
-				itrActualVariable != liInputvariables.rend(); itrActualVariable++ ) {
+				itrActualVariable = liInputVariables.rbegin();
+				itrActualVariable != liInputVariables.rend(); itrActualVariable++ ) {
 			
 			cFunction * pNewFunction = new cFunction( subFunValueNull,
 				pFibObjectToInsert );
@@ -465,7 +469,365 @@ bool cFibNode::insertFibObjectInfo( cFibObjectInfo * pFibObjectInfo ) {
 			
 			pFibObjectToInsert = pNewFunction;
 		}
-	}//else insert the created external object into the Fib object of this node
+	}
+	//insert the created external object into the Fib object of this node
+	
+	const bool bExtObjectInserted = pFibObject->insertObjectInElement(
+		pFibObjectToInsert, 'u', 0, false );
+	if ( ! bExtObjectInserted ) {
+		//external object could not be inserted -> delete it
+		if ( pFibNodeHandler ) {
+			pFibNodeHandler->unlock( this );
+		}
+		pExternalSubobjectToInsert->deleteObject();
+		
+		if ( bFibNodeObjectChanged ) {
+			fibObjectChanged( fibNodeChangedEvent );
+		}
+		
+		return false;
+	}
+	//remember: pFibObjectToInsert added in Fib object
+	fibNodeChangedEvent.addChangedFibObject( pFibObjectToInsert,
+		eFibNodeChangedEvent::ADDED );
+	fibNodeChangedEvent.addChangedFibElement( pFibObject,
+		eFibNodeChangedEvent::ADDED );
+	
+	if ( pFibNodeHandler ) {
+		pFibNodeHandler->unlock( this );
+	}
+	fibObjectChanged( fibNodeChangedEvent );
+	DEBUG_OUT_L2(<<"cFibNode("<<this<<")::insertFibObjectInfo( pFibObjectInfo="<<pFibObjectInfo<<" ) done insert OK"<<endl<<flush);
+	return true;
+#endif //TODO_WEG
+}
+
+
+//TODO check fast
+
+/**
+ * This method inserts the Fib object for the given Fib object info
+ * into the Fib object of this Fib object node on the given position.
+ * It will be tried to insert the given Fib object as a external
+ * subobject and a subroot object (if not a same subroot object allready
+ * exists).
+ * If the (start) position of the Fib object to insert is known.
+ *
+ * @see cFibObjectInfo::getInVarForType()
+ * @see typeOfInputVariables
+ * @see cFibElement::insertObjectInElement()
+ * @see cExtObject
+ * @see cRoot::integrateSubRootObject()
+ * @param pFibObjectInfo a pointer to the Fib object info object of
+ * 	the Fib object to insert
+ * @param poiInsertPosition the position on which the Fib object should
+ * 	be inserted
+ * @return true if the Fib object could be inserted, else false
+ */
+bool cFibNode::insertFibObjectInfo( cFibObjectInfo * pFibObjectInfo,
+		const QPoint & poiInsertPosition ) {
+	
+	return insertFibObjectInfo( pFibObjectInfo, QPointF( poiInsertPosition ) );
+}
+
+
+/**
+ * This method inserts the Fib object for the given Fib object info
+ * into the Fib object of this Fib object node on the given position.
+ * It will be tried to insert the given Fib object as a external
+ * subobject and a subroot object (if not a same subroot object allready
+ * exists).
+ * If the (start) position of the Fib object to insert is known.
+ *
+ * @see cFibObjectInfo::getInVarForType()
+ * @see typeOfInputVariables
+ * @see cFibElement::insertObjectInElement()
+ * @see cExtObject
+ * @see cRoot::integrateSubRootObject()
+ * @param pFibObjectInfo a pointer to the Fib object info object of
+ * 	the Fib object to insert
+ * @param poiInsertPosition the position on which the Fib object should
+ * 	be inserted
+ * @return true if the Fib object could be inserted, else false
+ */
+bool cFibNode::insertFibObjectInfo( cFibObjectInfo * pFibObjectInfo,
+		const QPointF & poiInsertPosition ) {
+	
+	if ( ( ! isChangebel() ) || ( pFibObject == NULL ) ) {
+		//Fib object for this node not changebel -> can't insert a Fib object in it
+		return false;
+	}
+	if ( pFibObjectInfo == NULL ) {
+		//nothing to insert
+		return false;
+	}
+	/*The map with the values of the input variables. It should contain
+	 the input variables for the object position, with the given position
+	 values.*/
+	map< unsigned int, double > mapInVarValues;
+	
+	unsigned int uiInVar = pFibObjectInfo->getInVarForType(
+		cFibObjectInfo::POS_DIM_1 );
+	if ( 0 < uiInVar ) {
+		//input variable for the start point x (first dimension) exists
+		mapInVarValues[ uiInVar ] = poiInsertPosition.x();
+	}
+	uiInVar = pFibObjectInfo->getInVarForType( cFibObjectInfo::POS_DIM_2 );
+	if ( 0 < uiInVar ) {
+		//input variable for the start point y (second dimension) exists
+		mapInVarValues[ uiInVar ] = poiInsertPosition.y();
+	}
+	//set size parameter to 10 (make object visible)
+	const set< unsigned int > setSizeParameter =
+		pFibObjectInfo->getSizeInVar();
+	
+	if ( ! setSizeParameter.empty() ) {
+		int iOutStatus = 0;
+		const cFibElement * pRootFibElementToInsert =
+			pFibObjectInfo->loadFibObjectFromSource( &iOutStatus );
+		
+		if ( iOutStatus < 0 ) {
+			/*error while loading Fib object for Fib object info
+			 * -> no default (/standard) values to consider*/
+			pRootFibElementToInsert = NULL;
+		}
+		
+		if ( ( pRootFibElementToInsert == NULL ) ||
+				 ( pRootFibElementToInsert->getType() != 'r' ) ) {
+			//no default (/standard) values to consider
+			for ( set< unsigned int >::const_iterator
+					itrSizeInVar = setSizeParameter.begin();
+					itrSizeInVar != setSizeParameter.end(); ++itrSizeInVar ) {
+				mapInVarValues[ *itrSizeInVar ] = 10;
+			}
+		} else {/*can evalue default (/standard) values
+			-> check if the size values are big enough*/
+			const cRoot * pRootToInsert =
+				static_cast<const cRoot *>(pRootFibElementToInsert);
+			
+			for ( set< unsigned int >::const_iterator
+					itrSizeInVar = setSizeParameter.begin();
+					itrSizeInVar != setSizeParameter.end(); ++itrSizeInVar ) {
+				if ( pRootToInsert->getStandardValueOfInputVariable(
+						* itrSizeInVar ) < 1.0 ) {
+					//size values not big enough
+					mapInVarValues[ *itrSizeInVar ] = 10;
+				}
+			}
+		}
+	}
+	//TODO? set second point to x + 10 and thir to y + 10
+	
+	return insertFibObjectInfo( pFibObjectInfo, mapInVarValues );
+}
+
+
+/**
+ * This method inserts the Fib object for the given Fib object info
+ * into the Fib object of this Fib object node.
+ * It will be tried to insert the given Fib object as a external
+ * subobject and a subroot object (if not a same subroot object allready
+ * exists).
+ * The input variables of the inserted Fib object, will be set to the
+ * given values.
+ *
+ * @see typeOfInputVariables
+ * @see cFibElement::insertObjectInElement()
+ * @see cExtObject
+ * @see cRoot::integrateSubRootObject()
+ * @param pFibObjectInfo a pointer to the Fib object info object of
+ * 	the Fib object to insert
+ * @param mapInVarValues a map with the values for the input variables;
+ * 	Missing input variables will be set to their default values.
+ * 	Input variables not in the to insert Fib object (pFibObjectInfo)
+ * 	will be ignored (e.g. the to insert Fib object has 2 input
+ * 	variables, but a value of the 4. is given -> this value (for the
+ * 	4.) will be ignored).
+ * 	key: the number of the input variable (counting starts with 1)
+ * 		@see cRoot::getInputVariable()
+ * 	value: the value for the input variable
+ * @return true if the Fib object could be inserted, else false
+ */
+bool cFibNode::insertFibObjectInfo( cFibObjectInfo * pFibObjectInfo,
+		const map< unsigned int, double > & mapInVarValues ) {
+	
+	DEBUG_OUT_L2(<<"cFibNode("<<this<<")::insertFibObjectInfo( pFibObjectInfo="<<pFibObjectInfo<<" ) started"<<endl<<flush);
+	if ( ( ! isChangebel() ) || ( pFibObject == NULL ) ) {
+		//Fib object for this node not changebel -> can't insert a Fib object in it
+		return false;
+	}
+	if ( pFibObjectInfo == NULL ) {
+		//no Fib object to insert given -> return false
+		return false;
+	}
+	cFibNodeHandler * pFibNodeHandler = cFibNodeHandler::getInstance();
+	
+	if ( pFibNodeHandler ) {
+		pFibNodeHandler->lock( this );
+	}
+	
+	eFibNodeChangedEvent fibNodeChangedEvent( this, ulVersion + 1, NULL );
+	bool bFibNodeObjectChanged = false;
+	
+	//try to integrate the Fib object for the Fib object info object
+	cExtObject * pExternalSubobjectToInsert = NULL;
+	longFib lIdentifier = 0;
+	if ( ( pFibObjectInfo->getFibObjectSource() != NULL ) &&
+			( pFibObjectInfo->getFibObjectSource()->getName() ==
+				"cFibObjectSourceFibDb" ) ) {
+		//if the to integrate Fib object is a database object
+		DEBUG_OUT_L3(<<"cFibNode("<<this<<")::insertFibObjectInfo( pFibObjectInfo="<<pFibObjectInfo<<" ) using Fib database object"<<endl<<flush);
+		
+		cFibObjectSourceFibDb * pFibObjectSourceFibDb =
+			((cFibObjectSourceFibDb*)(pFibObjectInfo->getFibObjectSource()));
+		lIdentifier = pFibObjectSourceFibDb->getFibDbIdentifier();
+		
+	}else if ( 2 < pFibObjectInfo->getNumberOfFibElements() ) {
+		/*else the to integrate Fib object is not a database object
+		 and if the Fib object for the info object contains more than a root
+		 element and a other Fib element*/
+		DEBUG_OUT_L3(<<"cFibNode("<<this<<")::insertFibObjectInfo( pFibObjectInfo="<<pFibObjectInfo<<" ) using not a Fib database object"<<endl<<flush);
+		int iOutStatus = 0;
+		cFibElement * pLoadedFibObject =
+			pFibObjectInfo->loadFibObjectFromSource( &iOutStatus );
+		
+		if ( ( pLoadedFibObject == NULL ) || ( iOutStatus < 0 ) ) {
+			/* no Fib object for Fib object info or error while loading
+			 * Fib object for Fib object info
+			 * -> no main window can be created*/
+			if ( pFibNodeHandler ) {
+				pFibNodeHandler->unlock( this );
+			}
+			return false;
+		}
+		//the root element where to integrate the loaded Fib object
+		cRoot * pNextSuperiorRoot = ( pFibObject->getType() == 'r' ) ?
+			(static_cast<cRoot*>(pFibObject)) :
+			pFibObject->getSuperiorRootElement();
+		
+		if ( pNextSuperiorRoot != NULL ) {
+			//more than root and one Fib element in the to integrate Fib object
+			//try to integrate Fib (root) object in next superior root element
+			lIdentifier = pNextSuperiorRoot->integrateSubRootObject(
+				pLoadedFibObject );
+			
+			cRoot * pSubRoot =
+				pNextSuperiorRoot->getAccessibleRootObject( lIdentifier );
+			//remember: pSubRoot added as subroot object
+			fibNodeChangedEvent.addChangedFibObject( pSubRoot,
+				eFibNodeChangedEvent::ADDED );
+			fibNodeChangedEvent.addChangedFibElement( pNextSuperiorRoot,
+				eFibNodeChangedEvent::ADDED );
+			bFibNodeObjectChanged = true;
+		}
+	}//end if Fib database object
+	
+	if ( lIdentifier != 0 ) {
+		DEBUG_OUT_L3(<<"cFibNode("<<this<<")::insertFibObjectInfo( pFibObjectInfo="<<pFibObjectInfo<<" ) create external object element for identifier "<<lIdentifier<<endl<<flush);
+		/*the Fib object could be inserted as a subroot object
+		 -> create external subobject for it*/
+		cRoot * pExternalObjectRoot =
+			pFibObject->getAccessibleRootObject( lIdentifier );
+		const unsignedIntFib ulNumberOfInputVariables =
+			pExternalObjectRoot->getNumberOfInputVariables();
+		cVectorExtObject vecInInputValues( ulNumberOfInputVariables );
+		if ( 0 < ulNumberOfInputVariables ) {
+			//evalue and set default values for the input variables
+			if ( mapInVarValues.empty() ) {
+				for ( unsignedIntFib uiActualInVar = 1;
+						uiActualInVar <= ulNumberOfInputVariables; ++uiActualInVar ) {
+					vecInInputValues.setValue( uiActualInVar,
+						pExternalObjectRoot->getStandardValueOfInputVariable( uiActualInVar ) );
+				}
+			}else{  //use mapInVarValues
+				map< unsigned int, double >::const_iterator itrGivenInVar;
+				
+				for ( unsignedIntFib uiActualInVar = 1;
+						uiActualInVar <= ulNumberOfInputVariables; ++uiActualInVar ) {
+					//try to find value for next input variable in mapInVarValues
+					itrGivenInVar = mapInVarValues.find( uiActualInVar );
+					if ( itrGivenInVar == mapInVarValues.end() ) {
+						/*no value for input variable found in mapInVarValues
+						 -> use default value*/
+						vecInInputValues.setValue( uiActualInVar,
+							pExternalObjectRoot->getStandardValueOfInputVariable( uiActualInVar ) );
+					} else {  //use value of mapInVarValues
+						vecInInputValues.setValue( uiActualInVar,
+							itrGivenInVar->second );
+					}
+				}
+			}
+		}//end if input variables exists
+		//create external subobject to insert
+		pExternalSubobjectToInsert = new cExtObject(
+			lIdentifier, vecInInputValues );
+	}
+	
+	DEBUG_OUT_L3(<<"cFibNode("<<this<<")::insertFibObjectInfo( pFibObjectInfo="<<pFibObjectInfo<<" ) integrating Fib object of info (pExternalSubobjectToInsert="<<pExternalSubobjectToInsert<<")"<<endl<<flush);
+	cFibElement * pFibObjectToInsert = pExternalSubobjectToInsert;
+	if ( pFibObjectToInsert == NULL ) {
+		//insert Fib object directly
+		int iOutStatus = 0;
+		cFibElement * pLoadedFibObject =
+			pFibObjectInfo->loadFibObjectFromSource( &iOutStatus );
+		
+		if ( ( pLoadedFibObject == NULL ) || ( iOutStatus < 0 ) ) {
+			/* no Fib object for Fib object info or error while loading
+			 * Fib object for Fib object info
+			 * -> no main window can be created*/
+			if ( pFibNodeHandler ) {
+				pFibNodeHandler->unlock( this );
+			}
+			return false;
+		}
+		const list< cFibVariable * > liInputVariables =
+			nFibObjectTools::evalueInputVariables( pLoadedFibObject );
+		
+		pFibObjectToInsert = pLoadedFibObject->clone();
+		
+		const cFunctionValue subFunValueNull( 0.0 );
+		cFunction * pNewFunction = NULL;
+		if ( mapInVarValues.empty() ) {
+			//define every input variable (create a function element with value 0 for it)
+			for ( list< cFibVariable * >::const_reverse_iterator
+					itrActualVariable = liInputVariables.rbegin();
+					itrActualVariable != liInputVariables.rend(); ++itrActualVariable ) {
+				
+				pNewFunction = new cFunction( subFunValueNull,
+					pFibObjectToInsert );
+				
+				pFibObjectToInsert->replaceVariable( *itrActualVariable,
+					pNewFunction->getDefinedVariable() );
+				
+				pFibObjectToInsert = pNewFunction;
+			}
+		} else {  //use mapInVarValues
+			map< unsigned int, double >::const_iterator itrGivenInVar;
+			//start with the last input variable
+			unsigned int uiActualInVar = liInputVariables.size();
+			for ( list< cFibVariable * >::const_reverse_iterator
+					itrActualVariable = liInputVariables.rbegin();
+					itrActualVariable != liInputVariables.rend();
+					++itrActualVariable, --uiActualInVar ) {
+				
+				itrGivenInVar = mapInVarValues.find( uiActualInVar );
+				if ( itrGivenInVar == mapInVarValues.end() ) {
+					//set input variable to 0
+					pNewFunction = new cFunction( subFunValueNull,
+						pFibObjectToInsert );
+				} else {  //use value of mapInVarValues for input variable
+					pNewFunction = new cFunction(
+						cFunctionValue( itrGivenInVar->second ), pFibObjectToInsert );
+				}
+				
+				pFibObjectToInsert->replaceVariable( *itrActualVariable,
+					pNewFunction->getDefinedVariable() );
+				
+				pFibObjectToInsert = pNewFunction;
+			}
+		}
+	}
+	//insert the created external object into the Fib object of this node
 	
 	const bool bExtObjectInserted = pFibObject->insertObjectInElement(
 		pFibObjectToInsert, 'u', 0, false );
@@ -495,6 +857,11 @@ bool cFibNode::insertFibObjectInfo( cFibObjectInfo * pFibObjectInfo ) {
 	DEBUG_OUT_L2(<<"cFibNode("<<this<<")::insertFibObjectInfo( pFibObjectInfo="<<pFibObjectInfo<<" ) done insert OK"<<endl<<flush);
 	return true;
 }
+
+
+//TODO check fast end
+
+
 
 
 /**

@@ -44,9 +44,19 @@ History:
 * version information for the Fib creator application
 **************************************/
 
-#define FIB_CREATOR_VERSION          1
-#define FIB_CREATOR_VERSION_NAME     V1.0.0
+#define FIB_CREATOR_VERSION          2
+#define FIB_CREATOR_VERSION_NAME     V1.0.1
 
+
+
+/*****************************************
+* C++ switches
+******************************************/
+
+#if __cplusplus > 199711
+//the C++ 2011 standard is available
+#define CPP_2011
+#endif
 
 /*****************************************
 * versioned programming debugging switches
@@ -103,6 +113,21 @@ History:
 #define FEATURE_INTEGRATE_FIB_OBJECT_INTO_NODE
 
 
+/**
+ * With this feature the method @see cFibObjectInfo::getInVarTypeFromText()
+ * will be implemented. The method will search the given string for
+ * patterns with the C++ 2011 regex functionalities.
+ * If this feature is not active, the method will return cFibObjectInfo::UNKNOWN.
+ *
+ * @see cFibObjectInfo::getInVarTypeFromText()
+ * created: 07.04.2014 Betti Oesterholz
+ * status:  to implement
+ *//*
+History:
+*/
+#ifdef CPP_2011
+#define FEATURE_FIB_OBJECT_INFO_IN_VAR_TYPE_FROM_TEXT_REGEX
+#endif //CPP_2011
 
 
 

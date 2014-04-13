@@ -434,18 +434,17 @@ protected:
 	static double getLastUsedTimesWeightSum(
 		const std::vector< std::pair< time_t, unsigned long > > & vecLastUsedTimes );
 	
-	//TODO check
-	
 	/**
 	 * This method will add the given Fib object info object to the
 	 * "used time" sorted Fib object infos.
 	 * Note: It will not use the mutexFibObjectInfoHandler, so lock it
 	 * 	outside this method.
+	 * 	But will use the mutexUsedTimeSortedFibObjectInfos, if bLock is true.
 	 *
 	 * @see mapUsedTimeSortedFibObjectInfos
 	 * @see mutexUsedTimeSortedFibObjectInfos
 	 * @param pFibObjectInfo the Fib object info object to add to the
-	 * 	"used time" sorted Fib object infos Fib object infos
+	 * 	"used time" sorted Fib object infos
 	 * @param bLock if true the mutexUsedTimeSortedFibObjectInfos will be
 	 * 	used (locked and unlocked)
 	 */
@@ -457,12 +456,12 @@ protected:
 	 * "used time" sorted Fib object infos.
 	 * Note: It will not use the mutexFibObjectInfoHandler, so lock it
 	 * 	outside this method.
-	 * 	But will use the mutexUsedTimeSortedFibObjectInfos.
+	 * 	But it will use the mutexUsedTimeSortedFibObjectInfos.
 	 *
 	 * @see mapUsedTimeSortedFibObjectInfos
 	 * @see mutexUsedTimeSortedFibObjectInfos
-	 * @param pRemovedFibObjectInfo the Fib object info object to remove from the
-	 * 	"used time" sorted Fib object infos
+	 * @param pRemovedFibObjectInfo the Fib object info object to remove
+	 * 	from the "used time" sorted Fib object infos
 	 * @return true if a Fib object info object was removed, else false
 	 */
 	bool removeFromUsedTimeSortedFibObjectInfos(
@@ -486,8 +485,6 @@ protected:
 	void evaluateMapCategoryUsedTimeSortedFibObjectInfos();
 	
 #endif //FEATURE_FIB_OBJECT_INFO_HANDLER_SORTET_SUBCATEGORIES_MAPS
-
-	//TODO check end
 	
 	
 	/**
@@ -514,6 +511,7 @@ protected:
 	 * @see loadFibInfoObject()
 	 * @see storeFibInfoObject()
 	 * @return the string for the path to the Fib object info objects
+	 * 	Beware: You have to care, that the returned string will be deleted.
 	 */
 	char * getFibObjectInfoPath() const;
 	
@@ -528,7 +526,7 @@ protected:
 	bool loadListOfInfoObjects();
 	
 	/**
-	 * This method checks if for the Fib object database the Fib object infos
+	 * This method checks, if for the Fib object database the Fib object infos
 	 * for this handler where created.
 	 * (This method returns true if the file:
 	 * 	szPathToFibObjectInfos"fibDbInfosCreated.flg" exists.)
@@ -702,36 +700,6 @@ protected:
 	 * @see mapUsedTimeSortedFibObjectInfos
 	 */
 	bool bReevaluateMapCategoryUsedTimeSortedFibObjectInfos;
-	
-#ifdef TODO_WEG
-//TODO OR
-//TODO good idea?
-	/**
-	 * All Fib object info object are sorted in an order according to the
-	 * times they where used. In which recently used times have a higher weight.
-	 * The Fib object info objects with the higher sum of weights (for their
-	 * used times) will be before the Fib object info objects with the lower
-	 * sum of weights.
-	 * This map stores the (via multimaps) sorted Fib object info objects:
-	 * 	key: the category for the stored submaps of "used time" sorted
-	 * 		Fib object infos
-	 * 	value: The submaps stores the Fib object infos and their
-	 * 		"used time" value for the key category:
-	 * 		key: a value for the sum of of weights (for their used times)
-	 * 			for the value Fib object info
-	 * 		value: the Fib object info
-	 *
-	 * @see mutexUsedTimeSortedFibObjectInfos
-	 * @see getLastUsedTimesWeightSum()
-	 * @see cFibObjectInfo::getLastUsedTimes()
-	 * @see getSortedFibObjectInfos()
-	 * @see getSortedFibObjectInfoIds()
-	 * @see sortFibObjectInfoIds()
-	 */
-	std::map< std::string, std::multimap< double , cFibObjectInfo * > >
-		mapUsedTimeSortedFibObjectInfos;
-	
-#endif //TODO_WEG
 	
 #endif //FEATURE_FIB_OBJECT_INFO_HANDLER_SORTET_SUBCATEGORIES_MAPS
 	

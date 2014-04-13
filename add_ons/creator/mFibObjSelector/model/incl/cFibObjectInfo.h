@@ -89,9 +89,17 @@
  *    The "user" element has the attribute "name" which contains the name of
  *    a user which can change the Fib object.
  * - The optional element "preview" contains the information for the
- *   preview image for the Fib object. It should contain a Fib object info
- *   XML element, like specified here.
- *   @see pPreviewFibObject
+ *    preview image for the Fib object. It should contain a Fib object info
+ *    XML element, like specified here.
+ *    @see pPreviewFibObject
+ * - The optional element "in_var_types" contains a list for known input
+ *    variable types. For each input variable, for which the type is known,
+ *    it contains a "input_variable" element with the attributes "number"
+ *    and "type". The attribute "number" contains the number of the input
+ *    variable (counting starts with 1) and the attribute "type" contains
+ *    the type of the input variable.
+ *    @see typeOfInputVariables
+ *    @see mapInVarTypes
  *
  * example:
     <?xml version="1.0" encoding="UTF-8"?>
@@ -131,6 +139,13 @@
              ...
           </fib_object_info>
        </preview>
+       <in_var_types>
+          <input_variable number="2" type="position dimension 1"/>
+          <input_variable number="3" type="position dimension 2"/>
+          <input_variable number="7" type="size radius"/>
+          ...
+       </in_var_types>
+       
     </fib_object_info>
  *
  *
@@ -141,6 +156,7 @@
 /*
 History:
 13.09.2013  Oesterholz  created
+05.04.2014  Oesterholz  input variables types added
 */
 
 
@@ -149,6 +165,7 @@ History:
 
 
 #include "version.h"
+#include "versionCreator.h"
 
 #include <string>
 #include <map>
@@ -186,6 +203,45 @@ class cFibObjectSource;
 class cFibObjectInfo: public lFibObjectInfoChanged{
 public:
 	
+	/**
+	 * This type (enum) is for the types of the input variables.
+	 * Note: Adapt when changing this type:
+	 * 	- @see getNameForInVarType()
+	 * 	- @see getInVarTypeForName()
+	 * 	- @see isSizeInVarTypes()
+	 * 	- @see getSizeInVarTyps()
+	 *
+	 * @see getTypeInVar()
+	 * @see getInVarForType()
+	 * @see addTypeInVar()
+	 * @see removeTypeInVar()
+	 * @see getNameForInVarType()
+	 * @see getInVarTypeForName()
+	 * @see isSizeInVarTypes()
+	 * @see getSizeInVarTyps()
+	 */
+	enum typeOfInputVariables{
+		UNKNOWN   = 0,  //type unknown
+		POS_DIM_1 = 1,  //the position in the first dimension
+		POS_DIM_2 = 2,  //the position in the second dimension
+		SIZE      = 10, //the size of the Fib object
+		SIZE_DIM_1 = 11,//the size of the Fib object in the first dimension
+		SIZE_DIM_2 = 12,//the size of the Fib object in the second dimension
+		SIZE_RADIUS= 20,//the radius of the Fib object
+		SIZE_RADIUS_DIM_1 = 21,//the radius of the Fib object in the first dimension
+		SIZE_RADIUS_DIM_2 = 22,//the radius of the Fib object in the second dimension
+		ANGLE = 100//the angle of the Fib object
+		/*TODO
+		 POS_POINT_2_DIM_1 = 200
+		 POS_POINT_2_DIM_2 = 201
+		 POS_POINT_3_DIM_1 = 300
+		 POS_POINT_3_DIM_2 = 301
+		 POS_POINT_4_DIM_1 = 400
+		 POS_POINT_4_DIM_2 = 401
+		 */
+		
+	};//end typeOfInputVariables
+
 	/**
 	 * constructor for a Fib object info object
 	 *
@@ -699,6 +755,141 @@ public:
 	cFibObjectInfo * getPreviewFibObjectInfo();
 	
 	/**
+	 * This method returns the type of the uiNumberOfInVar'th input variable
+	 * (counting starts with 1), of the Fib object of this Fib object info object.
+	 *
+	 * @see mapInVarTypes
+	 * @see getInVarForType()
+	 * @see typeOfInputVariables
+	 * @param uiNumberOfInVar the number of the input variable, of which to
+	 * 	return the type (counting starts with 1)
+	 * @return the type of the uiNumberOfInVar'th input variable or UNKNOWN,
+	 * 	if no type exists
+	 */
+	typeOfInputVariables getTypeInVar( const unsigned int uiNumberOfInVar ) const;
+	
+	/**
+	 * This method returns the number of the input variable (counting starts
+	 * with 1), of the Fib object of this Fib object info object, which is
+	 * of the given type.
+	 *
+	 * @see mapInVarTypes
+	 * @see getTypeInVar()
+	 * @see typeOfInputVariables
+	 * @param typeOfInVar the type of the input variable, of which to
+	 * 	return the number (counting starts with 1)
+	 * @return the number of the input variable, which is of the given type
+	 * 	or 0 if non could be found
+	 */
+	unsigned int getInVarForType( const typeOfInputVariables typeOfInVar ) const;
+	
+	/**
+	 * This method adds the type for the uiNumberOfInVar'th input variable
+	 * (counting starts with 1), of the Fib object of this Fib object info
+	 * object.
+	 * If a input variable with the same type exists allready, it will be
+	 * replaced.
+	 *
+	 * @see mapInVarTypes
+	 * @see removeTypeInVar()
+	 * @see getTypeInVar()
+	 * @see getInVarForType()
+	 * @see typeOfInputVariables
+	 * @param uiNumberOfInVar the number of the input variable, to which to
+	 * 	add the type (counting starts with 1)
+	 * @param typeOfInVar the type of the uiNumberOfInVar'th input variable
+	 */
+	void addTypeInVar( const unsigned int uiNumberOfInVar,
+		const typeOfInputVariables typeOfInVar );
+
+	/**
+	 * This method removes the type for a input variable, of the Fib object
+	 * of this Fib object info object.
+	 * No input variable with the given type will exists, after you called
+	 * this method.
+	 *
+	 * @see mapInVarTypes
+	 * @see addTypeInVar()
+	 * @see getTypeInVar()
+	 * @see getInVarForType()
+	 * @see typeOfInputVariables
+	 * @param typeOfInVar the type of the input variable to remove
+	 */
+	void removeTypeInVar( const typeOfInputVariables typeOfInVar );
+
+	/**
+	 * This method returns if the given input variable type is for input
+	 * variables, which determines the size of a Fib object.
+	 *
+	 * @see mapInVarTypes
+	 * @see typeOfInputVariables
+	 * @see getSizeInVarTyps()
+	 * @return true if the given input variable type is for input
+	 * 	variables, which determines the size of a Fib object
+	 */
+	static bool isSizeInVarTypes( const typeOfInputVariables typeOfInVar );
+
+	/**
+	 * This method returns all size typs for input variables of this object.
+	 *
+	 * @see mapInVarTypes
+	 * @see typeOfInputVariables
+	 * @see isSizeInVarTypes()
+	 * @see addTypeInVar()
+	 * @see removeTypeInVar()
+	 * @see getTypeInVar()
+	 * @see getInVarForType()
+	 * @return all size typs for input variables of this object
+	 */
+	set< typeOfInputVariables > getSizeInVarTyps() const;
+	
+	/**
+	 * This method returns all input variables which determine the size of
+	 * this Fib object.
+	 *
+	 * @see mapInVarTypes
+	 * @see typeOfInputVariables
+	 * @see getSizeInVarTyps()
+	 * @see addTypeInVar()
+	 * @see removeTypeInVar()
+	 * @see getTypeInVar()
+	 * @see getInVarForType()
+	 * @return all size typs for input variables of this object
+	 */
+	set< unsigned int > getSizeInVar() const;
+
+
+	/**
+	 * This function returns the name for the given input variable type.
+	 *
+	 * @see getInVarTypeForName()
+	 * @see typeOfInputVariables
+	 * @see mapInVarTypes
+	 * @see getTypeInVar()
+	 * @see getInVarForType()
+	 * @param typeOfInVar the type of the input variable, for which to
+	 * 	return the name
+	 * @return the name for the given input variable type
+	 */
+	static string getNameForInVarType( const typeOfInputVariables typeOfInVar );
+	
+	/**
+	 * This function returns the input variable type for the given input
+	 * variable type name.
+	 *
+	 * @see getNameForInVarType()
+	 * @see typeOfInputVariables
+	 * @see mapInVarTypes
+	 * @see getTypeInVar()
+	 * @see getInVarForType()
+	 * @param typeOfInVar the type of the input variable, for which to
+	 * 	return the name
+	 * @return the input variable type for the given input variable type
+	 * 	name (or UNKNOWN if non exists)
+	 */
+	static typeOfInputVariables getInVarTypeForName( const string szNameInVar );
+	
+	/**
 	 * This method will store this Fib object info object from the given
 	 * stream.
 	 *
@@ -890,6 +1081,23 @@ protected:
 	 */
 	int restoreFibObjectInfoInternal( const TiXmlNode * pXmlNode );
 	
+	/**
+	 * This function will analyse the given text and try to evalue an
+	 * input variable type for it.
+	 * For example the text:
+	 * 	"position of the start point in dimension 2 (y_s)"
+	 * would be interpreted as the POS_DIM_2 input variable type.
+	 *
+	 * @see typeOfInputVariables
+	 * @see mapInVarTypes
+	 * @see getTypeInVar()
+	 * @see getInVarForType()
+	 * @see addTypeInVar()
+	 * @param szText a text which shold describe/contain a input variable type
+	 * @return the found input variable type for the given text or
+	 * 	UNKNOWN if non could be found
+	 */
+	static typeOfInputVariables getInVarTypeFromText( const string & szText );
 	
 	/**
 	 * The identifiers of this Fib object.
@@ -1019,6 +1227,27 @@ protected:
 	 */
 	unsigned long ulNumberOfFibElements;
 	
+	//TODO
+	/**
+	 * The known types of the input variables.
+	 * 	key: the type of the input variable
+	 * 	value: the input variable, which has the type
+	 * There can only be one input variable of every type (except type UNKNOWN).
+	 * Every input variable not in this map has the type UNKNOWN .
+	 * Note: The more frequent use case should be: searching for the input
+	 * 	variable of a given type.
+	 * @see typeOfInputVariables
+	 * @see getTypeInVar()
+	 * @see getInVarForType()
+	 * @see addTypeInVar()
+	 * @see removeTypeInVar()
+	 * @see getInVarTypeForName()
+	 * @see getNameForInVarType()
+	 * TODO extract
+	 */
+	map< typeOfInputVariables , unsigned int > mapInVarTypes;
+	
+	
 	/**
 	 * The set with the listeners for changes in this Fib object info
 	 * object changes.
@@ -1045,6 +1274,7 @@ protected:
 	 * @see ulNumberOfExtSubobjects
 	 * @see ulNumberOfFibElements
 	 * @see setListenersFibNodeChanged
+	 * @see mapInVarTypes
 	 */
 	mutable QMutex mutexFibObjectInfoData;
 	

@@ -51,6 +51,7 @@ History:
 18.07.2013  Oesterholz  created
 25.01.2013  Oesterholz  the graphical items will be updated, if possible,
 	with the information of the Fib node change event
+13.04.2014  Oesterholz  mousePressEvent() insert selected Fib object
 */
 
 
@@ -59,16 +60,6 @@ History:
 
 
 #include "cFibGraphicsScene.h"
-
-#include "cFibObjectMainWindow.h"
-#include "nFibObjectTools.h"
-#include "cFibGraphicsItemImageFactory.h"
-#include "cFibNode.h"
-#include "cFibNodeHandler.h"
-#include "eFibNodeChangedEvent.h"
-#include "cFibGraphicsItem.h"
-#include "cWidgetFibInputVariables.h"
-#include "cEvalueSimpleRGBA255QPainter.h"
 
 #include "cFibElement.h"
 #include "cFibVariable.h"
@@ -80,6 +71,17 @@ History:
 #include "cDomainVectorBasis.h"
 #include "cTypeDimension.h"
 #include "cTypeProperty.h"
+
+#include "cFibObjectMainWindow.h"
+#include "nFibObjectTools.h"
+#include "cFibGraphicsItemImageFactory.h"
+#include "cFibNode.h"
+#include "cFibNodeHandler.h"
+#include "eFibNodeChangedEvent.h"
+#include "cFibGraphicsItem.h"
+#include "cWidgetFibInputVariables.h"
+#include "cEvalueSimpleRGBA255QPainter.h"
+#include "cFibCreatorStatiHandler.h"
 
 #include <QPainter>
 #include <QPen>
@@ -215,7 +217,7 @@ cFibNode * cFibGraphicsScene::getFibNode() {
  * @return a const pointer to the Fib node object this widget shows / represents
  * 	@see pFibNode
  */
-const cFibNode * cFibGraphicsScene::getFibNode() const{
+const cFibNode * cFibGraphicsScene::getFibNode() const {
 	
 	return pFibNode;
 }
@@ -325,7 +327,7 @@ void cFibGraphicsScene::fibNodeChangedEvent(
 		}
 	}else{//the Fib node and Fib root node for this graphical scene are the same
 		if ( ( pChangedNode != pFibNode ) ||
-				( pChangedNode->getFibObjectVersion() == ulFibNodeVersionDisplayed ) ){
+				( pChangedNode->getFibObjectVersion() == ulFibNodeVersionDisplayed ) ) {
 			//nothing changed for the Fib node of this graphical scene
 			return;
 		}
@@ -347,7 +349,7 @@ void cFibGraphicsScene::fibNodeChangedEvent(
 	cFibNodeHandler * pFibNodeHandler = cFibNodeHandler::getInstance();
 	if ( pFibNodeHandler ) {
 		pFibNodeHandler->lock( pChangedNode );
-		if ( ! pFibNodeHandler->isValidNode( pChangedNode ) ){
+		if ( ! pFibNodeHandler->isValidNode( pChangedNode ) ) {
 			//can't update for not valid node
 			pFibNodeHandler->unlock( pChangedNode );
 			emit signalEvalueGraphicsItemsFromFibNode();
@@ -393,7 +395,7 @@ void cFibGraphicsScene::fibNodeChangedEvent(
  * @see getInputVariablesWidget()
  * @return the number of input variables for the Fib object for the Fib node
  */
-unsigned int cFibGraphicsScene::getNumberOfInputVariables() const{
+unsigned int cFibGraphicsScene::getNumberOfInputVariables() const {
 	
 	mutexFibParts.lock();
 	const unsigned int ulInputVariables = ( pWidgetFibInputVariables != NULL) ?
@@ -464,7 +466,7 @@ cWidgetFibInputVariables * cFibGraphicsScene::getInputVariablesWidget() {
  * @see getNumberOfInputVariables()
  * @return a pointer to the widget with the input variables
  */
-const cWidgetFibInputVariables * cFibGraphicsScene::getInputVariablesWidget() const{
+const cWidgetFibInputVariables * cFibGraphicsScene::getInputVariablesWidget() const {
 	
 	return pWidgetFibInputVariables;
 }
@@ -473,7 +475,7 @@ const cWidgetFibInputVariables * cFibGraphicsScene::getInputVariablesWidget() co
 /**
  * @return the name of this class "cFibGraphicsScene"
  */
-std::string cFibGraphicsScene::getName() const{
+std::string cFibGraphicsScene::getName() const {
 	
 	return std::string( "cFibGraphicsScene" );
 }
@@ -538,7 +540,7 @@ bool cFibGraphicsScene::evalueInputVariables() {
 /**
  * @return a hint for a good size of this widget
  */
-QSize cFibGraphicsScene::sizeHint() const{
+QSize cFibGraphicsScene::sizeHint() const {
 	
 	return QSize( 640, 480 );
 }
@@ -596,7 +598,7 @@ bool cFibGraphicsScene::evalueGraphicsItemsFromFibNode() {
 	cFibNodeHandler * pFibNodeHandler = cFibNodeHandler::getInstance();
 	if ( pFibNodeHandler ) {
 		pFibNodeHandler->lock( pFibNode );
-		if ( ! pFibNodeHandler->isValidNode( pFibNode ) ){
+		if ( ! pFibNodeHandler->isValidNode( pFibNode ) ) {
 			//can't update for not valid node
 			pFibNodeHandler->unlock( pFibNode );
 			mutexFibParts.unlock();
@@ -847,7 +849,6 @@ bool cFibGraphicsScene::updateEvalueFibObjectForPainter() {
 	
 	//TODO accepted values are betwean 0.0 and 1.0
 	
-	
 	DEBUG_OUT_L2(<<"cFibGraphicsScene("<<this<<")::updateEvalueFibObjectForPainter() get domains"<<endl<<flush);
 	const cDomains domainsValid = pGraphicSceneFibObject->getValidDomains();
 	
@@ -1077,7 +1078,7 @@ bool cFibGraphicsScene::updateForDimensionChange() {
  * 	template for this graphic scene, or NULL if non exists
  */
 const cEvalueSimpleRGBA255QPainter *
-		cFibGraphicsScene::getEvalueSimpleRGBA255QPainter() const{
+		cFibGraphicsScene::getEvalueSimpleRGBA255QPainter() const {
 	
 	return pEvalueSimpleRGBA255QPainter;
 }
@@ -1093,7 +1094,7 @@ const cEvalueSimpleRGBA255QPainter *
  * @see pFibNode
  * @return true if the pen was set, else false
  */
-bool cFibGraphicsScene::setPenForPointSize( QPainter * pPainter ) const{
+bool cFibGraphicsScene::setPenForPointSize( QPainter * pPainter ) const {
 	
 	if ( pPainter == NULL ) {
 		//no painter given -> can't set pen
@@ -1121,11 +1122,34 @@ bool cFibGraphicsScene::setPenForPointSize( QPainter * pPainter ) const{
  * @see pFibNode
  * @return the size of a point
  */
-QSizeF cFibGraphicsScene::getPointSize() const{
+QSizeF cFibGraphicsScene::getPointSize() const {
 	
 	return QSizeF( dPointWidth, dPointHeight );
 }
 
+
+/**
+ * The event handler for mouse press events.
+ *
+ * @see QGraphicsScene::mousePressEvent
+ * @param pMouseEvent the mouse press event
+ */
+void cFibGraphicsScene::mousePressEvent( QGraphicsSceneMouseEvent * pMouseEvent ) {
+	
+	DEBUG_OUT_L2(<<"cFibGraphicsScene("<<this<<")::mousePressEvent() started"<<endl<<flush);
+	
+	if ( ( cFibCreatorStatiHandler::getActualMouseMode() ==
+				cFibCreatorStatiHandler::DRAWING ) &&
+			( pMainWindow != NULL ) && ( pMouseEvent != NULL ) ) {
+		//mouse mode is drawing -> try to draw actual selected item
+		DEBUG_OUT_L2(<<"cFibGraphicsScene("<<this<<")::mousePressEvent() mouse mode is drawin, insert object at ("<<pMouseEvent->scenePos().x()<<","<<pMouseEvent->scenePos().y()<<")"<<endl<<flush);
+		pMainWindow->insertSelectedFibObject( pMouseEvent->scenePos() );
+		return;
+	}
+	
+	//can not be handeled -> call inherited mouse press event handler
+	QGraphicsScene::mousePressEvent( pMouseEvent );
+}
 
 
 

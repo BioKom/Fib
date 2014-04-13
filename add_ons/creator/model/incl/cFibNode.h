@@ -56,6 +56,9 @@
 /*
 History:
 11.06.2013  Oesterholz  created
+26.01.2014  Oesterholz  insertFibObjectInfo() send Fib node change event
+	with information about the changed Fib object parts
+06.04.2014  Oesterholz  insertFibObjectInfo(): insert Fib object on given position
 */
 
 
@@ -68,6 +71,7 @@ History:
 #include <set>
 
 #include <QObject>
+#include <QPoint>
 
 #include "cFibElement.h"
 
@@ -195,6 +199,80 @@ public:
 	 * @return true if the Fib object could be inserted, else false
 	 */
 	bool insertFibObjectInfo( cFibObjectInfo * pFibObjectInfo );
+	
+	/**
+	 * This method inserts the Fib object for the given Fib object info
+	 * into the Fib object of this Fib object node on the given position.
+	 * It will be tried to insert the given Fib object as a external
+	 * subobject and a subroot object (if not a same subroot object allready
+	 * exists).
+	 * If the (start) position of the Fib object to insert is known.
+	 *
+	 * @see cFibObjectInfo::getInVarForType()
+	 * @see typeOfInputVariables
+	 * @see cFibElement::insertObjectInElement()
+	 * @see cExtObject
+	 * @see cRoot::integrateSubRootObject()
+	 * @param pFibObjectInfo a pointer to the Fib object info object of
+	 * 	the Fib object to insert
+	 * @param poiInsertPosition the position on which the Fib object should
+	 * 	be inserted
+	 * @return true if the Fib object could be inserted, else false
+	 */
+	bool insertFibObjectInfo( cFibObjectInfo * pFibObjectInfo,
+		const QPoint & poiInsertPosition );
+	
+	/**
+	 * This method inserts the Fib object for the given Fib object info
+	 * into the Fib object of this Fib object node on the given position.
+	 * It will be tried to insert the given Fib object as a external
+	 * subobject and a subroot object (if not a same subroot object allready
+	 * exists).
+	 * If the (start) position of the Fib object to insert is known.
+	 *
+	 * @see cFibObjectInfo::getInVarForType()
+	 * @see typeOfInputVariables
+	 * @see cFibElement::insertObjectInElement()
+	 * @see cExtObject
+	 * @see cRoot::integrateSubRootObject()
+	 * @param pFibObjectInfo a pointer to the Fib object info object of
+	 * 	the Fib object to insert
+	 * @param poiInsertPosition the position on which the Fib object should
+	 * 	be inserted
+	 * @return true if the Fib object could be inserted, else false
+	 */
+	bool insertFibObjectInfo( cFibObjectInfo * pFibObjectInfo,
+		const QPointF & poiInsertPosition );
+	
+	/**
+	 * This method inserts the Fib object for the given Fib object info
+	 * into the Fib object of this Fib object node.
+	 * It will be tried to insert the given Fib object as a external
+	 * subobject and a subroot object (if not a same subroot object allready
+	 * exists).
+	 * The input variables of the inserted Fib object, will be set to the
+	 * given values.
+	 *
+	 * @see cFibObjectInfo::getInVarForType()
+	 * @see typeOfInputVariables
+	 * @see cFibElement::insertObjectInElement()
+	 * @see cExtObject
+	 * @see cRoot::integrateSubRootObject()
+	 * @param pFibObjectInfo a pointer to the Fib object info object of
+	 * 	the Fib object to insert
+	 * @param mapInVarValues a map with the values for the input variables;
+	 * 	Missing input variables will be set to their default values.
+	 * 	Input variables not in the to insert Fib object (pFibObjectInfo)
+	 * 	will be ignored (e.g. the to insert Fib object has 2 input
+	 * 	variables, but a value of the 4. is given -> this value (for the
+	 * 	4.) will be ignored).
+	 * 	key: the number of the input variable (counting starts with 1)
+	 * 		@see cRoot::getInputVariable()
+	 * 	value: the value for the input variable
+	 * @return true if the Fib object could be inserted, else false
+	 */
+	bool insertFibObjectInfo( cFibObjectInfo * pFibObjectInfo,
+		const map< unsigned int, double > & mapInVarValues );
 	
 	/**
 	 * This method evalues the changes needed for the Fib object of this

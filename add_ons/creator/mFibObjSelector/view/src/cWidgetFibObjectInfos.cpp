@@ -1225,8 +1225,6 @@ void cWidgetFibObjectInfos::createWidgetFibObjectInfosList() {
 	pLayoutTop->addWidget( pComboBoxCategories, 0, Qt::AlignLeft );
 	pLayoutTop->addWidget( pButtonClose, 0, Qt::AlignRight );
 	
-//TODO check
-	
 	//add the label for the number of Fib objects infos displayed
 	if ( pLabelCounterText == NULL ) {
 		//create new number of Fib objects label
@@ -1242,7 +1240,6 @@ void cWidgetFibObjectInfos::createWidgetFibObjectInfosList() {
 	if ( ( 1 < uiStartFibObjectInfo ) ||
 			( uiEndFibObjectInfo < uiCountFibObjectInfo ) ) {
 		//display navigator part
-		
 		if ( pButtonPrevious == NULL ) {
 			//navigator part does not exists -> create navigator part
 			pButtonPrevious = new QPushButton( tr("&Prev") );
@@ -1252,7 +1249,7 @@ void cWidgetFibObjectInfos::createWidgetFibObjectInfosList() {
 				this, SLOT( previousFibObjectInfos() ) );
 			pLayoutNavigator->addWidget( pButtonPrevious );
 			
-			pLabelStart = new QLabel( tr( "first: " ) );
+			pLabelStart = new QLabel( tr( "first:" ) );
 			pLayoutNavigator->addWidget( pLabelStart );
 			
 			//create start number text field
@@ -1289,6 +1286,9 @@ void cWidgetFibObjectInfos::createWidgetFibObjectInfosList() {
 			pButtonNext->setVisible( false );
 		}//else no navigator part
 	}
+	
+	
+//TODO check
 	
 	//create the list with the Fib object info widgets
 	pSplitterFibObjectInfo = new QSplitter( this );

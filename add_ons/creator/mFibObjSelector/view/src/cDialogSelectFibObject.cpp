@@ -63,6 +63,8 @@
 /*
 History:
 24.10.2013  Oesterholz  created
+13.04.2014  Oesterholz  insertSelectedFibObject() insert selected Fib object
+	info on given position
 */
 
 
@@ -413,14 +415,6 @@ void cDialogSelectFibObject::selectWidgetFibObjectInfo(
 	//set new selected Fib object info
 	setSelectedFibObjectInfo( const_cast<cWidgetFibObjectInfo*>(
 		pWidgetFibObjectInfo ) );
-/*TODO weg old
-	if ( ( pWidgetFibObjectInfo != NULL ) &&
-			( pWidgetFibObjectInfo->getFibObjectInfo() != NULL ) ) {
-		//set new selected Fib object info
-		setSelectedFibObjectInfo( const_cast<cFibObjectInfo*>(
-			pWidgetFibObjectInfo->getFibObjectInfo() ) );
-	}//else nothing to set
-*/
 }
 
 
@@ -653,6 +647,66 @@ void cDialogSelectFibObject::showSelectedFibObject() {
 	}
 	mutexFibObjectInfos.unlock();
 	
+}
+
+
+/**
+ * This method will insert the selected Fib object into the associated
+ * Fib Node.
+ * If possible the inserted Fib object will be inserted on the given position.
+ *
+ * @see pButtonInsertSelectedFibObject
+ * @see pBaseFibObjectInfo
+ * @see pAssociatedNode
+ * @see cFibNode
+ * @param poiInsertPosition the position on which the Fib object should
+ * 	be inserted
+ * @return true if the Fib object was inserted, else false
+ */
+bool cDialogSelectFibObject::insertSelectedFibObject(
+		const QPoint & poiInsertPosition ) {
+	
+	DEBUG_OUT_L2(<<"cDialogSelectFibObject("<<this <<")::insertSelectedFibObject( poiInsertPosition=("<<poiInsertPosition.x() <<","<<poiInsertPosition.y()<<") ) started"<<endl <<flush);
+	
+	mutexFibObjectInfos.lock();
+	cFibObjectInfo * pToInsertFibObjectInfo = pBaseFibObjectInfo;
+	mutexFibObjectInfos.unlock();
+	if ( ( pToInsertFibObjectInfo != NULL ) && ( pAssociatedNode != NULL ) ) {
+		//insert Fib object into with this associated Fib object node (of main window)
+		return pAssociatedNode->insertFibObjectInfo(
+			pToInsertFibObjectInfo, poiInsertPosition );
+	}//else if associated Fib object node or selected Fib object exists -> do nothing
+	return false;
+}
+
+
+/**
+ * This method will insert the selected Fib object into the associated
+ * Fib Node.
+ * If possible the inserted Fib object will be inserted on the given position.
+ *
+ * @see pButtonInsertSelectedFibObject
+ * @see pBaseFibObjectInfo
+ * @see pAssociatedNode
+ * @see cFibNode
+ * @param poiInsertPosition the position on which the Fib object should
+ * 	be inserted
+ * @return true if the Fib object was inserted, else false
+ */
+bool cDialogSelectFibObject::insertSelectedFibObject(
+		const QPointF & poiInsertPosition ) {
+	
+	DEBUG_OUT_L2(<<"cDialogSelectFibObject("<<this <<")::insertSelectedFibObject( poiInsertPosition=("<<poiInsertPosition.x() <<","<<poiInsertPosition.y()<<") ) started"<<endl <<flush);
+	
+	mutexFibObjectInfos.lock();
+	cFibObjectInfo * pToInsertFibObjectInfo = pBaseFibObjectInfo;
+	mutexFibObjectInfos.unlock();
+	if ( ( pToInsertFibObjectInfo != NULL ) && ( pAssociatedNode != NULL ) ) {
+		//insert Fib object into with this associated Fib object node (of main window)
+		return pAssociatedNode->insertFibObjectInfo(
+			pToInsertFibObjectInfo, poiInsertPosition );
+	}//else if associated Fib object node or selected Fib object exists -> do nothing
+	return false;
 }
 
 

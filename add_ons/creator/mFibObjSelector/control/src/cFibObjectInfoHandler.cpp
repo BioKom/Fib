@@ -453,9 +453,6 @@ bool cFibObjectInfoHandler::addFibObjectInfo( const cFibObjectInfo & fibObjectIn
 }
 
 
-//TODO check
-
-
 /**
  * This method will remove the Fib object info object with the given
  * identifier from this handler.
@@ -536,6 +533,7 @@ unsigned long cFibObjectInfoHandler::getNextFreeIdentifier() const {
  * @see loadFibInfoObject()
  * @see storeFibInfoObject()
  * @return the string for the path to the Fib object info objects
+ * 	Beware: You have to care, that the returned string will be deleted.
  */
 char * cFibObjectInfoHandler::getFibObjectInfoPath() const {
 	
@@ -550,7 +548,7 @@ char * cFibObjectInfoHandler::getFibObjectInfoPath() const {
 #ifdef WINDOWS
 			QString( QDir::homePath() + "/fibCreator/fibObjectInfo/" )
 #else //WINDOWS
-			//linux
+			//linux default path
 			QString( QDir::homePath() + "/.fibCreator/fibObjectInfo/" )
 #endif //WINDOWS
 		).toString();
@@ -590,7 +588,8 @@ bool cFibObjectInfoHandler::loadListOfInfoObjects() {
 	//get the names of the Fib object infos files
 	QStringList filtersFibObjectInfoFiles;
 	filtersFibObjectInfoFiles << "id*.xml"  << "id*.FIB" << "id*.XML"<<
-		"ID*.fib" << "ID*.xml"  << "ID*.FIB" << "ID*.XML";
+		"ID*.fib" << "ID*.xml"  << "ID*.FIB" << "ID*.XML"<<
+		"Id*.fib" << "Id*.xml"  << "Id*.FIB" << "Id*.XML";
 	
 	const QStringList liFibObjectInfoFiles = dirFibObjectInfos.entryList(
 		filtersFibObjectInfoFiles, (QDir::Files | QDir::Readable) , QDir::Name );
@@ -607,9 +606,16 @@ bool cFibObjectInfoHandler::loadListOfInfoObjects() {
 	setFibObjectInfos.clear();
 	mapFibObjectInfos.clear();
 	setPossibleCategories.clear();
+	mapFibObjectInfoFiles.clear();
+	//clear list of sorted Fib object infos
+	mutexUsedTimeSortedFibObjectInfos.lock();
+	mapUsedTimeSortedFibObjectInfos.clear();
+#ifdef FEATURE_FIB_OBJECT_INFO_HANDLER_SORTET_SUBCATEGORIES_MAPS
+	bReevaluateMapCategoryUsedTimeSortedFibObjectInfos = true;
+#endif //FEATURE_FIB_OBJECT_INFO_HANDLER_SORTET_SUBCATEGORIES_MAPS
 	
-	DEBUG_OUT_L2(<<"cFibObjectInfoHandler("<<this<<")::loadListOfInfoObjects() extract the new entries form the Fib object info in there directory ("<<szPathToFibObjectInfos<<"):"<<endl<<flush);
-	//extract the new entries form the Fib object info in there directory
+	DEBUG_OUT_L2(<<"cFibObjectInfoHandler("<<this<<")::loadListOfInfoObjects() extract the new entries form the Fib object info in their directory ("<<szPathToFibObjectInfos<<"):"<<endl<<flush);
+	//extract the new entries form the Fib object info in their directory
 	QStringList::const_iterator constIterator;
 	const QString szOStringPath( szPathToFibObjectInfos );
 	for ( QStringList::const_iterator
@@ -623,7 +629,7 @@ bool cFibObjectInfoHandler::loadListOfInfoObjects() {
 		//load the Fib object info object
 		ifstream streamIn( ( szOStringPath + (*itrFibObjectInfoFile) ).
 			toStdString().c_str() );
-	
+		
 		int iOutStatus = 0;
 		cFibObjectInfo * pLoadedFibInfoObject =
 			cFibObjectInfo::restore( streamIn, &iOutStatus );
@@ -643,13 +649,13 @@ bool cFibObjectInfoHandler::loadListOfInfoObjects() {
 		//add possible categories of new Fib object (info)
 		addPossibleCategories( pLoadedFibInfoObject->getCategories() );
 		//add to sorted Fib object info objects
-		addToUsedTimeSortedFibObjectInfos( pLoadedFibInfoObject );
+		addToUsedTimeSortedFibObjectInfos( pLoadedFibInfoObject, false );
 		
 		mapFibObjectInfoFiles.insert( pair< unsigned long , string >(
 			ulIdentifier, itrFibObjectInfoFile->toStdString() ) );
-		
 	}//end for all files in the folder
 	//find the first free identifier
+	mutexUsedTimeSortedFibObjectInfos.unlock();
 	
 	ulFirstFreeIdentifier = 1;
 	for ( map< unsigned long , cFibObjectInfo * >::const_iterator
@@ -662,16 +668,14 @@ bool cFibObjectInfoHandler::loadListOfInfoObjects() {
 			break;
 		}
 	}
-	
 	mutexFibObjectInfoHandler.unlock();
 	
 	return true;
 }
 
 
-
 /**
- * This method checks if for the Fib object database the Fib object infos
+ * This method checks, if for the Fib object database the Fib object infos
  * for this handler where created.
  * (This method returns true if the file:
  * 	szPathToFibObjectInfos"fibDbInfosCreated.flg" exists.)
@@ -714,9 +718,6 @@ bool cFibObjectInfoHandler::loadFibDatabase() {
 		return true;
 	}
 	
-
-//TODO check fast
-
 	mutexFibObjectInfoHandler.lock();
 	mutexUsedTimeSortedFibObjectInfos.lock();
 	stack< cFibObjectInfo* > stackFibObjectInfosToStore;
@@ -767,7 +768,7 @@ bool cFibObjectInfoHandler::loadFibDatabase() {
 	}//end for all Fib database object identifiers
 	mutexUsedTimeSortedFibObjectInfos.unlock();
 	mutexFibObjectInfoHandler.unlock();
-	//write all Fib object info object to disk
+	//write all Fib object info objects to disk
 	bool bAllFibObjectsStored = true;
 	unsigned long ulStoredDbFibObjects = 0;
 	while ( ! stackFibObjectInfosToStore.empty() ) {
@@ -802,10 +803,6 @@ bool cFibObjectInfoHandler::loadFibDatabase() {
 	
 	return bAllFibObjectsStored;
 }
-
-//TODO check fast end
-
-
 
 
 /**
@@ -911,7 +908,6 @@ bool cFibObjectInfoHandler::storeFibInfoObject( cFibObjectInfo * pFibObjectInfo 
 	return pFibObjectInfo->store( streamOut );
 }
 
-//TODO check
 
 /**
  * This method returns a sorted list of Fib object info objects.
@@ -1092,8 +1088,6 @@ list< unsigned long > cFibObjectInfoHandler::getSortedFibObjectInfoIdsForCategor
 		const unsigned long ulLast, const unsigned long ulFirst ) {
 	
 	DEBUG_OUT_L2(<<"cFibObjectInfoHandler("<<this<<")::getSortedFibObjectInfoIdsForCategory( szCategory=\""<<szCategory<<"\", ulLast="<<ulLast<<", ulFirst="<<ulFirst<<") started"<<endl<<flush);
-	
-//TODO check
 	list< unsigned long > liSortedFibObjectInfos;
 #ifdef FEATURE_FIB_OBJECT_INFO_HANDLER_SORTET_SUBCATEGORIES_MAPS
 	mutexUsedTimeSortedFibObjectInfos.lock();
@@ -1107,8 +1101,8 @@ list< unsigned long > cFibObjectInfoHandler::getSortedFibObjectInfoIdsForCategor
 	const unsigned int uiFirstIndex = ( 0 < ulFirst ) ? ( ulFirst - 1 ) : 0;
 	const unsigned int uiLastIndex =
 		( ( vecFibObjectInfoForCategory.size() <= ulLast ) || ( ulLast == 0 ) ) ?
-			( vecFibObjectInfoForCategory.size() - 1 ) : ( ulLast - 1 );
-	for ( unsigned int uiIndex = uiFirstIndex; uiIndex <= uiLastIndex; ++uiIndex ) {
+			vecFibObjectInfoForCategory.size() : ulLast;
+	for ( unsigned int uiIndex = uiFirstIndex; uiIndex < uiLastIndex; ++uiIndex ) {
 		
 		liSortedFibObjectInfos.push_back(
 			vecFibObjectInfoForCategory[ uiIndex ]->getIdentifier() );
@@ -1147,11 +1141,11 @@ list< unsigned long > cFibObjectInfoHandler::getSortedFibObjectInfoIdsForCategor
 			if ( setFibObjectInfoCategories.find( szCategory ) !=
 					setFibObjectInfoCategories.end() ) {
 				//Fib object info object for category found
-				++ulActualPosition;
 				//add to return list
 				if ( itrFibObjectInfo->second ) {
 					liSortedFibObjectInfos.push_back(
 						itrFibObjectInfo->second->getIdentifier() );
+					++ulActualPosition;
 				}
 			}//else Fib object info object not for category -> skip it
 		}
@@ -1217,7 +1211,7 @@ unsigned long cFibObjectInfoHandler::getNumberOfSortedFibObjectInfoIdsForCategor
 	return getSortedFibObjectInfoIdsForCategory( szCategory ).size();
 #endif //FEATURE_FIB_OBJECT_INFO_HANDLER_SORTET_SUBCATEGORIES_MAPS
 }
-//TODO check end
+
 
 /**
  * This method sorts the list of identifiers of Fib object info objects.
@@ -1563,14 +1557,13 @@ double cFibObjectInfoHandler::getLastUsedTimesWeightSum(
 	return dWeightSum;
 }
 
-//TODO check fast
 
 /**
  * This method will add the given Fib object info object to the
  * "used time" sorted Fib object infos.
  * Note: It will not use the mutexFibObjectInfoHandler, so lock it
  * 	outside this method.
- * 	But will use the mutexUsedTimeSortedFibObjectInfos.
+ * 	But will use the mutexUsedTimeSortedFibObjectInfos, if bLock is true.
  *
  * @see mapUsedTimeSortedFibObjectInfos
  * @see mutexUsedTimeSortedFibObjectInfos
@@ -1678,13 +1671,15 @@ bool cFibObjectInfoHandler::removeFromUsedTimeSortedFibObjectInfos(
 void cFibObjectInfoHandler::evaluateMapCategoryUsedTimeSortedFibObjectInfos() {
 	//clear old values
 	mapCategoryUsedTimeSortedFibObjectInfos.clear();
-	/*put the Fib object infos in there order into thiere category vectors
+	/*put the Fib object infos in there order into their category vectors
 	in mapCategoryUsedTimeSortedFibObjectInfos*/
 	cFibObjectInfo * pActualFibObjectInfo;
 	std::set< std::string >::const_iterator itrCategory;
 	
 	std::vector< cFibObjectInfo * > & vecFibObjectInfoForCategoryAll =
 		mapCategoryUsedTimeSortedFibObjectInfos[ getCategoryForAll() ];
+	/*smallest values at front of mapUsedTimeSortedFibObjectInfos should
+	 go to the back of the vectors in mapCategoryUsedTimeSortedFibObjectInfos*/
 	for ( std::multimap< double , cFibObjectInfo * >::reverse_iterator
 			itrFibObjectInfo = mapUsedTimeSortedFibObjectInfos.rbegin();
 			itrFibObjectInfo != mapUsedTimeSortedFibObjectInfos.rend();
@@ -1710,8 +1705,6 @@ void cFibObjectInfoHandler::evaluateMapCategoryUsedTimeSortedFibObjectInfos() {
 
 #endif //FEATURE_FIB_OBJECT_INFO_HANDLER_SORTET_SUBCATEGORIES_MAPS
 
-
-//TODO check fast end
 
 /**
  * This function reads the integer number from the given string.

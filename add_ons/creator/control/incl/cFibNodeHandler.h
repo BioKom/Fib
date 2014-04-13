@@ -310,7 +310,7 @@ protected:
 	/**
 	 * This method will transfer the given Fib node and all Fib nodes for
 	 * Fib objects, which the Fib object for the given Fib node contains,
-	 * from one Fib object to a other Fib object.
+	 * from one Fib object to an other Fib object.
 	 * For that the path from the given node pNodeToTransfer Fib object to
 	 * the (root) Fib element of the from Fib object pFromFibObject will be
 	 * evalued and the Fib node will be set to a Fib object, which path to the

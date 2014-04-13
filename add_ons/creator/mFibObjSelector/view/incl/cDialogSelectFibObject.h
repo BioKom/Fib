@@ -63,6 +63,8 @@
 /*
 History:
 18.10.2013  Oesterholz  created
+13.04.2014  Oesterholz  insertSelectedFibObject() insert selected Fib object
+	info on given position
 */
 
 
@@ -141,7 +143,7 @@ public:
 	 * @see setSelectedFibObjectInfo()
 	 * @return a pointer to the selected Fib object info
 	 */
-	cFibObjectInfo * getSelectedFibObjectInfo();
+	virtual cFibObjectInfo * getSelectedFibObjectInfo();
 
 	/**
 	 * This method returns the selected Fib object info.
@@ -151,7 +153,7 @@ public:
 	 * @see setSelectedFibObjectInfo()
 	 * @return a const pointer to the selected Fib object info
 	 */
-	const cFibObjectInfo * getSelectedFibObjectInfo() const;
+	virtual const cFibObjectInfo * getSelectedFibObjectInfo() const;
 
 	/**
 	 * This method sets the selected Fib object info.
@@ -162,7 +164,7 @@ public:
 	 * @param pSelectedFibObjectInfo a pointer to the selected Fib object
 	 * 	info to set
 	 */
-	void setSelectedFibObjectInfo(
+	virtual void setSelectedFibObjectInfo(
 		cFibObjectInfo * pSelectedFibObjectInfo = NULL );
 	
 	/**
@@ -174,7 +176,7 @@ public:
 	 * @param pWidgetFibObjectInfo a pointer to the selected widget of the
 	 * 	Fib object info to set
 	 */
-	void setSelectedFibObjectInfo(
+	virtual void setSelectedFibObjectInfo(
 		cWidgetFibObjectInfo * pWidgetFibObjectInfo = NULL );
 	
 	/**
@@ -199,7 +201,7 @@ public:
 	 * @see setAssociatedNode()
 	 * @return a pointer to the associated Fib object node
 	 */
-	cFibNode * getAssociatedNode();
+	virtual cFibNode * getAssociatedNode();
 
 	/**
 	 * This method returns associated Fib object node, or NULL if non exists.
@@ -210,7 +212,7 @@ public:
 	 * @see setAssociatedNode()
 	 * @return a const pointer to the associated Fib object node
 	 */
-	const cFibNode * getAssociatedNode() const;
+	virtual const cFibNode * getAssociatedNode() const;
 
 	/**
 	 * This method sets the selected Fib object info.
@@ -220,7 +222,37 @@ public:
 	 * @see getAssociatedNode()
 	 * @param pAssociatedNode a pointer to the the associated Fib object node
 	 */
-	void setAssociatedNode( cFibNode * pAssociatedNode = NULL );
+	virtual void setAssociatedNode( cFibNode * pAssociatedNode = NULL );
+	
+	/**
+	 * This method will insert the selected Fib object into the associated
+	 * Fib Node.
+	 * If possible the inserted Fib object will be inserted on the given position.
+	 *
+	 * @see pButtonInsertSelectedFibObject
+	 * @see pBaseFibObjectInfo
+	 * @see pAssociatedNode
+	 * @see cFibNode::insertSelectedFibObject()
+	 * @param poiInsertPosition the position on which the Fib object should
+	 * 	be inserted
+	 * @return true if the Fib object was inserted, else false
+	 */
+	virtual bool insertSelectedFibObject( const QPoint & poiInsertPosition );
+	
+	/**
+	 * This method will insert the selected Fib object into the associated
+	 * Fib Node.
+	 * If possible the inserted Fib object will be inserted on the given position.
+	 *
+	 * @see pButtonInsertSelectedFibObject
+	 * @see pBaseFibObjectInfo
+	 * @see pAssociatedNode
+	 * @see cFibNode::insertSelectedFibObject()
+	 * @param poiInsertPosition the position on which the Fib object should
+	 * 	be inserted
+	 * @return true if the Fib object was inserted, else false
+	 */
+	virtual bool insertSelectedFibObject( const QPointF & poiInsertPosition );
 	
 protected slots:
 	
@@ -308,10 +340,6 @@ protected:
 	 * | +---------------------------------------------------------------+|
 	 */
 	QList< cWidgetFibObjectInfos * > liListsOfFibObjects;
-	
-	/*TODO implement a way to delete a existing Fib object info list
-	 signal closeWidgetFibObjectInfos( this ) in cWidgetFibObjectInfos
-	 */
 	
 	/**
 	 * This area is for scrolling the lists of list of Fib object infos.

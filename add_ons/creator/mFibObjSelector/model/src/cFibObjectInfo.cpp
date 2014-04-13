@@ -84,9 +84,17 @@
  *    The "user" element as the attribute "name" which contains the name of
  *    a user which can change the Fib object.
  * - The optional element "preview" contains the information for the
- *   preview image for the Fib object. It should contain a Fib object info
- *   XML element, like specified here.
- *   @see pPreviewFibObject
+ *    preview image for the Fib object. It should contain a Fib object info
+ *    XML element, like specified here.
+ *    @see pPreviewFibObject
+ * - The optional element "in_var_types" contains a list for known input
+ *    variable types. For each input variable, for which the type is known,
+ *    it contains a "input_variable" element with the attributes "number"
+ *    and "type". The attribute "number" contains the number of the input
+ *    variable (counting starts with 1) and the attribute "type" contains
+ *    the type of the input variable.
+ *    @see typeOfInputVariables
+ *    @see mapInVarTypes
  *
  * example:
     <?xml version="1.0" encoding="UTF-8"?>
@@ -122,6 +130,12 @@
              ...
           </fib_object_info>
        </preview>
+       <in_var_types>
+          <input_variable number="2" type="position dimension 1"/>
+          <input_variable number="3" type="position dimension 2"/>
+          <input_variable number="7" type="size radius"/>
+          ...
+       </in_var_types>
     </fib_object_info>
  *
  *
@@ -133,11 +147,16 @@
 History:
 13.09.2013  Oesterholz  created
 02.03.2014  Oesterholz  categories for Fib object source added
+05.04.2014  Oesterholz  input variables types added
 */
 
 
 
 #include "cFibObjectInfo.h"
+
+#ifdef FEATURE_FIB_OBJECT_INFO_IN_VAR_TYPE_FROM_TEXT_REGEX
+#include <regex>
+#endif //FEATURE_FIB_OBJECT_INFO_IN_VAR_TYPE_FROM_TEXT_REGEX
 
 #include "cFibElement.h"
 #include "cRoot.h"
@@ -717,6 +736,29 @@ bool cFibObjectInfo::extractInfoFromLoadedFibObject() {
 							setInCategories.insert( szKey );
 							DEBUG_OUT_L2(<<"cFibObjectInfo("<<this<<")::extractInfoFromLoadedFibObject() categories readed: "<<szKey<<endl<<flush);
 						}
+						if ( szKey.compare( 0, 5, "inVar" ) == 0 ) {
+							/*extract input variable types:
+							 * - inVar1::name
+							 * -inVar1::description
+							 */
+							const unsigned int uiInVar = atol( &(pSzKey[ 5 ]) );
+							if ( uiInVar == 0 ) {
+								//not a valid input variable -> skip
+								continue;
+							}
+							if ( ( szKey.find( "description", 8 ) == string::npos ) &&
+									( szKey.find( "name", 8 ) == string::npos ) ) {
+								//the comment is not a "description" or "name" -> skip
+								continue;
+							}
+							const typeOfInputVariables inVarType =
+								getInVarTypeFromText( itrEntry->second );
+							if ( inVarType == UNKNOWN ) {
+								//not a valid input variable type -> skip
+								continue;
+							}
+							addTypeInVar( uiInVar, inVarType );
+						}
 					}break;
 					case 'D':{
 						if ( szKey.compare( 0, 10, "DbObject::" ) == 0 ) {
@@ -774,8 +816,6 @@ bool cFibObjectInfo::extractInfoFromLoadedFibObject() {
 							}
 						}
 					}break;
-					
-					
 				};//end switch for key of type
 				
 			}//end for all entries
@@ -1375,6 +1415,342 @@ cFibObjectInfo * cFibObjectInfo::getPreviewFibObjectInfo() {
 
 
 /**
+ * This method returns the type of the uiNumberOfInVar'th input variable
+ * (counting starts with 1), of the Fib object of this Fib object info object.
+ *
+ * @see mapInVarTypes
+ * @see getInVarForType()
+ * @see typeOfInputVariables
+ * @param uiNumberOfInVar the number of the input variable, of which to
+ * 	return the type (counting starts with 1)
+ * @return the type of the uiNumberOfInVar'th input variable or UNKNOWN,
+ * 	if no type exists
+ */
+cFibObjectInfo::typeOfInputVariables cFibObjectInfo::getTypeInVar(
+		const unsigned int uiNumberOfInVar ) const {
+	
+	mutexFibObjectInfoData.lock();
+	typeOfInputVariables inVarType = UNKNOWN;
+	for ( map< typeOfInputVariables , unsigned int >::const_iterator
+			itrFoundInVar = mapInVarTypes.begin();
+			itrFoundInVar != mapInVarTypes.end(); ++itrFoundInVar ) {
+		if ( itrFoundInVar->second == uiNumberOfInVar ) {
+			//input variable found
+			inVarType = itrFoundInVar->first;
+		}
+	}
+	mutexFibObjectInfoData.unlock();
+	return inVarType;
+}
+
+
+/**
+ * This method returns the number of the input variable (counting starts
+ * with 1), of the Fib object of this Fib object info object, which is
+ * of the given type.
+ *
+ * @see mapInVarTypes
+ * @see getTypeInVar()
+ * @see typeOfInputVariables
+ * @param typeOfInVar the type of the input variable, of which to
+ * 	return the number (counting starts with 1)
+ * @return the number of the input variable, which is of the given type
+ * 	or 0 if non could be found
+ */
+unsigned int cFibObjectInfo::getInVarForType(
+		const typeOfInputVariables typeOfInVar ) const {
+	
+	mutexFibObjectInfoData.lock();
+	map< typeOfInputVariables , unsigned int >::const_iterator
+		itrFoundType = mapInVarTypes.find( typeOfInVar );
+	const unsigned int uiNumberOfInputVariable =
+		( itrFoundType == mapInVarTypes.end() ) ? 0 : itrFoundType->second;
+	mutexFibObjectInfoData.unlock();
+	return uiNumberOfInputVariable;
+}
+
+
+/**
+ * This method adds the type for the uiNumberOfInVar'th input variable
+ * (counting starts with 1), of the Fib object of this Fib object info object.
+ * If a input variable with the same type exists allready, it will be
+ * replaced.
+ *
+ * @see mapInVarTypes
+ * @see getTypeInVar()
+ * @see getInVarForType()
+ * @see typeOfInputVariables
+ * @param uiNumberOfInVar the number of the input variable, to which to
+ * 	add the type (counting starts with 1)
+ * @param typeOfInVar the type of the uiNumberOfInVar'th input variable
+ */
+void cFibObjectInfo::addTypeInVar( const unsigned int uiNumberOfInVar,
+		const typeOfInputVariables typeOfInVar ) {
+	
+	if ( typeOfInVar == UNKNOWN ) {
+		//not a valid input variable type -> skip
+		return;
+	}
+	mutexFibObjectInfoData.lock();
+	mapInVarTypes[ typeOfInVar ] = uiNumberOfInVar;
+	mutexFibObjectInfoData.unlock();
+}
+
+
+/**
+ * This method removes the type for a input variable, of the Fib object
+ * of this Fib object info object.
+ * No input variable with the given type will exists, after you called
+ * this method.
+ *
+ * @see mapInVarTypes
+ * @see addTypeInVar()
+ * @see getTypeInVar()
+ * @see getInVarForType()
+ * @see typeOfInputVariables
+ * @param typeOfInVar the type of the input variable to remove
+ */
+void cFibObjectInfo::removeTypeInVar( const typeOfInputVariables typeOfInVar ) {
+	
+	mutexFibObjectInfoData.lock();
+	mapInVarTypes.erase( typeOfInVar );
+	mutexFibObjectInfoData.unlock();
+}
+
+
+/**
+ * This method returns if the given input variable type is for input
+ * variables, which determines the size of a Fib object.
+ *
+ * @see mapInVarTypes
+ * @see typeOfInputVariables
+ * @see getSizeInVarTypes()
+ * @return true if the given input variable type is for input
+ * 	variables, which determines the size of a Fib object
+ */
+bool cFibObjectInfo::isSizeInVarTypes( const typeOfInputVariables typeOfInVar ) {
+	
+	return ( typeOfInVar == SIZE ) ||
+		( typeOfInVar == SIZE_DIM_1 ) ||
+		( typeOfInVar == SIZE_DIM_2 ) ||
+		( typeOfInVar == SIZE_RADIUS ) ||
+		( typeOfInVar == SIZE_RADIUS_DIM_1 ) ||
+		( typeOfInVar == SIZE_RADIUS_DIM_2 );
+}
+
+
+/**
+ * This method returns all size typs for input variables of this object.
+ *
+ * @see mapInVarTypes
+ * @see typeOfInputVariables
+ * @see addTypeInVar()
+ * @see removeTypeInVar()
+ * @see getTypeInVar()
+ * @see getInVarForType()
+ * @return all size typs for input variables of this object
+ */
+set< cFibObjectInfo::typeOfInputVariables > cFibObjectInfo::getSizeInVarTyps() const {
+	
+	set< typeOfInputVariables > setSizeInVarTyps;
+	for ( map< typeOfInputVariables , unsigned int >::const_iterator
+			itrInVarTyp = mapInVarTypes.begin();
+			itrInVarTyp != mapInVarTypes.end(); ++itrInVarTyp ) {
+		
+		if ( isSizeInVarTypes( itrInVarTyp->first ) ) {
+			//input variable type is for size -> add it
+			setSizeInVarTyps.insert( itrInVarTyp->first );
+		}
+	}
+	return setSizeInVarTyps;
+}
+
+
+/**
+ * This method returns all input variables which determine the size of this
+ * Fib object.
+ *
+ * @see mapInVarTypes
+ * @see typeOfInputVariables
+ * @see getSizeInVarTyps()
+ * @see addTypeInVar()
+ * @see removeTypeInVar()
+ * @see getTypeInVar()
+ * @see getInVarForType()
+ * @return all size typs for input variables of this object
+ */
+set< unsigned int > cFibObjectInfo::getSizeInVar() const {
+	
+	set< unsigned int > setSizeInVar;
+	for ( map< typeOfInputVariables , unsigned int >::const_iterator
+			itrInVarTyp = mapInVarTypes.begin();
+			itrInVarTyp != mapInVarTypes.end(); ++itrInVarTyp ) {
+		
+		if ( isSizeInVarTypes( itrInVarTyp->first ) ) {
+			//input variable type is for size -> add it
+			setSizeInVar.insert( itrInVarTyp->second );
+		}
+	}
+	return setSizeInVar;
+}
+
+
+/**
+ * This function will analyse the given text and try to evalue an
+ * input variable type for it.
+ * For example the text:
+ * 	"position of the start point in dimension 2 (y_s)"
+ * would be interpreted as the POS_DIM_2 input variable type.
+ *
+ * @see typeOfInputVariables
+ * @see mapInVarTypes
+ * @see getTypeInVar()
+ * @see getInVarForType()
+ * @see addTypeInVar()
+ * @param szText a text which shold describe/contain a input variable type
+ * @return the found input variable type for the given text or
+ * 	UNKNOWN if non could be found
+ */
+cFibObjectInfo::typeOfInputVariables cFibObjectInfo::getInVarTypeFromText(
+		const string & szText ) {
+	
+#ifdef FEATURE_FIB_OBJECT_INFO_IN_VAR_TYPE_FROM_TEXT_REGEX
+	//TODO implement
+	/*a list with the patterns for the input variable types
+		 first: the pattern
+		 second: the input variable type for the pattern*/
+	list< pair< regex, typeOfInputVariables > > liPatternsForInVarTypes;
+	//TODO
+	/*search for key words: " dimension ", " dim ", " point ", " start , " end ",
+	 * " angle ", " radius ", " width ", " x_", " y_", " z_", " x ", " y ", " z ",
+	 * " distance ", " middle "
+	check numbers (words) before or directly after:
+		 " 1", " 2", " 3", " 4", first ", " second ", " third "
+	*/
+	//e.g. "position start point dimension 1 (x_1)"
+	liPatternsForInVarTypes.push_back( pair< regex, typeOfInputVariables >(
+		regex( ".*position .*(start|first|1.) point .*dimension  (1 |first ) .*",
+			regex_constants::icase | regex_constants::ECMAScript ) ,POS_DIM_1 ) );
+	
+	for ( typename list< pair< regex, typeOfInputVariables > >::const_iterator
+			itrPattern = liPatternsForInVarTypes.begin();
+			itrPattern != liPatternsForInVarTypes.end(); ++itrPattern ) {
+		
+		if ( regex_match( szText, itrPattern->first ) ){
+			/*the pattern matches the string
+			 *-> return the input variable type for the pattern*/
+			return itrPattern->second;
+		}//else check next pattern
+	}//end for all pattern
+	
+
+
+	
+	
+	/*		UNKNOWN   = 0,  //type unknown
+		POS_DIM_1 = 1,  //the position in the first dimension
+		POS_DIM_2 = 2,  //the position in the second dimension
+		SIZE      = 10, //the size of the Fib object
+		SIZE_DIM_1 = 11,//the size of the Fib object in the first dimension
+		SIZE_DIM_2 = 12,//the size of the Fib object in the second dimension
+		SIZE_RADIUS= 20,//the radius of the Fib object
+		SIZE_RADIUS_DIM_1 = 21,//the radius of the Fib object in the first dimension
+		SIZE_RADIUS_DIM_2 = 22,//the radius of the Fib object in the second dimension
+		ANGLE = 100//the angle of the Fib object
+	*/
+	
+	
+#endif //FEATURE_FIB_OBJECT_INFO_IN_VAR_TYPE_FROM_TEXT_REGEX
+	return UNKNOWN;
+}
+
+
+
+/**
+ * This function returns the name for the given input variable type.
+ *
+ * @see getInVarTypeForName()
+ * @see typeOfInputVariables
+ * @see mapInVarTypes
+ * @see getTypeInVar()
+ * @see getInVarForType()
+ * @param typeOfInVar the type of the input variable, for which to
+ * 	return the name
+ * @return the name for the given input variable type
+ */
+string cFibObjectInfo::getNameForInVarType( const typeOfInputVariables typeOfInVar ) {
+	
+	switch ( typeOfInVar ) {
+		case UNKNOWN : return "type unknown";
+			//the position in the first dimension
+		case POS_DIM_1 : return "position dimension 1";
+			//the position in the first dimension
+		case POS_DIM_2 : return "position dimension 2";
+			//the position in the second dimension
+		case SIZE      : return "size";  //the size of the Fib object
+		case SIZE_DIM_1 : return "size dimension 1";
+			//the size of the Fib object in the first dimension
+		case SIZE_DIM_2 : return "size dimension 2";
+			//the size of the Fib object in the second dimension
+		case SIZE_RADIUS : return "radius";//the radius of the Fib object
+		case SIZE_RADIUS_DIM_1 : return "radius dimension 1";
+			//the radius of the Fib object in the first dimension
+		case SIZE_RADIUS_DIM_2 : return "radius dimension 2";
+			//the radius of the Fib object in the second dimension
+		case ANGLE : return "angle";//the angle of the Fib object
+	};//else UNKNOWN
+	//int to string
+	const int iTypeOfInVar = ((int)(typeOfInVar));
+	char szNumberBuffer[ 16 ];
+	sprintf( szNumberBuffer, "%d", iTypeOfInVar);
+	return string( szNumberBuffer );
+}
+
+
+/**
+ * This function returns the input variable type for the given input
+ * variable type name.
+ *
+ * @see getNameForInVarType()
+ * @see typeOfInputVariables
+ * @see mapInVarTypes
+ * @see getTypeInVar()
+ * @see getInVarForType()
+ * @param typeOfInVar the type of the input variable, for which to
+ * 	return the name
+ * @return the input variable type for the given input variable type
+ * 	name (or UNKNOWN if non exists)
+ */
+cFibObjectInfo::typeOfInputVariables cFibObjectInfo::getInVarTypeForName(
+		const string szNameInVar ) {
+	
+	if ( szNameInVar == "position dimension 1" ) {
+		return POS_DIM_1;  //the position in the first dimension
+	} else if ( szNameInVar == "position dimension 1" ) {
+		return POS_DIM_2;  //the position in the second dimension
+	} else if ( szNameInVar == "size" ) {
+		return SIZE;  //the size of the Fib object
+	} else if ( szNameInVar == "size dimension 1" ) {
+		return SIZE_DIM_1;  //the size of the Fib object in the first dimension
+	} else if ( szNameInVar == "size dimension 2" ) {
+		return SIZE_DIM_2;  //the size of the Fib object in the second dimension
+	} else if ( szNameInVar == "radius" ) {
+		return SIZE_RADIUS;  //the radius of the Fib object
+	} else if ( szNameInVar == "radius dimension 1" ) {
+		return SIZE_RADIUS_DIM_1;  //the radius of the Fib object in the first dimension
+	} else if ( szNameInVar == "radius dimension 2" ) {
+		return SIZE_RADIUS_DIM_2;  //the radius of the Fib object in the second dimension
+	} else  if ( szNameInVar == "angle" ) {
+		return ANGLE;  //the angle of the Fib object
+	} else if ( szNameInVar ==  "type unknown" ) {
+		return UNKNOWN;  //type unknown
+	}
+	//string to int (if no string for the input variable could be provieded)
+	return typeOfInputVariables( atoi( szNameInVar.c_str() ) );
+}
+
+
+/**
  * This method will store this Fib object info object from the given
  * stream.
  *
@@ -1411,7 +1787,7 @@ bool cFibObjectInfo::store( ostream & stream ) {
 	mutexFibObjectSource.unlock();
 	stream<<"<categories>"<<endl;
 	for ( set< string >::const_iterator itrCategory = setInCategories.begin();
-			itrCategory != setInCategories.end(); itrCategory++ ) {
+			itrCategory != setInCategories.end(); ++itrCategory ) {
 		
 		stream<<"<category name=\""<<(*itrCategory)<<"\"/>"<<endl;
 	}
@@ -1421,7 +1797,7 @@ bool cFibObjectInfo::store( ostream & stream ) {
 		//store the existing connections
 		for ( map< string, set< unsigned long > >::const_iterator
 				itrConnection = mapConnectedTo.begin();
-				itrConnection != mapConnectedTo.end(); itrConnection++ ) {
+				itrConnection != mapConnectedTo.end(); ++itrConnection ) {
 			
 			stream<<"	<connection name=\""<<itrConnection->first<<"\">"<<endl;
 			//store the identifiers
@@ -1429,7 +1805,7 @@ bool cFibObjectInfo::store( ostream & stream ) {
 				itrConnection->second;
 			for ( set< unsigned long >::const_iterator
 					itrIdentifier = setConnectionIds.begin();
-					itrIdentifier != setConnectionIds.end(); itrIdentifier++ ) {
+					itrIdentifier != setConnectionIds.end(); ++itrIdentifier ) {
 				
 				stream<<"		<identifier>"<<(*itrIdentifier)<<"</identifier>"<<endl;
 			}
@@ -1442,7 +1818,7 @@ bool cFibObjectInfo::store( ostream & stream ) {
 	stream<<"<last_used>"<<endl;
 	for ( vector< pair< time_t, unsigned long > >::const_iterator
 			itrTimestamp = vecLastUsed.begin();
-			itrTimestamp != vecLastUsed.end(); itrTimestamp++ ) {
+			itrTimestamp != vecLastUsed.end(); ++itrTimestamp ) {
 		
 		stream<<"<used_till timestamp=\""<<itrTimestamp->first<<
 			"\" count_uses=\""<<itrTimestamp->second<<"\"/>"<<endl;
@@ -1464,6 +1840,20 @@ bool cFibObjectInfo::store( ostream & stream ) {
 		pPreviewFibObject->store( stream );
 		
 		stream<<"</preview>"<<endl;
+	}
+	
+	if ( ! mapInVarTypes.empty() ) {
+		stream<<"<in_var_types>"<<endl;
+		//store the input variable types
+		for ( map< typeOfInputVariables , unsigned int >::const_iterator
+				itrInVarTyp = mapInVarTypes.begin();
+				itrInVarTyp != mapInVarTypes.end(); ++itrInVarTyp ) {
+			
+			stream<<"	<input_variable number=\""<<itrInVarTyp->second<<"\" "<<
+				"type=\""<<getNameForInVarType( itrInVarTyp->first )<<"\"/>"<<endl;
+		}
+		
+		stream<<"</in_var_types>"<<endl;
 	}
 	stream<<"</fib_object_info>"<<endl;
 	mutexFibObjectInfoData.unlock();
@@ -1911,6 +2301,60 @@ int cFibObjectInfo::restoreFibObjectInfoInternal( const TiXmlNode * pXmlNode ) {
 							}
 						}
 					}//end for all "preview" subelements
+				}else if ( szElementType == "in_var_types" ) {
+					//restore "in_var_types" data
+					//clear the old data
+					mapInVarTypes.clear();
+					/*read the "in_var_types" subelements; example;
+			       <in_var_types>
+			          <input_variable number="2" type="position dimension 1"/>
+			          <input_variable number="3" type="position dimension 2"/>
+			          <input_variable number="7" type="size radius"/>
+			          ...
+			       </in_var_types>
+					 */
+#ifdef DEBUG_RESTORE_XML
+					//print debugging output
+					printf("restore input variable types from Xml element\n" );
+#endif//DEBUG_RESTORE_XML
+					for( const TiXmlElement *
+							pActualInVarSubElement = pXmlElement->FirstChildElement();
+							pActualInVarSubElement != NULL;
+							pActualInVarSubElement =
+								pActualInVarSubElement->NextSiblingElement() ) {
+						//check the type of the sibling element
+						const string szActualInVarSubElementType(
+							pActualInVarSubElement->Value() );
+						if ( szActualInVarSubElementType == "input_variable" ) {
+							
+							//if exists get "number" attribute
+							const char * szXmlInVarNumber =
+								pActualInVarSubElement->Attribute( "number" );
+							//if exists get "type" attribute
+							const char * szXmlInVarType =
+								pActualInVarSubElement->Attribute( "type" );
+							if ( ( szXmlInVarNumber != NULL ) && ( szXmlInVarType != NULL ) ) {
+								//"number" and "type" attribute exists
+								const unsigned int uiInVarNumber =
+									atol( szXmlInVarNumber );
+								const typeOfInputVariables inVarType =
+									getInVarTypeForName( string( szXmlInVarType ) );
+								//push new entry with data to end of mapInVarTypes
+								mapInVarTypes.insert( pair< typeOfInputVariables , unsigned int >(
+									inVarType, uiInVarNumber ) );
+							}else if ( iRestoreStatus == 0 ) {
+								/*Warning: "number" or "type" attribute missing
+								 -> can't restore entry*/
+								iRestoreStatus = 2;
+							}
+							
+							
+						}else if ( iRestoreStatus == 0 ) {
+							//Warning: unknown "last_used" subelement
+							iRestoreStatus = 1;
+						}
+					}//end for all subelements of "in_var_types"
+					
 				}else{//unknown element type
 					if ( iRestoreStatus == 0 ) {
 						//Warning: unknown element type

@@ -37,6 +37,7 @@
 /*
 History:
 21.06.2013  Oesterholz  created
+13.04.2014  Oesterholz  insertSelectedFibObject() insert selected Fib object
 */
 
 
@@ -164,6 +165,36 @@ public:
 	 */
 	virtual void setInputVariablesWidgetForCentralGrapical(
 		cWidgetFibInputVariables * pNewWidgetFibInputVariables );
+	
+	/**
+	 * This method will insert the selected Fib object into the associated
+	 * (/represented) Fib Node.
+	 * If possible the inserted Fib object will be inserted on the given position.
+	 *
+	 * @see cFibNode::insertSelectedFibObject()
+	 * @see pFibNode
+	 * @see pDialogSelectFibObject
+	 * @see getFibNode()
+	 * @param poiInsertPosition the position on which the Fib object should
+	 * 	be inserted
+	 * @return true if the Fib object was inserted, else false
+	 */
+	virtual bool insertSelectedFibObject( const QPoint & poiInsertPosition );
+	
+	/**
+	 * This method will insert the selected Fib object into the associated
+	 * (/represented) Fib Node.
+	 * If possible the inserted Fib object will be inserted on the given position.
+	 *
+	 * @see cFibNode::insertSelectedFibObject()
+	 * @see pFibNode
+	 * @see pDialogSelectFibObject
+	 * @see getFibNode()
+	 * @param poiInsertPosition the position on which the Fib object should
+	 * 	be inserted
+	 * @return true if the Fib object was inserted, else false
+	 */
+	virtual bool insertSelectedFibObject( const QPointF & poiInsertPosition );
 	
 signals:
 	/**
@@ -392,6 +423,8 @@ protected:
 	QMenu * pMenuWindow;
 	///help menu
 	QMenu * pMenuHelp;
+	///modus menu
+	QMenu * pMenuModus;
 	///file tool bar
 	QToolBar * pToolBarFile;
 	///edit tool bar
@@ -429,6 +462,18 @@ protected:
 	
 	///action for show about this application information
 	QAction * pActAbout;
+	
+	/**
+	 * Action for changing the mouse mode to pointing.
+	 * @see cFibCreatorStatiHandler::setMouseModeToPointing()
+	 */
+	QAction * pActMouseModePointing;
+	
+	/**
+	 * Action for changing the mouse mode to drawing.
+	 * @see cFibCreatorStatiHandler::setMouseModeToDrawing()
+	 */
+	QAction * pActMouseModeDrawing;
 	
 	
 private slots:

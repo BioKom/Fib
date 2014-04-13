@@ -1,16 +1,64 @@
 
 tFibNodeHandler_integrateFibObjectIntoNode testcases:
-	- one limb changed
-	- one branch changed
-	- new subobject
+	- change below Fib node Fib element
+		-- one branch changed
+		-- new subobject at subobject list end
+		-- new subobject at subobject list begin
+		-- new subobject inside subobject list
+		-- delete subobject at subobject list end
+		-- delete subobject at subobject list begin
+		-- delete subobject inside subobject list
+		-- move in list subobject one step to end
+		-- move in list subobject one step to front
+		-- move in list subobject more than one step to end
+		-- move in list subobject more than one step to front
+		-- move in external object element subobject one step to end
+		-- move in external object element subobject one step to front
+		-- move in external object element subobject more than one step to end
+		-- move in external object element subobject more than one step to front
+		-- one subobject replaced
+		-- one subobject inserted and an other deleted
+		-- new subobject at external object element end
+		-- new subobject at external object element begin
+		-- new subobject inside external object element
+		-- delete subobject at external object element end
+		-- delete subobject at external object element begin
+		-- delete subobject inside external object element
+	- change at Fib node Fib element
+		-- one leaf changed
+		-- one limb changed
+		-- one branch changed
+		-- new subobject at subobject list end
+		-- new subobject at subobject list begin
+		-- new subobject inside subobject list
+		-- delete subobject at subobject list end
+		-- delete subobject at subobject list begin
+		-- delete subobject inside subobject list
+		-- move in list subobject one step to end
+		-- move in list subobject one step to front
+		-- move in list subobject more than one step to end
+		-- move in list subobject more than one step to front
+		-- move in external object element subobject one step to end
+		-- move in external object element subobject one step to front
+		-- move in external object element subobject more than one step to end
+		-- move in external object element subobject more than one step to front
+		-- one subobject replaced
+		-- one subobject inserted and an other deleted
+		-- new subobject at external object element end
+		-- new subobject at external object element begin
+		-- new subobject inside external object element
+		-- delete subobject at external object element end
+		-- delete subobject at external object element begin
+		-- delete subobject inside external object element
 
 
 - main window
 -- try to implement sub windows for the different Fib object views
+-- icons: (into /images/icon/) iconNew.png iconOpen.png iconSaveAs.png
+	(iconCut.png iconCopy.png iconPaste.png)
 
 
-- database functions
-	- at init database -> load all Fib database objects (load Fib database object)
+- database functions:
 	- load database object
 	- get database objects from database directory / source
 	- set database folder (+ recursive)
@@ -36,7 +84,15 @@ nice to have:
 
 - cFibNodeHandler: implement SWITCH_SUPERIOR_EVALUED_OBJECT
 
+
+eFibNodeChangedEvent::fibNodeChangedEvent():
+	 * adapt the changes from the given node into event and fast forward the version number to that of the other node.
+
+
 cFibObjectSourcePath::loadFibObject() : "user can change" adapt for operating system users or/and with optional part entry
+
+cFibObjectInfoHandler:
+	- load Fib object infos given with installation (give Fib object infos for DB objects with installation)
 
 cFibObjectInfo + tFibObjectInfo: extractInfoFromLoadedFibObject() ( + cFibObjectInfo( ulInIdentifier, pInFibObjectSource ) )
 

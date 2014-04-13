@@ -51,6 +51,7 @@ History:
 15.07.2013  Oesterholz  created
 25.01.2013  Oesterholz  the graphical items will be updated, if possible,
 	with the information of the Fib node change event
+13.04.2014  Oesterholz  mousePressEvent() insert selected Fib object
 */
 
 
@@ -182,8 +183,6 @@ public:
 	 * @return the number of input variables for the Fib object for the Fib node
 	 */
 	unsigned int getNumberOfInputVariables() const;
-	
-	//TODO implement
 	
 	/**
 	 * This method sets the input variable widgets.
@@ -391,6 +390,14 @@ protected:
 	 * 	else false
 	 */
 	bool updateForDimensionChange();
+	
+	/**
+	 * The event handler for mouse press events.
+	 *
+	 * @see QGraphicsScene::mousePressEvent
+	 * @param pMouseEvent the mouse press event
+	 */
+	virtual void mousePressEvent( QGraphicsSceneMouseEvent * pMouseEvent );
 	
 //members:
 	

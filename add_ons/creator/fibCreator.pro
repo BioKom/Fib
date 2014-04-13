@@ -65,7 +65,6 @@ CONFIG += qt warn_on
 # comment in for test mode
 # CONFIG += qt warn_on test_debug qtestlib
 
-
 ##########################################################################
 #
 # folder variables
@@ -133,7 +132,9 @@ OBJECTS_DIR = $${DIR_OBJ}obj
 MOC_DIR = $${DIR_OBJ}moc
 RCC_DIR = $${DIR_OBJ}rcc
 UI_DIR  = $${DIR_OBJ}ui
+RESOURCES = resources.qrc
 LIBS_ADDITIONAL = -L$${DIR_FIB_LANGUAGE_LIB} -lfib
+QMAKE_CXXFLAGS += -std=c++11
 
 DEFINES += TIXML_USE_STL
 

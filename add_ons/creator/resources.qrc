@@ -1,0 +1,8 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+	<file>images/icon/iconSave.png</file>
+	<file>images/icon/iconPlaintext.png</file>
+	<file>images/icon/iconMousePointing.png</file>
+	<file>images/icon/iconMouseDrawing.png</file>
+</qresource>
+</RCC>
