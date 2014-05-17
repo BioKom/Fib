@@ -1,6 +1,3 @@
-
-//TODO check
-
 /**
  * @file eFibVectorChangedEvent
  * file name: eFibVectorChangedEvent.h
@@ -136,10 +133,10 @@ public:
 	void setFibVector( const cFibVectorCreator * pInFibVectorChanged );
 	
 	/**
-	 * This method sets what was changed in the vector.
+	 * This method sets, what was changed in the vector.
 	 *
 	 * @param uiInNumberOfElement the position of the changed scalar
-	 * 	(counting starts with 1)
+	 * 	(counting starts with 1, 0 = entire vector)
 	 * 	@see uiNumberOfElement
 	 * @param elementCangeType the type of the change
 	 * 	@see elementCangeType
@@ -148,7 +145,8 @@ public:
 		const enumElementChange inElementCangeType );
 	
 	/**
-	 * @return the position of the changed scalar (counting starts with 1)
+	 * @return the position of the changed scalar (counting starts with 1,
+	 * 	0 = entire vector)
 	 * 	@see uiNumberOfElement
 	 */
 	unsigned int getNumberOfElementChanged() const;
@@ -163,6 +161,8 @@ protected:
 	
 	/**
 	 * A pointer to the Fib vector that was changed.
+	 * @see getFibVector()
+	 * @see setFibVector()
 	 */
 	const cFibVectorCreator * pFibVectorChanged;
 	

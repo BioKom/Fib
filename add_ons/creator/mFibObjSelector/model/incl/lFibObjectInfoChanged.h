@@ -1,6 +1,3 @@
-
-//TODO check
-
 /**
  * @file lFibObjectInfoChanged
  * file name: lFibObjectInfoChanged.h
@@ -31,8 +28,8 @@
  *
  *
  * This file specifies a listener interface for listening for Fib object
- * info object changes. If a Fib object info object changes it will send an
- * event to all registered listeners of this type.
+ * info object changes. If a Fib object info object changes, it will send
+ * an event to all registered listeners of this type.
  * @see cFibObjectInfo
  * @see eFibObjectInfoChangedEvent
  */

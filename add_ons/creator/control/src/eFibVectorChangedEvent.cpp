@@ -1,6 +1,3 @@
-
-//TODO check
-
 /**
  * @file eFibVectorChangedEvent
  * file name: eFibVectorChangedEvent.cpp
@@ -75,7 +72,7 @@ eFibVectorChangedEvent::eFibVectorChangedEvent(
 		eObjectDeleted< cFibVectorCreator >( pInFibVectorChanged ),
 		pFibVectorChanged( pInFibVectorChanged ),
 		uiNumberOfElement( uiInNumberOfElement ),
-		elementCangeType( inElementCangeType ){
+		elementCangeType( inElementCangeType ) {
 	//noting to do
 }
 
@@ -96,7 +93,7 @@ eFibVectorChangedEvent::eFibVectorChangedEvent(
 		eObjectDeleted< cFibVectorCreator >( pInFibVectorChanged, bInFibVectorDeleted ),
 		pFibVectorChanged( pInFibVectorChanged ),
 		uiNumberOfElement( 0 ),
-		elementCangeType( NONE ){
+		elementCangeType( NONE ) {
 	//noting to do
 }
 
@@ -105,7 +102,7 @@ eFibVectorChangedEvent::eFibVectorChangedEvent(
 /**
  * @return the name of this class "eFibVectorChangedEvent"
  */
-std::string eFibVectorChangedEvent::getName() const{
+std::string eFibVectorChangedEvent::getName() const {
 	
 	return std::string( "eFibVectorChangedEvent" );
 }
@@ -115,7 +112,7 @@ std::string eFibVectorChangedEvent::getName() const{
  * @return a pointer to the Fib vector that was changed
  * 	@see pFibVectorChanged
  */
-const cFibVectorCreator * eFibVectorChangedEvent::getFibVector() const{
+const cFibVectorCreator * eFibVectorChangedEvent::getFibVector() const {
 	
 	return pFibVectorChanged;
 }
@@ -129,7 +126,7 @@ const cFibVectorCreator * eFibVectorChangedEvent::getFibVector() const{
  * 	@see pFibVectorChanged
  */
 void eFibVectorChangedEvent::setFibVector(
-		const cFibVectorCreator * pInFibVectorChanged ){
+		const cFibVectorCreator * pInFibVectorChanged ) {
 	
 	pFibVectorChanged = pInFibVectorChanged;
 }
@@ -139,14 +136,14 @@ void eFibVectorChangedEvent::setFibVector(
  * This method sets what was changed in the vector.
  *
  * @param uiInNumberOfElement the position of the changed scalar
- * 	(counting starts with 1)
+ * 	(counting starts with 1, 0 = entire vector)
  * 	@see uiNumberOfElement
  * @param inElementCangeType the type of the change
  * 	@see elementCangeType
  */
 void eFibVectorChangedEvent::setElementChange(
 		const unsigned int uiInNumberOfElement,
-		const enumElementChange inElementCangeType ){
+		const enumElementChange inElementCangeType ) {
 	
 	uiNumberOfElement = uiInNumberOfElement;
 	elementCangeType  = inElementCangeType;
@@ -154,10 +151,11 @@ void eFibVectorChangedEvent::setElementChange(
 
 
 /**
- * @return the position of the changed scalar (counting starts with 1)
+ * @return the position of the changed scalar (counting starts with 1,
+ * 	0 = entire vector)
  * 	@see uiNumberOfElement
  */
-unsigned int eFibVectorChangedEvent::getNumberOfElementChanged() const{
+unsigned int eFibVectorChangedEvent::getNumberOfElementChanged() const {
 	
 	return uiNumberOfElement;
 }
@@ -168,7 +166,7 @@ unsigned int eFibVectorChangedEvent::getNumberOfElementChanged() const{
  * 	@see elementCangeType
  */
 eFibVectorChangedEvent::enumElementChange
-		eFibVectorChangedEvent::getElementChangeType() const{
+		eFibVectorChangedEvent::getElementChangeType() const {
 	
 	return elementCangeType;
 }

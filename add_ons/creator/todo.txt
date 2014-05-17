@@ -1,4 +1,8 @@
 
+
+- cFibNode::insertFibObjectInfo()
+-- if (point) subobject is needed -> add it
+
 tFibNodeHandler_integrateFibObjectIntoNode testcases:
 	- change below Fib node Fib element
 		-- one branch changed
@@ -66,6 +70,7 @@ tFibNodeHandler_integrateFibObjectIntoNode testcases:
 
 - object view (for database objects)
 -- connections betwean objects
+-- make combination of categories possible ("AND" and "OR"; eg: fibDb AND ( triangle OR line ))
 
 - draw background ( paint() ) correctly (cEvalueSimpleRGBA255QPainter)
 

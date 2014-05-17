@@ -1,0 +1,505 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fib_object
+			  xmlns:xsd="http://www.w3.org/2001/XMLSchema-instance"
+			  xmlns="http://www.fib-development.org/"
+			  xsd:schemaLocation="http://www.fib-development.org/fib.xsd">
+	<root>
+		<multimedia_info fib_version="3" db_version="2"/>
+		<optionalpart>
+			<pair key="name" value="line"/>
+			<pair key="description" value="This object represents a line in two dimensions from an start point (x_1, y_1) to an end point (x_2, y_2) with a given width. The points of the line are given back as variables of the subobject."/>
+			<pair key="inVar1::description" value="position start point dimension 1 (x_1)"/>
+			<pair key="inVar2::description" value="position start point dimension 2 (y_1)"/>
+			<pair key="inVar3::description" value="position end point dimension 1 (x_2)"/>
+			<pair key="inVar4::description" value="position end point dimension 2 (y_2)"/>
+			<pair key="inVar5::description" value="the width of the line in points"/>
+			
+			<pair key="subObj1::description" value="The points of the line. The subobject is called for every point on the line."/>
+			<pair key="subObj1::outVar1::description" value="the position of the line point in dimension 1 (x)"/>
+			<pair key="subObj1::outVar2::description" value="the position of the line point in dimension 2 (y)"/>
+			
+			<pair key="author" value="Betti Oesterholz"/>
+			<pair key="author::email" value="Oesterholz@Fib-Development.org"/>
+			<pair key="copyright" value="LGPL3"/>
+			
+			<pair key="isPointSubObject" value=""/>
+			<pair key="DbObject::isPointElement" value="-21"/>
+			<pair key="isNotAntialiased" value=""/>
+			<pair key="DbObject::isAntialiased" value="-27"/>
+		</optionalpart>
+		<input_variables>
+			<variable number="1" default="0"/>
+			<variable number="2" default="0"/>
+			<variable number="3" default="0"/>
+			<variable number="4" default="0"/>
+			<variable number="5" default="1"/>
+		</input_variables>
+		<domains>
+			<inVar number="1">
+				<domainReference subdomain="1">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="2">
+				<domainReference subdomain="2">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="3">
+				<domainReference subdomain="1">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<inVar number="4">
+				<domainReference subdomain="2">
+					<dim count="2">
+						<dimension number="1" direction="anywhere"/>
+						<dimension number="2" direction="anywhere"/>
+					</dim>
+				</domainReference>
+			</inVar>
+			<externSubobject number="1">
+				<vector elements="2">
+					<!-- actually any numbers are possible;
+						the next lines are just a space holder -->
+					<naturalNumberB bit="0" />
+					<naturalNumberB bit="0" />
+				</vector>
+			</externSubobject>
+			<externObject>
+				<vector elements="4">
+					<integer min="-25" max="-46" /><!--Identifier-->
+					<integer min="8" max="8" /><!--number input values-->
+					<naturalNumber max="1" /><!--number subobjects-->
+					<naturalNumber max="2" /><!--number output values-->
+				</vector>
+			</externObject>
+			<externObjectInput identifier="-25">
+				<vector elements="4">
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+				</vector>
+			</externObjectInput>
+			<externObjectInput identifier="-46">
+				<vector elements="8">
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+					<naturalNumber max="0" />
+				</vector>
+			</externObjectInput>
+			<subfunction>
+				<naturalNumberB scalingfactor="0.5" bit="18" />
+			</subfunction>
+		</domains>
+		<database_identifiers>
+			<identifier>-25</identifier>
+			<identifier>-46</identifier>
+		</database_identifiers>
+		<main_fib_object>
+			<!-- draw a quadrangle with help of object with id -46;
+				For this evalue the four corner points of the quadrangle:
+					(a_1, b_1), (a_2, b_2), (a_3, b_3), (a_4, b_4) -->
+			<if><!-- if line width lower 1.5 -> draw normal line or nothing -->
+				<condition>
+					<lo>
+						<variable>5</variable>
+						<value>1.5</value>
+					</lo>
+				</condition>
+				<if>
+					<condition>
+						<lo>
+							<variable>5</variable>
+							<value>0.5</value>
+						</lo>
+					</condition>
+					<point/><!-- line width lower 0.5 -> do nothing -->
+					<!-- else line widt betwean 0.5 and 1.5 -> draw line with object -20 -->
+					<obj identifier="-25">
+						<vector type="externObjectInput">
+							<variable>1</variable>
+							<variable>2</variable>
+							<variable>3</variable>
+							<variable>4</variable>
+						</vector>
+						<subobject>
+							<output_variables>
+								<variable>6</variable>
+								<variable>7</variable>
+							</output_variables>
+							<subobject number="1">
+								<vector type="externSubobject">
+									<variable>6</variable>
+									<variable>7</variable>
+								</vector>
+							</subobject>
+						</subobject>
+					</obj>
+				</if>
+				<!-- else -->
+				<if><!-- if x_1 == x_2 then line vertical -->
+					<condition>
+						<eqInt>
+							<mult>
+								<variable>1</variable>
+								<value>65536</value>
+							</mult>
+							<mult>
+								<variable>3</variable>
+								<value>65536</value>
+							</mult>
+						</eqInt>
+					</condition>
+					<!-- b_1 = y_1; b_2 = y_1; b_3 = y_2; b_4 = y_2 -->
+					<function define_variable="6"><!-- round( (width - 1) / 2 ) -->
+						<subfunction>
+							<round>
+								<div>
+									<sub>
+										<variable>5</variable>
+										<value>1</value>
+									</sub>
+									<value>2</value>
+								</div>
+							</round>
+						</subfunction>
+						<function define_variable="7"><!-- a_1 = a_4 = x_1 - round( (width - 1) / 2 ) -->
+							<subfunction>
+								<sub>
+									<variable>1</variable>
+									<variable>6</variable>
+								</sub>
+							</subfunction>
+							<function define_variable="8"><!-- a_2 = a_3 = x_1 + ( width - round( (width - 1) / 2 ) - 1 ) -->
+								<subfunction>
+									<add>
+										<variable>1</variable>
+										<sub>
+											<sub>
+												<variable>5</variable>
+												<variable>6</variable>
+											</sub>
+											<value>1</value>
+										</sub>
+									</add>
+								</subfunction>
+								<obj identifier="-46">
+									<vector type="externObjectInput">
+										<variable>7</variable>
+										<variable>2</variable>
+										<variable>8</variable>
+										<variable>2</variable>
+										<variable>8</variable>
+										<variable>4</variable>
+										<variable>7</variable>
+										<variable>4</variable>
+									</vector>
+									<subobject>
+										<output_variables>
+											<variable>9</variable>
+											<variable>10</variable>
+										</output_variables>
+										<subobject number="1">
+											<vector type="externSubobject">
+												<variable>9</variable>
+												<variable>10</variable>
+											</vector>
+										</subobject>
+									</subobject>
+								</obj>
+							</function>
+						</function>
+					</function>
+					<!-- else (x_1 != x_2) line not vertical -->
+					<function define_variable="6">
+						<subfunction>
+							<!-- (y_2 - y_1) / (x_2 - x_1) -->
+							<div>
+								<sub>
+									<variable>4</variable>
+									<variable>2</variable>
+								</sub>
+								<sub>
+									<variable>3</variable>
+									<variable>1</variable>
+								</sub>
+							</div>
+						</subfunction>
+						<function define_variable="7">
+							<subfunction>
+								<!-- width_1 = round( (width - 1) / 2 ) -->
+								<round>
+									<div>
+										<sub>
+											<variable>5</variable>
+											<value>1</value>
+										</sub>
+										<value>2</value>
+									</div>
+								</round>
+							</subfunction>
+							<function define_variable="8">
+								<subfunction>
+									<!-- width_1^2 = width_1^2 -->
+									<mult>
+										<variable>7</variable>
+										<variable>7</variable>
+									</mult>
+								</subfunction>
+								<function define_variable="9">
+									<subfunction>
+										<!-- width_2 = width - round( (width - 1) / 2 ) - 1 -->
+										<sub>
+											<sub>
+												<variable>5</variable>
+												<variable>7</variable>
+											</sub>
+											<value>1</value>
+										</sub>
+									</subfunction>
+									<function define_variable="10">
+										<subfunction>
+											<!-- width_2^2 = width_2^2 -->
+											<mult>
+												<variable>9</variable>
+												<variable>9</variable>
+											</mult>
+										</subfunction>
+							
+										<function define_variable="11">
+											<!-- hight value h_1, which the corner points of the
+												quandrangle are above or below the the base points
+												of the line;
+												this function evalues h_2^2 -->
+											<subfunction>
+												<!-- h_1^2 = width_1^2 / ( ( (y_2 - y_1) / (x_2 - x_1) )^2 + 1 ) -->
+												<div>
+													<variable>8</variable>
+													<add>
+														<mult>
+															<variable>6</variable>
+															<variable>6</variable>
+														</mult>
+														<value>1</value>
+													</add>
+												</div>
+											</subfunction>
+											<function define_variable="12">
+												<!-- hight value h_1 -->
+												<subfunction>
+													<if>
+														<lo><!-- 0 < (y_2 - y_1) / (x_2 - x_1) -->
+															<value>0</value>
+															<variable>6</variable>
+														</lo>
+														<exp><!-- h_1 = (h_1^2)^(0.5) (h_1 is positiv) -->
+															<variable>11</variable>
+															<value>0.5</value>
+														</exp>
+														<sub><!-- h_1 = -1 * (h_1^2)^(0.5) (h_1 is negativ) -->
+															<value>0</value>
+															<exp>
+																<variable>11</variable>
+																<value>0.5</value>
+															</exp>
+														</sub>
+													</if>
+												</subfunction>
+												<function define_variable="13">
+													<!-- width value w_1, which the corner points of the
+														quandrangle are left or right of the the base
+														points of the line -->
+													<subfunction>
+														<!-- w_1 = ( width_1^2 - h_1^2 )^(0.5) -->
+														<exp>
+															<sub>
+																<variable>8</variable>
+																<variable>11</variable>
+															</sub>
+															<value>0.5</value>
+														</exp>
+													</subfunction>
+													
+													<function define_variable="14">
+														<!-- hight value h_2, which the corner points of the
+															quandrangle are above or below the the base points
+															of the line;
+															this function evalues h_2^2 -->
+														<subfunction>
+															<!-- h_2^2 = width_2^2 / ( ( (y_2 - y_1) / (x_2 - x_1) )^2 + 1 ) -->
+															<div>
+																<variable>10</variable>
+																<add>
+																	<mult>
+																		<variable>6</variable>
+																		<variable>6</variable>
+																	</mult>
+																	<value>1</value>
+																</add>
+															</div>
+														</subfunction>
+														<function define_variable="15">
+															<!-- hight value h_2 -->
+															<subfunction>
+																<if>
+																	<lo><!-- 0 < (y_2 - y_1) / (x_2 - x_1) -->
+																		<value>0</value>
+																		<variable>6</variable>
+																	</lo>
+																	<exp><!-- h_2 = (h_2^2)^(0.5) (h_2 is positiv) -->
+																		<variable>14</variable>
+																		<value>0.5</value>
+																	</exp>
+																	<sub><!-- h_2 = -1 * (h_2^2)^(0.5) (h_2 is negativ) -->
+																		<value>0</value>
+																		<exp>
+																			<variable>14</variable>
+																			<value>0.5</value>
+																		</exp>
+																	</sub>
+																</if>
+															</subfunction>
+															<function define_variable="16">
+																<!-- width value w_2, which the corner points of the
+																	quandrangle are left or right of the the base
+																	points of the line -->
+																<subfunction>
+																	<!-- w_2 = ( width_2^2 - h_2^2 )^(0.5) -->
+																	<exp>
+																		<sub>
+																			<variable>10</variable>
+																			<variable>14</variable>
+																		</sub>
+																		<value>0.5</value>
+																	</exp>
+																</subfunction>
+																
+																<!-- evalue the corner points of the quadrangle -->
+																<function define_variable="17">
+																	<!-- a_1 = x_1 - w_1 -->
+																	<subfunction>
+																		<sub>
+																			<variable>1</variable>
+																			<variable>13</variable>
+																		</sub>
+																	</subfunction>
+																	<function define_variable="18">
+																		<!-- b_1 = y_1 + h_1 -->
+																		<subfunction>
+																			<add>
+																				<variable>2</variable>
+																				<variable>12</variable>
+																			</add>
+																		</subfunction>
+																		<function define_variable="19">
+																			<!-- a_2 = x_1 + w_2 -->
+																			<subfunction>
+																				<add>
+																					<variable>1</variable>
+																					<variable>16</variable>
+																				</add>
+																			</subfunction>
+																			<function define_variable="20">
+																				<!-- b_2 = y_1 - h_2 -->
+																				<subfunction>
+																					<sub>
+																						<variable>2</variable>
+																						<variable>15</variable>
+																					</sub>
+																				</subfunction>
+																				<function define_variable="21">
+																					<!-- a_4 = x_2 + w_2 -->
+																					<subfunction>
+																						<add>
+																							<variable>3</variable>
+																							<variable>16</variable>
+																						</add>
+																					</subfunction>
+																					<function define_variable="22">
+																						<!-- b_4 = y_2 - h_2 -->
+																						<subfunction>
+																							<sub>
+																								<variable>4</variable>
+																								<variable>15</variable>
+																							</sub>
+																						</subfunction>
+																						<function define_variable="23">
+																							<!-- a_3 = x_2 - w_1 -->
+																							<subfunction>
+																								<sub>
+																									<variable>3</variable>
+																									<variable>13</variable>
+																								</sub>
+																							</subfunction>
+																							<function define_variable="24">
+																								<!-- b_3 = y_2 + h_1 -->
+																								<subfunction>
+																									<add>
+																										<variable>4</variable>
+																										<variable>12</variable>
+																									</add>
+																								</subfunction>
+																								<obj identifier="-46">
+																									<vector type="externObjectInput">
+																										<variable>17</variable>
+																										<variable>18</variable>
+																										<variable>19</variable>
+																										<variable>20</variable>
+																										<variable>21</variable>
+																										<variable>22</variable>
+																										<variable>23</variable>
+																										<variable>24</variable>
+																									</vector>
+																									<subobject>
+																										<output_variables>
+																											<variable>25</variable>
+																											<variable>26</variable>
+																										</output_variables>
+																										<subobject number="1">
+																											<vector type="externSubobject">
+																												<variable>25</variable>
+																												<variable>26</variable>
+																											</vector>
+																										</subobject>
+																									</subobject>
+																								</obj>
+																							</function>
+																						</function>
+																					</function>
+																				</function>
+																			</function>
+																		</function>
+																	</function>
+																</function>
+															</function>
+														</function>
+													</function>
+												</function>
+											</function>
+										</function>
+									</function>
+								</function>
+							</function>
+						</function>
+					</function>
+				</if>
+			</if>
+		</main_fib_object>
+	</root>
+</fib_object>

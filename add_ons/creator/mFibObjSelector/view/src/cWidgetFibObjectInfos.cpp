@@ -1287,9 +1287,6 @@ void cWidgetFibObjectInfos::createWidgetFibObjectInfosList() {
 		}//else no navigator part
 	}
 	
-	
-//TODO check
-	
 	//create the list with the Fib object info widgets
 	pSplitterFibObjectInfo = new QSplitter( this );
 	pSplitterFibObjectInfo->setOrientation( Qt::Vertical );
@@ -1334,13 +1331,13 @@ void cWidgetFibObjectInfos::createWidgetFibObjectInfosList() {
 		pLayoutMain->addWidget( pScrollAreaFibObjectInfo );
 		//set the main layout
 		setLayout( pLayoutMain );
-	}
+	}//else elements already added to the main layout
 	
 	mutexGraphicalElements.unlock();
 	
 	DEBUG_OUT_L2(<<"cWidgetFibObjectInfos("<<this<<")::createWidgetFibObjectInfosList() done ( elements in splitter: "<<pSplitterFibObjectInfo->count()<<", height: "<< pSplitterFibObjectInfo->height()<<" )"<<endl <<flush);
 }
-//TODO check end
+
 
 
 /**
@@ -1436,24 +1433,18 @@ void cWidgetFibObjectInfos::close() {
 	emit closeWidgetFibObjectInfos( this );
 }
 
-
-//TODO check
-
 /**
  * This slot updates the counter text.
  * @see pLabelCounterText
  */
 void cWidgetFibObjectInfos::updateCounterText() {
 	//adapt text of Fib objects of existing number of Fib objects label
-	QString strNumberOfFibInfoObjects( tr("Displaying ",
-		"Full text: Displaying START till END from COUNT") );
-	strNumberOfFibInfoObjects.append( QString::number( uiStartFibObjectInfo ) );
-	strNumberOfFibInfoObjects.append( tr(" to ",
-		"Full text: Displaying START till END from COUNT") );
-	strNumberOfFibInfoObjects.append( QString::number( uiEndFibObjectInfo ) );
-	strNumberOfFibInfoObjects.append( tr(" from ",
-		"Full text: Displaying START till END from COUNT") );
-	strNumberOfFibInfoObjects.append( QString::number( uiCountFibObjectInfo ) );
+	
+	QString strNumberOfFibInfoObjects( tr("Full text: Displaying %1 till %2 from %3",
+		"Full text: Displaying START till END from COUNT").
+			arg( uiStartFibObjectInfo ).
+			arg( uiEndFibObjectInfo ).
+			arg( uiCountFibObjectInfo ) );
 	
 	pLabelCounterText->setText( strNumberOfFibInfoObjects );
 	
@@ -1480,7 +1471,6 @@ void cWidgetFibObjectInfos::previousFibObjectInfos() {
 		uiStartFibObjectInfo = 1;
 		uiEndFibObjectInfo   = uiMaxFibObjectInfos;
 	}
-	
 	updateForCategory();
 }
 
@@ -1542,7 +1532,8 @@ void cWidgetFibObjectInfos::setNumberStartFibObjectInfo(
 	//update start number of Fib objects infos to display
 	const unsigned int uiMaxFibObjectInfos = getMaxFibObjectInfos();
 	
-	uiStartFibObjectInfo = uiNewStartFibObjectInfo;
+	uiStartFibObjectInfo = ( 0 < uiNewStartFibObjectInfo ) ?
+		uiNewStartFibObjectInfo : 1;
 	uiEndFibObjectInfo   = uiStartFibObjectInfo + uiMaxFibObjectInfos;
 	if ( uiCountFibObjectInfo < uiEndFibObjectInfo ) {
 		//set the end point to the count of Fib object infos

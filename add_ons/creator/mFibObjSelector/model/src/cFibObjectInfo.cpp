@@ -757,7 +757,7 @@ bool cFibObjectInfo::extractInfoFromLoadedFibObject() {
 								//not a valid input variable type -> skip
 								continue;
 							}
-							addTypeInVar( uiInVar, inVarType );
+							mapInVarTypes[ inVarType ] = uiInVar;
 						}
 					}break;
 					case 'D':{
@@ -819,6 +819,7 @@ bool cFibObjectInfo::extractInfoFromLoadedFibObject() {
 				};//end switch for key of type
 				
 			}//end for all entries
+			fillInMissingTypesOfInputVariables( mapInVarTypes );
 		}//else nothing to evaluate the information from
 	}else{//not a root element loaded
 		//evalue the number of input variables
@@ -1602,6 +1603,10 @@ set< unsigned int > cFibObjectInfo::getSizeInVar() const {
  * 	"position of the start point in dimension 2 (y_s)"
  * would be interpreted as the POS_DIM_2 input variable type.
  *
+ * There exists a test exectebel, where the regular expressions are tested
+ * and where new regular expressions can be tested first:
+ * @see ../test/tInVarTypeFromTextRegex.cpp
+ *
  * @see typeOfInputVariables
  * @see mapInVarTypes
  * @see getTypeInVar()
@@ -1615,22 +1620,117 @@ cFibObjectInfo::typeOfInputVariables cFibObjectInfo::getInVarTypeFromText(
 		const string & szText ) {
 	
 #ifdef FEATURE_FIB_OBJECT_INFO_IN_VAR_TYPE_FROM_TEXT_REGEX
-	//TODO implement
 	/*a list with the patterns for the input variable types
 		 first: the pattern
 		 second: the input variable type for the pattern*/
 	list< pair< regex, typeOfInputVariables > > liPatternsForInVarTypes;
-	//TODO
-	/*search for key words: " dimension ", " dim ", " point ", " start , " end ",
-	 * " angle ", " radius ", " width ", " x_", " y_", " z_", " x ", " y ", " z ",
-	 * " distance ", " middle "
-	check numbers (words) before or directly after:
-		 " 1", " 2", " 3", " 4", first ", " second ", " third "
-	*/
+	
+	//search for key words:
+	const string patPosition = "(((((position)|(location))|((locale)|(locality)))|(((place)|(site))|((spot)|(point))))|(pixle))";
+	const string patDimension = "(((dimension)|(dim))|(direction))";
+	const string parOne = "(((1)|(one))|((1\\.)|(first)))";
+	const string parTwo = "(((2)|(two))|((2\\.)|(second)))";
+	const string parThree = "(((3)|(three))|((3\\.)|(third)))";
+	const string parFour = "(((4)|(four))|((4\\.)|(fourth)))";
+	
+	const string patStart = "(((1\\.)|(start))|((first)|"+ parOne +"))";
+	
+	const string patDim1 = "(((" + patDimension + " +" + parOne + ")|(" +
+		parOne + " +" + patDimension + "))|(x))";
+	const string patDim2 = "(((" + patDimension + " +" + parTwo + ")|(" +
+		parTwo + " +" + patDimension + "))|(y))";
+	
+	const string patWidth = "((((width)|(breadth))|((compass)|(diameter)))|(((measure)|(span))|((thickness)|(wideness))))";
+	
+	const string patLine = "(((((line)|(lines))|((border)|(borderline)))|(((boundary)|(bound))|((edge)|( fringe))))|(((rank)|(rim))|(verge)))";
+	
+	const string patStartPosition = "((" + patStart + " +" + patPosition + ")|(" +
+		patPosition + " +" + patStart +"))";
+	
+	const string patEndPosition = "(((((end)|(ending))|(last)) +" + patPosition + ")|(" +
+		patPosition + " +(((end)|(ending))|(last))))";
+	
+	
 	//e.g. "position start point dimension 1 (x_1)"
 	liPatternsForInVarTypes.push_back( pair< regex, typeOfInputVariables >(
-		regex( ".*position .*(start|first|1.) point .*dimension  (1 |first ) .*",
-			regex_constants::icase | regex_constants::ECMAScript ) ,POS_DIM_1 ) );
+		regex( ".*" + patPosition + " .*" + patStartPosition +" .*" + patDim1 +".*",
+			regex_constants::icase | regex_constants::ECMAScript ) , POS_DIM_1 ) );
+	liPatternsForInVarTypes.push_back( pair< regex, typeOfInputVariables >(
+		regex( ".*" + patPosition + " .*" + patStartPosition +" .*" + patDim2 +".*",
+			regex_constants::icase | regex_constants::ECMAScript ) , POS_DIM_2 ) );
+	liPatternsForInVarTypes.push_back( pair< regex, typeOfInputVariables >(
+		regex( ".*" + patPosition + " .*" + patEndPosition +" .*" + patDim1 +".*",
+			regex_constants::icase | regex_constants::ECMAScript ) , POS_END_DIM_1 ) );
+	liPatternsForInVarTypes.push_back( pair< regex, typeOfInputVariables >(
+		regex( ".*" + patPosition + " .*" + patEndPosition +" .*" + patDim2 +".*",
+			regex_constants::icase | regex_constants::ECMAScript ) , POS_END_DIM_2 ) );
+	liPatternsForInVarTypes.push_back( pair< regex, typeOfInputVariables >(
+		regex( ".*((" + patWidth + " .*" + patLine +")|("
+		+ patLine + " .*" + patWidth +")).*",
+			regex_constants::icase | regex_constants::ECMAScript ) , LINE_WIDTH ) );
+	liPatternsForInVarTypes.push_back( pair< regex, typeOfInputVariables >(
+		regex( ".*" + patPosition + " .*((" + parThree + " +" + patPosition + ")|(" +
+		patPosition + " +" + parThree +")) .*" + patDim1 +".*",
+			regex_constants::icase | regex_constants::ECMAScript ) , POS_POINT_3_DIM_1 ) );
+	liPatternsForInVarTypes.push_back( pair< regex, typeOfInputVariables >(
+		regex( ".*" + patPosition + " .*((" + parThree + " +" + patPosition + ")|(" +
+		patPosition + " +" + parThree +")) .*" + patDim2 +".*",
+			regex_constants::icase | regex_constants::ECMAScript ) , POS_POINT_3_DIM_2 ) );
+	liPatternsForInVarTypes.push_back( pair< regex, typeOfInputVariables >(
+		regex( ".*" + patPosition + " .*((" + parFour + " +" + patPosition + ")|(" +
+		patPosition + " +" + parFour +")) .*" + patDim1 +".*",
+			regex_constants::icase | regex_constants::ECMAScript ) , POS_POINT_4_DIM_1 ) );
+	liPatternsForInVarTypes.push_back( pair< regex, typeOfInputVariables >(
+		regex( ".*" + patPosition + " .*((" + parFour + " +" + patPosition + ")|(" +
+		patPosition + " +" + parFour +")) .*" + patDim2 +".*",
+			regex_constants::icase | regex_constants::ECMAScript ) , POS_POINT_4_DIM_2 ) );
+	
+	const string patRadius = "((radius)|(diameter))";
+	liPatternsForInVarTypes.push_back( pair< regex, typeOfInputVariables >(
+		regex( ".*((" + patRadius + ".* " + patDim1 +")|(" +
+		patDim1 + ".* " + patRadius +")).*",
+			regex_constants::icase | regex_constants::ECMAScript ) , SIZE_RADIUS_DIM_1 ) );
+	liPatternsForInVarTypes.push_back( pair< regex, typeOfInputVariables >(
+		regex( ".*((" + patRadius + ".* " + patDim2 +")|(" +
+		patDim2 + ".* " + patRadius +")).*",
+			regex_constants::icase | regex_constants::ECMAScript ) , SIZE_RADIUS_DIM_2 ) );
+	//check specific pattern before general pattern
+	liPatternsForInVarTypes.push_back( pair< regex, typeOfInputVariables >(
+		regex( ".*" + patRadius + ".*",
+			regex_constants::icase | regex_constants::ECMAScript ) , SIZE_RADIUS ) );
+	
+	liPatternsForInVarTypes.push_back( pair< regex, typeOfInputVariables >(
+		regex( ".*((angle)|(chevron)).*",
+			regex_constants::icase | regex_constants::ECMAScript ) , ANGLE ) );
+	
+	const string patSize = "((((size)|(distance))|((extent)|(bigness)))|(((length)|(span))|((stretch)|(width))))";
+	liPatternsForInVarTypes.push_back( pair< regex, typeOfInputVariables >(
+		regex( ".*((" + patSize + ".* " + patDim1 +")|(" + patDim1 + ".* " + patSize +")).*",
+			regex_constants::icase | regex_constants::ECMAScript ) , SIZE_DIM_1 ) );
+	liPatternsForInVarTypes.push_back( pair< regex, typeOfInputVariables >(
+		regex( ".*((" + patSize + ".* " + patDim2 +")|(" + patDim2 + ".* " + patSize +")).*",
+			regex_constants::icase | regex_constants::ECMAScript ) , SIZE_DIM_2 ) );
+	//check specific pattern before general pattern
+	liPatternsForInVarTypes.push_back( pair< regex, typeOfInputVariables >(
+		regex( ".*" + patSize + ".*",
+			regex_constants::icase | regex_constants::ECMAScript ) , SIZE ) );
+	
+	liPatternsForInVarTypes.push_back( pair< regex, typeOfInputVariables >(
+		regex( ".*" + patPosition + " .*" + patPosition +"s .*" + patDim1 +".*",
+			regex_constants::icase | regex_constants::ECMAScript ) , POS_POINT_ALL_DIM_1 ) );
+	liPatternsForInVarTypes.push_back( pair< regex, typeOfInputVariables >(
+		regex( ".*" + patPosition + " .*" + patPosition +"s .*" + patDim2 +".*",
+			regex_constants::icase | regex_constants::ECMAScript ) , POS_POINT_ALL_DIM_2 ) );
+	
+	const string parMiddle = "(((middle)|(center))|((mid)|(midpoint)))";
+	liPatternsForInVarTypes.push_back( pair< regex, typeOfInputVariables >(
+		regex( ".*" + parMiddle + " .*" + patDim1 +".*",
+			regex_constants::icase | regex_constants::ECMAScript ) , POS_POINT_MIDDLE_DIM_1 ) );
+	liPatternsForInVarTypes.push_back( pair< regex, typeOfInputVariables >(
+		regex( ".*" + parMiddle + " .*" + patDim2 +".*",
+			regex_constants::icase | regex_constants::ECMAScript ) , POS_POINT_MIDDLE_DIM_2 ) );
+	
+	
 	
 	for ( typename list< pair< regex, typeOfInputVariables > >::const_iterator
 			itrPattern = liPatternsForInVarTypes.begin();
@@ -1643,25 +1743,188 @@ cFibObjectInfo::typeOfInputVariables cFibObjectInfo::getInVarTypeFromText(
 		}//else check next pattern
 	}//end for all pattern
 	
-
-
 	
 	
-	/*		UNKNOWN   = 0,  //type unknown
-		POS_DIM_1 = 1,  //the position in the first dimension
-		POS_DIM_2 = 2,  //the position in the second dimension
-		SIZE      = 10, //the size of the Fib object
-		SIZE_DIM_1 = 11,//the size of the Fib object in the first dimension
-		SIZE_DIM_2 = 12,//the size of the Fib object in the second dimension
-		SIZE_RADIUS= 20,//the radius of the Fib object
-		SIZE_RADIUS_DIM_1 = 21,//the radius of the Fib object in the first dimension
-		SIZE_RADIUS_DIM_2 = 22,//the radius of the Fib object in the second dimension
-		ANGLE = 100//the angle of the Fib object
-	*/
+	/*TODO
+	 -?how to implement? if no size is given but POS_DIM_n and POS_END_DIM_n -> size POS_END_DIM_n - POS_DIM_n
+	 */
 	
 	
 #endif //FEATURE_FIB_OBJECT_INFO_IN_VAR_TYPE_FROM_TEXT_REGEX
 	return UNKNOWN;
+}
+
+
+//TODO
+
+/**
+ * This function will add missing Fib input variables types to the given
+ * map of input variable types
+ * For exampe the POS_END_DIM_1 input variable type, will be set to the
+ * last not used POS_POINT_p_DIM_1 (if existing) .
+ *
+ * @see getInVarTypeFromText()
+ * @see typeOfInputVariables
+ * @see mapInVarTypes
+ * @see getTypeInVar()
+ * @see getInVarForType()
+ * @see addTypeInVar()
+ * @param inOutMapInVarTypes the map with the input variable types, for
+ * 	which to add missing types that can be infered from the existing
+ * 	input variable types
+ */
+void cFibObjectInfo::fillInMissingTypesOfInputVariables(
+		map< typeOfInputVariables , unsigned int > & inOutMapInVarTypes ) {
+	
+	/*function fillInMissingTypesOfInputVariables
+		* the first free inVar POS_* type will be set to the middle point
+		 inVar (of same dimension)
+		* for POS_END_DIM_n inVars set last not used POS_POINT_p_DIM_n (if existing)
+		* set last used POS_POINT_p_DIM_n (if existing) to POS_END_DIM_n
+		* remember inVar for position of all points in one dimension and
+		 add later all free other sides for dimension as type for inVar
+		 ( inVar v for dim 1: other inVars for POS_DIM_2, POS_POINT_2_DIM_1,
+		 POS_POINT_3_DIM_1, POS_POINT_3_DIM_2 and POS_END_DIM_2
+		 -> add type for inVar v: POS_DIM_1 and POS_END_DIM_1)
+	 */
+	const static int uiNumberOfPosNTypes = 4;
+	const static typeOfInputVariables arOfPosNTypesDim1[ uiNumberOfPosNTypes ] =
+		{ POS_DIM_1, POS_POINT_2_DIM_1, POS_POINT_3_DIM_1, POS_POINT_4_DIM_1 };
+	const static typeOfInputVariables arOfPosNTypesDim2[ uiNumberOfPosNTypes ] =
+		{ POS_DIM_2, POS_POINT_2_DIM_2, POS_POINT_3_DIM_2, POS_POINT_4_DIM_2 };
+	
+	//the first free inVar POS_* type will be set to the middle point inVar (of same dimension)
+	if ( inOutMapInVarTypes.find( POS_POINT_MIDDLE_DIM_1 ) != inOutMapInVarTypes.end() ) {
+		//a middle point for dimension 1 exists
+		for ( int index = 0; index < uiNumberOfPosNTypes; ++index ) {
+			if ( inOutMapInVarTypes.find( arOfPosNTypesDim1[ index ] ) == inOutMapInVarTypes.end() ) {
+				//no input variable for the input variable POS_*_DIM_1 type
+				//arOfPosNTypesDim1[ index ] exists -> set type for middle point inVar
+				inOutMapInVarTypes[ arOfPosNTypesDim1[ index ] ] =
+					inOutMapInVarTypes[ POS_POINT_MIDDLE_DIM_1 ];
+				break;  //done
+			}
+		}
+	}  //end if POS_POINT_MIDDLE_DIM_1
+	if ( inOutMapInVarTypes.find( POS_POINT_MIDDLE_DIM_2 ) != inOutMapInVarTypes.end() ) {
+		//a middle point for dimension 2 exists
+		for ( int index = 0; index < uiNumberOfPosNTypes; ++index ) {
+			if ( inOutMapInVarTypes.find( arOfPosNTypesDim2[ index ] ) == inOutMapInVarTypes.end() ) {
+				//no input variable for the input variable POS_*_DIM_2 type
+				//arOfPosNTypesDim1[ index ] exists -> set type for middle point inVar
+				inOutMapInVarTypes[ arOfPosNTypesDim2[ index ] ] =
+					inOutMapInVarTypes[ POS_POINT_MIDDLE_DIM_2 ];
+				break;  //done
+			}
+		}
+	}  //end if POS_POINT_MIDDLE_DIM_2
+	
+	//connect end point and last point (POS_POINT_p_DIM_d with p is max)
+	if ( inOutMapInVarTypes.find( POS_END_DIM_1 ) != inOutMapInVarTypes.end() ) {
+		//end point for dimension 1 exists
+		//for POS_END_DIM_1 inVars set last not used POS_POINT_p_DIM_1 (if existing)
+		
+		//set last used POS_POINT_p_DIM_n (if existing) to POS_END_DIM_n
+		for ( int index = uiNumberOfPosNTypes - 1; 0 <= index ; --index ) {
+			if ( inOutMapInVarTypes.find( arOfPosNTypesDim1[ index ] ) != inOutMapInVarTypes.end() ) {
+				//input variable for the input variable POS_*_DIM_1 type
+				//arOfPosNTypesDim1[ index ] exists -> try to get next point
+				if ( ( index < uiNumberOfPosNTypes  ) && //not last existing position type
+						( inOutMapInVarTypes[ POS_END_DIM_1 ] !=
+							inOutMapInVarTypes[ arOfPosNTypesDim1[ index ] ] ) ) {
+					//not the same input variable for both position types
+					++index;  //get next point position type
+					inOutMapInVarTypes[ arOfPosNTypesDim1[ index ] ] =
+						inOutMapInVarTypes[ POS_END_DIM_1 ];
+				}
+				break;  //done
+			}
+		}
+	} else { //no end point for dimension 1 exists
+		//set last used POS_POINT_p_DIM_1 (if existing) to POS_END_DIM_1
+		for ( int index = uiNumberOfPosNTypes - 1; 0 <= index ; --index ) {
+			if ( inOutMapInVarTypes.find( arOfPosNTypesDim1[ index ] ) != inOutMapInVarTypes.end() ) {
+				//input variable for the input variable POS_*_DIM_1 type
+				//arOfPosNTypesDim1[ index ] exists -> set type for end point inVar
+				inOutMapInVarTypes[ POS_END_DIM_1 ] =
+					inOutMapInVarTypes[ arOfPosNTypesDim1[ index ] ];
+				break;  //done
+			}
+		}
+	}  //end if POS_END_DIM_1
+	
+	if ( inOutMapInVarTypes.find( POS_END_DIM_2 ) != inOutMapInVarTypes.end() ) {
+		//end point for dimension 2 exists
+		//for POS_END_DIM_n inVars set last not used POS_POINT_p_DIM_2 (if existing)
+		
+		//set last used POS_POINT_p_DIM_2 (if existing) to POS_END_DIM_2
+		for ( int index = uiNumberOfPosNTypes - 1; 0 <= index ; --index ) {
+			if ( inOutMapInVarTypes.find( arOfPosNTypesDim2[ index ] ) != inOutMapInVarTypes.end() ) {
+				//input variable for the input variable POS_*_DIM_2 type
+				//arOfPosNTypesDim2[ index ] exists -> try to get next point
+				if ( ( index < uiNumberOfPosNTypes  ) && //not last existing position type
+						( inOutMapInVarTypes[ POS_END_DIM_2 ] !=
+							inOutMapInVarTypes[ arOfPosNTypesDim2[ index ] ] ) ) {
+					//not the same input variable for both position types
+					++index;  //get next point position type
+					inOutMapInVarTypes[ arOfPosNTypesDim2[ index ] ] =
+						inOutMapInVarTypes[ POS_END_DIM_2 ];
+				}
+				break;  //done
+			}
+		}
+	} else {  //no end point for dimension 2 exists
+		//set last used POS_POINT_p_DIM_2 (if existing) to POS_END_DIM_2
+		for ( int index = uiNumberOfPosNTypes - 1; 0 <= index ; --index ) {
+			if ( inOutMapInVarTypes.find( arOfPosNTypesDim2[ index ] ) != inOutMapInVarTypes.end() ) {
+				//input variable for the input variable POS_*_DIM_2 type
+				//arOfPosNTypesDim2[ index ] exists -> set type for end point inVar
+				inOutMapInVarTypes[ POS_END_DIM_2 ] =
+					inOutMapInVarTypes[ arOfPosNTypesDim2[ index ] ];
+				break;  //done
+			}
+		}
+	}  //end if POS_END_DIM_1
+	
+	
+	/* set inVar for position of all points in one dimension to
+	 all free other sides for dimension as type for inVar
+	 (e.g. inVar v for dim 1: other inVars for POS_DIM_2, POS_POINT_2_DIM_1,
+	 POS_POINT_3_DIM_1, POS_POINT_3_DIM_2 and POS_END_DIM_2
+	 -> add type for inVar v: POS_DIM_1 and POS_END_DIM_1) */
+	if ( inOutMapInVarTypes.find( POS_POINT_ALL_DIM_1 ) != inOutMapInVarTypes.end() ) {
+		//the POS_POINT_ALL_DIM_1 inVar type exists
+		for ( int index = 0; index < uiNumberOfPosNTypes; ++index ) {
+			if ( ( inOutMapInVarTypes.find( arOfPosNTypesDim1[ index ] ) ==
+						inOutMapInVarTypes.end() ) &&
+					( inOutMapInVarTypes.find( arOfPosNTypesDim2[ index ] ) !=
+						inOutMapInVarTypes.end() ) ) {
+				//no input variable for the input variable POS_n_DIM_1 type
+				//but one for the POS_n_DIM_2 type exists
+				//-> set type for POS_n_DIM_1 point inVar to
+				// POS_POINT_ALL_DIM_1 inVar
+				inOutMapInVarTypes[ arOfPosNTypesDim1[ index ] ] =
+					inOutMapInVarTypes[ POS_POINT_ALL_DIM_1 ];
+			}
+		}
+	}
+	if ( inOutMapInVarTypes.find( POS_POINT_ALL_DIM_2 ) != inOutMapInVarTypes.end() ) {
+		//the POS_POINT_ALL_DIM_2 inVar type exists
+		for ( int index = 0; index < uiNumberOfPosNTypes; ++index ) {
+			if ( ( inOutMapInVarTypes.find( arOfPosNTypesDim2[ index ] ) ==
+						inOutMapInVarTypes.end() ) &&
+					( inOutMapInVarTypes.find( arOfPosNTypesDim1[ index ] ) !=
+						inOutMapInVarTypes.end() ) ) {
+				//no input variable for the input variable POS_n_DIM_2 type
+				//but one for the POS_n_DIM_1 type exists
+				//-> set type for POS_n_DIM_2 point inVar to
+				// POS_POINT_ALL_DIM_2 inVar
+				inOutMapInVarTypes[ arOfPosNTypesDim2[ index ] ] =
+					inOutMapInVarTypes[ POS_POINT_ALL_DIM_2 ];
+			}
+		}
+	}
+	
 }
 
 
@@ -1697,7 +1960,40 @@ string cFibObjectInfo::getNameForInVarType( const typeOfInputVariables typeOfInV
 			//the radius of the Fib object in the first dimension
 		case SIZE_RADIUS_DIM_2 : return "radius dimension 2";
 			//the radius of the Fib object in the second dimension
+		case LINE_WIDTH : return "line width";
+			//width of the line, with which the object was drawn
+		
 		case ANGLE : return "angle";//the angle of the Fib object
+		case POS_END_DIM_1 : return "end position dimension 1";
+			//the end position in the first dimension
+		case POS_END_DIM_2 : return "end position dimension 2";
+			//the end position in the second dimension
+		
+		case POS_POINT_2_DIM_1 : return "2. point dimension 1";
+			//the position of the second point in the first dimension
+		case POS_POINT_2_DIM_2 : return "2. point dimension 2";
+			//the position of the second point in the second dimension
+		
+		case POS_POINT_3_DIM_1 : return "3. point dimension 1";
+			//the position of the third point in the first dimension
+		case POS_POINT_3_DIM_2 : return "3. point dimension 2";
+			//the position of the third point in the second dimension
+		
+		case POS_POINT_4_DIM_1 : return "4. point dimension 1";
+			//the position of the 4. point in the first dimension
+		case POS_POINT_4_DIM_2 : return "4. point dimension 2";
+			//the position of the 4. point in the second dimension
+		
+		case POS_POINT_ALL_DIM_1 : return "all points dimension 1";
+			//the position of the all points in the first dimension
+		case POS_POINT_ALL_DIM_2 : return "all points dimension 2";
+			//the position of the all points in the second dimension
+		case POS_POINT_MIDDLE_DIM_1 : return "middle point dimension 1";
+			//the position of the middle point in the first dimension
+		case POS_POINT_MIDDLE_DIM_2 : return "middle point dimension 2";
+			//the position of the middle point in the second dimension
+		
+		
 	};//else UNKNOWN
 	//int to string
 	const int iTypeOfInVar = ((int)(typeOfInVar));
@@ -1726,7 +2022,7 @@ cFibObjectInfo::typeOfInputVariables cFibObjectInfo::getInVarTypeForName(
 	
 	if ( szNameInVar == "position dimension 1" ) {
 		return POS_DIM_1;  //the position in the first dimension
-	} else if ( szNameInVar == "position dimension 1" ) {
+	} else if ( szNameInVar == "position dimension 2" ) {
 		return POS_DIM_2;  //the position in the second dimension
 	} else if ( szNameInVar == "size" ) {
 		return SIZE;  //the size of the Fib object
@@ -1740,8 +2036,41 @@ cFibObjectInfo::typeOfInputVariables cFibObjectInfo::getInVarTypeForName(
 		return SIZE_RADIUS_DIM_1;  //the radius of the Fib object in the first dimension
 	} else if ( szNameInVar == "radius dimension 2" ) {
 		return SIZE_RADIUS_DIM_2;  //the radius of the Fib object in the second dimension
+	} else if ( szNameInVar == "line width" ) {
+		return LINE_WIDTH;  //width of the line, with which the object was drawn
+	
 	} else  if ( szNameInVar == "angle" ) {
 		return ANGLE;  //the angle of the Fib object
+	} else if ( szNameInVar == "end position dimension 1" ) {
+		return POS_END_DIM_1;  //the end position in the first dimension
+	} else if ( szNameInVar == "end position dimension 2" ) {
+		return POS_END_DIM_2;  //the end position in the second dimension
+		
+	} else if ( szNameInVar == "2. point dimension 1" ) {
+		return POS_POINT_2_DIM_1;  //the position of the second point in the first dimension
+	} else if ( szNameInVar == "2. point dimension 2" ) {
+		return POS_POINT_2_DIM_2;  //the position of the second point in the second dimension
+		
+	} else if ( szNameInVar == "3. point dimension 1" ) {
+		return POS_POINT_3_DIM_1;  //the position of the third point in the first dimension
+	} else if ( szNameInVar == "3. point dimension 2" ) {
+		return POS_POINT_3_DIM_2;  //the position of the third point in the second dimension
+		
+	} else if ( szNameInVar == "4. point dimension 1" ) {
+		return POS_POINT_4_DIM_1;  //the position of the 4. point in the first dimension
+	} else if ( szNameInVar == "4. point dimension 2" ) {
+		return POS_POINT_4_DIM_2;  //the position of the 4. point in the second dimension
+		
+	} else if ( szNameInVar == "all points dimension 1" ) {
+		return POS_POINT_ALL_DIM_1;  //the position of the all points in the first dimension
+	} else if ( szNameInVar == "all points dimension 2" ) {
+		return POS_POINT_ALL_DIM_2;  //the position of the all points in the second dimension
+	} else if ( szNameInVar == "middle point dimension 1" ) {
+		return POS_POINT_MIDDLE_DIM_1;  //the position of the middle point in the first dimension
+	} else if ( szNameInVar == "middle point dimension 2" ) {
+		return POS_POINT_MIDDLE_DIM_2;  //the position of the middle point in the second dimension
+		
+		
 	} else if ( szNameInVar ==  "type unknown" ) {
 		return UNKNOWN;  //type unknown
 	}

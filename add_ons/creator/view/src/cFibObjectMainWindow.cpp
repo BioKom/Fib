@@ -1056,7 +1056,7 @@ bool cFibObjectMainWindow::storeFibObject( const QString & strFilePath ) {
 		//no Fib object to store given
 		QMessageBox msgBox( this );
 		msgBox.setWindowTitle("Fib creator save Fib object");
-		msgBox.setText( tr( "No Fib object to store." ).
+		msgBox.setText( tr( "No Fib object to store to \"%1\"." ).
 			arg( strFilePath ) );
 		msgBox.setIcon( QMessageBox::Critical );
 		msgBox.exec();

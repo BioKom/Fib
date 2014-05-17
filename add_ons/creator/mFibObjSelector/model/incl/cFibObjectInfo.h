@@ -209,7 +209,6 @@ public:
 	 * 	- @see getNameForInVarType()
 	 * 	- @see getInVarTypeForName()
 	 * 	- @see isSizeInVarTypes()
-	 * 	- @see getSizeInVarTyps()
 	 *
 	 * @see getTypeInVar()
 	 * @see getInVarForType()
@@ -230,15 +229,25 @@ public:
 		SIZE_RADIUS= 20,//the radius of the Fib object
 		SIZE_RADIUS_DIM_1 = 21,//the radius of the Fib object in the first dimension
 		SIZE_RADIUS_DIM_2 = 22,//the radius of the Fib object in the second dimension
-		ANGLE = 100//the angle of the Fib object
-		/*TODO
-		 POS_POINT_2_DIM_1 = 200
-		 POS_POINT_2_DIM_2 = 201
-		 POS_POINT_3_DIM_1 = 300
-		 POS_POINT_3_DIM_2 = 301
-		 POS_POINT_4_DIM_1 = 400
-		 POS_POINT_4_DIM_2 = 401
-		 */
+		LINE_WIDTH = 30,  //width of the line, with which the object was drawn
+		
+		ANGLE = 100,    //the angle of the Fib object
+		POS_END_DIM_1 = 101,  //the end position in the first dimension
+		POS_END_DIM_2 = 102,  //the end position in the second dimension
+		
+		POS_POINT_2_DIM_1 = 200,  //the position of the second point in the first dimension
+		POS_POINT_2_DIM_2 = 201,  //the position of the second point in the second dimension
+		
+		POS_POINT_3_DIM_1 = 300,  //the position of the third point in the first dimension
+		POS_POINT_3_DIM_2 = 301,  //the position of the third point in the second dimension
+		
+		POS_POINT_4_DIM_1 = 400,  //the position of the 4. point in the first dimension
+		POS_POINT_4_DIM_2 = 401,   //the position of the 4. point in the second dimension
+		
+		POS_POINT_ALL_DIM_1 = 1000, //the position of the all points in the first dimension
+		POS_POINT_ALL_DIM_2 = 1001, //the position of the all points in the second dimension
+		POS_POINT_MIDDLE_DIM_1 = 1010, //the position of the middle point in the first dimension
+		POS_POINT_MIDDLE_DIM_2 = 1011 //the position of the middle point in the second dimension
 		
 	};//end typeOfInputVariables
 
@@ -1090,6 +1099,7 @@ protected:
 	 *
 	 * @see typeOfInputVariables
 	 * @see mapInVarTypes
+	 * @see fillInMissingTypesOfInputVariables()
 	 * @see getTypeInVar()
 	 * @see getInVarForType()
 	 * @see addTypeInVar()
@@ -1098,6 +1108,25 @@ protected:
 	 * 	UNKNOWN if non could be found
 	 */
 	static typeOfInputVariables getInVarTypeFromText( const string & szText );
+	
+	/**
+	 * This function will add missing Fib input variables types to the given
+	 * map of input variable types
+	 * For exampe the POS_END_DIM_1 input variable type, will be set to the
+	 * last not used POS_POINT_p_DIM_1 (if existing) .
+	 *
+	 * @see getInVarTypeFromText()
+	 * @see typeOfInputVariables
+	 * @see mapInVarTypes
+	 * @see getTypeInVar()
+	 * @see getInVarForType()
+	 * @see addTypeInVar()
+	 * @param inOutMapInVarTypes the map with the input variable types, for
+	 * 	which to add missing types that can be infered from the existing
+	 * 	input variable types
+	 */
+	static void fillInMissingTypesOfInputVariables(
+		map< typeOfInputVariables , unsigned int > & inOutMapInVarTypes );
 	
 	/**
 	 * The identifiers of this Fib object.
@@ -1227,7 +1256,6 @@ protected:
 	 */
 	unsigned long ulNumberOfFibElements;
 	
-	//TODO
 	/**
 	 * The known types of the input variables.
 	 * 	key: the type of the input variable
@@ -1243,7 +1271,6 @@ protected:
 	 * @see removeTypeInVar()
 	 * @see getInVarTypeForName()
 	 * @see getNameForInVarType()
-	 * TODO extract
 	 */
 	map< typeOfInputVariables , unsigned int > mapInVarTypes;
 	

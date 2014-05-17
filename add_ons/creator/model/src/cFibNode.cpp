@@ -844,6 +844,9 @@ bool cFibNode::insertFibObjectInfo( cFibObjectInfo * pFibObjectInfo,
 		
 		return false;
 	}
+	//TODO if point subobject is needed -> add one
+	
+	
 	//remember: pFibObjectToInsert added in Fib object
 	fibNodeChangedEvent.addChangedFibObject( pFibObjectToInsert,
 		eFibNodeChangedEvent::ADDED );
