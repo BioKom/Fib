@@ -1829,7 +1829,8 @@ void cFibObjectInfo::fillInMissingTypesOfInputVariables(
 			if ( inOutMapInVarTypes.find( arOfPosNTypesDim1[ index ] ) != inOutMapInVarTypes.end() ) {
 				//input variable for the input variable POS_*_DIM_1 type
 				//arOfPosNTypesDim1[ index ] exists -> try to get next point
-				if ( ( index < uiNumberOfPosNTypes  ) && //not last existing position type
+				if ( ( 0 < index ) &&  //not first point
+						( index < uiNumberOfPosNTypes  ) && //not last existing position type
 						( inOutMapInVarTypes[ POS_END_DIM_1 ] !=
 							inOutMapInVarTypes[ arOfPosNTypesDim1[ index ] ] ) ) {
 					//not the same input variable for both position types
@@ -1862,7 +1863,8 @@ void cFibObjectInfo::fillInMissingTypesOfInputVariables(
 			if ( inOutMapInVarTypes.find( arOfPosNTypesDim2[ index ] ) != inOutMapInVarTypes.end() ) {
 				//input variable for the input variable POS_*_DIM_2 type
 				//arOfPosNTypesDim2[ index ] exists -> try to get next point
-				if ( ( index < uiNumberOfPosNTypes  ) && //not last existing position type
+				if ( ( 0 < index ) &&  //not first point
+						( index < uiNumberOfPosNTypes  ) && //not last existing position type
 						( inOutMapInVarTypes[ POS_END_DIM_2 ] !=
 							inOutMapInVarTypes[ arOfPosNTypesDim2[ index ] ] ) ) {
 					//not the same input variable for both position types

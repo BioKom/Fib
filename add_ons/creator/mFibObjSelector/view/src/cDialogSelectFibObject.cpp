@@ -65,6 +65,7 @@ History:
 24.10.2013  Oesterholz  created
 13.04.2014  Oesterholz  insertSelectedFibObject() insert selected Fib object
 	info on given position
+18.05.2014  Oesterholz  loadFibObject(): opens with last choosen file
 */
 
 
@@ -76,6 +77,7 @@ History:
 #include "cDialogSelectFibObject.h"
 
 #include <QFileDialog>
+#include <QSettings>
 
 #include "cFlowLayout.h"
 
@@ -502,8 +504,12 @@ void cDialogSelectFibObject::loadFibObject() {
 	//open dialog to load a Fib object
 	DEBUG_OUT_L2(<<"cDialogSelectFibObject("<<this<<")::loadFibObject() called"<<endl<<flush);
 	
+	//to set start file
+	QSettings settings("Fib development", "Fib creator");
 	//open file dialog
-	QFileDialog fileDialog( NULL, tr("Open Fib object"), QString(""),
+	QFileDialog fileDialog( NULL, tr("Open Fib object"), settings.value(
+			"dialogSelectFibObject/fileDialog/lastFibFile",
+				QDir::homePath() + QDir::separator() + "*.xml" ).toString(),
 		tr("Fib XML (*.xml);;Fib compressed (*.fib)" ) );
 	
 	fileDialog.setFileMode( QFileDialog::ExistingFile );
@@ -511,6 +517,10 @@ void cDialogSelectFibObject::loadFibObject() {
 	if ( fileDialog.exec() ) {
 		//file(s) was/(where) choosen, add Fib object infos from the choosen files
 		const QStringList liFileNames = fileDialog.selectedFiles();
+		if ( ! liFileNames.empty() ) {
+			//store actual first file as last used file
+			settings.setValue("dialogSelectFibObject/fileDialog/lastFibFile", liFileNames.front() );
+		}
 		
 		cFibObjectInfoHandler * pFibObjectInfoHandler =
 			cFibObjectInfoHandler::getInstance();
@@ -530,7 +540,6 @@ void cDialogSelectFibObject::loadFibObject() {
 				//update Fib object info widget lists
 				(*itrFibInfos)->updateForCategory();
 			}
-			
 		}
 	}//else no file was choosen
 }

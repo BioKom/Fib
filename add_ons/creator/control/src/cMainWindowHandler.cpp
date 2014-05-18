@@ -41,6 +41,7 @@
 /*
 History:
 24.06.2013  Oesterholz  created
+18.05.2014  Oesterholz  openFibObjectFromFile(): opens with last choosen file
 */
 
 
@@ -56,6 +57,7 @@ History:
 #include <QApplication>
 #include <QMessageBox>
 #include <QFileDialog>
+#include <QSettings>
 
 #include "cRoot.h"
 #include "cPoint.h"
@@ -534,8 +536,12 @@ cFibElement * cMainWindowHandler::openFibObjectFromFile( string * pOutStrFilePat
 	
 	DEBUG_OUT_L2(<<"cMainWindowHandler("<<this<<")::openFibObjectFromFile( pOutStrFilePath="<<pOutStrFilePath<<") called"<<endl<<flush);
 	
+	//to set start file
+	QSettings settings("Fib development", "Fib creator");
 	//open file dialog
-	QFileDialog fileDialog( NULL, tr("Open Fib object"), QString(""),
+	QFileDialog fileDialog( NULL, tr("Open Fib object"),  settings.value(
+			"mainWindow/fileDialog/lastFile",
+				QDir::homePath() + QDir::separator() + "*.xml" ).toString(),
 		tr("Fib XML (*.xml);;Fib compressed (*.fib)" ) );
 	
 	fileDialog.setFileMode( QFileDialog::ExistingFile );
@@ -552,6 +558,8 @@ cFibElement * cMainWindowHandler::openFibObjectFromFile( string * pOutStrFilePat
 			//store the file path
 			(*pOutStrFilePath) = liFileNames.size();
 		}
+		//store actual file as last used file
+		settings.setValue("mainWindow/fileDialog/lastFile", liFileNames.front() );
 		return openFibObjectFromFile( liFileNames.front().toStdString() );
 	}//else
 	//no file to open -> return NULL

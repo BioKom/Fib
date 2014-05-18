@@ -1,3 +1,6 @@
+
+//TODO check
+
 /**
  * @file tInVarTypeFromTextRegex
  * file name: tInVarTypeFromTextRegex.cpp
@@ -335,27 +338,26 @@ int main(int argc, char* argv[]){
 		"stretch y dirction") );
 	
 	
-//TODO transver
-	/*TODO remember inVar for position of all points in one dimension and
+	/*remember inVar for position of all points in one dimension and
 	 add later all free other sides for dimension as type for inVar
 	 ( inVar v for dim 1: other inVars for POS_DIM_2, POS_POINT_2_DIM_1,
 	 POS_POINT_3_DIM_1, POS_POINT_3_DIM_2 and POS_END_DIM_2
 	 -> add type for inVar v: POS_DIM_1 and POS_END_DIM_1)*/
-	//TODO POS_POINT_ALL_DIM_1
+	//POS_POINT_ALL_DIM_1
 	szTestPattern = ".*" + patPosition + " .*" + patPosition +"s .*" + patDim1 +".*";
 	liPatternTests.push_back( pair< string, string >( szTestPattern,
 		"position points in dimension 1 (x)") );
 	liPatternTests.push_back( pair< string, string >( szTestPattern,
 		"position points in  x dimension") );
 	
-	//TODO POS_POINT_ALL_DIM_2
+	//POS_POINT_ALL_DIM_2
 	szTestPattern = ".*" + patPosition + " .*" + patPosition +"s .*" + patDim2 +".*";
 	liPatternTests.push_back( pair< string, string >( szTestPattern,
 		"position points in dimension 2 (y)") );
 	liPatternTests.push_back( pair< string, string >( szTestPattern,
 		"position points in 2  dimension") );
 
-	/*TODO the first free inVar POS_* type will be set to the middle point
+	/*the first free inVar POS_* type will be set to the middle point
 	 *inVar (of same dimension)*/
 	const string parMiddle = "(((middle)|(center))|((mid)|(midpoint)))";
 	
@@ -381,44 +383,6 @@ int main(int argc, char* argv[]){
 	liPatternTests.push_back( pair< string, string >( szTestPattern,
 		"place for the circle  center for y") );
 	
-//TODO transver end
-	
-	
-/*
-		POS_DIM_1 = 1,  //the position in the first dimension
-		POS_DIM_2 = 2,  //the position in the second dimension
-		SIZE      = 10, //the size of the Fib object
-		SIZE_DIM_1 = 11,//the size of the Fib object in the first dimension
-		SIZE_DIM_2 = 12,//the size of the Fib object in the second dimension
-		SIZE_RADIUS= 20,//the radius of the Fib object
-		SIZE_RADIUS_DIM_1 = 21,//the radius of the Fib object in the first dimension
-		SIZE_RADIUS_DIM_2 = 22,//the radius of the Fib object in the second dimension
-		LINE_WIDTH = 30,  //width of the line, with which the object was drawn
-		
-		ANGLE = 100//the angle of the Fib object
-		POS_END_DIM_1 = 101,  //the end position in the first dimension
-		POS_END_DIM_2 = 102,  //the end position in the second dimension
-		
-		POS_POINT_2_DIM_1 = 200,  //the position of the second point in the first dimension
-		POS_POINT_2_DIM_2 = 201,  //the position of the second point in the second dimension
-		
-		POS_POINT_3_DIM_1 = 300,  //the position of the third point in the first dimension
-		POS_POINT_3_DIM_2 = 301,  //the position of the third point in the second dimension
-		
-		POS_POINT_4_DIM_1 = 400,  //the position of the 4. point in the first dimension
-		POS_POINT_4_DIM_2 = 401  //the position of the 4. point in the second dimension
-		
-//new
-		
-		
-*/
-
-/*TODO
- * * for POS_END_DIM_n inVars set last not used POS_POINT_p_DIM_n (if existing)
- * 
- */
-	
-
 
 	unsigned int uiActualMatch = 1;
 	string szLastPattern = "";

@@ -38,6 +38,7 @@
 History:
 21.06.2013  Oesterholz  created
 13.04.2014  Oesterholz  insertSelectedFibObject() added
+18.05.2014  Oesterholz  saveAs(): opens with last choosen file
 */
 
 
@@ -879,7 +880,11 @@ bool cFibObjectMainWindow::save() {
  */
 bool cFibObjectMainWindow::saveAs() {
 	//ask for a file name for the file where to store the Fib object
-	QFileDialog fileDialogSaveAs( this, tr("Save Fib object") );
+	//to set start file
+	QSettings settings("Fib development", "Fib creator");
+	QFileDialog fileDialogSaveAs( this, tr("Save Fib object"), settings.value(
+			"mainWindow/fileDialog/lastFile",
+				QDir::homePath() + QDir::separator() + "*.xml" ).toString() );
 	fileDialogSaveAs.setNameFilter(tr("Fib XML (*.xml);;Fib compressed (*.fib)"));
 	fileDialogSaveAs.setAcceptMode( QFileDialog::AcceptSave );
 	
@@ -897,6 +902,9 @@ bool cFibObjectMainWindow::saveAs() {
 			//no file name choosen -> can't save
 			return false;
 		}
+		//store actual file as last used file
+		settings.setValue("mainWindow/fileDialog/lastFile", liFileNames.front() );
+		
 		return storeFibObject( liFileNames.front() );
 	}//else
 	
